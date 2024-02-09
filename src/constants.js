@@ -1,1 +1,3 @@
 export const PUBLIC_URL = process.env.PUBLIC_URL;
+export const SUPABASE_URL = process.env.SUPABASE_URL || "https://fruxgtzwbchlilxhuhvu.supabase.co";
+export const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY || "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImZydXhndHp3YmNobGlseGh1aHZ1Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3MDc0Mzk2NjksImV4cCI6MjAyMzAxNTY2OX0.pxDUUDJC2wVha8pLdjdergjSf2Xy_O832LxQvCX9nwo";

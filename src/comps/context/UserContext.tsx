@@ -1,10 +1,5 @@
 import React from "react";
 
-interface UserContextType extends User {
-    signed_in: boolean,
-    memberships: Membership[]
-}
-
 const UserContext = React.createContext<UserContextType>({
     signed_in: false,
     id: -1,
