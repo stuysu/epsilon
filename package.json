@@ -49,6 +49,7 @@
   },
   "devDependencies": {
     "@types/react-helmet": "^6.1.11",
+    "prettier": "3.2.5",
     "supabase": "^1.142.2"
   }
 }
