@@ -15,6 +15,8 @@ const UserProvider = ({ children } : { children: React.ReactNode }) => {
         memberships: []
     }
 
+    console.log(value)
+
     return (
         <UserContext.Provider value={value}>
             {children}

@@ -9,6 +9,8 @@ import UserHome from "../comps/home/UserHome"
 const Home = () => {
     const user : UserContextType = useContext(UserContext);
 
+    console.log(user.signed_in)
+
     return (
         <div>
             <Helmet>
