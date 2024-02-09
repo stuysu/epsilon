@@ -6,6 +6,7 @@ const Home = () => {
             <Helmet>
                 <title>Home | StuyActivities</title>
             </Helmet>
+            HI
         </div>
     )
 }

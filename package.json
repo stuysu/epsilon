@@ -48,6 +48,7 @@
     ]
   },
   "devDependencies": {
-    "@types/react-helmet": "^6.1.11"
+    "@types/react-helmet": "^6.1.11",
+    "supabase": "^1.142.2"
   }
 }
