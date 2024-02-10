@@ -1,4 +1,4 @@
-import React from "react"
+import React, { useEffect } from "react"
 import { supabase } from "../../supabaseClient"
 import UserContext from "./UserContext";
 
@@ -15,7 +15,13 @@ const UserProvider = ({ children } : { children: React.ReactNode }) => {
         memberships: []
     }
 
-    console.log(value)
+
+
+    useEffect(() => {
+        async function getUserData() {
+            const { data, error } = await supabase.from("users").select().eq('email', "rsim40@stuy.edu")
+        }
+    })
 
     return (
         <UserContext.Provider value={value}>
