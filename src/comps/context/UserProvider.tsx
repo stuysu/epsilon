@@ -17,7 +17,8 @@ const UserProvider = ({ children } : { children: React.ReactNode }) => {
         grade: -1,
         memberships: [],
         is_faculty: false,
-        active: false
+        active: false,
+        setMessage: setMessage
     });
 
     supabase.auth.onAuthStateChange(event => {
@@ -35,7 +36,8 @@ const UserProvider = ({ children } : { children: React.ReactNode }) => {
                 grade: -1,
                 memberships: [],
                 is_faculty: false,
-                active: false
+                active: false,
+                setMessage: setMessage
             })
         }
     })
@@ -62,10 +64,12 @@ const UserProvider = ({ children } : { children: React.ReactNode }) => {
                             id,
                             role,
                             role_name,
+                            active,
                             organizations (
                                 id,
                                 name,
-                                url
+                                url,
+                                picture
                             )
                         )
                     `)
@@ -112,7 +116,8 @@ const UserProvider = ({ children } : { children: React.ReactNode }) => {
                     grade: user.grade,
                     memberships: user.memberships,
                     is_faculty: user.is_faculty,
-                    active: user.active
+                    active: user.active,
+                    setMessage: setMessage
                 });
 
                 setMessage(`Signed in with ${supabaseUser.email}!`)

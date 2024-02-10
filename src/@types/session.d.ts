@@ -1,5 +1,6 @@
 interface UserContextType extends User {
     signed_in: boolean,
     admin: boolean,
-    memberships: Partial<Membership>[] | undefined
+    memberships: Partial<Membership>[] | undefined,
+    setMessage: (message : string) => void,
 }

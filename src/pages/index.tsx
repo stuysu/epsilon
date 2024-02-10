@@ -7,6 +7,7 @@ import React, { lazy, Suspense } from "react";
 
 // Pages
 import Home from "./Home";
+const Catalog = lazy(() => import("./Catalog"));
 
 const Pages = () => {
     const location = useLocation();
@@ -28,6 +29,7 @@ const Pages = () => {
             <Suspense fallback={<Loading />}>
                 <Routes>
                     <Route path={"/"} Component={Home} />
+                    <Route path={"/catalog"} Component={Catalog} />
                 </Routes>
             </Suspense>
         </div>

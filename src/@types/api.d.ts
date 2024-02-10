@@ -1,6 +1,15 @@
 interface Organization {
     id: number;
     name: string;
+    picture?: string;
+    mission?: string;
+    purpose?: string;
+    benefit?: string;
+    appointment_procedures?: string;
+    uniqueness?: string;
+    meeting_schedule?: string;
+    meeting_days?: string;
+    commitment_level?: "NONE" | "LOW" | "MEDIUM" | "HIGH";
     url: string;
     state: "PENDING" | "LOCKED" | "UNLOCKED" | "ADMIN";
     memberships?: Partial<Membership>[];
@@ -24,4 +33,5 @@ interface Membership {
     id: number;
     role: "MEMBER" | "ADVISOR" | "ADMIN" | "CREATOR";
     role_name?: string;
+    active: boolean;
 }
