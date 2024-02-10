@@ -15,10 +15,8 @@ const UserProvider = ({ children } : { children: React.ReactNode }) => {
         memberships: []
     });
 
-    supabase.auth.onAuthStateChange(async event => {
-        if (event !== "SIGNED_OUT") {
-            /* Signed In */
-            
+    useEffect(() => {
+        const getUser = async () => {
             const authData = await supabase.auth.getUser()
             console.log(authData)
             if (authData.data?.user) {
@@ -28,10 +26,10 @@ const UserProvider = ({ children } : { children: React.ReactNode }) => {
                 
                 console.log(data)
             }
-        } else {
-            /* Signed Out */
         }
-    })
+
+        getUser()
+    }, [])
 
     return (
         <UserContext.Provider value={value}>
