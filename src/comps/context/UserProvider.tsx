@@ -3,15 +3,7 @@ import { supabase } from "../../supabaseClient"
 import UserContext from "./UserContext";
 
 const UserProvider = ({ children } : { children: React.ReactNode }) => {
-    supabase.auth.onAuthStateChange(async event => {
-        if (event !== "SIGNED_OUT") {
-            console.log("Signed In!")
-        } else {
-            console.log("Signed Out!")
-        }
-    })
-
-    let value : UserContextType = {
+    const [value, setValue] = React.useState<UserContextType>({
         signed_in: false,
         admin: false,
         id: -1,
@@ -21,14 +13,24 @@ const UserProvider = ({ children } : { children: React.ReactNode }) => {
         picture: "",
         grade: -1,
         memberships: []
-    }
+    });
 
-    useEffect(() => {
-        const getUserData = async () => {
-            const { data, error } = await supabase.from("users").select()
+    supabase.auth.onAuthStateChange(async event => {
+        if (event !== "SIGNED_OUT") {
+            /* Signed In */
+            
+            const authData = await supabase.auth.getUser()
+            console.log(authData)
+            if (authData.data?.user) {
+                /* fetch user profile */
+                const supabaseUser = authData.data.user; // user stored in auth.user table
+                const { data, error } = await supabase.from('users').select().eq('email', supabaseUser.email)
+                
+                console.log(data)
+            }
+        } else {
+            /* Signed Out */
         }
-
-        getUserData();
     })
 
     return (
