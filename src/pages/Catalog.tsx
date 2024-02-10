@@ -28,14 +28,14 @@ const Catalog = () => {
             setOrgs(data)
         }
         getOrgs()
-    }, [])
+    }, [user])
 
     return (
         <div>
             <h1>Catalog!</h1>
             <div>
                 {
-                    orgs.map(org => <OrgCard organization={org} />)
+                    orgs.map((org, i) => <OrgCard organization={org} key={i} />)
                 }
             </div>
         </div>

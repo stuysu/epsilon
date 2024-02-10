@@ -5,7 +5,12 @@ import UserContext from "../../comps/context/UserContext";
 import OrgContext from "../../comps/context/OrgContext";
 import { supabase } from "../../supabaseClient";
 
+import OrgNav from "../../comps/pages/orgs/OrgNav";
+
 import Overview from "./Overview";
+import Charter from "./Charter";
+import Meetings from "./Meetings";
+import Members from "./Members";
 
 const OrgRouter = () => {
     const user = useContext(UserContext)
@@ -92,12 +97,16 @@ const OrgRouter = () => {
         }
 
         getOrgData();
-    }, [])
+    }, [orgUrl, user])
 
     return (
         <OrgContext.Provider value={org}>
+            <OrgNav />
             <Routes>
-                <Route path={"/"} Component={Overview} />
+                <Route path={`/`} Component={Overview} />
+                <Route path={`/charter`} Component={Charter} />
+                <Route path={`/meetings`} Component={Meetings} />
+                <Route path={`/members`} Component={Members} />
             </Routes>
         </OrgContext.Provider>
     )

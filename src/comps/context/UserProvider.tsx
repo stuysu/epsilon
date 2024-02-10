@@ -84,9 +84,14 @@ const UserProvider = ({ children } : { children: React.ReactNode }) => {
                     `)
                     .eq('email', supabaseUser.email)
                 
+                if (error) {
+                    setMessage("Error logging in. Contact it@stuysu.org for help.")
+                    return;
+                }
+                
                 if (!Array.isArray(data) || data?.length === 0) {
                     // user is not in our public.users table. sign out + notify
-                    const { error } = await supabase.auth.signOut();
+                    await supabase.auth.signOut();
 
                     setMessage("Unverified account. Please contact it@stuysu.org for help.")
                     return;
