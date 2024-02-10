@@ -7,7 +7,7 @@ const OrgCard = ({ organization } : { organization : Partial<Organization> }) =>
             name: {organization.name}
             <br />
             mission: {organization.mission}
-            <Link to={`/organizations/${organization.url}`}>Go to org</Link>
+            <Link to={`/${organization.url}`}>Go to org</Link>
         </Box>
     )
 }

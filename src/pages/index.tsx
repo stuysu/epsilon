@@ -31,7 +31,7 @@ const Pages = () => {
                 <Routes>
                     <Route path={"/"} Component={Home} />
                     <Route path={"/catalog"} Component={Catalog} />
-                    <Route path={"/organizations/:orgUrl/*"} Component={OrgRouter} />
+                    <Route path={"/:orgUrl/*"} Component={OrgRouter} />
                 </Routes>
             </Suspense>
         </div>

@@ -1,5 +1,5 @@
 /* ORG ROUTING INFORMATION HERE */
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Routes, Route, useParams } from "react-router-dom";
 import UserContext from "../../comps/context/UserContext";
 import OrgContext from "../../comps/context/OrgContext";
@@ -101,13 +101,21 @@ const OrgRouter = () => {
 
     return (
         <OrgContext.Provider value={org}>
-            <OrgNav />
-            <Routes>
-                <Route path={`/`} Component={Overview} />
-                <Route path={`/charter`} Component={Charter} />
-                <Route path={`/meetings`} Component={Meetings} />
-                <Route path={`/members`} Component={Members} />
-            </Routes>
+            {
+                org.id === -1 ? 
+                (<div></div>) :
+                (
+                    <React.Fragment>
+                    <OrgNav />
+                    <Routes>
+                        <Route path={`/`} Component={Overview} />
+                        <Route path={`/charter`} Component={Charter} />
+                        <Route path={`/meetings`} Component={Meetings} />
+                        <Route path={`/members`} Component={Members} />
+                    </Routes>
+                    </React.Fragment>
+                )
+            }
         </OrgContext.Provider>
     )
 }

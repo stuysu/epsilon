@@ -5,7 +5,7 @@ import OrgContext from "../../context/OrgContext";
 
 const OrgNav = () => {
     const organization = useContext<OrgContextType>(OrgContext);
-    const main = `/organizations/${organization.url}`
+    const main = `/${organization.url}`
 
     return (
         <div>
