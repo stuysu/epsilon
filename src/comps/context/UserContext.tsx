@@ -9,7 +9,9 @@ const UserContext = React.createContext<UserContextType>({
     email: "",
     picture: "",
     grade: -1,
-    memberships: []
+    memberships: [],
+    is_faculty: false,
+    active: false
 })
 
 export default UserContext

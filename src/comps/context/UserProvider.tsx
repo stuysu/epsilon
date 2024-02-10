@@ -15,7 +15,9 @@ const UserProvider = ({ children } : { children: React.ReactNode }) => {
         email: "",
         picture: "",
         grade: -1,
-        memberships: []
+        memberships: [],
+        is_faculty: false,
+        active: false
     });
 
     supabase.auth.onAuthStateChange(event => {
@@ -31,7 +33,9 @@ const UserProvider = ({ children } : { children: React.ReactNode }) => {
                 email: "",
                 picture: "",
                 grade: -1,
-                memberships: []
+                memberships: [],
+                is_faculty: false,
+                active: false
             })
         }
     })
@@ -43,9 +47,31 @@ const UserProvider = ({ children } : { children: React.ReactNode }) => {
             if (authData.data?.session?.user) {
                  // fetch user profile
                 const supabaseUser = authData.data.session.user; // user stored in auth.user table
-                const { data, error } = await supabase.from('users').select().eq('email', supabaseUser.email)
+                const { data, error } = await supabase
+                    .from('users')
+                    .select(`
+                        id,
+                        first_name,
+                        last_name,
+                        email,
+                        grad_year,
+                        picture,
+                        is_faculty,
+                        active,
+                        memberships (
+                            id,
+                            role,
+                            role_name,
+                            organizations (
+                                id,
+                                name,
+                                url
+                            )
+                        )
+                    `)
+                    .eq('email', supabaseUser.email)
                 
-                if (Array.isArray(data) && data.length === 0) {
+                if (!Array.isArray(data) || data?.length === 0) {
                     // user is not in our public.users table. sign out + notify
                     const { error } = await supabase.auth.signOut();
 
@@ -53,7 +79,41 @@ const UserProvider = ({ children } : { children: React.ReactNode }) => {
                     return;
                 }
 
-                const user = data; // user in our own user table
+                let grade;
+                let d = new Date();
+
+                if (d.getMonth() < 8) {
+                    grade = 12 - (data[0].grad_year - d.getFullYear())
+                } else {
+                    grade = 12 - (data[0].grad_year - d.getFullYear() - 1)
+                }
+                
+                const user : User = {
+                    first_name: data[0].first_name,
+                    last_name: data[0].last_name,
+                    email: data[0].email,
+                    grade: grade,
+                    id: data[0].id,
+                    is_faculty: data[0].is_faculty,
+                    active: data[0].active,
+                    memberships: data[0].memberships
+                    
+                } // user in our own user table
+                const isAdmin = false; /* TODO: fetch permissions. check if user has any admin permissions */
+
+                setValue({
+                    signed_in: true,
+                    admin: isAdmin,
+                    id: user.id,
+                    first_name: user.first_name,
+                    last_name: user.last_name,
+                    email: user.email,
+                    picture: user.picture,
+                    grade: user.grade,
+                    memberships: user.memberships,
+                    is_faculty: user.is_faculty,
+                    active: user.active
+                });
 
                 setMessage(`Signed in with ${supabaseUser.email}!`)
             }

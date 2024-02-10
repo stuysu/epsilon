@@ -1,22 +1,8 @@
-enum OrgState {
-    Pending = "PENDING",
-    Locked = "LOCKED",
-    Unlocked = "UNLOCKED",
-    Admin = "ADMIN"
-}
-
-enum OrgRole {
-    Member = "MEMBER",
-    Advisor = "ADVISOR",
-    Admin = "ADMIN",
-    Creator = "CREATOR"
-}
-
 interface Organization {
     id: number;
     name: string;
     url: string;
-    state: OrgState;
+    state: "PENDING" | "LOCKED" | "UNLOCKED" | "ADMIN";
     memberships?: Partial<Membership>[];
 }
 
@@ -27,12 +13,15 @@ interface User {
     email: string;
     picture?: string;
     grade: number;
+    is_faculty: boolean;
+    active: boolean;
+    memberships?: Partial<Membership>[];
 }
 
 interface Membership {
     user?: Partial<User>;
     organization?: Partial<Organization>;
     id: number;
-    role: OrgRole;
+    role: "MEMBER" | "ADVISOR" | "ADMIN" | "CREATOR";
     role_name?: string;
 }
