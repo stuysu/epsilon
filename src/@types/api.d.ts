@@ -8,7 +8,7 @@ interface Organization {
     appointment_procedures?: string;
     uniqueness?: string;
     meeting_schedule?: string;
-    meeting_days?: string;
+    meeting_days?: string[];
     commitment_level?: "NONE" | "LOW" | "MEDIUM" | "HIGH";
     url: string;
     state: "PENDING" | "LOCKED" | "UNLOCKED" | "ADMIN";
@@ -30,7 +30,7 @@ interface User {
 }
 
 interface Membership {
-    user?: Partial<User>;
+    users?: Partial<User>;
     organization?: Partial<Organization>;
     id: number;
     role: "MEMBER" | "ADVISOR" | "ADMIN" | "CREATOR";
@@ -49,14 +49,14 @@ interface Room {
 
 interface Permission {
     id: number;
-    user?: Partial<User>;
+    users?: Partial<User>;
     permission: 'ADMIN'; // union type of permission enum
 }
 
 interface Meeting {
     id: number;
     organization?: Partial<Organization>;
-    room?: Partial<Room>;
+    rooms?: Partial<Room>;
     is_public: boolean;
     title: string;
     description: string;

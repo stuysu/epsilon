@@ -4,3 +4,7 @@ interface UserContextType extends User {
     memberships: Partial<Membership>[] | undefined,
     setMessage: (message : string) => void,
 }
+
+interface OrgContextType extends Organization {
+    meetings: Partial<Meeting>[]
+}

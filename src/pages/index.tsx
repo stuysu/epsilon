@@ -2,12 +2,13 @@ import { PUBLIC_URL } from "../constants"
 import { Helmet } from "react-helmet"
 import Loading from "../comps/ui/Loading";
 
-import { Routes, Route, useLocation } from "react-router-dom"
+import { Routes, Route, useLocation, Navigate } from "react-router-dom"
 import React, { lazy, Suspense } from "react";
 
 // Pages
 import Home from "./Home";
 const Catalog = lazy(() => import("./Catalog"));
+const OrgRouter = lazy(() => import("./orgs"));
 
 const Pages = () => {
     const location = useLocation();
@@ -30,6 +31,7 @@ const Pages = () => {
                 <Routes>
                     <Route path={"/"} Component={Home} />
                     <Route path={"/catalog"} Component={Catalog} />
+                    <Route path={"/organizations/:orgUrl"} Component={OrgRouter} />
                 </Routes>
             </Suspense>
         </div>
