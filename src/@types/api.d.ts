@@ -12,6 +12,8 @@ interface Organization {
     commitment_level?: "NONE" | "LOW" | "MEDIUM" | "HIGH";
     url: string;
     state: "PENDING" | "LOCKED" | "UNLOCKED" | "ADMIN";
+    joinable?: boolean;
+    join_instructions?: string;
     memberships?: Partial<Membership>[];
 }
 
@@ -34,4 +36,30 @@ interface Membership {
     role: "MEMBER" | "ADVISOR" | "ADMIN" | "CREATOR";
     role_name?: string;
     active: boolean;
+}
+
+interface Room {
+    id: number;
+    name: string;
+    floor?: number;
+    approval_required: boolean;
+    available_days: ("MONDAY" | "TUESDAY" | "WEDNESDAY" | "THURSDAY" | "FRIDAY")[];
+    comments?: string;
+}
+
+interface Permission {
+    id: number;
+    user?: Partial<User>;
+    permission: 'ADMIN'; // union type of permission enum
+}
+
+interface Meeting {
+    id: number;
+    organization?: Partial<Organization>;
+    room?: Partial<Room>;
+    is_public: boolean;
+    title: string;
+    description: string;
+    start_time: Date;
+    end_time: Date;
 }
