@@ -72,18 +72,14 @@ const OrgNav = () => {
         }
     }
 
+    let disabled = false;
+    if (isCreator) disabled = true;
+    if (!isInOrg && !organization.joinable) disabled = true;
+
     return (
         <div>
             <Box bgcolor="gray">
-                { 
-                    isCreator ? 
-                        (
-                            <Button variant="contained" disabled>LEAVE</Button>
-                        ) : 
-                        (
-                            <Button variant="contained" onClick={handleInteract}>{interactString}</Button>
-                        )
-                }
+                <Button variant="contained" onClick={handleInteract} disabled={disabled}>{interactString}</Button>
             </Box>
             
             <br />
