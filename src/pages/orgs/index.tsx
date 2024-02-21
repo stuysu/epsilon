@@ -11,6 +11,7 @@ import Overview from "./Overview";
 import Charter from "./Charter";
 import Meetings from "./Meetings";
 import Members from "./Members";
+import AdminRouter from "./admin";
 
 const OrgRouter = () => {
     const user = useContext(UserContext)
@@ -109,13 +110,14 @@ const OrgRouter = () => {
                 (<div></div>) : /* ORG DOESN'T EXIST HERE */
                 (
                     <React.Fragment>
-                    <OrgNav />
-                    <Routes>
-                        <Route path={`/`} Component={Overview} />
-                        <Route path={`/charter`} Component={Charter} />
-                        <Route path={`/meetings`} Component={Meetings} />
-                        <Route path={`/members`} Component={Members} />
-                    </Routes>
+                        <OrgNav />
+                        <Routes>
+                            <Route path={`/`} Component={Overview} />
+                            <Route path={`/charter`} Component={Charter} />
+                            <Route path={`/meetings`} Component={Meetings} />
+                            <Route path={`/members`} Component={Members} />
+                            <Route path={`/admin/*`} Component={AdminRouter} />
+                        </Routes>
                     </React.Fragment>
                 )
             }
