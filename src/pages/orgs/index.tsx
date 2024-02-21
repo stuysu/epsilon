@@ -59,7 +59,9 @@ const OrgRouter = () => {
                     memberships (
                         role,
                         role_name,
+                        active,
                         users (
+                            id,
                             first_name,
                             last_name,
                             email,
@@ -103,7 +105,7 @@ const OrgRouter = () => {
         <OrgContext.Provider value={org}>
             {
                 org.id === -1 ? 
-                (<div></div>) :
+                (<div></div>) : /* ORG DOESN'T EXIST HERE */
                 (
                     <React.Fragment>
                     <OrgNav />

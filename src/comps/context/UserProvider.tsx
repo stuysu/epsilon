@@ -133,8 +133,6 @@ const UserProvider = ({ children } : { children: React.ReactNode }) => {
                     active: user.active,
                     setMessage: setMessage
                 });
-
-                setMessage(`Signed in with ${supabaseUser.email}!`)
             }
         }
 
