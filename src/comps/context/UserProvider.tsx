@@ -49,7 +49,7 @@ const UserProvider = ({ children } : { children: React.ReactNode }) => {
             if (authData.data?.session?.user) {
                  // fetch user profile
                 const supabaseUser = authData.data.session.user; // user stored in auth.user table
-                const { data, error } = await supabase
+                let { data, error } = await supabase
                     .from('users')
                     .select(`
                         id,
@@ -85,7 +85,7 @@ const UserProvider = ({ children } : { children: React.ReactNode }) => {
                     .eq('email', supabaseUser.email)
                 
                 if (error) {
-                    setMessage("Error logging in. Contact it@stuysu.org for help.")
+                    setMessage("Error logging in. Contact it@stuysu.org for support.")
                     return;
                 }
                 
@@ -93,7 +93,7 @@ const UserProvider = ({ children } : { children: React.ReactNode }) => {
                     // user is not in our public.users table. sign out + notify
                     await supabase.auth.signOut();
 
-                    setMessage("Unverified account. Please contact it@stuysu.org for help.")
+                    setMessage("Unverified account. Please contact it@stuysu.org for support.")
                     return;
                 }
 
@@ -117,7 +117,19 @@ const UserProvider = ({ children } : { children: React.ReactNode }) => {
                     memberships: data[0].memberships
                     
                 } // user in our own user table
-                const isAdmin = false; /* TODO: fetch permissions. check if user has any admin permissions */
+                let isAdmin = false;
+                /* CHECK PERMISSIONS */
+                ({ data, error } = await supabase
+                    .from("permissions")
+                    .select()
+                    .eq("user_id", user.id))
+                    
+                if (error) {
+                    setMessage("Error fetching permissions. Contact it@stuysu.org for support.")
+                }
+                if (Array.isArray(data) && data?.length > 0) {
+                    isAdmin = true;
+                }
 
                 setValue({
                     signed_in: true,
