@@ -6,6 +6,8 @@ import { Box, Button } from "@mui/material";
 import OrgContext from "../../context/OrgContext";
 import UserContext from "../../context/UserContext";
 
+import { supabase } from "../../../supabaseClient";
+
 const OrgNav = () => {
     const organization = useContext<OrgContextType>(OrgContext);
     const user = useContext<UserContextType>(UserContext)
@@ -30,11 +32,28 @@ const OrgNav = () => {
     }
 
     let interactString = isInOrg ? (isActive ? "LEAVE" : "CANCEL JOIN") : "JOIN";
-    const handleInteract = () => {
+    const handleInteract = async () => {
         if (interactString === "JOIN") {
-
+            const { error } = await supabase
+                .from('memberships')
+                .insert({ organization_id: organization.id, user_id: user.id });
+            if (error) {
+                return user.setMessage("Unable to join organization. Contact it@stuysu.org for support.");
+            }
+            
+            user.setMessage("Sent organization a join request!")
         } else if (interactString === "LEAVE" || interactString === "CANCEL JOIN") {
+            let membership = organization.memberships?.find(m => m.users?.id === user.id)
 
+            const { error } = await supabase
+                .from('memberships')
+                .delete()
+                .eq('id', membership?.id)
+            if (error) {
+                return user.setMessage("Unable to leave organization. Contact it@stuysu.org for support.");
+            }
+            
+            user.setMessage("Left organization!")
         }
     }
 
@@ -44,10 +63,10 @@ const OrgNav = () => {
                 { 
                     isCreator ? 
                         (
-                            <Button disabled>LEAVE</Button>
+                            <Button variant="contained" disabled>LEAVE</Button>
                         ) : 
                         (
-                            <Button onClick={handleInteract}>{interactString}</Button>
+                            <Button variant="contained" onClick={handleInteract}>{interactString}</Button>
                         )
                 }
             </Box>

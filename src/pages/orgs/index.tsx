@@ -57,6 +57,7 @@ const OrgRouter = () => {
                     joinable,
                     join_instructions,
                     memberships (
+                        id,
                         role,
                         role_name,
                         active,
