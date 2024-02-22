@@ -6,12 +6,12 @@ import { Button } from "@mui/material";
 
 const PendingMember = (
     { id, name, email, picture } : 
-    { id: number, name: string, email: string, picture: string }
+    { id: number, name: string, email: string, picture: string | undefined }
 ) => {
     const user = useContext(UserContext);
 
     const handleApprove = async () => {
-        const { data, error } = await supabase
+        const { error } = await supabase
             .from('memberships')
             .update({ active: true })
             .eq('id', id)
@@ -25,7 +25,7 @@ const PendingMember = (
     }
 
     const handleReject = async () => {
-        const { data, error } = await supabase
+        const { error } = await supabase
             .from('memberships')
             .delete()
             .eq('id', id)

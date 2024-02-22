@@ -19,11 +19,12 @@ const MemberRequests = () => {
             <h1>MEMBER REQUESTS</h1>
             {
                 pendingMembers?.map(
-                    member => (
+                    (member, i) => (
                         <PendingMember 
                             id={member.membershipId || -1} 
                             name={member.name} email={member.email || "Undefined"} 
-                            picture={member.picture || ""} 
+                            picture={member.picture} 
+                            key={i}
                         />
                     )
                 )

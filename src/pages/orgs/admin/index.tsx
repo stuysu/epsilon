@@ -41,6 +41,7 @@ const AdminRouter = () => {
                             <Route path={'/posts'} Component={Posts} />
                             <Route path={'/strikes'} Component={Strikes} />
                             <Route path={'/charter-edits'} Component={Charter} />
+                            <Route path={'/*'} Component={Members} />
                         </Routes>
                     </Fragment>
                 )
