@@ -60,6 +60,6 @@ interface Meeting {
     is_public: boolean;
     title: string;
     description: string;
-    start_time: Date;
-    end_time: Date;
+    start_time: string;
+    end_time: string;
 }
