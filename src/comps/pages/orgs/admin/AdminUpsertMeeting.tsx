@@ -48,7 +48,6 @@ const AdminUpsertMeeting = (
     const user = useContext(UserContext)
     const organization = useContext(OrgContext)
 
-    
     const [meetingTitle, setMeetingTitle] = useState(title || "")
     const [meetingDesc, setMeetingDesc] = useState(description || "")
     const [roomId, setRoomId] = useState(room_id)
@@ -57,6 +56,7 @@ const AdminUpsertMeeting = (
     const [isPub, setIsPub] = useState(isPublic === undefined ? true : isPublic)
 
     const [availableRooms, setAvailableRooms] = useState<Room[]>([])
+    const [loading, setLoading] = useState(true);
 
     /* TODO: edit to filter out rooms that are already taken for that day */
     useEffect(() => {
@@ -70,7 +70,8 @@ const AdminUpsertMeeting = (
                 return;
             }
 
-            setAvailableRooms(data)
+            setAvailableRooms(data);
+            setLoading(false);
         }
 
         fetchRooms();
@@ -78,6 +79,8 @@ const AdminUpsertMeeting = (
 
     const handleSave = async () => {
         let supabaseReturn;
+
+        let isCreated = false;
 
         if (id) {
             // update
@@ -105,6 +108,7 @@ const AdminUpsertMeeting = (
                     end_time: endTime?.toISOString(),
                     is_public: isPub
                 })
+            isCreated = true;
         }
 
         if (supabaseReturn.error) {
@@ -112,7 +116,12 @@ const AdminUpsertMeeting = (
             return;
         }
 
-        user.setMessage("Meeting created!");
+        if (isCreated) {
+            user.setMessage("Meeting created!");
+        } else {
+            user.setMessage("Meeting updated!");
+        }
+
         onClose();
     }
 
@@ -135,7 +144,7 @@ const AdminUpsertMeeting = (
                 />
 
                 <Select
-                    value={String(roomId)}
+                    value={!loading ? String(roomId) : ''}
                     label='Room'
                     onChange={(event: SelectChangeEvent) => setRoomId(Number(event.target.value) || undefined)}
                 >
@@ -165,9 +174,6 @@ const AdminUpsertMeeting = (
                     }
                     label="is public?"
                 />
-                
-
-
                 
             </DialogContent>
             <DialogActions>

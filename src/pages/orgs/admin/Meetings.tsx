@@ -11,7 +11,18 @@ const Meetings = () => {
     const organization = useContext(OrgContext)
     const user = useContext(UserContext)
 
-    const [editState, setEditState] = useState<any>({
+    const [editState, setEditState] = useState<
+        { 
+            id: number | undefined,
+            title: string | undefined,
+            description: string | undefined ,
+            start: string | undefined,
+            end: string | undefined,
+            room: number | undefined,
+            isPublic: boolean | undefined,
+            editing: boolean
+        }
+    >({
         id: undefined,
         title: undefined,
         description: undefined,
@@ -76,28 +87,30 @@ const Meetings = () => {
                 })}
             > Create Meeting</Button>
 
-            <AdminUpsertMeeting 
-                id={editState.id}
-                title={editState.title}
-                description={editState.description}
-                room_id={editState.room}
-                start={editState.start}
-                end={editState.end}
-                isPublic={editState.isPublic}
-                open={editState.editing}
-                onClose={() => {
-                    setEditState({
-                        id: undefined,
-                        title: undefined,
-                        description: undefined,
-                        start: undefined,
-                        end: undefined,
-                        room: undefined,
-                        isPublic: undefined,
-                        editing: false
-                    })
-                }}
-            />
+            {editState.editing ?
+                (<AdminUpsertMeeting 
+                    id={editState.id}
+                    title={editState.title}
+                    description={editState.description}
+                    room_id={editState.room}
+                    start={editState.start}
+                    end={editState.end}
+                    isPublic={editState.isPublic}
+                    open={editState.editing}
+                    onClose={() => {
+                        setEditState({
+                            id: undefined,
+                            title: undefined,
+                            description: undefined,
+                            start: undefined,
+                            end: undefined,
+                            room: undefined,
+                            isPublic: undefined,
+                            editing: false
+                        })
+                    }}
+                />) : (<div></div>)
+            }
         </div>
     )
 }
