@@ -8,6 +8,7 @@ import { lazy, Suspense } from "react";
 // Pages
 import Home from "./Home";
 const Catalog = lazy(() => import("./Catalog"));
+const Create = lazy(() => import("./Create"));
 const OrgRouter = lazy(() => import("./orgs"));
 
 const Pages = () => {
@@ -31,6 +32,7 @@ const Pages = () => {
                 <Routes>
                     <Route path={"/"} Component={Home} />
                     <Route path={"/catalog"} Component={Catalog} />
+                    <Route path={"/create"} Component={Create} />
                     <Route path={"/:orgUrl/*"} Component={OrgRouter} />
                 </Routes>
             </Suspense>
