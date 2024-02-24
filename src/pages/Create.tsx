@@ -1,4 +1,4 @@
-import { useContext, useState, ChangeEvent, useCallback } from "react";
+import { useContext, useState, ChangeEvent } from "react";
 import UserContext from "../comps/context/UserContext";
 import { 
     Button,
@@ -8,7 +8,10 @@ import {
     FormLabel,
     FormControlLabel,
     FormGroup, 
-    Checkbox
+    Checkbox,
+    Select,
+    MenuItem,
+    SelectChangeEvent
 } from "@mui/material";
 
 import { supabase } from "../supabaseClient";
@@ -35,7 +38,7 @@ const Create = () => {
         friday: false
     })
     const [keywords, setKeywords] = useState("") /* MAX 3, ex: coding,programming,events */
-    const [commitmentLevel, setCommitmentLevel] = useState<"NONE" | "LOW" | "MEDIUM" | "HIGH">()
+    const [commitmentLevel, setCommitmentLevel] = useState<Organization["commitment_level"]>("NONE")
     const [joinInstructions, setJoinInstructions] = useState<string>("")
 
     const handleDayChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -94,6 +97,16 @@ const Create = () => {
             <TextField label="meeting schedule" value={meetingSchedule} onChange={(event: ChangeEvent<HTMLInputElement>) => setMeetingSchedule(event.target.value)} />
             <TextField label="keywords" value={keywords} onChange={(event: ChangeEvent<HTMLInputElement>) => setKeywords(event.target.value)} />
             <TextField label="join instructions" value={joinInstructions} onChange={(event: ChangeEvent<HTMLInputElement>) => setJoinInstructions(event.target.value)} />
+            <Select
+                value={commitmentLevel}
+                onChange={(event: SelectChangeEvent) => setCommitmentLevel(event.target.value as Organization["commitment_level"])}
+                label="commitment level"
+            >
+                <MenuItem value={"NONE"}>None</MenuItem>
+                <MenuItem value={"LOW"}>Low</MenuItem>
+                <MenuItem value={"MEDIUM"}>Medium</MenuItem>
+                <MenuItem value={"HIGH"}>High</MenuItem>
+            </Select>
             <FormControl>
                 <FormLabel>Meeting Days</FormLabel>
                 <FormGroup>
