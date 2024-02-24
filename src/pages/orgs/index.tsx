@@ -11,7 +11,7 @@ import Overview from "./Overview";
 import Charter from "./Charter";
 import Meetings from "./Meetings";
 import Members from "./Members";
-import AdminRouter from "./admin";
+import OrgAdminRouter from "./admin";
 
 const OrgRouter = () => {
     const user = useContext(UserContext)
@@ -116,7 +116,7 @@ const OrgRouter = () => {
                             <Route path={`/charter`} Component={Charter} />
                             <Route path={`/meetings`} Component={Meetings} />
                             <Route path={`/members`} Component={Members} />
-                            <Route path={`/admin/*`} Component={AdminRouter} />
+                            <Route path={`/admin/*`} Component={OrgAdminRouter} />
                         </Routes>
                     </React.Fragment>
                 )

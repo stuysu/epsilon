@@ -14,7 +14,7 @@ import Charter from "./Charter";
 
 import OrgAdminNav from "../../../comps/pages/orgs/admin/OrgAdminNav";
 
-const AdminRouter = () => {
+const OrgAdminRouter = () => {
     const user = useContext<UserContextType>(UserContext);
     const organization = useContext<OrgContextType>(OrgContext);
 
@@ -54,4 +54,4 @@ const AdminRouter = () => {
     )
 }
 
-export default AdminRouter;
+export default OrgAdminRouter;
