@@ -17,7 +17,8 @@ const Catalog = () => {
                         name,
                         url,
                         picture,
-                        mission
+                        mission,
+                        state
                     `)
 
             if (error) {
@@ -35,7 +36,12 @@ const Catalog = () => {
             <h1>Catalog!</h1>
             <div>
                 {
-                    orgs.map((org, i) => <OrgCard organization={org} key={i} />)
+                    orgs.map(
+                        (org, i) => {
+                            if (org.state === "PENDING" || org.state === "LOCKED") return;
+                            return <OrgCard organization={org} key={i} />
+                        }
+                    )
                 }
             </div>
         </div>

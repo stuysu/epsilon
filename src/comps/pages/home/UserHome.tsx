@@ -13,7 +13,10 @@ const UserHome = () => {
             <pre>{JSON.stringify(user, undefined, 4)}</pre>
             <div>
                 <Link to="/catalog">Catalog</Link>
+                <br />
                 <Link to="/create">Create</Link>
+                <br />
+                <Link to="/admin">Admin</Link>
             </div>
         </div>
     )

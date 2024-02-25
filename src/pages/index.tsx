@@ -10,6 +10,7 @@ import Home from "./Home";
 const Catalog = lazy(() => import("./Catalog"));
 const Create = lazy(() => import("./Create"));
 const OrgRouter = lazy(() => import("./orgs"));
+const AdminRouter = lazy(() => import("./admin"));
 
 const Pages = () => {
     const location = useLocation();
@@ -33,6 +34,7 @@ const Pages = () => {
                     <Route path={"/"} Component={Home} />
                     <Route path={"/catalog"} Component={Catalog} />
                     <Route path={"/create"} Component={Create} />
+                    <Route path={"/admin/*"} Component={AdminRouter} />
                     <Route path={"/:orgUrl/*"} Component={OrgRouter} />
                 </Routes>
             </Suspense>
