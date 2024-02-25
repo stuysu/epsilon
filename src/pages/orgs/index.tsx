@@ -92,6 +92,7 @@ const OrgRouter = () => {
                 return;
             }
 
+
             if (data?.length === 0) {
                 user.setMessage("Invalid organization URL.");
                 return;

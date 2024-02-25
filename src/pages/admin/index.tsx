@@ -2,7 +2,8 @@ import { Routes, Route, useNavigate } from "react-router-dom"
 
 /* MODULES */
 import Approve from "./Approve";
-import { useEffect } from "react";
+import { useEffect, useContext } from "react";
+import UserContext from "../../comps/context/UserContext";
 
 const Redirect = () => {
     const navigate= useNavigate(); 
@@ -15,6 +16,14 @@ const Redirect = () => {
 }
 
 const AdminRouter = () => {
+    const user = useContext(UserContext);
+
+    if (!user.admin) {
+        return (
+            <div>You do not have access to this page.</div>
+        )
+    }
+
     return (
         <div>
             <Routes>
