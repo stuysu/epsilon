@@ -56,6 +56,7 @@ const ApprovePending = () => {
         }
 
         fetchPendingOrgs()
+    // eslint-disable-next-line
     }, [])
 
     if (view) {

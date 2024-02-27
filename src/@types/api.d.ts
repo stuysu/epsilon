@@ -17,6 +17,21 @@ interface Organization {
     memberships?: Partial<Membership>[];
 }
 
+interface OrganizationEdit {
+    name?: string;
+    url?: string;
+    picture?: string;
+    mission?: string;
+    purpose?: string;
+    benefit?: string;
+    appointment_procedures?: string;
+    uniqueness?: string;
+    meeting_schedule?: string;
+    meeting_days?: string;
+    commitment_level?: "NONE" | "LOW" | "MEDIUM" | "HIGH";
+    keywords?: string;
+}
+
 interface User {
     id: number;
     first_name: string;
