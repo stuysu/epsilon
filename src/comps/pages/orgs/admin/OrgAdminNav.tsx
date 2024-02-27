@@ -17,7 +17,7 @@ const OrgAdminNav = () => {
             <Link to={`${main}/meetings`}>Meetings</Link>
             <Link to={`${main}/posts`}>Posts</Link>
             <Link to={`${main}/strikes`}>Strikes</Link>
-            <Link to={`${main}/charter-edits`}>Charter Edits</Link>
+            <Link to={`${main}/org-edits`}>Organization Edits</Link>
         </Box>
     )
 }

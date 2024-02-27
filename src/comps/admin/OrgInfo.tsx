@@ -9,7 +9,7 @@ const OrgInfo = ({ onBack, ...org}: { onBack: () => void } & Partial<OrgContextT
     const approve = async () => {
         const { error } = await supabase
             .from("organizations")
-            .update({ state: "LOCKED" })
+            .update({ state: "UNLOCKED" })
             .eq("id", org.id)
         if (error) {
             return user.setMessage("Error approving organization. Contact it@stuysu.org for support.")

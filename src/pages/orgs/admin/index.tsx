@@ -10,7 +10,7 @@ import MemberRequests from "./MemberRequests";
 import Meetings from "./Meetings";
 import Posts from "./Posts";
 import Strikes from "./Strikes";
-import Charter from "./Charter";
+import Organization from "./Organization";
 
 import OrgAdminNav from "../../../comps/pages/orgs/admin/OrgAdminNav";
 
@@ -40,7 +40,7 @@ const OrgAdminRouter = () => {
                             <Route path={'/meetings'} Component={Meetings} />
                             <Route path={'/posts'} Component={Posts} />
                             <Route path={'/strikes'} Component={Strikes} />
-                            <Route path={'/charter-edits'} Component={Charter} />
+                            <Route path={'/org-edits'} Component={Organization} />
                             <Route path={'/*'} Component={Members} />
                         </Routes>
                     </Fragment>

@@ -5,7 +5,7 @@ import { Button } from "@mui/material";
 
 import OrgInfo from "../../comps/admin/OrgInfo";
 
-const Approve = () => {
+const ApprovePending = () => {
     const user = useContext(UserContext);
     const [pendingOrgs, setPendingOrgs] = useState<Partial<OrgContextType>[]>([]);
 
@@ -79,4 +79,4 @@ const Approve = () => {
     )
 }
 
-export default Approve;
+export default ApprovePending;
