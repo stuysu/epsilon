@@ -10,12 +10,25 @@ import OrgEditor from "../../../comps/pages/orgs/admin/OrgEditor";
 const Organization = () => {
     const user = useContext(UserContext);
     const organization = useContext(OrgContext);
-    const [pendingEdit, setPendingEdit] = useState<OrganizationEdit>();
+    const [pendingEdit, setPendingEdit] = useState<OrganizationEdit>({
+        name: undefined,
+        url: undefined,
+        picture: undefined,
+        mission: undefined,
+        purpose: undefined,
+        benefit: undefined,
+        appointment_procedures: undefined,
+        uniqueness: undefined,
+        meeting_schedule: undefined,
+        meeting_days: undefined,
+        commitment_level: undefined,
+        keywords: undefined
+    });
 
     // eslint-disable-next-line
     useEffect(() => {
         const fetchEdits = async () => {
-            const { data, error } = await supabase.from("organizationEdits")
+            const { data, error } = await supabase.from("organizationedits")
                 .select()
                 .eq("id", organization.id)
             
@@ -34,8 +47,9 @@ const Organization = () => {
 
     return (
         <div>
-            <h1>Organization</h1>
+            <h1>Organization Edits</h1>
             <OrgEditor organization={organization} organizationEdit={pendingEdit}/>
+            
         </div>
     )
 }
