@@ -32,7 +32,7 @@ const Organization = () => {
         const fetchEdits = async () => {
             const { data, error } = await supabase.from("organizationedits")
                 .select()
-                .eq("id", organization.id)
+                .eq("organization_id", organization.id)
             
             if (error) {
                 return user.setMessage("Error fetching organization edits. Contact it@stuysu.org for support.");

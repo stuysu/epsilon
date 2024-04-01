@@ -124,12 +124,54 @@ const OrgEditor = (
             return user.setMessage("Error editing organization. Contact it@stuysu.org for support.")
         }
 
-        if (data !== null) {
-            /* update client without sending another call */
+        if (data !== null && data[0]) {
+            
             user.setMessage("Organization edit request sent!");
-            setPendingEdit(data[0] as OrganizationEdit)
+
+            /* if all fields of organizationEdit are null, delete the edit */
+            let res = data[0];
+            let allNull = true;
+            for (let resKey of Object.keys(res)) {
+                if (hiddenFields.includes(resKey)) continue;
+
+                if (res[resKey] !== null) {
+                    console.log(resKey, res[resKey])
+                    allNull = false;
+                    break;
+                }
+            }
+
+            if (allNull) {
+                /* delete organization edit */
+                (
+                    { error } = await supabase
+                        .from('organizationedits')
+                        .delete()
+                        .eq("organization_id", organization.id)
+                )
+
+                setPendingEdit({
+                    id: undefined,
+                    organization_id: undefined,
+                    name: undefined,
+                    url: undefined,
+                    picture: undefined,
+                    mission: undefined,
+                    purpose: undefined,
+                    benefit: undefined,
+                    appointment_procedures: undefined,
+                    uniqueness: undefined,
+                    meeting_schedule: undefined,
+                    meeting_days: undefined,
+                    commitment_level: undefined,
+                    keywords: undefined
+                })
+            } else {
+                /* update client without sending another call */
+                setPendingEdit(data[0] as OrganizationEdit);
+            }
         } else {
-            user.setMessage("Server failed to send back data. Refresh page to see potential changes.")
+            user.setMessage("Server failed to send back changes. Refresh page to see potential results.")
         }
     }
 
@@ -147,10 +189,12 @@ const OrgEditor = (
                 organizationEdit[key] !== orgEdit[key] &&
                 (
                     (orgEdit[key] != (organization[key] || "")) ||
-                    organizationEdit[key] !== null
+                    (
+                        organizationEdit[key] !== null &&
+                        organizationEdit[key] !== undefined
+                    )
                 )
             ) {
-                
                 saveable = true;
             }
         })
@@ -182,7 +226,10 @@ const OrgEditor = (
                             ) {
                                 if (orgEdit[key] != (organization[key] || "")) {
                                     status = "Unsaved"
-                                } else if (organizationEdit[key] !== null) {
+                                } else if (
+                                    organizationEdit[key] !== null &&
+                                    organizationEdit[key] !== undefined
+                                ) {
                                     status = "Approved [Unsaved]"
                                 }
                             } else if (orgEdit[key] != (organization[key] || "")) {
