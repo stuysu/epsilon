@@ -38,7 +38,7 @@ const Catalog = () => {
                 {
                     orgs.map(
                         (org, i) => {
-                            if (org.state === "PENDING" || org.state === "LOCKED") return;
+                            if (org.state === "PENDING" || org.state === "LOCKED") return (<></>);
                             return <OrgCard organization={org} key={i} />
                         }
                     )

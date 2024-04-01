@@ -113,7 +113,7 @@ const AdminMember = (
                             isCreator
                         ) ||
                         (
-                            role == 'MEMBER' || role == 'ADVISOR'
+                            role === 'MEMBER' || role === 'ADVISOR'
                         )
                     )
                 ) ? (<Button onClick={handleKick} variant='contained'>Kick</Button>) : (<div></div>)

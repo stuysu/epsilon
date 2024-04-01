@@ -11,6 +11,8 @@ const Organization = () => {
     const user = useContext(UserContext);
     const organization = useContext(OrgContext);
     const [pendingEdit, setPendingEdit] = useState<OrganizationEdit>({
+        id: undefined,
+        organization_id: undefined,
         name: undefined,
         url: undefined,
         picture: undefined,
@@ -48,8 +50,7 @@ const Organization = () => {
     return (
         <div>
             <h1>Organization Edits</h1>
-            <OrgEditor organization={organization} organizationEdit={pendingEdit}/>
-            
+            <OrgEditor organization={organization} organizationEdit={pendingEdit} setPendingEdit={setPendingEdit} />
         </div>
     )
 }

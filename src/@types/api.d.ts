@@ -18,6 +18,8 @@ interface Organization {
 }
 
 interface OrganizationEdit {
+    id?: number;
+    organization_id?: number;
     name?: string;
     url?: string;
     picture?: string;

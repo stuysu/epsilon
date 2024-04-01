@@ -75,7 +75,7 @@ const AdminUpsertMeeting = (
         }
 
         fetchRooms();
-    }, [])
+    }, [user])
 
     const handleSave = async () => {
         let supabaseReturn;

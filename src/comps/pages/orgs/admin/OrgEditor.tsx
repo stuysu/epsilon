@@ -1,8 +1,23 @@
-import { useState, ChangeEvent } from "react";
+import { useContext, useEffect, useState, ChangeEvent } from "react";
 import { Box, Button, TextField } from "@mui/material";
 
-const findDiff = (obj1 : any, obj2 : any) => {
-    let diff : ({ key: string, value1: any, value2: any })[] = []
+import UserContext from "../../../context/UserContext";
+
+import { supabase } from "../../../../supabaseClient";
+
+type orgKey = keyof OrganizationEdit & keyof Organization;
+type diffType = { key: string, value1: any, value2: any }
+
+const hiddenFields : string[] = ["id", "organization_id", "created_at", "updated_at"]
+
+/* NOTES ON SHALLOW COMPARISON
+- in this component, there are uses of null, undefined, and empty quotes which all mean similar things.
+using shallow comparison is the most convenient solution [for now]
+*/
+
+/* find differences in properties of obj1 and obj2 and return those properties */
+const findDiff = (obj1 : any, obj2 : any) : diffType[] => {
+    let diff : diffType[] = []
 
     for (let key of Object.keys(obj1)) {
         if (
@@ -10,6 +25,7 @@ const findDiff = (obj1 : any, obj2 : any) => {
             obj1[key] === undefined ||
             obj2[key] === undefined ||
             (!obj1[key] && !obj2[key]) ||
+            // eslint-disable-next-line
             obj1[key] == obj2[key]
         ) continue;
 
@@ -18,7 +34,7 @@ const findDiff = (obj1 : any, obj2 : any) => {
 
     return diff;
 }
-/* apply obj1 on obj2. */
+/* replace properties on obj2 that obj1 has as well. */
 const apply = (obj1 : any, obj2: any) => {
     let obj3 : any = {}
 
@@ -39,14 +55,22 @@ TextField Statuses:
 - once changed but not saved is Unsaved
 - once changed and saved is Pending
 */
+
+/* EDGE CASE: changing unapproved back to approved */
 const OrgEditor = (
-    { organization, organizationEdit } : 
+    { organization, organizationEdit, setPendingEdit } : 
     { 
         organization: Partial<Organization>,
-        organizationEdit: OrganizationEdit
+        organizationEdit: OrganizationEdit,
+        setPendingEdit: (orgEdit: OrganizationEdit) => void
     }
 ) => {
+    let user = useContext(UserContext)
     let [orgEdit, setOrgEdit] = useState(organizationEdit)
+
+    useEffect(() => {
+        setOrgEdit(organizationEdit)
+    }, [organizationEdit])
 
     const onChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target
@@ -59,11 +83,79 @@ const OrgEditor = (
 
     /* 
     STEPS 
-    - compare all fields that are different between organization and intersection of organizationEdit and organization
+    - compare all fields that are different between orgEdit and organization
     - upsert an organization edit with all different values
     */
-    let createEdit = () => {
-        let diff = findDiff(apply(organizationEdit, organization), orgEdit);
+    let createEdit = async () => {
+        let diffs = findDiff(organization, orgEdit)
+        let payload : any = {}
+
+        for (let key of Object.keys(organizationEdit)) {
+            if (hiddenFields.includes(key)) continue;
+
+            let field : orgKey = key as orgKey
+
+            payload[field] = null;
+        }
+
+        for (let diff of diffs) {
+            payload[diff.key] = diff.value2
+        }
+
+        let data, error;
+
+        if (organizationEdit.id === undefined) {
+            /* INSERT */
+            ({ data, error } = await supabase
+                .from('organizationedits')
+                .insert({ organization_id: organization.id, ...payload })
+                .select())
+
+        } else {
+            /* UPDATE */
+            ({ data, error } = await supabase
+                .from('organizationedits')
+                .update({ organization_id: organization.id, ...payload })
+                .eq('id', organizationEdit.id)
+                .select())
+        }
+        
+        if (error) {
+            return user.setMessage("Error editing organization. Contact it@stuysu.org for support.")
+        }
+
+        if (data !== null) {
+            /* update client without sending another call */
+            user.setMessage("Organization edit request sent!");
+            setPendingEdit(data[0] as OrganizationEdit)
+        } else {
+            user.setMessage("Server failed to send back data. Refresh page to see potential changes.")
+        }
+    }
+
+    const canSave = () : boolean => {
+        let saveable = false;
+
+        Object.keys(organizationEdit).map(field => {
+            if (hiddenFields.includes(field)) return;
+            
+            let key : orgKey = (field as orgKey);
+
+            if (
+                orgEdit[key] !== undefined &&
+                orgEdit[key] !== null && 
+                organizationEdit[key] !== orgEdit[key] &&
+                (
+                    (orgEdit[key] != (organization[key] || "")) ||
+                    organizationEdit[key] !== null
+                )
+            ) {
+                
+                saveable = true;
+            }
+        })
+
+        return saveable;
     }
 
     return (
@@ -72,24 +164,30 @@ const OrgEditor = (
             <Box>
                 {
                     Object.keys(organizationEdit).map((field, i) => {
-                        type orgKey = keyof OrganizationEdit & keyof Organization;
+                        if (hiddenFields.includes(field)) return (<></>);
+                        
                         let key : orgKey = (field as orgKey);
 
                         let current : any = orgEdit[key]
-                        if (current === undefined) {
+                        if (current === undefined || current === null) {
                             current = organization[key]
                         }
 
+                        /* FIGURE OUT STATUS MESSAGE FOR TEXTFIELD */
                         let status = "Approved"
-                        if (orgEdit[key] !== undefined) {
+
+                        if (orgEdit[key] !== undefined && orgEdit[key] !== null) {
                             if (
-                                organizationEdit[key] !== orgEdit[key] &&
-                                orgEdit[key] != (organization[key] || "")
+                                organizationEdit[key] !== orgEdit[key]
                             ) {
-                                status = "Unsaved"
+                                if (orgEdit[key] != (organization[key] || "")) {
+                                    status = "Unsaved"
+                                } else if (organizationEdit[key] !== null) {
+                                    status = "Approved [Unsaved]"
+                                }
+                            } else if (orgEdit[key] != (organization[key] || "")) {
+                                status = "Pending"
                             }
-                        } else if (organizationEdit[key] !== undefined) {
-                            status = "Pending"
                         }
 
                         return (
@@ -108,7 +206,7 @@ const OrgEditor = (
                 }
 
                 {
-                    findDiff(apply(organizationEdit, organization), orgEdit).length !== 0 && <Button>Save</Button>
+                    canSave() && <Button onClick={createEdit}>Save</Button>
                 }
             </Box>
 
