@@ -3,7 +3,7 @@ import { supabase } from "../../supabaseClient"
 import UserContext from "../../comps/context/UserContext";
 import { Button } from "@mui/material";
 
-import OrgInfo from "../../comps/admin/OrgInfo";
+import OrgApproval from "../../comps/admin/OrgApproval";
 
 const ApprovePending = () => {
     const user = useContext(UserContext);
@@ -48,7 +48,7 @@ const ApprovePending = () => {
                 `)
                 .eq('state', 'PENDING')
             
-            if (error) {
+            if (error || !data) {
                 return user.setMessage("Failed to fetch pending organizations. Contact it@stuysu.org for support.")
             }
 
@@ -56,11 +56,20 @@ const ApprovePending = () => {
         }
 
         fetchPendingOrgs()
-    // eslint-disable-next-line
-    }, [])
+    }, [user])
 
     if (view) {
-        return <OrgInfo {...view} onBack={() => setView(undefined)} />
+        return (
+            <OrgApproval 
+                {...view} 
+                onBack={() => setView(undefined)} 
+                onApprove={() => {
+                    // remove self from pending orgs
+                    setPendingOrgs(pendingOrgs.filter(o => o.id !== view.id))
+                    setView(undefined);
+                }}
+            />
+        )
     }
 
     return (

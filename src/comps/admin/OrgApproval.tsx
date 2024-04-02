@@ -3,7 +3,10 @@ import { supabase } from "../../supabaseClient";
 import UserContext from "../context/UserContext";
 import { useContext } from "react";
 
-const OrgInfo = ({ onBack, ...org}: { onBack: () => void } & Partial<OrgContextType>) => {
+const OrgApproval = (
+    { onBack, onApprove, ...org} : 
+    { onBack: () => void, onApprove: () => void } & Partial<OrgContextType>
+) => {
     const user = useContext(UserContext);
 
     const approve = async () => {
@@ -16,6 +19,7 @@ const OrgInfo = ({ onBack, ...org}: { onBack: () => void } & Partial<OrgContextT
         }
 
         user.setMessage("Organization approved!")
+        onApprove();
     }
 
     return (
@@ -38,4 +42,4 @@ const OrgInfo = ({ onBack, ...org}: { onBack: () => void } & Partial<OrgContextT
     )
 }
 
-export default OrgInfo;
+export default OrgApproval;

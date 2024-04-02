@@ -106,16 +106,17 @@ const UserProvider = ({ children } : { children: React.ReactNode }) => {
                     grade = 12 - (data[0].grad_year - d.getFullYear() - 1)
                 }
                 
+                /* this probably isn't necessary and could be replaced with better typescript */
                 const user : User = {
                     first_name: data[0].first_name,
                     last_name: data[0].last_name,
                     email: data[0].email,
                     grade: grade,
+                    picture: data[0].picture,
                     id: data[0].id,
                     is_faculty: data[0].is_faculty,
                     active: data[0].active,
                     memberships: data[0].memberships
-                    
                 } // user in our own user table
                 let isAdmin = false;
                 /* CHECK PERMISSIONS */
@@ -129,6 +130,23 @@ const UserProvider = ({ children } : { children: React.ReactNode }) => {
                 }
                 if (Array.isArray(data) && data?.length > 0) {
                     isAdmin = true;
+                }
+
+                if (!user.picture) {
+                    /* get google pfp and update */
+                    let avatarURL = supabaseUser.user_metadata.avatar_url;
+                    user.picture = avatarURL;
+
+                    (
+                        { error } = await supabase
+                            .from('users')
+                            .update({ picture: avatarURL })
+                            .eq('id', user.id)
+                    )
+
+                    if (error) {
+                        setMessage("Unable to save profile picture to server. Please contact it@stuysu.org for support.")
+                    }
                 }
 
                 setValue({

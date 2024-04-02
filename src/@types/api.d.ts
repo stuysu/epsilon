@@ -34,6 +34,9 @@ interface OrganizationEdit {
     keywords?: string;
 }
 
+/* FOR ADMIN PANEL (Approving Organization Edit Requests)*/
+type EditType = OrganizationEdit & { organization_name: string, organization_picture: string }
+
 interface User {
     id: number;
     first_name: string;
@@ -70,6 +73,15 @@ interface Permission {
     permission: 'ADMIN'; // union type of permission enum
 }
 
+interface Post {
+    id: number;
+    organization_id: number;
+    title: string;
+    description: string;
+    created_at: string;
+    updated_at: string;
+}
+
 interface Meeting {
     id: number;
     organization?: Partial<Organization>;
@@ -80,3 +92,4 @@ interface Meeting {
     start_time: string;
     end_time: string;
 }
+

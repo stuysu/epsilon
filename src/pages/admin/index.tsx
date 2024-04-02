@@ -1,6 +1,6 @@
-import { Routes, Route, useNavigate } from "react-router-dom"
+import { Routes, Route } from "react-router-dom"
 
-import { useEffect, useContext } from "react";
+import { useContext } from "react";
 import UserContext from "../../comps/context/UserContext";
 
 import AdminNav from "../../comps/admin/AdminNav";
@@ -8,16 +8,6 @@ import AdminNav from "../../comps/admin/AdminNav";
 /* MODULES */
 import ApprovePending from "./ApprovePending";
 import ApproveEdit from "./ApproveEdit";
-
-const Redirect = () => {
-    const navigate= useNavigate(); 
-
-    useEffect(() => {
-        navigate("/admin/approve-pending"); 
-    })
-    
-    return (<div>Redirecting...</div>)
-}
 
 const AdminRouter = () => {
     const user = useContext(UserContext);
@@ -34,7 +24,7 @@ const AdminRouter = () => {
             <Routes>
                 <Route path="/approve-pending" Component={ApprovePending} />
                 <Route path="/approve-edit" Component={ApproveEdit} />
-                <Route path="/*" Component={Redirect} />
+                <Route path="/*" Component={ApprovePending} />
             </Routes>
         </div>
     )
