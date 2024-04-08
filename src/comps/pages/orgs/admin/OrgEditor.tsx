@@ -40,20 +40,6 @@ const findDiff = (obj1: any, obj2: any): diffType[] => {
 
   return diff;
 };
-/* replace properties on obj2 that obj1 has as well. */
-const apply = (obj1: any, obj2: any) => {
-  let obj3: any = {};
-
-  for (let key of Object.keys(obj1)) {
-    if (obj1[key]) {
-      obj3[key] = obj1[key];
-    } else {
-      obj3[key] = obj2[key];
-    }
-  }
-
-  return obj3;
-};
 
 /* 
 TextField Statuses:
@@ -185,7 +171,7 @@ const OrgEditor = ({
   const canSave = (): boolean => {
     let saveable = false;
 
-    Object.keys(organizationEdit).map((field) => {
+    Object.keys(organizationEdit).forEach((field) => {
       if (hiddenFields.includes(field)) return;
 
       let key: orgKey = field as orgKey;

@@ -30,7 +30,7 @@ const AllMeetings = () => {
     };
 
     fetchMeetings();
-  }, []);
+  }, [user]);
 
   return (
     <div>

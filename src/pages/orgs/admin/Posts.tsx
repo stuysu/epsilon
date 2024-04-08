@@ -28,7 +28,7 @@ const Posts = () => {
     };
 
     fetchPosts();
-  }, []);
+  }, [user]);
 
   return (
     <div>

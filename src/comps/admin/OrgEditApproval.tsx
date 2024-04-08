@@ -65,7 +65,7 @@ const OrgEditApproval = ({
     };
 
     fetchCurrentOrg();
-  }, [edit]);
+  }, [edit, user]);
 
   const approve = async () => {
     let error;
