@@ -17,6 +17,8 @@ const UserHome = () => {
                 <Link to="/create">Create</Link>
                 <br />
                 <Link to="/admin">Admin</Link>
+                <br />
+                <Link to="meetings">Meetings</Link>
             </div>
         </div>
     )
