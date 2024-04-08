@@ -1,27 +1,27 @@
-import React from "react"
-import UserContext from "../../context/UserContext"
+import React from "react";
+import UserContext from "../../context/UserContext";
 
-import { Link } from "react-router-dom"
+import { Link } from "react-router-dom";
 
 const UserHome = () => {
-    const user = React.useContext(UserContext)
+  const user = React.useContext(UserContext);
 
-    return (
-        <div>
-            <h1>Signed In!</h1>
-            <h2>Here's the context</h2>
-            <pre>{JSON.stringify(user, undefined, 4)}</pre>
-            <div>
-                <Link to="/catalog">Catalog</Link>
-                <br />
-                <Link to="/create">Create</Link>
-                <br />
-                <Link to="/admin">Admin</Link>
-                <br />
-                <Link to="meetings">Meetings</Link>
-            </div>
-        </div>
-    )
-}
+  return (
+    <div>
+      <h1>Signed In!</h1>
+      <h2>Here's the context</h2>
+      <pre>{JSON.stringify(user, undefined, 4)}</pre>
+      <div>
+        <Link to="/catalog">Catalog</Link>
+        <br />
+        <Link to="/create">Create</Link>
+        <br />
+        <Link to="/admin">Admin</Link>
+        <br />
+        <Link to="meetings">Meetings</Link>
+      </div>
+    </div>
+  );
+};
 
-export default UserHome
+export default UserHome;

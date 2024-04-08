@@ -31,7 +31,8 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "prettier": "npx prettier . --write"
   },
   "eslintConfig": {
     "extends": [
@@ -54,7 +55,7 @@
   "devDependencies": {
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@types/react-helmet": "^6.1.11",
-    "prettier": "3.2.5",
+    "prettier": "^3.2.5",
     "supabase": "^1.142.2"
   }
 }
