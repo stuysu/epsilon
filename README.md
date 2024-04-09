@@ -14,3 +14,5 @@ the everything platform for stuyvesant high school
 
 - typescript + react -> netlify
 - supabase = postgres -> docker -> digital ocean
+
+
