@@ -7,6 +7,19 @@ import AdminUpsertMeeting from "../../../comps/pages/orgs/admin/AdminUpsertMeeti
 import { Button } from "@mui/material";
 import { supabase } from "../../../supabaseClient";
 
+// using any types because i can't be bothered
+const sortByStart = (m1 : any, m2 : any) : number => {
+
+  if (m1.start_time < m2.start_time) {
+    return -1;
+  }
+  if (m1.start_time > m2.start_time) {
+    return 1;
+  }
+
+  return 0;
+}
+
 const Meetings = () => {
   const organization = useContext(OrgContext);
   const user = useContext(UserContext);
@@ -34,7 +47,7 @@ const Meetings = () => {
   return (
     <div>
       <h1>Meetings</h1>
-      {organization.meetings.map((meeting) => (
+      {organization.meetings.sort(sortByStart).map((meeting) => (
         <AdminMeeting
           key={meeting.id}
           title={meeting.title || ""}
@@ -109,6 +122,25 @@ const Meetings = () => {
               isPublic: undefined,
               editing: false,
             });
+          }}
+          onSave={(saveState : Partial<Meeting>, isInsert : boolean) => {
+            if (isInsert) {
+              organization.setOrg?.({
+                ...organization,
+                meetings: [
+                  ...organization.meetings,
+                  saveState
+                ]
+              })
+            } else {
+              organization.setOrg?.({
+                ...organization,
+                meetings: [
+                  ...organization.meetings.filter(m => m.id !== saveState.id),
+                  saveState
+                ]
+              })
+            }
           }}
         />
       ) : (

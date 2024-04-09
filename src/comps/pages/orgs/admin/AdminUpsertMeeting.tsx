@@ -37,22 +37,25 @@ const AdminUpsertMeeting = ({
   isPublic,
   open,
   onClose,
+  onSave,
 }: {
-  id: number | undefined;
-  title: string | undefined;
-  description: string | undefined;
-  room_id: number | undefined;
-  start: string | undefined;
-  end: string | undefined;
-  isPublic: boolean | undefined;
+  id?: number;
+  title?: string;
+  description?: string;
+  room_id?: number;
+  start?: string;
+  end?: string;
+  isPublic?: boolean;
   open: boolean;
   onClose: () => void;
+  onSave: (saveState : Partial<Meeting>, isInsert : boolean) => void;
 }) => {
   const user = useContext(UserContext);
   const organization = useContext(OrgContext);
 
   const [meetingTitle, setMeetingTitle] = useState(title || "");
   const [meetingDesc, setMeetingDesc] = useState(description || "");
+  
   const [roomId, setRoomId] = useState(room_id);
 
   // let default date be today at 3:35-5:00
@@ -63,6 +66,7 @@ const AdminUpsertMeeting = ({
   const [endTimePicked, setEndTimePicked] = useState(false);
   const [isPub, setIsPub] = useState(isPublic === undefined ? true : isPublic);
 
+  const [allRooms, setAllRooms] = useState<Room[]>([]);
   const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
 
   // fixes select menu item bug where it is trying to map over undefined rooms
@@ -81,25 +85,64 @@ const AdminUpsertMeeting = ({
         return;
       }
 
-      let viableRooms = data;
-
-      /* check if rooms are available 
-        find meetings that use room_id where client_start < existing_start < client_end
-        good idea to select minimal meeting info
-        CREATE EDGE FUNCTION HERE: current user can't read private meeting data.
-      */
-
-      setAvailableRooms(viableRooms);
+      setAllRooms(data);
       setLoading(false);
     };
 
     fetchRooms();
   }, [user]);
 
+  useEffect(() => {
+    const filterRooms = async () => {
+      /* 
+      get ids of rooms that are booked. 
+      there is a special case when we fetch an existing booked room from save
+      */
+      
+      let { data, error } = await supabase
+          .rpc(
+            'get_booked_rooms', 
+            { meeting_start: startTime , meeting_end: endTime }
+          )
+
+      if (error || !data) {
+        user.setMessage(
+          "Error fetching booked rooms. Contact it@stuysu.org for support."
+        );
+        return;
+      }
+
+      setAvailableRooms(
+        allRooms.filter(
+          room => (
+            room.id === roomId ||
+            !data.includes(room.id)
+          )
+        )
+      )
+    }
+
+    filterRooms();
+  }, [user, allRooms, startTime, endTime])
+
   const handleSave = async () => {
     let supabaseReturn;
 
     let isCreated = false;
+    let isInsert = false;
+    let returnSelect = `
+      id,
+      is_public,
+      title,
+      description,
+      start_time,
+      end_time,
+      rooms (
+          id,
+          name,
+          floor
+      )
+    `
 
     if (id) {
       // update
@@ -108,23 +151,27 @@ const AdminUpsertMeeting = ({
         .update({
           title: meetingTitle,
           description: meetingDesc,
-          room_id: roomId,
+          room_id: roomId || null,
           start_time: startTime?.toISOString(),
           end_time: endTime?.toISOString(),
           is_public: isPub,
         })
-        .eq("id", id);
+        .eq("id", id)
+        .select(returnSelect);
     } else {
       // create
-      supabaseReturn = await supabase.from("meetings").insert({
-        organization_id: organization.id,
-        title: meetingTitle,
-        description: meetingDesc,
-        room_id: roomId,
-        start_time: startTime?.toISOString(),
-        end_time: endTime?.toISOString(),
-        is_public: isPub,
-      });
+      isInsert = true;
+      supabaseReturn = await supabase.from("meetings")
+        .insert({
+          organization_id: organization.id,
+          title: meetingTitle,
+          description: meetingDesc,
+          room_id: roomId || null,
+          start_time: startTime?.toISOString(),
+          end_time: endTime?.toISOString(),
+          is_public: isPub,
+        })
+        .select(returnSelect);
       isCreated = true;
     }
 
@@ -141,6 +188,7 @@ const AdminUpsertMeeting = ({
       user.setMessage("Meeting updated!");
     }
 
+    onSave(supabaseReturn.data[0] as Partial<Meeting>, isInsert)
     onClose();
   };
 

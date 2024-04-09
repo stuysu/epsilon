@@ -106,7 +106,7 @@ const OrgRouter = () => {
   }, [orgUrl, user]);
 
   return (
-    <OrgContext.Provider value={org}>
+    <OrgContext.Provider value={{...org, setOrg}}>
       {org.id === -1 ? (
         <div></div> /* ORG DOESN'T EXIST HERE */
       ) : (

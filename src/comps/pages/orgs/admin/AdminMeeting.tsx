@@ -25,7 +25,7 @@ const AdminMeeting = ({
       <p>{description}</p>
       <p>{start}</p>
       <p>{end}</p>
-      <p>{`Room ${room}` || "Virtual"}</p>
+      <p>{room ? `Room ${room}` : "Virtual Meeting"}</p>
       <p>is public: {String(isPublic)}</p>
       <Button onClick={onEdit}>Edit</Button>
       <Button onClick={onDelete}>Delete</Button>
