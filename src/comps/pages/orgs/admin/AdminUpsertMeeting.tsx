@@ -52,6 +52,7 @@ const AdminUpsertMeeting = ({
     start ? dayjs(start) : null,
   );
   const [endTime, setEndTime] = useState<Dayjs | null>(end ? dayjs(end) : null);
+  const [endTimePicked, setEndTimePicked] = useState(false);
   const [isPub, setIsPub] = useState(isPublic === undefined ? true : isPublic);
 
   const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
@@ -161,13 +162,19 @@ const AdminUpsertMeeting = ({
         <DateTimePicker
           label="Start Time"
           value={dayjs(startTime)}
-          onChange={(newTime) => setStartTime(newTime)}
+          onChange={(newTime) => {
+            setStartTime(newTime);
+            if (!endTimePicked) setEndTime(newTime);
+          }}
         />
 
         <DateTimePicker
           label="End Time"
           value={dayjs(endTime)}
-          onChange={(newTime) => setEndTime(newTime)}
+          onChange={(newTime) => {
+            if (!endTimePicked) setEndTimePicked(true);
+            setEndTime(newTime)
+          }}
         />
         <FormControlLabel
           control={
