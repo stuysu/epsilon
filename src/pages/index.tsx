@@ -8,6 +8,7 @@ import { lazy, Suspense } from "react";
 // Pages
 import Home from "./Home";
 import AllMeetings from "./AllMeetings";
+import NavBar from "../comps/ui/NavBar";
 const Catalog = lazy(() => import("./Catalog"));
 const Create = lazy(() => import("./Create"));
 const OrgRouter = lazy(() => import("./orgs"));
@@ -31,8 +32,9 @@ const Pages = () => {
         <meta property={"og:title"} content={"StuyActivities"} />
         <title>StuyActivities</title>
       </Helmet>
-
+          
       <Suspense fallback={<Loading />}>
+        <NavBar />
         <Routes>
           <Route path={"/"} Component={Home} />
           <Route path={"/catalog"} Component={Catalog} />
