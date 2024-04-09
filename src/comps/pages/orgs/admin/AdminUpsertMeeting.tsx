@@ -27,6 +27,7 @@ const getDefaultTime = () => {
   return defaultTime;
 }
 
+/* TODO: block off rooms on days they are unavailable */
 const AdminUpsertMeeting = ({
   id,
   title,
