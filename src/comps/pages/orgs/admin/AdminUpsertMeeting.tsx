@@ -21,6 +21,12 @@ import UserContext from "../../../context/UserContext";
 import OrgContext from "../../../context/OrgContext";
 import dayjs, { Dayjs } from "dayjs";
 
+const getDefaultTime = () => {
+  let d = new Date();
+  let defaultTime = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime() + (1000 * 60 * 60 * 15) + (1000 * 60 * 35);
+  return defaultTime;
+}
+
 const AdminUpsertMeeting = ({
   id,
   title,
@@ -48,29 +54,42 @@ const AdminUpsertMeeting = ({
   const [meetingTitle, setMeetingTitle] = useState(title || "");
   const [meetingDesc, setMeetingDesc] = useState(description || "");
   const [roomId, setRoomId] = useState(room_id);
+
+  // let default date be today at 3:35-5:00
   const [startTime, setStartTime] = useState<Dayjs | null>(
-    start ? dayjs(start) : null,
+    start ? dayjs(start) : dayjs(getDefaultTime()),
   );
-  const [endTime, setEndTime] = useState<Dayjs | null>(end ? dayjs(end) : null);
+  const [endTime, setEndTime] = useState<Dayjs | null>(end ? dayjs(end) : dayjs(getDefaultTime()));
   const [endTimePicked, setEndTimePicked] = useState(false);
   const [isPub, setIsPub] = useState(isPublic === undefined ? true : isPublic);
 
   const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
+
+  // fixes select menu item bug where it is trying to map over undefined rooms
   const [loading, setLoading] = useState(true);
 
-  /* TODO: edit to filter out rooms that are already taken for that day */
+  /* Filtering out rooms that are taken for that day */
+  
   useEffect(() => {
     const fetchRooms = async () => {
-      const { data, error } = await supabase.from("rooms").select();
+      let { data, error } = await supabase.from("rooms").select();
 
-      if (error) {
+      if (error || !data) {
         user.setMessage(
           "Error fetching rooms. Contact it@stuysu.org for support.",
         );
         return;
       }
 
-      setAvailableRooms(data);
+      let viableRooms = data;
+
+      /* check if rooms are available 
+        find meetings that use room_id where client_start < existing_start < client_end
+        good idea to select minimal meeting info
+        CREATE EDGE FUNCTION HERE: current user can't read private meeting data.
+      */
+
+      setAvailableRooms(viableRooms);
       setLoading(false);
     };
 
