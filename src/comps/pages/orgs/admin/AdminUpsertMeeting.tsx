@@ -116,7 +116,7 @@ const AdminUpsertMeeting = ({
       setAvailableRooms(
         allRooms.filter(
           room => (
-            room.id === roomId ||
+            room.id === room_id ||
             !data.includes(room.id)
           )
         )
