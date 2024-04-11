@@ -4,7 +4,7 @@ the everything platform for stuyvesant high school
 
 ## current services
 
-- StuyActivities [In Progress]
+- StuyActivities [wip]
 - Opportunities [planned]
 - schedule/schedules [planned]
 - valentines [planned]
