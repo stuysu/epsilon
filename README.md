@@ -13,6 +13,6 @@ the everything platform for stuyvesant high school
 ## stack
 
 - typescript + react -> netlify
-- supabase = postgres -> docker -> digital ocean
+- supabase = postgres -> docker -> digital ocean [database github](https://github.com/stuysu/epsilon-database)
 
 
