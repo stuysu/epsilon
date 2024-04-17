@@ -30,6 +30,10 @@ const Posts = () => {
     fetchPosts();
   }, [user]);
 
+  if (organization.state === "LOCKED" || organization.state === "PENDING") return (
+    <h2>Posts are disabled for this organization.</h2>
+  )
+
   return (
     <div>
       <PostEditor

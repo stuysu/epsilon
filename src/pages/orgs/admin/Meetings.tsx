@@ -44,6 +44,10 @@ const Meetings = () => {
     editing: false,
   });
 
+  if (organization.state === "LOCKED" || organization.state === "PENDING") return (
+    <h2>Meetings are disabled for this organization.</h2>
+  )
+
   return (
     <div>
       <h1>Meetings</h1>
@@ -83,6 +87,7 @@ const Meetings = () => {
           }}
         />
       ))}
+
       <Button
         onClick={() =>
           setEditState({

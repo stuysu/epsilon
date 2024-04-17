@@ -17,6 +17,8 @@ import {
 import { supabase } from "../supabaseClient";
 import { HOSTNAME } from "../constants";
 
+import { redirect } from "react-router-dom";
+
 type tField = {
   label: string,
   id: string,
@@ -195,7 +197,7 @@ const Create = () => {
     }
 
     user.setMessage("Organization created!");
-    /* REDIRECT user to organization pending page */
+    /* redirect after creation */
   };
 
   return (

@@ -1,5 +1,5 @@
 import { useContext, useEffect, useState, ChangeEvent } from "react";
-import { Box, Button, TextField } from "@mui/material";
+import { Box, Button, TextField, Switch, FormGroup, FormControlLabel } from "@mui/material";
 
 import UserContext from "../../../context/UserContext";
 
@@ -60,6 +60,7 @@ const OrgEditor = ({
 }) => {
   let user = useContext(UserContext);
   let [orgEdit, setOrgEdit] = useState(organizationEdit);
+  let [editing, setEditing] = useState(false);
 
   useEffect(() => {
     setOrgEdit(organizationEdit);
@@ -194,7 +195,16 @@ const OrgEditor = ({
   return (
     <div>
       <h1>Organization</h1>
-      <Box>
+      <Box bgcolor="background.default" color="primary.contrastText">
+        <FormGroup>
+          <FormControlLabel
+            control={<Switch 
+              checked={editing}
+              onChange={e => setEditing(e.target.checked)}
+            />}
+            label="editing"
+          />
+        </FormGroup>
         {Object.keys(organizationEdit).map((field, i) => {
           if (hiddenFields.includes(field)) return <></>;
 
@@ -208,26 +218,28 @@ const OrgEditor = ({
           /* FIGURE OUT STATUS MESSAGE FOR TEXTFIELD */
           let status = "Approved";
 
-          if (orgEdit[key] !== undefined && orgEdit[key] !== null) {
-            if (organizationEdit[key] !== orgEdit[key]) {
-              if (orgEdit[key] != (organization[key] || "")) {
-                status = "Unsaved";
-              } else if (
-                organizationEdit[key] !== null &&
-                organizationEdit[key] !== undefined
-              ) {
-                status = "Approved [Unsaved]";
+          if (organization.state === "PENDING") {
+            status = "Pending"
+          } else {
+            if (orgEdit[key] !== undefined && orgEdit[key] !== null) {
+              if (organizationEdit[key] !== orgEdit[key]) {
+                if (orgEdit[key] != (organization[key] || "")) {
+                  status = "Unsaved";
+                } else if (
+                  organizationEdit[key] !== null &&
+                  organizationEdit[key] !== undefined
+                ) {
+                  status = "Approved [Unsaved]";
+                }
+              } else if (orgEdit[key] != (organization[key] || "")) {
+                status = "Pending";
               }
-            } else if (orgEdit[key] != (organization[key] || "")) {
-              status = "Pending";
             }
           }
 
           return (
             <Box
               key={i}
-              bgcolor="background.default"
-              color="primary.contrastText"
             >
               <TextField
                 variant="filled"
@@ -235,13 +247,14 @@ const OrgEditor = ({
                 label={field}
                 value={current || ""}
                 onChange={onChange}
+                disabled={!editing}
               />
               {status}
             </Box>
           );
         })}
 
-        {canSave() && <Button onClick={createEdit}>Save</Button>}
+        {canSave() && editing && <Button onClick={createEdit}>Save</Button>}
       </Box>
 
       <pre>{JSON.stringify(organization, undefined, 4)}</pre>

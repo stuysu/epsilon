@@ -33,9 +33,9 @@ const Catalog = () => {
     <div>
       <h1>Catalog!</h1>
       <div>
-        {orgs.map((org, i) => {
+        {orgs.map(org => {
           if (org.state === "PENDING" || org.state === "LOCKED") return <></>;
-          return <OrgCard organization={org} key={i} />;
+          return <OrgCard organization={org} key={org.id} />;
         })}
       </div>
     </div>
