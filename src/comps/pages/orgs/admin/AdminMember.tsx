@@ -24,6 +24,7 @@ const capitalize = (s: string): string => {
 
 const AdminMember = ({
   id,
+  userId,
   name,
   email,
   picture,
@@ -32,11 +33,12 @@ const AdminMember = ({
   isCreator,
 }: {
   id: number;
+  userId: number;
   name: string;
   email: string;
-  picture: string | undefined;
+  picture?: string;
   role: string;
-  role_name: string | undefined;
+  role_name?: string;
   isCreator: boolean;
 }) => {
   const user = useContext(UserContext);
@@ -49,7 +51,7 @@ const AdminMember = ({
   const handleEdit = () => {
     setEditState({
       role,
-      role_name: role_name || capitalize(role),
+      role_name: "",
       editing: true,
     });
   };
@@ -109,7 +111,7 @@ const AdminMember = ({
   return (
     <div>
       <p>
-        {name} - {email} - role name: {role_name}, role: {role}
+        {name} - {email} - role nickname: {role_name || "None"}, role: {role}
       </p>
       {role !== "CREATOR" || isCreator ? (
         <Button onClick={handleEdit} variant="contained">
@@ -119,7 +121,7 @@ const AdminMember = ({
         <div></div>
       )}
 
-      {id !== user.id &&
+      {userId !== user.id &&
       (isCreator || role === "MEMBER" || role === "ADVISOR") ? (
         <Button onClick={handleKick} variant="contained">
           Kick
@@ -136,9 +138,7 @@ const AdminMember = ({
             onChange={handleType}
             label="Role Name"
           />
-          {isCreator && id === user.id ? (
-            <div></div>
-          ) : (
+          {!(isCreator && user.id === userId) && (
             <Select value={editState.role} label="Role" onChange={handleSelect}>
               <MenuItem value={"MEMBER"}>Member</MenuItem>
               <MenuItem value={"ADVISOR"}>Advisor</MenuItem>

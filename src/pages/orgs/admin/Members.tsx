@@ -31,6 +31,7 @@ const Members = () => {
       {members?.map((member, i) => (
         <AdminMember
           id={member.membershipId || -1}
+          userId={member.userId || -1}
           name={member.name}
           email={member.email || ""}
           picture={member.picture}
