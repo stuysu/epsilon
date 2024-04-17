@@ -101,3 +101,11 @@ interface Meeting {
   start_time: string;
   end_time: string;
 }
+
+interface Strike {
+  id: number;
+  organization?: Partial<Organization>;
+  admin?: Partial<User>;
+  reason: string;
+  created_at: string;
+}

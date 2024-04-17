@@ -8,6 +8,7 @@ import AdminNav from "../../comps/admin/AdminNav";
 /* MODULES */
 import ApprovePending from "./ApprovePending";
 import ApproveEdit from "./ApproveEdit";
+import Strikes from "./Strikes";
 
 const AdminRouter = () => {
   const user = useContext(UserContext);
@@ -22,6 +23,7 @@ const AdminRouter = () => {
       <Routes>
         <Route path="/approve-pending" Component={ApprovePending} />
         <Route path="/approve-edit" Component={ApproveEdit} />
+        <Route path="/strikes" Component={Strikes} />
         <Route path="/*" Component={ApprovePending} />
       </Routes>
     </div>
