@@ -15,6 +15,95 @@ import {
 } from "@mui/material";
 
 import { supabase } from "../supabaseClient";
+import { HOSTNAME } from "../constants";
+
+type tField = {
+  label: string,
+  id: string,
+  requirements?: {
+    notRequired?: boolean,
+    minChar?: Number,
+    maxChar?: Number,
+    minWords?: Number,
+    maxWords?: Number
+  },
+  description?: String
+}
+
+const textRequirements : tField[] = [
+  {
+    label: "name",
+    id: "name",
+  },
+  {
+    label: "url",
+    id: "url",
+    requirements: {
+      minChar: 1,
+      maxChar: 80
+    },
+    description: `https://${HOSTNAME}/<url>`
+  },
+  {
+    label: "mission",
+    id: "mission",
+    requirements: {
+      minChar: 20,
+      maxChar: 150
+    },
+    description: "A quick blurb of what this organization is all about"
+  },
+  {
+    label: "purpose",
+    id: "purpose",
+    requirements: {
+      minWords: 100,
+      maxWords: 400
+    },
+    description: "This will serve as the official description of the club. Please include a brief statement about what is expected of general members involved in the club."
+  },
+  {
+    label: "benefit",
+    id: "benefit",
+    requirements: {
+      minWords: 200,
+      maxWords: 400
+    },
+    description: "How will this activity benefit the Stuyvesant community?"
+  },
+  {
+    label: "appointment procedures",
+    id: "appointment_procedures",
+    requirements: {
+      minWords: 50,
+      maxWords: 400
+    },
+    description: "What are the leadership positions and how are they appointed? Are there any specific protocols members are expected to follow? What is the policy for transfer of leadership between school years? How will leaders be removed if necessary?"
+  },
+  {
+    label: "uniqueness",
+    id: "uniqueness",
+    requirements: {
+      minWords: 75,
+      maxWords: 400
+    },
+    description: "What makes your organization unique?"
+  },
+  {
+    label: "meeting schedule",
+    id: "meeting_schedule",
+    requirements: {
+      minChar: 50,
+      maxChar: 1000
+    },
+    description: `Something like "Our meeting schedule varies throughout the year, but we meet at least once a month and up to 3 times in the Spring."`
+  }
+]
+
+let initialOrg : any = {};
+for (let tField of textRequirements) {
+  initialOrg[tField.id] = "";
+}
 
 const Create = () => {
   const user = useContext(UserContext);
