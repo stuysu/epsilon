@@ -58,7 +58,7 @@ const OrgRouter = () => {
                     state,
                     joinable,
                     join_instructions,
-                    memberships (
+                    memberships!memberships_organization_id_fkey (
                         id,
                         role,
                         role_name,
@@ -90,6 +90,7 @@ const OrgRouter = () => {
         .eq("url", orgUrl);
 
       if (error) {
+        console.log(error)
         user.setMessage("Error fetching organization.");
         return;
       }

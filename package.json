@@ -11,7 +11,7 @@
     "@mui/x-date-pickers": "^6.19.4",
     "@supabase/auth-ui-react": "^0.4.7",
     "@supabase/auth-ui-shared": "^0.1.8",
-    "@supabase/supabase-js": "^2.39.3",
+    "@supabase/supabase-js": "^2.42.4",
     "@testing-library/jest-dom": "^5.17.0",
     "@testing-library/react": "^13.4.0",
     "@testing-library/user-event": "^13.5.0",

@@ -53,36 +53,36 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
           .from("users")
           .select(
             `
-                        id,
-                        first_name,
-                        last_name,
-                        email,
-                        grad_year,
-                        picture,
-                        is_faculty,
-                        active,
-                        memberships (
-                            id,
-                            role,
-                            role_name,
-                            active,
-                            organizations (
-                                id,
-                                name,
-                                url,
-                                picture,
-                                meetings (
-                                    title,
-                                    description,
-                                    start_time,
-                                    end_time,
-                                    rooms (
-                                        name
-                                    )
-                                )
-                            )
-                        )
-                    `,
+              id,
+              first_name,
+              last_name,
+              email,
+              grad_year,
+              picture,
+              is_faculty,
+              active,
+              memberships (
+                  id,
+                  role,
+                  role_name,
+                  active,
+                  organizations!memberships_organization_id_fkey (
+                      id,
+                      name,
+                      url,
+                      picture,
+                      meetings!meetings_organization_id_fkey (
+                          title,
+                          description,
+                          start_time,
+                          end_time,
+                          rooms (
+                              name
+                          )
+                      )
+                  )
+              )
+          `,
           )
           .eq("email", supabaseUser.email);
 

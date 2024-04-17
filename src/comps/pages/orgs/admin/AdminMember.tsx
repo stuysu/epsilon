@@ -15,13 +15,6 @@ import {
 } from "@mui/material";
 import { supabase } from "../../../../supabaseClient";
 
-const capitalize = (s: string): string => {
-  return s
-    .split(" ")
-    .map((e) => e[0].toUpperCase() + e.slice(1))
-    .join(" ");
-};
-
 const AdminMember = ({
   id,
   userId,

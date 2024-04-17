@@ -67,7 +67,7 @@ const ApprovePending = () => {
       <OrgApproval
         {...view}
         onBack={() => setView(undefined)}
-        onApprove={() => {
+        onDecision={() => {
           // remove self from pending orgs
           setPendingOrgs(pendingOrgs.filter((o) => o.id !== view.id));
           setView(undefined);

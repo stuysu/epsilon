@@ -5,9 +5,9 @@ import { useContext } from "react";
 
 const OrgApproval = ({
   onBack,
-  onApprove,
+  onDecision,
   ...org
-}: { onBack: () => void; onApprove: () => void } & Partial<OrgContextType>) => {
+}: { onBack: () => void; onDecision: () => void } & Partial<OrgContextType>) => {
   const user = useContext(UserContext);
 
   const approve = async () => {
@@ -22,8 +22,23 @@ const OrgApproval = ({
     }
 
     user.setMessage("Organization approved!");
-    onApprove();
+    onDecision();
   };
+
+  const reject = async () => {
+    const { error } = await supabase
+      .from("organizations")
+      .delete()
+      .eq("id", org.id);
+    if (error) {
+      return user.setMessage(
+        "Error rejecting organization. Contact it@stuysu.org for support."
+      );
+    }
+
+    user.setMessage("Organization rejected!");
+    onDecision();
+  }
 
   return (
     <Box>
@@ -32,6 +47,9 @@ const OrgApproval = ({
       </Button>
       <Button variant="contained" onClick={approve}>
         Approve
+      </Button>
+      <Button variant="contained" onClick={reject}>
+        Reject
       </Button>
       <p>name: {org.name}</p>
       <p>url: {org.url}</p>
