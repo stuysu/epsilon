@@ -17,7 +17,7 @@ import {
 import { supabase } from "../supabaseClient";
 import { HOSTNAME } from "../constants";
 
-import { redirect } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 type tField = {
   label: string,
@@ -27,7 +27,8 @@ type tField = {
     minChar?: Number,
     maxChar?: Number,
     minWords?: Number,
-    maxWords?: Number
+    maxWords?: Number,
+    disableSpaces?: boolean
   },
   description?: String
 }
@@ -61,7 +62,8 @@ const textRequirements : tField[] = [
     id: "url",
     requirements: {
       minChar: 1,
-      maxChar: 80
+      maxChar: 80,
+      disableSpaces: true
     },
     description: `https://${HOSTNAME}/<url>`
   },
@@ -123,6 +125,7 @@ const textRequirements : tField[] = [
 
 const Create = () => {
   const user = useContext(UserContext);
+  const navigate = useNavigate();
   const [textState, setTextState] = useState<tState>({
     name: "",
     url: "",
@@ -198,6 +201,7 @@ const Create = () => {
 
     user.setMessage("Organization created!");
     /* redirect after creation */
+    navigate(`/${textState.url}`)
   };
 
   return (
