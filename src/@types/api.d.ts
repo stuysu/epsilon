@@ -14,6 +14,7 @@ interface Organization {
   state: "PENDING" | "LOCKED" | "UNLOCKED" | "ADMIN";
   joinable?: boolean;
   join_instructions?: string;
+  tags?: string;
   memberships?: Partial<Membership>[];
 }
 
