@@ -30,6 +30,25 @@ type tField = {
   description?: String
 }
 
+type tState = {
+  name: string,
+  url: string,
+  mission: string,
+  purpose: string,
+  benefit: string,
+  appointment_procedures: string,
+  uniqueness: string,
+  meeting_schedule: string
+}
+
+type mDays = {
+  monday: boolean,
+  tuesday: boolean,
+  wednesday: boolean,
+  thursday: boolean,
+  friday: boolean
+}
+
 const textRequirements : tField[] = [
   {
     label: "name",
@@ -100,37 +119,37 @@ const textRequirements : tField[] = [
   }
 ]
 
-let initialOrg : any = {};
-for (let tField of textRequirements) {
-  initialOrg[tField.id] = "";
-}
-
 const Create = () => {
   const user = useContext(UserContext);
+  const [textState, setTextState] = useState<tState>({
+    name: "",
+    url: "",
+    mission: "",
+    purpose: "",
+    benefit: "",
+    appointment_procedures: "",
+    uniqueness: "",
+    meeting_schedule: ""
+  });
 
-  const [name, setName] = useState<string>("");
-  const [url, setUrl] = useState<string>("");
+  const onTextChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = event.target;
 
-  /* use google drive for pictures + provide default pfps */
+    setTextState({
+      ...textState,
+      [name]: value,
+    });
+  }
 
-  const [mission, setMission] = useState<string>("");
-  const [purpose, setPurpose] = useState<string>("");
-  const [benefit, setBenefit] = useState<string>("");
-  const [appointmentProcedures, setAppointmentProcedures] =
-    useState<string>("");
-  const [uniqueness, setUniqueness] = useState<string>("");
-  const [meetingSchedule, setMeetingSchedule] = useState<string>("");
-  const [meetingDays, setMeetingDays] = useState({
+  const [meetingDays, setMeetingDays] = useState<mDays>({
     monday: false,
     tuesday: false,
     wednesday: false,
     thursday: false,
     friday: false,
   });
-  const [keywords, setKeywords] =
-    useState(""); /* MAX 3, ex: coding,programming,events */
-  const [commitmentLevel, setCommitmentLevel] =
-    useState<Organization["commitment_level"]>("NONE");
+  const [keywords, setKeywords] = useState(""); /* MAX 3, ex: coding,programming,events */
+  const [commitmentLevel, setCommitmentLevel] = useState<Organization["commitment_level"]>("NONE");
   const [joinInstructions, setJoinInstructions] = useState<string>("");
 
   const handleDayChange = (event: ChangeEvent<HTMLInputElement>) => {
@@ -150,22 +169,25 @@ const Create = () => {
 
     let meetDays = mdays.join(",");
 
-    let { error } = await supabase.from("organizations").insert({
+    /* TODO: VALIDATE PAYLOAD FRONTEND */
+    let payload = {
       creator_id: user.id,
-      name: name,
-      url: url,
+      name: textState.name,
+      url: textState.url,
       picture: null,
-      mission: mission,
-      purpose: purpose,
-      benefit: benefit,
-      appointment_procedures: appointmentProcedures,
-      uniqueness: uniqueness,
-      meeting_schedule: meetingSchedule,
+      mission: textState.mission,
+      purpose: textState.purpose,
+      benefit: textState.benefit,
+      appointment_procedures: textState.appointment_procedures,
+      uniqueness: textState.uniqueness,
+      meeting_schedule: textState.meeting_schedule,
       meeting_days: meetDays,
       keywords: keywords,
       commitment_level: commitmentLevel,
       join_instructions: joinInstructions,
-    });
+    }
+
+    let { error } = await supabase.from("organizations").insert(payload);
     if (error) {
       return user.setMessage(
         "Error creating organization. Contact it@stuysu.org for support.",
@@ -173,68 +195,27 @@ const Create = () => {
     }
 
     user.setMessage("Organization created!");
-    /* REDIRECT user to organization pending page*/
+    /* REDIRECT user to organization pending page */
   };
 
   return (
     <Box bgcolor="background.default" color="primary.contrastText">
       <h1>Create Organization</h1>
-      <TextField
-        label="name"
-        value={name}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          setName(event.target.value)
-        }
-      />
-      <TextField
-        label="url"
-        value={url}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          setUrl(event.target.value)
-        }
-      />
-      <TextField
-        label="mission"
-        value={mission}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          setMission(event.target.value)
-        }
-      />
-      <TextField
-        label="purpose"
-        value={purpose}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          setPurpose(event.target.value)
-        }
-      />
-      <TextField
-        label="benefit"
-        value={benefit}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          setBenefit(event.target.value)
-        }
-      />
-      <TextField
-        label="appointment procedures"
-        value={appointmentProcedures}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          setAppointmentProcedures(event.target.value)
-        }
-      />
-      <TextField
-        label="uniqueness"
-        value={uniqueness}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          setUniqueness(event.target.value)
-        }
-      />
-      <TextField
-        label="meeting schedule"
-        value={meetingSchedule}
-        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-          setMeetingSchedule(event.target.value)
-        }
-      />
+      {
+        textRequirements.map((tInfo, i) => {
+          let tKey = tInfo.id as (keyof tState)
+
+          return (
+            <TextField 
+              key={i}
+              label={tInfo.label}
+              name={tInfo.id}
+              value={textState[tKey]}
+              onChange={onTextChange}
+            />
+          )
+        })
+      }
       <TextField
         label="keywords"
         value={keywords}
@@ -266,56 +247,24 @@ const Create = () => {
       <FormControl>
         <FormLabel>Meeting Days</FormLabel>
         <FormGroup>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={meetingDays.monday}
-                onChange={handleDayChange}
-                name="monday"
-              />
-            }
-            label="Monday"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={meetingDays.tuesday}
-                onChange={handleDayChange}
-                name="tuesday"
-              />
-            }
-            label="Tuesday"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={meetingDays.wednesday}
-                onChange={handleDayChange}
-                name="wednesday"
-              />
-            }
-            label="Wednesday"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={meetingDays.thursday}
-                onChange={handleDayChange}
-                name="thursday"
-              />
-            }
-            label="Thursday"
-          />
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={meetingDays.friday}
-                onChange={handleDayChange}
-                name="friday"
-              />
-            }
-            label="Friday"
-          />
+          {
+            Object.keys(meetingDays).map((day, i) => {
+              let mKey = day as keyof mDays
+
+              return (
+                <FormControlLabel 
+                  control={
+                    <Checkbox 
+                      checked={meetingDays[mKey]}
+                      onChange={handleDayChange}
+                      name={day}
+                    />
+                  }
+                  label={day}
+                />
+              )
+            })
+          }
         </FormGroup>
       </FormControl>
       <Button onClick={createActivity}>Create Activity</Button>

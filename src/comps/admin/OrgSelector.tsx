@@ -6,7 +6,7 @@ import { supabase } from "../../supabaseClient";
 
 const OrgSelector = (
     { onSelect } :
-    { onSelect : (orgId : Number, orgName: string) => void }
+    { onSelect : (orgId : number, orgName: string) => void }
 ) => {
     let [orgName, setOrgName] = useState("");
     let [inputError, setInputError] = useState("");
