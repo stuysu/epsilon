@@ -7,6 +7,7 @@ the everything platform for stuyvesant high school
 - StuyActivities [wip]
 - Opportunities [planned]
 - schedule/schedules [planned]
+- votes [planned]
 - valentines [planned]
 - mobile app [planned]
 
