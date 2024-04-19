@@ -20,7 +20,8 @@ const Catalog = () => {
                     `);
 
       if (error) {
-        user.setMessage("Error fetching organizations.");
+        console.log(error)
+        user.setMessage("Error fetching organizations. Contact it@stuysu.org for support.");
         return;
       }
 
