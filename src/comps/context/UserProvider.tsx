@@ -66,12 +66,12 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                   role,
                   role_name,
                   active,
-                  organizations!memberships_organization_id_fkey (
+                  organizations (
                       id,
                       name,
                       url,
                       picture,
-                      meetings!meetings_organization_id_fkey (
+                      meetings (
                           title,
                           description,
                           start_time,
