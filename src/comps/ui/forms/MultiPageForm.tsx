@@ -41,8 +41,8 @@ const MultiPageForm = <T extends unknown>(
         if (page > 0) setPage(page - 1);
     }
 
-    const childrenWithProps = Children.map(children, (child, index) => {
-        if (isValidElement(child)) {
+    const formPage = Children.map(children, (child, index) => {
+        if (isValidElement(child) && index === page) {
             let first = index === 0;
             let last = index === (Children.count(children) - 1)
 
@@ -51,18 +51,16 @@ const MultiPageForm = <T extends unknown>(
                 { value, onChange: onFormChange, first, last, onSubmit, onNext, onBack, submitText }
             );
         }
-
-        return child;
     });
 
+    /* TODO: create a ui that tracks the current page you are on */
     return (
         <Box {...boxProps}>
-            <Box sx={{ height: "10%"}}>
-                <h1>{title}</h1>
+            <Box sx={{ height: "10%", width: "100%"}}>
+                <h2>{title}</h2>
             </Box>
-            <Box sx={{ height: "90%"}}>
-                {childrenWithProps}
-            </Box>
+            
+            {formPage}
         </Box>
     )
 }

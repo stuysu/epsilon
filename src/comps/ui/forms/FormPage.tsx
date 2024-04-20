@@ -62,26 +62,28 @@ const FormPage = <T extends unknown>(
     });
 
     return (
-        <Box sx={{ height: "100%"}}>
+        <Box sx={{ height: "100%", width: "800px" }}>
             <Box sx={{ height: "10%", width: "100%"}}>
                 <h3>{title}</h3>
             </Box>
-            <Box  sx={{ height: "80%", width: "100%" }}>
+            <Box  sx={{ width: "100%" }}>
                 {childrenWithProps}
             </Box>
-            <Box sx={{ height: "10%", width: "100%"}}>
-                {
-                    !first && <Button onClick={onBack}>Back</Button>
-                }
-                {
-                    last ?
-                    (
-                        <Button onClick={onSubmit}>{submitText ? submitText : "Submit"}</Button>
-                    ) :
-                    (
-                        <Button onClick={onNext}>Next</Button>
-                    )
-                }
+            <Box sx={{ height: "10%", width: "100%" }}>
+                <Box sx={{ maxWidth: "500px", display: 'flex', justifyContent: 'space-around'}}>
+                    {
+                        !first && <Button onClick={onBack} variant="contained">Back</Button>
+                    }
+                    {
+                        last ?
+                        (
+                            <Button onClick={onSubmit} variant="contained">{submitText ? submitText : "Submit"}</Button>
+                        ) :
+                        (
+                            <Button onClick={onNext} variant="contained">Next</Button>
+                        )
+                    }
+                </Box>
             </Box>
         </Box>
     )

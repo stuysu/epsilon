@@ -8,17 +8,23 @@ type SelectType = {
 
 type Props = {
     field: string,
+    value?: string,
     label?: string,
+    required?: boolean,
     description?: string,
     formatter?: (choices : string[]) => any
     onChange?: (field: string, updatedValue: string) => void
     selections: SelectType[]
 }
 
+let order = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
+
 const FormCheckSelect = (
     {
         field,
+        value,
         label,
+        required,
         description,
         formatter,
         onChange,
@@ -26,12 +32,16 @@ const FormCheckSelect = (
         ...checkboxProps
     } : Props & CheckboxProps
 ) => {
-    const [checked, setChecked] = useState<string[]>([]);
+    let checked = value?.split(",") || []
 
-    useEffect(() => {
+    const checkboxUpdate = (newSelections : string[]) => {
         if (!onChange) return;
-        onChange(field, formatter ? formatter(checked) : checked.join(","));
-    }, checked);
+        
+        newSelections = newSelections
+            .filter(v => v && v.length)
+            .sort((a, b) => order.findIndex(v => v === a) - order.findIndex(v => v === b))
+        onChange(field, formatter ? formatter(newSelections) : newSelections.join(","))
+    }
 
     return (
         <FormControl>
@@ -44,12 +54,13 @@ const FormCheckSelect = (
                         <FormControlLabel 
                         control={
                             <Checkbox
+                                key={i}
                                 checked={checked.includes(select.id)}
                                 onChange={(event) => {
                                     if (event.target.checked && !checked.includes(select.id)) {
-                                        setChecked([...checked, select.id]);
+                                        checkboxUpdate([...checked, select.id]);
                                     } else {
-                                        setChecked(checked.filter(id => id !== select.id));
+                                        checkboxUpdate(checked.filter(id => id !== select.id));
                                     }
                                 }}
                                 name={select.display}

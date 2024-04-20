@@ -8,6 +8,7 @@ type SelectType = {
 type Props = {
     field: string,
     description?: string,
+    required?: boolean,
     onChange?: (field: string, updatedValue: string) => void
     selections: SelectType[]
 }
@@ -16,6 +17,7 @@ const FormDropSelect = (
     {
         field,
         description,
+        required,
         onChange,
         selections,
         ...selectProps
@@ -37,8 +39,8 @@ const FormDropSelect = (
                 >
                     {
                         selections.map(
-                            select => (
-                                <MenuItem value={select.id}>{select.display}</MenuItem>
+                            (select, i) => (
+                                <MenuItem key={i} value={select.id}>{select.display}</MenuItem>
                             )
                         )
                     }

@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { CSSProperties, useContext, useState } from "react";
 import UserContext from "../comps/context/UserContext";
 
 import { useNavigate } from "react-router-dom";
@@ -9,10 +9,12 @@ import FormDropSelect from "../comps/ui/forms/FormDropSelect";
 import FormCheckSelect from "../comps/ui/forms/FormCheckSelect";
 
 import { supabase } from "../supabaseClient";
+import FormUpload from "../comps/ui/forms/FormUpload";
 
 type FormType = {
   name: string,
   url: string,
+  socials: string,
   picture?: File,
   mission: string,
   purpose: string,
@@ -22,6 +24,7 @@ type FormType = {
   meeting_schedule: string,
   meeting_days: string,
   keywords: string,
+  tags: string,
   commitment_level: string,
   join_instructions: string
 }
@@ -29,6 +32,7 @@ type FormType = {
 const emptyForm : FormType = {
   name: "",
   url: "",
+  socials: "",
   picture: undefined,
   mission: "",
   purpose: "",
@@ -38,9 +42,18 @@ const emptyForm : FormType = {
   meeting_schedule: "",
   meeting_days: "",
   keywords: "",
+  tags: "",
   commitment_level: "",
   join_instructions: ""
 }
+
+const multilineStyle : CSSProperties = {
+  width: "50%",
+  minWidth: "500px",
+  display: "flex",
+  marginTop: "20px"
+}
+
 
 const Create = () => {
   const user = useContext(UserContext);
@@ -53,6 +66,7 @@ const Create = () => {
       creator_id: user.id,
       name: formData.name,
       url: formData.url,
+      socials: formData.socials,
       picture: null, // update after creating initial org
       mission: formData.mission,
       purpose: formData.purpose,
@@ -62,6 +76,7 @@ const Create = () => {
       meeting_schedule: formData.meeting_schedule,
       meeting_days: formData.meeting_days,
       keywords: formData.keywords,
+      tags: formData.tags,
       commitment_level: formData.commitment_level,
       join_instructions: formData.join_instructions,
     }
@@ -141,24 +156,147 @@ const Create = () => {
       onSubmit={createActivity}
       submitText="Create Activity"
       width="100%"
-      height="600px"
     >
       <FormPage title="Basic Info">
+        <FormTextField 
+            label="Name"
+            field="name"
+            required
+            requirements={{
+              minChar: 3,
+              maxChar: 40,
+              onlyAlpha: true
+            }}
+        />
         <FormTextField
-          field="name"
-          label="Name"
+          label="Url"
+          field="url"
+          required
+          requirements={{
+            minChar: 3,
+            maxChar: 40,
+            disableSpaces: true,
+            onlyAlpha: true
+          }}
         />
         <FormDropSelect 
-          field="commitment_level"
-          selections={[ {id: "LOW", display: "Low"}, {id: "HIGH", display: "High"}]}
           label="Commitment Level"
+          field="commitment_level"
+          required
+          selections={[
+            {
+              id: 'NONE',
+              display: 'None'
+            },
+            {
+              id: 'LOW',
+              display: "Low"
+            },
+            {
+              id: 'MEDIUM',
+              display: "Medium"
+            },
+            {
+              id: 'HIGH',
+              display: "High"
+            }
+          ]}
         />
-        <FormCheckSelect 
-          field="meeting_days"
-          selections={[ { id: "MONDAY", display: "Monday"}, { id: "TUESDAY", display: "Tuesday"}]}
-          label="Select meeting days"
-          formatter={(choices) => choices.join(",")}
+        <FormTextField 
+          label="Socials (optional)"
+          field="socials"
         />
+
+        <FormUpload 
+          field="picture"
+          display
+        />
+      </FormPage>
+
+      <FormPage title="Charter Information">
+          <FormTextField 
+            label="Mission"
+            field="mission"
+            multiline
+            requirements={{
+              minChar: 20,
+              maxChar: 150
+            }}
+            sx={multilineStyle}
+            rows={4}
+            description="A quick blurb of what this organization is all about"
+          />
+          <FormTextField 
+            label="Purpose"
+            field="purpose"
+            multiline
+            requirements={{
+              minWords: 100,
+              maxWords: 400
+            }}
+            sx={multilineStyle}
+            rows={4}
+            description="This will serve as the official description of the club. Please include a brief statement about what is expected of general members involved in the club."
+          />
+          <FormTextField
+            label="Benefit"
+            field="benefit"
+            multiline
+            requirements={{
+              minWords: 200,
+              maxWords: 400
+            }}
+            sx={multilineStyle}
+            rows={4}
+            description="How will this activity benefit the Stuyvesant community?"
+          />
+          <FormTextField
+            label="Appointment Procedures"
+            field="appointment_procedures"
+            multiline
+            requirements={{
+              minWords: 50,
+              maxWords: 400
+            }}
+            sx={multilineStyle}
+            rows={4}
+            description="What are the leadership positions and how are they appointed? Are there any specific protocols members are expected to follow? What is the policy for transfer of leadership between school years? How will leaders be removed if necessary?"
+          />
+          <FormTextField
+            label="Uniqueness"
+            field="uniqueness"
+            multiline
+            requirements={{
+              minWords: 75,
+              maxWords: 400
+            }}
+            sx={multilineStyle}
+            rows={4}
+            description="What makes your organization unique?"
+          />
+          <FormTextField
+            label="Meeting Schedule"
+            field="meeting_schedule"
+            requirements={{
+              minChar: 50,
+              maxChar: 1000
+            }}
+            sx={multilineStyle}
+            rows={4}
+            description={`Something like "Our meeting schedule varies throughout the year, but we meet at least once a month and up to 3 times in the Spring."`}
+          />
+          <FormCheckSelect 
+            label="Meeting Days"
+            field="meeting_days"
+            selections={[
+              { id: 'MONDAY', display: 'Monday' },
+              { id: 'TUESDAY', display: 'Tuesday' },
+              { id: 'WEDNESDAY', display: 'Wednesday' },
+              { id: 'THURSDAY', display: "Thursday" },
+              { id: 'FRIDAY', display: "Friday"}
+            ]}
+            formatter={choices => choices.join(',')}
+          />
       </FormPage>
     </MultiPageForm>
   )

@@ -6,12 +6,14 @@ type Requirements = {
     maxChar?: number,
     minWords?: number,
     maxWords?: number,
-    required?: boolean
+    disableSpaces?: boolean,  /* replace spaces with dashes */
+    onlyAlpha?: boolean
 }
 
 type Props = {
     field: string,
     description?: string,
+    required?: boolean,
     requirements?: Requirements,
     onChange?: (field: string, updatedValue: string) => void
 }
@@ -20,6 +22,7 @@ const FormTextField = (
     { 
         field, 
         description,
+        required,
         requirements,
         onChange,
         ...textFieldProps
