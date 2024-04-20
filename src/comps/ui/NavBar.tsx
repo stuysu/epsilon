@@ -1,7 +1,9 @@
 import { Box, Button, Drawer } from "@mui/material";
 import { Menu } from "@mui/icons-material";
-import { CSSProperties, useEffect, useState } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { CSSProperties, useContext, useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
+import { supabase } from "../../supabaseClient";
+import UserContext from "../context/UserContext";
 
 const navStyles : CSSProperties = { 
     width: "100%", 
@@ -33,8 +35,17 @@ const drawerLinkStyle : CSSProperties = {
 }
 
 const NavBar = () => {
+    const user = useContext(UserContext);
     const [drawerOpen, setDrawerOpen] = useState(false)
     const location = useLocation(); // disable drawer when location changes
+    const navigate = useNavigate();
+
+    const signOut = async () => {
+        const { error } = await supabase.auth.signOut();
+        
+        setDrawerOpen(false);
+        navigate("/");
+    }
 
     useEffect(() => {
         setDrawerOpen(false);
@@ -59,6 +70,12 @@ const NavBar = () => {
                     <Link to="/admin" style={drawerLinkStyle}>Admin</Link>
                     <br />
                     <Link to="/meetings" style={drawerLinkStyle}>Meetings</Link>
+                    <br />
+                    {
+                        user.signed_in && (
+                            <Button style={drawerLinkStyle} onClick={signOut}>Sign Out</Button>
+                        )
+                    }
                 </Box>
             </Drawer>
         </>
