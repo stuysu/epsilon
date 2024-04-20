@@ -218,7 +218,7 @@ const Create = () => {
     
     /* convert picture to url */
     if (file) {
-      let filePath = `org-pictures/${orgId}/${file.name}`
+      let filePath = `org-pictures/${orgId}/${Date.now()}-${file.name}`
       let { data: storageData, error: storageError } = await supabase
         .storage
         .from('public-files')
