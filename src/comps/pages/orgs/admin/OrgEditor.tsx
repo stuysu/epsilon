@@ -1,9 +1,8 @@
-import { useContext, useEffect, useState, ChangeEvent } from "react";
+import { useEffect, useState, ChangeEvent } from "react";
 import { Box, Button, TextField, Switch, FormGroup, FormControlLabel } from "@mui/material";
 
-import UserContext from "../../../context/UserContext";
-
 import { supabase } from "../../../../supabaseClient";
+import { useSnackbar } from "notistack";
 
 type orgKey = keyof OrganizationEdit & keyof Organization;
 type diffType = { key: string; value1: any; value2: any };
@@ -58,7 +57,7 @@ const OrgEditor = ({
   organizationEdit: OrganizationEdit;
   setPendingEdit: (orgEdit: OrganizationEdit) => void;
 }) => {
-  let user = useContext(UserContext);
+  const { enqueueSnackbar } = useSnackbar();
   let [orgEdit, setOrgEdit] = useState(organizationEdit);
   let [editing, setEditing] = useState(false);
 
@@ -114,13 +113,14 @@ const OrgEditor = ({
     }
 
     if (error) {
-      return user.setMessage(
+      return enqueueSnackbar(
         "Error editing organization. Contact it@stuysu.org for support.",
+        { variant: "error" }
       );
     }
 
     if (data !== null && data[0]) {
-      user.setMessage("Organization edit request sent!");
+      enqueueSnackbar("Organization edit request sent!", { variant: "success" });
 
       /* if all fields of organizationEdit are null, delete the edit */
       let res = data[0];
@@ -129,7 +129,6 @@ const OrgEditor = ({
         if (hiddenFields.includes(resKey)) continue;
 
         if (res[resKey] !== null) {
-          console.log(resKey, res[resKey]);
           allNull = false;
           break;
         }
@@ -163,10 +162,13 @@ const OrgEditor = ({
         setPendingEdit(data[0] as OrganizationEdit);
       }
     } else {
-      user.setMessage(
+      enqueueSnackbar(
         "Server failed to send back changes. Refresh page to see potential results.",
+        { variant: "warning" }
       );
     }
+
+    setEditing(false);
   };
 
   const canSave = (): boolean => {

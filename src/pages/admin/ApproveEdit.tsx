@@ -1,13 +1,12 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { Box, Button } from "@mui/material";
 import OrgEditApproval from "../../comps/admin/OrgEditApproval";
 
-import UserContext from "../../comps/context/UserContext";
-
 import { supabase } from "../../supabaseClient";
+import { useSnackbar } from "notistack";
 
 const ApproveEdit = () => {
-  const user = useContext(UserContext);
+  const { enqueueSnackbar } = useSnackbar();
   const [pendingEdits, setPendingEdits] = useState<EditType[]>([]);
   const [view, setView] = useState<EditType>();
 
@@ -18,8 +17,9 @@ const ApproveEdit = () => {
       let { data, error } = await supabase.from("organizationedits").select();
 
       if (error || !data) {
-        return user.setMessage(
+        return enqueueSnackbar(
           "Failed to fetch pending edits. Contact it@stuysu.org for support.",
+          { variant: "error" }
         );
       }
 
@@ -41,8 +41,9 @@ const ApproveEdit = () => {
         .in("id", orgIds);
 
       if (oerror || !odata) {
-        return user.setMessage(
+        return enqueueSnackbar(
           "Failed to fetch corresponding org data. Contact it@stuysu.org for support.",
+          { variant: "error" }
         );
       }
 
@@ -67,7 +68,7 @@ const ApproveEdit = () => {
     };
 
     fetchPendingEdits();
-  }, [user]);
+  }, []);
 
   if (view) {
     return (

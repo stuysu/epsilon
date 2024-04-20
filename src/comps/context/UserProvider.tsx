@@ -1,10 +1,10 @@
 import React, { useEffect } from "react";
 import { supabase } from "../../supabaseClient";
 import UserContext from "./UserContext";
-import { Snackbar } from "@mui/material";
+import { useSnackbar } from "notistack";
 
 const UserProvider = ({ children }: { children: React.ReactNode }) => {
-  let [message, setMessage] = React.useState("");
+  const { enqueueSnackbar } = useSnackbar();
 
   const [value, setValue] = React.useState<UserContextType>({
     signed_in: false,
@@ -18,13 +18,12 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
     memberships: [],
     is_faculty: false,
     active: false,
-    setMessage: setMessage,
   });
 
   supabase.auth.onAuthStateChange((event) => {
     if (event !== "SIGNED_OUT") {
     } else {
-      setMessage("Signed Out!");
+      enqueueSnackbar("Signed Out!");
       setValue({
         signed_in: false,
         admin: false,
@@ -36,8 +35,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
         grade: -1,
         memberships: [],
         is_faculty: false,
-        active: false,
-        setMessage: setMessage,
+        active: false
       });
     }
   });
@@ -87,7 +85,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
           .eq("email", supabaseUser.email);
 
         if (error) {
-          setMessage("Error logging in. Contact it@stuysu.org for support.");
+          enqueueSnackbar("Error logging in. Contact it@stuysu.org for support.", { variant: "error" });
           return;
         }
 
@@ -95,8 +93,9 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
           // user is not in our public.users table. sign out + notify
           await supabase.auth.signOut();
 
-          setMessage(
+          enqueueSnackbar(
             "Unverified account. Please contact it@stuysu.org for support.",
+            { variant: "error" }
           );
           return;
         }
@@ -130,8 +129,9 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
           .eq("user_id", user.id));
 
         if (error) {
-          setMessage(
+          enqueueSnackbar(
             "Error fetching permissions. Contact it@stuysu.org for support.",
+            { variant: "error" }
           );
         }
         if (Array.isArray(data) && data?.length > 0) {
@@ -149,11 +149,17 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
             .eq("id", user.id));
 
           if (error) {
-            setMessage(
+            enqueueSnackbar(
               "Unable to save profile picture to server. Please contact it@stuysu.org for support.",
+              { variant: "error" }
             );
           }
         }
+
+        /* 
+          This shows every time we log in (even if its saved already). Thus, it is commented out.
+          enqueueSnackbar("Signed In!", { variant: "success" }) 
+        */
 
         setValue({
           signed_in: true,
@@ -166,8 +172,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
           grade: user.grade,
           memberships: user.memberships,
           is_faculty: user.is_faculty,
-          active: user.active,
-          setMessage: setMessage,
+          active: user.active
         });
       }
     };
@@ -178,12 +183,6 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
   return (
     <UserContext.Provider value={value}>
       {children}
-      <Snackbar
-        open={message.length > 0}
-        autoHideDuration={3000}
-        onClose={() => setMessage("")}
-        message={message}
-      />
     </UserContext.Provider>
   );
 };

@@ -6,11 +6,13 @@ import PostEditor from "../../../comps/pages/orgs/admin/PostEditor";
 
 import { supabase } from "../../../supabaseClient";
 import OrgContext from "../../../comps/context/OrgContext";
+import { useSnackbar } from "notistack";
 
 /* create new posts */
 /* fetch existing posts to update or delete */
 const Posts = () => {
   const user = useContext(UserContext);
+  const { enqueueSnackbar } = useSnackbar();
   const organization = useContext(OrgContext);
   let [posts, setPosts] = useState<Post[]>([]);
 
@@ -19,8 +21,9 @@ const Posts = () => {
       let { data, error } = await supabase.from("posts").select();
 
       if (error || !data) {
-        return user.setMessage(
+        return enqueueSnackbar(
           "Error retrieving data. Please contact it@stuysu.org for support.",
+          { variant: "error" }
         );
       }
 

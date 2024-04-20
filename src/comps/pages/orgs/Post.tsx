@@ -1,10 +1,10 @@
 import { Box, Button } from "@mui/material";
 import { supabase } from "../../../supabaseClient";
 
-import { useContext, useEffect, useState } from "react";
-import UserContext from "../../context/UserContext";
+import { useEffect, useState } from "react";
 
 import PostEditor from "./admin/PostEditor";
+import { useSnackbar } from "notistack";
 
 /* This post component will serve as both the admin and member post. depending on role, differeing functionality */
 const Post = ({
@@ -16,7 +16,7 @@ const Post = ({
   editable?: boolean;
   onDelete?: () => void;
 }) => {
-  const user = useContext(UserContext);
+  const { enqueueSnackbar } = useSnackbar();
   const [editing, setEditing] = useState(false);
   const [postData, setPostData] = useState(content);
 
@@ -26,13 +26,14 @@ const Post = ({
     let { error } = await supabase.from("posts").delete().eq("id", content.id);
 
     if (error) {
-      return user.setMessage(
+      return enqueueSnackbar(
         "Could not delete post. Contact it@stuysu.org for support",
+        { variant: "error" }
       );
     }
 
     if (onDelete) onDelete();
-    user.setMessage("Post deleted!");
+    enqueueSnackbar("Post deleted!", { variant: "success" });
   };
 
   if (editing) {

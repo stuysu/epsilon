@@ -9,16 +9,20 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { CssBaseline } from "@mui/material";
 
+import { SnackbarProvider } from "notistack";
+
 const App = () => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <ThemeProvider>
         <CssBaseline />
-        <BrowserRouter>
-          <UserProvider>
-            <Pages />
-          </UserProvider>
-        </BrowserRouter>
+        <SnackbarProvider maxSnack={4} autoHideDuration={3000} preventDuplicate>
+          <BrowserRouter>
+            <UserProvider>
+              <Pages />
+            </UserProvider>
+          </BrowserRouter>
+        </SnackbarProvider>
       </ThemeProvider>
     </LocalizationProvider>
   );

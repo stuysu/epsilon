@@ -1,9 +1,8 @@
 import { Box, TextField, Button } from "@mui/material";
-import { useContext, useEffect, useState, ChangeEvent } from "react";
-
-import UserContext from "../../../context/UserContext";
+import { useEffect, useState, ChangeEvent } from "react";
 
 import { supabase } from "../../../../supabaseClient";
+import { useSnackbar } from "notistack";
 
 let editableFieilds = ["title", "description"];
 
@@ -21,7 +20,7 @@ const PostEditor = ({
   onCancel?: () => void;
   onCreate?: (newData: Post) => void;
 }) => {
-  const user = useContext(UserContext);
+  const { enqueueSnackbar } = useSnackbar();
 
   let [postData, setPostData] = useState<Partial<Post>>({
     id: undefined,
@@ -54,8 +53,9 @@ const PostEditor = ({
       .select();
 
     if (error || !data) {
-      return user.setMessage(
+      return enqueueSnackbar(
         "Could not create post. Please contact it@stuysu.org for support.",
+        { variant: "error" }
       );
     }
 
@@ -70,7 +70,7 @@ const PostEditor = ({
     });
 
     if (onCreate) onCreate(data[0] as Post);
-    user.setMessage("Post created!");
+    enqueueSnackbar("Post created!", { variant: "success" });
   };
 
   const savePost = async () => {
@@ -81,13 +81,14 @@ const PostEditor = ({
       .select();
 
     if (error || !data) {
-      return user.setMessage(
+      return enqueueSnackbar(
         "Could not update post. Please contact it@stuysu.org for support.",
+        { variant: "error" }
       );
     }
 
     if (onSave) onSave(data[0] as Post);
-    user.setMessage("Post updated!");
+    enqueueSnackbar("Post updated!", { variant: "success" });
   };
 
   return (

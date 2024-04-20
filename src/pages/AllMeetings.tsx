@@ -1,11 +1,11 @@
-import { useContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { supabase } from "../supabaseClient";
 
-import UserContext from "../comps/context/UserContext";
+import { useSnackbar } from "notistack";
 
 const AllMeetings = () => {
-  const user = useContext(UserContext);
+  const { enqueueSnackbar } = useSnackbar();
   const [meetings, setMeetings] = useState<Meeting[]>([]);
 
   useEffect(() => {
@@ -21,8 +21,9 @@ const AllMeetings = () => {
         .gte("start_time", monthStart.toISOString());
 
       if (error || !data) {
-        return user.setMessage(
+        return enqueueSnackbar(
           "Error fetching meetings. Contact it@stuysu.org for support.",
+          { variant: "error" }
         );
       }
 
@@ -30,7 +31,7 @@ const AllMeetings = () => {
     };
 
     fetchMeetings();
-  }, [user]);
+  }, []);
 
   return (
     <div>

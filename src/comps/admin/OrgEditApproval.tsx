@@ -4,6 +4,7 @@ import UserContext from "../context/UserContext";
 import { Box, Button } from "@mui/material";
 
 import { supabase } from "../../supabaseClient";
+import { useSnackbar } from "notistack";
 
 type EditKey = keyof EditType;
 type OrgKey = keyof Organization;
@@ -28,7 +29,7 @@ const OrgEditApproval = ({
   onApprove,
   ...edit
 }: { onBack: () => void; onApprove: () => void } & EditType) => {
-  const user = useContext(UserContext);
+  const { enqueueSnackbar } = useSnackbar();
 
   /* fetch current org data to compare to */
   let [currentOrg, setCurrentOrg] = useState<Partial<Organization>>({});
@@ -55,8 +56,9 @@ const OrgEditApproval = ({
         .eq("id", edit.organization_id);
 
       if (error || !data) {
-        return user.setMessage(
+        return enqueueSnackbar(
           "Could not fetch current organization data. Please contact it@stuysu.org for support.",
+          { variant: "error" }
         );
       }
 
@@ -65,7 +67,7 @@ const OrgEditApproval = ({
     };
 
     fetchCurrentOrg();
-  }, [edit, user]);
+  }, [edit]);
 
   const approve = async () => {
     let error;
@@ -82,8 +84,9 @@ const OrgEditApproval = ({
       .eq("id", edit.organization_id));
 
     if (error) {
-      return user.setMessage(
+      return enqueueSnackbar(
         "Error updating organization. Contact it@stuysu.org for support.",
+        { variant: "error" }
       );
     }
 
@@ -94,12 +97,13 @@ const OrgEditApproval = ({
       .eq("id", edit.id));
 
     if (error) {
-      return user.setMessage(
+      return enqueueSnackbar(
         "Error deleting old organization edit. Please let it@stuysu.org know about this issue.",
+        { variant: "error" }
       );
     }
 
-    user.setMessage("Organization edit approved!");
+    enqueueSnackbar("Organization edit approved!", { variant: "success" });
     onApprove();
   };
 

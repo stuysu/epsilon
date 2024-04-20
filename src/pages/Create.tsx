@@ -10,6 +10,7 @@ import FormCheckSelect from "../comps/ui/forms/FormCheckSelect";
 
 import { supabase } from "../supabaseClient";
 import FormUpload from "../comps/ui/forms/FormUpload";
+import { useSnackbar } from "notistack";
 
 type FormType = {
   name: string,
@@ -57,6 +58,7 @@ const multilineStyle : CSSProperties = {
 
 const Create = () => {
   const user = useContext(UserContext);
+  const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState<FormType>(emptyForm);
@@ -89,8 +91,9 @@ const Create = () => {
       `);
 
     if (orgCreateError || !orgCreateData) {
-      return user.setMessage(
+      return enqueueSnackbar(
         "Error creating organization. Contact it@stuysu.org for support.",
+        { variant: "error" }
       );
     }
 
@@ -107,8 +110,9 @@ const Create = () => {
         .upload(filePath, formData.picture);
       
       if (storageError || !storageData) {
-        return user.setMessage(
-          "Error uploading image to storage. Contact it@stuysu.org for support."
+        return enqueueSnackbar(
+          "Error uploading image to storage. Contact it@stuysu.org for support.",
+          { variant: "error" }
         )
       }
 
@@ -124,7 +128,10 @@ const Create = () => {
           .delete()
           .eq('id', orgId)
 
-        return user.setMessage("Failed to retrieve image after upload. Contact it@stuysu.org for support.");
+        return enqueueSnackbar(
+          "Failed to retrieve image after upload. Contact it@stuysu.org for support.",
+          { variant: "error" }
+        );
       }
 
       
@@ -139,11 +146,14 @@ const Create = () => {
           .from('organizations')
           .delete()
           .eq('id', orgId)
-        return user.setMessage("Error uploading image to organization. Contact it@stuysu.org for support.")
+        return enqueueSnackbar(
+          "Error uploading image to organization. Contact it@stuysu.org for support.",
+          { variant: "error" }
+        )
       }
     }
     
-    user.setMessage("Organization created!");
+    enqueueSnackbar("Organization created!", { variant: "success" });
     /* redirect after creation */
     navigate(`/${formData.url}`)
   };

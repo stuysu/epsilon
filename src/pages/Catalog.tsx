@@ -1,11 +1,11 @@
-import { useEffect, useContext, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
-import UserContext from "../comps/context/UserContext";
 
 import OrgCard from "../comps/pages/catalog/OrgCard";
+import { useSnackbar } from "notistack";
 
 const Catalog = () => {
-  const user = useContext(UserContext);
+  const { enqueueSnackbar } = useSnackbar();
   const [orgs, setOrgs] = useState<Partial<Organization>[]>([]);
 
   useEffect(() => {
@@ -21,14 +21,14 @@ const Catalog = () => {
 
       if (error) {
         console.log(error)
-        user.setMessage("Error fetching organizations. Contact it@stuysu.org for support.");
+        enqueueSnackbar("Error fetching organizations. Contact it@stuysu.org for support.", { variant: "error" });
         return;
       }
 
       setOrgs(data);
     };
     getOrgs();
-  }, [user]);
+  }, []);
 
   return (
     <div>

@@ -4,6 +4,7 @@ import { CSSProperties, useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import UserContext from "../context/UserContext";
+import { useSnackbar } from "notistack";
 
 const navStyles : CSSProperties = { 
     width: "100%", 
@@ -36,12 +37,17 @@ const drawerLinkStyle : CSSProperties = {
 
 const NavBar = () => {
     const user = useContext(UserContext);
+    const { enqueueSnackbar } = useSnackbar();
     const [drawerOpen, setDrawerOpen] = useState(false)
     const location = useLocation(); // disable drawer when location changes
     const navigate = useNavigate();
 
     const signOut = async () => {
         const { error } = await supabase.auth.signOut();
+
+        if (error) {
+            return enqueueSnackbar("Error signing out. Contact it@stuysu.org for support.", { variant: "error" })
+        }
         
         setDrawerOpen(false);
         navigate("/");

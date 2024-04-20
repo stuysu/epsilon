@@ -17,9 +17,9 @@ import {
 import { DateTimePicker } from "@mui/x-date-pickers";
 
 import { supabase } from "../../../../supabaseClient";
-import UserContext from "../../../context/UserContext";
 import OrgContext from "../../../context/OrgContext";
 import dayjs, { Dayjs } from "dayjs";
+import { useSnackbar } from "notistack";
 
 const getDefaultTime = () => {
   let d = new Date();
@@ -51,7 +51,7 @@ const AdminUpsertMeeting = ({
   onClose: () => void;
   onSave: (saveState : Partial<Meeting>, isInsert : boolean) => void;
 }) => {
-  const user = useContext(UserContext);
+  const { enqueueSnackbar } = useSnackbar();
   const organization = useContext(OrgContext);
 
   const [meetingTitle, setMeetingTitle] = useState(title || "");
@@ -80,8 +80,9 @@ const AdminUpsertMeeting = ({
       let { data, error } = await supabase.from("rooms").select();
 
       if (error || !data) {
-        user.setMessage(
+        enqueueSnackbar(
           "Error fetching rooms. Contact it@stuysu.org for support.",
+          { variant: "error" }
         );
         return;
       }
@@ -91,7 +92,7 @@ const AdminUpsertMeeting = ({
     };
 
     fetchRooms();
-  }, [user]);
+  }, []);
 
   useEffect(() => {
     const filterRooms = async () => {
@@ -107,8 +108,9 @@ const AdminUpsertMeeting = ({
           )
 
       if (error || !data) {
-        user.setMessage(
-          "Error fetching booked rooms. Contact it@stuysu.org for support."
+        enqueueSnackbar(
+          "Error fetching booked rooms. Contact it@stuysu.org for support.",
+          { variant: "error" }
         );
         return;
       }
@@ -124,7 +126,7 @@ const AdminUpsertMeeting = ({
     }
 
     filterRooms();
-  }, [user, allRooms, startTime, endTime])
+  }, [allRooms, startTime, endTime])
 
   const handleSave = async () => {
     let supabaseReturn;
@@ -177,16 +179,17 @@ const AdminUpsertMeeting = ({
     }
 
     if (supabaseReturn.error) {
-      user.setMessage(
+      enqueueSnackbar(
         "Error creating meeting. Contact it@stuysu.org for support.",
+        { variant: "error" }
       );
       return;
     }
 
     if (isCreated) {
-      user.setMessage("Meeting created!");
+      enqueueSnackbar("Meeting created!", { variant: "success" });
     } else {
-      user.setMessage("Meeting updated!");
+      enqueueSnackbar("Meeting updated!", { variant: "success" });
     }
 
     onSave(supabaseReturn.data[0] as Partial<Meeting>, isInsert)

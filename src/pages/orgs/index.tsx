@@ -1,7 +1,6 @@
 /* ORG ROUTING INFORMATION HERE */
-import React, { useContext, useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Routes, Route, useParams } from "react-router-dom";
-import UserContext from "../../comps/context/UserContext";
 import OrgContext from "../../comps/context/OrgContext";
 import { supabase } from "../../supabaseClient";
 
@@ -12,9 +11,10 @@ import Charter from "./Charter";
 import Meetings from "./Meetings";
 import Members from "./Members";
 import OrgAdminRouter from "./admin";
+import { useSnackbar } from "notistack";
 
 const OrgRouter = () => {
-  const user = useContext(UserContext);
+  const { enqueueSnackbar } = useSnackbar();
   const { orgUrl } = useParams();
 
   const [org, setOrg] = useState<OrgContextType>({
@@ -90,13 +90,12 @@ const OrgRouter = () => {
         .eq("url", orgUrl);
 
       if (error) {
-        console.log(error)
-        user.setMessage("Error fetching organization.");
+        enqueueSnackbar("Error fetching organization.", { variant: "error" });
         return;
       }
 
       if (data?.length === 0) {
-        user.setMessage("Invalid organization URL.");
+        enqueueSnackbar("Invalid organization URL.", { variant: "error" });
         return;
       }
 
@@ -104,7 +103,7 @@ const OrgRouter = () => {
     };
 
     getOrgData();
-  }, [orgUrl, user]);
+  }, [orgUrl]);
 
   return (
     <OrgContext.Provider value={{...org, setOrg}}>

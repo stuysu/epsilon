@@ -1,12 +1,12 @@
 import { useEffect, useState, useContext } from "react";
 import { supabase } from "../../supabaseClient";
-import UserContext from "../../comps/context/UserContext";
 import { Button } from "@mui/material";
 
 import OrgApproval from "../../comps/admin/OrgApproval";
+import { useSnackbar } from "notistack";
 
 const ApprovePending = () => {
-  const user = useContext(UserContext);
+  const { enqueueSnackbar } = useSnackbar();
   const [pendingOrgs, setPendingOrgs] = useState<Partial<OrgContextType>[]>([]);
 
   const [view, setView] = useState<Partial<OrgContextType>>();
@@ -51,8 +51,9 @@ const ApprovePending = () => {
         .eq("state", "PENDING");
 
       if (error || !data) {
-        return user.setMessage(
+        return enqueueSnackbar(
           "Failed to fetch pending organizations. Contact it@stuysu.org for support.",
+          { variant: "error" }
         );
       }
 
@@ -60,7 +61,7 @@ const ApprovePending = () => {
     };
 
     fetchPendingOrgs();
-  }, [user]);
+  }, []);
 
   if (view) {
     return (

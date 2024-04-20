@@ -7,10 +7,12 @@ import OrgContext from "../../context/OrgContext";
 import UserContext from "../../context/UserContext";
 
 import { supabase } from "../../../supabaseClient";
+import { useSnackbar } from "notistack";
 
 const OrgNav = () => {
   const organization = useContext<OrgContextType>(OrgContext);
   const user = useContext<UserContextType>(UserContext);
+  const { enqueueSnackbar } = useSnackbar();
   const main = `/${organization.url}`;
 
   const isInOrg: boolean = organization.memberships?.find(
@@ -58,12 +60,13 @@ const OrgNav = () => {
         .from("memberships")
         .insert({ organization_id: organization.id, user_id: user.id });
       if (error) {
-        return user.setMessage(
+        return enqueueSnackbar(
           "Unable to join organization. Contact it@stuysu.org for support.",
+          { variant: "error" }
         );
       }
 
-      user.setMessage("Sent organization a join request!");
+      enqueueSnackbar("Sent organization a join request!", { variant: "success" });
     } else if (interactString === "LEAVE" || interactString === "CANCEL JOIN") {
       /* LEAVE ORGANIZATION */
       let membership = organization.memberships?.find(
@@ -75,12 +78,13 @@ const OrgNav = () => {
         .delete()
         .eq("id", membership?.id);
       if (error) {
-        return user.setMessage(
+        return enqueueSnackbar(
           "Unable to leave organization. Contact it@stuysu.org for support.",
+          { variant: "error" }
         );
       }
 
-      user.setMessage("Left organization!");
+      enqueueSnackbar("Left organization!", { variant: "success" });
     }
   };
 

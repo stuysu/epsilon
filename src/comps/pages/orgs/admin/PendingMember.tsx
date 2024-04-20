@@ -1,8 +1,6 @@
-import { useContext } from "react";
-import UserContext from "../../../context/UserContext";
-
 import { supabase } from "../../../../supabaseClient";
 import { Button } from "@mui/material";
+import { useSnackbar } from "notistack";
 
 const PendingMember = ({
   id,
@@ -15,7 +13,7 @@ const PendingMember = ({
   email: string;
   picture: string | undefined;
 }) => {
-  const user = useContext(UserContext);
+  const { enqueueSnackbar } = useSnackbar();
 
   const handleApprove = async () => {
     const { error } = await supabase
@@ -24,25 +22,27 @@ const PendingMember = ({
       .eq("id", id);
 
     if (error) {
-      user.setMessage(
+      enqueueSnackbar(
         "Error approving member. Contact it@stuysu.org for support.",
+        { variant: "error" }
       );
       return;
     }
 
-    user.setMessage("Member approved!");
+    enqueueSnackbar("Member approved!", { variant: "success" });
   };
 
   const handleReject = async () => {
     const { error } = await supabase.from("memberships").delete().eq("id", id);
     if (error) {
-      user.setMessage(
+      enqueueSnackbar(
         "Error rejecting member. Contact it@stuysu.org for support.",
+        { variant: "error" }
       );
       return;
     }
 
-    user.setMessage("User rejected!");
+    enqueueSnackbar("User rejected!", { variant: "success" });
   };
 
   return (

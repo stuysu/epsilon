@@ -14,6 +14,7 @@ import {
   DialogActions,
 } from "@mui/material";
 import { supabase } from "../../../../supabaseClient";
+import { useSnackbar } from "notistack";
 
 const AdminMember = ({
   id,
@@ -35,6 +36,7 @@ const AdminMember = ({
   isCreator: boolean;
 }) => {
   const user = useContext(UserContext);
+  const { enqueueSnackbar } = useSnackbar();
   const [editState, setEditState] = useState({
     role: "",
     role_name: "",
@@ -53,13 +55,14 @@ const AdminMember = ({
     const { error } = await supabase.from("memberships").delete().eq("id", id);
 
     if (error) {
-      user.setMessage(
+      enqueueSnackbar(
         "Could not kick member. Contact it@stuysu.org for support.",
+        { variant: "error" }
       );
       return;
     }
 
-    user.setMessage("Member kicked!");
+    enqueueSnackbar("Member kicked!", { variant: "success" });
   };
 
   const handleSelect = (event: SelectChangeEvent) => {
@@ -91,13 +94,14 @@ const AdminMember = ({
       .eq("id", id);
 
     if (error) {
-      user.setMessage(
+      enqueueSnackbar(
         "Could not update member. Contact it@stuysu.org for support.",
+        { variant: "error" }
       );
       return;
     }
 
-    user.setMessage("Member updated!");
+    enqueueSnackbar("Member updated!", { variant: "success" });
     handleClose();
   };
 

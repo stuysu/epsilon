@@ -1,14 +1,14 @@
 import { Box, Button } from "@mui/material";
 import { supabase } from "../../supabaseClient";
-import UserContext from "../context/UserContext";
-import { useContext } from "react";
+
+import { useSnackbar  } from "notistack";
 
 const OrgApproval = ({
   onBack,
   onDecision,
   ...org
 }: { onBack: () => void; onDecision: () => void } & Partial<OrgContextType>) => {
-  const user = useContext(UserContext);
+  const { enqueueSnackbar } = useSnackbar();
 
   const approve = async () => {
     const { error } = await supabase
@@ -16,12 +16,13 @@ const OrgApproval = ({
       .update({ state: "UNLOCKED" })
       .eq("id", org.id);
     if (error) {
-      return user.setMessage(
+      return enqueueSnackbar(
         "Error approving organization. Contact it@stuysu.org for support.",
+        { variant: "error" }
       );
     }
 
-    user.setMessage("Organization approved!");
+    enqueueSnackbar("Organization approved!", { variant: "success" });
     onDecision();
   };
 
@@ -31,12 +32,13 @@ const OrgApproval = ({
       .delete()
       .eq("id", org.id);
     if (error) {
-      return user.setMessage(
-        "Error rejecting organization. Contact it@stuysu.org for support."
+      return enqueueSnackbar(
+        "Error rejecting organization. Contact it@stuysu.org for support.",
+        { variant: "error" }
       );
     }
 
-    user.setMessage("Organization rejected!");
+    enqueueSnackbar("Organization rejected!", { variant: "success" });
     onDecision();
   }
 

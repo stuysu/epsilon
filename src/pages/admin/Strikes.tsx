@@ -1,14 +1,14 @@
 import { Box } from "@mui/material"
 
-import { useState, useEffect, useContext } from "react";
+import { useState, useEffect } from "react";
 
 import OrgSelector from "../../comps/admin/OrgSelector";
 
 import { supabase } from "../../supabaseClient";
-import UserContext from "../../comps/context/UserContext";
+import { useSnackbar } from "notistack";
 
 const Strikes = () => {
-    const user = useContext(UserContext);
+    const { enqueueSnackbar } = useSnackbar();
 
     const [orgId, setOrgId] = useState<Number>();
     const [orgName, setOrgName] = useState("");
@@ -34,14 +34,14 @@ const Strikes = () => {
                 .eq('organization_id', orgId)
             
             if (error || !data) {
-                return user.setMessage("Failed to load strikes. Contact it@stuysu.org for support.");
+                return enqueueSnackbar("Failed to load strikes. Contact it@stuysu.org for support.", { variant: "error" });
             }
 
             setOrgStrikes(data as Strike[]);
         }
 
         fetchOrgStrikes();
-    }, [orgId, user])
+    }, [orgId])
 
     return (
         <Box>

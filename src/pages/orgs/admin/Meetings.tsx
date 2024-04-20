@@ -1,11 +1,11 @@
 import { useContext, useState } from "react";
 import OrgContext from "../../../comps/context/OrgContext";
-import UserContext from "../../../comps/context/UserContext";
 import AdminMeeting from "../../../comps/pages/orgs/admin/AdminMeeting";
 import AdminUpsertMeeting from "../../../comps/pages/orgs/admin/AdminUpsertMeeting";
 
 import { Button } from "@mui/material";
 import { supabase } from "../../../supabaseClient";
+import { useSnackbar } from "notistack";
 
 // using any types because i can't be bothered
 const sortByStart = (m1 : any, m2 : any) : number => {
@@ -22,7 +22,7 @@ const sortByStart = (m1 : any, m2 : any) : number => {
 
 const Meetings = () => {
   const organization = useContext(OrgContext);
-  const user = useContext(UserContext);
+  const { enqueueSnackbar } = useSnackbar();
 
   const [editState, setEditState] = useState<{
     id: number | undefined;
@@ -78,12 +78,13 @@ const Meetings = () => {
               .delete()
               .eq("id", meeting.id);
             if (error) {
-              return user.setMessage(
+              return enqueueSnackbar(
                 "Error deleting meeting. Contact it@stuysu.org for support.",
+                { variant: "error" }
               );
             }
 
-            user.setMessage("Deleted Meeting!");
+            enqueueSnackbar("Deleted Meeting!", { variant: "success" });
           }}
         />
       ))}

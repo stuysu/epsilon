@@ -2,13 +2,14 @@ import { useState, useEffect, useContext } from "react";
 
 import { supabase } from "../../../supabaseClient";
 
-import UserContext from "../../..//comps/context/UserContext";
 import OrgContext from "../../../comps/context/OrgContext";
 
 import OrgEditor from "../../../comps/pages/orgs/admin/OrgEditor";
 
+import { useSnackbar } from "notistack";
+
 const Organization = () => {
-  const user = useContext(UserContext);
+  const { enqueueSnackbar } = useSnackbar();
   const organization = useContext(OrgContext);
   const [pendingEdit, setPendingEdit] = useState<OrganizationEdit>({
     id: undefined,
@@ -36,8 +37,9 @@ const Organization = () => {
         .eq("organization_id", organization.id);
 
       if (error) {
-        return user.setMessage(
+        return enqueueSnackbar(
           "Error fetching organization edits. Contact it@stuysu.org for support.",
+          { variant: "error" }
         );
       }
 
