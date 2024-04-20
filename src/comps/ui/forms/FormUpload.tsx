@@ -2,7 +2,27 @@ import { useState, ChangeEvent } from "react";
 
 import { Box } from "@mui/material";
 
-const FormUpload = ({ value, onChange } : { value?: File, onChange: (event : ChangeEvent<HTMLInputElement>) => void }) => {
+type Props = {
+    value: File,
+    field: string,
+    onChange?: (field: string, updatedValue: File) => void
+}
+
+const FormUpload = (
+    { 
+        value, 
+        field, 
+        onChange 
+    } : 
+    Props
+) => {
+    const fileChanged = (event: ChangeEvent<HTMLInputElement>) => {
+        if (!event.target.files) return;
+        if (!onChange) return;
+
+        onChange(field, event.target.files[0]);
+    }
+
     return (
         <Box>
             <Box>
@@ -10,7 +30,7 @@ const FormUpload = ({ value, onChange } : { value?: File, onChange: (event : Cha
             </Box>
             <input
                 type="file"
-                onChange={onChange}
+                onChange={fileChanged}
             />
         </Box>
     )
