@@ -236,7 +236,13 @@ const Create = () => {
       .getPublicUrl(filePath)
 
       if (!urlData) {
-        return user.setMessage("Failed to retrieve image after upload. Contact it@stuysu.org for support.")
+        /* attempt to delete organization */
+        await supabase
+          .from('organizations')
+          .delete()
+          .eq('id', orgId)
+
+        return user.setMessage("Failed to retrieve image after upload. Contact it@stuysu.org for support.");
       }
 
       (
@@ -247,6 +253,11 @@ const Create = () => {
       )
 
       if (error) {
+        /* attempt to delete organization */
+        await supabase
+          .from('organizations')
+          .delete()
+          .eq('id', orgId)
         return user.setMessage("Error uploading image to organization. Contact it@stuysu.org for support.")
       }
     }
