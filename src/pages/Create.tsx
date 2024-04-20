@@ -18,6 +18,7 @@ import { supabase } from "../supabaseClient";
 import { HOSTNAME } from "../constants";
 
 import { useNavigate } from "react-router-dom";
+import FormUpload from "../comps/ui/forms/FormUpload";
 
 type tField = {
   label: string,
@@ -136,6 +137,7 @@ const Create = () => {
     uniqueness: "",
     meeting_schedule: ""
   });
+  const [file, setFile] = useState<File>();
 
   const onTextChange = (event: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = event.target;
@@ -164,6 +166,11 @@ const Create = () => {
     });
   };
 
+  const handleImageChange = (event: ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files) return;
+    setFile(event.target.files[0]);
+  }
+
   const createActivity = async () => {
     let mdays = [];
     if (meetingDays.monday) mdays.push("MONDAY");
@@ -179,7 +186,7 @@ const Create = () => {
       creator_id: user.id,
       name: textState.name,
       url: textState.url,
-      picture: null,
+      picture: null, // will update later
       mission: textState.mission,
       purpose: textState.purpose,
       benefit: textState.benefit,
@@ -192,12 +199,58 @@ const Create = () => {
       join_instructions: joinInstructions,
     }
 
-    let { error } = await supabase.from("organizations").insert(payload);
-    if (error) {
+    let { data, error } = await supabase
+      .from("organizations")
+      .insert(payload)
+      .select(`
+        id
+      `);
+
+    if (error || !data) {
       return user.setMessage(
         "Error creating organization. Contact it@stuysu.org for support.",
       );
     }
+
+    let orgId = data[0].id;
+
+    /* Create picture if organization is successfully created */
+    
+    /* convert picture to url */
+    if (file) {
+      let filePath = `org-pictures/${orgId}/${file.name}`
+      let { data: storageData, error: storageError } = await supabase
+        .storage
+        .from('public-files')
+        .upload(filePath, file);
+      
+      if (storageError || !storageData) {
+        return user.setMessage(
+          "Error uploading image to storage. Contact it@stuysu.org for support."
+        )
+      }
+
+      let { data: urlData } = await supabase
+      .storage
+      .from('public-files')
+      .getPublicUrl(filePath)
+
+      if (!urlData) {
+        return user.setMessage("Failed to retrieve image after upload. Contact it@stuysu.org for support.")
+      }
+
+      (
+        { error } = await supabase
+          .from("organizations")
+          .update({ picture: urlData.publicUrl })
+          .eq('id', orgId)
+      )
+
+      if (error) {
+        return user.setMessage("Error uploading image to organization. Contact it@stuysu.org for support.")
+      }
+    }
+    
 
     user.setMessage("Organization created!");
     /* redirect after creation */
@@ -273,6 +326,7 @@ const Create = () => {
           }
         </FormGroup>
       </FormControl>
+      <FormUpload value={file} onChange={handleImageChange} />
       <Button onClick={createActivity}>Create Activity</Button>
     </Box>
   );
