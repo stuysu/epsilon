@@ -1,4 +1,4 @@
-import { Select, MenuItem, SelectProps, SelectChangeEvent } from "@mui/material"
+import { Box, Select, MenuItem, SelectProps, SelectChangeEvent, FormControl, InputLabel } from "@mui/material"
 
 type SelectType = {
     id: string,
@@ -28,18 +28,23 @@ const FormDropSelect = (
     }
 
     return (
-        <Select
-            onChange={(e) => selectionChanged(e)}
-            {...selectProps}
-        >
-            {
-                selections.map(
-                    select => (
-                        <MenuItem value={select.id}>{select.display}</MenuItem>
-                    )
-                )
-            }
-        </Select>
+        <Box sx={{ maxWidth: 700 }}>
+            <FormControl fullWidth>
+                <InputLabel>{selectProps.label}</InputLabel>
+                <Select
+                    onChange={(e) => selectionChanged(e)}
+                    {...selectProps}
+                >
+                    {
+                        selections.map(
+                            select => (
+                                <MenuItem value={select.id}>{select.display}</MenuItem>
+                            )
+                        )
+                    }
+                </Select>
+            </FormControl>
+        </Box>
     )
 }
 

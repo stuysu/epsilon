@@ -8,7 +8,7 @@ import {
     cloneElement 
 } from "react";
 
-import { Box, Button } from "@mui/material";
+import { Box, BoxProps, Button } from "@mui/material";
 
 type Props<T> = {
     title: string;
@@ -18,6 +18,7 @@ type Props<T> = {
     onSubmit?: () => void;
     onNext?: () => void;
     onBack?: () => void;
+    submitText?: string;
     last?: boolean; // if its the last page, have a submit button instead of a next button 
     first?: boolean
 }
@@ -31,8 +32,9 @@ const FormPage = <T extends unknown>(
         onSubmit, 
         onNext, 
         onBack, 
+        submitText,
         last, 
-        first 
+        first
     } : Props<T>
 ) => {
     const childOnChange = (field: string, updatedValue: any) => {
@@ -60,19 +62,21 @@ const FormPage = <T extends unknown>(
     });
 
     return (
-        <Box>
-            <h3>{title}</h3>
-            <Box>
+        <Box sx={{ height: "100%"}}>
+            <Box sx={{ height: "10%", width: "100%"}}>
+                <h3>{title}</h3>
+            </Box>
+            <Box  sx={{ height: "80%", width: "100%" }}>
                 {childrenWithProps}
             </Box>
-            <Box>
+            <Box sx={{ height: "10%", width: "100%"}}>
                 {
                     !first && <Button onClick={onBack}>Back</Button>
                 }
                 {
                     last ?
                     (
-                        <Button onClick={onSubmit}>Submit</Button>
+                        <Button onClick={onSubmit}>{submitText ? submitText : "Submit"}</Button>
                     ) :
                     (
                         <Button onClick={onNext}>Next</Button>

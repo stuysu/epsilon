@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, BoxProps } from "@mui/material";
 import { 
     Dispatch, 
     SetStateAction, 
@@ -10,11 +10,12 @@ import {
     ReactElement 
 } from "react";
 
-interface Props<T> {
+type Props<T> = {
     title: string;
     value: T;
-    onChange: Dispatch<SetStateAction<T>>;
+    onFormChange: Dispatch<SetStateAction<T>>;
     onSubmit: (data : T) => void;
+    submitText?: string;
     children?: ReactNode
 }
 
@@ -22,10 +23,12 @@ const MultiPageForm = <T extends unknown>(
     {
         title,
         value, 
-        onChange, 
-        onSubmit, 
-        children 
-    } : Props<T>
+        onFormChange, 
+        onSubmit,
+        submitText, 
+        children,
+        ...boxProps 
+    } : Props<T> & BoxProps
 ) => {
 
     const [page, setPage] = useState(0);
@@ -45,7 +48,7 @@ const MultiPageForm = <T extends unknown>(
 
             return cloneElement(
                 child as ReactElement<any>, 
-                { value, onChange, first, last, onSubmit, onNext, onBack }
+                { value, onChange: onFormChange, first, last, onSubmit, onNext, onBack, submitText }
             );
         }
 
@@ -53,11 +56,11 @@ const MultiPageForm = <T extends unknown>(
     });
 
     return (
-        <Box color="white" bgcolor="background.default">
-            <Box>
+        <Box {...boxProps}>
+            <Box sx={{ height: "10%"}}>
                 <h1>{title}</h1>
             </Box>
-            <Box>
+            <Box sx={{ height: "90%"}}>
                 {childrenWithProps}
             </Box>
         </Box>

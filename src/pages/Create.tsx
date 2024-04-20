@@ -6,6 +6,7 @@ import MultiPageForm from "../comps/ui/forms/MultiPageForm";
 import FormPage from "../comps/ui/forms/FormPage";
 import FormTextField from "../comps/ui/forms/FormTextField";
 import FormDropSelect from "../comps/ui/forms/FormDropSelect";
+import FormCheckSelect from "../comps/ui/forms/FormCheckSelect";
 
 const emptyForm = {
   name: "",
@@ -37,8 +38,11 @@ const Create = () => {
     <MultiPageForm
       title="Create New Organization" 
       value={formData} 
-      onChange={setFormData}
+      onFormChange={setFormData}
       onSubmit={onSubmit}
+      submitText="Create Activity"
+      width="100%"
+      height="600px"
     >
       <FormPage title="Basic Info">
         <FormTextField
@@ -46,8 +50,15 @@ const Create = () => {
           label="Name"
         />
         <FormDropSelect 
-          field="meetingDays"
-          selections={[ {id: "MONDAY", display: "Monday"}, {id: "TUESDAY", display: "Tuesday"}]}
+          field="commitment_level"
+          selections={[ {id: "LOW", display: "Low"}, {id: "HIGH", display: "High"}]}
+          label="Commitment Level"
+        />
+        <FormCheckSelect 
+          field="meeting_days"
+          selections={[ { id: "MONDAY", display: "Monday"}, { id: "TUESDAY", display: "Tuesday"}]}
+          label="Select meeting days"
+          formatter={(choices) => choices.join(",")}
         />
       </FormPage>
     </MultiPageForm>

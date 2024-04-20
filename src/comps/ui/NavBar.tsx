@@ -11,7 +11,7 @@ const navStyles : CSSProperties = {
 }
 
 const titleStyle : CSSProperties = {
-    color: "black",
+    color: 'inherit',
     fontSize: "40px"
 }
 

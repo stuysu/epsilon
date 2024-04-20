@@ -7,11 +7,13 @@ import Pages from "./pages";
 
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { CssBaseline } from "@mui/material";
 
 const App = () => {
   return (
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <ThemeProvider>
+        <CssBaseline />
         <BrowserRouter>
           <UserProvider>
             <Pages />
