@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 
-import { Box, useMediaQuery } from "@mui/material";
+import { Box, useMediaQuery, Typography, TextField } from "@mui/material";
 import { Masonry } from "@mui/lab";
 
 import OrgCard from "../comps/pages/catalog/OrgCard";
@@ -40,9 +40,32 @@ const Catalog = () => {
   }, []);
 
   return (
-    <Box>
-      <h1>Catalog!</h1>
-      <Box sx= {{ width: (isOne || isTwo) ? '100%' : '70%', padding: '20px' }}>
+    <Box sx={{ display: 'flex', position: 'relative', flexWrap: 'wrap'}}>
+      <Box 
+        sx={{ 
+          width: (isOne || isTwo) ? '100%' : '25%', 
+          height: (isOne || isTwo) ? '' : '100vh',
+          padding: '20px',
+          position: (isOne || isTwo) ? 'relative' : 'sticky',
+          top: 0,
+          paddingTop: '40px'
+        }} 
+      >
+        <Box sx={{ width: '100%', height: '50px', display: 'flex', justifyContent: 'center'}}>
+          <TextField label='Search' sx={{ width: '100%' }} />
+        </Box>
+        <Box sx={{ width: '100%', padding: '20px', marginTop: '15px' }}>
+          <Typography>Tags</Typography>
+        </Box>
+        <Box sx={{ width: '100%', padding: '20px', marginTop: '15px' }}>
+          <Typography>Commitment Level</Typography>
+        </Box>
+        <Box sx={{ width: '100%', padding: '20px', marginTop: '15px' }}>
+          <Typography>Meeting Days</Typography>
+        </Box>
+      </Box>
+      <Box sx= {{ width: (isOne || isTwo) ? '100%' : '75%', padding: '20px' }}>
+        <Typography variant='h3'>Catalog</Typography>
         <Masonry columns={columns} spacing={2}>
           {orgs.map(org => {
             if (org.state === "PENDING" || org.state === "LOCKED") return <></>;
