@@ -110,6 +110,11 @@ const Create = () => {
         .upload(filePath, formData.picture);
       
       if (storageError || !storageData) {
+        /* attempt to delete organization */
+        await supabase
+          .from('organizations')
+          .delete()
+          .eq('id', orgId)
         return enqueueSnackbar(
           "Error uploading image to storage. Contact it@stuysu.org for support.",
           { variant: "error" }
