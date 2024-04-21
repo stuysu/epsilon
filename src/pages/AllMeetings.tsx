@@ -4,7 +4,7 @@ import { supabase } from "../supabaseClient";
 
 import { useSnackbar } from "notistack";
 
-import { Box } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
 
 import { DateCalendar } from "@mui/x-date-pickers";
 
@@ -15,10 +15,9 @@ type CachedMeetings = {
   [date: string]: CalendarMeeting[]
 }
 
-const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "October", "September", "November", "December"]
-
 const AllMeetings = () => {
   const { enqueueSnackbar } = useSnackbar();
+  const isMobile = useMediaQuery("(max-width: 500px)");
 
   /* meetings for a given day */
   /* cache after fetching once */
@@ -76,14 +75,32 @@ const AllMeetings = () => {
   return (
     <Box>
       <h1>All Meetings</h1>
-      <Box>
-        <Box>
+      <Box 
+        sx={{ 
+          width: "100%", 
+          display: isMobile ? 'block' : 'flex', 
+          marginBottom: "20px"
+        }}
+      >
+        <Box 
+          sx={{ 
+            width: "100%", 
+            maxWidth: '320px', 
+            minWidth: "250px", 
+            boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px', 
+            marginRight: "10px", 
+            marginLeft: "10px" 
+          }}
+        >
           <DateCalendar 
             views={['day']}
-            onChange={(newValue) => setTime(newValue)} 
+            onChange={(newValue) => setTime(newValue)}
+            sx={{ width: "100%" }}
           />
         </Box>
-        <DaySchedule day={time} meetings={meetings} />
+        <Box sx={{ width: "100%" }}>
+          <DaySchedule day={time} meetings={meetings} />
+        </Box>
       </Box>
     </Box>
   );
