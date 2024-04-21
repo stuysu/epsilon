@@ -29,8 +29,8 @@ const Pages = () => {
             "An app to help students navigate the clubs and organizations at Stuyvesant High School."
           }
         />
-        <meta property={"og:title"} content={"StuyActivities"} />
-        <title>StuyActivities</title>
+        <meta property={"og:title"} content={"Epsilon"} />
+        <title>Epsilon</title>
       </Helmet>
           
       <Suspense fallback={<Loading />}>
