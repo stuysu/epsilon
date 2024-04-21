@@ -11,18 +11,29 @@ import { DateCalendar } from "@mui/x-date-pickers";
 import dayjs, { Dayjs } from "dayjs";
 import DaySchedule from "../comps/pages/allmeetings/DaySchedule";
 
+type CachedMeetings = {
+  [date: string]: CalendarMeeting[]
+}
+
 const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "October", "September", "November", "December"]
 
 const AllMeetings = () => {
   const { enqueueSnackbar } = useSnackbar();
 
   /* meetings for a given day */
+  /* cache after fetching once */
+  const [cachedMeetings, setCachedMeetings] = useState<CachedMeetings>({});
   const [meetings, setMeetings] = useState<CalendarMeeting[]>([]);
 
   /* month adjuster */
   const [time, setTime] = useState<Dayjs>(dayjs());
 
   useEffect(() => {
+    let dayString = `${time.year()}/${time.month()}/${time.date()}`;
+    if (cachedMeetings[dayString]) {
+      return setMeetings(cachedMeetings[dayString]);
+    }
+
     let dayStart = new Date(time.year(), time.month(), time.date());
     let nextDayStart = new Date(time.year(), time.month(), time.date()+1);
 
@@ -55,7 +66,8 @@ const AllMeetings = () => {
         );
       }
 
-      setMeetings(data as any); // weird, typescript thinks the room and organization is an array
+      setCachedMeetings({ ...cachedMeetings, [dayString]: data as any })
+      setMeetings(data as any);
     };
 
     fetchMeetings();
