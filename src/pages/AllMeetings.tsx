@@ -4,7 +4,7 @@ import { supabase } from "../supabaseClient";
 
 import { useSnackbar } from "notistack";
 
-import { Box, useMediaQuery } from "@mui/material";
+import { Box, useMediaQuery, Typography } from "@mui/material";
 
 import { DateCalendar } from "@mui/x-date-pickers";
 
@@ -75,7 +75,7 @@ const AllMeetings = () => {
 
   return (
     <Box>
-      <h1>All Meetings</h1>
+      <Typography variant="h1">All Meetings</Typography>
       <Box 
         sx={{ 
           width: "100%", 
@@ -89,7 +89,8 @@ const AllMeetings = () => {
             width: "100%", 
             maxWidth: '320px', 
             minWidth: "250px", 
-            boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px', 
+            boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
+            borderRadius: '7px', 
             marginRight: "10px", 
           }}
         >

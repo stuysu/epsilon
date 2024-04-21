@@ -22,6 +22,7 @@ const ScheduleMeeting = (
                 width: "95%", 
                 height: "80px", 
                 boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px', 
+                borderRadius: '7px',
                 marginBottom: "15px", 
                 padding: "10px",
                 display: "flex",
