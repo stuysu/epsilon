@@ -69,6 +69,8 @@ const NavBar = () => {
             </Box>
             <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
                 <Box sx={{ width: "200px"}}>
+                    <Link to="/" style={drawerLinkStyle}>Home</Link>
+                    <br />
                     <Link to="/catalog" style={drawerLinkStyle}>Catalog</Link>
                     <br />
                     <Link to="/create" style={drawerLinkStyle}>Create</Link>

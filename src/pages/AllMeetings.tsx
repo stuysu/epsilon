@@ -4,21 +4,49 @@ import { supabase } from "../supabaseClient";
 
 import { useSnackbar } from "notistack";
 
+import { Box } from "@mui/material";
+
+import { DateCalendar } from "@mui/x-date-pickers";
+
+import dayjs, { Dayjs } from "dayjs";
+import DaySchedule from "../comps/pages/allmeetings/DaySchedule";
+
+const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "October", "September", "November", "December"]
+
 const AllMeetings = () => {
   const { enqueueSnackbar } = useSnackbar();
-  const [meetings, setMeetings] = useState<Meeting[]>([]);
+
+  /* meetings for a given day */
+  const [meetings, setMeetings] = useState<CalendarMeeting[]>([]);
+
+  /* month adjuster */
+  const [time, setTime] = useState<Dayjs>(dayjs());
 
   useEffect(() => {
-    let d = new Date();
-    let monthStart = new Date(d.getFullYear(), d.getMonth(), 1);
-    let monthEnd = new Date(d.getFullYear(), d.getMonth() + 1, 0);
+    let dayStart = new Date(time.year(), time.month(), time.date());
+    let nextDayStart = new Date(time.year(), time.month(), time.date()+1);
 
     const fetchMeetings = async () => {
       const { data, error } = await supabase
         .from("meetings")
-        .select()
-        .lte("start_time", monthEnd.toISOString())
-        .gte("start_time", monthStart.toISOString());
+        .select(`
+          id,
+          title,
+          description,
+          is_public,
+          start_time,
+          end_time,
+          rooms (
+            id,
+            name
+          ),
+          organizations (
+            id,
+            name
+          )
+        `)
+        .gte("start_time", dayStart.toISOString())
+        .lt("start_time", nextDayStart.toISOString());
 
       if (error || !data) {
         return enqueueSnackbar(
@@ -27,17 +55,25 @@ const AllMeetings = () => {
         );
       }
 
-      setMeetings(data as Meeting[]);
+      setMeetings(data as any); // weird, typescript thinks the room and organization is an array
     };
 
     fetchMeetings();
-  }, []);
+  }, [time]);
 
   return (
-    <div>
+    <Box>
       <h1>All Meetings</h1>
-      <pre>{JSON.stringify(meetings, undefined, 4)}</pre>
-    </div>
+      <Box>
+        <Box>
+          <DateCalendar 
+            views={['day']}
+            onChange={(newValue) => setTime(newValue)} 
+          />
+        </Box>
+        <DaySchedule day={time} meetings={meetings} />
+      </Box>
+    </Box>
   );
 };
 
