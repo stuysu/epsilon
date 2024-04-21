@@ -22,6 +22,7 @@ type CalendarMeeting = {
   },
   organizations: {
     id: number,
-    name: string
+    name: string,
+    picture: string
   }
 }

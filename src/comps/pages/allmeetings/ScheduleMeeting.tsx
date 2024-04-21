@@ -1,5 +1,7 @@
+import { useState } from "react";
 import { Box, Button } from "@mui/material";
 import dayjs from "dayjs";
+import MeetingPreview from "../../ui/meetings/MeetingPreview";
 
 type Props = {
     meeting: CalendarMeeting
@@ -10,6 +12,7 @@ const ScheduleMeeting = (
         meeting
     } : Props
 ) => {
+    const [open, setOpen] = useState(false);
     let startTime = dayjs(meeting.start_time).format('LT');
     let endTime = dayjs(meeting.end_time).format('LT');
 
@@ -47,10 +50,23 @@ const ScheduleMeeting = (
                     marginRight: "10px"
                 }}
             >
-                <Button variant="contained">
+                <Button variant="contained" onClick={() => setOpen(true)}>
                     View
                 </Button>
             </Box>
+            <MeetingPreview 
+                id={meeting.id}
+                title={meeting.title}
+                open={open}
+                isPublic={meeting.is_public}
+                description={meeting.description}
+                startTime={meeting.start_time}
+                endTime={meeting.end_time}
+                organizationPicture={meeting.organizations?.picture}
+                organizationName={meeting.organizations?.name}
+                roomName={meeting.rooms?.name}
+                onClose={() => setOpen(false)}
+            />
         </Box>
     )
 }
