@@ -7,9 +7,17 @@ import { Masonry } from "@mui/lab";
 import OrgCard from "../comps/pages/catalog/OrgCard";
 import { useSnackbar } from "notistack";
 
+import InfiniteScroll from "react-infinite-scroll-component";
+
+import Loading from "../comps/ui/Loading";
+
 const Catalog = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [orgs, setOrgs] = useState<Partial<Organization>[]>([]);
+
+  const [seed, setSeed] = useState(Math.random());
+  const [offset, setOffset] = useState(0);
+  const [more, setMore] = useState(true);
 
   const isTwo = useMediaQuery("(max-width: 1000px)");
   const isOne = useMediaQuery("(max-width: 500px)");
@@ -18,33 +26,39 @@ const Catalog = () => {
   if (isTwo) columns = 2;
   if (isOne) columns = 1;
 
+  const getOrgs = async () => {
+    if (!more) return;
+
+    const { data, error } = await supabase
+      .rpc(
+        'get_random_organizations',
+        { seed, query_offset: offset, query_limit: 10 }
+      );
+                    
+
+    if (error || !data) {
+      enqueueSnackbar("Error fetching organizations. Contact it@stuysu.org for support.", { variant: "error" });
+      return;
+    }
+
+    if (!data.length) {
+      setMore(false);
+    }
+
+    setOffset(offset + data.length);
+    setOrgs([...orgs, ...data]);
+  };
+
   useEffect(() => {
-    const getOrgs = async () => {
-      const { data, error } = await supabase.from("organizations").select(`
-                        id,
-                        name,
-                        url,
-                        picture,
-                        mission,
-                        state
-                    `);
-
-      if (error) {
-        enqueueSnackbar("Error fetching organizations. Contact it@stuysu.org for support.", { variant: "error" });
-        return;
-      }
-
-      setOrgs(data);
-    };
     getOrgs();
-  }, []);
+  }, [seed]);
 
   return (
     <Box sx={{ display: 'flex', position: 'relative', flexWrap: 'wrap'}}>
       <Box 
         sx={{ 
           width: (isOne || isTwo) ? '100%' : '25%', 
-          height: (isOne || isTwo) ? '' : '100vh',
+          height: (isOne || isTwo) ? ' ' : '100vh',
           padding: '20px',
           position: (isOne || isTwo) ? 'relative' : 'sticky',
           top: 0,
@@ -64,16 +78,29 @@ const Catalog = () => {
           <Typography>Meeting Days</Typography>
         </Box>
       </Box>
-      <Box sx= {{ width: (isOne || isTwo) ? '100%' : '75%', padding: '20px' }}>
+      <Box sx= {{ width: (isOne || isTwo) ? '100%' : '75%', padding: '20px', position: 'relative' }}>
         <Typography variant='h3'>Catalog</Typography>
-        <Masonry columns={columns} spacing={2}>
-          {orgs.map(org => {
-            if (org.state === "PENDING" || org.state === "LOCKED") return <></>;
-            return (
-              <OrgCard organization={org} key={org.id} />
-            );
-          })}
-        </Masonry>
+        <InfiniteScroll
+          dataLength={orgs.length}
+          next={getOrgs}
+          hasMore={more}
+          loader={<Loading />}
+          endMessage={
+            <Box>
+              <Typography align='center' variant='h3'>Thats it! You viewed every club! Stop procrastinating.</Typography>
+            </Box>
+          }
+          style={{ overflow: 'hidden'}}
+        >
+          <Masonry columns={columns} spacing={2}>
+            {orgs.map(org => {
+              if (org.state === "PENDING" || org.state === "LOCKED") return <></>;
+              return (
+                <OrgCard organization={org} key={org.id} />
+              );
+            })}
+          </Masonry>
+        </InfiniteScroll>
       </Box>
     </Box>
   );
