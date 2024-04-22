@@ -11,6 +11,12 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 import Loading from "../comps/ui/Loading";
 
+/* 
+If there are search params
+- reset offset to 0
+- new function that doesn't order by random, but gets by search params
+- should work with infinite scroll 
+*/
 const Catalog = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [orgs, setOrgs] = useState<Partial<Organization>[]>([]);
@@ -50,6 +56,7 @@ const Catalog = () => {
   };
 
   useEffect(() => {
+    setSeed(0);
     getOrgs();
   }, [seed]);
 
@@ -87,7 +94,7 @@ const Catalog = () => {
           loader={<Loading />}
           endMessage={
             <Box>
-              <Typography align='center' variant='h3'>Thats it! You viewed every club! Stop procrastinating.</Typography>
+              <Typography align='center' variant='h3'>Total of {orgs.length} Organizations</Typography>
             </Box>
           }
           style={{ overflow: 'hidden'}}

@@ -143,17 +143,20 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
           let avatarURL = supabaseUser.user_metadata.avatar_url;
           user.picture = avatarURL;
 
-          ({ error } = await supabase
-            .from("users")
-            .update({ picture: avatarURL })
-            .eq("id", user.id));
+          let { error: profileUpdateError } = await supabase
+            .rpc(
+              "update_profile_picture",
+              { profile_url: avatarURL }
+            );
 
-          if (error) {
+          if (profileUpdateError) {
             enqueueSnackbar(
               "Unable to save profile picture to server. Please contact it@stuysu.org for support.",
               { variant: "error" }
             );
           }
+
+          enqueueSnackbar("Profile Picture Updated!", { variant: 'success' })
         }
 
         /* 
