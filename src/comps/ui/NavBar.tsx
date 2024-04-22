@@ -75,8 +75,12 @@ const NavBar = () => {
                     <br />
                     <Link to="/create" style={drawerLinkStyle}>Create</Link>
                     <br />
-                    <Link to="/admin" style={drawerLinkStyle}>Admin</Link>
-                    <br />
+                    {user.admin && (
+                        <>
+                            <Link to="/admin" style={drawerLinkStyle}>Admin</Link>
+                            <br />
+                        </>
+                    )}
                     <Link to="/meetings" style={drawerLinkStyle}>Meetings</Link>
                     <br />
                     {
