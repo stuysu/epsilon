@@ -16,7 +16,7 @@ const App = () => {
     <LocalizationProvider dateAdapter={AdapterDayjs}>
       <ThemeProvider>
         <CssBaseline />
-        <SnackbarProvider maxSnack={4} autoHideDuration={3000}>
+        <SnackbarProvider maxSnack={4} autoHideDuration={3000} preventDuplicate>
           <BrowserRouter>
             <UserProvider>
               <Pages />
