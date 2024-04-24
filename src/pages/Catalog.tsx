@@ -11,18 +11,30 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 import Loading from "../comps/ui/Loading";
 
+/*
+function getUnique(arr : Partial<Organization>[]) {
+  let obj : {[k: number] : any} = {};
+  for (let thing of arr) {
+    obj[thing.id || 0] = true;
+  }
+
+  return obj;
+}
+*/
+
 /* 
 If there are search params
-- reset offset to 0
+- reset orgs to empty
 - new function that doesn't order by random, but gets by search params
 - should work with infinite scroll 
 */
+const querySize = 10;
 const Catalog = () => {
   const { enqueueSnackbar } = useSnackbar();
   const [orgs, setOrgs] = useState<Partial<Organization>[]>([]);
+  const [offset, setOffset] = useState(0);
 
   const [seed, setSeed] = useState(Math.random());
-  const [offset, setOffset] = useState(0);
   const [more, setMore] = useState(true);
 
   const isTwo = useMediaQuery("(max-width: 1000px)");
@@ -33,12 +45,13 @@ const Catalog = () => {
   if (isOne) columns = 1;
 
   const getOrgs = async () => {
-    if (!more) return;
+    const originalOffset = offset;
+    setOffset(offset + querySize);
 
     const { data, error } = await supabase
       .rpc(
         'get_random_organizations',
-        { seed, query_offset: offset, query_limit: 10 }
+        { seed, query_offset: originalOffset, query_limit: querySize }
       );
                     
 
@@ -51,14 +64,22 @@ const Catalog = () => {
       setMore(false);
     }
 
-    setOffset(offset + data.length);
+    /* ONLY SET ORGS THAT DON'T EXIST YET */
+
     setOrgs([...orgs, ...data]);
   };
 
   useEffect(() => {
-    setSeed(0);
     getOrgs();
   }, [seed]);
+
+  /*
+  Testing
+  useEffect(() => {
+    console.log(`${orgs.length} orgs!`)
+    console.log(`${Object.keys(getUnique(orgs)).length} unique orgs!`);
+  }, [orgs])
+  */
 
   return (
     <Box sx={{ display: 'flex', position: 'relative', flexWrap: 'wrap'}}>
@@ -100,10 +121,10 @@ const Catalog = () => {
           style={{ overflow: 'hidden'}}
         >
           <Masonry columns={columns} spacing={2}>
-            {orgs.map(org => {
+            {orgs.map((org, i) => {
               if (org.state === "PENDING" || org.state === "LOCKED") return <></>;
               return (
-                <OrgCard organization={org} key={org.id} />
+                <OrgCard organization={org} key={i} />
               );
             })}
           </Masonry>
