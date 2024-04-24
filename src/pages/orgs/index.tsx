@@ -58,7 +58,7 @@ const OrgRouter = () => {
                     state,
                     joinable,
                     join_instructions,
-                    memberships!memberships_organization_id_fkey (
+                    memberships (
                         id,
                         role,
                         role_name,
