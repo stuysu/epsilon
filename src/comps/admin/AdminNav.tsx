@@ -9,6 +9,8 @@ const AdminNav = () => {
       <Link to="/admin/approve-edit">Approve Edits</Link>
       <br />
       <Link to="/admin/strikes">Strikes</Link>
+      <br />
+      <Link to="/admin/send-email">Send Email</Link>
     </Box>
   );
 };
