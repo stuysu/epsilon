@@ -23,7 +23,6 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
   supabase.auth.onAuthStateChange((event) => {
     if (event !== "SIGNED_OUT") {
     } else {
-      enqueueSnackbar("Signed Out!");
       setValue({
         signed_in: false,
         admin: false,
