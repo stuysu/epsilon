@@ -11,6 +11,7 @@ import FormCheckSelect from "../comps/ui/forms/FormCheckSelect";
 import { supabase } from "../supabaseClient";
 import FormUpload from "../comps/ui/forms/FormUpload";
 import { useSnackbar } from "notistack";
+import FormSection from "../comps/ui/forms/FormSection";
 
 type FormType = {
   name: string,
@@ -173,27 +174,29 @@ const Create = () => {
       width="100%"
     >
       <FormPage title="Basic Info">
-        <FormTextField 
-            label="Name"
-            field="name"
+        <FormSection bgcolor='red'>
+          <FormTextField 
+              label="Name"
+              field="name"
+              required
+              requirements={{
+                minChar: 3,
+                maxChar: 40,
+                onlyAlpha: true
+              }}
+          />
+          <FormTextField
+            label="Url"
+            field="url"
             required
             requirements={{
               minChar: 3,
               maxChar: 40,
+              disableSpaces: true,
               onlyAlpha: true
             }}
-        />
-        <FormTextField
-          label="Url"
-          field="url"
-          required
-          requirements={{
-            minChar: 3,
-            maxChar: 40,
-            disableSpaces: true,
-            onlyAlpha: true
-          }}
-        />
+          />
+        </FormSection>
         <FormDropSelect 
           label="Commitment Level"
           field="commitment_level"

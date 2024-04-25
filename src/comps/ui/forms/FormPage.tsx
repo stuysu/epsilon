@@ -8,7 +8,9 @@ import {
     cloneElement 
 } from "react";
 
-import { Box, BoxProps, Button } from "@mui/material";
+import { Box, BoxProps, Button, Typography } from "@mui/material";
+
+import FormSection from "./FormSection";
 
 type Props<T> = {
     title: string;
@@ -46,28 +48,45 @@ const FormPage = <T extends unknown>(
         }
     }
 
-    const childrenWithProps = Children.map(children, (child, index) => {
-        if (isValidElement(child)) {
+    const parseChildren = (c : ReactNode) => {
+        let childs : ReactNode[] = [];
 
-            let childField = child.props.field as (keyof T);
-            let childValue = value?.[childField];
+        Children.map(c, (child, index) => {
+            if (isValidElement(child)) {
 
-            return cloneElement(
-                child as ReactElement<any>, 
-                { value: childValue, onChange: childOnChange }
-            );
-        }
+                if (child.type === FormSection) {
+                    let parsedChildren = parseChildren(child.props.children);
+                    childs.push(
+                        <FormSection {...child.props}>
+                            {parsedChildren}
+                        </FormSection>
+                    );
+                    return;
+                }
+    
+                let childField = child.props.field as (keyof T);
+                let childValue = value?.[childField];
+    
+                childs.push(cloneElement(
+                    child as ReactElement<any>, 
+                    { value: childValue, onChange: childOnChange }
+                ));
+                return;
+            }
 
-        return child;
-    });
+            childs.push(child);
+        })
+
+        return childs;
+    }
 
     return (
         <Box sx={{ height: "100%", width: "800px" }}>
             <Box sx={{ height: "10%", width: "100%"}}>
-                <h3>{title}</h3>
+                <Typography variant='h3'>{title}</Typography>
             </Box>
-            <Box  sx={{ width: "100%" }}>
-                {childrenWithProps}
+            <Box  sx={{ width: "100%", display: 'flex', flexWrap: 'wrap' }}>
+                {parseChildren(children)}
             </Box>
             <Box sx={{ height: "10%", width: "100%" }}>
                 <Box sx={{ maxWidth: "500px", display: 'flex', justifyContent: 'space-around'}}>
