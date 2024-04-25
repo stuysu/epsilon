@@ -154,8 +154,7 @@ const OrgEditor = ({
           uniqueness: undefined,
           meeting_schedule: undefined,
           meeting_days: undefined,
-          commitment_level: undefined,
-          keywords: undefined,
+          commitment_level: undefined
         });
       } else {
         /* update client without sending another call */

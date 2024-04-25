@@ -24,8 +24,7 @@ const Organization = () => {
     uniqueness: undefined,
     meeting_schedule: undefined,
     meeting_days: undefined,
-    commitment_level: undefined,
-    keywords: undefined
+    commitment_level: undefined
   });
 
   // eslint-disable-next-line

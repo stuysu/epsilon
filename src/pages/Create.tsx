@@ -25,8 +25,8 @@ type FormType = {
   uniqueness: string,
   meeting_schedule: string,
   meeting_days: string,
-  keywords: string,
-  tags: string,
+  keywords: string[],
+  tags: string[],
   commitment_level: string,
   join_instructions: string
 }
@@ -43,8 +43,8 @@ const emptyForm : FormType = {
   uniqueness: "",
   meeting_schedule: "",
   meeting_days: "",
-  keywords: "",
-  tags: "",
+  keywords: [],
+  tags: [],
   commitment_level: "",
   join_instructions: ""
 }
@@ -78,8 +78,6 @@ const Create = () => {
       uniqueness: formData.uniqueness,
       meeting_schedule: formData.meeting_schedule,
       meeting_days: formData.meeting_days,
-      keywords: formData.keywords,
-      tags: formData.tags,
       commitment_level: formData.commitment_level,
       join_instructions: formData.join_instructions,
     }
@@ -171,10 +169,15 @@ const Create = () => {
       onFormChange={setFormData}
       onSubmit={createActivity}
       submitText="Create Activity"
-      width="100%"
+      sx={{
+        width: '100%',
+        display: 'flex',
+        justifyContent: 'center',
+        flexWrap: 'wrap'
+      }}
     >
       <FormPage title="Basic Info">
-        <FormSection bgcolor='red'>
+        <FormSection sx={{ width: '100%', display: 'flex' }}>
           <FormTextField 
               label="Name"
               field="name"
@@ -195,31 +198,35 @@ const Create = () => {
               disableSpaces: true,
               onlyAlpha: true
             }}
+            sx={{ marginLeft: '20px'}}
           />
         </FormSection>
-        <FormDropSelect 
-          label="Commitment Level"
-          field="commitment_level"
-          required
-          selections={[
-            {
-              id: 'NONE',
-              display: 'None'
-            },
-            {
-              id: 'LOW',
-              display: "Low"
-            },
-            {
-              id: 'MEDIUM',
-              display: "Medium"
-            },
-            {
-              id: 'HIGH',
-              display: "High"
-            }
-          ]}
-        />
+        <FormSection sx={{ width: '100%'}}>
+          <FormDropSelect 
+            label="Commitment Level"
+            field="commitment_level"
+            required
+            selections={[
+              {
+                id: 'NONE',
+                display: 'None'
+              },
+              {
+                id: 'LOW',
+                display: "Low"
+              },
+              {
+                id: 'MEDIUM',
+                display: "Medium"
+              },
+              {
+                id: 'HIGH',
+                display: "High"
+              }
+            ]}
+            sx={{ width: '100%'}}
+          />
+        </FormSection>
         <FormTextField 
           label="Socials (optional)"
           field="socials"
@@ -313,7 +320,6 @@ const Create = () => {
               { id: 'THURSDAY', display: "Thursday" },
               { id: 'FRIDAY', display: "Friday"}
             ]}
-            formatter={choices => choices.join(',')}
           />
       </FormPage>
     </MultiPageForm>

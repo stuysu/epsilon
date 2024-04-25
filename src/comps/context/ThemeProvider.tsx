@@ -37,16 +37,16 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
         palette: {
           mode: prefersDarkMode ? "dark" : "light",
           primary: {
-            main: "#e66767",
+            main: "#3498db",
             contrastText: "#fff",
           },
           secondary: {
-            main: "#546de5",
+            main: "#9b59b6",
             contrastText: "#fff",
           },
           background: {
-            default: prefersDarkMode ? "#262630" : "#FFFFFF",
-            paper: prefersDarkMode ? "#262630" : "#FFFFFF",
+            default: prefersDarkMode ? "#2d3436" : "#FFFFFF",
+            paper: prefersDarkMode ? "#2d3436" : "#FFFFFF",
           },
         },
         typography: {

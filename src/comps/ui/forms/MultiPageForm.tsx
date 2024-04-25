@@ -1,4 +1,4 @@
-import { Box, BoxProps } from "@mui/material";
+import { Box, BoxProps, Typography } from "@mui/material";
 import { 
     Dispatch, 
     SetStateAction, 
@@ -56,8 +56,8 @@ const MultiPageForm = <T extends unknown>(
     /* TODO: create a ui that tracks the current page you are on */
     return (
         <Box {...boxProps}>
-            <Box sx={{ height: "10%", width: "100%"}}>
-                <h2>{title}</h2>
+            <Box sx={{ height: "10%", width: "100%", padding: '20px'}}>
+                <Typography variant='h2' align='center'>{title}</Typography>
             </Box>
             
             {formPage}

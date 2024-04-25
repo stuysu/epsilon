@@ -14,7 +14,6 @@ interface Organization {
   state: "PENDING" | "LOCKED" | "UNLOCKED" | "ADMIN";
   joinable?: boolean;
   join_instructions?: string;
-  tags?: string;
   memberships?: Partial<Membership>[];
 }
 
@@ -32,7 +31,6 @@ interface OrganizationEdit {
   meeting_schedule?: string;
   meeting_days?: string;
   commitment_level?: "NONE" | "LOW" | "MEDIUM" | "HIGH";
-  keywords?: string;
 }
 
 /* FOR ADMIN PANEL (Approving Organization Edit Requests)*/

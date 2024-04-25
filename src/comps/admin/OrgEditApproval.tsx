@@ -20,8 +20,7 @@ const editFields: EditKey[] = [
   "uniqueness",
   "meeting_schedule",
   "meeting_days",
-  "commitment_level",
-  "keywords",
+  "commitment_level"
 ];
 
 const OrgEditApproval = ({

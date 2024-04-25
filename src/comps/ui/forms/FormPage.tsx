@@ -81,7 +81,7 @@ const FormPage = <T extends unknown>(
     }
 
     return (
-        <Box sx={{ height: "100%", width: "800px" }}>
+        <Box sx={{ height: "100%", maxWidth: "800px", width: '100%', padding: '20px' }}>
             <Box sx={{ height: "10%", width: "100%"}}>
                 <Typography variant='h3'>{title}</Typography>
             </Box>
