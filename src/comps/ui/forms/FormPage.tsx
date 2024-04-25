@@ -11,6 +11,7 @@ import {
 import { Box, BoxProps, Button, Typography } from "@mui/material";
 
 import FormSection from "./FormSection";
+import FormRender from "./FormRender";
 
 type Props<T> = {
     title: string;
@@ -61,6 +62,11 @@ const FormPage = <T extends unknown>(
                             {parsedChildren}
                         </FormSection>
                     );
+                    return;
+                }
+
+                if (child.type === FormRender) {
+                    childs.push(child);
                     return;
                 }
     

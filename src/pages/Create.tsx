@@ -2,6 +2,7 @@ import { CSSProperties, useContext, useState } from "react";
 import UserContext from "../comps/context/UserContext";
 
 import { useNavigate } from "react-router-dom";
+import { useMediaQuery } from "@mui/material";
 import MultiPageForm from "../comps/ui/forms/MultiPageForm";
 import FormPage from "../comps/ui/forms/FormPage";
 import FormTextField from "../comps/ui/forms/FormTextField";
@@ -63,6 +64,7 @@ const Create = () => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState<FormType>(emptyForm);
+  const isMobile = useMediaQuery("(max-width: 620px)");
 
   const createActivity = async () => {
     let payload = {
@@ -177,7 +179,7 @@ const Create = () => {
       }}
     >
       <FormPage title="Basic Info">
-        <FormSection sx={{ width: '100%', display: 'flex' }}>
+        <FormSection sx={{ width: '100%', display: 'flex', flexWrap: isMobile ? 'wrap' : 'nowrap' }} >
           <FormTextField 
               label="Name"
               field="name"
@@ -187,6 +189,7 @@ const Create = () => {
                 maxChar: 40,
                 onlyAlpha: true
               }}
+              sx={{ width: isMobile ? '100%' : '50%' }}
           />
           <FormTextField
             label="Url"
@@ -198,10 +201,14 @@ const Create = () => {
               disableSpaces: true,
               onlyAlpha: true
             }}
-            sx={{ marginLeft: '20px'}}
+            sx={{ 
+              marginLeft: isMobile ? '' : '20px',
+              marginTop: isMobile ? '20px' : '', 
+              width: isMobile ? '100%' : '50%' 
+            }}
           />
         </FormSection>
-        <FormSection sx={{ width: '100%'}}>
+        <FormSection sx={{ width: '100%', marginTop: '20px' }}>
           <FormDropSelect 
             label="Commitment Level"
             field="commitment_level"
