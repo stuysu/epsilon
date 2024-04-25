@@ -1,5 +1,4 @@
 import { CheckboxProps, FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox } from "@mui/material"
-import { useEffect, useState } from "react"
 
 type SelectType = {
     id: string,
@@ -8,16 +7,13 @@ type SelectType = {
 
 type Props = {
     field: string,
-    value?: string,
+    value?: string[],
     label?: string,
     required?: boolean,
     description?: string,
-    formatter?: (choices : string[]) => any
-    onChange?: (field: string, updatedValue: string) => void
+    onChange?: (field: string, updatedSelections: string[]) => void
     selections: SelectType[]
 }
-
-let order = ['MONDAY', 'TUESDAY', 'WEDNESDAY', 'THURSDAY', 'FRIDAY']
 
 const FormCheckSelect = (
     {
@@ -26,21 +22,20 @@ const FormCheckSelect = (
         label,
         required,
         description,
-        formatter,
         onChange,
         selections,
         ...checkboxProps
     } : Props & CheckboxProps
 ) => {
-    let checked = value?.split(",") || []
+    let checked : string[] = value || [];
 
     const checkboxUpdate = (newSelections : string[]) => {
         if (!onChange) return;
         
         newSelections = newSelections
-            .filter(v => v && v.length)
-            .sort((a, b) => order.findIndex(v => v === a) - order.findIndex(v => v === b))
-        onChange(field, formatter ? formatter(newSelections) : newSelections.join(","))
+            .filter(v => v && v.length);
+
+        onChange(field, newSelections)
     }
 
     return (
