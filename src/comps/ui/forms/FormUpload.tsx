@@ -1,32 +1,37 @@
 import { ChangeEvent } from "react";
 
-import { Box } from "@mui/material";
+import { Box, BoxProps, Button, Typography } from "@mui/material";
 
-type FileType = "image/png" | "image/jpeg" | "image/webp"
+type FileType = "image/png" | "image/jpeg" | "image/webp" | "image/*"
 
 type Requirements = {
-    maxSize: [number, "MB"],
-    types: FileType[]
+    maxSize?: [number, "MB"],
+    types?: FileType[]
 }
 
 type Props = {
     value?: File,
     field: string,
+    required?: boolean,
     requirements?: Requirements,
-    display?: boolean,
-    onChange?: (field: string, updatedValue: File) => void
+    preview?: boolean,
+    onChange?: (field: string, updatedValue: File | undefined) => void
 }
 
 const FormUpload = (
     { 
         value, 
         field,
+        required,
         requirements, 
-        display,
-        onChange 
+        preview,
+        onChange,
+        ...boxProps 
     } : 
-    Props
+    Props & BoxProps
 ) => {
+    const hasFile = value ? true : false;
+
     const fileChanged = (event: ChangeEvent<HTMLInputElement>) => {
         if (!event.target.files) return;
         if (!onChange) return;
@@ -35,18 +40,65 @@ const FormUpload = (
     }
 
     return (
-        <Box>
+        <Box 
+            {...boxProps}
+            sx={{
+                width: '100%',
+                height: hasFile ? '220px' : '100px',
+                borderRadius: '7px',
+                padding: '10px',
+                display: 'flex',
+                flexWrap: 'wrap',
+                position: 'relative',
+                ...boxProps.sx
+            }}
+        >
+            
+            <Box sx={{ width: '100px', height: '100%', position: 'relative', padding: '10px' }}>
+                <Button variant='contained' component='label'>
+                    Upload
+                    <input
+                        type="file"
+                        accept={requirements?.types ? requirements.types.join(",") : "*/*"}
+                        id='input-file-upload'
+                        onChange={fileChanged}
+                        value={value?.webkitRelativePath}
+                        hidden
+                    />
+                </Button>
+                <Typography>{value?.name}</Typography>
+
+                {hasFile && (
+                    <Button
+                        onClick={() => onChange?.(field, undefined)} 
+                        variant='contained'
+                        sx={{
+                            position: 'absolute',
+                            bottom: '10px',
+                            left: '10px'
+                        }}
+                    >
+                        Remove
+                    </Button>
+                )}
+                
+            </Box>
             { 
-                (display && value) && (
-                    <Box>
-                        <img src={value ? URL.createObjectURL(value) : ""} width="100px" height="100px" />
+                (preview && hasFile) && (
+                    <Box sx={{ 
+                        width: '200px', 
+                        height: '200px', 
+                        borderRadius: '100%',
+                        position: 'absolute',
+                        right: '20px'
+                    }}>
+                        <img 
+                            src={value ? URL.createObjectURL(value) : ""} width="200px" height="200px"
+                            style={{ borderRadius: '100%' }} 
+                        />
                     </Box>
                 )
             }
-            <input
-                type="file"
-                onChange={fileChanged}
-            />
         </Box>
     )
 }

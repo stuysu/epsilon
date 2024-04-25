@@ -94,11 +94,13 @@ const FormPage = <T extends unknown>(
             <Box  sx={{ width: "100%", display: 'flex', flexWrap: 'wrap' }}>
                 {parseChildren(children)}
             </Box>
-            <Box sx={{ height: "10%", width: "100%" }}>
-                <Box sx={{ maxWidth: "500px", display: 'flex', justifyContent: 'space-around'}}>
+            <Box sx={{ height: "10%", width: "100%", marginTop: '20px', display: 'flex', flexWrap: 'wrap' }}>
+                <Box sx={{ width: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                     {
                         !first && <Button onClick={onBack} variant="contained">Back</Button>
                     }
+                </Box>
+                <Box sx={{ width: '50%', display: 'flex', justifyContent: 'center', alignItems: 'center'}}>
                     {
                         last ?
                         (

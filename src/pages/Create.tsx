@@ -2,7 +2,7 @@ import { CSSProperties, useContext, useState } from "react";
 import UserContext from "../comps/context/UserContext";
 
 import { useNavigate } from "react-router-dom";
-import { useMediaQuery } from "@mui/material";
+import { Typography, useMediaQuery } from "@mui/material";
 import MultiPageForm from "../comps/ui/forms/MultiPageForm";
 import FormPage from "../comps/ui/forms/FormPage";
 import FormTextField from "../comps/ui/forms/FormTextField";
@@ -51,8 +51,7 @@ const emptyForm : FormType = {
 }
 
 const multilineStyle : CSSProperties = {
-  width: "50%",
-  minWidth: "500px",
+  width: "100%",
   display: "flex",
   marginTop: "20px"
 }
@@ -178,6 +177,13 @@ const Create = () => {
         flexWrap: 'wrap'
       }}
     >
+      <FormPage title="Before you start">
+        <Typography variant='body1'>
+        Before you begin the chartering process, make sure to read through the Clubs & Pubs Rules, which all Activities must follow.<br/><br/>
+        Once you’re confident that your Activity abides by all the regulations, log in to your StuyActivities account (You've already done that!) and fill out the Chartering form below. Keep in mind that your charter will be public, so do your best to provide helpful, substantive responses to the questions, and avoid including confusing, inappropriate, or incorrect information. <br/><br/>
+        Once you’ve submitted your club’s charter, please allow up to two weeks for SU Clubs & Pubs Administrators to review your charter. Unless there are any issues with your charter (i.e. lack of compliance with the rules or unclear submissions) the SU Admins will approve it. Once your activity is approved, it will appear in the StuyActivities Catalog, and you can begin adding members and scheduling meetings. If you have any questions or concerns regarding the chartering process, please reach out to us at clubpub@stuysu.org. Happy chartering!
+        </Typography>
+      </FormPage>
       <FormPage title="Basic Info">
         <FormSection sx={{ width: '100%', display: 'flex', flexWrap: isMobile ? 'wrap' : 'nowrap' }} >
           <FormTextField 
@@ -234,14 +240,22 @@ const Create = () => {
             sx={{ width: '100%'}}
           />
         </FormSection>
-        <FormTextField 
-          label="Socials (optional)"
-          field="socials"
-        />
-
+        <FormSection sx={{ width: '100%', marginTop: '20px'}}>
+          <FormTextField 
+            label="Socials (optional)"
+            field="socials"
+            sx={{ width: '100%' }}
+          />
+        </FormSection>
         <FormUpload 
           field="picture"
-          display
+          requirements={{
+            maxSize: [5, 'MB'],
+            types: ['image/*']
+          }}
+          preview
+          bgcolor="secondary.main"
+          sx={{ marginTop: '20px' }}
         />
       </FormPage>
 
@@ -317,17 +331,19 @@ const Create = () => {
             rows={4}
             description={`Something like "Our meeting schedule varies throughout the year, but we meet at least once a month and up to 3 times in the Spring."`}
           />
-          <FormCheckSelect 
-            label="Meeting Days"
-            field="meeting_days"
-            selections={[
-              { id: 'MONDAY', display: 'Monday' },
-              { id: 'TUESDAY', display: 'Tuesday' },
-              { id: 'WEDNESDAY', display: 'Wednesday' },
-              { id: 'THURSDAY', display: "Thursday" },
-              { id: 'FRIDAY', display: "Friday"}
-            ]}
-          />
+          <FormSection sx={{ marginTop: '20px'}}>
+            <FormCheckSelect 
+              label="Meeting Days"
+              field="meeting_days"
+              selections={[
+                { id: 'MONDAY', display: 'Monday' },
+                { id: 'TUESDAY', display: 'Tuesday' },
+                { id: 'WEDNESDAY', display: 'Wednesday' },
+                { id: 'THURSDAY', display: "Thursday" },
+                { id: 'FRIDAY', display: "Friday"}
+              ]}
+            />
+          </FormSection>
       </FormPage>
     </MultiPageForm>
   )
