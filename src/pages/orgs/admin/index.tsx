@@ -13,6 +13,7 @@ import Strikes from "./Strikes";
 import Organization from "./Organization";
 
 import OrgAdminNav from "../../../comps/pages/orgs/admin/OrgAdminNav";
+import { Box } from "@mui/material";
 
 const OrgAdminRouter = () => {
   const user = useContext<UserContextType>(UserContext);
@@ -31,7 +32,7 @@ const OrgAdminRouter = () => {
     isOrgAdmin = true;
 
   return (
-    <div>
+    <Box>
       {isOrgAdmin ? (
         <Fragment>
           <OrgAdminNav />
@@ -48,7 +49,7 @@ const OrgAdminRouter = () => {
       ) : (
         <div>You don't have access to this page</div>
       )}
-    </div>
+    </Box>
   );
 };
 

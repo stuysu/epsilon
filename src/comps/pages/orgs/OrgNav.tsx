@@ -1,7 +1,6 @@
-import { Fragment, useContext } from "react";
-import { Link } from "react-router-dom";
+import { useContext } from "react";
 
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 
 import OrgContext from "../../context/OrgContext";
 import UserContext from "../../context/UserContext";
@@ -9,10 +8,13 @@ import UserContext from "../../context/UserContext";
 import { supabase } from "../../../supabaseClient";
 import { useSnackbar } from "notistack";
 
-const OrgNav = () => {
+import { useNavigate } from "react-router-dom";
+
+const OrgNav = ({ isMobile } : { isMobile: boolean }) => {
   const organization = useContext<OrgContextType>(OrgContext);
   const user = useContext<UserContextType>(UserContext);
   const { enqueueSnackbar } = useSnackbar();
+  const navigate = useNavigate();
   const main = `/${organization.url}`;
 
   const isInOrg: boolean = organization.memberships?.find(
@@ -92,9 +94,28 @@ const OrgNav = () => {
   if (isCreator) disabled = true;
   if (!isInOrg && !organization.joinable) disabled = true;
 
+  let navLinks = [
+    main,
+    `${main}/charter`,
+    `${main}/meetings`,
+    `${main}/members`
+  ]
+
+  let navNames = [
+    'Overview',
+    'Charter',
+    'Meetings',
+    'Members',
+    'Admin'
+  ]
+
+  if (isAdmin) {
+    navLinks.push(`${main}/admin`)
+  }
+
   return (
-    <div>
-      <Box bgcolor="gray">
+    <Box sx={{ minWidth: '350px', width: isMobile ? '100%' : '', padding: '20px'}}>
+      <Box>
         <Button
           variant="contained"
           onClick={handleInteract}
@@ -104,21 +125,38 @@ const OrgNav = () => {
         </Button>
       </Box>
 
-      <br />
-      <Link to={main}>Overview</Link>
-      <br />
-      <Link to={`${main}/charter`}>Charter</Link>
-      <br />
-      <Link to={`${main}/meetings`}>Meetings</Link>
-      <br />
-      <Link to={`${main}/members`}>Members</Link>
-      <br />
-      {isAdmin ? (
-        <Link to={`${main}/admin`}>Admin</Link>
-      ) : (
-        <Fragment></Fragment>
-      )}
-    </div>
+      <Box sx={{ width: '100%', display: 'flex', flexWrap: 'wrap'}}>
+        {
+          navLinks.map(
+            (to, i) => (
+              <Box 
+                onClick={() => {
+                  navigate(to);
+                }} 
+                sx={{
+                  width: '100%',
+                  height: '60px',
+                  display: 'flex',
+                  alignItems: 'center',
+                  color: 'inherit',
+                  padding: '20px',
+                  cursor: 'pointer',
+                  transition: 'filter 0.1s ease-out',
+                  "&:hover": { filter: 'brightness(150%)', transition: 'filter 0.1s ease-out' },
+                  backgroundColor: 'background.default',
+                  borderRadius: '3px'
+                }}
+                key={i}
+              >
+                <Typography>
+                  {navNames[i]}
+                </Typography>
+              </Box>
+            )
+          )
+        }
+      </Box>
+    </Box>
   );
 };
 

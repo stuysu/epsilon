@@ -12,7 +12,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
         borderRadius: '7px',
         cursor: 'pointer',
         transition: 'filter 0.3s ease-out',
-        "&:hover": { filter: 'brightness(150%)', transition: 'filter 0.2s ease-out', }
+        "&:hover": { filter: 'brightness(150%)', transition: 'filter 0.2s ease-out' }
       }}
       onClick={() => navigate(`/${organization.url}`)}
     >
