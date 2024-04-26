@@ -68,7 +68,7 @@ const NavBar = () => {
                 </Box>
             </Box>
             <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-                <Paper sx={{ width: "260px", height: '100%'}}>
+                <Paper sx={{ width: "260px", height: '100%'}} square>
                     <Link to="/" style={drawerLinkStyle}>Home</Link>
                     <br />
                     <Link to="/catalog" style={drawerLinkStyle}>Catalog</Link>
