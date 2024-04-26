@@ -131,7 +131,9 @@ const Catalog = () => {
           loader={<Loading />}
           endMessage={
             <Box>
-              <Typography align='center' variant='h3'>Total of {searchState.orgs.length} Organizations</Typography>
+              <Typography align='center' variant='h3'>
+                Total of {searchState.orgs.length} {`Organization${(searchState.orgs.length > 1) ? 's' : ''}`}
+              </Typography>
             </Box>
           }
           style={{ overflow: 'hidden', paddingTop: '20px'}}

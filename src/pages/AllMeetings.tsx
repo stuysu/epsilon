@@ -74,14 +74,13 @@ const AllMeetings = () => {
   }, [time, enqueueSnackbar, cachedMeetings]);
 
   return (
-    <Box>
+    <Box sx={{ width: '100%', paddingLeft: '20px'}}>
       <Typography variant="h1">All Meetings</Typography>
       <Box 
         sx={{ 
           width: "100%", 
           display: 'flex', 
           marginBottom: "20px",
-          padding: "10px",
           flexWrap: isMobile ? 'wrap' : 'nowrap',
           justifyContent: 'center'
         }}
