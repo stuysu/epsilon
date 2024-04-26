@@ -10,6 +10,7 @@ import { useSnackbar } from "notistack";
 import InfiniteScroll from "react-infinite-scroll-component";
 
 import Loading from "../comps/ui/Loading";
+import SearchFilter from "../comps/pages/catalog/SearchFilter";
 
 /*
 function getUnique(arr : Partial<Organization>[]) {
@@ -22,6 +23,12 @@ function getUnique(arr : Partial<Organization>[]) {
 }
 */
 
+type SearchState = {
+  orgs: Partial<Organization>[],
+  offset: number,
+  more: boolean
+}
+
 /* 
 If there are search params
 - reset orgs to empty
@@ -31,11 +38,20 @@ If there are search params
 const querySize = 10;
 const Catalog = () => {
   const { enqueueSnackbar } = useSnackbar();
-  const [orgs, setOrgs] = useState<Partial<Organization>[]>([]);
-  const [offset, setOffset] = useState(0);
+
+  const [searchState, setSearchState] = useState<SearchState>({
+    orgs: [],
+    offset: 0,
+    more: true
+  })
+
+  const [searchParams, setSearchParams] = useState<SearchParams>({
+    name: "",
+    keywords: [],
+    tags: []
+  })
 
   const [seed, setSeed] = useState(Math.random());
-  const [more, setMore] = useState(true);
 
   const isTwo = useMediaQuery("(max-width: 1000px)");
   const isOne = useMediaQuery("(max-width: 500px)");
@@ -45,33 +61,54 @@ const Catalog = () => {
   if (isOne) columns = 1;
 
   const getOrgs = async () => {
-    const originalOffset = offset;
-    setOffset(offset + querySize);
+    const originalOffset = searchState.offset;
+    // setSearchState({...searchState, offset: originalOffset + querySize});
 
-    const { data, error } = await supabase
-      .rpc(
-        'get_random_organizations',
-        { seed, query_offset: originalOffset, query_limit: querySize }
+    let orgData, orgError;
+
+    if (!searchParams.name.length && !searchParams.keywords.length && !searchParams.tags.length) {
+      // get orgs in random order (no search params)
+      (
+        { data: orgData, error: orgError } = await supabase
+        .rpc(
+          'get_random_organizations',
+          { seed, query_offset: originalOffset, query_limit: querySize }
+        )
       );
-                    
+    } else {
+      // inner join with tags and keywords
+      (
+        { data: orgData, error: orgError } = await supabase
+          .from('organizations')
+          .select('*')
+          .ilike('name', `%${searchParams.name}%`)
+          .range(originalOffset, originalOffset + querySize - 1)
+      )
+    }
 
-    if (error || !data) {
+    if (orgError || !orgData) {
       enqueueSnackbar("Error fetching organizations. Contact it@stuysu.org for support.", { variant: "error" });
       return;
     }
 
-    if (!data.length) {
-      setMore(false);
+    let more = true;
+
+    if (orgData.length < querySize) {
+      more = false;
     }
 
-    /* ONLY SET ORGS THAT DON'T EXIST YET */
-
-    setOrgs([...orgs, ...data]);
+    setSearchState({orgs: [...searchState.orgs, ...orgData], offset: originalOffset + querySize, more });
   };
 
   useEffect(() => {
+    setSearchState({
+      orgs: [],
+      offset: 0,
+      more: true
+    });
+
     getOrgs();
-  }, [seed]);
+  }, [seed, searchParams]);
 
   /*
   Testing
@@ -83,50 +120,34 @@ const Catalog = () => {
 
   return (
     <Box sx={{ display: 'flex', position: 'relative', flexWrap: 'wrap'}}>
-      <Box 
-        sx={{ 
-          width: (isOne || isTwo) ? '100%' : '25%', 
-          height: (isOne || isTwo) ? ' ' : '100vh',
-          padding: '20px',
-          position: (isOne || isTwo) ? 'relative' : 'sticky',
-          top: 0,
-          paddingTop: '40px'
-        }} 
-      >
-        <Box sx={{ width: '100%', height: '50px', display: 'flex', justifyContent: 'center'}}>
-          <TextField label='Search' sx={{ width: '100%' }} />
-        </Box>
-        <Box sx={{ width: '100%', padding: '20px', marginTop: '15px' }}>
-          <Typography>Tags</Typography>
-        </Box>
-        <Box sx={{ width: '100%', padding: '20px', marginTop: '15px' }}>
-          <Typography>Commitment Level</Typography>
-        </Box>
-        <Box sx={{ width: '100%', padding: '20px', marginTop: '15px' }}>
-          <Typography>Meeting Days</Typography>
-        </Box>
-      </Box>
+      <SearchFilter isOneColumn={isOne} isTwoColumn={isTwo} value={searchParams} onChange={setSearchParams} />
       <Box sx= {{ width: (isOne || isTwo) ? '100%' : '75%', padding: '20px', position: 'relative' }}>
         <Typography variant='h3'>Catalog</Typography>
+        
         <InfiniteScroll
-          dataLength={orgs.length}
+          dataLength={searchState.offset}
           next={getOrgs}
-          hasMore={more}
+          hasMore={searchState.more}
           loader={<Loading />}
           endMessage={
             <Box>
-              <Typography align='center' variant='h3'>Total of {orgs.length} Organizations</Typography>
+              <Typography align='center' variant='h3'>Total of {searchState.orgs.length} Organizations</Typography>
             </Box>
           }
-          style={{ overflow: 'hidden'}}
+          style={{ overflow: 'hidden', paddingTop: '20px'}}
         >
+          
           <Masonry columns={columns} spacing={2}>
-            {orgs.map((org, i) => {
-              if (org.state === "PENDING" || org.state === "LOCKED") return <></>;
-              return (
-                <OrgCard organization={org} key={i} />
-              );
-            })}
+            {
+              searchState.orgs.length ? (
+                searchState.orgs.map((org, i) => {
+                  if (org.state === "PENDING" || org.state === "LOCKED") return <></>;
+                  return (
+                    <OrgCard organization={org} key={i} />
+                  );
+                })
+              ) : (<Box></Box>) /* To make masonry resize accordingly */
+            }
           </Masonry>
         </InfiniteScroll>
       </Box>

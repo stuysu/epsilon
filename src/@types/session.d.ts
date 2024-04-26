@@ -26,3 +26,9 @@ type CalendarMeeting = {
     picture: string
   }
 }
+
+type SearchParams = {
+  name: string,
+  keywords: string[],
+  tags: string[]
+}
