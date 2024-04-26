@@ -42,7 +42,7 @@ const FormUpload = (
     return (
         <Paper
             {...paperProps}
-            elevation={10}
+            elevation={5}
             sx={{
                 width: '100%',
                 height: hasFile ? '220px' : '100px',

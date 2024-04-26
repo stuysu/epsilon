@@ -1,5 +1,4 @@
-import { Link } from "react-router-dom";
-import { Box, Typography } from "@mui/material";
+import { Paper, Box, Typography } from "@mui/material";
 
 import { useNavigate } from "react-router-dom";
 
@@ -7,9 +6,9 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
   const navigate = useNavigate();
 
   return (
-    <Box 
+    <Paper
+      elevation={1}
       sx={{ 
-        boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',  
         borderRadius: '7px',
         cursor: 'pointer'
       }}
@@ -27,7 +26,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
         <Typography variant='h3' align='center'>{organization.name}</Typography>
         <Typography variant='body1' align='center'>{organization.mission}</Typography>
       </Box>
-    </Box>
+    </Paper>
   );
 };
 

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Box, Button } from "@mui/material";
+import { Paper, Box, Button } from "@mui/material";
 import dayjs from "dayjs";
 import MeetingPreview from "../../ui/meetings/MeetingPreview";
 
@@ -17,11 +17,11 @@ const ScheduleMeeting = (
     let endTime = dayjs(meeting.end_time).format('LT');
 
     return (
-        <Box 
+        <Paper 
+            elevation={1}
             sx={{ 
                 width: "95%", 
                 height: "80px", 
-                boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px', 
                 borderRadius: '7px',
                 marginBottom: "15px", 
                 padding: "10px",
@@ -68,7 +68,7 @@ const ScheduleMeeting = (
                 roomName={meeting.rooms?.name}
                 onClose={() => setOpen(false)}
             />
-        </Box>
+        </Paper>
     )
 }
 
