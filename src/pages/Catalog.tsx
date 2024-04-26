@@ -60,8 +60,8 @@ const Catalog = () => {
   if (isTwo) columns = 2;
   if (isOne) columns = 1;
 
-  const getOrgs = async () => {
-    const originalOffset = searchState.offset;
+  const getOrgs = async (isReset? : boolean) => {
+    const originalOffset = isReset ? 0 : searchState.offset;
     // setSearchState({...searchState, offset: originalOffset + querySize});
 
     let orgData, orgError;
@@ -92,22 +92,17 @@ const Catalog = () => {
     }
 
     let more = true;
+    let finalOrgs = isReset ? orgData : [...searchState.orgs, ...orgData]
 
     if (orgData.length < querySize) {
       more = false;
     }
 
-    setSearchState({orgs: [...searchState.orgs, ...orgData], offset: originalOffset + querySize, more });
+    setSearchState({orgs: finalOrgs, offset: originalOffset + querySize, more });
   };
 
   useEffect(() => {
-    setSearchState({
-      orgs: [],
-      offset: 0,
-      more: true
-    });
-
-    getOrgs();
+    getOrgs(true);
   }, [seed, searchParams]);
 
   /*
@@ -120,7 +115,12 @@ const Catalog = () => {
 
   return (
     <Box sx={{ display: 'flex', position: 'relative', flexWrap: 'wrap'}}>
-      <SearchFilter isOneColumn={isOne} isTwoColumn={isTwo} value={searchParams} onChange={setSearchParams} />
+      <SearchFilter 
+        isOneColumn={isOne} 
+        isTwoColumn={isTwo} 
+        value={searchParams} 
+        onChange={setSearchParams} 
+      />
       <Box sx= {{ width: (isOne || isTwo) ? '100%' : '75%', padding: '20px', position: 'relative' }}>
         <Typography variant='h3'>Catalog</Typography>
         
