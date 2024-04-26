@@ -10,7 +10,7 @@ const Meetings = () => {
 
   return (
     <Box>
-      <Typography variant='h1'>Meetings</Typography>
+      <Typography variant='h1' align='center' width='100%'>Meetings</Typography>
 
       <Box sx={{ width: '100%', display: 'flex', flexWrap: 'wrap'}}>
         {

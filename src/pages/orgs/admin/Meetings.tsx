@@ -3,7 +3,7 @@ import OrgContext from "../../../comps/context/OrgContext";
 import AdminMeeting from "../../../comps/pages/orgs/admin/AdminMeeting";
 import AdminUpsertMeeting from "../../../comps/pages/orgs/admin/AdminUpsertMeeting";
 
-import { Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import { supabase } from "../../../supabaseClient";
 import { useSnackbar } from "notistack";
 
@@ -49,8 +49,8 @@ const Meetings = () => {
   )
 
   return (
-    <div>
-      <h1>Meetings</h1>
+    <Box sx={{ width: '100%'}}>
+      <Typography variant='h1' align='center' width='100%'>Meetings</Typography>
       {organization.meetings.sort(sortByStart).map((meeting) => (
         <AdminMeeting
           key={meeting.id}
@@ -107,7 +107,7 @@ const Meetings = () => {
         Create Meeting
       </Button>
 
-      {editState.editing ? (
+      {editState.editing && (
         <AdminUpsertMeeting
           id={editState.id}
           title={editState.title}
@@ -149,10 +149,8 @@ const Meetings = () => {
             }
           }}
         />
-      ) : (
-        <div></div>
       )}
-    </div>
+    </Box>
   );
 };
 

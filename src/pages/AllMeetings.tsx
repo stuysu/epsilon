@@ -17,7 +17,7 @@ type CachedMeetings = {
 
 const AllMeetings = () => {
   const { enqueueSnackbar } = useSnackbar();
-  const isMobile = useMediaQuery("(max-width: 620px)");
+  const isMobile = useMediaQuery("(max-width: 800px)");
 
   /* meetings for a given day */
   /* cache after fetching once */
@@ -79,9 +79,11 @@ const AllMeetings = () => {
       <Box 
         sx={{ 
           width: "100%", 
-          display: isMobile ? 'block' : 'flex', 
+          display: 'flex', 
           marginBottom: "20px",
-          padding: "10px"
+          padding: "10px",
+          flexWrap: isMobile ? 'wrap' : 'nowrap',
+          justifyContent: 'center'
         }}
       >
         <Box 
@@ -91,7 +93,8 @@ const AllMeetings = () => {
             minWidth: "250px", 
             boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px',
             borderRadius: '7px', 
-            marginRight: "10px", 
+            marginRight: "10px",
+            height: '320px' 
           }}
         >
           <DateCalendar 

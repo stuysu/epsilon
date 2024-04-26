@@ -7,6 +7,7 @@ import PostEditor from "../../../comps/pages/orgs/admin/PostEditor";
 import { supabase } from "../../../supabaseClient";
 import OrgContext from "../../../comps/context/OrgContext";
 import { useSnackbar } from "notistack";
+import { Box, Typography } from "@mui/material";
 
 /* create new posts */
 /* fetch existing posts to update or delete */
@@ -38,14 +39,14 @@ const Posts = () => {
   )
 
   return (
-    <div>
+    <Box sx={{ width: '100%'}}>
       <PostEditor
         orgId={organization.id}
         onCreate={(newPost) => {
           setPosts([...posts, newPost]);
         }}
       />
-      <h1>POSTS</h1>
+      <Typography variant='h1' align='center' width='100%'>Posts</Typography>
       {posts.map((post, i) => {
         return (
           <Post
@@ -57,7 +58,7 @@ const Posts = () => {
           />
         );
       })}
-    </div>
+    </Box>
   );
 };
 

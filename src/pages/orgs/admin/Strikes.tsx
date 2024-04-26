@@ -1,8 +1,10 @@
+import { Box, Typography } from "@mui/material";
+
 const Strikes = () => {
   return (
-    <div>
-      <h1>Strikes</h1>
-    </div>
+    <Box sx={{ width: '100%'}}>
+      <Typography variant='h1' align='center' width='100%'>Strikes</Typography>
+    </Box>
   );
 };
 

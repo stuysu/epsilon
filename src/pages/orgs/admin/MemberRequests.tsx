@@ -2,6 +2,7 @@ import { useContext } from "react";
 import OrgContext from "../../../comps/context/OrgContext";
 
 import PendingMember from "../../../comps/pages/orgs/admin/PendingMember";
+import { Box, Typography } from "@mui/material";
 
 const MemberRequests = () => {
   const organization = useContext<OrgContextType>(OrgContext);
@@ -17,8 +18,8 @@ const MemberRequests = () => {
     });
 
   return (
-    <div>
-      <h1>MEMBER REQUESTS</h1>
+    <Box sx={{ width: '100%'}}>
+      <Typography variant='h1' align='center' width='100%'>Member Requests</Typography>
       {pendingMembers?.map((member, i) => (
         <PendingMember
           id={member.membershipId || -1}
@@ -28,7 +29,7 @@ const MemberRequests = () => {
           key={i}
         />
       ))}
-    </div>
+    </Box>
   );
 };
 

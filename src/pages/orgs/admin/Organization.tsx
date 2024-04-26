@@ -7,6 +7,7 @@ import OrgContext from "../../../comps/context/OrgContext";
 import OrgEditor from "../../../comps/pages/orgs/admin/OrgEditor";
 
 import { useSnackbar } from "notistack";
+import { Box, Typography } from "@mui/material";
 
 const Organization = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -52,14 +53,14 @@ const Organization = () => {
   }, []);
 
   return (
-    <div>
-      <h1>Organization Edits</h1>
+    <Box sx={{ width: '100%'}}>
+      <Typography variant='h1' align='center' width='100%'>Organization Edits</Typography>
       <OrgEditor
         organization={organization}
         organizationEdit={pendingEdit}
         setPendingEdit={setPendingEdit}
       />
-    </div>
+    </Box>
   );
 };
 

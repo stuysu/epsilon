@@ -11,7 +11,7 @@ const Charter = () => {
 
   return (
     <Box>
-      <Typography variant='h1'>Charter</Typography>
+      <Typography variant='h1' align='center' width='100%'>Charter</Typography>
       <Typography variant='h3' color='primary.main'>Mission Statement:</Typography>
       <Typography>{organization.mission || "None"}</Typography>
       <Typography variant='h3' color='primary.main'>What days does this organization meet?</Typography>

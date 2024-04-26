@@ -3,6 +3,7 @@ import OrgContext from "../../../comps/context/OrgContext";
 import UserContext from "../../../comps/context/UserContext";
 
 import AdminMember from "../../../comps/pages/orgs/admin/AdminMember";
+import { Box, Typography } from "@mui/material";
 
 const Members = () => {
   const user = useContext(UserContext);
@@ -26,8 +27,8 @@ const Members = () => {
   );
 
   return (
-    <div>
-      <h1>MEMBERS</h1>
+    <Box sx={{ width: '100%'}}>
+      <Typography variant='h1' align='center' width='100%'>Members</Typography>
       {members?.map((member, i) => (
         <AdminMember
           id={member.membershipId || -1}
@@ -41,7 +42,7 @@ const Members = () => {
           key={i}
         />
       ))}
-    </div>
+    </Box>
   );
 };
 
