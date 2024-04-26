@@ -41,7 +41,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
             contrastText: "#fff",
           },
           secondary: {
-            main: "#636e72",
+            main: "#e74c3c",
             contrastText: "#fff",
           },
           background: {

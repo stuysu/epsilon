@@ -1,4 +1,4 @@
-import { Box, Button, Drawer } from "@mui/material";
+import { Paper, Box, Button, Drawer } from "@mui/material";
 import { Menu } from "@mui/icons-material";
 import { CSSProperties, useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -68,7 +68,7 @@ const NavBar = () => {
                 </Box>
             </Box>
             <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-                <Box sx={{ width: "200px"}}>
+                <Paper sx={{ width: "260px", height: '100%'}}>
                     <Link to="/" style={drawerLinkStyle}>Home</Link>
                     <br />
                     <Link to="/catalog" style={drawerLinkStyle}>Catalog</Link>
@@ -88,7 +88,7 @@ const NavBar = () => {
                             <Button style={drawerLinkStyle} onClick={signOut}>Sign Out</Button>
                         )
                     }
-                </Box>
+                </Paper>
             </Drawer>
         </>
         
