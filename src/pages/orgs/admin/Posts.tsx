@@ -32,10 +32,12 @@ const Posts = () => {
     };
 
     fetchPosts();
-  }, [user]);
+  }, [user, enqueueSnackbar]);
 
   if (organization.state === "LOCKED" || organization.state === "PENDING") return (
-    <h2>Posts are disabled for this organization.</h2>
+    <Box>
+      <Typography variant='h2'>Posts are disabled for this organization.</Typography>
+    </Box>
   )
 
   return (

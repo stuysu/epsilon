@@ -71,7 +71,7 @@ const AllMeetings = () => {
     };
 
     fetchMeetings();
-  }, [time]);
+  }, [time, enqueueSnackbar, cachedMeetings]);
 
   return (
     <Box>

@@ -106,7 +106,7 @@ const OrgRouter = () => {
     };
 
     getOrgData();
-  }, [orgUrl]);
+  }, [orgUrl, enqueueSnackbar]);
 
   return (
     <OrgContext.Provider value={{...org, setOrg}}>

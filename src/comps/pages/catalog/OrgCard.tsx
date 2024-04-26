@@ -22,6 +22,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
           width='170px' 
           height='170px'
           style={{ borderRadius: '100%', boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px'}}
+          alt={`Organization Card for ${organization.name || "organization without a name"}`}
         />
       </Box>
       <Box sx={{ width: "100%", padding: '20px'}}>

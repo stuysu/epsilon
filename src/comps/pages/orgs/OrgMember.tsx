@@ -27,6 +27,7 @@ const OrgMember = (
                     height='100%'
                     src={picture}
                     style={{ borderRadius: '100%'}}
+                    alt={`Member ${first_name} ${last_name}`}
                 />
             </Box>
             <Box sx={{ height: '75px', padding: '5px'}}>
