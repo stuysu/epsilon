@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 import OrgContext from "../../../context/OrgContext";
 
@@ -10,6 +10,7 @@ const OrgAdminNav = () => {
   const organization = useContext<OrgContextType>(OrgContext);
   const main = `/${organization.url}/admin`;
   const navigate = useNavigate();
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   let navLinks = [
     {
@@ -52,7 +53,10 @@ const OrgAdminNav = () => {
           (linkData, i) => (
             <Box
               key={i}
-              onClick={() => navigate(linkData.to)}
+              onClick={() => {
+                setCurrentIndex(i);
+                navigate(linkData.to);
+              }}
               sx={{
                 width: `${100/navLinks.length}%`,
                 height: '85px',
@@ -63,6 +67,7 @@ const OrgAdminNav = () => {
                 padding: '20px',
                 cursor: 'pointer',
                 transition: 'filter 0.1s ease-out',
+                filter: currentIndex === i ? 'brightness(150%)' : 'brightness(100%)',
                 "&:hover": { filter: 'brightness(150%)', transition: 'filter 0.1s ease-out' },
                 backgroundColor: 'background.default',
                 borderRadius: '3px'

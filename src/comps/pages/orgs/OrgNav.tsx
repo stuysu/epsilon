@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 
 import { Box, Button, Typography, Divider } from "@mui/material";
 
@@ -16,6 +16,8 @@ const OrgNav = ({ isMobile } : { isMobile: boolean }) => {
   const { enqueueSnackbar } = useSnackbar();
   const navigate = useNavigate();
   const main = `/${organization.url}`;
+
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const isInOrg: boolean = organization.memberships?.find(
     (m) => m.users?.id === user.id,
@@ -100,22 +102,14 @@ const OrgNav = ({ isMobile } : { isMobile: boolean }) => {
   }
 
   let navLinks = [
-    main,
-    `${main}/charter`,
-    `${main}/meetings`,
-    `${main}/members`
-  ]
-
-  let navNames = [
-    'Overview',
-    'Charter',
-    'Meetings',
-    'Members',
-    'Admin'
+    { to: main, display: 'Overview' },
+    { to: `${main}/charter`, display: 'Charter' },
+    { to: `${main}/meetings`, display: 'Meetings' },
+    { to: `${main}/members`, display: 'Members' }
   ]
 
   if (isAdmin) {
-    navLinks.push(`${main}/admin`)
+    navLinks.push({ to: `${main}/admin`, display: 'Admin' });
   }
 
   return (
@@ -150,10 +144,11 @@ const OrgNav = ({ isMobile } : { isMobile: boolean }) => {
       <Box sx={{ width: '100%', display: 'flex', flexWrap: 'wrap', marginTop: '10px'}}>
         {
           navLinks.map(
-            (to, i) => (
+            (linkData, i) => (
               <Box 
                 onClick={() => {
-                  navigate(to);
+                  navigate(linkData.to);
+                  setCurrentIndex(i);
                 }} 
                 sx={{
                   width: '100%',
@@ -164,6 +159,7 @@ const OrgNav = ({ isMobile } : { isMobile: boolean }) => {
                   padding: '20px',
                   cursor: 'pointer',
                   transition: 'filter 0.1s ease-out',
+                  filter: i === currentIndex ? 'brightness(150%)' : 'brightness(100%)',
                   "&:hover": { filter: 'brightness(150%)', transition: 'filter 0.1s ease-out' },
                   backgroundColor: 'background.default',
                   borderRadius: '3px'
@@ -171,7 +167,7 @@ const OrgNav = ({ isMobile } : { isMobile: boolean }) => {
                 key={i}
               >
                 <Typography>
-                  {navNames[i]}
+                  {linkData.display}
                 </Typography>
               </Box>
             )
