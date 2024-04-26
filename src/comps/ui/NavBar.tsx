@@ -60,7 +60,7 @@ const NavBar = () => {
     return (
         <>
             <Box sx={navStyles}>
-                <Button onClick={() => setDrawerOpen(!drawerOpen)}>
+                <Button onClick={() => setDrawerOpen(!drawerOpen)} sx={{ borderRadius: '100%' }}>
                     <Menu />
                 </Button>
                 <Box sx={titleStyle}>
