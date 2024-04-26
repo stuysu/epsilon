@@ -1,6 +1,6 @@
 import { useContext } from "react";
 
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Button, Typography, Divider } from "@mui/material";
 
 import OrgContext from "../../context/OrgContext";
 import UserContext from "../../context/UserContext";
@@ -114,18 +114,34 @@ const OrgNav = ({ isMobile } : { isMobile: boolean }) => {
   }
 
   return (
-    <Box sx={{ minWidth: '350px', width: isMobile ? '100%' : '', padding: '20px'}}>
-      <Box>
+    <Box sx={{ minWidth: '350px', width: isMobile ? '100%' : '', padding: isMobile ? '0px' : '20px'}}>
+      <Box sx={{ width: '100%', display: 'flex', flexWrap: 'wrap', justifyContent: 'center'}}>
+        <Box sx={{ width: '300px', height: '300px', borderRadius: '10px', padding: '20px' }}>
+          <img 
+            src={organization.picture || 'https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png'} 
+            width='100%' 
+            height='100%'
+            style={{ borderRadius: '5px', boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px' }} 
+          />
+        </Box>
+        <Typography variant='h3' align='center' width='100%'>{organization.name}</Typography>
+        <Typography variant='body1' align='center' width='100%'>{organization.mission}</Typography>
         <Button
           variant="contained"
           onClick={handleInteract}
           disabled={disabled}
+          sx={{
+            marginTop: '20px',
+            width: isMobile ? '80%' : '100%'
+          }}
         >
           {interactString}
         </Button>
       </Box>
 
-      <Box sx={{ width: '100%', display: 'flex', flexWrap: 'wrap'}}>
+      <Divider sx={{ marginTop: '20px', height: '2px' }} />
+
+      <Box sx={{ width: '100%', display: 'flex', flexWrap: 'wrap', marginTop: '10px'}}>
         {
           navLinks.map(
             (to, i) => (
