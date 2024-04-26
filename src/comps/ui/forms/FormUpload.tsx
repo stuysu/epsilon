@@ -1,6 +1,6 @@
 import { ChangeEvent } from "react";
 
-import { Box, BoxProps, Button, Typography } from "@mui/material";
+import { Paper, Box, PaperProps, Button, Typography } from "@mui/material";
 
 type FileType = "image/png" | "image/jpeg" | "image/webp" | "image/*"
 
@@ -26,9 +26,9 @@ const FormUpload = (
         requirements, 
         preview,
         onChange,
-        ...boxProps 
+        ...paperProps 
     } : 
-    Props & BoxProps
+    Props & PaperProps
 ) => {
     const hasFile = value ? true : false;
 
@@ -40,8 +40,9 @@ const FormUpload = (
     }
 
     return (
-        <Box 
-            {...boxProps}
+        <Paper
+            {...paperProps}
+            elevation={10}
             sx={{
                 width: '100%',
                 height: hasFile ? '220px' : '100px',
@@ -50,7 +51,7 @@ const FormUpload = (
                 display: 'flex',
                 flexWrap: 'wrap',
                 position: 'relative',
-                ...boxProps.sx
+                ...paperProps.sx
             }}
         >
             
@@ -99,7 +100,7 @@ const FormUpload = (
                     </Box>
                 )
             }
-        </Box>
+        </Paper>
     )
 }
 

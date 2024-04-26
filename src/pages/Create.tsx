@@ -254,7 +254,6 @@ const Create = () => {
             types: ['image/*']
           }}
           preview
-          bgcolor="secondary.main"
           sx={{ marginTop: '20px' }}
         />
       </FormPage>
