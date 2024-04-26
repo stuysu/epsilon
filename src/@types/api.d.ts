@@ -29,7 +29,7 @@ interface OrganizationEdit {
   appointment_procedures?: string;
   uniqueness?: string;
   meeting_schedule?: string;
-  meeting_days?: string;
+  meeting_days?: string[];
   commitment_level?: "NONE" | "LOW" | "MEDIUM" | "HIGH";
 }
 
