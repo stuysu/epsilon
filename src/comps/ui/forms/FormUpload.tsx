@@ -54,9 +54,9 @@ const FormUpload = (
             }}
         >
             
-            <Box sx={{ width: '100px', height: '100%', position: 'relative', padding: '10px' }}>
-                <Button variant='contained' component='label'>
-                    Upload
+            <Box sx={{ width: hasFile ? '100px' : '100%', height: '100%', position: 'relative', padding: '10px' }}>
+                <Button variant='contained' component='label' sx={{ width: '100%', height: hasFile ? 'auto' : '100%'}}>
+                    {hasFile ? 'Change' : 'Upload Image'}
                     <input
                         type="file"
                         accept={requirements?.types ? requirements.types.join(",") : "*/*"}
