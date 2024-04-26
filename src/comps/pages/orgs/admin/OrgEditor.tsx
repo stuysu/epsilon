@@ -12,6 +12,11 @@ const hiddenFields: string[] = [
   "organization_id",
   "created_at",
   "updated_at",
+  /* NOT TEXT FIELDS, CUSTOM IMPLEMENT */
+  'meeting_days',
+  'picture',
+  'keywords',
+  'tags'
 ];
 
 /* NOTES ON SHALLOW COMPARISON
@@ -154,6 +159,8 @@ const OrgEditor = ({
           uniqueness: undefined,
           meeting_schedule: undefined,
           meeting_days: undefined,
+          keywords: undefined,
+          tags: undefined,
           commitment_level: undefined
         });
       } else {

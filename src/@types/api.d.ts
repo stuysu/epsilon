@@ -30,6 +30,8 @@ interface OrganizationEdit {
   uniqueness?: string;
   meeting_schedule?: string;
   meeting_days?: string[];
+  keywords?: string;
+  tags?: string[];
   commitment_level?: "NONE" | "LOW" | "MEDIUM" | "HIGH";
 }
 

@@ -25,6 +25,8 @@ const Organization = () => {
     uniqueness: undefined,
     meeting_schedule: undefined,
     meeting_days: undefined,
+    keywords: undefined,
+    tags: undefined,
     commitment_level: undefined
   });
 

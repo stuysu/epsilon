@@ -1,31 +1,78 @@
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import { useContext } from "react";
 
 import OrgContext from "../../../context/OrgContext";
 
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 const OrgAdminNav = () => {
   const organization = useContext<OrgContextType>(OrgContext);
   const main = `/${organization.url}/admin`;
+  const navigate = useNavigate();
+
+  let navLinks = [
+    {
+      to: `${main}/members`,
+      display: 'Members'
+    },
+    {
+      to: `${main}/member-requests`,
+      display: 'Member Requests'
+    },
+    {
+      to: `${main}/meetings`,
+      display: 'Meetings'
+    },
+    {
+      to: `${main}/posts`,
+      display: 'Posts'
+    },
+    {
+      to: `${main}/strikes`,
+      display: 'Strikes'
+    },
+    {
+      to: `${main}/org-edits`,
+      display: 'Org Edits'
+    },
+  ]
 
   return (
     <Box
       sx={{
         display: "flex",
-        justifyContent: "space-around",
         flexWrap: "nowrap",
-        width: "80%",
-        marginLeft: "20%",
+        height: '85px',
+        width: '100%'
       }}
     >
-      <Link to={`${main}/members`}>Members</Link>
-      <Link to={`${main}/member-requests`}>Member Requests</Link>
-      <Link to={`${main}/meetings`}>Meetings</Link>
-      <Link to={`${main}/posts`}>Posts</Link>
-      <Link to={`${main}/strikes`}>Strikes</Link>
-      <Link to={`${main}/org-edits`}>Organization Edits</Link>
+      {
+        navLinks.map(
+          (linkData, i) => (
+            <Box
+              key={i}
+              onClick={() => navigate(linkData.to)}
+              sx={{
+                width: `${100/navLinks.length}%`,
+                height: '85px',
+                display: 'flex',
+                justifyContent: 'center',
+                alignItems: 'center',
+                color: 'inherit',
+                padding: '20px',
+                cursor: 'pointer',
+                transition: 'filter 0.1s ease-out',
+                "&:hover": { filter: 'brightness(150%)', transition: 'filter 0.1s ease-out' },
+                backgroundColor: 'background.default',
+                borderRadius: '3px'
+              }}
+            >
+              <Typography>{linkData.display}</Typography>
+            </Box>
+          )
+        )
+      }
     </Box>
   );
 };
