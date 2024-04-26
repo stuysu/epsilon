@@ -115,7 +115,7 @@ const OrgRouter = () => {
       ) : (
         <Box sx={{ width: '100%', display: 'flex', flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
           <OrgNav isMobile={isMobile} />
-          <Box sx={{ width: '100%'}}>
+          <Box sx={{ width: '100%', padding: '10px'}}>
             <Routes>
               <Route path={`/`} Component={Overview} />
               <Route path={`/charter`} Component={Charter} />

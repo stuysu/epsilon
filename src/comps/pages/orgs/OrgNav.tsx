@@ -94,6 +94,11 @@ const OrgNav = ({ isMobile } : { isMobile: boolean }) => {
   if (isCreator) disabled = true;
   if (!isInOrg && !organization.joinable) disabled = true;
 
+  if (!user.signed_in) {
+    interactString = "sign in to join"
+    disabled = true
+  }
+
   let navLinks = [
     main,
     `${main}/charter`,
