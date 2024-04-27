@@ -13,7 +13,7 @@ const Members = () => {
       </Typography>
       {organization.memberships?.map(
         (member, i) =>
-          ["FACULTY", "ADMIN", "CREATOR"].includes(member.role || "") && (
+          (
             <OrgMember
               key={i}
               role={member.role || "MEMBER"}
