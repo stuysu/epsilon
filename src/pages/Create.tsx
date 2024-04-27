@@ -68,7 +68,7 @@ const Create = () => {
     let payload = {
       creator_id: user.id,
       name: formData.name,
-      url: formData.url,
+      url: formData.url.toLowerCase(),
       socials: formData.socials,
       picture: null, // update after creating initial org
       mission: formData.mission,
@@ -214,6 +214,7 @@ const Create = () => {
               maxChar: 40,
               disableSpaces: true,
               onlyAlpha: true,
+              lowercase: true,
             }}
             sx={{
               marginLeft: isMobile ? "" : "20px",

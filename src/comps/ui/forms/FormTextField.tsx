@@ -8,6 +8,7 @@ type Requirements = {
   maxWords?: number;
   disableSpaces?: boolean /* replace spaces with dashes */;
   onlyAlpha?: boolean;
+  lowercase?: boolean;
 };
 
 type Props = {
@@ -95,6 +96,10 @@ const FormTextField = ({
       }
     } else if (requirements?.onlyAlpha) {
       targetValue = targetValue.replace(/[^a-z0-9\- ]/gi, "");
+    }
+
+    if (requirements?.lowercase) {
+        targetValue = targetValue.toLowerCase();
     }
 
     if (onChange) {
