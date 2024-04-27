@@ -14,6 +14,10 @@ type Props = {
     required?: boolean,
     description?: string,
     onChange?: (field: string, updatedSelections: string[]) => void,
+    status?: {
+        dirty: boolean,
+        value: boolean
+    },
     changeStatus?: (newValue : boolean) => void,
     selections: SelectType[]
 }
@@ -26,13 +30,14 @@ const FormCheckSelect = (
         required,
         description,
         onChange,
+        status,
         changeStatus,
         selections,
         ...checkboxProps
     } : Props & CheckboxProps
 ) => {
     useEffect(() => {
-        if (changeStatus) {
+        if (status && !status.dirty && changeStatus) {
             changeStatus(required ? false : true);
         }
     }, [required]);

@@ -15,7 +15,12 @@ type Props = {
     description?: string,
     required?: boolean,
     requirements?: Requirements,
+    value?: string,
     onChange?: (field: string, updatedValue: string) => void,
+    status?: {
+        dirty: boolean,
+        value: boolean
+    },
     changeStatus?: (newStatus : boolean) => void
 }
 
@@ -25,7 +30,9 @@ const FormTextField = (
         description,
         required,
         requirements,
+        value,
         onChange,
+        status,
         changeStatus,
         ...textFieldProps
     } :
@@ -33,10 +40,31 @@ const FormTextField = (
 ) => {
     useEffect(() => {
         /* set initial validation status */
-        if (changeStatus) {
-            changeStatus(required ? false : true);
-        }
+        validate(value || "");
     }, [required]);
+
+    const validate = (targetValue : string) => {
+        if (!changeStatus) return;
+
+        if (requirements) {
+            if (requirements.minChar && targetValue.length < requirements.minChar) {
+                changeStatus(false);
+                return;
+            }
+
+            // does not work with onlyAlpha
+            if (requirements.minWords && targetValue.trim().split(" ").length < requirements.minWords) {
+                changeStatus(false);
+                return;
+            }
+
+            changeStatus(true);
+        } else {
+            if (required) {
+                changeStatus(targetValue.length > 0);
+            }
+        }
+    }
 
     const textChanged = (event: ChangeEvent<HTMLInputElement>) => {
         let targetValue = event.target.value;
@@ -70,31 +98,13 @@ const FormTextField = (
             onChange(field, targetValue);
         }
 
-        if (changeStatus) {
-            if (requirements) {
-                if (requirements.minChar && targetValue.length < requirements.minChar) {
-                    changeStatus(false);
-                    return;
-                }
-
-                // use event.target.value here in case disableSpaces = true.
-                if (requirements.minWords && event.target.value.trim().split(" ").length < requirements.minWords) {
-                    changeStatus(false);
-                    return;
-                }
-
-                changeStatus(true);
-            } else {
-                if (required) {
-                    changeStatus(event.target.value.length > 0);
-                }
-            }
-        }
+        validate(targetValue);
     }
 
     return (
         <TextField
             onChange={textChanged}
+            value={value}
             {...textFieldProps}
         />
     )

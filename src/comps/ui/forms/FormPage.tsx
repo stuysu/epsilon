@@ -29,7 +29,10 @@ type Props<T> = {
 }
 
 type FormStatus = {
-    [field : string]: boolean
+    [field : string]: {
+        dirty: boolean,
+        value: boolean
+    }
 }
 
 const FormPage = <T extends unknown>(
@@ -51,8 +54,8 @@ const FormPage = <T extends unknown>(
 
     useEffect(() => {
         const isValid = () : boolean => {
-            for (let value of Object.values(status)) {
-                if (!value) return false;
+            for (let stat of Object.values(status)) {
+                if (!stat.value) return false;
             }
     
             return true;
@@ -98,9 +101,22 @@ const FormPage = <T extends unknown>(
                     key: index,
                     value: childValue, 
                     onChange: childOnChange,
+                    status: status[child.props.field],
                     changeStatus: (newStatus: boolean) => {
-                        if (newStatus === status[child.props.field]) return;
-                        setStatus(prevState => ({ ...prevState, [child.props.field]: newStatus})) 
+                        if (
+                            status[child.props.field] && 
+                            newStatus === status[child.props.field].value
+                        ) return;
+
+                        setStatus(prevState => (
+                            { 
+                                ...prevState, 
+                                [child.props.field]: {
+                                    dirty: true,
+                                    value: newStatus
+                                }
+                            }
+                        )) 
                     }
                 }
                 

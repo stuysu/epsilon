@@ -8,9 +8,14 @@ type SelectType = {
 
 type Props = {
     field: string,
+    value?: string,
     description?: string,
     required?: boolean,
     onChange?: (field: string, updatedValue: string) => void,
+    status?: {
+        dirty: boolean,
+        value: boolean
+    },
     changeStatus?: (newValue : boolean) => void,
     selections: SelectType[]
 }
@@ -18,9 +23,11 @@ type Props = {
 const FormDropSelect = (
     {
         field,
+        value,
         description,
         required,
         onChange,
+        status,
         changeStatus,
         selections,
         ...selectProps
@@ -28,19 +35,20 @@ const FormDropSelect = (
     Props & SelectProps
 ) => {
     useEffect(() => {
-        if (changeStatus) {
-            changeStatus(required ? false : true);
-        }
+        validate(value || undefined);
     }, [required]);
+
+    const validate = (targetValue : any) => {
+        if (changeStatus && required) {
+            changeStatus(targetValue !== undefined);
+        }
+    }
 
     const selectionChanged = (event: SelectChangeEvent<unknown>) => {
         if (!onChange) return;
 
         onChange(field, event.target.value as string);
-
-        if (changeStatus && required) {
-            changeStatus(event.target.value !== undefined);
-        }
+        validate(event.target.value);
     }
 
     return (
@@ -49,6 +57,7 @@ const FormDropSelect = (
                 <InputLabel>{selectProps.label}</InputLabel>
                 <Select
                     onChange={(e) => selectionChanged(e)}
+                    value={value}
                     {...selectProps}
                 >
                     {
