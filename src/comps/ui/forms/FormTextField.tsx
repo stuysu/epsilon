@@ -46,6 +46,10 @@ const FormTextField = (
         if (!targetValue) targetValue = "";
         if (!changeStatus) return;
 
+        if (!required && targetValue.length === 0) {
+            changeStatus(true);
+        }
+
         if (requirements) {
             if (requirements.minChar && targetValue.length < requirements.minChar) {
                 changeStatus(false);

@@ -42,8 +42,9 @@ const FormCheckSelect = (
 
     const validate = (targetValue? : string[]) => {
         if (!targetValue) targetValue = [];
+        if (!changeStatus) return;
 
-        if (changeStatus && required) {
+        if (required) {
             changeStatus(targetValue.length > 0);
         }
     }

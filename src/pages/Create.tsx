@@ -270,6 +270,7 @@ const Create = () => {
               minChar: 20,
               maxChar: 150
             }}
+            required
             sx={multilineStyle}
             rows={4}
             description="A quick blurb of what this organization is all about"
@@ -282,6 +283,7 @@ const Create = () => {
               minWords: 100,
               maxWords: 400
             }}
+            required
             sx={multilineStyle}
             rows={4}
             description="This will serve as the official description of the club. Please include a brief statement about what is expected of general members involved in the club."
@@ -294,6 +296,7 @@ const Create = () => {
               minWords: 200,
               maxWords: 400
             }}
+            required
             sx={multilineStyle}
             rows={4}
             description="How will this activity benefit the Stuyvesant community?"
@@ -306,6 +309,7 @@ const Create = () => {
               minWords: 50,
               maxWords: 400
             }}
+            required
             sx={multilineStyle}
             rows={4}
             description="What are the leadership positions and how are they appointed? Are there any specific protocols members are expected to follow? What is the policy for transfer of leadership between school years? How will leaders be removed if necessary?"
@@ -318,6 +322,7 @@ const Create = () => {
               minWords: 75,
               maxWords: 400
             }}
+            required
             sx={multilineStyle}
             rows={4}
             description="What makes your organization unique?"
@@ -329,6 +334,7 @@ const Create = () => {
               minChar: 50,
               maxChar: 1000
             }}
+            required
             sx={multilineStyle}
             rows={4}
             description={`Something like "Our meeting schedule varies throughout the year, but we meet at least once a month and up to 3 times in the Spring."`}
@@ -344,6 +350,7 @@ const Create = () => {
                 { id: 'THURSDAY', display: "Thursday" },
                 { id: 'FRIDAY', display: "Friday"}
               ]}
+              required
             />
           </FormSection>
       </FormPage>

@@ -40,8 +40,14 @@ const FormDropSelect = (
 
     const validate = (targetValue? : string) => {
         if (!targetValue) targetValue = '';
+        if (!changeStatus) return;
 
-        if (changeStatus && required) {
+        if (!required && targetValue.length === 0) {
+            changeStatus(true);
+            return;
+        }
+
+        if (required) {
             changeStatus(targetValue.length > 0);
         }
     }

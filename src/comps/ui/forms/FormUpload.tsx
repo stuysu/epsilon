@@ -42,7 +42,14 @@ const FormUpload = (
     }, [required, requirements, value]);
 
     const validate = (targetValue : any) => {
-        if (changeStatus && required) {
+        if (!changeStatus) return;
+
+        if (!required && targetValue === undefined) {
+            changeStatus(true);
+            return;
+        }
+
+        if (required) {
             changeStatus(targetValue !== undefined);
         }
     }
