@@ -11,7 +11,7 @@ type Props = {
 };
 
 const formatCapitals = (txt : string) => {
-  return txt.slice(0, 1) + txt.slice(1);
+  return txt.slice(0, 1).toUpperCase() + txt.slice(1).toLowerCase();
 }
 
 const OrgMember = ({
