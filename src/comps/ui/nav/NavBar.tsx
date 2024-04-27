@@ -1,10 +1,11 @@
-import { Paper, Box, Button, Drawer } from "@mui/material";
+import { Box, Button, Drawer } from "@mui/material";
 import { Menu } from "@mui/icons-material";
 import { CSSProperties, useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { supabase } from "../../supabaseClient";
-import UserContext from "../context/UserContext";
+import { supabase } from "../../../supabaseClient";
+import UserContext from "../../context/UserContext";
 import { useSnackbar } from "notistack";
+import NavButton from "./NavButton";
 
 const navStyles : CSSProperties = { 
     width: "100%", 
@@ -21,18 +22,6 @@ const titleStyle : CSSProperties = {
 const linkStyle : CSSProperties = {
     color: 'inherit',
     textDecoration: 'none'
-}
-
-const drawerLinkStyle : CSSProperties = {
-    color: 'inherit',
-    textDecoration: 'none',
-    width: '100%',
-    height: '50px',
-    display: 'flex',
-    flexWrap: 'nowrap',
-    justifyContent: 'center',
-    alignItems: 'center',
-    fontSize: "20px"
 }
 
 const NavBar = () => {
@@ -68,27 +57,31 @@ const NavBar = () => {
                 </Box>
             </Box>
             <Drawer anchor="left" open={drawerOpen} onClose={() => setDrawerOpen(false)}>
-                <Paper sx={{ width: "260px", height: '100%'}} square>
-                    <Link to="/" style={drawerLinkStyle}>Home</Link>
-                    <br />
-                    <Link to="/catalog" style={drawerLinkStyle}>Catalog</Link>
-                    <br />
-                    <Link to="/create" style={drawerLinkStyle}>Create</Link>
-                    <br />
-                    {user.admin && (
-                        <>
-                            <Link to="/admin" style={drawerLinkStyle}>Admin</Link>
-                            <br />
-                        </>
-                    )}
-                    <Link to="/meetings" style={drawerLinkStyle}>Meetings</Link>
-                    <br />
-                    {
-                        user.signed_in && (
-                            <Button style={drawerLinkStyle} onClick={signOut}>Sign Out</Button>
-                        )
-                    }
-                </Paper>
+                <Box 
+                    sx={{ 
+                        width: "260px", 
+                        height: '100%', 
+                        backgroundColor: 'inherit', 
+                        overflowY: 'scroll' 
+                    }}
+                >
+                    <Box sx={{ width: '100%', backgroundColor: 'inherit'}}>
+                        {
+                            user.signed_in && (
+                                <NavButton onClick={signOut} display={'Sign Out'} />
+                            )
+                        }
+                        <NavButton onClick={() => navigate("/")} display={'Home'} />
+                        {user.admin && (
+                            <NavButton onClick={() => navigate("/admin")} display={'Admin Panel'} />
+                        )}
+                    </Box>
+                    <Box sx={{ width: '100%', backgroundColor: 'inherit'}}>
+                        <NavButton onClick={() => navigate("/catalog")} display={'Catalog'} />
+                        <NavButton onClick={() => navigate("/create")} display={'Create Activity'} />
+                        <NavButton onClick={() => navigate("/meetings")} display={'Meetings'} />
+                    </Box>
+                </Box>
             </Drawer>
         </>
         

@@ -8,7 +8,7 @@ import { lazy, Suspense } from "react";
 // Pages
 import Home from "./Home";
 import AllMeetings from "./AllMeetings";
-import NavBar from "../comps/ui/NavBar";
+import NavBar from "../comps/ui/nav/NavBar";
 const Catalog = lazy(() => import("./Catalog"));
 const Create = lazy(() => import("./Create"));
 const OrgRouter = lazy(() => import("./orgs"));
