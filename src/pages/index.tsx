@@ -21,7 +21,7 @@ const Pages = () => {
     <div>
       <Helmet>
         <meta property="og:url" content={PUBLIC_URL + location.pathname} />
-        <meta property="og:site_name" content={"StuyActivities"} />
+        <meta property="og:site_name" content={"epsilon"} />
         <meta property="og:type" content={"website"} />
         <meta
           property="og:description"
