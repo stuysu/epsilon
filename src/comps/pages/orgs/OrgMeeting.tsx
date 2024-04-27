@@ -15,7 +15,8 @@ type Props = {
     room_name: string,
     org_name: string,
     org_picture: string,
-    isMobile: boolean
+    isMobile?: boolean,
+    onlyUpcoming?: boolean
 }
 
 const OrgMeeting = (
@@ -29,12 +30,20 @@ const OrgMeeting = (
         room_name,
         org_name,
         org_picture,
-        isMobile
+        isMobile,
+        onlyUpcoming
     } : Props
 ) => {
     const [open, setOpen] = useState(false);
     let startTime = dayjs(start_time).format('L LT');
     let endTime = dayjs(end_time).format('LT');
+    let today = dayjs().startOf('day');
+
+    if (onlyUpcoming && today.isAfter(dayjs(start_time))) {
+        return (
+            <></>
+        )
+    }
 
     return (
         <Paper 
