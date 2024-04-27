@@ -45,6 +45,7 @@ const Overview = () => {
               <OrgMember
                 key={i}
                 role={member.role || "MEMBER"}
+                role_name={member.role_name}
                 email={member.users?.email || "no email"}
                 picture={
                   member.users?.picture ||
