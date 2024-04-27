@@ -15,69 +15,69 @@ const OrgAdminNav = () => {
   let navLinks = [
     {
       to: `${main}/members`,
-      display: 'Members'
+      display: "Members",
     },
     {
       to: `${main}/member-requests`,
-      display: 'Member Requests'
+      display: "Member Requests",
     },
     {
       to: `${main}/meetings`,
-      display: 'Meetings'
+      display: "Meetings",
     },
     {
       to: `${main}/posts`,
-      display: 'Posts'
+      display: "Posts",
     },
     {
       to: `${main}/strikes`,
-      display: 'Strikes'
+      display: "Strikes",
     },
     {
       to: `${main}/org-edits`,
-      display: 'Org Edits'
+      display: "Org Edits",
     },
-  ]
+  ];
 
   return (
     <Box
       sx={{
         display: "flex",
         flexWrap: "nowrap",
-        height: '85px',
-        width: '100%'
+        height: "85px",
+        width: "100%",
       }}
     >
-      {
-        navLinks.map(
-          (linkData, i) => (
-            <Box
-              key={i}
-              onClick={() => {
-                setCurrentIndex(i);
-                navigate(linkData.to);
-              }}
-              sx={{
-                width: `${100/navLinks.length}%`,
-                height: '85px',
-                display: 'flex',
-                justifyContent: 'center',
-                alignItems: 'center',
-                color: 'inherit',
-                padding: '20px',
-                cursor: 'pointer',
-                transition: 'filter 0.1s ease-out',
-                filter: currentIndex === i ? 'brightness(150%)' : 'brightness(100%)',
-                "&:hover": { filter: 'brightness(150%)', transition: 'filter 0.1s ease-out' },
-                backgroundColor: 'background.default',
-                borderRadius: '3px'
-              }}
-            >
-              <Typography>{linkData.display}</Typography>
-            </Box>
-          )
-        )
-      }
+      {navLinks.map((linkData, i) => (
+        <Box
+          key={i}
+          onClick={() => {
+            setCurrentIndex(i);
+            navigate(linkData.to);
+          }}
+          sx={{
+            width: `${100 / navLinks.length}%`,
+            height: "85px",
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            color: "inherit",
+            padding: "20px",
+            cursor: "pointer",
+            transition: "filter 0.1s ease-out",
+            filter:
+              currentIndex === i ? "brightness(150%)" : "brightness(100%)",
+            "&:hover": {
+              filter: "brightness(150%)",
+              transition: "filter 0.1s ease-out",
+            },
+            backgroundColor: "background.default",
+            borderRadius: "3px",
+          }}
+        >
+          <Typography>{linkData.display}</Typography>
+        </Box>
+      ))}
     </Box>
   );
 };

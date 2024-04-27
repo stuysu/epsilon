@@ -27,7 +27,7 @@ const Organization = () => {
     meeting_days: undefined,
     keywords: undefined,
     tags: undefined,
-    commitment_level: undefined
+    commitment_level: undefined,
   });
 
   // eslint-disable-next-line
@@ -41,7 +41,7 @@ const Organization = () => {
       if (error) {
         return enqueueSnackbar(
           "Error fetching organization edits. Contact it@stuysu.org for support.",
-          { variant: "error" }
+          { variant: "error" },
         );
       }
 
@@ -55,8 +55,10 @@ const Organization = () => {
   }, []);
 
   return (
-    <Box sx={{ width: '100%'}}>
-      <Typography variant='h1' align='center' width='100%'>Organization Edits</Typography>
+    <Box sx={{ width: "100%" }}>
+      <Typography variant="h1" align="center" width="100%">
+        Organization Edits
+      </Typography>
       <OrgEditor
         organization={organization}
         organizationEdit={pendingEdit}

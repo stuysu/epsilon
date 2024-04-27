@@ -20,7 +20,7 @@ const editFields: EditKey[] = [
   "uniqueness",
   "meeting_schedule",
   "meeting_days",
-  "commitment_level"
+  "commitment_level",
 ];
 
 const OrgEditApproval = ({
@@ -57,7 +57,7 @@ const OrgEditApproval = ({
       if (error || !data) {
         return enqueueSnackbar(
           "Could not fetch current organization data. Please contact it@stuysu.org for support.",
-          { variant: "error" }
+          { variant: "error" },
         );
       }
 
@@ -85,7 +85,7 @@ const OrgEditApproval = ({
     if (error) {
       return enqueueSnackbar(
         "Error updating organization. Contact it@stuysu.org for support.",
-        { variant: "error" }
+        { variant: "error" },
       );
     }
 
@@ -98,7 +98,7 @@ const OrgEditApproval = ({
     if (error) {
       return enqueueSnackbar(
         "Error deleting old organization edit. Please let it@stuysu.org know about this issue.",
-        { variant: "error" }
+        { variant: "error" },
       );
     }
 

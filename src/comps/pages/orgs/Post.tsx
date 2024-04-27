@@ -28,7 +28,7 @@ const Post = ({
     if (error) {
       return enqueueSnackbar(
         "Could not delete post. Contact it@stuysu.org for support",
-        { variant: "error" }
+        { variant: "error" },
       );
     }
 

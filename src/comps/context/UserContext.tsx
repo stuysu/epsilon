@@ -11,7 +11,7 @@ const UserContext = React.createContext<UserContextType>({
   grade: -1,
   memberships: [],
   is_faculty: false,
-  active: false
+  active: false,
 });
 
 export default UserContext;

@@ -24,7 +24,7 @@ const Posts = () => {
       if (error || !data) {
         return enqueueSnackbar(
           "Error retrieving data. Please contact it@stuysu.org for support.",
-          { variant: "error" }
+          { variant: "error" },
         );
       }
 
@@ -34,21 +34,26 @@ const Posts = () => {
     fetchPosts();
   }, [user, enqueueSnackbar]);
 
-  if (organization.state === "LOCKED" || organization.state === "PENDING") return (
-    <Box>
-      <Typography variant='h2'>Posts are disabled for this organization.</Typography>
-    </Box>
-  )
+  if (organization.state === "LOCKED" || organization.state === "PENDING")
+    return (
+      <Box>
+        <Typography variant="h2">
+          Posts are disabled for this organization.
+        </Typography>
+      </Box>
+    );
 
   return (
-    <Box sx={{ width: '100%'}}>
+    <Box sx={{ width: "100%" }}>
       <PostEditor
         orgId={organization.id}
         onCreate={(newPost) => {
           setPosts([...posts, newPost]);
         }}
       />
-      <Typography variant='h1' align='center' width='100%'>Posts</Typography>
+      <Typography variant="h1" align="center" width="100%">
+        Posts
+      </Typography>
       {posts.map((post, i) => {
         return (
           <Post

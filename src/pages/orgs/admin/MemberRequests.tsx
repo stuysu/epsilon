@@ -18,8 +18,10 @@ const MemberRequests = () => {
     });
 
   return (
-    <Box sx={{ width: '100%'}}>
-      <Typography variant='h1' align='center' width='100%'>Member Requests</Typography>
+    <Box sx={{ width: "100%" }}>
+      <Typography variant="h1" align="center" width="100%">
+        Member Requests
+      </Typography>
       {pendingMembers?.map((member, i) => (
         <PendingMember
           id={member.membershipId || -1}

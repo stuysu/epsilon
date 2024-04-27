@@ -19,7 +19,7 @@ const ApproveEdit = () => {
       if (error || !data) {
         return enqueueSnackbar(
           "Failed to fetch pending edits. Contact it@stuysu.org for support.",
-          { variant: "error" }
+          { variant: "error" },
         );
       }
 
@@ -43,7 +43,7 @@ const ApproveEdit = () => {
       if (oerror || !odata) {
         return enqueueSnackbar(
           "Failed to fetch corresponding org data. Contact it@stuysu.org for support.",
-          { variant: "error" }
+          { variant: "error" },
         );
       }
 

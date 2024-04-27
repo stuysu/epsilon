@@ -1,4 +1,4 @@
-import { Box } from "@mui/material"
+import { Box } from "@mui/material";
 
 import { useState, useEffect } from "react";
 
@@ -8,19 +8,20 @@ import { supabase } from "../../supabaseClient";
 import { useSnackbar } from "notistack";
 
 const Strikes = () => {
-    const { enqueueSnackbar } = useSnackbar();
+  const { enqueueSnackbar } = useSnackbar();
 
-    const [orgId, setOrgId] = useState<Number>();
-    const [orgName, setOrgName] = useState("");
-    const [orgStrikes, setOrgStrikes] = useState<Strike[]>([]);
+  const [orgId, setOrgId] = useState<Number>();
+  const [orgName, setOrgName] = useState("");
+  const [orgStrikes, setOrgStrikes] = useState<Strike[]>([]);
 
-    useEffect(() => {
-        if (!orgId) return;
+  useEffect(() => {
+    if (!orgId) return;
 
-        const fetchOrgStrikes = async () => {
-            const { data, error } = await supabase
-                .from("strikes")
-                .select(`
+    const fetchOrgStrikes = async () => {
+      const { data, error } = await supabase
+        .from("strikes")
+        .select(
+          `
                     id,
                     reason,
                     created_at,
@@ -30,30 +31,36 @@ const Strikes = () => {
                     users (
                         email
                     )
-                `)
-                .eq('organization_id', orgId)
-            
-            if (error || !data) {
-                return enqueueSnackbar("Failed to load strikes. Contact it@stuysu.org for support.", { variant: "error" });
-            }
+                `,
+        )
+        .eq("organization_id", orgId);
 
-            setOrgStrikes(data as Strike[]);
-        }
+      if (error || !data) {
+        return enqueueSnackbar(
+          "Failed to load strikes. Contact it@stuysu.org for support.",
+          { variant: "error" },
+        );
+      }
 
-        fetchOrgStrikes();
-    }, [orgId])
+      setOrgStrikes(data as Strike[]);
+    };
 
-    return (
-        <Box>
-            <h1>Strikes</h1>
-            <OrgSelector onSelect={(orgId, orgName) => {
-                setOrgId(orgId);
-                setOrgName(orgName);
-            }}/>
-            <h1>{orgName}</h1>
-            <pre>{JSON.stringify(orgStrikes, undefined, 4)}</pre>
-        </Box>
-    )
-}
+    fetchOrgStrikes();
+  }, [orgId]);
+
+  return (
+    <Box>
+      <h1>Strikes</h1>
+      <OrgSelector
+        onSelect={(orgId, orgName) => {
+          setOrgId(orgId);
+          setOrgName(orgName);
+        }}
+      />
+      <h1>{orgName}</h1>
+      <pre>{JSON.stringify(orgStrikes, undefined, 4)}</pre>
+    </Box>
+  );
+};
 
 export default Strikes;

@@ -1,5 +1,12 @@
 import { useEffect, useState, ChangeEvent } from "react";
-import { Box, Button, TextField, Switch, FormGroup, FormControlLabel } from "@mui/material";
+import {
+  Box,
+  Button,
+  TextField,
+  Switch,
+  FormGroup,
+  FormControlLabel,
+} from "@mui/material";
 
 import { supabase } from "../../../../supabaseClient";
 import { useSnackbar } from "notistack";
@@ -13,10 +20,10 @@ const hiddenFields: string[] = [
   "created_at",
   "updated_at",
   /* NOT TEXT FIELDS, CUSTOM IMPLEMENT */
-  'meeting_days',
-  'picture',
-  'keywords',
-  'tags'
+  "meeting_days",
+  "picture",
+  "keywords",
+  "tags",
 ];
 
 /* NOTES ON SHALLOW COMPARISON
@@ -120,12 +127,14 @@ const OrgEditor = ({
     if (error) {
       return enqueueSnackbar(
         "Error editing organization. Contact it@stuysu.org for support.",
-        { variant: "error" }
+        { variant: "error" },
       );
     }
 
     if (data !== null && data[0]) {
-      enqueueSnackbar("Organization edit request sent!", { variant: "success" });
+      enqueueSnackbar("Organization edit request sent!", {
+        variant: "success",
+      });
 
       /* if all fields of organizationEdit are null, delete the edit */
       let res = data[0];
@@ -161,7 +170,7 @@ const OrgEditor = ({
           meeting_days: undefined,
           keywords: undefined,
           tags: undefined,
-          commitment_level: undefined
+          commitment_level: undefined,
         });
       } else {
         /* update client without sending another call */
@@ -170,7 +179,7 @@ const OrgEditor = ({
     } else {
       enqueueSnackbar(
         "Server failed to send back changes. Refresh page to see potential results.",
-        { variant: "warning" }
+        { variant: "warning" },
       );
     }
 
@@ -206,10 +215,12 @@ const OrgEditor = ({
       <Box bgcolor="background.default" color="primary.contrastText">
         <FormGroup>
           <FormControlLabel
-            control={<Switch 
-              checked={editing}
-              onChange={e => setEditing(e.target.checked)}
-            />}
+            control={
+              <Switch
+                checked={editing}
+                onChange={(e) => setEditing(e.target.checked)}
+              />
+            }
             label="editing"
           />
         </FormGroup>
@@ -227,7 +238,7 @@ const OrgEditor = ({
           let status = "Approved";
 
           if (organization.state === "PENDING") {
-            status = "Pending"
+            status = "Pending";
           } else {
             if (orgEdit[key] !== undefined && orgEdit[key] !== null) {
               if (organizationEdit[key] !== orgEdit[key]) {
@@ -246,9 +257,7 @@ const OrgEditor = ({
           }
 
           return (
-            <Box
-              key={i}
-            >
+            <Box key={i}>
               <TextField
                 variant="filled"
                 name={field}

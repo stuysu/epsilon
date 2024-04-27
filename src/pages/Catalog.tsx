@@ -24,10 +24,10 @@ function getUnique(arr : Partial<Organization>[]) {
 */
 
 type SearchState = {
-  orgs: Partial<Organization>[],
-  offset: number,
-  more: boolean
-}
+  orgs: Partial<Organization>[];
+  offset: number;
+  more: boolean;
+};
 
 /* 
 If there are search params
@@ -42,63 +42,69 @@ const Catalog = () => {
   const [searchState, setSearchState] = useState<SearchState>({
     orgs: [],
     offset: 0,
-    more: true
-  })
+    more: true,
+  });
 
   const [searchParams, setSearchParams] = useState<SearchParams>({
     name: "",
     keywords: [],
-    tags: []
-  })
+    tags: [],
+  });
 
   const [seed, setSeed] = useState(Math.random());
 
   const isTwo = useMediaQuery("(max-width: 1000px)");
   const isOne = useMediaQuery("(max-width: 500px)");
-  
+
   let columns = 3;
   if (isTwo) columns = 2;
   if (isOne) columns = 1;
 
-  const getOrgs = async (isReset? : boolean) => {
+  const getOrgs = async (isReset?: boolean) => {
     const originalOffset = isReset ? 0 : searchState.offset;
     // setSearchState({...searchState, offset: originalOffset + querySize});
 
     let orgData, orgError;
 
-    if (!searchParams.name.length && !searchParams.keywords.length && !searchParams.tags.length) {
+    if (
+      !searchParams.name.length &&
+      !searchParams.keywords.length &&
+      !searchParams.tags.length
+    ) {
       // get orgs in random order (no search params)
-      (
-        { data: orgData, error: orgError } = await supabase
-        .rpc(
-          'get_random_organizations',
-          { seed, query_offset: originalOffset, query_limit: querySize }
-        )
-      );
+      ({ data: orgData, error: orgError } = await supabase.rpc(
+        "get_random_organizations",
+        { seed, query_offset: originalOffset, query_limit: querySize },
+      ));
     } else {
       // inner join with tags and keywords
-      (
-        { data: orgData, error: orgError } = await supabase
-          .from('organizations')
-          .select('*')
-          .ilike('name', `%${searchParams.name}%`)
-          .range(originalOffset, originalOffset + querySize - 1)
-      )
+      ({ data: orgData, error: orgError } = await supabase
+        .from("organizations")
+        .select("*")
+        .ilike("name", `%${searchParams.name}%`)
+        .range(originalOffset, originalOffset + querySize - 1));
     }
 
     if (orgError || !orgData) {
-      enqueueSnackbar("Error fetching organizations. Contact it@stuysu.org for support.", { variant: "error" });
+      enqueueSnackbar(
+        "Error fetching organizations. Contact it@stuysu.org for support.",
+        { variant: "error" },
+      );
       return;
     }
 
     let more = true;
-    let finalOrgs = isReset ? orgData : [...searchState.orgs, ...orgData]
+    let finalOrgs = isReset ? orgData : [...searchState.orgs, ...orgData];
 
     if (orgData.length < querySize) {
       more = false;
     }
 
-    setSearchState({orgs: finalOrgs, offset: originalOffset + querySize, more });
+    setSearchState({
+      orgs: finalOrgs,
+      offset: originalOffset + querySize,
+      more,
+    });
   };
 
   useEffect(() => {
@@ -113,20 +119,27 @@ const Catalog = () => {
   }, [orgs])
   */
 
-  let approvedOrgs = searchState.orgs
-    .filter(o => o.state !== 'PENDING' && o.state !== 'LOCKED')
+  let approvedOrgs = searchState.orgs.filter(
+    (o) => o.state !== "PENDING" && o.state !== "LOCKED",
+  );
 
   return (
-    <Box sx={{ display: 'flex', position: 'relative', flexWrap: 'wrap'}}>
-      <SearchFilter 
-        isOneColumn={isOne} 
-        isTwoColumn={isTwo} 
-        value={searchParams} 
-        onChange={setSearchParams} 
+    <Box sx={{ display: "flex", position: "relative", flexWrap: "wrap" }}>
+      <SearchFilter
+        isOneColumn={isOne}
+        isTwoColumn={isTwo}
+        value={searchParams}
+        onChange={setSearchParams}
       />
-      <Box sx= {{ width: (isOne || isTwo) ? '100%' : '75%', padding: '20px', position: 'relative' }}>
-        <Typography variant='h3'>Catalog</Typography>
-        
+      <Box
+        sx={{
+          width: isOne || isTwo ? "100%" : "75%",
+          padding: "20px",
+          position: "relative",
+        }}
+      >
+        <Typography variant="h3">Catalog</Typography>
+
         <InfiniteScroll
           dataLength={searchState.offset}
           next={getOrgs}
@@ -134,24 +147,25 @@ const Catalog = () => {
           loader={<Loading />}
           endMessage={
             <Box>
-              <Typography align='center' variant='h3'>
-                Total of {approvedOrgs.length} {`Organization${(approvedOrgs.length > 1) ? 's' : ''}`}
+              <Typography align="center" variant="h3">
+                Total of {approvedOrgs.length}{" "}
+                {`Organization${approvedOrgs.length > 1 ? "s" : ""}`}
               </Typography>
             </Box>
           }
-          style={{ overflow: 'hidden', paddingTop: '20px'}}
+          style={{ overflow: "hidden", paddingTop: "20px" }}
         >
-          
           <Masonry columns={columns} spacing={2}>
             {
               searchState.orgs.length ? (
                 searchState.orgs.map((org, i) => {
-                  if (org.state === "PENDING" || org.state === "LOCKED") return <></>;
-                  return (
-                    <OrgCard organization={org} key={i} />
-                  );
+                  if (org.state === "PENDING" || org.state === "LOCKED")
+                    return <></>;
+                  return <OrgCard organization={org} key={i} />;
                 })
-              ) : (<Box></Box>) /* To make masonry resize accordingly */
+              ) : (
+                <Box></Box>
+              ) /* To make masonry resize accordingly */
             }
           </Masonry>
         </InfiniteScroll>
