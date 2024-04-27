@@ -1,4 +1,4 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, useEffect } from "react";
 
 import { Paper, Box, PaperProps, Button, Typography } from "@mui/material";
 
@@ -15,7 +15,8 @@ type Props = {
     required?: boolean,
     requirements?: Requirements,
     preview?: boolean,
-    onChange?: (field: string, updatedValue: File | undefined) => void
+    onChange?: (field: string, updatedValue: File | undefined) => void,
+    changeStatus?: (newValue : boolean) => void
 }
 
 const FormUpload = (
@@ -26,10 +27,17 @@ const FormUpload = (
         requirements, 
         preview,
         onChange,
+        changeStatus,
         ...paperProps 
     } : 
     Props & PaperProps
 ) => {
+    useEffect(() => {
+        if (changeStatus) {
+            changeStatus(required ? false : true);
+        }
+    }, [required]);
+
     const hasFile = value ? true : false;
 
     const fileChanged = (event: ChangeEvent<HTMLInputElement>) => {

@@ -1,3 +1,5 @@
+import { useEffect } from "react"
+
 import { CheckboxProps, FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox } from "@mui/material"
 
 type SelectType = {
@@ -11,7 +13,8 @@ type Props = {
     label?: string,
     required?: boolean,
     description?: string,
-    onChange?: (field: string, updatedSelections: string[]) => void
+    onChange?: (field: string, updatedSelections: string[]) => void,
+    changeStatus?: (newValue : boolean) => void,
     selections: SelectType[]
 }
 
@@ -23,10 +26,17 @@ const FormCheckSelect = (
         required,
         description,
         onChange,
+        changeStatus,
         selections,
         ...checkboxProps
     } : Props & CheckboxProps
 ) => {
+    useEffect(() => {
+        if (changeStatus) {
+            changeStatus(required ? false : true);
+        }
+    }, [required]);
+
     let checked : string[] = value || [];
 
     const checkboxUpdate = (newSelections : string[]) => {

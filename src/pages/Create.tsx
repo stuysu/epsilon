@@ -245,6 +245,9 @@ const Create = () => {
             label="Socials (optional)"
             field="socials"
             sx={{ width: '100%' }}
+            requirements={{
+              maxChar: 100
+            }}
           />
         </FormSection>
         <FormUpload 

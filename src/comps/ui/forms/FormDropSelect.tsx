@@ -1,3 +1,4 @@
+import { useEffect } from "react"
 import { Box, Select, MenuItem, SelectProps, SelectChangeEvent, FormControl, InputLabel } from "@mui/material"
 
 type SelectType = {
@@ -9,7 +10,8 @@ type Props = {
     field: string,
     description?: string,
     required?: boolean,
-    onChange?: (field: string, updatedValue: string) => void
+    onChange?: (field: string, updatedValue: string) => void,
+    changeStatus?: (newValue : boolean) => void,
     selections: SelectType[]
 }
 
@@ -19,14 +21,26 @@ const FormDropSelect = (
         description,
         required,
         onChange,
+        changeStatus,
         selections,
         ...selectProps
     } :
     Props & SelectProps
 ) => {
+    useEffect(() => {
+        if (changeStatus) {
+            changeStatus(required ? false : true);
+        }
+    }, [required]);
+
     const selectionChanged = (event: SelectChangeEvent<unknown>) => {
         if (!onChange) return;
+
         onChange(field, event.target.value as string);
+
+        if (changeStatus && required) {
+            changeStatus(event.target.value !== undefined);
+        }
     }
 
     return (

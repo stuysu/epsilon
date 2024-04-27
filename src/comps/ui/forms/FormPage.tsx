@@ -5,7 +5,9 @@ import {
     Dispatch,
     Children,
     ReactElement,
-    cloneElement 
+    cloneElement,
+    useState, 
+    useEffect
 } from "react";
 
 import { Box, BoxProps, Button, Typography } from "@mui/material";
@@ -26,6 +28,10 @@ type Props<T> = {
     first?: boolean
 }
 
+type FormStatus = {
+    [field : string]: boolean
+}
+
 const FormPage = <T extends unknown>(
     { 
         title,
@@ -40,6 +46,21 @@ const FormPage = <T extends unknown>(
         first
     } : Props<T>
 ) => {
+    const [status, setStatus] = useState<FormStatus>({});
+    const [valid, setValid] = useState(false);
+
+    useEffect(() => {
+        const isValid = () : boolean => {
+            for (let value of Object.values(status)) {
+                if (!value) return false;
+            }
+    
+            return true;
+        }
+
+        setValid(isValid());
+    }, [status])
+
     const childOnChange = (field: string, updatedValue: any) => {
         if (onChange && value) {
             onChange({
@@ -72,15 +93,24 @@ const FormPage = <T extends unknown>(
     
                 let childField = child.props.field as (keyof T);
                 let childValue = value?.[childField];
-    
+
+                let childProps : { [field : string] : any} = {
+                    key: index,
+                    value: childValue, 
+                    onChange: childOnChange,
+                    changeStatus: (newStatus: boolean) => {
+                        if (newStatus === status[child.props.field]) return;
+                        setStatus(prevState => ({ ...prevState, [child.props.field]: newStatus})) 
+                    }
+                }
+                
                 childs.push(cloneElement(
                     child as ReactElement<any>, 
-                    { value: childValue, onChange: childOnChange }
+                    childProps
                 ));
-                return;
+            } else {
+                childs.push(child);
             }
-
-            childs.push(child);
         })
 
         return childs;
@@ -104,10 +134,10 @@ const FormPage = <T extends unknown>(
                     {
                         last ?
                         (
-                            <Button onClick={onSubmit} variant="contained">{submitText ? submitText : "Submit"}</Button>
+                            <Button onClick={onSubmit} variant="contained" disabled={!valid}>{submitText ? submitText : "Submit"}</Button>
                         ) :
                         (
-                            <Button onClick={onNext} variant="contained">Next</Button>
+                            <Button onClick={onNext} variant="contained" disabled={!valid}>Next</Button>
                         )
                     }
                 </Box>
