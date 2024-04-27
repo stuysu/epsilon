@@ -2,6 +2,7 @@ import { Box, Typography } from "@mui/material";
 
 type Props = {
   role: Membership["role"];
+  role_name: Membership["role_name"]
   email: User["email"];
   picture: User["picture"];
   first_name: User["first_name"];
@@ -9,8 +10,13 @@ type Props = {
   is_faculty: User["is_faculty"];
 };
 
+const formatCapitals = (txt : string) => {
+  return txt.slice(0, 1).toUpperCase() + txt.slice(1).toLowerCase();
+}
+
 const OrgMember = ({
   role,
+  role_name,
   email,
   picture,
   first_name,
@@ -40,7 +46,7 @@ const OrgMember = ({
           {first_name} {last_name}
         </Typography>
         <Typography>
-          {role}
+          {role_name || formatCapitals(role)}
           {is_faculty && " - Faculty"}
         </Typography>
         <Typography>{email}</Typography>
