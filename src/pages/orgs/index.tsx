@@ -90,7 +90,7 @@ const OrgRouter = () => {
                     )
                 `,
         )
-        .eq("url", orgUrl);
+        .ilike("url", orgUrl || "");
 
       if (error) {
         enqueueSnackbar("Error fetching organization.", { variant: "error" });
