@@ -12,7 +12,7 @@ const navButtonStyle : SxProps = {
     height: '60px',
     display: 'flex',
     flexWrap: 'nowrap',
-    justifyContent: 'center',
+    paddingLeft: '20px',
     alignItems: 'center',
     fontSize: "20px",
     cursor: 'pointer',

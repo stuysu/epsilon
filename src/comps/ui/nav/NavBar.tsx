@@ -1,4 +1,4 @@
-import { Box, Button, Drawer } from "@mui/material";
+import { Typography, Box, Button, Drawer } from "@mui/material";
 import { Menu } from "@mui/icons-material";
 import { CSSProperties, useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -6,6 +6,7 @@ import { supabase } from "../../../supabaseClient";
 import UserContext from "../../context/UserContext";
 import { useSnackbar } from "notistack";
 import NavButton from "./NavButton";
+import OrgBar from "../../pages/home/ui/OrgBar";
 
 const navStyles : CSSProperties = { 
     width: "100%", 
@@ -65,6 +66,34 @@ const NavBar = () => {
                         overflowY: 'scroll' 
                     }}
                 >
+                    <Box sx={{ width: '100%', height: '250px'}}>
+                        <Box sx={{ width: '100%', height: '110px', padding: '20px'}}>
+                            <img 
+                                style={{
+                                    width: '110px',
+                                    height: '110px', 
+                                    borderRadius: '100%',
+                                    boxShadow: 'rgba(0, 0, 0, 0.35) 0px 5px 15px' 
+                                }}
+                                src={user.picture || 'https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png'}
+                            />
+                        </Box>
+                        <Box sx={{ width: '100%', height: '140px', display: 'flex', flexWrap: 'wrap', padding: '20px', alignContent: 'flex-end' }}>
+                            {
+                                user.signed_in ? 
+                                (
+                                    <>
+                                        <Typography width='100%'>{user.email || "No Email"}</Typography>
+                                        <Typography width='100%'>ID: {user.id || 'No ID'}</Typography>
+                                        <Typography width='100%'>Grade: {user.grade || 'No Grade'}</Typography>
+                                    </>
+                                ) :
+                                (
+                                    <Typography width='100%'>Signed Out</Typography>
+                                )
+                            }
+                        </Box>
+                    </Box>
                     <Box sx={{ width: '100%', backgroundColor: 'inherit'}}>
                         {
                             user.signed_in && (
@@ -76,10 +105,49 @@ const NavBar = () => {
                             <NavButton onClick={() => navigate("/admin")} display={'Admin Panel'} />
                         )}
                     </Box>
-                    <Box sx={{ width: '100%', backgroundColor: 'inherit'}}>
+                    <Box sx={{ width: '100%', backgroundColor: 'inherit' }}>
+                        <Typography 
+                            color='#aaa' 
+                            width='100%' 
+                            height='60px'
+                            paddingLeft='20px'
+                            display='flex'
+                            alignItems='center'
+                        >   
+                            Discover
+                        </Typography>
                         <NavButton onClick={() => navigate("/catalog")} display={'Catalog'} />
-                        <NavButton onClick={() => navigate("/create")} display={'Create Activity'} />
                         <NavButton onClick={() => navigate("/meetings")} display={'Meetings'} />
+                    </Box>
+
+                    <Box sx={{ width: '100%', backgroundColor: 'inherit'}}>
+                        <Typography 
+                            color='#aaa' 
+                            width='100%' 
+                            height='60px'
+                            paddingLeft='20px'
+                            display='flex'
+                            alignItems='center'
+                        >
+                            My Activities
+                        </Typography>
+                        {
+                            user.memberships?.map((membership, i) => 
+                                (
+                                <OrgBar 
+                                    name={membership?.organizations?.name || "No Name"}
+                                    role={membership?.role || 'No Role'}
+                                    url={membership?.organizations?.url || "/"}
+                                    picture={membership?.organizations?.picture || 'https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png'}
+                                />
+                                )
+                            )
+                        }
+                        {
+                            user.signed_in && (
+                                <NavButton onClick={() => navigate("/create")} display={'Create Activity'} />
+                            )
+                        }
                     </Box>
                 </Box>
             </Drawer>
