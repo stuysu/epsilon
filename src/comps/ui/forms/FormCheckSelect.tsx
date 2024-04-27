@@ -40,9 +40,11 @@ const FormCheckSelect = (
         validate(value);
     }, [required, value]);
 
-    const validate = (targetValue : any) => {
+    const validate = (targetValue? : string[]) => {
+        if (!targetValue) targetValue = [];
+
         if (changeStatus && required) {
-            changeStatus(targetValue !== undefined);
+            changeStatus(targetValue.length > 0);
         }
     }
 
