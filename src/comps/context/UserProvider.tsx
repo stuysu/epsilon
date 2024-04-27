@@ -118,7 +118,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
           id: data[0].id,
           is_faculty: data[0].is_faculty,
           active: data[0].active,
-          memberships: data[0].memberships,
+          memberships: data[0].memberships as Membership[],
         }; // user in our own user table
         let isAdmin = false;
         /* CHECK PERMISSIONS */

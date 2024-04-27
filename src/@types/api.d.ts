@@ -55,7 +55,7 @@ interface User {
 
 interface Membership {
   users?: Partial<User>;
-  organization?: Partial<Organization>;
+  organizations?: Partial<Organization>;
   id: number;
   role: "MEMBER" | "ADVISOR" | "ADMIN" | "CREATOR";
   role_name?: string;
