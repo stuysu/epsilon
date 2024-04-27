@@ -165,7 +165,8 @@ const NavBar = () => {
             {user.memberships?.map((membership, i) => (
               <OrgBar
                 name={membership?.organizations?.name || "No Name"}
-                role={membership?.role || "No Role"}
+                role={membership?.role || "MEMBER"}
+                role_name={membership?.role_name}
                 url={membership?.organizations?.url || "/"}
                 picture={
                   membership?.organizations?.picture ||

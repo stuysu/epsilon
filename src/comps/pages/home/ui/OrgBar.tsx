@@ -3,12 +3,17 @@ import { useNavigate } from "react-router-dom";
 
 type Props = {
   name: string;
-  role: string;
+  role: Membership['role'];
+  role_name: Membership['role_name'];
   url: string;
   picture: string;
 };
 
-const OrgBar = ({ name, url, role, picture }: Props) => {
+const formatCapitals = (txt : string) => {
+  return txt.slice(0, 1).toUpperCase() + txt.slice(1).toLowerCase();
+}
+
+const OrgBar = ({ name, url, role, role_name, picture }: Props) => {
   const navigate = useNavigate();
 
   return (
@@ -50,7 +55,7 @@ const OrgBar = ({ name, url, role, picture }: Props) => {
       </Box>
       <Box>
         <Typography width="100%">{name}</Typography>
-        <Typography width="100%">{role}</Typography>
+        <Typography width="100%">{role_name || formatCapitals(role)}</Typography>
       </Box>
     </Box>
   );
