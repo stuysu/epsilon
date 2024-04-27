@@ -103,10 +103,65 @@ const FormTextField = (
         }
     }
 
+    let helperText = "";
+    if (!required) {
+        helperText = "Optional"
+    } else {
+        helperText = "*Required"
+    }
+
+    if (requirements) {
+        let countChars = false;
+        if (requirements.minChar) {
+            countChars = true;
+            helperText += `: min ${requirements.minChar} Characters`;
+        }
+
+        if (requirements.maxChar) {
+            if (countChars) {
+                helperText += ' to'
+            } else {
+                helperText += ':'
+            }
+            countChars = true;
+
+            helperText += ` max ${requirements.maxChar} Characters`;
+        }
+
+        if (countChars) helperText += `, at ${value?.length || 0}.`
+
+        let countWords = false;
+
+        if (requirements.minWords) {
+            if (!countChars) {
+                helperText += ":"
+            }
+
+            countWords = true;
+            helperText += ` min ${requirements.minWords} Words`
+        }
+
+        if (requirements.maxWords) {
+            if (!countChars && !countWords) {
+                helperText += ":"
+            }
+
+            if (countWords) {
+                helperText += 'to'
+            }
+
+            countWords = true;
+            helperText += ` max ${requirements.maxWords} Words`
+        }
+
+        if (countWords) helperText += `, at ${value?.trim().split(" ").length || 0}.`
+    }
+
     return (
         <TextField
             onChange={textChanged}
             value={value}
+            helperText={helperText}
             {...textFieldProps}
         />
     )

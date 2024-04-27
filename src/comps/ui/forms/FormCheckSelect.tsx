@@ -1,6 +1,6 @@
 import { useEffect } from "react"
 
-import { CheckboxProps, FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox } from "@mui/material"
+import { CheckboxProps, FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox, FormHelperText } from "@mui/material"
 
 type SelectType = {
     id: string,
@@ -60,6 +60,14 @@ const FormCheckSelect = (
         onChange(field, newSelections);
     }
 
+    let helperText = "";
+
+    if (required) {
+        helperText = '*Required'
+    } else {
+        helperText = '*Optional'
+    }
+
     return (
         <FormControl>
             {label && (<FormLabel>{label}</FormLabel>)}
@@ -90,6 +98,7 @@ const FormCheckSelect = (
                     })
                 }
             </FormGroup>
+            <FormHelperText>{helperText}</FormHelperText>
         </FormControl>
     )
 }

@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { Box, Select, MenuItem, SelectProps, SelectChangeEvent, FormControl, InputLabel } from "@mui/material"
+import { Box, Select, MenuItem, SelectProps, SelectChangeEvent, FormControl, InputLabel, FormHelperText } from "@mui/material"
 
 type SelectType = {
     id: string,
@@ -58,6 +58,14 @@ const FormDropSelect = (
         onChange(field, event.target.value as string);
     }
 
+    let helperText = "";
+
+    if (required) {
+        helperText = '*Required'
+    } else {
+        helperText = '*Optional'
+    }
+
     return (
         <Box sx={{ maxWidth: 700 }}>
             <FormControl fullWidth>
@@ -75,6 +83,7 @@ const FormDropSelect = (
                         )
                     }
                 </Select>
+                <FormHelperText>{helperText}</FormHelperText>
             </FormControl>
         </Box>
     )
