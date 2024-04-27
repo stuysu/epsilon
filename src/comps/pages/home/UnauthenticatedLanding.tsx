@@ -7,6 +7,8 @@ import { supabase } from "../../../supabaseClient";
 
 import { useNavigate } from "react-router-dom";
 
+import { PUBLIC_URL } from "../../../constants";
+
 const UnauthenticatedLanding = () => {
   const navigate = useNavigate();
 
@@ -45,6 +47,7 @@ const UnauthenticatedLanding = () => {
           >
             <Box sx={{ width: '100%', display: 'flex', justifyContent: 'center', alignItems: 'center' }} >
               <Auth
+                redirectTo={PUBLIC_URL}
                 supabaseClient={supabase}
                 appearance={{ theme: ThemeSupa }}
                 providers={["google"]}
