@@ -1,4 +1,5 @@
-export const PUBLIC_URL = process.env.REACT_APP_PUBLIC_URL || "http://localhost:3000";
+export const PUBLIC_URL =
+  process.env.REACT_APP_PUBLIC_URL || "http://localhost:3000";
 export const SUPABASE_URL =
   process.env.REACT_APP_SUPABASE_URL || "http://localhost:8000/";
 export const SUPABASE_ANON_KEY =

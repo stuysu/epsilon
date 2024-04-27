@@ -53,7 +53,7 @@ const ApprovePending = () => {
       if (error || !data) {
         return enqueueSnackbar(
           "Failed to fetch pending organizations. Contact it@stuysu.org for support.",
-          { variant: "error" }
+          { variant: "error" },
         );
       }
 

@@ -1,5 +1,3 @@
-const AdminOrgStrikes = () => {
-    
-}
+const AdminOrgStrikes = () => {};
 
 export default AdminOrgStrikes;

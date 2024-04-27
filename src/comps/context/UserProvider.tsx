@@ -34,7 +34,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
         grade: -1,
         memberships: [],
         is_faculty: false,
-        active: false
+        active: false,
       });
     }
   });
@@ -84,7 +84,10 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
           .eq("email", supabaseUser.email);
 
         if (error) {
-          enqueueSnackbar("Error logging in. Contact it@stuysu.org for support.", { variant: "error" });
+          enqueueSnackbar(
+            "Error logging in. Contact it@stuysu.org for support.",
+            { variant: "error" },
+          );
           return;
         }
 
@@ -94,7 +97,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
           enqueueSnackbar(
             "Unverified account. Please contact it@stuysu.org for support.",
-            { variant: "error" }
+            { variant: "error" },
           );
           return;
         }
@@ -130,7 +133,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
         if (error) {
           enqueueSnackbar(
             "Error fetching permissions. Contact it@stuysu.org for support.",
-            { variant: "error" }
+            { variant: "error" },
           );
         }
         if (Array.isArray(data) && data?.length > 0) {
@@ -142,20 +145,19 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
           let avatarURL = supabaseUser.user_metadata.avatar_url;
           user.picture = avatarURL;
 
-          let { error: profileUpdateError } = await supabase
-            .rpc(
-              "update_profile_picture",
-              { profile_url: avatarURL }
-            );
+          let { error: profileUpdateError } = await supabase.rpc(
+            "update_profile_picture",
+            { profile_url: avatarURL },
+          );
 
           if (profileUpdateError) {
             enqueueSnackbar(
               "Unable to save profile picture to server. Please contact it@stuysu.org for support.",
-              { variant: "error" }
+              { variant: "error" },
             );
           }
 
-          enqueueSnackbar("Profile Picture Updated!", { variant: 'success' })
+          enqueueSnackbar("Profile Picture Updated!", { variant: "success" });
         }
 
         /* 
@@ -174,7 +176,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
           grade: user.grade,
           memberships: user.memberships,
           is_faculty: user.is_faculty,
-          active: user.active
+          active: user.active,
         });
       }
     };
@@ -182,11 +184,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
     getUser();
   }, []);
 
-  return (
-    <UserContext.Provider value={value}>
-      {children}
-    </UserContext.Provider>
-  );
+  return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };
 
 export default UserProvider;

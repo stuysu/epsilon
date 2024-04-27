@@ -24,7 +24,7 @@ const PendingMember = ({
     if (error) {
       enqueueSnackbar(
         "Error approving member. Contact it@stuysu.org for support.",
-        { variant: "error" }
+        { variant: "error" },
       );
       return;
     }
@@ -37,7 +37,7 @@ const PendingMember = ({
     if (error) {
       enqueueSnackbar(
         "Error rejecting member. Contact it@stuysu.org for support.",
-        { variant: "error" }
+        { variant: "error" },
       );
       return;
     }

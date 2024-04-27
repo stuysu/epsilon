@@ -11,7 +11,7 @@ const Home = () => {
   const user: UserContextType = useContext(UserContext);
 
   return (
-    <Box sx={{ width: '100%'}}>
+    <Box sx={{ width: "100%" }}>
       <Helmet>
         <title>Home | Epsilon</title>
       </Helmet>

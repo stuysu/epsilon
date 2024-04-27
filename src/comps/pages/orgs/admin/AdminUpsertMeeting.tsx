@@ -23,9 +23,12 @@ import { useSnackbar } from "notistack";
 
 const getDefaultTime = () => {
   let d = new Date();
-  let defaultTime = new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime() + (1000 * 60 * 60 * 15) + (1000 * 60 * 35);
+  let defaultTime =
+    new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime() +
+    1000 * 60 * 60 * 15 +
+    1000 * 60 * 35;
   return defaultTime;
-}
+};
 
 /* TODO: block off rooms on days they are unavailable */
 const AdminUpsertMeeting = ({
@@ -49,21 +52,23 @@ const AdminUpsertMeeting = ({
   isPublic?: boolean;
   open: boolean;
   onClose: () => void;
-  onSave: (saveState : Partial<Meeting>, isInsert : boolean) => void;
+  onSave: (saveState: Partial<Meeting>, isInsert: boolean) => void;
 }) => {
   const { enqueueSnackbar } = useSnackbar();
   const organization = useContext(OrgContext);
 
   const [meetingTitle, setMeetingTitle] = useState(title || "");
   const [meetingDesc, setMeetingDesc] = useState(description || "");
-  
+
   const [roomId, setRoomId] = useState(room_id);
 
   // let default date be today at 3:35-5:00
   const [startTime, setStartTime] = useState<Dayjs | null>(
     start ? dayjs(start) : dayjs(getDefaultTime()),
   );
-  const [endTime, setEndTime] = useState<Dayjs | null>(end ? dayjs(end) : dayjs(getDefaultTime()));
+  const [endTime, setEndTime] = useState<Dayjs | null>(
+    end ? dayjs(end) : dayjs(getDefaultTime()),
+  );
   const [endTimePicked, setEndTimePicked] = useState(false);
   const [isPub, setIsPub] = useState(isPublic === undefined ? true : isPublic);
 
@@ -74,7 +79,7 @@ const AdminUpsertMeeting = ({
   const [loading, setLoading] = useState(true);
 
   /* Filtering out rooms that are taken for that day */
-  
+
   useEffect(() => {
     const fetchRooms = async () => {
       let { data, error } = await supabase.from("rooms").select();
@@ -82,7 +87,7 @@ const AdminUpsertMeeting = ({
       if (error || !data) {
         enqueueSnackbar(
           "Error fetching rooms. Contact it@stuysu.org for support.",
-          { variant: "error" }
+          { variant: "error" },
         );
         return;
       }
@@ -100,33 +105,29 @@ const AdminUpsertMeeting = ({
       get ids of rooms that are booked. 
       there is a special case when we fetch an existing booked room from save
       */
-      
-      let { data, error } = await supabase
-          .rpc(
-            'get_booked_rooms', 
-            { meeting_start: startTime , meeting_end: endTime }
-          )
+
+      let { data, error } = await supabase.rpc("get_booked_rooms", {
+        meeting_start: startTime,
+        meeting_end: endTime,
+      });
 
       if (error || !data) {
         enqueueSnackbar(
           "Error fetching booked rooms. Contact it@stuysu.org for support.",
-          { variant: "error" }
+          { variant: "error" },
         );
         return;
       }
 
       setAvailableRooms(
         allRooms.filter(
-          room => (
-            room.id === room_id ||
-            !data.includes(room.id)
-          )
-        )
-      )
-    }
+          (room) => room.id === room_id || !data.includes(room.id),
+        ),
+      );
+    };
 
     filterRooms();
-  }, [allRooms, startTime, endTime])
+  }, [allRooms, startTime, endTime]);
 
   const handleSave = async () => {
     let supabaseReturn;
@@ -145,7 +146,7 @@ const AdminUpsertMeeting = ({
           name,
           floor
       )
-    `
+    `;
 
     if (id) {
       // update
@@ -164,7 +165,8 @@ const AdminUpsertMeeting = ({
     } else {
       // create
       isInsert = true;
-      supabaseReturn = await supabase.from("meetings")
+      supabaseReturn = await supabase
+        .from("meetings")
         .insert({
           organization_id: organization.id,
           title: meetingTitle,
@@ -181,7 +183,7 @@ const AdminUpsertMeeting = ({
     if (supabaseReturn.error) {
       enqueueSnackbar(
         "Error creating meeting. Contact it@stuysu.org for support.",
-        { variant: "error" }
+        { variant: "error" },
       );
       return;
     }
@@ -192,7 +194,7 @@ const AdminUpsertMeeting = ({
       enqueueSnackbar("Meeting updated!", { variant: "success" });
     }
 
-    onSave(supabaseReturn.data[0] as Partial<Meeting>, isInsert)
+    onSave(supabaseReturn.data[0] as Partial<Meeting>, isInsert);
     onClose();
   };
 
@@ -244,7 +246,7 @@ const AdminUpsertMeeting = ({
           value={dayjs(endTime)}
           onChange={(newTime) => {
             if (!endTimePicked) setEndTimePicked(true);
-            setEndTime(newTime)
+            setEndTime(newTime);
           }}
         />
         <FormControlLabel

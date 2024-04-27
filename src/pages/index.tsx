@@ -32,7 +32,7 @@ const Pages = () => {
         <meta property={"og:title"} content={"Epsilon"} />
         <title>Epsilon</title>
       </Helmet>
-          
+
       <Suspense fallback={<Loading />}>
         <NavBar />
         <Routes>

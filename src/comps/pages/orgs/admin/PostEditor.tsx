@@ -55,7 +55,7 @@ const PostEditor = ({
     if (error || !data) {
       return enqueueSnackbar(
         "Could not create post. Please contact it@stuysu.org for support.",
-        { variant: "error" }
+        { variant: "error" },
       );
     }
 
@@ -83,7 +83,7 @@ const PostEditor = ({
     if (error || !data) {
       return enqueueSnackbar(
         "Could not update post. Please contact it@stuysu.org for support.",
-        { variant: "error" }
+        { variant: "error" },
       );
     }
 

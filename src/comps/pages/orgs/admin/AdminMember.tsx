@@ -57,7 +57,7 @@ const AdminMember = ({
     if (error) {
       enqueueSnackbar(
         "Could not kick member. Contact it@stuysu.org for support.",
-        { variant: "error" }
+        { variant: "error" },
       );
       return;
     }
@@ -96,7 +96,7 @@ const AdminMember = ({
     if (error) {
       enqueueSnackbar(
         "Could not update member. Contact it@stuysu.org for support.",
-        { variant: "error" }
+        { variant: "error" },
       );
       return;
     }

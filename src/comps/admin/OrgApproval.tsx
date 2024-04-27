@@ -1,13 +1,16 @@
 import { Box, Button } from "@mui/material";
 import { supabase } from "../../supabaseClient";
 
-import { useSnackbar  } from "notistack";
+import { useSnackbar } from "notistack";
 
 const OrgApproval = ({
   onBack,
   onDecision,
   ...org
-}: { onBack: () => void; onDecision: () => void } & Partial<OrgContextType>) => {
+}: {
+  onBack: () => void;
+  onDecision: () => void;
+} & Partial<OrgContextType>) => {
   const { enqueueSnackbar } = useSnackbar();
 
   const approve = async () => {
@@ -18,7 +21,7 @@ const OrgApproval = ({
     if (error) {
       return enqueueSnackbar(
         "Error approving organization. Contact it@stuysu.org for support.",
-        { variant: "error" }
+        { variant: "error" },
       );
     }
 
@@ -34,13 +37,13 @@ const OrgApproval = ({
     if (error) {
       return enqueueSnackbar(
         "Error rejecting organization. Contact it@stuysu.org for support.",
-        { variant: "error" }
+        { variant: "error" },
       );
     }
 
     enqueueSnackbar("Organization rejected!", { variant: "success" });
     onDecision();
-  }
+  };
 
   return (
     <Box>

@@ -109,13 +109,19 @@ const OrgRouter = () => {
   }, [orgUrl, enqueueSnackbar]);
 
   return (
-    <OrgContext.Provider value={{...org, setOrg}}>
+    <OrgContext.Provider value={{ ...org, setOrg }}>
       {org.id === -1 ? (
         <div></div> /* ORG DOESN'T EXIST HERE */
       ) : (
-        <Box sx={{ width: '100%', display: 'flex', flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
+        <Box
+          sx={{
+            width: "100%",
+            display: "flex",
+            flexWrap: isMobile ? "wrap" : "nowrap",
+          }}
+        >
           <OrgNav isMobile={isMobile} />
-          <Box sx={{ width: '100%', padding: '10px'}}>
+          <Box sx={{ width: "100%", padding: "10px" }}>
             <Routes>
               <Route path={`/`} Component={Overview} />
               <Route path={`/charter`} Component={Charter} />

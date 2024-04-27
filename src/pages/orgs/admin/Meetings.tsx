@@ -8,8 +8,7 @@ import { supabase } from "../../../supabaseClient";
 import { useSnackbar } from "notistack";
 
 // using any types because i can't be bothered
-const sortByStart = (m1 : any, m2 : any) : number => {
-
+const sortByStart = (m1: any, m2: any): number => {
   if (m1.start_time < m2.start_time) {
     return -1;
   }
@@ -18,7 +17,7 @@ const sortByStart = (m1 : any, m2 : any) : number => {
   }
 
   return 0;
-}
+};
 
 const Meetings = () => {
   const organization = useContext(OrgContext);
@@ -44,13 +43,14 @@ const Meetings = () => {
     editing: false,
   });
 
-  if (organization.state === "LOCKED" || organization.state === "PENDING") return (
-    <h2>Meetings are disabled for this organization.</h2>
-  )
+  if (organization.state === "LOCKED" || organization.state === "PENDING")
+    return <h2>Meetings are disabled for this organization.</h2>;
 
   return (
-    <Box sx={{ width: '100%'}}>
-      <Typography variant='h1' align='center' width='100%'>Meetings</Typography>
+    <Box sx={{ width: "100%" }}>
+      <Typography variant="h1" align="center" width="100%">
+        Meetings
+      </Typography>
       {organization.meetings.sort(sortByStart).map((meeting) => (
         <AdminMeeting
           key={meeting.id}
@@ -80,7 +80,7 @@ const Meetings = () => {
             if (error) {
               return enqueueSnackbar(
                 "Error deleting meeting. Contact it@stuysu.org for support.",
-                { variant: "error" }
+                { variant: "error" },
               );
             }
 
@@ -129,23 +129,20 @@ const Meetings = () => {
               editing: false,
             });
           }}
-          onSave={(saveState : Partial<Meeting>, isInsert : boolean) => {
+          onSave={(saveState: Partial<Meeting>, isInsert: boolean) => {
             if (isInsert) {
               organization.setOrg?.({
                 ...organization,
-                meetings: [
-                  ...organization.meetings,
-                  saveState
-                ]
-              })
+                meetings: [...organization.meetings, saveState],
+              });
             } else {
               organization.setOrg?.({
                 ...organization,
                 meetings: [
-                  ...organization.meetings.filter(m => m.id !== saveState.id),
-                  saveState
-                ]
-              })
+                  ...organization.meetings.filter((m) => m.id !== saveState.id),
+                  saveState,
+                ],
+              });
             }
           }}
         />

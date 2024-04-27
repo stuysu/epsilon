@@ -1,106 +1,108 @@
-import { useEffect } from "react"
+import { useEffect } from "react";
 
-import { CheckboxProps, FormControl, FormLabel, FormGroup, FormControlLabel, Checkbox, FormHelperText } from "@mui/material"
+import {
+  CheckboxProps,
+  FormControl,
+  FormLabel,
+  FormGroup,
+  FormControlLabel,
+  Checkbox,
+  FormHelperText,
+} from "@mui/material";
 
 type SelectType = {
-    id: string,
-    display: string
-}
+  id: string;
+  display: string;
+};
 
 type Props = {
-    field: string,
-    value?: string[],
-    label?: string,
-    required?: boolean,
-    description?: string,
-    onChange?: (field: string, updatedSelections: string[]) => void,
-    status?: {
-        dirty: boolean,
-        value: boolean
-    },
-    changeStatus?: (newValue : boolean) => void,
-    selections: SelectType[]
-}
+  field: string;
+  value?: string[];
+  label?: string;
+  required?: boolean;
+  description?: string;
+  onChange?: (field: string, updatedSelections: string[]) => void;
+  status?: {
+    dirty: boolean;
+    value: boolean;
+  };
+  changeStatus?: (newValue: boolean) => void;
+  selections: SelectType[];
+};
 
-const FormCheckSelect = (
-    {
-        field,
-        value,
-        label,
-        required,
-        description,
-        onChange,
-        status,
-        changeStatus,
-        selections,
-        ...checkboxProps
-    } : Props & CheckboxProps
-) => {
-    useEffect(() => {
-        validate(value);
-    }, [required, value]);
+const FormCheckSelect = ({
+  field,
+  value,
+  label,
+  required,
+  description,
+  onChange,
+  status,
+  changeStatus,
+  selections,
+  ...checkboxProps
+}: Props & CheckboxProps) => {
+  useEffect(() => {
+    validate(value);
+  }, [required, value]);
 
-    const validate = (targetValue? : string[]) => {
-        if (!targetValue) targetValue = [];
-        if (!changeStatus) return;
-
-        if (required) {
-            changeStatus(targetValue.length > 0);
-        }
-    }
-
-    let checked : string[] = value || [];
-
-    const checkboxUpdate = (newSelections : string[]) => {
-        if (!onChange) return;
-        
-        newSelections = newSelections
-            .filter(v => v && v.length);
-
-        onChange(field, newSelections);
-    }
-
-    let helperText = "";
+  const validate = (targetValue?: string[]) => {
+    if (!targetValue) targetValue = [];
+    if (!changeStatus) return;
 
     if (required) {
-        helperText = '*Required'
-    } else {
-        helperText = '*Optional'
+      changeStatus(targetValue.length > 0);
     }
+  };
 
-    return (
-        <FormControl>
-            {label && (<FormLabel>{label}</FormLabel>)}
-            <FormGroup row>
-                {
-                    selections.map((select, i) => {
+  let checked: string[] = value || [];
 
-                    return (
-                        <FormControlLabel 
-                        control={
-                            <Checkbox
-                                key={i}
-                                checked={checked.includes(select.id)}
-                                onChange={(event) => {
-                                    if (event.target.checked && !checked.includes(select.id)) {
-                                        checkboxUpdate([...checked, select.id]);
-                                    } else {
-                                        checkboxUpdate(checked.filter(id => id !== select.id));
-                                    }
-                                }}
-                                name={select.display}
-                                {...checkboxProps}
-                            />
-                        }
-                        label={select.display}
-                        />
-                    )
-                    })
-                }
-            </FormGroup>
-            <FormHelperText>{helperText}</FormHelperText>
-        </FormControl>
-    )
-}
+  const checkboxUpdate = (newSelections: string[]) => {
+    if (!onChange) return;
+
+    newSelections = newSelections.filter((v) => v && v.length);
+
+    onChange(field, newSelections);
+  };
+
+  let helperText = "";
+
+  if (required) {
+    helperText = "*Required";
+  } else {
+    helperText = "*Optional";
+  }
+
+  return (
+    <FormControl>
+      {label && <FormLabel>{label}</FormLabel>}
+      <FormGroup row>
+        {selections.map((select, i) => {
+          return (
+            <FormControlLabel
+              control={
+                <Checkbox
+                  key={i}
+                  checked={checked.includes(select.id)}
+                  onChange={(event) => {
+                    if (event.target.checked && !checked.includes(select.id)) {
+                      checkboxUpdate([...checked, select.id]);
+                    } else {
+                      checkboxUpdate(checked.filter((id) => id !== select.id));
+                    }
+                  }}
+                  name={select.display}
+                  {...checkboxProps}
+                />
+              }
+              label={select.display}
+            />
+          );
+        })}
+      </FormGroup>
+      <FormHelperText>{helperText}</FormHelperText>
+    </FormControl>
+  );
+};
 
 export default FormCheckSelect;
