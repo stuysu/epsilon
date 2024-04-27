@@ -147,7 +147,7 @@ const FormTextField = (
             }
 
             if (countWords) {
-                helperText += 'to'
+                helperText += ' to'
             }
 
             countWords = true;
