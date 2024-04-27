@@ -113,6 +113,9 @@ const Catalog = () => {
   }, [orgs])
   */
 
+  let approvedOrgs = searchState.orgs
+    .filter(o => o.state !== 'PENDING' && o.state !== 'LOCKED')
+
   return (
     <Box sx={{ display: 'flex', position: 'relative', flexWrap: 'wrap'}}>
       <SearchFilter 
@@ -132,7 +135,7 @@ const Catalog = () => {
           endMessage={
             <Box>
               <Typography align='center' variant='h3'>
-                Total of {searchState.orgs.length} {`Organization${(searchState.orgs.length > 1) ? 's' : ''}`}
+                Total of {approvedOrgs.length} {`Organization${(approvedOrgs.length > 1) ? 's' : ''}`}
               </Typography>
             </Box>
           }
