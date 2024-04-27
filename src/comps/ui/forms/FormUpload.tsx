@@ -16,6 +16,10 @@ type Props = {
     requirements?: Requirements,
     preview?: boolean,
     onChange?: (field: string, updatedValue: File | undefined) => void,
+    status?: {
+        dirty: boolean,
+        value: boolean
+    },
     changeStatus?: (newValue : boolean) => void
 }
 
@@ -27,16 +31,21 @@ const FormUpload = (
         requirements, 
         preview,
         onChange,
+        status,
         changeStatus,
         ...paperProps 
     } : 
     Props & PaperProps
 ) => {
     useEffect(() => {
-        if (changeStatus) {
-            changeStatus(required ? false : true);
+        validate(value);
+    }, [required, requirements, value]);
+
+    const validate = (targetValue : any) => {
+        if (changeStatus && required) {
+            changeStatus(targetValue !== undefined);
         }
-    }, [required]);
+    }
 
     const hasFile = value ? true : false;
 

@@ -35,12 +35,14 @@ const FormDropSelect = (
     Props & SelectProps
 ) => {
     useEffect(() => {
-        validate(value || undefined);
-    }, [required]);
+        validate(value);
+    }, [required, value]);
 
-    const validate = (targetValue : any) => {
+    const validate = (targetValue? : string) => {
+        if (!targetValue) targetValue = '';
+
         if (changeStatus && required) {
-            changeStatus(targetValue !== undefined);
+            changeStatus(targetValue.length > 0);
         }
     }
 
@@ -48,7 +50,6 @@ const FormDropSelect = (
         if (!onChange) return;
 
         onChange(field, event.target.value as string);
-        validate(event.target.value);
     }
 
     return (
@@ -57,7 +58,7 @@ const FormDropSelect = (
                 <InputLabel>{selectProps.label}</InputLabel>
                 <Select
                     onChange={(e) => selectionChanged(e)}
-                    value={value}
+                    value={value || ''}
                     {...selectProps}
                 >
                     {

@@ -37,10 +37,14 @@ const FormCheckSelect = (
     } : Props & CheckboxProps
 ) => {
     useEffect(() => {
-        if (status && !status.dirty && changeStatus) {
-            changeStatus(required ? false : true);
+        validate(value);
+    }, [required, value]);
+
+    const validate = (targetValue : any) => {
+        if (changeStatus && required) {
+            changeStatus(targetValue !== undefined);
         }
-    }, [required]);
+    }
 
     let checked : string[] = value || [];
 
@@ -50,7 +54,7 @@ const FormCheckSelect = (
         newSelections = newSelections
             .filter(v => v && v.length);
 
-        onChange(field, newSelections)
+        onChange(field, newSelections);
     }
 
     return (

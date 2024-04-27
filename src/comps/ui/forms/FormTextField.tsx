@@ -39,11 +39,11 @@ const FormTextField = (
     Props & TextFieldProps
 ) => {
     useEffect(() => {
-        /* set initial validation status */
-        validate(value || "");
-    }, [required]);
+        validate(value);
+    }, [required, requirements, value]);
 
-    const validate = (targetValue : string) => {
+    const validate = (targetValue? : string) => {
+        if (!targetValue) targetValue = "";
         if (!changeStatus) return;
 
         if (requirements) {
@@ -97,8 +97,6 @@ const FormTextField = (
         if (onChange) {
             onChange(field, targetValue);
         }
-
-        validate(targetValue);
     }
 
     return (
