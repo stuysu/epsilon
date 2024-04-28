@@ -73,23 +73,21 @@ const FormDropSelect = ({
   }
 
   return (
-    <Box sx={{ maxWidth: 700 }}>
-      <FormControl fullWidth>
-        <InputLabel>{selectProps.label}</InputLabel>
-        <Select
-          onChange={(e) => selectionChanged(e)}
-          value={value || ""}
-          {...selectProps}
-        >
-          {selections.map((select, i) => (
-            <MenuItem key={i} value={select.id}>
-              {select.display}
-            </MenuItem>
-          ))}
-        </Select>
-        <FormHelperText>{helperText}</FormHelperText>
-      </FormControl>
-    </Box>
+    <FormControl fullWidth>
+      <InputLabel>{selectProps.label}</InputLabel>
+      <Select
+        onChange={(e) => selectionChanged(e)}
+        value={value || ""}
+        {...selectProps}
+      >
+        {selections.map((select, i) => (
+          <MenuItem key={i} value={select.id}>
+            {select.display}
+          </MenuItem>
+        ))}
+      </Select>
+      <FormHelperText>{helperText}</FormHelperText>
+    </FormControl>
   );
 };
 
