@@ -75,12 +75,16 @@ const FormTextField = ({
     let targetValue = event.target.value;
 
     if (
-      (requirements?.maxChar && targetValue.length > requirements.maxChar) ||
+      (requirements?.maxChar && targetValue.length > requirements.maxChar)
+    ) {
+      targetValue = targetValue.slice(0, requirements.maxChar);
+    }
+    if (
       (requirements?.maxWords &&
         targetValue.replace(/  +/g, " ").split(" ").length >
           requirements.maxWords)
     ) {
-      return;
+      targetValue = targetValue.replace(/  +/g, " ").split(" ").slice(0, requirements.maxWords).join(" ");
     }
 
     if (
