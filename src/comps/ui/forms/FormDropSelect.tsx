@@ -86,7 +86,10 @@ const FormDropSelect = ({
           </MenuItem>
         ))}
       </Select>
-      <FormHelperText>{helperText}</FormHelperText>
+      <FormHelperText>
+        {helperText}
+        {description?.split("\n").map(line => (<><br />{line}</>))}
+      </FormHelperText>
     </FormControl>
   );
 };

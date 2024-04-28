@@ -208,6 +208,7 @@ const Create = () => {
           <FormTextField
             label="Url"
             field="url"
+            description={"https://site.com/<this is the part you are entering>\nExample: https://site.com/suit"}
             required
             requirements={{
               minChar: 3,
@@ -227,6 +228,7 @@ const Create = () => {
           <FormDropSelect
             label="Commitment Level"
             field="commitment_level"
+            description={"None: Any amount\nLow: <= 3 meetings a month\nMedium: 4-8 meetings a month\nHigh: 9+ Meetings a month"}
             required
             selections={[
               {

@@ -166,7 +166,12 @@ const FormTextField = ({
     <TextField
       onChange={textChanged}
       value={value}
-      helperText={helperText}
+      helperText={
+        <>
+          {description?.split("\n").map(line => (<>{line}<br /></>))}
+          {helperText} 
+        </>
+      }
       {...textFieldProps}
     />
   );
