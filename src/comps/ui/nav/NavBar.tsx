@@ -92,7 +92,7 @@ const NavBar = () => {
             width: "260px",
             height: "100%",
             backgroundColor: "inherit",
-            overflowY: "scroll",
+            overflowY: "scroll"
           }}
         >
           <Box sx={{ width: "100%", height: "250px" }}>

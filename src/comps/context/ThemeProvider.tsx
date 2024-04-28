@@ -82,7 +82,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
             fontWeight: 400,
             margin: "0.5rem 0",
           },
-        },
+        }
       }),
     [prefersDarkMode],
   );
