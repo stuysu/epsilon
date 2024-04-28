@@ -103,7 +103,7 @@ const Create = () => {
 
     /* convert picture to url */
     if (formData.picture) {
-      let filePath = `org-pictures/${orgId}/${Date.now()}-${formData.name}-profile${formData.picture.name.split(".").pop()}`;
+      let filePath = `org-pictures/${orgId}/${Date.now()}-${formData.url}-profile${formData.picture.name.split(".").pop()}`;
       let { data: storageData, error: storageError } = await supabase.storage
         .from("public-files")
         .upload(filePath, formData.picture);
