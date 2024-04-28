@@ -160,7 +160,7 @@ const FormPage = <T extends unknown>({
             <Button
               onClick={onBack}
               variant="contained"
-              sx={{ width: "80px", height: "40px" }}
+              sx={{ width: "150px", height: "40px" }}
             >
               Back
             </Button>
@@ -179,7 +179,7 @@ const FormPage = <T extends unknown>({
               onClick={onSubmit}
               variant="contained"
               disabled={!valid}
-              sx={{ width: "80px", height: "40px" }}
+              sx={{ width: "150px", height: "40px" }}
             >
               {submitText ? submitText : "Submit"}
             </Button>
@@ -188,7 +188,7 @@ const FormPage = <T extends unknown>({
               onClick={onNext}
               variant="contained"
               disabled={!valid}
-              sx={{ width: "80px", height: "40px" }}
+              sx={{ width: "150px", height: "40px" }}
             >
               Next
             </Button>

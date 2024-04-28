@@ -75,6 +75,7 @@ const Create = () => {
       mission: formData.mission,
       purpose: formData.purpose,
       benefit: formData.benefit,
+      keywords: formData.keywords.join(",").toLowerCase(),
       appointment_procedures: formData.appointment_procedures,
       uniqueness: formData.uniqueness,
       meeting_schedule: formData.meeting_schedule,
