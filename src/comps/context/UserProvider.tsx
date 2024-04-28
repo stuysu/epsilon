@@ -105,10 +105,14 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
         let grade;
         let d = new Date();
 
-        if (d.getMonth() < 8) {
-          grade = 12 - (data[0].grad_year - d.getFullYear());
+        if (!data[0].is_faculty) {
+          if (d.getMonth() < 8) {
+            grade = 12 - (data[0].grad_year - d.getFullYear());
+          } else {
+            grade = 12 - (data[0].grad_year - d.getFullYear() - 1);
+          }
         } else {
-          grade = 12 - (data[0].grad_year - d.getFullYear() - 1);
+          grade = 0;
         }
 
         /* this probably isn't necessary and could be replaced with better typescript */
