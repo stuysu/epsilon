@@ -1,4 +1,17 @@
-import { Typography, Box, Button, Drawer, List, ListItemText, Divider, ListSubheader, ListItemButton, Switch, FormGroup, FormControlLabel } from "@mui/material";
+import {
+  Typography,
+  Box,
+  Button,
+  Drawer,
+  List,
+  ListItemText,
+  Divider,
+  ListSubheader,
+  ListItemButton,
+  Switch,
+  FormGroup,
+  FormControlLabel,
+} from "@mui/material";
 import { Menu } from "@mui/icons-material";
 import { CSSProperties, useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -13,7 +26,7 @@ const navStyles: CSSProperties = {
   height: "50px",
   display: "flex",
   flexWrap: "wrap",
-  position: 'relative'
+  position: "relative",
 };
 
 const titleStyle: CSSProperties = {
@@ -67,17 +80,27 @@ const NavBar = () => {
             Epsilon
           </Link>
         </Box>
-        <Box sx={{ 
-          width: '200px', 
-          height: '100%', 
-          position: 'absolute', 
-          right: 0,
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center' 
-        }}>
+        <Box
+          sx={{
+            width: "200px",
+            height: "100%",
+            position: "absolute",
+            right: 0,
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+          }}
+        >
           <FormGroup>
-            <FormControlLabel control={<Switch checked={theme.colorMode} onChange={(e) => theme.toggleColorMode()} />} label='Dark Mode' />
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={theme.colorMode}
+                  onChange={(e) => theme.toggleColorMode()}
+                />
+              }
+              label="Dark Mode"
+            />
           </FormGroup>
         </Box>
       </Box>
@@ -98,6 +121,7 @@ const NavBar = () => {
           <Box sx={{ width: "100%", height: "250px" }}>
             <Box sx={{ width: "100%", height: "110px", padding: "20px" }}>
               <img
+                alt={`${user.first_name} ${user.last_name}`}
                 style={{
                   width: "110px",
                   height: "110px",
@@ -139,62 +163,53 @@ const NavBar = () => {
           <Divider />
           <List sx={{ width: "100%" }}>
             {user.signed_in && (
-              <ListItemButton
-                onClick={signOut}
-              >
+              <ListItemButton onClick={signOut}>
                 <ListItemText>Sign Out</ListItemText>
               </ListItemButton>
             )}
-              <ListItemButton
-                  onClick={() => navigate("/")}
-                >
-                  <ListItemText>Home</ListItemText>
-              </ListItemButton>
+            <ListItemButton onClick={() => navigate("/")}>
+              <ListItemText>Home</ListItemText>
+            </ListItemButton>
             {user.admin && (
-              <ListItemButton
-                onClick={() => navigate("/admin")}
-              >
+              <ListItemButton onClick={() => navigate("/admin")}>
                 <ListItemText>Admin</ListItemText>
               </ListItemButton>
             )}
           </List>
           <Divider />
-          <List sx={{ width: "100%" }} subheader={<ListSubheader>Discover</ListSubheader>}>
-            <ListItemButton
-              onClick={() => navigate("/catalog")}
-            >
+          <List
+            sx={{ width: "100%" }}
+            subheader={<ListSubheader>Discover</ListSubheader>}
+          >
+            <ListItemButton onClick={() => navigate("/catalog")}>
               <ListItemText>Catalog</ListItemText>
             </ListItemButton>
-            <ListItemButton
-              onClick={() => navigate("/meetings")}
-            >
+            <ListItemButton onClick={() => navigate("/meetings")}>
               <ListItemText>Meetings</ListItemText>
             </ListItemButton>
           </List>
-          
+
           <Divider />
-          
-          <List sx={{ width: '100%'}} subheader={<ListSubheader>My Activities</ListSubheader>}>
+
+          <List
+            sx={{ width: "100%" }}
+            subheader={<ListSubheader>My Activities</ListSubheader>}
+          >
             {user.memberships?.map((membership, i) => (
               <OrgBar
                 name={membership?.organizations?.name}
                 role={membership?.role}
                 role_name={membership?.role_name}
                 url={membership?.organizations?.url || "/"}
-                picture={
-                  membership?.organizations?.picture
-                }
+                picture={membership?.organizations?.picture}
               />
             ))}
             {user.signed_in && (
-              <ListItemButton
-                onClick={() => navigate("/create")}
-              >
+              <ListItemButton onClick={() => navigate("/create")}>
                 <ListItemText>Create Activity</ListItemText>
               </ListItemButton>
             )}
           </List>
-          
         </Box>
       </Drawer>
     </>

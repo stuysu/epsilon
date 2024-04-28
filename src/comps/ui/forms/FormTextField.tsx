@@ -12,12 +12,12 @@ type Requirements = {
 };
 
 type Props = {
-  field: string;
+  field: string; // field must be in props so FormPage associates values correctly
   description?: string;
   required?: boolean;
   requirements?: Requirements;
   value?: string;
-  onChange?: (field: string, updatedValue: string) => void;
+  onChange?: (updatedValue: string) => void;
   status?: {
     dirty: boolean;
     value: boolean;
@@ -26,7 +26,6 @@ type Props = {
 };
 
 const FormTextField = ({
-  field,
   description,
   required,
   requirements,
@@ -37,50 +36,56 @@ const FormTextField = ({
   ...textFieldProps
 }: Props & TextFieldProps) => {
   useEffect(() => {
+    const validate = (targetValue?: string) => {
+      if (!targetValue) targetValue = "";
+      if (!changeStatus) return;
+
+      /* incase component gets "dirtied" and then goes back to undefined */
+      if (!required && targetValue.length === 0) {
+        changeStatus(true);
+      }
+
+      if (requirements) {
+        if (requirements.minChar && targetValue.length < requirements.minChar) {
+          changeStatus(false);
+          return;
+        }
+
+        // does not work with onlyAlpha
+        if (
+          requirements.minWords &&
+          targetValue.trim().split(" ").length < requirements.minWords
+        ) {
+          changeStatus(false);
+          return;
+        }
+
+        changeStatus(true);
+      } else {
+        if (required) {
+          changeStatus(targetValue.length > 0);
+        }
+      }
+    };
+
     validate(value);
-  }, [required, requirements, value]);
-
-  const validate = (targetValue?: string) => {
-    if (!targetValue) targetValue = "";
-    if (!changeStatus) return;
-
-    if (!required && targetValue.length === 0) {
-      changeStatus(true);
-    }
-
-    if (requirements) {
-      if (requirements.minChar && targetValue.length < requirements.minChar) {
-        changeStatus(false);
-        return;
-      }
-
-      // does not work with onlyAlpha
-      if (
-        requirements.minWords &&
-        targetValue.trim().split(" ").length < requirements.minWords
-      ) {
-        changeStatus(false);
-        return;
-      }
-
-      changeStatus(true);
-    } else {
-      if (required) {
-        changeStatus(targetValue.length > 0);
-      }
-    }
-  };
+  }, [required, requirements, value, changeStatus]);
 
   const textChanged = (event: ChangeEvent<HTMLInputElement>) => {
     let targetValue = event.target.value;
 
+    if (requirements?.maxChar && targetValue.length > requirements.maxChar) {
+      targetValue = targetValue.slice(0, requirements.maxChar);
+    }
     if (
-      (requirements?.maxChar && targetValue.length > requirements.maxChar) ||
-      (requirements?.maxWords &&
-        targetValue.replace(/  +/g, " ").split(" ").length >
-          requirements.maxWords)
+      requirements?.maxWords &&
+      targetValue.replace(/  +/g, " ").split(" ").length > requirements.maxWords
     ) {
-      return;
+      targetValue = targetValue
+        .replace(/  +/g, " ")
+        .split(" ")
+        .slice(0, requirements.maxWords)
+        .join(" ");
     }
 
     if (
@@ -99,11 +104,11 @@ const FormTextField = ({
     }
 
     if (requirements?.lowercase) {
-        targetValue = targetValue.toLowerCase();
+      targetValue = targetValue.toLowerCase();
     }
 
     if (onChange) {
-      onChange(field, targetValue);
+      onChange(targetValue);
     }
   };
 
@@ -166,7 +171,17 @@ const FormTextField = ({
     <TextField
       onChange={textChanged}
       value={value}
-      helperText={helperText}
+      helperText={
+        <>
+          {description?.split("\n").map((line) => (
+            <>
+              {line}
+              <br />
+            </>
+          ))}
+          {helperText}
+        </>
+      }
       {...textFieldProps}
     />
   );

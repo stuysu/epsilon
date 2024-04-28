@@ -11,11 +11,11 @@ type Requirements = {
 
 type Props = {
   value?: File;
-  field: string;
+  field: string; // field must be in props so FormPage associates values correctly
   required?: boolean;
   requirements?: Requirements;
   preview?: boolean;
-  onChange?: (field: string, updatedValue: File | undefined) => void;
+  onChange?: (updatedValue: File | undefined) => void;
   status?: {
     dirty: boolean;
     value: boolean;
@@ -25,7 +25,6 @@ type Props = {
 
 const FormUpload = ({
   value,
-  field,
   required,
   requirements,
   preview,
@@ -35,21 +34,21 @@ const FormUpload = ({
   ...paperProps
 }: Props & PaperProps) => {
   useEffect(() => {
+    const validate = (targetValue: any) => {
+      if (!changeStatus) return;
+
+      if (!required && targetValue === undefined) {
+        changeStatus(true);
+        return;
+      }
+
+      if (required) {
+        changeStatus(targetValue !== undefined);
+      }
+    };
+
     validate(value);
-  }, [required, requirements, value]);
-
-  const validate = (targetValue: any) => {
-    if (!changeStatus) return;
-
-    if (!required && targetValue === undefined) {
-      changeStatus(true);
-      return;
-    }
-
-    if (required) {
-      changeStatus(targetValue !== undefined);
-    }
-  };
+  }, [required, requirements, value, changeStatus]);
 
   const hasFile = value ? true : false;
 
@@ -57,7 +56,7 @@ const FormUpload = ({
     if (!event.target.files) return;
     if (!onChange) return;
 
-    onChange(field, event.target.files[0]);
+    onChange(event.target.files[0]);
   };
 
   return (
@@ -102,7 +101,7 @@ const FormUpload = ({
 
         {hasFile && (
           <Button
-            onClick={() => onChange?.(field, undefined)}
+            onClick={() => onChange?.(undefined)}
             variant="contained"
             sx={{
               position: "absolute",
@@ -125,6 +124,7 @@ const FormUpload = ({
           }}
         >
           <img
+            alt={`${value?.name || "Empty File"}`}
             src={value ? URL.createObjectURL(value) : ""}
             width="200px"
             height="200px"

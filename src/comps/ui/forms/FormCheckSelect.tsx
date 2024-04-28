@@ -16,12 +16,12 @@ type SelectType = {
 };
 
 type Props = {
-  field: string;
+  field: string; // field must be in props so FormPage associates values correctly
   value?: string[];
   label?: string;
   required?: boolean;
   description?: string;
-  onChange?: (field: string, updatedSelections: string[]) => void;
+  onChange?: (updatedSelections: string[]) => void;
   status?: {
     dirty: boolean;
     value: boolean;
@@ -31,7 +31,6 @@ type Props = {
 };
 
 const FormCheckSelect = ({
-  field,
   value,
   label,
   required,
@@ -43,17 +42,17 @@ const FormCheckSelect = ({
   ...checkboxProps
 }: Props & CheckboxProps) => {
   useEffect(() => {
+    const validate = (targetValue?: string[]) => {
+      if (!targetValue) targetValue = [];
+      if (!changeStatus) return;
+
+      if (required) {
+        changeStatus(targetValue.length > 0);
+      }
+    };
+
     validate(value);
-  }, [required, value]);
-
-  const validate = (targetValue?: string[]) => {
-    if (!targetValue) targetValue = [];
-    if (!changeStatus) return;
-
-    if (required) {
-      changeStatus(targetValue.length > 0);
-    }
-  };
+  }, [required, value, changeStatus]);
 
   let checked: string[] = value || [];
 
@@ -62,7 +61,7 @@ const FormCheckSelect = ({
 
     newSelections = newSelections.filter((v) => v && v.length);
 
-    onChange(field, newSelections);
+    onChange(newSelections);
   };
 
   let helperText = "";

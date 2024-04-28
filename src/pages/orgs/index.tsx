@@ -58,6 +58,8 @@ const OrgRouter = () => {
                     meeting_schedule,
                     meeting_days,
                     commitment_level,
+                    keywords,
+                    tags,
                     state,
                     joinable,
                     join_instructions,
