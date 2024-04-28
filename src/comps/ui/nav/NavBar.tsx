@@ -1,11 +1,10 @@
-import { Typography, Box, Button, Drawer } from "@mui/material";
+import { Typography, Box, Button, Drawer, List, ListItem, ListItemAvatar, ListItemText, Avatar, Divider, ListSubheader, ListItemButton } from "@mui/material";
 import { Menu } from "@mui/icons-material";
 import { CSSProperties, useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../../supabaseClient";
 import UserContext from "../../context/UserContext";
 import { useSnackbar } from "notistack";
-import NavButton from "./NavButton";
 import OrgBar from "../../pages/home/ui/OrgBar";
 
 const navStyles: CSSProperties = {
@@ -65,6 +64,7 @@ const NavBar = () => {
           </Link>
         </Box>
       </Box>
+
       <Drawer
         anchor="left"
         open={drawerOpen}
@@ -118,69 +118,66 @@ const NavBar = () => {
               )}
             </Box>
           </Box>
-          <Box sx={{ width: "100%", backgroundColor: "inherit" }}>
-            {user.signed_in && (
-              <NavButton onClick={signOut} display={"Sign Out"} />
-            )}
-            <NavButton onClick={() => navigate("/")} display={"Home"} />
-            {user.admin && (
-              <NavButton
-                onClick={() => navigate("/admin")}
-                display={"Admin Panel"}
-              />
-            )}
-          </Box>
-          <Box sx={{ width: "100%", backgroundColor: "inherit" }}>
-            <Typography
-              color="#aaa"
-              width="100%"
-              height="60px"
-              paddingLeft="20px"
-              display="flex"
-              alignItems="center"
-            >
-              Discover
-            </Typography>
-            <NavButton
-              onClick={() => navigate("/catalog")}
-              display={"Catalog"}
-            />
-            <NavButton
-              onClick={() => navigate("/meetings")}
-              display={"Meetings"}
-            />
-          </Box>
 
-          <Box sx={{ width: "100%", backgroundColor: "inherit" }}>
-            <Typography
-              color="#aaa"
-              width="100%"
-              height="60px"
-              paddingLeft="20px"
-              display="flex"
-              alignItems="center"
+          <Divider />
+          <List sx={{ width: "100%" }}>
+            {user.signed_in && (
+              <ListItemButton
+                onClick={signOut}
+              >
+                <ListItemText>Sign Out</ListItemText>
+              </ListItemButton>
+            )}
+              <ListItemButton
+                  onClick={() => navigate("/")}
+                >
+                  <ListItemText>Home</ListItemText>
+              </ListItemButton>
+            {user.admin && (
+              <ListItemButton
+                onClick={() => navigate("/admin")}
+              >
+                <ListItemText>Admin</ListItemText>
+              </ListItemButton>
+            )}
+          </List>
+          <Divider />
+          <List sx={{ width: "100%" }} subheader={<ListSubheader>Discover</ListSubheader>}>
+            <ListItemButton
+              onClick={() => navigate("/catalog")}
             >
-              My Activities
-            </Typography>
+              <ListItemText>Catalog</ListItemText>
+            </ListItemButton>
+            <ListItemButton
+              onClick={() => navigate("/meetings")}
+            >
+              <ListItemText>Meetings</ListItemText>
+            </ListItemButton>
+          </List>
+          
+          <Divider />
+          
+          <List sx={{ width: '100%'}} subheader={<ListSubheader>My Activities</ListSubheader>}>
             {user.memberships?.map((membership, i) => (
               <OrgBar
-                name={membership?.organizations?.name || "No Name"}
-                role={membership?.role || "MEMBER"}
+                name={membership?.organizations?.name}
+                role={membership?.role}
                 role_name={membership?.role_name}
                 url={membership?.organizations?.url || "/"}
                 picture={
-                  membership?.organizations?.picture ||
-                  "https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png"
+                  membership?.organizations?.picture
                 }
               />
             ))}
             {user.signed_in && (
-              <NavButton
+              <ListItemButton
                 onClick={() => navigate("/create")}
-                display={"Create Activity"}
-              />
+              >
+                <ListItemText>Create Activity</ListItemText>
+              </ListItemButton>
             )}
-          </Box>
+          </List>
+          
         </Box>
       </Drawer>
     </>

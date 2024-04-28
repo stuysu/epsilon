@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 
 import OrgContext from "../../../context/OrgContext";
 
-import { Box, Typography } from "@mui/material";
+import { Box, List, ListItemButton, ListItemText, Typography } from "@mui/material";
 
 const OrgAdminNav = () => {
   const organization = useContext<OrgContextType>(OrgContext);
@@ -40,45 +40,23 @@ const OrgAdminNav = () => {
   ];
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexWrap: "nowrap",
-        height: "85px",
-        width: "100%",
-      }}
+    <List
+      sx={{ width: '100%', display: 'flex', flexWrap: 'nowrap' }}
+      
     >
       {navLinks.map((linkData, i) => (
-        <Box
+        <ListItemButton
           key={i}
+          selected={currentIndex === i}
           onClick={() => {
             setCurrentIndex(i);
             navigate(linkData.to);
           }}
-          sx={{
-            width: `${100 / navLinks.length}%`,
-            height: "85px",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-            color: "inherit",
-            padding: "20px",
-            cursor: "pointer",
-            transition: "filter 0.1s ease-out",
-            filter:
-              currentIndex === i ? "brightness(150%)" : "brightness(100%)",
-            "&:hover": {
-              filter: "brightness(150%)",
-              transition: "filter 0.1s ease-out",
-            },
-            backgroundColor: "background.default",
-            borderRadius: "3px",
-          }}
         >
-          <Typography>{linkData.display}</Typography>
-        </Box>
+          <ListItemText>{linkData.display}</ListItemText>
+        </ListItemButton>
       ))}
-    </Box>
+    </List>
   );
 };
 
