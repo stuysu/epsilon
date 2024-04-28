@@ -17,7 +17,7 @@ const OrgBar = ({ name, url, role, role_name, picture }: Props) => {
   const navigate = useNavigate();
 
   return (
-    <ListItemButton onClick={() => navigate(`/${url}`)}>
+    <ListItemButton onClick={() => navigate(`/${url}`)} sx={{ height: '75px'}}>
       <ListItemAvatar>
         <Avatar 
           alt={name} 
