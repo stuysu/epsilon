@@ -1,6 +1,6 @@
 import { useContext, useState } from "react";
 
-import { Box, Button, Typography, Divider } from "@mui/material";
+import { Box, Button, Typography, Divider, List, ListItemButton, ListItemText } from "@mui/material";
 
 import OrgContext from "../../context/OrgContext";
 import UserContext from "../../context/UserContext";
@@ -173,44 +173,20 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
 
       <Divider sx={{ marginTop: "20px", height: "2px" }} />
 
-      <Box
-        sx={{
-          width: "100%",
-          display: "flex",
-          flexWrap: "wrap",
-          marginTop: "10px",
-        }}
+      <List
+        sx={{ width: '100%' }}
       >
         {navLinks.map((linkData, i) => (
-          <Box
-            onClick={() => {
-              navigate(linkData.to);
-              setCurrentIndex(i);
-            }}
-            sx={{
-              width: "100%",
-              height: "60px",
-              display: "flex",
-              alignItems: "center",
-              color: "inherit",
-              padding: "20px",
-              cursor: "pointer",
-              transition: "filter 0.1s ease-out",
-              filter:
-                i === currentIndex ? "brightness(150%)" : "brightness(100%)",
-              "&:hover": {
-                filter: "brightness(150%)",
-                transition: "filter 0.1s ease-out",
-              },
-              backgroundColor: "background.default",
-              borderRadius: "3px",
-            }}
+          <ListItemButton
             key={i}
+            sx={{ height: `65px`}}
+            selected={currentIndex === i} 
+            onClick={() => { navigate(linkData.to); setCurrentIndex(i); }}
           >
-            <Typography>{linkData.display}</Typography>
-          </Box>
+            <ListItemText>{linkData.display}</ListItemText>
+          </ListItemButton>
         ))}
-      </Box>
+      </List>
     </Box>
   );
 };
