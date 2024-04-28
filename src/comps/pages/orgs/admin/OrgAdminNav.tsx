@@ -4,7 +4,7 @@ import { useContext, useState } from "react";
 
 import OrgContext from "../../../context/OrgContext";
 
-import { Box, List, ListItemButton, ListItemText, Typography } from "@mui/material";
+import { List, ListItemButton, ListItemText } from "@mui/material";
 
 const OrgAdminNav = () => {
   const organization = useContext<OrgContextType>(OrgContext);
@@ -40,10 +40,7 @@ const OrgAdminNav = () => {
   ];
 
   return (
-    <List
-      sx={{ width: '100%', display: 'flex', flexWrap: 'nowrap' }}
-      
-    >
+    <List sx={{ width: "100%", display: "flex", flexWrap: "nowrap" }}>
       {navLinks.map((linkData, i) => (
         <ListItemButton
           key={i}

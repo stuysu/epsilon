@@ -46,7 +46,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
           },
           background: {
             default: prefersDarkMode ? "#1e2124" : "#FFFFFF",
-            paper: prefersDarkMode ? "#1e2124" : "#FFFFFF"
+            paper: prefersDarkMode ? "#1e2124" : "#FFFFFF",
           },
         },
         typography: {
@@ -82,7 +82,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
             fontWeight: 400,
             margin: "0.5rem 0",
           },
-        }
+        },
       }),
     [prefersDarkMode],
   );

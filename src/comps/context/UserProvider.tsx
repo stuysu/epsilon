@@ -186,7 +186,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
     };
 
     getUser();
-  }, []);
+  }, [enqueueSnackbar]);
 
   return <UserContext.Provider value={value}>{children}</UserContext.Provider>;
 };

@@ -1,6 +1,5 @@
 import { useEffect } from "react";
 import {
-  Box,
   Select,
   MenuItem,
   SelectProps,
@@ -16,7 +15,7 @@ type SelectType = {
 };
 
 type Props = {
-  field: string;
+  field: string; // field must be in props so FormPage associates values correctly
   value?: string;
   description?: string;
   required?: boolean;
@@ -41,22 +40,22 @@ const FormDropSelect = ({
   ...selectProps
 }: Props & SelectProps) => {
   useEffect(() => {
+    const validate = (targetValue?: string) => {
+      if (!targetValue) targetValue = "";
+      if (!changeStatus) return;
+
+      if (!required && targetValue.length === 0) {
+        changeStatus(true);
+        return;
+      }
+
+      if (required) {
+        changeStatus(targetValue.length > 0);
+      }
+    };
+
     validate(value);
-  }, [required, value]);
-
-  const validate = (targetValue?: string) => {
-    if (!targetValue) targetValue = "";
-    if (!changeStatus) return;
-
-    if (!required && targetValue.length === 0) {
-      changeStatus(true);
-      return;
-    }
-
-    if (required) {
-      changeStatus(targetValue.length > 0);
-    }
-  };
+  }, [required, value, changeStatus]);
 
   const selectionChanged = (event: SelectChangeEvent<unknown>) => {
     if (!onChange) return;
@@ -81,14 +80,19 @@ const FormDropSelect = ({
         {...selectProps}
       >
         {selections.map((select, i) => (
-          <MenuItem key={i} value={select.id}>
+          <MenuItem key={`${i}-${select.id}`} value={select.id}>
             {select.display}
           </MenuItem>
         ))}
       </Select>
       <FormHelperText>
         {helperText}
-        {description?.split("\n").map(line => (<><br />{line}</>))}
+        {description?.split("\n").map((line) => (
+          <>
+            <br />
+            {line}
+          </>
+        ))}
       </FormHelperText>
     </FormControl>
   );

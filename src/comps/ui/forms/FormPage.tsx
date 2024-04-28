@@ -10,7 +10,7 @@ import {
   useEffect,
 } from "react";
 
-import { Box, BoxProps, Button, Typography } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 
 import FormSection from "./FormSection";
 import FormRender from "./FormRender";
@@ -95,7 +95,8 @@ const FormPage = <T extends unknown>({
         let childProps: { [field: string]: any } = {
           key: index,
           value: childValue,
-          onChange: (newValue : any) => childOnChange(child.props.field, newValue),
+          onChange: (newValue: any) =>
+            childOnChange(child.props.field, newValue),
           status: status[child.props.field],
           changeStatus: (newStatus: boolean) => {
             if (
@@ -125,7 +126,12 @@ const FormPage = <T extends unknown>({
 
   return (
     <Box
-      sx={{ height: "100%", maxWidth: "800px", width: "100%", padding: "20px" }}
+      sx={{
+        height: "100%",
+        maxWidth: "1000px",
+        width: "100%",
+        padding: "20px",
+      }}
     >
       <Box sx={{ height: "10%", width: "100%" }}>
         <Typography variant="h3">{title}</Typography>
@@ -151,7 +157,11 @@ const FormPage = <T extends unknown>({
           }}
         >
           {!first && (
-            <Button onClick={onBack} variant="contained">
+            <Button
+              onClick={onBack}
+              variant="contained"
+              sx={{ width: "80px", height: "40px" }}
+            >
               Back
             </Button>
           )}
@@ -165,11 +175,21 @@ const FormPage = <T extends unknown>({
           }}
         >
           {last ? (
-            <Button onClick={onSubmit} variant="contained" disabled={!valid}>
+            <Button
+              onClick={onSubmit}
+              variant="contained"
+              disabled={!valid}
+              sx={{ width: "80px", height: "40px" }}
+            >
               {submitText ? submitText : "Submit"}
             </Button>
           ) : (
-            <Button onClick={onNext} variant="contained" disabled={!valid}>
+            <Button
+              onClick={onNext}
+              variant="contained"
+              disabled={!valid}
+              sx={{ width: "80px", height: "40px" }}
+            >
               Next
             </Button>
           )}

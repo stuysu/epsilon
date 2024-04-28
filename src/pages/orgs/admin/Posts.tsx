@@ -19,9 +19,10 @@ const Posts = () => {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      let { data, error } = await supabase.from("posts")
+      let { data, error } = await supabase
+        .from("posts")
         .select()
-        .eq('organization_id', organization.id);
+        .eq("organization_id", organization.id);
 
       if (error || !data) {
         return enqueueSnackbar(
@@ -34,7 +35,7 @@ const Posts = () => {
     };
 
     fetchPosts();
-  }, [user, enqueueSnackbar]);
+  }, [user, enqueueSnackbar, organization]);
 
   if (organization.state === "LOCKED" || organization.state === "PENDING")
     return (

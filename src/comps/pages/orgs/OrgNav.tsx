@@ -1,6 +1,14 @@
 import { useContext, useState } from "react";
 
-import { Box, Button, Typography, Divider, List, ListItemButton, ListItemText } from "@mui/material";
+import {
+  Box,
+  Button,
+  Typography,
+  Divider,
+  List,
+  ListItemButton,
+  ListItemText,
+} from "@mui/material";
 
 import OrgContext from "../../context/OrgContext";
 import UserContext from "../../context/UserContext";
@@ -147,7 +155,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
             height="100%"
             style={{
               borderRadius: "100%",
-              boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px"
+              boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
             }}
             alt={`organization ${organization.name}`}
           />
@@ -173,15 +181,16 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
 
       <Divider sx={{ marginTop: "20px", height: "2px" }} />
 
-      <List
-        sx={{ width: '100%' }}
-      >
+      <List sx={{ width: "100%" }}>
         {navLinks.map((linkData, i) => (
           <ListItemButton
             key={i}
-            sx={{ height: `65px`}}
-            selected={currentIndex === i} 
-            onClick={() => { navigate(linkData.to); setCurrentIndex(i); }}
+            sx={{ height: `65px` }}
+            selected={currentIndex === i}
+            onClick={() => {
+              navigate(linkData.to);
+              setCurrentIndex(i);
+            }}
           >
             <ListItemText>{linkData.display}</ListItemText>
           </ListItemButton>

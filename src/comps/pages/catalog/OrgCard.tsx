@@ -1,4 +1,4 @@
-import { Paper, Box, Typography, ButtonBase, Card } from "@mui/material";
+import { Box, Typography, Card } from "@mui/material";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -7,17 +7,19 @@ import { ThemeContext } from "../../context/ThemeProvider";
 const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
   const navigate = useNavigate();
   const theme = useContext(ThemeContext);
-  
+
   return (
     <Card
       sx={{
         borderRadius: "7px",
         cursor: "pointer",
-        transition: '0.2s background ease-out',
-        '&:hover': {
-          background: theme.colorMode ? 'rgba(255, 255, 255, 0.2)' : 'rgba(100, 100, 100, 0.2)',
-          transition: '0.2s background ease-out'
-        }
+        transition: "0.2s background ease-out",
+        "&:hover": {
+          background: theme.colorMode
+            ? "rgba(255, 255, 255, 0.2)"
+            : "rgba(100, 100, 100, 0.2)",
+          transition: "0.2s background ease-out",
+        },
       }}
       onClick={() => navigate(`/${organization.url}`)}
     >

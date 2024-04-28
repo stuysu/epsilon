@@ -13,6 +13,7 @@ import { supabase } from "../supabaseClient";
 import FormUpload from "../comps/ui/forms/FormUpload";
 import { useSnackbar } from "notistack";
 import FormSection from "../comps/ui/forms/FormSection";
+import FormChipText from "../comps/ui/forms/FormChipText";
 
 type FormType = {
   name: string;
@@ -101,7 +102,7 @@ const Create = () => {
 
     /* convert picture to url */
     if (formData.picture) {
-      let filePath = `org-pictures/${orgId}/${Date.now()}-${formData.picture.name}`;
+      let filePath = `org-pictures/${orgId}/${Date.now()}-${formData.name}-profile${formData.picture.name.split(".").pop()}`;
       let { data: storageData, error: storageError } = await supabase.storage
         .from("public-files")
         .upload(filePath, formData.picture);
@@ -208,7 +209,9 @@ const Create = () => {
           <FormTextField
             label="Url"
             field="url"
-            description={"https://site.com/<this is the part you are entering>\nExample: https://site.com/suit"}
+            description={
+              "https://site.com/<this is the part you are entering>\nExample: https://site.com/suit"
+            }
             required
             requirements={{
               minChar: 3,
@@ -228,7 +231,9 @@ const Create = () => {
           <FormDropSelect
             label="Commitment Level"
             field="commitment_level"
-            description={"None: Any amount\nLow: <= 3 meetings a month\nMedium: 4-8 meetings a month\nHigh: 9+ Meetings a month"}
+            description={
+              "None: Any amount\nLow: <= 3 meetings a month\nMedium: 4-8 meetings a month\nHigh: 9+ Meetings a month"
+            }
             required
             selections={[
               {
@@ -249,6 +254,18 @@ const Create = () => {
               },
             ]}
             sx={{ width: "100%" }}
+          />
+        </FormSection>
+        <FormSection sx={{ width: "100%", marginTop: "20px" }}>
+          <FormChipText
+            field="keywords"
+            label="Keywords"
+            requirements={{
+              onlyAlpha: true,
+              lowercase: true,
+              maxChips: 3,
+            }}
+            description={`Choose up to 3 keywords relating to your activity. They will not be publicly visible but they will help your activity show up in search results. This can be things like alternate names or acronyms. For example, the Student Union might add 'SU' as a keyword. Add a keyword with <ENTER>`}
           />
         </FormSection>
         <FormSection sx={{ width: "100%", marginTop: "20px" }}>

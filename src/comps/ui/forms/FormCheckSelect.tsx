@@ -16,7 +16,7 @@ type SelectType = {
 };
 
 type Props = {
-  field: string;
+  field: string; // field must be in props so FormPage associates values correctly
   value?: string[];
   label?: string;
   required?: boolean;
@@ -31,7 +31,6 @@ type Props = {
 };
 
 const FormCheckSelect = ({
-  field,
   value,
   label,
   required,
@@ -43,17 +42,17 @@ const FormCheckSelect = ({
   ...checkboxProps
 }: Props & CheckboxProps) => {
   useEffect(() => {
+    const validate = (targetValue?: string[]) => {
+      if (!targetValue) targetValue = [];
+      if (!changeStatus) return;
+
+      if (required) {
+        changeStatus(targetValue.length > 0);
+      }
+    };
+
     validate(value);
-  }, [required, value]);
-
-  const validate = (targetValue?: string[]) => {
-    if (!targetValue) targetValue = [];
-    if (!changeStatus) return;
-
-    if (required) {
-      changeStatus(targetValue.length > 0);
-    }
-  };
+  }, [required, value, changeStatus]);
 
   let checked: string[] = value || [];
 
