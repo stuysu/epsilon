@@ -15,7 +15,7 @@ type Props = {
   required?: boolean;
   requirements?: Requirements;
   preview?: boolean;
-  onChange?: (field: string, updatedValue: File | undefined) => void;
+  onChange?: (updatedValue: File | undefined) => void;
   status?: {
     dirty: boolean;
     value: boolean;
@@ -57,7 +57,7 @@ const FormUpload = ({
     if (!event.target.files) return;
     if (!onChange) return;
 
-    onChange(field, event.target.files[0]);
+    onChange(event.target.files[0]);
   };
 
   return (
@@ -102,7 +102,7 @@ const FormUpload = ({
 
         {hasFile && (
           <Button
-            onClick={() => onChange?.(field, undefined)}
+            onClick={() => onChange?.(undefined)}
             variant="contained"
             sx={{
               position: "absolute",

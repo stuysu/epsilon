@@ -21,7 +21,7 @@ type Props = {
   label?: string;
   required?: boolean;
   description?: string;
-  onChange?: (field: string, updatedSelections: string[]) => void;
+  onChange?: (updatedSelections: string[]) => void;
   status?: {
     dirty: boolean;
     value: boolean;
@@ -62,7 +62,7 @@ const FormCheckSelect = ({
 
     newSelections = newSelections.filter((v) => v && v.length);
 
-    onChange(field, newSelections);
+    onChange(newSelections);
   };
 
   let helperText = "";

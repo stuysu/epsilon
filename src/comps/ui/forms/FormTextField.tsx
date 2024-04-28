@@ -17,7 +17,7 @@ type Props = {
   required?: boolean;
   requirements?: Requirements;
   value?: string;
-  onChange?: (field: string, updatedValue: string) => void;
+  onChange?: (updatedValue: string) => void;
   status?: {
     dirty: boolean;
     value: boolean;
@@ -103,7 +103,7 @@ const FormTextField = ({
     }
 
     if (onChange) {
-      onChange(field, targetValue);
+      onChange(targetValue);
     }
   };
 

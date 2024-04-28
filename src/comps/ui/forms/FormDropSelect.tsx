@@ -20,7 +20,7 @@ type Props = {
   value?: string;
   description?: string;
   required?: boolean;
-  onChange?: (field: string, updatedValue: string) => void;
+  onChange?: (updatedValue: string) => void;
   status?: {
     dirty: boolean;
     value: boolean;
@@ -61,7 +61,7 @@ const FormDropSelect = ({
   const selectionChanged = (event: SelectChangeEvent<unknown>) => {
     if (!onChange) return;
 
-    onChange(field, event.target.value as string);
+    onChange(event.target.value as string);
   };
 
   let helperText = "";

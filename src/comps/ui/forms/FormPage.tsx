@@ -95,7 +95,7 @@ const FormPage = <T extends unknown>({
         let childProps: { [field: string]: any } = {
           key: index,
           value: childValue,
-          onChange: childOnChange,
+          onChange: (newValue : any) => childOnChange(child.props.field, newValue),
           status: status[child.props.field],
           changeStatus: (newStatus: boolean) => {
             if (
