@@ -19,7 +19,9 @@ const Posts = () => {
 
   useEffect(() => {
     const fetchPosts = async () => {
-      let { data, error } = await supabase.from("posts").select();
+      let { data, error } = await supabase.from("posts")
+        .select()
+        .eq('organization_id', organization.id);
 
       if (error || !data) {
         return enqueueSnackbar(
