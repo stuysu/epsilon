@@ -1,4 +1,4 @@
-import { Typography, Box, Button, Drawer, List, ListItem, ListItemAvatar, ListItemText, Avatar, Divider, ListSubheader, ListItemButton } from "@mui/material";
+import { Typography, Box, Button, Drawer, List, ListItemText, Divider, ListSubheader, ListItemButton, Switch, FormGroup, FormControlLabel } from "@mui/material";
 import { Menu } from "@mui/icons-material";
 import { CSSProperties, useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -6,12 +6,14 @@ import { supabase } from "../../../supabaseClient";
 import UserContext from "../../context/UserContext";
 import { useSnackbar } from "notistack";
 import OrgBar from "../../pages/home/ui/OrgBar";
+import { ThemeContext } from "../../context/ThemeProvider";
 
 const navStyles: CSSProperties = {
   width: "100%",
   height: "50px",
   display: "flex",
   flexWrap: "wrap",
+  position: 'relative'
 };
 
 const titleStyle: CSSProperties = {
@@ -30,6 +32,8 @@ const NavBar = () => {
   const [drawerOpen, setDrawerOpen] = useState(false);
   const location = useLocation(); // disable drawer when location changes
   const navigate = useNavigate();
+
+  const theme = useContext(ThemeContext);
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
@@ -62,6 +66,19 @@ const NavBar = () => {
           <Link style={linkStyle} to="/">
             Epsilon
           </Link>
+        </Box>
+        <Box sx={{ 
+          width: '200px', 
+          height: '100%', 
+          position: 'absolute', 
+          right: 0,
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center' 
+        }}>
+          <FormGroup>
+            <FormControlLabel control={<Switch checked={theme.colorMode} onChange={(e) => theme.toggleColorMode()} />} label='Dark Mode' />
+          </FormGroup>
         </Box>
       </Box>
 
