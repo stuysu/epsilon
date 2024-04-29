@@ -14,6 +14,7 @@ import FormUpload from "../comps/ui/forms/FormUpload";
 import { useSnackbar } from "notistack";
 import FormSection from "../comps/ui/forms/FormSection";
 import FormChipText from "../comps/ui/forms/FormChipText";
+import FormTagSelect from "../comps/ui/forms/FormTagSelect";
 
 type FormType = {
   name: string;
@@ -64,6 +65,7 @@ const Create = () => {
 
   const [formData, setFormData] = useState<FormType>(emptyForm);
   const isMobile = useMediaQuery("(max-width: 620px)");
+  console.log(formData)
 
   const createActivity = async () => {
     let payload = {
@@ -228,7 +230,7 @@ const Create = () => {
             }}
           />
         </FormSection>
-        <FormSection sx={{ width: "100%", marginTop: "20px" }}>
+        <FormSection sx={{ width: "100%", marginTop: "20px", display: 'flex', flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
           <FormDropSelect
             label="Commitment Level"
             field="commitment_level"
@@ -255,6 +257,19 @@ const Create = () => {
               },
             ]}
             sx={{ width: "100%" }}
+          />
+          <FormTagSelect 
+            field='tags'
+            label='Choose Tags'
+            tags={['Arts & Crafts', 'Academic & Professoinal', 'Club Sports & Recreational Games', 'Community Service & Volunteering', 'Cultural & Religious', 'Music', 'Public Speaking', 'STEM', 'Student Support & Governmnet', 'Hobby & Special Interest', 'Publication']}
+            description='Select up to 3 tags that best represent your activity'
+            required={false}
+            requirements={{ maxSelect: 3 }}
+            sx={{ 
+              width: '100%', 
+              marginLeft: isMobile ? "" : "20px",
+              marginTop: isMobile ? "20px" : "" 
+            }}
           />
         </FormSection>
         <FormSection sx={{ width: "100%", marginTop: "20px" }}>
