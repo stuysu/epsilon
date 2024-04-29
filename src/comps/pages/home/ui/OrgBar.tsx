@@ -27,8 +27,7 @@ const OrgBar = ({ name, url, role, role_name, picture }: Props) => {
         <Avatar
           alt={name}
           src={
-            picture ||
-            "https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png"
+            picture
           }
         />
       </ListItemAvatar>
