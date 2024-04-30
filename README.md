@@ -10,6 +10,7 @@ the everything platform for stuyvesant high school
 - votes [planned]
 - valentines [planned]
 - mobile app [planned]
+- StuyArista [planned]
 
 ## stack
 
