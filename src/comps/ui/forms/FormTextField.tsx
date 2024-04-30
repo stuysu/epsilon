@@ -43,6 +43,7 @@ const FormTextField = ({
       /* incase component gets "dirtied" and then goes back to undefined */
       if (!required && targetValue.length === 0) {
         changeStatus(true);
+        return;
       }
 
       if (requirements) {
