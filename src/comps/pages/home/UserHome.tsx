@@ -46,8 +46,7 @@ const UserHome = () => {
                 role_name={membership?.role_name}
                 url={membership?.organizations?.url || "/"}
                 picture={
-                  membership?.organizations?.picture ||
-                  "https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png"
+                  membership?.organizations?.picture
                 }
               />
             ))}

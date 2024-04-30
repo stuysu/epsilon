@@ -14,6 +14,9 @@ import FormUpload from "../comps/ui/forms/FormUpload";
 import { useSnackbar } from "notistack";
 import FormSection from "../comps/ui/forms/FormSection";
 import FormChipText from "../comps/ui/forms/FormChipText";
+import FormTagSelect from "../comps/ui/forms/FormTagSelect";
+import FormCheckbox from "../comps/ui/forms/FormCheckbox";
+import { TagSharp } from "@mui/icons-material";
 
 type FormType = {
   name: string;
@@ -31,6 +34,8 @@ type FormType = {
   tags: string[];
   commitment_level: string;
   join_instructions: string;
+  returning: boolean;
+  returning_info: string;
 };
 
 const emptyForm: FormType = {
@@ -49,6 +54,8 @@ const emptyForm: FormType = {
   tags: [],
   commitment_level: "",
   join_instructions: "",
+  returning: false,
+  returning_info: ""
 };
 
 const multilineStyle: CSSProperties = {
@@ -76,12 +83,15 @@ const Create = () => {
       purpose: formData.purpose,
       benefit: formData.benefit,
       keywords: formData.keywords.join(",").toLowerCase(),
+      tags: formData.tags,
       appointment_procedures: formData.appointment_procedures,
       uniqueness: formData.uniqueness,
       meeting_schedule: formData.meeting_schedule,
       meeting_days: formData.meeting_days,
       commitment_level: formData.commitment_level,
       join_instructions: formData.join_instructions,
+      is_returning: formData.returning,
+      returning_info: formData.returning_info
     };
 
     let { data: orgCreateData, error: orgCreateError } = await supabase
@@ -228,7 +238,7 @@ const Create = () => {
             }}
           />
         </FormSection>
-        <FormSection sx={{ width: "100%", marginTop: "20px" }}>
+        <FormSection sx={{ width: "100%", marginTop: "20px", display: 'flex', flexWrap: isMobile ? 'wrap' : 'nowrap' }}>
           <FormDropSelect
             label="Commitment Level"
             field="commitment_level"
@@ -255,6 +265,19 @@ const Create = () => {
               },
             ]}
             sx={{ width: "100%" }}
+          />
+          <FormTagSelect 
+            field='tags'
+            label='Choose Tags'
+            tags={['Arts & Crafts', 'Academic & Professoinal', 'Club Sports & Recreational Games', 'Community Service & Volunteering', 'Cultural & Religious', 'Music', 'Public Speaking', 'STEM', 'Student Support & Governmnet', 'Hobby & Special Interest', 'Publication']}
+            description='Select up to 3 tags that best represent your activity'
+            required={false}
+            requirements={{ maxSelect: 3 }}
+            sx={{ 
+              width: '100%', 
+              marginLeft: isMobile ? "" : "20px",
+              marginTop: isMobile ? "20px" : "" 
+            }}
           />
         </FormSection>
         <FormSection sx={{ width: "100%", marginTop: "20px" }}>
@@ -381,6 +404,28 @@ const Create = () => {
             ]}
             required
           />
+        </FormSection>
+        <FormSection sx={{ marginTop: '20px', width: '100%'}}>
+          <FormCheckbox
+            field='returning'
+            label='Returning?'
+            description='Check this box if your club was chartered last year.'
+          />
+          {
+            formData.returning && (
+              <FormTextField 
+                label='Returning Info'
+                field='returning_info'
+                requirements={{
+                  minChar: 50,
+                  maxChar: 1000
+                }}
+                sx={multilineStyle}
+                rows={4}
+                description={"Give us an idea of the things your club did last year!"}
+              />
+            )
+          }
         </FormSection>
       </FormPage>
     </MultiPageForm>

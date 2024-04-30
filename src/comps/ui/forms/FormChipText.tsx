@@ -38,6 +38,7 @@ const FormChipText = ({
 
       if (!required && newValue.length === 0) {
         changeStatus(true);
+        return;
       }
 
       if (required) {
