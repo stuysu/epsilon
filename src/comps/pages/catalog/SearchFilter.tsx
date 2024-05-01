@@ -10,7 +10,7 @@ type Props = {
 
 const tags = [
     "Arts & Crafts",
-    "Academic & Professoinal",
+    "Academic & Professional",
     "Club Sports & Recreational Games",
     "Community Service & Volunteering",
     "Cultural & Religious",
