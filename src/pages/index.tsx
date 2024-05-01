@@ -15,37 +15,40 @@ const OrgRouter = lazy(() => import("./orgs"));
 const AdminRouter = lazy(() => import("./admin"));
 
 const Pages = () => {
-  const location = useLocation();
+    const location = useLocation();
 
-  return (
-    <div>
-      <Helmet>
-        <meta property="og:url" content={PUBLIC_URL + location.pathname} />
-        <meta property="og:site_name" content={"epsilon"} />
-        <meta property="og:type" content={"website"} />
-        <meta
-          property="og:description"
-          content={
-            "An app to help students navigate the clubs and organizations at Stuyvesant High School."
-          }
-        />
-        <meta property={"og:title"} content={"Epsilon"} />
-        <title>Epsilon</title>
-      </Helmet>
+    return (
+        <div>
+            <Helmet>
+                <meta
+                    property="og:url"
+                    content={PUBLIC_URL + location.pathname}
+                />
+                <meta property="og:site_name" content={"epsilon"} />
+                <meta property="og:type" content={"website"} />
+                <meta
+                    property="og:description"
+                    content={
+                        "An app to help students navigate the clubs and organizations at Stuyvesant High School."
+                    }
+                />
+                <meta property={"og:title"} content={"Epsilon"} />
+                <title>Epsilon</title>
+            </Helmet>
 
-      <Suspense fallback={<Loading />}>
-        <NavBar />
-        <Routes>
-          <Route path={"/"} Component={Home} />
-          <Route path={"/catalog"} Component={Catalog} />
-          <Route path={"/create"} Component={Create} />
-          <Route path={"/meetings"} Component={AllMeetings} />
-          <Route path={"/admin/*"} Component={AdminRouter} />
-          <Route path={"/:orgUrl/*"} Component={OrgRouter} />
-        </Routes>
-      </Suspense>
-    </div>
-  );
+            <Suspense fallback={<Loading />}>
+                <NavBar />
+                <Routes>
+                    <Route path={"/"} Component={Home} />
+                    <Route path={"/catalog"} Component={Catalog} />
+                    <Route path={"/create"} Component={Create} />
+                    <Route path={"/meetings"} Component={AllMeetings} />
+                    <Route path={"/admin/*"} Component={AdminRouter} />
+                    <Route path={"/:orgUrl/*"} Component={OrgRouter} />
+                </Routes>
+            </Suspense>
+        </div>
+    );
 };
 
 export default Pages;

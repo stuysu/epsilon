@@ -2,8 +2,8 @@ import { Autocomplete, TextField, Chip, SxProps } from "@mui/material";
 import { SyntheticEvent, useEffect } from "react";
 
 type Requirements = {
-    maxSelect: number
-}
+    maxSelect: number;
+};
 
 type Props = {
     field: string;
@@ -12,7 +12,7 @@ type Props = {
     required?: boolean;
     requirements?: Requirements;
     value?: string[];
-    onChange?: (newTags : string[]) => void;
+    onChange?: (newTags: string[]) => void;
     status?: {
         dirty: boolean;
         value: boolean;
@@ -20,21 +20,19 @@ type Props = {
     changeStatus?: (newStatus: boolean) => void;
     label?: string;
     sx?: SxProps;
-}
+};
 
-const FormTagSelect = (
-    {
-        tags,
-        description,
-        required,
-        requirements,
-        value,
-        onChange,
-        changeStatus,
-        label,
-        sx
-    } : Props
-) => {
+const FormTagSelect = ({
+    tags,
+    description,
+    required,
+    requirements,
+    value,
+    onChange,
+    changeStatus,
+    label,
+    sx,
+}: Props) => {
     useEffect(() => {
         const validate = (newValue?: string[]) => {
             if (!changeStatus) return;
@@ -44,24 +42,27 @@ const FormTagSelect = (
                 changeStatus(true);
                 return;
             }
-    
+
             if (required) {
                 changeStatus(newValue.length > 0);
             }
-        }
+        };
 
         validate(value);
-    }, [changeStatus])
+    }, [changeStatus]);
 
     const valueChanged = (event: SyntheticEvent, newValue: string[]) => {
-        if (requirements?.maxSelect && newValue.length > requirements.maxSelect) {
+        if (
+            requirements?.maxSelect &&
+            newValue.length > requirements.maxSelect
+        ) {
             return;
         }
 
         if (onChange) {
             onChange(newValue);
         }
-    }
+    };
 
     return (
         <Autocomplete
@@ -72,24 +73,24 @@ const FormTagSelect = (
             options={tags}
             renderTags={(value, props) => {
                 return value.map((option, index) => (
-                  <Chip label={option} {...props({ index })} />
+                    <Chip label={option} {...props({ index })} />
                 ));
-            }} 
+            }}
             renderInput={(params) => (
                 <TextField
-                label={label}
-                value={undefined}
-                {...params}
-                helperText={description?.split("\n").map((line) => (
-                    <>
-                    {line}
-                    <br />
-                    </>
-                ))}
+                    label={label}
+                    value={undefined}
+                    {...params}
+                    helperText={description?.split("\n").map((line) => (
+                        <>
+                            {line}
+                            <br />
+                        </>
+                    ))}
                 />
             )}
         />
-    )
-}
+    );
+};
 
 export default FormTagSelect;

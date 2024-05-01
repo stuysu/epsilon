@@ -15,37 +15,37 @@ import { useSnackbar } from "notistack";
 import { Box, useMediaQuery } from "@mui/material";
 
 const OrgRouter = () => {
-  const { enqueueSnackbar } = useSnackbar();
-  const { orgUrl } = useParams();
+    const { enqueueSnackbar } = useSnackbar();
+    const { orgUrl } = useParams();
 
-  const isMobile = useMediaQuery("(max-width: 700px)");
+    const isMobile = useMediaQuery("(max-width: 700px)");
 
-  const [org, setOrg] = useState<OrgContextType>({
-    id: -1,
-    name: "",
-    url: "",
-    picture: "",
-    mission: "",
-    purpose: "",
-    benefit: "",
-    appointment_procedures: "",
-    uniqueness: "",
-    meeting_schedule: "",
-    meeting_days: [],
-    commitment_level: "NONE",
-    state: "PENDING",
-    joinable: false,
-    join_instructions: "",
-    memberships: [],
-    meetings: [],
-  });
+    const [org, setOrg] = useState<OrgContextType>({
+        id: -1,
+        name: "",
+        url: "",
+        picture: "",
+        mission: "",
+        purpose: "",
+        benefit: "",
+        appointment_procedures: "",
+        uniqueness: "",
+        meeting_schedule: "",
+        meeting_days: [],
+        commitment_level: "NONE",
+        state: "PENDING",
+        joinable: false,
+        join_instructions: "",
+        memberships: [],
+        meetings: [],
+    });
 
-  useEffect(() => {
-    const getOrgData = async () => {
-      const { data, error } = await supabase
-        .from("organizations")
-        .select(
-          `
+    useEffect(() => {
+        const getOrgData = async () => {
+            const { data, error } = await supabase
+                .from("organizations")
+                .select(
+                    `
                     id,
                     name,
                     url,
@@ -91,51 +91,58 @@ const OrgRouter = () => {
                         )
                     )
                 `,
-        )
-        .ilike("url", orgUrl || "");
+                )
+                .ilike("url", orgUrl || "");
 
-      if (error) {
-        enqueueSnackbar("Error fetching organization.", { variant: "error" });
-        return;
-      }
+            if (error) {
+                enqueueSnackbar("Error fetching organization.", {
+                    variant: "error",
+                });
+                return;
+            }
 
-      if (data?.length === 0) {
-        enqueueSnackbar("Invalid organization URL.", { variant: "error" });
-        return;
-      }
+            if (data?.length === 0) {
+                enqueueSnackbar("Invalid organization URL.", {
+                    variant: "error",
+                });
+                return;
+            }
 
-      setOrg(data[0] as OrgContextType);
-    };
+            setOrg(data[0] as OrgContextType);
+        };
 
-    getOrgData();
-  }, [orgUrl, enqueueSnackbar]);
+        getOrgData();
+    }, [orgUrl, enqueueSnackbar]);
 
-  return (
-    <OrgContext.Provider value={{ ...org, setOrg }}>
-      {org.id === -1 ? (
-        <div></div> /* ORG DOESN'T EXIST HERE */
-      ) : (
-        <Box
-          sx={{
-            width: "100%",
-            display: "flex",
-            flexWrap: isMobile ? "wrap" : "nowrap",
-          }}
-        >
-          <OrgNav isMobile={isMobile} />
-          <Box sx={{ width: "100%", padding: "10px" }}>
-            <Routes>
-              <Route path={`/`} Component={Overview} />
-              <Route path={`/charter`} Component={Charter} />
-              <Route path={`/meetings`} Component={Meetings} />
-              <Route path={`/members`} Component={Members} />
-              <Route path={`/admin/*`} Component={OrgAdminRouter} />
-            </Routes>
-          </Box>
-        </Box>
-      )}
-    </OrgContext.Provider>
-  );
+    return (
+        <OrgContext.Provider value={{ ...org, setOrg }}>
+            {org.id === -1 ? (
+                <div></div> /* ORG DOESN'T EXIST HERE */
+            ) : (
+                <Box
+                    sx={{
+                        width: "100%",
+                        display: "flex",
+                        flexWrap: isMobile ? "wrap" : "nowrap",
+                    }}
+                >
+                    <OrgNav isMobile={isMobile} />
+                    <Box sx={{ width: "100%", padding: "10px" }}>
+                        <Routes>
+                            <Route path={`/`} Component={Overview} />
+                            <Route path={`/charter`} Component={Charter} />
+                            <Route path={`/meetings`} Component={Meetings} />
+                            <Route path={`/members`} Component={Members} />
+                            <Route
+                                path={`/admin/*`}
+                                Component={OrgAdminRouter}
+                            />
+                        </Routes>
+                    </Box>
+                </Box>
+            )}
+        </OrgContext.Provider>
+    );
 };
 
 export default OrgRouter;
