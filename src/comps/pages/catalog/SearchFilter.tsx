@@ -37,7 +37,7 @@ const meetingDays = [
     'FRIDAY'
 ]
 
-const caps = (s : string) => s.slice(0, 1).toUpperCase() + s.slice(1).toLowerCase();
+const caps = (s : string) => s.split(" ").map(substr => substr.slice(0, 1).toUpperCase() + substr.slice(1).toLowerCase()).join(" ");
 
 const onlyAlpha = /[^a-z0-9 ]/gi;
 
