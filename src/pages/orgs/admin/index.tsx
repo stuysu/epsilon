@@ -16,41 +16,44 @@ import OrgAdminNav from "../../../comps/pages/orgs/admin/OrgAdminNav";
 import { Box } from "@mui/material";
 
 const OrgAdminRouter = () => {
-  const user = useContext<UserContextType>(UserContext);
-  const organization = useContext<OrgContextType>(OrgContext);
+    const user = useContext<UserContextType>(UserContext);
+    const organization = useContext<OrgContextType>(OrgContext);
 
-  const membership = organization.memberships?.find(
-    (m) => m.users?.id === user.id,
-  );
+    const membership = organization.memberships?.find(
+        (m) => m.users?.id === user.id,
+    );
 
-  let isOrgAdmin = false;
+    let isOrgAdmin = false;
 
-  if (
-    membership &&
-    (membership.role === "ADMIN" || membership.role === "CREATOR")
-  )
-    isOrgAdmin = true;
+    if (
+        membership &&
+        (membership.role === "ADMIN" || membership.role === "CREATOR")
+    )
+        isOrgAdmin = true;
 
-  return (
-    <Box>
-      {isOrgAdmin ? (
-        <Fragment>
-          <OrgAdminNav />
-          <Routes>
-            <Route path={"/members"} Component={Members} />
-            <Route path={"/member-requests"} Component={MemberRequests} />
-            <Route path={"/meetings"} Component={Meetings} />
-            <Route path={"/posts"} Component={Posts} />
-            <Route path={"/strikes"} Component={Strikes} />
-            <Route path={"/org-edits"} Component={Organization} />
-            <Route path={"/*"} Component={Members} />
-          </Routes>
-        </Fragment>
-      ) : (
-        <div>You don't have access to this page</div>
-      )}
-    </Box>
-  );
+    return (
+        <Box>
+            {isOrgAdmin ? (
+                <Fragment>
+                    <OrgAdminNav />
+                    <Routes>
+                        <Route path={"/members"} Component={Members} />
+                        <Route
+                            path={"/member-requests"}
+                            Component={MemberRequests}
+                        />
+                        <Route path={"/meetings"} Component={Meetings} />
+                        <Route path={"/posts"} Component={Posts} />
+                        <Route path={"/strikes"} Component={Strikes} />
+                        <Route path={"/org-edits"} Component={Organization} />
+                        <Route path={"/*"} Component={Members} />
+                    </Routes>
+                </Fragment>
+            ) : (
+                <div>You don't have access to this page</div>
+            )}
+        </Box>
+    );
 };
 
 export default OrgAdminRouter;

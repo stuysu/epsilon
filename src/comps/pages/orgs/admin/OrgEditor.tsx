@@ -1,11 +1,11 @@
 import { useEffect, useState, ChangeEvent } from "react";
 import {
-  Box,
-  Button,
-  TextField,
-  Switch,
-  FormGroup,
-  FormControlLabel,
+    Box,
+    Button,
+    TextField,
+    Switch,
+    FormGroup,
+    FormControlLabel,
 } from "@mui/material";
 
 import { supabase } from "../../../../supabaseClient";
@@ -15,15 +15,15 @@ type orgKey = keyof OrganizationEdit & keyof Organization;
 type diffType = { key: string; value1: any; value2: any };
 
 const hiddenFields: string[] = [
-  "id",
-  "organization_id",
-  "created_at",
-  "updated_at",
-  /* NOT TEXT FIELDS, CUSTOM IMPLEMENT */
-  "meeting_days",
-  "picture",
-  "keywords",
-  "tags",
+    "id",
+    "organization_id",
+    "created_at",
+    "updated_at",
+    /* NOT TEXT FIELDS, CUSTOM IMPLEMENT */
+    "meeting_days",
+    "picture",
+    "keywords",
+    "tags",
 ];
 
 /* NOTES ON SHALLOW COMPARISON
@@ -33,23 +33,23 @@ using shallow comparison is the most convenient solution [for now]
 
 /* find differences in properties of obj1 and obj2 and return those properties */
 const findDiff = (obj1: any, obj2: any): diffType[] => {
-  let diff: diffType[] = [];
+    let diff: diffType[] = [];
 
-  for (let key of Object.keys(obj1)) {
-    if (
-      !(key in obj2) ||
-      obj1[key] === undefined ||
-      obj2[key] === undefined ||
-      (!obj1[key] && !obj2[key]) ||
-      // eslint-disable-next-line
-      obj1[key] == obj2[key]
-    )
-      continue;
+    for (let key of Object.keys(obj1)) {
+        if (
+            !(key in obj2) ||
+            obj1[key] === undefined ||
+            obj2[key] === undefined ||
+            (!obj1[key] && !obj2[key]) ||
+            // eslint-disable-next-line
+            obj1[key] == obj2[key]
+        )
+            continue;
 
-    diff.push({ key, value1: obj1[key], value2: obj2[key] });
-  }
+        diff.push({ key, value1: obj1[key], value2: obj2[key] });
+    }
 
-  return diff;
+    return diff;
 };
 
 /* 
@@ -61,224 +61,233 @@ TextField Statuses:
 
 /* EDGE CASE: changing unapproved back to approved */
 const OrgEditor = ({
-  organization,
-  organizationEdit,
-  setPendingEdit,
+    organization,
+    organizationEdit,
+    setPendingEdit,
 }: {
-  organization: Partial<Organization>;
-  organizationEdit: OrganizationEdit;
-  setPendingEdit: (orgEdit: OrganizationEdit) => void;
+    organization: Partial<Organization>;
+    organizationEdit: OrganizationEdit;
+    setPendingEdit: (orgEdit: OrganizationEdit) => void;
 }) => {
-  const { enqueueSnackbar } = useSnackbar();
-  let [orgEdit, setOrgEdit] = useState(organizationEdit);
-  let [editing, setEditing] = useState(false);
+    const { enqueueSnackbar } = useSnackbar();
+    let [orgEdit, setOrgEdit] = useState(organizationEdit);
+    let [editing, setEditing] = useState(false);
 
-  useEffect(() => {
-    setOrgEdit(organizationEdit);
-  }, [organizationEdit]);
+    useEffect(() => {
+        setOrgEdit(organizationEdit);
+    }, [organizationEdit]);
 
-  const onChange = (event: ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = event.target;
+    const onChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target;
 
-    setOrgEdit({
-      ...orgEdit,
-      [name]: value,
-    });
-  };
+        setOrgEdit({
+            ...orgEdit,
+            [name]: value,
+        });
+    };
 
-  /* 
+    /* 
     STEPS 
     - compare all fields that are different between orgEdit and organization
     - upsert an organization edit with all different values
     */
-  let createEdit = async () => {
-    let diffs = findDiff(organization, orgEdit);
-    let payload: any = {};
+    let createEdit = async () => {
+        let diffs = findDiff(organization, orgEdit);
+        let payload: any = {};
 
-    for (let key of Object.keys(organizationEdit)) {
-      if (hiddenFields.includes(key)) continue;
+        for (let key of Object.keys(organizationEdit)) {
+            if (hiddenFields.includes(key)) continue;
 
-      let field: orgKey = key as orgKey;
+            let field: orgKey = key as orgKey;
 
-      payload[field] = null;
-    }
-
-    for (let diff of diffs) {
-      payload[diff.key] = diff.value2;
-    }
-
-    let data, error;
-
-    if (organizationEdit.id === undefined) {
-      /* INSERT */
-      ({ data, error } = await supabase
-        .from("organizationedits")
-        .insert({ organization_id: organization.id, ...payload })
-        .select());
-    } else {
-      /* UPDATE */
-      ({ data, error } = await supabase
-        .from("organizationedits")
-        .update({ organization_id: organization.id, ...payload })
-        .eq("id", organizationEdit.id)
-        .select());
-    }
-
-    if (error) {
-      return enqueueSnackbar(
-        "Error editing organization. Contact it@stuysu.org for support.",
-        { variant: "error" },
-      );
-    }
-
-    if (data !== null && data[0]) {
-      enqueueSnackbar("Organization edit request sent!", {
-        variant: "success",
-      });
-
-      /* if all fields of organizationEdit are null, delete the edit */
-      let res = data[0];
-      let allNull = true;
-      for (let resKey of Object.keys(res)) {
-        if (hiddenFields.includes(resKey)) continue;
-
-        if (res[resKey] !== null) {
-          allNull = false;
-          break;
+            payload[field] = null;
         }
-      }
 
-      if (allNull) {
-        /* delete organization edit */
-        ({ error } = await supabase
-          .from("organizationedits")
-          .delete()
-          .eq("organization_id", organization.id));
+        for (let diff of diffs) {
+            payload[diff.key] = diff.value2;
+        }
 
-        setPendingEdit({
-          id: undefined,
-          organization_id: undefined,
-          name: undefined,
-          url: undefined,
-          picture: undefined,
-          mission: undefined,
-          purpose: undefined,
-          benefit: undefined,
-          appointment_procedures: undefined,
-          uniqueness: undefined,
-          meeting_schedule: undefined,
-          meeting_days: undefined,
-          keywords: undefined,
-          tags: undefined,
-          commitment_level: undefined,
-        });
-      } else {
-        /* update client without sending another call */
-        setPendingEdit(data[0] as OrganizationEdit);
-      }
-    } else {
-      enqueueSnackbar(
-        "Server failed to send back changes. Refresh page to see potential results.",
-        { variant: "warning" },
-      );
-    }
+        let data, error;
 
-    setEditing(false);
-  };
+        if (organizationEdit.id === undefined) {
+            /* INSERT */
+            ({ data, error } = await supabase
+                .from("organizationedits")
+                .insert({ organization_id: organization.id, ...payload })
+                .select());
+        } else {
+            /* UPDATE */
+            ({ data, error } = await supabase
+                .from("organizationedits")
+                .update({ organization_id: organization.id, ...payload })
+                .eq("id", organizationEdit.id)
+                .select());
+        }
 
-  const canSave = (): boolean => {
-    let saveable = false;
+        if (error) {
+            return enqueueSnackbar(
+                "Error editing organization. Contact it@stuysu.org for support.",
+                { variant: "error" },
+            );
+        }
 
-    Object.keys(organizationEdit).forEach((field) => {
-      if (hiddenFields.includes(field)) return;
+        if (data !== null && data[0]) {
+            enqueueSnackbar("Organization edit request sent!", {
+                variant: "success",
+            });
 
-      let key: orgKey = field as orgKey;
+            /* if all fields of organizationEdit are null, delete the edit */
+            let res = data[0];
+            let allNull = true;
+            for (let resKey of Object.keys(res)) {
+                if (hiddenFields.includes(resKey)) continue;
 
-      if (
-        orgEdit[key] !== undefined &&
-        orgEdit[key] !== null &&
-        organizationEdit[key] !== orgEdit[key] &&
-        (orgEdit[key] != (organization[key] || "") ||
-          (organizationEdit[key] !== null &&
-            organizationEdit[key] !== undefined))
-      ) {
-        saveable = true;
-      }
-    });
-
-    return saveable;
-  };
-
-  return (
-    <div>
-      <h1>Organization</h1>
-      <Box bgcolor="background.default" color="primary.contrastText">
-        <FormGroup>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={editing}
-                onChange={(e) => setEditing(e.target.checked)}
-              />
-            }
-            label="editing"
-          />
-        </FormGroup>
-        {Object.keys(organizationEdit).map((field, i) => {
-          if (hiddenFields.includes(field)) return <></>;
-
-          let key: orgKey = field as orgKey;
-
-          let current: any = orgEdit[key];
-          if (current === undefined || current === null) {
-            current = organization[key];
-          }
-
-          /* FIGURE OUT STATUS MESSAGE FOR TEXTFIELD */
-          let status = "Approved";
-
-          if (organization.state === "PENDING") {
-            status = "Pending";
-          } else {
-            if (orgEdit[key] !== undefined && orgEdit[key] !== null) {
-              if (organizationEdit[key] !== orgEdit[key]) {
-                if (orgEdit[key] != (organization[key] || "")) {
-                  status = "Unsaved";
-                } else if (
-                  organizationEdit[key] !== null &&
-                  organizationEdit[key] !== undefined
-                ) {
-                  status = "Approved [Unsaved]";
+                if (res[resKey] !== null) {
+                    allNull = false;
+                    break;
                 }
-              } else if (orgEdit[key] != (organization[key] || "")) {
-                status = "Pending";
-              }
             }
-          }
 
-          return (
-            <Box key={i}>
-              <TextField
-                variant="filled"
-                name={field}
-                label={field}
-                value={current || ""}
-                onChange={onChange}
-                disabled={!editing}
-              />
-              {status}
+            if (allNull) {
+                /* delete organization edit */
+                ({ error } = await supabase
+                    .from("organizationedits")
+                    .delete()
+                    .eq("organization_id", organization.id));
+
+                setPendingEdit({
+                    id: undefined,
+                    organization_id: undefined,
+                    name: undefined,
+                    url: undefined,
+                    picture: undefined,
+                    mission: undefined,
+                    purpose: undefined,
+                    benefit: undefined,
+                    appointment_procedures: undefined,
+                    uniqueness: undefined,
+                    meeting_schedule: undefined,
+                    meeting_days: undefined,
+                    keywords: undefined,
+                    tags: undefined,
+                    commitment_level: undefined,
+                });
+            } else {
+                /* update client without sending another call */
+                setPendingEdit(data[0] as OrganizationEdit);
+            }
+        } else {
+            enqueueSnackbar(
+                "Server failed to send back changes. Refresh page to see potential results.",
+                { variant: "warning" },
+            );
+        }
+
+        setEditing(false);
+    };
+
+    const canSave = (): boolean => {
+        let saveable = false;
+
+        Object.keys(organizationEdit).forEach((field) => {
+            if (hiddenFields.includes(field)) return;
+
+            let key: orgKey = field as orgKey;
+
+            if (
+                orgEdit[key] !== undefined &&
+                orgEdit[key] !== null &&
+                organizationEdit[key] !== orgEdit[key] &&
+                (orgEdit[key] != (organization[key] || "") ||
+                    (organizationEdit[key] !== null &&
+                        organizationEdit[key] !== undefined))
+            ) {
+                saveable = true;
+            }
+        });
+
+        return saveable;
+    };
+
+    return (
+        <div>
+            <h1>Organization</h1>
+            <Box bgcolor="background.default" color="primary.contrastText">
+                <FormGroup>
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={editing}
+                                onChange={(e) => setEditing(e.target.checked)}
+                            />
+                        }
+                        label="editing"
+                    />
+                </FormGroup>
+                {Object.keys(organizationEdit).map((field, i) => {
+                    if (hiddenFields.includes(field)) return <></>;
+
+                    let key: orgKey = field as orgKey;
+
+                    let current: any = orgEdit[key];
+                    if (current === undefined || current === null) {
+                        current = organization[key];
+                    }
+
+                    /* FIGURE OUT STATUS MESSAGE FOR TEXTFIELD */
+                    let status = "Approved";
+
+                    if (organization.state === "PENDING") {
+                        status = "Pending";
+                    } else {
+                        if (
+                            orgEdit[key] !== undefined &&
+                            orgEdit[key] !== null
+                        ) {
+                            if (organizationEdit[key] !== orgEdit[key]) {
+                                if (orgEdit[key] != (organization[key] || "")) {
+                                    status = "Unsaved";
+                                } else if (
+                                    organizationEdit[key] !== null &&
+                                    organizationEdit[key] !== undefined
+                                ) {
+                                    status = "Approved [Unsaved]";
+                                }
+                            } else if (
+                                orgEdit[key] != (organization[key] || "")
+                            ) {
+                                status = "Pending";
+                            }
+                        }
+                    }
+
+                    return (
+                        <Box key={i}>
+                            <TextField
+                                variant="filled"
+                                name={field}
+                                label={field}
+                                value={current || ""}
+                                onChange={onChange}
+                                disabled={!editing}
+                            />
+                            {status}
+                        </Box>
+                    );
+                })}
+
+                {canSave() && editing && (
+                    <Button onClick={createEdit}>Save</Button>
+                )}
             </Box>
-          );
-        })}
 
-        {canSave() && editing && <Button onClick={createEdit}>Save</Button>}
-      </Box>
-
-      <pre>{JSON.stringify(organization, undefined, 4)}</pre>
-      <h1>Organization Edits</h1>
-      <pre>{JSON.stringify(organizationEdit || "NONE", undefined, 4)}</pre>
-    </div>
-  );
+            <pre>{JSON.stringify(organization, undefined, 4)}</pre>
+            <h1>Organization Edits</h1>
+            <pre>
+                {JSON.stringify(organizationEdit || "NONE", undefined, 4)}
+            </pre>
+        </div>
+    );
 };
 
 export default OrgEditor;

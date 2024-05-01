@@ -1,48 +1,43 @@
-import { FormControlLabel, FormGroup, Checkbox, FormHelperText } from "@mui/material";
+import {
+    FormControlLabel,
+    FormGroup,
+    Checkbox,
+    FormHelperText,
+} from "@mui/material";
 
 type Props = {
-    field: string,
-    label?: string,
-    value?: boolean,
-    description?: string,
-    onChange?: (newValue: boolean) => void,
-
-}
+    field: string;
+    label?: string;
+    value?: boolean;
+    description?: string;
+    onChange?: (newValue: boolean) => void;
+};
 
 /* no requirements or validation, default value in form should be false. */
-const FormCheckbox = (
-    {
-        label,
-        value,
-        description,
-        onChange
-    } : Props
-) => {
+const FormCheckbox = ({ label, value, description, onChange }: Props) => {
     return (
         <FormGroup>
             <FormControlLabel
                 control={
-                    <Checkbox 
+                    <Checkbox
                         checked={value}
                         onChange={(e) => {
-                            if (onChange) onChange(e.target.checked)
+                            if (onChange) onChange(e.target.checked);
                         }}
                     />
                 }
                 label={label}
             />
             <FormHelperText>
-                {
-                    description?.split("\n").map((line) => (
-                        <>
+                {description?.split("\n").map((line) => (
+                    <>
                         {line}
                         <br />
-                        </>
-                    ))
-                }
+                    </>
+                ))}
             </FormHelperText>
         </FormGroup>
-    )
-}
+    );
+};
 
 export default FormCheckbox;

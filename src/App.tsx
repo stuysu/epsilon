@@ -12,20 +12,20 @@ import { CssBaseline } from "@mui/material";
 import { SnackbarProvider } from "notistack";
 
 const App = () => {
-  return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <ThemeProvider>
-        <CssBaseline />
-        <SnackbarProvider maxSnack={4} autoHideDuration={3000}>
-          <BrowserRouter>
-            <UserProvider>
-              <Pages />
-            </UserProvider>
-          </BrowserRouter>
-        </SnackbarProvider>
-      </ThemeProvider>
-    </LocalizationProvider>
-  );
+    return (
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+            <ThemeProvider>
+                <CssBaseline />
+                <SnackbarProvider maxSnack={4} autoHideDuration={3000}>
+                    <BrowserRouter>
+                        <UserProvider>
+                            <Pages />
+                        </UserProvider>
+                    </BrowserRouter>
+                </SnackbarProvider>
+            </ThemeProvider>
+        </LocalizationProvider>
+    );
 };
 
 export default App;
