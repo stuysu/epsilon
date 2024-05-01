@@ -290,7 +290,7 @@ const Create = () => {
                             "Music",
                             "Public Speaking",
                             "STEM",
-                            "Student Support & Governmnet",
+                            "Student Support & Government",
                             "Hobby & Special Interest",
                             "Publication",
                         ]}
