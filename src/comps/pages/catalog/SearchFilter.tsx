@@ -82,7 +82,16 @@ const SearchFilter = ({ value, onChange, isOneColumn, isTwoColumn, isTwoWrap }: 
                             tag => (
                                 <Chip 
                                     label={caps(tag)}
+                                    onClick={() => {
+                                        let exists = value.tags.findIndex(v => v === tag) !== -1;
 
+                                        onChange({
+                                            ...value,
+                                            tags: exists ? value.tags.filter(v => v !== tag) : [tag, ...value.tags]
+                                        });
+                                    }}
+                                    variant={value.tags.find(v => v === tag) ? 'filled' : 'outlined'}
+                                    clickable
                                 />
                             )
                         )
@@ -97,7 +106,16 @@ const SearchFilter = ({ value, onChange, isOneColumn, isTwoColumn, isTwoWrap }: 
                             level => (
                                 <Chip 
                                     label={caps(level)}
+                                    onClick={() => {
+                                        let exists = value.commitmentLevels.findIndex(v => v === level) !== -1;
 
+                                        onChange({
+                                            ...value,
+                                            commitmentLevels: exists ? value.commitmentLevels.filter(v => v !== level) : [level, ...value.commitmentLevels]
+                                        });
+                                    }}
+                                    variant={value.commitmentLevels.find(v => v === level) ? 'filled' : 'outlined'}
+                                    clickable
                                 />
                             )
                         )
@@ -112,7 +130,16 @@ const SearchFilter = ({ value, onChange, isOneColumn, isTwoColumn, isTwoWrap }: 
                             day => (
                                 <Chip 
                                     label={caps(day)}
+                                    onClick={() => {
+                                        let exists = value.meetingDays.findIndex(v => v === day) !== -1;
 
+                                        onChange({
+                                            ...value,
+                                            meetingDays: exists ? value.meetingDays.filter(v => v !== day) : [day, ...value.meetingDays]
+                                        });
+                                    }}
+                                    variant={value.meetingDays.find(v => v === day) ? 'filled' : 'outlined'}
+                                    clickable
                                 />
                             )
                         )
