@@ -81,34 +81,38 @@ const Catalog = () => {
             ));
         } else {
             // get orgs with search params
-            let tagsQuery = "";
+            
+
+            let additionalQuery = [];
             if (searchParams.tags.length) {
-                tagsQuery =
-                    "," +
+                additionalQuery.push(
                     searchParams.tags
                         .map((tag) => `tags.cs.{${tag}}`)
-                        .join(",");
+                        .join(",")
+                )
             }
 
-            let daysQuery = "";
             if (searchParams.meetingDays.length) {
-                daysQuery =
-                    "," +
+                additionalQuery.push(
                     searchParams.meetingDays
                         .map((day) => `meeting_days.cs.{${day}}`)
-                        .join(",");
+                        .join(",")
+                )
             }
-
-            let commitmentQuery = "";
             if (searchParams.commitmentLevels.length) {
-                commitmentQuery =
-                    "," +
+                additionalQuery.push(
                     searchParams.commitmentLevels
                         .map((level) => `commitment_level.eq.${level}`)
-                        .join(",");
+                        .join(",")
+                )
             }
 
-            var orQuery = `name.ilike.%${searchParams.name}%,keywords.ilike.%${searchParams.name}%${tagsQuery}${daysQuery}${commitmentQuery}`;
+            let andQuery = '';
+            if (additionalQuery.length) {
+                andQuery = `,and(${additionalQuery.join(",")})`
+            }
+
+            var orQuery = `and(or(name.ilike.%${searchParams.name}%,keywords.ilike.%${searchParams.name}%)${andQuery})`;
 
             ({ data: orgData, error: orgError } = await supabase
                 .from("organizations")
