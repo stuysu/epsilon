@@ -54,8 +54,9 @@ const Catalog = () => {
 
     const [seed, setSeed] = useState(Math.random());
 
-    const isTwo = useMediaQuery("(max-width: 1000px)");
-    const isOne = useMediaQuery("(max-width: 500px)");
+    const isTwo = useMediaQuery("(max-width: 1525px)");
+    const isTwoWrap = useMediaQuery("(max-width: 1100px)")
+    const isOne = useMediaQuery("(max-width: 700px)");
 
     let columns = 3;
     if (isTwo) columns = 2;
@@ -160,12 +161,13 @@ const Catalog = () => {
             <SearchFilter
                 isOneColumn={isOne}
                 isTwoColumn={isTwo}
+                isTwoWrap={isTwoWrap}
                 value={searchParams}
                 onChange={setSearchParams}
             />
             <Box
                 sx={{
-                    width: isOne || isTwo ? "100%" : "75%",
+                    width: isOne || isTwoWrap ? "100%" : (isTwo ? '70%' : '75%'),
                     padding: "20px",
                     position: "relative",
                 }}
