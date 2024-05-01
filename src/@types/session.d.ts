@@ -29,6 +29,7 @@ type CalendarMeeting = {
 
 type SearchParams = {
   name: string;
-  keywords: string[];
+  meetingDays: string[];
+  commitmentLevels: string[];
   tags: string[];
 };

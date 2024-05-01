@@ -163,7 +163,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
         <Typography variant="h3" align="center" width="100%">
           {organization.name}
         </Typography>
-        <Typography variant="body1" align="center" width="100%">
+        <Typography variant="body1" align="center" width="100%" sx={{ overflowX: 'hidden'}}>
           {organization.mission}
         </Typography>
         <Button

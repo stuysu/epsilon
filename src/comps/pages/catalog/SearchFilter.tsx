@@ -7,6 +7,8 @@ type Props = {
   isTwoColumn: boolean;
 };
 
+const onlyAlpha = /[^a-z0-9 ]/gi;
+
 const SearchFilter = ({ value, onChange, isOneColumn, isTwoColumn }: Props) => {
   return (
     <Box
@@ -31,7 +33,10 @@ const SearchFilter = ({ value, onChange, isOneColumn, isTwoColumn }: Props) => {
           label="Search"
           sx={{ width: "100%" }}
           value={value.name}
-          onChange={(e) => onChange({ ...value, name: e.target.value })}
+          onChange={(e) => {
+            e.target.value = e.target.value.replace(onlyAlpha, "")
+            onChange({ ...value, name: e.target.value })
+          }}
         />
       </Box>
       <Box sx={{ width: "100%", padding: "20px", marginTop: "15px" }}>

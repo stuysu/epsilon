@@ -47,7 +47,8 @@ const Catalog = () => {
 
   const [searchParams, setSearchParams] = useState<SearchParams>({
     name: "",
-    keywords: [],
+    meetingDays: [],
+    commitmentLevels: [],
     tags: [],
   });
 
@@ -68,7 +69,8 @@ const Catalog = () => {
 
     if (
       !searchParams.name.length &&
-      !searchParams.keywords.length &&
+      !searchParams.meetingDays.length &&
+      !searchParams.commitmentLevels.length &&
       !searchParams.tags.length
     ) {
       // get orgs in random order (no search params)
@@ -77,11 +79,29 @@ const Catalog = () => {
         { seed, query_offset: originalOffset, query_limit: querySize },
       ));
     } else {
-      // inner join with tags and keywords
+      // get orgs with search params
+      let tagsQuery = "";
+      if (searchParams.tags.length) {
+        tagsQuery = ',' + searchParams.tags.map(tag => `tags.cs.{${tag}}`).join(",")
+      }
+
+      let daysQuery = "";
+      if (searchParams.meetingDays.length) {
+        daysQuery = ',' + searchParams.meetingDays.map(day => `meeting_days.cs.{${day}}`).join(",")
+      }
+
+      let commitmentQuery = "";
+      if (searchParams.commitmentLevels.length) {
+        commitmentQuery = ',' + searchParams.commitmentLevels.map(level => `commitment_level.eq.${level}`).join(",")
+      }
+
+      var orQuery = `name.ilike.%${searchParams.name}%,keywords.ilike.%${searchParams.name}%${tagsQuery}${daysQuery}${commitmentQuery}`;
+
       ({ data: orgData, error: orgError } = await supabase
         .from("organizations")
         .select("*")
-        .ilike("name", `%${searchParams.name}%`)
+        .or(orQuery)
+        // .ilike("name", `%${searchParams.name}%`)
         .range(originalOffset, originalOffset + querySize - 1));
     }
 
