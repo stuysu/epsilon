@@ -54,8 +54,9 @@ const Catalog = () => {
 
     const [seed, setSeed] = useState(Math.random());
 
-    const isTwo = useMediaQuery("(max-width: 1000px)");
-    const isOne = useMediaQuery("(max-width: 500px)");
+    const isTwo = useMediaQuery("(max-width: 1525px)");
+    const isTwoWrap = useMediaQuery("(max-width: 1100px)")
+    const isOne = useMediaQuery("(max-width: 700px)");
 
     let columns = 3;
     if (isTwo) columns = 2;
@@ -80,34 +81,38 @@ const Catalog = () => {
             ));
         } else {
             // get orgs with search params
-            let tagsQuery = "";
+            
+
+            let additionalQuery = [];
             if (searchParams.tags.length) {
-                tagsQuery =
-                    "," +
+                additionalQuery.push(
                     searchParams.tags
                         .map((tag) => `tags.cs.{${tag}}`)
-                        .join(",");
+                        .join(",")
+                )
             }
 
-            let daysQuery = "";
             if (searchParams.meetingDays.length) {
-                daysQuery =
-                    "," +
+                additionalQuery.push(
                     searchParams.meetingDays
                         .map((day) => `meeting_days.cs.{${day}}`)
-                        .join(",");
+                        .join(",")
+                )
             }
-
-            let commitmentQuery = "";
             if (searchParams.commitmentLevels.length) {
-                commitmentQuery =
-                    "," +
+                additionalQuery.push(
                     searchParams.commitmentLevels
                         .map((level) => `commitment_level.eq.${level}`)
-                        .join(",");
+                        .join(",")
+                )
             }
 
-            var orQuery = `name.ilike.%${searchParams.name}%,keywords.ilike.%${searchParams.name}%${tagsQuery}${daysQuery}${commitmentQuery}`;
+            let andQuery = '';
+            if (additionalQuery.length) {
+                andQuery = `,and(${additionalQuery.join(",")})`
+            }
+
+            var orQuery = `and(or(name.ilike.%${searchParams.name}%,keywords.ilike.%${searchParams.name}%)${andQuery})`;
 
             ({ data: orgData, error: orgError } = await supabase
                 .from("organizations")
@@ -160,12 +165,13 @@ const Catalog = () => {
             <SearchFilter
                 isOneColumn={isOne}
                 isTwoColumn={isTwo}
+                isTwoWrap={isTwoWrap}
                 value={searchParams}
                 onChange={setSearchParams}
             />
             <Box
                 sx={{
-                    width: isOne || isTwo ? "100%" : "75%",
+                    width: isOne || isTwoWrap ? "100%" : (isTwo ? '70%' : '75%'),
                     padding: "20px",
                     position: "relative",
                 }}

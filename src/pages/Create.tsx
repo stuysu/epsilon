@@ -283,14 +283,14 @@ const Create = () => {
                         label="Choose Tags"
                         tags={[
                             "Arts & Crafts",
-                            "Academic & Professoinal",
+                            "Academic & Professional",
                             "Club Sports & Recreational Games",
                             "Community Service & Volunteering",
                             "Cultural & Religious",
                             "Music",
                             "Public Speaking",
                             "STEM",
-                            "Student Support & Governmnet",
+                            "Student Support & Government",
                             "Hobby & Special Interest",
                             "Publication",
                         ]}
