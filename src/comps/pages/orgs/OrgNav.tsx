@@ -8,6 +8,7 @@ import {
     List,
     ListItemButton,
     ListItemText,
+    Avatar,
 } from "@mui/material";
 
 import OrgContext from "../../context/OrgContext";
@@ -17,6 +18,7 @@ import { supabase } from "../../../supabaseClient";
 import { useSnackbar } from "notistack";
 
 import { useLocation, useNavigate } from "react-router-dom";
+import { CollectionsOutlined } from "@mui/icons-material";
 
 const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const organization = useContext<OrgContextType>(OrgContext);
@@ -37,14 +39,27 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
-        const isCorrectIndex = location.pathname === navLinks[currentIndex]?.to;
+        let isCorrectIndex = false;
+        if (location.pathname === main) {
+            if (currentIndex !== 0) {
+                setCurrentIndex(0);
+            } else {
+                isCorrectIndex = true;
+            }
+        } else {
+            if (currentIndex === 0) {
+                isCorrectIndex = location.pathname === main;
+            } else {
+                isCorrectIndex = location.pathname.startsWith(navLinks[currentIndex]?.to)
+            }
+        }
 
 		if (!isCorrectIndex) {
-			const correctIndex = navLinks.findIndex(link => location.pathname === link.to);
+			const correctIndex = navLinks.slice(1).findIndex(link => location.pathname.startsWith(link.to)) + 1;
 			setCurrentIndex(~correctIndex ? correctIndex : 0);
 		}
     }, [navLinks, location.pathname, currentIndex])
-
+    
     const isInOrg: boolean = organization.memberships?.find(
         (m) => m.users?.id === user.id,
     )
@@ -90,14 +105,38 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const handleInteract = async () => {
         if (interactString === "JOIN") {
             /* JOIN ORGANIZATION */
-            const { error } = await supabase
+            const { data, error } = await supabase
                 .from("memberships")
-                .insert({ organization_id: organization.id, user_id: user.id });
-            if (error) {
+                .insert({ organization_id: organization.id, user_id: user.id })
+                .select(`
+                    id,
+                    role,
+                    role_name,
+                    active,
+                    users (
+                        id,
+                        first_name,
+                        last_name,
+                        email,
+                        picture,
+                        is_faculty
+                    )
+                `);
+            if (error || !data) {
                 return enqueueSnackbar(
                     "Unable to join organization. Contact it@stuysu.org for support.",
                     { variant: "error" },
                 );
+            }
+
+            // update context
+            if (organization.setOrg) {
+                organization.setOrg(
+                    {
+                        ...organization,
+                        memberships: [...organization.memberships, data[0]]
+                    }
+                )
             }
 
             enqueueSnackbar("Sent organization a join request!", {
@@ -116,11 +155,22 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                 .from("memberships")
                 .delete()
                 .eq("id", membership?.id);
+
             if (error) {
                 return enqueueSnackbar(
                     "Unable to leave organization. Contact it@stuysu.org for support.",
                     { variant: "error" },
                 );
+            }
+
+            // update context
+            if (organization.setOrg) {
+                organization.setOrg(
+                    {
+                        ...organization,
+                        memberships: organization.memberships.filter(m => m.users?.id !== user.id)
+                    }
+                )
             }
 
             enqueueSnackbar("Left organization!", { variant: "success" });
@@ -164,19 +214,19 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                         padding: "20px",
                     }}
                 >
-                    <img
+                    <Avatar
                         src={
-                            organization.picture ||
-                            "https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png"
+                            organization.picture
                         }
-                        width="100%"
-                        height="100%"
                         style={{
+                            width: '100%',
+                            height: '100%',
                             borderRadius: "100%",
                             boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+                            fontSize: '100px'
                         }}
                         alt={`organization ${organization.name}`}
-                    />
+                    >{organization.name.charAt(0).toUpperCase()}</Avatar>
                 </Box>
                 <Typography variant="h3" align="center" width="100%">
                     {organization.name}

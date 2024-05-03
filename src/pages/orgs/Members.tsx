@@ -12,19 +12,21 @@ const Members = () => {
                 Members
             </Typography>
             {organization.memberships?.map((member, i) => (
-                <OrgMember
-                    key={i}
-                    role={member.role || "MEMBER"}
-                    role_name={member.role_name}
-                    email={member.users?.email || "no email"}
-                    picture={
-                        member.users?.picture ||
-                        "https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png"
-                    }
-                    first_name={member.users?.first_name || "First"}
-                    last_name={member.users?.last_name || "Last"}
-                    is_faculty={member.users?.is_faculty || false}
-                />
+                member.active && (
+                    <OrgMember
+                        key={i}
+                        role={member.role || "MEMBER"}
+                        role_name={member.role_name}
+                        email={member.users?.email || "no email"}
+                        picture={
+                            member.users?.picture ||
+                            "https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png"
+                        }
+                        first_name={member.users?.first_name || "First"}
+                        last_name={member.users?.last_name || "Last"}
+                        is_faculty={member.users?.is_faculty || false}
+                    />
+                )
             ))}
         </Box>
     );

@@ -76,6 +76,15 @@ const AdminMember = ({
             return;
         }
 
+        if (organization.setOrg) {
+            organization.setOrg(
+                {
+                    ...organization,
+                    memberships: organization.memberships.filter(m => m.id !== id)
+                }
+            )
+        }
+
         enqueueSnackbar("Member kicked!", { variant: "success" });
     };
 
@@ -117,8 +126,8 @@ const AdminMember = ({
         }
 
         if (organization.setOrg) {
-            let existingMember = organization.memberships.find(m => m.users?.id === user.id);
-            if (!existingMember) {
+            let existingMemberIndex = organization.memberships.findIndex(m => m.users?.id === user.id);
+            if (!~existingMemberIndex) {
                 enqueueSnackbar(
                     "Could not update frontend. Refresh to see changes.",
                     { variant: "warning" }
@@ -127,16 +136,19 @@ const AdminMember = ({
                 return;
             }
 
+            let existingMember = organization.memberships[existingMemberIndex];
+
             organization.setOrg(
                 {
                     ...organization,
                     memberships: [
-                        ...organization.memberships.filter(m => m.users?.id !== editState.id),
+                        ...organization.memberships.slice(0, existingMemberIndex),
                         {
                             ...existingMember,
                             role: editState.role,
                             role_name: editState.role_name
-                        } 
+                        },
+                        ...organization.memberships.slice(existingMemberIndex+1) 
                     ]
                 }
             )
@@ -148,33 +160,35 @@ const AdminMember = ({
 
     return (
         <Box sx={{ width: '100%', display: 'flex', flexWrap: 'nowrap', alignItems: 'center' }}>
-            <Box sx={{ width: '80%'}}>
+            <Box sx={{ width: '100%'}}>
                 <OrgMember
-                    role={role || "MEMBER"}
+                    role={role}
                     role_name={role_name}
-                    email={email || "no email"}
+                    email={email}
                     picture={picture}
                     first_name={first_name}
                     last_name={last_name}
                     is_faculty={is_faculty}
                 />
             </Box>
-            {role !== "CREATOR" || isCreator ? (
-                <Button onClick={handleEdit} variant="contained" sx={{ height: '40px'}}>
-                    Edit
-                </Button>
-            ) : (
-                <></>
-            )}
+            <Box sx={{ width: '200px' }}>
+                {role !== "CREATOR" || isCreator ? (
+                    <Button onClick={handleEdit} variant="contained" sx={{ height: '40px'}}>
+                        Edit
+                    </Button>
+                ) : (
+                    <></>
+                )}
 
-            {userId !== user.id &&
-            (isCreator || role === "MEMBER" || role === "ADVISOR") ? (
-                <Button onClick={handleKick} variant="contained" sx={{ height: '40px'}}>
-                    Kick
-                </Button>
-            ) : (
-                <></>
-            )}
+                {userId !== user.id &&
+                (isCreator || role === "MEMBER" || role === "ADVISOR") ? (
+                    <Button onClick={handleKick} variant="contained" sx={{ height: '40px', marginLeft: '10px'}}>
+                        Kick
+                    </Button>
+                ) : (
+                    <></>
+                )}
+            </Box>
             <Dialog open={editState.editing} onClose={handleClose}>
                 <DialogTitle>Edit User</DialogTitle>
                 <DialogContent>

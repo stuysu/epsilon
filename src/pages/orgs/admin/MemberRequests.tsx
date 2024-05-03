@@ -10,7 +10,8 @@ const MemberRequests = () => {
         ?.filter((member) => !member.active)
         .map((member) => {
             return {
-                name: member.users?.first_name + " " + member.users?.last_name,
+                first_name: member.users?.first_name,
+                last_name: member.users?.last_name,
                 email: member.users?.email,
                 membershipId: member.id,
                 picture: member.users?.picture,
@@ -25,7 +26,8 @@ const MemberRequests = () => {
             {pendingMembers?.map((member, i) => (
                 <PendingMember
                     id={member.membershipId || -1}
-                    name={member.name}
+                    first_name={member.first_name}
+                    last_name={member.last_name}
                     email={member.email || "Undefined"}
                     picture={member.picture}
                     key={i}
