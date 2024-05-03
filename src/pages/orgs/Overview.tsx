@@ -41,9 +41,9 @@ const Overview = () => {
                 </Typography>
                 {organization.memberships?.map(
                     (member, i) =>
-                        ["FACULTY", "ADMIN", "CREATOR"].includes(
+                        (["FACULTY", "ADMIN", "CREATOR"].includes(
                             member.role || "",
-                        ) && (
+                        ) && member.active) && (
                             <OrgMember
                                 key={i}
                                 role={member.role || "MEMBER"}

@@ -44,7 +44,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
 			setCurrentIndex(~correctIndex ? correctIndex : 0);
 		}
     }, [navLinks, location.pathname, currentIndex])
-
+    
     const isInOrg: boolean = organization.memberships?.find(
         (m) => m.users?.id === user.id,
     )
@@ -90,14 +90,38 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const handleInteract = async () => {
         if (interactString === "JOIN") {
             /* JOIN ORGANIZATION */
-            const { error } = await supabase
+            const { data, error } = await supabase
                 .from("memberships")
-                .insert({ organization_id: organization.id, user_id: user.id });
-            if (error) {
+                .insert({ organization_id: organization.id, user_id: user.id })
+                .select(`
+                    id,
+                    role,
+                    role_name,
+                    active,
+                    users (
+                        id,
+                        first_name,
+                        last_name,
+                        email,
+                        picture,
+                        is_faculty
+                    )
+                `);
+            if (error || !data) {
                 return enqueueSnackbar(
                     "Unable to join organization. Contact it@stuysu.org for support.",
                     { variant: "error" },
                 );
+            }
+
+            // update context
+            if (organization.setOrg) {
+                organization.setOrg(
+                    {
+                        ...organization,
+                        memberships: [...organization.memberships, data[0]]
+                    }
+                )
             }
 
             enqueueSnackbar("Sent organization a join request!", {
@@ -116,11 +140,22 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                 .from("memberships")
                 .delete()
                 .eq("id", membership?.id);
+
             if (error) {
                 return enqueueSnackbar(
                     "Unable to leave organization. Contact it@stuysu.org for support.",
                     { variant: "error" },
                 );
+            }
+
+            // update context
+            if (organization.setOrg) {
+                organization.setOrg(
+                    {
+                        ...organization,
+                        memberships: organization.memberships.filter(m => m.users?.id !== user.id)
+                    }
+                )
             }
 
             enqueueSnackbar("Left organization!", { variant: "success" });
