@@ -126,7 +126,7 @@ const AdminMember = ({
         }
 
         if (organization.setOrg) {
-            let existingMemberIndex = organization.memberships.findIndex(m => m.users?.id === user.id);
+            let existingMemberIndex = organization.memberships.findIndex(m => m.id === id);
             if (!~existingMemberIndex) {
                 enqueueSnackbar(
                     "Could not update frontend. Refresh to see changes.",
