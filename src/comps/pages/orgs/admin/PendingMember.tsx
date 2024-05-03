@@ -1,17 +1,20 @@
 import { supabase } from "../../../../supabaseClient";
-import { Button } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useContext } from "react";
 import OrgContext from "../../../context/OrgContext";
+import OrgMember from "../OrgMember";
 
 const PendingMember = ({
     id,
-    name,
+    first_name,
+    last_name,
     email,
     picture,
 }: {
     id: number;
-    name: string;
+    first_name?: string;
+    last_name?: string;
     email: string;
     picture: string | undefined;
 }) => {
@@ -81,13 +84,21 @@ const PendingMember = ({
     };
 
     return (
-        <div>
-            <p>
-                {name} - {email}
-            </p>
-            <Button onClick={handleApprove}>Approve</Button>
-            <Button onClick={handleReject}>Reject</Button>
-        </div>
+        <Box sx={{ width: '100%', display: 'flex', flexWrap: 'nowrap', alignItems: 'center' }}>
+            <Box sx={{ width: '100%' }}>
+                <OrgMember
+                    email={email}
+                    picture={picture}
+                    first_name={first_name}
+                    last_name={last_name}
+                />
+            </Box>
+            <Box sx={{ width: '200px' }}>
+                <Button onClick={handleApprove} variant='contained' sx={{ height: '40px' }}>Approve</Button>
+                <Button onClick={handleReject} variant='contained' sx={{ height: '40px', marginLeft: '10px'}}>Reject</Button>
+            </Box>
+            
+        </Box>
     );
 };
 

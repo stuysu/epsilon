@@ -160,18 +160,18 @@ const AdminMember = ({
 
     return (
         <Box sx={{ width: '100%', display: 'flex', flexWrap: 'nowrap', alignItems: 'center' }}>
-            <Box sx={{ width: '70%'}}>
+            <Box sx={{ width: '100%'}}>
                 <OrgMember
-                    role={role || "MEMBER"}
+                    role={role}
                     role_name={role_name}
-                    email={email || "no email"}
+                    email={email}
                     picture={picture}
                     first_name={first_name}
                     last_name={last_name}
                     is_faculty={is_faculty}
                 />
             </Box>
-            <Box sx={{ width: '50%' }}>
+            <Box sx={{ width: '200px' }}>
                 {role !== "CREATOR" || isCreator ? (
                     <Button onClick={handleEdit} variant="contained" sx={{ height: '40px'}}>
                         Edit
