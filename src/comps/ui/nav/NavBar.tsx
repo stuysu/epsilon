@@ -11,8 +11,9 @@ import {
     Switch,
     FormGroup,
     FormControlLabel,
+    IconButton,
 } from "@mui/material";
-import { Menu } from "@mui/icons-material";
+import { Brightness4Rounded, Brightness7Rounded, Menu } from "@mui/icons-material";
 import { CSSProperties, useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../../supabaseClient";
@@ -91,17 +92,10 @@ const NavBar = () => {
                         alignItems: "center",
                     }}
                 >
-                    <FormGroup>
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={theme.colorMode}
-                                    onChange={(e) => theme.toggleColorMode()}
-                                />
-                            }
-                            label="Dark Mode"
-                        />
-                    </FormGroup>
+
+                    <IconButton onClick={theme.toggleColorMode} color='inherit'>
+                        {theme.colorMode ? <Brightness7Rounded /> : <Brightness4Rounded />}
+                    </IconButton>
                 </Box>
             </Box>
 
