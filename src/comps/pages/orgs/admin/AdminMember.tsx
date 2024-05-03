@@ -16,6 +16,10 @@ import {
 import { supabase } from "../../../../supabaseClient";
 import { useSnackbar } from "notistack";
 
+const formatCapitals = (txt: string) => {
+    return txt.slice(0, 1).toUpperCase() + txt.slice(1).toLowerCase();
+}
+
 const AdminMember = ({
     id,
     userId,

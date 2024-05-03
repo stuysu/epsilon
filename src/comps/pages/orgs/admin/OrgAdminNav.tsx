@@ -1,17 +1,12 @@
-import { useNavigate } from "react-router-dom";
-
-import { useContext, useState } from "react";
+import { useContext } from "react";
 
 import OrgContext from "../../../context/OrgContext";
 
-import { List, ListItemButton, ListItemText } from "@mui/material";
 import RouteTabs from "../../../ui/RouteTabs";
 
 const OrgAdminNav = () => {
     const organization = useContext<OrgContextType>(OrgContext);
     const main = `/${organization.url}/admin`;
-    const navigate = useNavigate();
-    const [currentIndex, setCurrentIndex] = useState(0);
 
     let navLinks = [
         {
