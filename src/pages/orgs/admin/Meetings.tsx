@@ -6,6 +6,7 @@ import AdminUpsertMeeting from "../../../comps/pages/orgs/admin/AdminUpsertMeeti
 import { Box, Button, Typography } from "@mui/material";
 import { supabase } from "../../../supabaseClient";
 import { useSnackbar } from "notistack";
+import OrgMeeting from "../../../comps/pages/orgs/OrgMeeting";
 
 // using any types because i can't be bothered
 const sortByStart = (m1: any, m2: any): number => {
@@ -52,14 +53,17 @@ const Meetings = () => {
                 Meetings
             </Typography>
             {organization.meetings.sort(sortByStart).map((meeting) => (
-                <AdminMeeting
+                <OrgMeeting
                     key={meeting.id}
+                    id={meeting.id}
                     title={meeting.title || ""}
                     description={meeting.description || ""}
-                    start={meeting.start_time || ""}
-                    end={meeting.end_time || ""}
-                    room={meeting.rooms?.name}
-                    isPublic={meeting.is_public || false}
+                    start_time={meeting.start_time || ""}
+                    end_time={meeting.end_time || ""}
+                    room_name={meeting.rooms?.name}
+                    org_name={organization.name}
+                    org_picture={organization.picture}
+                    is_public={meeting.is_public || false}
                     onEdit={() => {
                         setEditState({
                             id: meeting.id,

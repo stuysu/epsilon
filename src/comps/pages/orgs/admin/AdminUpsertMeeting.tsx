@@ -106,11 +106,15 @@ const AdminUpsertMeeting = ({
       get ids of rooms that are booked. 
       there is a special case when we fetch an existing booked room from save
       */
+            type roomMeta = {
+                room_id: number;
+                meeting_id: number;
+            }
 
             let { data, error } = await supabase.rpc("get_booked_rooms", {
                 meeting_start: startTime,
                 meeting_end: endTime,
-            });
+            }).returns<roomMeta[]>();
 
             if (error || !data) {
                 enqueueSnackbar(
@@ -120,15 +124,29 @@ const AdminUpsertMeeting = ({
                 return;
             }
 
+            data = data.filter(meta => meta.meeting_id !== id); // remove this current meeting's booking from time slot
+
+            let availRooms = allRooms.filter(
+                (room) => !~data!.findIndex(meta => meta.room_id === room.id), // room does not exist in booked rooms
+            )
+
+            // check if the currently selected room id is no longer valid
+            if (roomId && ~data.findIndex(meta => meta.room_id === roomId)) {
+                setRoomId(undefined);
+            }
+
             setAvailableRooms(
-                allRooms.filter(
-                    (room) => room.id === room_id || !data.includes(room.id),
-                ),
+                availRooms
             );
         };
 
         filterRooms();
     }, [allRooms, startTime, endTime]);
+
+    useEffect(() => {
+        // if available room changes due to time, check if room id chosen before is still valid
+        
+    }, [availableRooms, roomId])
 
     const handleSave = async () => {
         let supabaseReturn;
@@ -148,6 +166,12 @@ const AdminUpsertMeeting = ({
                 floor
             )
         `;
+
+        if (!meetingTitle || !meetingTitle.length) {
+            console.log(meetingTitle)
+            enqueueSnackbar("Missing meeting title.", { variant: 'error' });
+            return;
+        }
 
         if (!startTime) {
             enqueueSnackbar("Missing start time for meeting.", { variant: 'error' });
