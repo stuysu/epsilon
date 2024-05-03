@@ -12,32 +12,42 @@ import {
     MenuItem,
     SelectChangeEvent,
     DialogActions,
+    Box,
 } from "@mui/material";
 import { supabase } from "../../../../supabaseClient";
 import { useSnackbar } from "notistack";
+import OrgMember from "../OrgMember";
+import OrgContext from "../../../context/OrgContext";
 
 const AdminMember = ({
     id,
     userId,
-    name,
+    first_name,
+    last_name,
     email,
     picture,
     role,
     role_name,
     isCreator,
+    is_faculty
 }: {
     id: number;
     userId: number;
-    name: string;
+    first_name: string;
+    last_name: string;
     email: string;
     picture?: string;
-    role: string;
+    role: Membership['role'];
     role_name?: string;
     isCreator: boolean;
+    is_faculty?: boolean;
 }) => {
     const user = useContext(UserContext);
+    const organization = useContext(OrgContext)
+
     const { enqueueSnackbar } = useSnackbar();
     const [editState, setEditState] = useState({
+        id: -1,
         role: "",
         role_name: "",
         editing: false,
@@ -45,8 +55,9 @@ const AdminMember = ({
 
     const handleEdit = () => {
         setEditState({
+            id: user.id,
             role,
-            role_name: "",
+            role_name: role_name || "",
             editing: true,
         });
     };
@@ -84,6 +95,7 @@ const AdminMember = ({
 
     const handleClose = () => {
         setEditState({
+            id: -1,
             role: "",
             role_name: "",
             editing: false,
@@ -104,31 +116,64 @@ const AdminMember = ({
             return;
         }
 
+        if (organization.setOrg) {
+            let existingMember = organization.memberships.find(m => m.users?.id === user.id);
+            if (!existingMember) {
+                enqueueSnackbar(
+                    "Could not update frontend. Refresh to see changes.",
+                    { variant: "warning" }
+                );
+                handleClose();
+                return;
+            }
+
+            organization.setOrg(
+                {
+                    ...organization,
+                    memberships: [
+                        ...organization.memberships.filter(m => m.users?.id !== editState.id),
+                        {
+                            ...existingMember,
+                            role: editState.role,
+                            role_name: editState.role_name
+                        } 
+                    ]
+                }
+            )
+        }
+
         enqueueSnackbar("Member updated!", { variant: "success" });
         handleClose();
     };
 
     return (
-        <div>
-            <p>
-                {name} - {email} - role nickname: {role_name || "None"}, role:{" "}
-                {role}
-            </p>
+        <Box sx={{ width: '100%', display: 'flex', flexWrap: 'nowrap', alignItems: 'center' }}>
+            <Box sx={{ width: '80%'}}>
+                <OrgMember
+                    role={role || "MEMBER"}
+                    role_name={role_name}
+                    email={email || "no email"}
+                    picture={picture}
+                    first_name={first_name}
+                    last_name={last_name}
+                    is_faculty={is_faculty}
+                />
+            </Box>
             {role !== "CREATOR" || isCreator ? (
-                <Button onClick={handleEdit} variant="contained">
+                <Button onClick={handleEdit} variant="contained" sx={{ height: '40px'}}>
                     Edit
                 </Button>
             ) : (
-                <div></div>
+                <></>
             )}
 
             {userId !== user.id &&
             (isCreator || role === "MEMBER" || role === "ADVISOR") ? (
-                <Button onClick={handleKick} variant="contained">
+                <Button onClick={handleKick} variant="contained" sx={{ height: '40px'}}>
                     Kick
                 </Button>
             ) : (
-                <div></div>
+                <></>
             )}
             <Dialog open={editState.editing} onClose={handleClose}>
                 <DialogTitle>Edit User</DialogTitle>
@@ -160,7 +205,7 @@ const AdminMember = ({
                     </Button>
                 </DialogActions>
             </Dialog>
-        </div>
+        </Box>
     );
 };
 

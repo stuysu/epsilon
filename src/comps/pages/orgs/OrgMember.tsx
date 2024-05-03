@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { ListItem, ListItemAvatar, Avatar, ListItemText } from "@mui/material";
 
 type Props = {
     role: Membership["role"];
@@ -7,7 +7,7 @@ type Props = {
     picture: User["picture"];
     first_name: User["first_name"];
     last_name: User["last_name"];
-    is_faculty: User["is_faculty"];
+    is_faculty?: User["is_faculty"];
 };
 
 const formatCapitals = (txt: string) => {
@@ -24,34 +24,23 @@ const OrgMember = ({
     is_faculty,
 }: Props) => {
     return (
-        <Box
-            sx={{
-                width: "100%",
-                height: "75px",
-                display: "flex",
-                flexWrap: "nowrap",
-            }}
+        <ListItem
+            sx={{ height: "75px" }}
         >
-            <Box sx={{ width: "75px", height: "75px", padding: "15px" }}>
-                <img
-                    width="100%"
-                    height="100%"
-                    src={picture}
-                    style={{ borderRadius: "100%" }}
-                    alt={`Member ${first_name} ${last_name}`}
-                />
-            </Box>
-            <Box sx={{ height: "75px", padding: "5px" }}>
-                <Typography>
-                    {first_name} {last_name}
-                </Typography>
-                <Typography>
-                    {role_name || formatCapitals(role)}
-                    {is_faculty && " - Faculty"}
-                </Typography>
-                <Typography>{email}</Typography>
-            </Box>
-        </Box>
+            <ListItemAvatar>
+                <Avatar alt={`${first_name} ${last_name}`} src={picture} />
+            </ListItemAvatar>
+            <ListItemText
+                primary={`${first_name} ${last_name}`}
+                secondary={
+                    <>
+                        {role_name || formatCapitals(role) + (is_faculty ? " - Faculty" : "")}
+                        <br />
+                        {email}
+                    </>
+                }
+            />
+        </ListItem>
     );
 };
 

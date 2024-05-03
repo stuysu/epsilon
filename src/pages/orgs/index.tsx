@@ -18,7 +18,7 @@ const OrgRouter = () => {
     const { enqueueSnackbar } = useSnackbar();
     const { orgUrl } = useParams();
 
-    const isMobile = useMediaQuery("(max-width: 700px)");
+    const isMobile = useMediaQuery("(max-width: 1000px)");
 
     const [org, setOrg] = useState<OrgContextType>({
         id: -1,

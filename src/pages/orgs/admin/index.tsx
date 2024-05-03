@@ -1,4 +1,4 @@
-import { Fragment, useContext } from "react";
+import { useContext } from "react";
 
 import { Routes, Route } from "react-router-dom";
 
@@ -32,9 +32,9 @@ const OrgAdminRouter = () => {
         isOrgAdmin = true;
 
     return (
-        <Box>
+        <>
             {isOrgAdmin ? (
-                <Fragment>
+                <>
                     <OrgAdminNav />
                     <Routes>
                         <Route path={"/members"} Component={Members} />
@@ -48,11 +48,11 @@ const OrgAdminRouter = () => {
                         <Route path={"/org-edits"} Component={Organization} />
                         <Route path={"/*"} Component={Members} />
                     </Routes>
-                </Fragment>
+                </>
             ) : (
                 <div>You don't have access to this page</div>
             )}
-        </Box>
+        </>
     );
 };
 
