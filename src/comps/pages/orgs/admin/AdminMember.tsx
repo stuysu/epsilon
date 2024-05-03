@@ -117,8 +117,8 @@ const AdminMember = ({
         }
 
         if (organization.setOrg) {
-            let existingMember = organization.memberships.find(m => m.users?.id === user.id);
-            if (!existingMember) {
+            let existingMemberIndex = organization.memberships.findIndex(m => m.users?.id === user.id);
+            if (!~existingMemberIndex) {
                 enqueueSnackbar(
                     "Could not update frontend. Refresh to see changes.",
                     { variant: "warning" }
@@ -127,16 +127,19 @@ const AdminMember = ({
                 return;
             }
 
+            let existingMember = organization.memberships[existingMemberIndex];
+
             organization.setOrg(
                 {
                     ...organization,
                     memberships: [
-                        ...organization.memberships.filter(m => m.users?.id !== editState.id),
+                        ...organization.memberships.slice(0, existingMemberIndex),
                         {
                             ...existingMember,
                             role: editState.role,
                             role_name: editState.role_name
-                        } 
+                        },
+                        ...organization.memberships.slice(existingMemberIndex+1) 
                     ]
                 }
             )
