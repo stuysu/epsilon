@@ -83,12 +83,12 @@ const NavBar = () => {
                 </Box>
                 <Box
                     sx={{
-                        width: "200px",
+                        width: "100px",
                         height: "100%",
                         position: "absolute",
                         right: 0,
                         display: "flex",
-                        justifyContent: "center",
+                        justifyContent: "space-around",
                         alignItems: "center",
                     }}
                 >
