@@ -55,7 +55,7 @@ const Posts = () => {
                 }}
             />
             <Typography variant="h1" align="center" width="100%">
-                Posts
+                Manage Posts
             </Typography>
             {posts.map((post, i) => {
                 return (

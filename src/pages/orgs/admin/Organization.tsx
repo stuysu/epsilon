@@ -57,7 +57,7 @@ const Organization = () => {
     return (
         <Box sx={{ width: "100%" }}>
             <Typography variant="h1" align="center" width="100%">
-                Organization Edits
+                Edit Charter
             </Typography>
             <OrgEditor
                 organization={organization}

@@ -50,7 +50,7 @@ const Meetings = () => {
     return (
         <Box sx={{ width: "100%" }}>
             <Typography variant="h1" align="center" width="100%">
-                Meetings
+                Manage Meetings
             </Typography>
             {organization.meetings.sort(sortByStart).map((meeting) => (
                 <OrgMeeting
