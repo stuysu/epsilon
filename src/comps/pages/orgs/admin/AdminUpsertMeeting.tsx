@@ -14,7 +14,7 @@ import {
     FormControlLabel,
 } from "@mui/material";
 
-import { DateTimePicker } from "@mui/x-date-pickers";
+import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 
 import { supabase } from "../../../../supabaseClient";
 import OrgContext from "../../../context/OrgContext";
@@ -22,13 +22,13 @@ import dayjs, { Dayjs } from "dayjs";
 import { useSnackbar } from "notistack";
 
 const getDefaultTime = () => {
-    let d = new Date();
-    let defaultTime =
-        new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime() +
-        1000 * 60 * 60 * 15 +
-        1000 * 60 * 35;
-    return defaultTime;
+    return dayjs().startOf('day').hour(15).minute(45)
 };
+
+const getDayStart = (day : Dayjs) => {
+    let dayStart = new Date(day.year(), day.month(), day.date());
+    return dayjs(dayStart);
+}
 
 /* TODO: block off rooms on days they are unavailable */
 const AdminUpsertMeeting = ({
@@ -62,14 +62,14 @@ const AdminUpsertMeeting = ({
 
     const [roomId, setRoomId] = useState(room_id);
 
-    // let default date be today at 3:35-5:00
+    /* date inputs */
     const [startTime, setStartTime] = useState<Dayjs | null>(
-        start ? dayjs(start) : dayjs(getDefaultTime()),
+        start ? dayjs(start) : getDefaultTime()
     );
     const [endTime, setEndTime] = useState<Dayjs | null>(
-        end ? dayjs(end) : dayjs(getDefaultTime()),
-    );
-    const [endTimePicked, setEndTimePicked] = useState(false);
+        end ? dayjs(end) : getDefaultTime() 
+    )
+
     const [isPub, setIsPub] = useState(
         isPublic === undefined ? true : isPublic,
     );
@@ -81,7 +81,6 @@ const AdminUpsertMeeting = ({
     const [loading, setLoading] = useState(true);
 
     /* Filtering out rooms that are taken for that day */
-
     useEffect(() => {
         const fetchRooms = async () => {
             let { data, error } = await supabase.from("rooms").select();
@@ -137,18 +136,33 @@ const AdminUpsertMeeting = ({
         let isCreated = false;
         let isInsert = false;
         let returnSelect = `
-      id,
-      is_public,
-      title,
-      description,
-      start_time,
-      end_time,
-      rooms (
-          id,
-          name,
-          floor
-      )
-    `;
+            id,
+            is_public,
+            title,
+            description,
+            start_time,
+            end_time,
+            rooms (
+                id,
+                name,
+                floor
+            )
+        `;
+
+        if (!startTime) {
+            enqueueSnackbar("Missing start time for meeting.", { variant: 'error' });
+            return;
+        }
+
+        if (!endTime) {
+            enqueueSnackbar("Missing end time for meeting.", { variant: 'error' });
+            return;
+        }
+
+        if (endTime.isBefore(startTime)) {
+            enqueueSnackbar("Meeting start time cannot be before meeting end time.", { variant: 'error' })
+            return;
+        }
 
         if (id) {
             // update
@@ -158,8 +172,8 @@ const AdminUpsertMeeting = ({
                     title: meetingTitle,
                     description: meetingDesc,
                     room_id: roomId || null,
-                    start_time: startTime?.toISOString(),
-                    end_time: endTime?.toISOString(),
+                    start_time: startTime.toISOString(),
+                    end_time: endTime.toISOString(),
                     is_public: isPub,
                 })
                 .eq("id", id)
@@ -174,8 +188,8 @@ const AdminUpsertMeeting = ({
                     title: meetingTitle,
                     description: meetingDesc,
                     room_id: roomId || null,
-                    start_time: startTime?.toISOString(),
-                    end_time: endTime?.toISOString(),
+                    start_time: startTime.toISOString(),
+                    end_time: endTime.toISOString(),
                     is_public: isPub,
                 })
                 .select(returnSelect);
@@ -234,22 +248,34 @@ const AdminUpsertMeeting = ({
                     ))}
                 </Select>
 
-                <DateTimePicker
-                    label="Start Time"
-                    value={dayjs(startTime)}
-                    onChange={(newTime) => {
-                        setStartTime(newTime);
-                        if (!endTimePicked) setEndTime(newTime);
-                    }}
+                <DatePicker 
+                    label='Meeting Day'
+                    value={startTime}
+                    onChange={(newStartTime) => 
+                        {
+                            if (!newStartTime) return;
+
+                            setStartTime(newStartTime);
+
+                            // also change day of end time
+                            if (!endTime) {
+                                setEndTime(newStartTime);
+                            } else {
+                                setEndTime(endTime?.year(newStartTime.year()).month(newStartTime.month()).date(newStartTime.date()))
+                            }
+                        }
+                    }
+                />
+                <TimePicker 
+                    label='Start'
+                    value={startTime}
+                    onChange={setStartTime}
                 />
 
-                <DateTimePicker
-                    label="End Time"
-                    value={dayjs(endTime)}
-                    onChange={(newTime) => {
-                        if (!endTimePicked) setEndTimePicked(true);
-                        setEndTime(newTime);
-                    }}
+                <TimePicker 
+                    label='End'
+                    value={endTime}
+                    onChange={setEndTime}
                 />
                 <FormControlLabel
                     control={
