@@ -94,7 +94,7 @@ const NavBar = () => {
                 >
 
                     <IconButton onClick={theme.toggleColorMode} color='inherit'>
-                        {theme.colorMode ? <Brightness7Rounded /> : <Brightness4Rounded />}
+                        {theme.colorMode ?  <Brightness4Rounded /> : <Brightness7Rounded />}
                     </IconButton>
                 </Box>
             </Box>
