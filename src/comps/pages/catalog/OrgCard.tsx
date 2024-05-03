@@ -1,4 +1,4 @@
-import { Box, Typography, Card } from "@mui/material";
+import { Box, Typography, Card, Avatar } from "@mui/material";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -32,19 +32,18 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                     paddingTop: "20px",
                 }}
             >
-                <img
-                    src={
-                        organization.picture ||
-                        "https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png"
-                    }
-                    width="170px"
-                    height="170px"
-                    style={{
+                <Avatar
+                    src={organization.picture}
+
+                    sx={{
+                        width: '170px',
+                        height: '170px',
                         borderRadius: "100%",
                         boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+                        fontSize: '60px'
                     }}
-                    alt={`Organization Card for ${organization.name || "organization without a name"}`}
-                />
+                    alt={`${organization.name}`}
+                >{organization.name?.charAt(0).toUpperCase()}</Avatar>
             </Box>
             <Box sx={{ width: "100%", padding: "20px" }}>
                 <Typography variant="h3" align="center">

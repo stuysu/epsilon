@@ -76,6 +76,15 @@ const AdminMember = ({
             return;
         }
 
+        if (organization.setOrg) {
+            organization.setOrg(
+                {
+                    ...organization,
+                    memberships: organization.memberships.filter(m => m.id !== id)
+                }
+            )
+        }
+
         enqueueSnackbar("Member kicked!", { variant: "success" });
     };
 
@@ -151,7 +160,7 @@ const AdminMember = ({
 
     return (
         <Box sx={{ width: '100%', display: 'flex', flexWrap: 'nowrap', alignItems: 'center' }}>
-            <Box sx={{ width: '80%'}}>
+            <Box sx={{ width: '70%'}}>
                 <OrgMember
                     role={role || "MEMBER"}
                     role_name={role_name}
@@ -162,22 +171,24 @@ const AdminMember = ({
                     is_faculty={is_faculty}
                 />
             </Box>
-            {role !== "CREATOR" || isCreator ? (
-                <Button onClick={handleEdit} variant="contained" sx={{ height: '40px'}}>
-                    Edit
-                </Button>
-            ) : (
-                <></>
-            )}
+            <Box sx={{ width: '50%' }}>
+                {role !== "CREATOR" || isCreator ? (
+                    <Button onClick={handleEdit} variant="contained" sx={{ height: '40px'}}>
+                        Edit
+                    </Button>
+                ) : (
+                    <></>
+                )}
 
-            {userId !== user.id &&
-            (isCreator || role === "MEMBER" || role === "ADVISOR") ? (
-                <Button onClick={handleKick} variant="contained" sx={{ height: '40px'}}>
-                    Kick
-                </Button>
-            ) : (
-                <></>
-            )}
+                {userId !== user.id &&
+                (isCreator || role === "MEMBER" || role === "ADVISOR") ? (
+                    <Button onClick={handleKick} variant="contained" sx={{ height: '40px', marginLeft: '10px'}}>
+                        Kick
+                    </Button>
+                ) : (
+                    <></>
+                )}
+            </Box>
             <Dialog open={editState.editing} onClose={handleClose}>
                 <DialogTitle>Edit User</DialogTitle>
                 <DialogContent>

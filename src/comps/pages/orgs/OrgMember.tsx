@@ -28,7 +28,7 @@ const OrgMember = ({
             sx={{ height: "75px" }}
         >
             <ListItemAvatar>
-                <Avatar alt={`${first_name} ${last_name}`} src={picture}>{first_name.charAt(0)}</Avatar>
+                <Avatar alt={`${first_name} ${last_name}`} src={picture}>{first_name.charAt(0).toUpperCase()}</Avatar>
             </ListItemAvatar>
             <ListItemText
                 primary={`${first_name} ${last_name}`}

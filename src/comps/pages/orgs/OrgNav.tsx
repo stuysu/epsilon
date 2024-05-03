@@ -8,6 +8,7 @@ import {
     List,
     ListItemButton,
     ListItemText,
+    Avatar,
 } from "@mui/material";
 
 import OrgContext from "../../context/OrgContext";
@@ -213,19 +214,19 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                         padding: "20px",
                     }}
                 >
-                    <img
+                    <Avatar
                         src={
-                            organization.picture ||
-                            "https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png"
+                            organization.picture
                         }
-                        width="100%"
-                        height="100%"
                         style={{
+                            width: '100%',
+                            height: '100%',
                             borderRadius: "100%",
                             boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+                            fontSize: '100px'
                         }}
                         alt={`organization ${organization.name}`}
-                    />
+                    >{organization.name.charAt(0).toUpperCase()}</Avatar>
                 </Box>
                 <Typography variant="h3" align="center" width="100%">
                     {organization.name}
