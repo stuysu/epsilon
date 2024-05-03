@@ -7,7 +7,7 @@ type Props = {
     picture: User["picture"];
     first_name: User["first_name"];
     last_name: User["last_name"];
-    is_faculty: User["is_faculty"];
+    is_faculty?: User["is_faculty"];
 };
 
 const formatCapitals = (txt: string) => {
