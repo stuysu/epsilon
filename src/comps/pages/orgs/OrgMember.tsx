@@ -34,7 +34,7 @@ const OrgMember = ({
                 primary={`${first_name} ${last_name}`}
                 secondary={
                     <>
-                        {role_name || formatCapitals(role) + (is_faculty && " - Faculty")}
+                        {role_name || formatCapitals(role) + (is_faculty ? " - Faculty" : "")}
                         <br />
                         {email}
                     </>
