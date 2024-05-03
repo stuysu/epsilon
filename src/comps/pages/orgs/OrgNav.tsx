@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import {
     Box,
@@ -16,7 +16,7 @@ import UserContext from "../../context/UserContext";
 import { supabase } from "../../../supabaseClient";
 import { useSnackbar } from "notistack";
 
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 
 const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const organization = useContext<OrgContextType>(OrgContext);
@@ -25,7 +25,25 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const navigate = useNavigate();
     const main = `/${organization.url}`;
 
+    const location = useLocation();
+
+    const navLinks = [
+        { to: main, display: "Overview" },
+        { to: `${main}/charter`, display: "Charter" },
+        { to: `${main}/meetings`, display: "Meetings" },
+        { to: `${main}/members`, display: "Members" },
+    ];
+
     const [currentIndex, setCurrentIndex] = useState(0);
+
+    useEffect(() => {
+        const isCorrectIndex = location.pathname === navLinks[currentIndex]?.to;
+
+		if (!isCorrectIndex) {
+			const correctIndex = navLinks.findIndex(link => location.pathname === link.to);
+			setCurrentIndex(~correctIndex ? correctIndex : 0);
+		}
+    }, [navLinks, location.pathname, currentIndex])
 
     const isInOrg: boolean = organization.memberships?.find(
         (m) => m.users?.id === user.id,
@@ -117,13 +135,6 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
         interactString = "sign in to join";
         disabled = true;
     }
-
-    let navLinks = [
-        { to: main, display: "Overview" },
-        { to: `${main}/charter`, display: "Charter" },
-        { to: `${main}/meetings`, display: "Meetings" },
-        { to: `${main}/members`, display: "Members" },
-    ];
 
     if (isAdmin) {
         navLinks.push({ to: `${main}/admin`, display: "Admin" });

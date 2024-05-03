@@ -23,10 +23,10 @@ const RouteTabs = (
     const navigate = useNavigate();
 
     useEffect(() => {
-        const isCorrectIndex = location.pathname.startsWith(tabs[currentTab]?.to);
+        const isCorrectIndex = location.pathname === tabs[currentTab]?.to;
 
 		if (!isCorrectIndex) {
-			const correctIndex = tabs.findIndex(tab => location.pathname.startsWith(tab.to));
+			const correctIndex = tabs.findIndex(tab => location.pathname === tab.to);
 			setCurrentTab(~correctIndex ? correctIndex : 0);
 		}
     }, [location.pathname, currentTab, tabs])
