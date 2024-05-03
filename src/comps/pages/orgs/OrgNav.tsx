@@ -17,6 +17,7 @@ import { supabase } from "../../../supabaseClient";
 import { useSnackbar } from "notistack";
 
 import { useLocation, useNavigate } from "react-router-dom";
+import { CollectionsOutlined } from "@mui/icons-material";
 
 const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const organization = useContext<OrgContextType>(OrgContext);
@@ -37,10 +38,23 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
-        const isCorrectIndex = location.pathname === navLinks[currentIndex]?.to;
+        let isCorrectIndex = false;
+        if (location.pathname === main) {
+            if (currentIndex !== 0) {
+                setCurrentIndex(0);
+            } else {
+                isCorrectIndex = true;
+            }
+        } else {
+            if (currentIndex === 0) {
+                isCorrectIndex = location.pathname === main;
+            } else {
+                isCorrectIndex = location.pathname.startsWith(navLinks[currentIndex]?.to)
+            }
+        }
 
 		if (!isCorrectIndex) {
-			const correctIndex = navLinks.findIndex(link => location.pathname === link.to);
+			const correctIndex = navLinks.slice(1).findIndex(link => location.pathname.startsWith(link.to)) + 1;
 			setCurrentIndex(~correctIndex ? correctIndex : 0);
 		}
     }, [navLinks, location.pathname, currentIndex])
