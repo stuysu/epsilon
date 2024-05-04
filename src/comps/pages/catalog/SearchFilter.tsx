@@ -1,4 +1,5 @@
 import { Box, Typography, TextField, Stack, Chip } from "@mui/material";
+import { capitalizeWords } from "../../../utils/DataFormatters";
 
 type Props = {
     value: SearchParams;
@@ -36,8 +37,6 @@ const meetingDays = [
     'THURSDAY',
     'FRIDAY'
 ]
-
-const caps = (s : string) => s.split(" ").map(substr => substr.slice(0, 1).toUpperCase() + substr.slice(1).toLowerCase()).join(" ");
 
 const onlyAlpha = /[^a-z0-9 ]/gi;
 
@@ -81,7 +80,7 @@ const SearchFilter = ({ value, onChange, isOneColumn, isTwoColumn, isTwoWrap }: 
                         tags.map(
                             tag => (
                                 <Chip 
-                                    label={caps(tag)}
+                                    label={capitalizeWords(tag)}
                                     onClick={() => {
                                         let exists = value.tags.findIndex(v => v === tag) !== -1;
 
@@ -105,7 +104,7 @@ const SearchFilter = ({ value, onChange, isOneColumn, isTwoColumn, isTwoWrap }: 
                         commitmentLevels.map(
                             level => (
                                 <Chip 
-                                    label={caps(level)}
+                                    label={capitalizeWords(level)}
                                     onClick={() => {
                                         let exists = value.commitmentLevels.findIndex(v => v === level) !== -1;
 
@@ -129,7 +128,7 @@ const SearchFilter = ({ value, onChange, isOneColumn, isTwoColumn, isTwoWrap }: 
                         meetingDays.map(
                             day => (
                                 <Chip 
-                                    label={caps(day)}
+                                    label={capitalizeWords(day)}
                                     onClick={() => {
                                         let exists = value.meetingDays.findIndex(v => v === day) !== -1;
 

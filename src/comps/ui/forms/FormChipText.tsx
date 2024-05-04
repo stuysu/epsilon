@@ -18,11 +18,12 @@ type Props = {
         dirty: boolean;
         value: boolean;
     };
-    changeStatus?: (newStatus: boolean) => void;
+    changeStatus?: (field: string, newStatus: boolean) => void;
     label?: string;
 };
 
 const FormChipText = ({
+    field,
     description,
     required,
     requirements,
@@ -37,12 +38,12 @@ const FormChipText = ({
             if (!newValue) newValue = [];
 
             if (!required && newValue.length === 0) {
-                changeStatus(true);
+                changeStatus(field, true);
                 return;
             }
 
             if (required) {
-                changeStatus(newValue.length > 0);
+                changeStatus(field, newValue.length > 0);
             }
         };
 

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 
-import { Box, useMediaQuery, Typography, TextField } from "@mui/material";
+import { Box, useMediaQuery, Typography } from "@mui/material";
 import { Masonry } from "@mui/lab";
 
 import OrgCard from "../comps/pages/catalog/OrgCard";
@@ -81,43 +81,39 @@ const Catalog = () => {
             ));
         } else {
             // get orgs with search params
-            
 
-            let additionalQuery = [];
+            let orgReqs = [];
             if (searchParams.tags.length) {
-                additionalQuery.push(
-                    searchParams.tags
-                        .map((tag) => `tags.cs.{${tag}}`)
-                        .join(",")
-                )
+                let tagReqs = searchParams.tags
+                    .map((tag) => `tags.cs.{${tag}}`)
+                    .join(",")
+                orgReqs.push(`and(or(${tagReqs}))`)
             }
 
             if (searchParams.meetingDays.length) {
-                additionalQuery.push(
-                    searchParams.meetingDays
-                        .map((day) => `meeting_days.cs.{${day}}`)
-                        .join(",")
-                )
+                let dayReqs = searchParams.meetingDays
+                    .map((day) => `meeting_days.cs.{${day}}`)
+                    .join(",")
+                orgReqs.push(`and(or(${dayReqs}))`)
             }
             if (searchParams.commitmentLevels.length) {
-                additionalQuery.push(
-                    searchParams.commitmentLevels
-                        .map((level) => `commitment_level.eq.${level}`)
-                        .join(",")
-                )
+                let commitmentReqs = searchParams.commitmentLevels
+                    .map((level) => `commitment_level.eq.${level}`)
+                    .join(",");
+                orgReqs.push(`and(or(${commitmentReqs}))`)
             }
 
-            let andQuery = '';
-            if (additionalQuery.length) {
-                andQuery = `,and(${additionalQuery.join(",")})`
+            let orgReqsQuery = '';
+            if (orgReqs.length) {
+                orgReqsQuery = `,and(${orgReqs.join(",")})`
             }
 
-            var orQuery = `and(or(name.ilike.%${searchParams.name}%,keywords.ilike.%${searchParams.name}%)${andQuery})`;
+            var catalogQuery = `and(or(name.ilike.%${searchParams.name}%,keywords.ilike.%${searchParams.name}%)${orgReqsQuery})`;
 
             ({ data: orgData, error: orgError } = await supabase
                 .from("organizations")
                 .select("*")
-                .or(orQuery)
+                .or(catalogQuery)
                 // .ilike("name", `%${searchParams.name}%`)
                 .range(originalOffset, originalOffset + querySize - 1));
         }

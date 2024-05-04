@@ -5,6 +5,8 @@ import UserContext from "../../../comps/context/UserContext";
 import AdminMember from "../../../comps/pages/orgs/admin/AdminMember";
 import { Box, Typography } from "@mui/material";
 
+import { sortByRole } from "../../../utils/DataFormatters";
+
 const Members = () => {
     const user = useContext(UserContext);
     const organization = useContext<OrgContextType>(OrgContext);
@@ -31,9 +33,9 @@ const Members = () => {
     return (
         <Box sx={{ width: "100%" }}>
             <Typography variant="h1" align="center" width="100%">
-                Members
+                Manage Members
             </Typography>
-            {members?.map((member, i) => (
+            {members?.sort(sortByRole).map((member, i) => (
                 <AdminMember
                     id={member.membershipId || -1}
                     userId={member.userId || -1}

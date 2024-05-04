@@ -1,10 +1,8 @@
-import { Box, TextField, Button } from "@mui/material";
+import { Paper, Box, TextField, Button, Typography } from "@mui/material";
 import { useEffect, useState, ChangeEvent } from "react";
 
 import { supabase } from "../../../../supabaseClient";
 import { useSnackbar } from "notistack";
-
-let editableFieilds = ["title", "description"];
 
 /* if content is null, then it is creating post */
 const PostEditor = ({
@@ -25,8 +23,8 @@ const PostEditor = ({
     let [postData, setPostData] = useState<Partial<Post>>({
         id: undefined,
         organization_id: orgId,
-        title: undefined,
-        description: undefined,
+        title: "",
+        description: "",
         created_at: undefined,
         updated_at: undefined,
     });
@@ -47,6 +45,13 @@ const PostEditor = ({
     };
 
     const createPost = async () => {
+        if (!postData.title) {
+            return enqueueSnackbar("Missing post title.", { variant: 'error' })
+        }
+        if (!postData.description) {
+            return enqueueSnackbar("Missing post description.", { variant: "error" })
+        }
+
         let { data, error } = await supabase
             .from("posts")
             .insert(postData)
@@ -63,8 +68,8 @@ const PostEditor = ({
         setPostData({
             id: undefined,
             organization_id: orgId,
-            title: undefined,
-            description: undefined,
+            title: "",
+            description: "",
             created_at: undefined,
             updated_at: undefined,
         });
@@ -92,34 +97,41 @@ const PostEditor = ({
     };
 
     return (
-        <Box>
-            <h1>{content ? "Update Post" : "Create Post"}</h1>
-            <Box bgcolor="background.default" color="primary.contrastText">
-                {editableFieilds.map((field, i) => {
-                    let key: keyof Post = field as keyof Post;
+        <Paper
+            elevation={1}
+            sx={{ width: '500px', padding: '15px', height: '350px', margin: '10px' }}
+        >
+            <Typography variant='h3' width='100%'>{content ? "Update Post" : "Create Post"}</Typography>
+            <Box sx={{ marginBottom: '10px'}}>
+                <TextField 
+                    value={postData['title']}
+                    name={'title'}
+                    label='Title'
+                    onChange={onChange}
+                    fullWidth
+                />
 
-                    return (
-                        <Box key={i}>
-                            {field}
-                            <TextField
-                                value={postData[key] || ""}
-                                name={field}
-                                onChange={onChange}
-                            />
-                        </Box>
-                    );
-                })}
+                <TextField 
+                    value={postData['description']}
+                    name={'description'}
+                    label='Description'
+                    onChange={onChange}
+                    fullWidth
+                    multiline
+                    rows={5}
+                    sx={{ marginTop: '10px'}}
+                />
             </Box>
 
             {content ? (
                 <>
-                    <Button onClick={savePost}>Save</Button>
-                    <Button onClick={onCancel}>Cancel</Button>
+                    <Button onClick={savePost} variant='contained'>Save</Button>
+                    <Button onClick={onCancel} variant='contained' sx={{ marginLeft: '10px'}}>Cancel</Button>
                 </>
             ) : (
-                <Button onClick={createPost}>Create</Button>
+                <Button onClick={createPost} variant='contained'>Create</Button>
             )}
-        </Box>
+        </Paper>
     );
 };
 

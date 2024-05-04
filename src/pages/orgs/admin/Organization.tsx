@@ -16,6 +16,7 @@ const Organization = () => {
         id: undefined,
         organization_id: undefined,
         name: undefined,
+        socials: undefined,
         url: undefined,
         picture: undefined,
         mission: undefined,
@@ -38,30 +39,29 @@ const Organization = () => {
                 .select()
                 .eq("organization_id", organization.id);
 
-            if (error) {
+            if (error || !data) {
                 return enqueueSnackbar(
                     "Error fetching organization edits. Contact it@stuysu.org for support.",
                     { variant: "error" },
                 );
             }
 
-            if (data.length) {
+            if (data[0]) {
                 setPendingEdit(data[0]);
             }
         };
 
         fetchEdits();
-        // eslint-disable-next-line
-    }, []);
+    }, [organization]);
 
     return (
         <Box sx={{ width: "100%" }}>
             <Typography variant="h1" align="center" width="100%">
-                Organization Edits
+                Edit Charter
             </Typography>
             <OrgEditor
                 organization={organization}
-                organizationEdit={pendingEdit}
+                existingEdit={pendingEdit}
                 setPendingEdit={setPendingEdit}
             />
         </Box>

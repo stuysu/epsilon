@@ -2,7 +2,7 @@ import { Autocomplete, TextField, Chip, SxProps } from "@mui/material";
 import { SyntheticEvent, useEffect } from "react";
 
 type Requirements = {
-    maxSelect: number;
+    maxSelect?: number;
 };
 
 type Props = {
@@ -17,12 +17,13 @@ type Props = {
         dirty: boolean;
         value: boolean;
     };
-    changeStatus?: (newStatus: boolean) => void;
+    changeStatus?: (field: string, newStatus: boolean) => void;
     label?: string;
     sx?: SxProps;
 };
 
 const FormTagSelect = ({
+    field,
     tags,
     description,
     required,
@@ -39,12 +40,12 @@ const FormTagSelect = ({
             if (!newValue) newValue = [];
 
             if (!required && newValue.length === 0) {
-                changeStatus(true);
+                changeStatus(field, true);
                 return;
             }
 
             if (required) {
-                changeStatus(newValue.length > 0);
+                changeStatus(field, newValue.length > 0);
             }
         };
 

@@ -4,6 +4,7 @@ import OrgContext from "../../comps/context/OrgContext";
 import { Box, Typography, useMediaQuery } from "@mui/material";
 import OrgMember from "../../comps/pages/orgs/OrgMember";
 import OrgMeeting from "../../comps/pages/orgs/OrgMeeting";
+import { sortByDate, sortByRole } from "../../utils/DataFormatters";
 
 const Overview = () => {
     const organization: OrgContextType = useContext(OrgContext);
@@ -39,7 +40,7 @@ const Overview = () => {
                 <Typography variant="h3" color="primary.main" width="100%">
                     Leaders
                 </Typography>
-                {organization.memberships?.map(
+                {organization.memberships?.sort(sortByRole).map(
                     (member, i) =>
                         (["FACULTY", "ADMIN", "CREATOR"].includes(
                             member.role || "",
@@ -61,20 +62,18 @@ const Overview = () => {
                 <Typography variant="h3" color="primary.main" width="100%">
                     Upcoming Meetings
                 </Typography>
-                {organization.meetings.map((meeting, i) => (
+                {organization.meetings.sort(sortByDate).map(meeting => (
                     <OrgMeeting
-                        id={meeting.id || -1}
-                        title={meeting.title || "No Title"}
-                        description={meeting.description || "No Description"}
-                        start_time={meeting.start_time || ""}
-                        end_time={meeting.end_time || ""}
-                        is_public={meeting.is_public || false}
-                        room_name={meeting.rooms?.name || "Virtual"}
-                        org_name={organization.name || "No Org"}
-                        org_picture={
-                            organization.picture ||
-                            "https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png"
-                        }
+                        key={meeting.id}
+                        id={meeting.id}
+                        title={meeting.title}
+                        description={meeting.description}
+                        start_time={meeting.start_time}
+                        end_time={meeting.end_time}
+                        is_public={meeting.is_public}
+                        room_name={meeting.rooms?.name}
+                        org_name={organization.name}
+                        org_picture={organization.picture}
                         isMobile={isMeetingMobile}
                         onlyUpcoming
                     />

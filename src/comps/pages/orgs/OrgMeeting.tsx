@@ -6,17 +6,19 @@ import dayjs from "dayjs";
 import MeetingPreview from "../../ui/meetings/MeetingPreview";
 
 type Props = {
-    id: number;
-    title: string;
-    description: string;
-    start_time: string;
-    end_time: string;
-    is_public: boolean;
-    room_name: string;
-    org_name: string;
-    org_picture: string;
+    id?: number;
+    title?: string;
+    description?: string;
+    start_time?: string;
+    end_time?: string;
+    is_public?: boolean;
+    room_name?: string;
+    org_name?: string;
+    org_picture?: string;
     isMobile?: boolean;
     onlyUpcoming?: boolean;
+    onEdit?: () => void;
+    onDelete?: () => void;
 };
 
 const OrgMeeting = ({
@@ -31,6 +33,8 @@ const OrgMeeting = ({
     org_picture,
     isMobile,
     onlyUpcoming,
+    onEdit,
+    onDelete
 }: Props) => {
     const [open, setOpen] = useState(false);
     let startTime = dayjs(start_time).format("L LT");
@@ -62,13 +66,27 @@ const OrgMeeting = ({
                 <Typography>
                     {startTime} to {endTime}
                 </Typography>
-                <Typography>Location: {room_name}</Typography>
-                {is_public && <Typography>Public</Typography>}
+                <Typography>Location: {room_name || "Virtual"}</Typography>
+                {is_public ? <Typography>Public</Typography> : <Typography>Private</Typography>}
             </Box>
             <Box sx={{ height: "60px", width: "100%" }}>
                 <Button variant="contained" onClick={() => setOpen(true)}>
                     View More
                 </Button>
+                {
+                    onEdit && (
+                        <Button variant='contained' onClick={onEdit} sx={{ marginLeft: '10px'}}>
+                            Edit
+                        </Button>
+                    )
+                }
+                {
+                    onDelete && (
+                        <Button variant='contained' onClick={onDelete} sx={{ marginLeft: '10px'}}>
+                            Delete
+                        </Button>
+                    )
+                }
             </Box>
             <MeetingPreview
                 id={id}

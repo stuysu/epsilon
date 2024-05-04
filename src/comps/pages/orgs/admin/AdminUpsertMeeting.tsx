@@ -12,9 +12,10 @@ import {
     DialogActions,
     Switch,
     FormControlLabel,
+    Box
 } from "@mui/material";
 
-import { DateTimePicker } from "@mui/x-date-pickers";
+import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 
 import { supabase } from "../../../../supabaseClient";
 import OrgContext from "../../../context/OrgContext";
@@ -22,12 +23,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { useSnackbar } from "notistack";
 
 const getDefaultTime = () => {
-    let d = new Date();
-    let defaultTime =
-        new Date(d.getFullYear(), d.getMonth(), d.getDate()).getTime() +
-        1000 * 60 * 60 * 15 +
-        1000 * 60 * 35;
-    return defaultTime;
+    return dayjs().startOf('day').hour(15).minute(45)
 };
 
 /* TODO: block off rooms on days they are unavailable */
@@ -62,14 +58,14 @@ const AdminUpsertMeeting = ({
 
     const [roomId, setRoomId] = useState(room_id);
 
-    // let default date be today at 3:35-5:00
+    /* date inputs */
     const [startTime, setStartTime] = useState<Dayjs | null>(
-        start ? dayjs(start) : dayjs(getDefaultTime()),
+        start ? dayjs(start) : getDefaultTime()
     );
     const [endTime, setEndTime] = useState<Dayjs | null>(
-        end ? dayjs(end) : dayjs(getDefaultTime()),
-    );
-    const [endTimePicked, setEndTimePicked] = useState(false);
+        end ? dayjs(end) : getDefaultTime() 
+    )
+
     const [isPub, setIsPub] = useState(
         isPublic === undefined ? true : isPublic,
     );
@@ -81,7 +77,6 @@ const AdminUpsertMeeting = ({
     const [loading, setLoading] = useState(true);
 
     /* Filtering out rooms that are taken for that day */
-
     useEffect(() => {
         const fetchRooms = async () => {
             let { data, error } = await supabase.from("rooms").select();
@@ -103,15 +98,21 @@ const AdminUpsertMeeting = ({
 
     useEffect(() => {
         const filterRooms = async () => {
+            if (!startTime || !endTime) return; // can't filter without these bounds
+
             /* 
       get ids of rooms that are booked. 
       there is a special case when we fetch an existing booked room from save
       */
+            type roomMeta = {
+                room_id: number;
+                meeting_id: number;
+            }
 
             let { data, error } = await supabase.rpc("get_booked_rooms", {
-                meeting_start: startTime,
-                meeting_end: endTime,
-            });
+                meeting_start: startTime.toISOString(),
+                meeting_end: endTime.toISOString(),
+            }).returns<roomMeta[]>();
 
             if (error || !data) {
                 enqueueSnackbar(
@@ -121,15 +122,29 @@ const AdminUpsertMeeting = ({
                 return;
             }
 
+            data = data.filter(meta => meta.meeting_id !== id); // remove this current meeting's booking from time slot
+            
+            let availRooms = allRooms.filter(
+                (room) => !~data!.findIndex(meta => meta.room_id === room.id), // room does not exist in booked rooms
+            )
+
+            // check if the currently selected room id is no longer valid
+            if (roomId && ~data.findIndex(meta => meta.room_id === roomId)) {
+                setRoomId(undefined);
+            }
+
             setAvailableRooms(
-                allRooms.filter(
-                    (room) => room.id === room_id || !data.includes(room.id),
-                ),
+                availRooms
             );
         };
 
         filterRooms();
     }, [allRooms, startTime, endTime]);
+
+    useEffect(() => {
+        // if available room changes due to time, check if room id chosen before is still valid
+        
+    }, [availableRooms, roomId])
 
     const handleSave = async () => {
         let supabaseReturn;
@@ -137,18 +152,39 @@ const AdminUpsertMeeting = ({
         let isCreated = false;
         let isInsert = false;
         let returnSelect = `
-      id,
-      is_public,
-      title,
-      description,
-      start_time,
-      end_time,
-      rooms (
-          id,
-          name,
-          floor
-      )
-    `;
+            id,
+            is_public,
+            title,
+            description,
+            start_time,
+            end_time,
+            rooms (
+                id,
+                name,
+                floor
+            )
+        `;
+
+        if (!meetingTitle || !meetingTitle.length) {
+            console.log(meetingTitle)
+            enqueueSnackbar("Missing meeting title.", { variant: 'error' });
+            return;
+        }
+
+        if (!startTime) {
+            enqueueSnackbar("Missing start time for meeting.", { variant: 'error' });
+            return;
+        }
+
+        if (!endTime) {
+            enqueueSnackbar("Missing end time for meeting.", { variant: 'error' });
+            return;
+        }
+
+        if (endTime.isBefore(startTime)) {
+            enqueueSnackbar("Meeting start time cannot be before meeting end time.", { variant: 'error' })
+            return;
+        }
 
         if (id) {
             // update
@@ -158,8 +194,8 @@ const AdminUpsertMeeting = ({
                     title: meetingTitle,
                     description: meetingDesc,
                     room_id: roomId || null,
-                    start_time: startTime?.toISOString(),
-                    end_time: endTime?.toISOString(),
+                    start_time: startTime.toISOString(),
+                    end_time: endTime.toISOString(),
                     is_public: isPub,
                 })
                 .eq("id", id)
@@ -174,8 +210,8 @@ const AdminUpsertMeeting = ({
                     title: meetingTitle,
                     description: meetingDesc,
                     room_id: roomId || null,
-                    start_time: startTime?.toISOString(),
-                    end_time: endTime?.toISOString(),
+                    start_time: startTime.toISOString(),
+                    end_time: endTime.toISOString(),
                     is_public: isPub,
                 })
                 .select(returnSelect);
@@ -202,55 +238,78 @@ const AdminUpsertMeeting = ({
 
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogTitle>Upsert Meeting</DialogTitle>
+            <DialogTitle>{id ? "Update" : "Create"} Meeting</DialogTitle>
             <DialogContent>
-                <TextField
-                    value={meetingTitle}
-                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        setMeetingTitle(event.target.value)
-                    }
-                    label="Title"
-                />
+                <Box sx={{ width: '100%', display: 'flex', flexWrap: 'nowrap', alignItems: 'center', height: '80px' }}>
+                    <TextField
+                        value={meetingTitle}
+                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                            setMeetingTitle(event.target.value)
+                        }
+                        label="Title"
+                        sx={{ width: '100%', height: '60px' }}
+                    />
+                    <TextField
+                        value={!loading ? String(roomId) : ""}
+                        label="Room"
+                        select
+                        onChange={(event) =>
+                            setRoomId(Number(event.target.value) || undefined)
+                        }
+                        sx={{ width: '30%', height: '60px', marginLeft: '10px' }}
+                    >
+                        <MenuItem value={"undefined"}>Virtual</MenuItem>
+                        {availableRooms.map((room) => (
+                            <MenuItem key={room.id} value={String(room.id)}>
+                                {room.name}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                </Box>
                 <TextField
                     value={meetingDesc}
                     onChange={(event: ChangeEvent<HTMLInputElement>) =>
                         setMeetingDesc(event.target.value)
                     }
                     label="Description"
+                    fullWidth
+                    multiline
+                    rows={4}
                 />
 
-                <Select
-                    value={!loading ? String(roomId) : ""}
-                    label="Room"
-                    onChange={(event: SelectChangeEvent) =>
-                        setRoomId(Number(event.target.value) || undefined)
+                <DatePicker 
+                    label='Meeting Day'
+                    value={startTime}
+                    onChange={(newStartTime) => 
+                        {
+                            if (!newStartTime) return;
+
+                            setStartTime(newStartTime);
+
+                            // also change day of end time
+                            if (!endTime) {
+                                setEndTime(newStartTime);
+                            } else {
+                                setEndTime(endTime?.year(newStartTime.year()).month(newStartTime.month()).date(newStartTime.date()))
+                            }
+                        }
                     }
-                >
-                    <MenuItem value={"undefined"}>Virtual</MenuItem>
-                    {availableRooms.map((room) => (
-                        <MenuItem key={room.id} value={String(room.id)}>
-                            {room.name}
-                        </MenuItem>
-                    ))}
-                </Select>
-
-                <DateTimePicker
-                    label="Start Time"
-                    value={dayjs(startTime)}
-                    onChange={(newTime) => {
-                        setStartTime(newTime);
-                        if (!endTimePicked) setEndTime(newTime);
-                    }}
+                    sx={{ width: '100%', marginTop: '10px', marginBottom: '10px'}}
                 />
+                <Box sx={{ width: '100%', display: 'flex', flexWrap: 'nowrap', alignItems: 'center'}}>
+                    <TimePicker 
+                        label='Start'
+                        value={startTime}
+                        onChange={setStartTime}
+                        sx={{ marginRight: '10px'}}
+                    />
 
-                <DateTimePicker
-                    label="End Time"
-                    value={dayjs(endTime)}
-                    onChange={(newTime) => {
-                        if (!endTimePicked) setEndTimePicked(true);
-                        setEndTime(newTime);
-                    }}
-                />
+                    <TimePicker 
+                        label='End'
+                        value={endTime}
+                        onChange={setEndTime}
+                    />
+                </Box>
                 <FormControlLabel
                     control={
                         <Switch
@@ -260,6 +319,7 @@ const AdminUpsertMeeting = ({
                             }
                         />
                     }
+                    sx={{ marginTop: '10px'}}
                     label="is public?"
                 />
             </DialogContent>

@@ -20,10 +20,11 @@ type Props = {
         dirty: boolean;
         value: boolean;
     };
-    changeStatus?: (newValue: boolean) => void;
+    changeStatus?: (field: string, newValue: boolean) => void;
 };
 
 const FormUpload = ({
+    field,
     value,
     required,
     requirements,
@@ -38,12 +39,12 @@ const FormUpload = ({
             if (!changeStatus) return;
 
             if (!required && targetValue === undefined) {
-                changeStatus(true);
+                changeStatus(field, true);
                 return;
             }
 
             if (required) {
-                changeStatus(targetValue !== undefined);
+                changeStatus(field, targetValue !== undefined);
             }
         };
 

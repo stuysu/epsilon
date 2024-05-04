@@ -12,15 +12,15 @@ import { Close } from "@mui/icons-material";
 import dayjs from "dayjs";
 
 type Props = {
-    id: number;
-    title: string;
+    id?: number;
+    title?: string;
     open: boolean;
-    isPublic: boolean;
+    isPublic?: boolean;
     description?: string;
-    startTime: string;
-    endTime: string;
+    startTime?: string;
+    endTime?: string;
     organizationPicture?: string;
-    organizationName: string;
+    organizationName?: string;
     roomName?: string;
     onClose: () => void;
 };
@@ -67,7 +67,7 @@ const MeetingPreview = ({
 
     return (
         <Dialog open={open}>
-            <DialogTitle variant="h2">{organizationName}</DialogTitle>
+            <DialogTitle variant="h2">{organizationName || "Untitled Organization"}</DialogTitle>
             <IconButton
                 sx={{
                     position: "absolute",
@@ -80,7 +80,7 @@ const MeetingPreview = ({
             </IconButton>
             <DialogContent dividers>
                 <Typography variant="h1" align="center">
-                    {title}
+                    {title || "Untitled Meeting"}
                 </Typography>
                 <Typography color="secondary.main" align="center">
                     {daysOfWeek[start.day()]}, {monthNames[start.month()]}{" "}
@@ -90,7 +90,7 @@ const MeetingPreview = ({
                     {isPublic ? "Public" : "Private"}
                 </Typography>
                 <Typography align="center" sx={{ marginTop: "20px" }}>
-                    {description}
+                    {description || "No Description"}
                 </Typography>
             </DialogContent>
         </Dialog>

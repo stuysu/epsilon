@@ -3,6 +3,8 @@ import OrgContext from "../../comps/context/OrgContext";
 import { Box, Typography } from "@mui/material";
 import OrgMember from "../../comps/pages/orgs/OrgMember";
 
+import { sortByRole } from "../../utils/DataFormatters";
+
 const Members = () => {
     const organization: OrgContextType = useContext(OrgContext);
 
@@ -11,7 +13,7 @@ const Members = () => {
             <Typography variant="h1" align="center" width="100%">
                 Members
             </Typography>
-            {organization.memberships?.map((member, i) => (
+            {organization.memberships?.sort(sortByRole).map((member, i) => (
                 member.active && (
                     <OrgMember
                         key={i}
