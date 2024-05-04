@@ -82,33 +82,33 @@ const Catalog = () => {
         } else {
             // get orgs with search params
 
-            let additionalQuery = [];
+            let orgReqs = [];
             if (searchParams.tags.length) {
                 let tagReqs = searchParams.tags
                     .map((tag) => `tags.cs.{${tag}}`)
                     .join(",")
-                additionalQuery.push(`and(or(${tagReqs}))`)
+                orgReqs.push(`and(or(${tagReqs}))`)
             }
 
             if (searchParams.meetingDays.length) {
                 let dayReqs = searchParams.meetingDays
                     .map((day) => `meeting_days.cs.{${day}}`)
                     .join(",")
-                additionalQuery.push(`and(or(${dayReqs}))`)
+                orgReqs.push(`and(or(${dayReqs}))`)
             }
             if (searchParams.commitmentLevels.length) {
                 let commitmentReqs = searchParams.commitmentLevels
                     .map((level) => `commitment_level.eq.${level}`)
                     .join(",");
-                additionalQuery.push(`and(or(${commitmentReqs}))`)
+                orgReqs.push(`and(or(${commitmentReqs}))`)
             }
 
-            let andQuery = '';
-            if (additionalQuery.length) {
-                andQuery = `,and(${additionalQuery.join(",")})`
+            let orgReqsQuery = '';
+            if (orgReqs.length) {
+                orgReqsQuery = `,and(${orgReqs.join(",")})`
             }
 
-            var catalogQuery = `and(or(name.ilike.%${searchParams.name}%,keywords.ilike.%${searchParams.name}%)${andQuery})`;
+            var catalogQuery = `and(or(name.ilike.%${searchParams.name}%,keywords.ilike.%${searchParams.name}%)${orgReqsQuery})`;
 
             ({ data: orgData, error: orgError } = await supabase
                 .from("organizations")
