@@ -8,6 +8,7 @@ import {
     cloneElement,
     useState,
     useEffect,
+    useCallback,
 } from "react";
 
 import { Box, Button, Typography } from "@mui/material";
@@ -71,6 +72,22 @@ const FormPage = <T extends unknown>({
         }
     };
 
+    const changeStatus = useCallback((field: string, newStatus: boolean) => {
+        if (
+            status[field] &&
+            newStatus === status[field].value
+        )
+            return;
+        
+        setStatus((prevState) => ({
+            ...prevState,
+            [field]: {
+                dirty: true,
+                value: newStatus,
+            },
+        }));
+    }, [])
+
     const parseChildren = (c: ReactNode) => {
         let childs: ReactNode[] = [];
 
@@ -100,21 +117,7 @@ const FormPage = <T extends unknown>({
                     onChange: (newValue: any) =>
                         childOnChange(child.props.field, newValue),
                     status: status[child.props.field],
-                    changeStatus: (newStatus: boolean) => {
-                        if (
-                            status[child.props.field] &&
-                            newStatus === status[child.props.field].value
-                        )
-                            return;
-
-                        setStatus((prevState) => ({
-                            ...prevState,
-                            [child.props.field]: {
-                                dirty: true,
-                                value: newStatus,
-                            },
-                        }));
-                    },
+                    changeStatus
                 };
 
                 childs.push(

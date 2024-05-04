@@ -24,7 +24,7 @@ type Props = {
         dirty: boolean;
         value: boolean;
     };
-    changeStatus?: (newValue: boolean) => void;
+    changeStatus?: (field: string, newValue: boolean) => void;
     selections: SelectType[];
 };
 
@@ -45,12 +45,12 @@ const FormDropSelect = ({
             if (!changeStatus) return;
 
             if (!required && targetValue.length === 0) {
-                changeStatus(true);
+                changeStatus(field, true);
                 return;
             }
 
             if (required) {
-                changeStatus(targetValue.length > 0);
+                changeStatus(field, targetValue.length > 0);
             }
         };
 

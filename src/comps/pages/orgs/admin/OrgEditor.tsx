@@ -1,4 +1,4 @@
-import { ReactNode, useEffect, useState } from "react";
+import { ReactNode, useCallback, useEffect, useState } from "react";
 import { Box, Button, Paper, TextField, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import FormTextField from "../../../ui/forms/FormTextField";
@@ -13,6 +13,13 @@ type Props = {
 type EditState = {
     [field: string]: boolean;
 }
+
+type FormStatus = {
+    [field: string]: {
+        dirty: boolean;
+        value: boolean;
+    };
+};
 
 const EditField = (
     {
@@ -83,6 +90,21 @@ const OrgEditor = (
     
     const [editData, setEditData] = useState<OrganizationEdit>({}); // proposed edits (should be different from current organization)
     const [editState, setEditState] = useState<EditState>({});
+    const [formStatus, setFormStatus] = useState<FormStatus>({});
+
+    const updateFormStatus = useCallback((field : string, bool : boolean) => {
+        setFormStatus(
+            (prevState) => ({
+                ...prevState,
+                [field]: {
+                    dirty: true,
+                    value: bool,
+                },
+            })
+        )
+    }, [])
+
+    
 
     /* update form data if existingEdit changes */
     useEffect(() => {
@@ -101,8 +123,6 @@ const OrgEditor = (
         setEditData(baseData);
     }, [existingEdit]);
 
-    /* validation */
-
     const updateEdit = (field : keyof OrganizationEdit, value: any) => {
         setEditData(
             {
@@ -119,39 +139,54 @@ const OrgEditor = (
         >
             {
                 textFields.map(
-                    field => (
-                        <EditField 
-                            key={field}
-                            field={field}
-                            pending={editData[field as keyof OrganizationEdit] === undefined}
-                            editing={editState[field]}
-                            onCancel={() => {
-                                updateEdit(
-                                    field as keyof OrganizationEdit, 
-                                    existingEdit[field as keyof OrganizationEdit] ||
-                                    organization[field as keyof Organization]
-                                )
-                                setEditState({ ...editState, [field]: false })
-                            }}
-                            onEdit={() => setEditState({ ...editState, [field]: true })}
-                            defaultDisplay={<Typography width='80%'>{editData[field as keyof OrganizationEdit]}</Typography>}
-                            editDisplay={
-                                <FormTextField
-                                    sx={{ width: '80%'}}
-                                    label={capitalizeWords(field.split("_").join(" "))}
-                                    field={field}
-                                    onChange={val => updateEdit(field as keyof OrganizationEdit, val)}
-                                    value={editData[field as keyof OrganizationEdit]}
-                                    required={OrgRequirements[field].required}
-                                    requirements={OrgRequirements[field].requirements}
-                                    multiline
-                                    rows={4}
-                                />
-                            }
-                        />
-                    )
+                        field => {
+                            return (
+                            <EditField 
+                                key={field}
+                                field={field}
+                                pending={editData[field as keyof OrganizationEdit] === undefined}
+                                editing={editState[field]}
+                                onCancel={() => {
+                                    updateEdit(
+                                        field as keyof OrganizationEdit, 
+                                        existingEdit[field as keyof OrganizationEdit] ||
+                                        organization[field as keyof Organization]
+                                    )
+                                    setEditState({ ...editState, [field]: false })
+                                }}
+                                onEdit={() => setEditState({ ...editState, [field]: true })}
+                                defaultDisplay={<Typography width='80%'>{editData[field as keyof OrganizationEdit]}</Typography>}
+                                editDisplay={
+                                    <FormTextField
+                                        sx={{ width: '80%'}}
+                                        label={capitalizeWords(field.split("_").join(" "))}
+                                        field={field}
+                                        onChange={val => updateEdit(field as keyof OrganizationEdit, val)}
+                                        value={editData[field as keyof OrganizationEdit]}
+                                        required={OrgRequirements[field].required}
+                                        requirements={OrgRequirements[field].requirements}
+                                        changeStatus={updateFormStatus}
+                                        multiline
+                                        rows={4}
+                                    />
+                                }
+                            />
+                        )
+                    }
                 )
             }
+            <Box 
+                sx={{ 
+                    width: '100%', 
+                    marginTop: '20px', 
+                    padding: '20px', 
+                    display: 'flex', 
+                    flexDirection: 'row-reverse', 
+                    flexWrap: 'nowrap' 
+                }}
+            >
+                <Button color='error' variant='contained'>Save Changes</Button>
+            </Box>
         </Paper>
     );
 };

@@ -26,11 +26,12 @@ type Props = {
         dirty: boolean;
         value: boolean;
     };
-    changeStatus?: (newValue: boolean) => void;
+    changeStatus?: (field: string, newValue: boolean) => void;
     selections: SelectType[];
 };
 
 const FormCheckSelect = ({
+    field,
     value,
     label,
     required,
@@ -47,7 +48,7 @@ const FormCheckSelect = ({
             if (!changeStatus) return;
 
             if (required) {
-                changeStatus(targetValue.length > 0);
+                changeStatus(field, targetValue.length > 0);
             }
         };
 
