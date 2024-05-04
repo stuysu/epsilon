@@ -2,7 +2,7 @@ type Requirements = {
     [field: string]: any
 }
 
-type validatorField = 'name' | 'url' | 'commitment_level' | 'tags' | 'keywords' |'socials' |'picture' | 'mission' | 'purpose' | 'benefit' | 'appointment_procedures' | 'uniqueness' | 'meeting_schedule' | 'meeting_days' | 'returning_info' 
+type validatorField = 'name' | 'url' | 'commitment_level' | 'tags' | 'keywords' |'socials' |'picture' | 'mission' | 'purpose' | 'benefit' | 'appointment_procedures' | 'uniqueness' | 'meeting_schedule' | 'meeting_days' | 'returning_info' | string 
 
 type OrgValidator = {
     [field in validatorField]: {

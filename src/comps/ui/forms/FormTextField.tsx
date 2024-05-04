@@ -23,6 +23,7 @@ type Props = {
         value: boolean;
     };
     changeStatus?: (newStatus: boolean) => void;
+    hideHelper?: boolean;
 };
 
 const FormTextField = ({
@@ -33,6 +34,7 @@ const FormTextField = ({
     onChange,
     status,
     changeStatus,
+    hideHelper,
     ...textFieldProps
 }: Props & TextFieldProps) => {
     useEffect(() => {
@@ -180,6 +182,7 @@ const FormTextField = ({
             onChange={textChanged}
             value={value}
             helperText={
+                !hideHelper && 
                 <>
                     {description?.split("\n").map((line) => (
                         <>

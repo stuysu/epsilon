@@ -2,7 +2,7 @@ import { Autocomplete, TextField, Chip, SxProps } from "@mui/material";
 import { SyntheticEvent, useEffect } from "react";
 
 type Requirements = {
-    maxSelect: number;
+    maxSelect?: number;
 };
 
 type Props = {
