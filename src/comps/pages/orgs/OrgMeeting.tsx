@@ -67,7 +67,7 @@ const OrgMeeting = ({
                     {startTime} to {endTime}
                 </Typography>
                 <Typography>Location: {room_name || "Virtual"}</Typography>
-                {is_public && <Typography>Public</Typography>}
+                {is_public ? <Typography>Public</Typography> : <Typography>Private</Typography>}
             </Box>
             <Box sx={{ height: "60px", width: "100%" }}>
                 <Button variant="contained" onClick={() => setOpen(true)}>

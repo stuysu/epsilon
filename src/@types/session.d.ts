@@ -7,6 +7,7 @@ interface UserContextType extends User {
 interface OrgContextType extends Organization {
     meetings: Partial<Meeting>[];
     memberships: Partial<Membership>[];
+    posts: Partial<Posts>[];
     setOrg?: (data: any) => void;
 }
 
