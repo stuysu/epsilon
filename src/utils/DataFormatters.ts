@@ -16,3 +16,10 @@ export const sortByDate = (meeting1: Partial<Meeting>, meeting2: Partial<Meeting
     if (meeting1.start_time < meeting2.start_time) return -1;
     return 0;
 }
+
+export const sortPostByDate = (post1: Partial<Post>, post2: Partial<Post>) => {
+    if (!post1.created_at || !post2.created_at) return 0;
+    if (post1.created_at > post2.created_at) return 1;
+    if (post1.created_at < post2.created_at) return -1;
+    return 0;
+}

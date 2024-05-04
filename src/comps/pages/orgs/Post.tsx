@@ -1,10 +1,12 @@
-import { Box, Button } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 import { supabase } from "../../../supabaseClient";
 
 import { useEffect, useState } from "react";
 
 import PostEditor from "./admin/PostEditor";
 import { useSnackbar } from "notistack";
+
+import dayjs from "dayjs";
 
 /* This post component will serve as both the admin and member post. depending on role, differeing functionality */
 const Post = ({
@@ -42,7 +44,7 @@ const Post = ({
     if (editing) {
         return (
             <PostEditor
-                content={content}
+                content={postData}
                 orgId={content.organization_id}
                 onCancel={() => setEditing(false)}
                 onSave={(newData) => {
@@ -53,24 +55,30 @@ const Post = ({
         );
     }
 
+    let isEdited = postData.created_at !== postData.updated_at;
+
     return (
-        <Box>
-            <Box>
-                {postData.title} -{" "}
-                {postData.created_at !== postData.updated_at
-                    ? `${postData.updated_at} [Edited]`
-                    : postData.created_at}
+        <Paper elevation={1} sx={{ width: '500px', margin: '10px', padding: '15px', height: '350px'}}>
+            <Box sx={{ width: '100%', display: 'flex', flexWrap: 'nowrap'}}>
+                <Box sx={{ width: '80%'}}>
+                    <Typography variant='h3' width='100%'>{postData.title}</Typography>
+                </Box>
+                <Box sx={{ width: '20%', display: 'flex', justfiyContent: 'center', alignItems: 'center'}}>
+                    <Typography>{isEdited ? "[Edited]" : ""}</Typography>
+                </Box>
             </Box>
-            <Box>{postData.description}</Box>
-            <Box>
+            <Box sx={{ width: '100%', height: '200px', overflowY: 'auto'}}>
+                <Typography variant='body1' width='100%'>{postData.description}</Typography>
+            </Box>
+            <Box sx={{ marginTop: '20px'}}>
                 {editable && (
                     <>
-                        <Button onClick={deletePost}>Delete</Button>
-                        <Button onClick={() => setEditing(true)}>Edit</Button>
+                        <Button onClick={deletePost} variant='contained'>Delete</Button>
+                        <Button onClick={() => setEditing(true)} variant='contained' sx={{ marginLeft: '10px'}}>Edit</Button>
                     </>
                 )}
             </Box>
-        </Box>
+        </Paper>
     );
 };
 

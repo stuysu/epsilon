@@ -9,6 +9,8 @@ import OrgContext from "../../../comps/context/OrgContext";
 import { useSnackbar } from "notistack";
 import { Box, Typography } from "@mui/material";
 
+import { sortPostByDate } from "../../../utils/DataFormatters";
+
 /* create new posts */
 /* fetch existing posts to update or delete */
 const Posts = () => {
@@ -47,7 +49,8 @@ const Posts = () => {
         );
 
     return (
-        <Box sx={{ width: "100%" }}>
+        <Box sx={{ width: "100%", display: 'flex', flexWrap: 'wrap' }}>
+            <Typography variant='h1' width='100%'>Manage Posts</Typography>
             <PostEditor
                 orgId={organization.id}
                 onCreate={(newPost) => {
@@ -57,7 +60,7 @@ const Posts = () => {
             <Typography variant="h1" align="center" width="100%">
                 Manage Posts
             </Typography>
-            {posts.map((post, i) => {
+            {posts.sort(sortPostByDate).map((post, i) => {
                 return (
                     <Post
                         content={post}
