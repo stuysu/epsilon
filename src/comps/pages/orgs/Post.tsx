@@ -56,15 +56,17 @@ const Post = ({
     }
 
     let isEdited = postData.created_at !== postData.updated_at;
+    let postTime = isEdited ? dayjs(postData.updated_at) : dayjs(postData.created_at);
+    let timeStr = `${postTime.month()+1}/${postTime.date()}/${postTime.year()}`
 
     return (
         <Paper elevation={1} sx={{ width: '500px', margin: '10px', padding: '15px', height: '350px'}}>
             <Box sx={{ width: '100%', display: 'flex', flexWrap: 'nowrap'}}>
-                <Box sx={{ width: '80%'}}>
+                <Box sx={{ width: '70%'}}>
                     <Typography variant='h3' width='100%'>{postData.title}</Typography>
                 </Box>
-                <Box sx={{ width: '20%', display: 'flex', justfiyContent: 'center', alignItems: 'center'}}>
-                    <Typography>{isEdited ? "[Edited]" : ""}</Typography>
+                <Box sx={{ width: '30%', display: 'flex', justfiyContent: 'center', alignItems: 'center'}}>
+                    <Typography>{timeStr}{isEdited ? " [Edited]" : ""}</Typography>
                 </Box>
             </Box>
             <Box sx={{ width: '100%', height: '200px', overflowY: 'auto'}}>
