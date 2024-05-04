@@ -3,6 +3,7 @@ import React from "react";
 const OrgContext = React.createContext<OrgContextType>({
     id: -1,
     name: "",
+    socials: "",
     url: "",
     picture: "",
     mission: "",

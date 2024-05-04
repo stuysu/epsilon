@@ -49,6 +49,7 @@ const OrgRouter = () => {
                     `
                     id,
                     name,
+                    socials,
                     url,
                     picture,
                     mission,

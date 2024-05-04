@@ -17,6 +17,7 @@ type EditState = {
 const EditField = (
     {
         field,
+        pending,
         editing,
         onCancel,
         onEdit,
@@ -25,6 +26,7 @@ const EditField = (
     } :
     {
         field: string,
+        pending: boolean,
         editing: boolean,
         onCancel: () => void,
         onEdit: () => void,
@@ -34,7 +36,7 @@ const EditField = (
 ) => {
     return (
         <>
-            <Typography width='100%' variant='h4' sx={{ paddingLeft: '10px' }}>{capitalizeWords(field.split("_").join(" "))}</Typography>
+            <Typography width='100%' variant='h4' sx={{ paddingLeft: '10px' }}>{capitalizeWords(field.split("_").join(" "))}{pending ? " - Pending" : " - Approved"}</Typography>
             <Box sx={{ width: '100%', display: 'flex', flexWrap: 'nowrap', padding: '10px', marginTop: '10px', position: 'relative', minHeight: '100px' }}>
                 
                 {editing ?
@@ -60,7 +62,7 @@ const EditField = (
 }
 
 // too lazy to write them all out, use array.map to write it faster
-const textFields = ['name', 'url', 'commitment_level', 'socials', 'mission', 'purpose', 'benefit', 'appointment_procedures', 'uniqueness', 'meeting_schedule']
+const textFields = ['name', 'url', 'socials', 'mission', 'purpose', 'benefit', 'appointment_procedures', 'uniqueness', 'meeting_schedule']
 
 /* 
 TextField Statuses:
@@ -121,6 +123,7 @@ const OrgEditor = (
                         <EditField 
                             key={field}
                             field={field}
+                            pending={editData[field as keyof OrganizationEdit] === undefined}
                             editing={editState[field]}
                             onCancel={() => {
                                 updateEdit(

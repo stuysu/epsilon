@@ -16,6 +16,7 @@ const Organization = () => {
         id: undefined,
         organization_id: undefined,
         name: undefined,
+        socials: undefined,
         url: undefined,
         picture: undefined,
         mission: undefined,
