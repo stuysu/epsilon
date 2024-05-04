@@ -4,6 +4,7 @@ import OrgContext from "../../comps/context/OrgContext";
 import { Box, Typography, useMediaQuery } from "@mui/material";
 import OrgMember from "../../comps/pages/orgs/OrgMember";
 import OrgMeeting from "../../comps/pages/orgs/OrgMeeting";
+import { sortByRole } from "../../utils/DataFormatters";
 
 const Overview = () => {
     const organization: OrgContextType = useContext(OrgContext);
@@ -39,7 +40,7 @@ const Overview = () => {
                 <Typography variant="h3" color="primary.main" width="100%">
                     Leaders
                 </Typography>
-                {organization.memberships?.map(
+                {organization.memberships?.sort(sortByRole).map(
                     (member, i) =>
                         (["FACULTY", "ADMIN", "CREATOR"].includes(
                             member.role || "",
