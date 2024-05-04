@@ -7,3 +7,5 @@ export const sortByRole = (member1 : Partial<Membership>, member2 : Partial<Memb
 
     return 1; // if member 1 is not greater and they are not the same, member2 is simply greater
 }
+
+export const capitalizeWords = (s : string) => s.split(" ").map(substr => substr.slice(0, 1).toUpperCase() + substr.slice(1).toLowerCase()).join(" ")

@@ -16,7 +16,6 @@ import FormSection from "../comps/ui/forms/FormSection";
 import FormChipText from "../comps/ui/forms/FormChipText";
 import FormTagSelect from "../comps/ui/forms/FormTagSelect";
 import FormCheckbox from "../comps/ui/forms/FormCheckbox";
-import { TagSharp } from "@mui/icons-material";
 
 type FormType = {
     name: string;

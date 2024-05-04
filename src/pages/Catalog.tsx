@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 
-import { Box, useMediaQuery, Typography, TextField } from "@mui/material";
+import { Box, useMediaQuery, Typography } from "@mui/material";
 import { Masonry } from "@mui/lab";
 
 import OrgCard from "../comps/pages/catalog/OrgCard";
