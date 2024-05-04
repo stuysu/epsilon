@@ -102,6 +102,8 @@ const AdminUpsertMeeting = ({
 
     useEffect(() => {
         const filterRooms = async () => {
+            if (!startTime || !endTime) return; // can't filter without these bounds
+
             /* 
       get ids of rooms that are booked. 
       there is a special case when we fetch an existing booked room from save
@@ -112,8 +114,8 @@ const AdminUpsertMeeting = ({
             }
 
             let { data, error } = await supabase.rpc("get_booked_rooms", {
-                meeting_start: startTime,
-                meeting_end: endTime,
+                meeting_start: startTime.toISOString(),
+                meeting_end: endTime.toISOString(),
             }).returns<roomMeta[]>();
 
             if (error || !data) {
@@ -125,7 +127,7 @@ const AdminUpsertMeeting = ({
             }
 
             data = data.filter(meta => meta.meeting_id !== id); // remove this current meeting's booking from time slot
-
+            
             let availRooms = allRooms.filter(
                 (room) => !~data!.findIndex(meta => meta.room_id === room.id), // room does not exist in booked rooms
             )
