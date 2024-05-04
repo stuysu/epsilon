@@ -8,6 +8,8 @@ import { supabase } from "../../../supabaseClient";
 import { useSnackbar } from "notistack";
 import OrgMeeting from "../../../comps/pages/orgs/OrgMeeting";
 
+import { useMediaQuery } from "@mui/material";
+
 // using any types because i can't be bothered
 const sortByStart = (m1: any, m2: any): number => {
     if (m1.start_time < m2.start_time) {
@@ -23,6 +25,7 @@ const sortByStart = (m1: any, m2: any): number => {
 const Meetings = () => {
     const organization = useContext(OrgContext);
     const { enqueueSnackbar } = useSnackbar();
+    const isMeetingMobile = useMediaQuery("(max-width: 1450px)");
 
     const [editState, setEditState] = useState<{
         id: number | undefined;
@@ -48,7 +51,7 @@ const Meetings = () => {
         return <h2>Meetings are disabled for this organization.</h2>;
 
     return (
-        <Box sx={{ width: "100%" }}>
+        <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
             <Typography variant="h1" align="center" width="100%">
                 Manage Meetings
             </Typography>
@@ -56,14 +59,15 @@ const Meetings = () => {
                 <OrgMeeting
                     key={meeting.id}
                     id={meeting.id}
-                    title={meeting.title || ""}
-                    description={meeting.description || ""}
-                    start_time={meeting.start_time || ""}
-                    end_time={meeting.end_time || ""}
+                    title={meeting.title}
+                    description={meeting.description}
+                    start_time={meeting.start_time}
+                    end_time={meeting.end_time}
                     room_name={meeting.rooms?.name}
                     org_name={organization.name}
                     org_picture={organization.picture}
-                    is_public={meeting.is_public || false}
+                    is_public={meeting.is_public}
+                    isMobile={isMeetingMobile}
                     onEdit={() => {
                         setEditState({
                             id: meeting.id,
@@ -105,23 +109,26 @@ const Meetings = () => {
                 />
             ))}
 
-            <Button
-                onClick={() =>
-                    setEditState({
-                        id: undefined,
-                        title: undefined,
-                        description: undefined,
-                        start: undefined,
-                        end: undefined,
-                        room: undefined,
-                        isPublic: undefined,
-                        editing: true,
-                    })
-                }
-            >
-                {" "}
-                Create Meeting
-            </Button>
+            <Box sx={{ width: '100%', paddingLeft: '10px'}}>
+                <Button
+                    onClick={() =>
+                        setEditState({
+                            id: undefined,
+                            title: undefined,
+                            description: undefined,
+                            start: undefined,
+                            end: undefined,
+                            room: undefined,
+                            isPublic: undefined,
+                            editing: true,
+                        })
+                    }
+                    variant='contained'
+                    sx={{ marginTop: '20px' }}
+                >
+                    Create Meeting
+                </Button>
+            </Box>
 
             {editState.editing && (
                 <AdminUpsertMeeting
