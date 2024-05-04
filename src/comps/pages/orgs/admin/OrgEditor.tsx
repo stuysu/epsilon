@@ -4,10 +4,12 @@ import { useSnackbar } from "notistack";
 import FormTextField from "../../../ui/forms/FormTextField";
 import OrgRequirements from "../../../../utils/OrgRequirements";
 import { capitalizeWords } from "../../../../utils/DataFormatters";
+import { supabase } from "../../../../supabaseClient";
 
 type Props = {
     organization: Partial<Organization>, // Make organization a prop to allow component to become reusable
-    existingEdit: OrganizationEdit
+    existingEdit: OrganizationEdit,
+    setPendingEdit: (orgEdit: OrganizationEdit) => void
 }
 
 type EditState = {
@@ -20,6 +22,8 @@ type FormStatus = {
         value: boolean;
     };
 };
+
+type orgKey = keyof OrganizationEdit & keyof Organization;
 
 const EditField = (
     {
@@ -71,6 +75,13 @@ const EditField = (
 // too lazy to write them all out, use array.map to write it faster
 const textFields = ['name', 'url', 'socials', 'mission', 'purpose', 'benefit', 'appointment_procedures', 'uniqueness', 'meeting_schedule']
 
+const hiddenFields: string[] = [
+    "id",
+    "organization_id",
+    "created_at",
+    "updated_at"
+]
+
 /* 
 TextField Statuses:
 - default is Approved
@@ -83,14 +94,19 @@ TextField Statuses:
 const OrgEditor = (
     {
         organization, // current approved organization
-        existingEdit
+        existingEdit,
+        setPendingEdit
     } : Props
 ) => {
     const { enqueueSnackbar } = useSnackbar();
     
-    const [editData, setEditData] = useState<OrganizationEdit>({}); // proposed edits (should be different from current organization)
-    const [editState, setEditState] = useState<EditState>({});
-    const [status, setStatus] = useState<FormStatus>({});
+    /* everything that is displayed on the page (could include values similar to original)*/
+    const [editData, setEditData] = useState<OrganizationEdit>({});
+
+    /* only includes keys who are currently being edited */
+    // idk why i split this up, this could both be in one but i was just copy and pasting code from FormPage
+    const [editState, setEditState] = useState<EditState>({}); // whether or not a field is being edited
+    const [status, setStatus] = useState<FormStatus>({}); // validation status for that field
 
     /* validation */
     const [savable, setSavable] = useState(false);
@@ -122,18 +138,158 @@ const OrgEditor = (
     useEffect(() => {
         // replace undefined fields with organization
 
-        let baseData = existingEdit;
+        let baseData : OrganizationEdit = {};
 
         for (let key of Object.keys(existingEdit)) {
             // typescript crying
-            let editField = key as keyof OrganizationEdit
-            if (baseData[editField] === undefined || baseData[editField] === null) {
+            let editField = key as keyof OrganizationEdit;
+            if (hiddenFields.includes(editField)) continue;
+
+            if (existingEdit[editField] === undefined || existingEdit[editField] === null) {
                 baseData[editField] = organization[editField as keyof Organization]
+            } else {
+                baseData[editField] = existingEdit[editField];
             }
         }
 
         setEditData(baseData);
     }, [existingEdit]);
+
+    const saveChanges = async () => {
+        if (!savable) {
+            enqueueSnackbar("Stop tinkering with the website. We know what you're doing.", { variant: 'warning' });
+            return;
+        }
+
+        let payload: any = {};
+
+        let allNull = true;
+        for (let key of Object.keys(existingEdit)) {
+
+            let field = key as orgKey;
+            if (hiddenFields.includes(field)) continue;
+
+            payload[field] = editData[field] || existingEdit[field] || null;
+
+            // if it is equal to the original, approved value, don't put it in the request.
+            if (
+                typeof payload[field] === 'string' || 
+                typeof payload[field] === 'boolean' || 
+                typeof payload[field] === 'number'
+            ) {
+                if (payload[field] === organization[field]) {
+                    payload[field] = null;
+                } 
+            } else if (Array.isArray(payload[field])) {
+                let diff = false;
+                let oldValue = (organization[field] as any[])
+
+                if (payload[field].length !== oldValue.length) {
+                    diff = true;
+                } else {
+                    payload[field].map((v:any, i:number) => {
+                        if (v !== oldValue[i]) {
+                            diff = true;
+                        }
+                    })
+                }
+
+                if (!diff) payload[field] = null;
+            }
+            
+
+            if (payload[field] !== null) {
+                allNull = false;
+            }
+        }
+
+        if (allNull) {
+            // delete the existing organization edit if it exists
+            if (existingEdit.id) {
+                let { error: deleteError } = await supabase
+                    .from('organizationedits')
+                    .delete()
+                    .eq('organization_id', organization.id);
+                if (deleteError) {
+                    enqueueSnackbar("Error removing redundant organization edit.", { variant: 'error' })
+                }
+
+                enqueueSnackbar('Removed redundant organization edit!', { variant: 'success' });
+            } else {
+                enqueueSnackbar('Unexpected behavior: all edit fields were null.', { variant: 'warning' })
+            }
+
+            // update frontend to removed org edit
+            setPendingEdit(
+                {
+                    id: undefined,
+                    organization_id: undefined,
+                    name: undefined,
+                    socials: undefined,
+                    url: undefined,
+                    picture: undefined,
+                    mission: undefined,
+                    purpose: undefined,
+                    benefit: undefined,
+                    appointment_procedures: undefined,
+                    uniqueness: undefined,
+                    meeting_schedule: undefined,
+                    meeting_days: undefined,
+                    keywords: undefined,
+                    tags: undefined,
+                    commitment_level: undefined,
+                }
+            )
+
+            // reset edit state
+            setEditState({})
+            setStatus({})
+
+            return;
+        }
+
+        let data, error;
+
+        if (existingEdit.id === undefined) {
+            // insert new
+            ({ data, error } = await supabase
+                .from("organizationedits")
+                .insert({ organization_id: organization.id, ...payload })
+                .select());
+        } else {
+            // update old
+            ({ data, error } = await supabase
+                .from("organizationedits")
+                .update({ organization_id: organization.id, ...payload })
+                .eq("id", existingEdit.id)
+                .select())
+        }
+
+        if (error || !data) {
+            return enqueueSnackbar(
+                "Error editing organization. Contact it@stuysu.org for support.",
+                { variant: "error" },
+            )
+        }
+
+        if (!data[0]) {
+            return enqueueSnackbar(
+                "Could not retrieve new data from server. Refresh to see changes.",
+                { variant: "warning" },
+            )
+        }
+
+        // update frontend to reflect changes
+        setPendingEdit(data[0] as OrganizationEdit)
+
+        enqueueSnackbar("Organization edit request sent!", {
+            variant: "success",
+        });
+
+        // reset edit state
+        setEditState({})
+        setStatus({})
+    }
 
     const changeStatus = useCallback((field: string, newStatus: boolean) => {
         if (
@@ -172,7 +328,7 @@ const OrgEditor = (
                             <EditField 
                                 key={field}
                                 field={field}
-                                pending={editData[field as keyof OrganizationEdit] === undefined}
+                                pending={existingEdit[field as keyof OrganizationEdit] !== null && existingEdit[field as keyof OrganizationEdit] !== undefined}
                                 editing={editState[field]}
                                 onCancel={() => {
                                     // replace editData with original value
@@ -197,7 +353,9 @@ const OrgEditor = (
                                     })
                                 }}
                                 onEdit={() => setEditState({ ...editState, [field]: true })}
-                                defaultDisplay={<Typography width='80%'>{editData[field as keyof OrganizationEdit]}</Typography>}
+                                defaultDisplay={
+                                    <Typography width='80%'>{editData[field as keyof OrganizationEdit]}</Typography>
+                                }
                                 editDisplay={
                                     <FormTextField
                                         sx={{ width: '80%'}}
@@ -227,7 +385,7 @@ const OrgEditor = (
                     flexWrap: 'nowrap' 
                 }}
             >
-                <Button color='error' variant='contained' disabled={!savable}>Save Changes</Button>
+                <Button color='error' variant='contained' disabled={!savable} onClick={saveChanges}>Save Changes</Button>
             </Box>
         </Paper>
     );

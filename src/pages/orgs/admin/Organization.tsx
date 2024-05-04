@@ -62,6 +62,7 @@ const Organization = () => {
             <OrgEditor
                 organization={organization}
                 existingEdit={pendingEdit}
+                setPendingEdit={setPendingEdit}
             />
         </Box>
     );
