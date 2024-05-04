@@ -92,6 +92,49 @@ const OrgEditor = (
     const [editState, setEditState] = useState<EditState>({});
     const [status, setStatus] = useState<FormStatus>({});
 
+    /* validation */
+    const [savable, setSavable] = useState(false);
+
+    useEffect(() => {
+        /* check if there is anything to save */
+        let editedFields : string[] = Object.keys(editState)
+        if (!editedFields.length) {
+            setSavable(false);
+            return;
+        }
+
+        /* check if the edited fields are different from the original */
+        let atleastOneDiff = false;
+        for (let field of editedFields) {
+            let editedValue = editData[field as keyof OrganizationEdit];
+            let originalValue = existingEdit[field as keyof OrganizationEdit] || organization[field as keyof Organization];
+
+            if (editedValue !== originalValue) {
+                atleastOneDiff = true;
+                break;
+            }
+        }
+
+        setSavable(atleastOneDiff);
+    }, [status, editState, editData])
+
+    /* update form data if existingEdit changes */
+    useEffect(() => {
+        // replace undefined fields with organization
+
+        let baseData = existingEdit;
+
+        for (let key of Object.keys(existingEdit)) {
+            // typescript crying
+            let editField = key as keyof OrganizationEdit
+            if (baseData[editField] === undefined || baseData[editField] === null) {
+                baseData[editField] = organization[editField as keyof Organization]
+            }
+        }
+
+        setEditData(baseData);
+    }, [existingEdit]);
+
     const changeStatus = useCallback((field: string, newStatus: boolean) => {
         if (
             status[field] &&
@@ -107,25 +150,6 @@ const OrgEditor = (
             },
         }));
     }, [status])
-
-    
-
-    /* update form data if existingEdit changes */
-    useEffect(() => {
-        // replace undefined fields with organization
-
-        let baseData = existingEdit;
-
-        for (let key of Object.keys(existingEdit)) {
-            // typescript crying
-            let editField = key as keyof OrganizationEdit
-            if (baseData[editField] === undefined) {
-                baseData[editField] = organization[editField as keyof Organization]
-            }
-        }
-
-        setEditData(baseData);
-    }, [existingEdit]);
 
     const updateEdit = (field : keyof OrganizationEdit, value: any) => {
         setEditData(
@@ -151,12 +175,26 @@ const OrgEditor = (
                                 pending={editData[field as keyof OrganizationEdit] === undefined}
                                 editing={editState[field]}
                                 onCancel={() => {
+                                    // replace editData with original value
                                     updateEdit(
                                         field as keyof OrganizationEdit, 
                                         existingEdit[field as keyof OrganizationEdit] ||
                                         organization[field as keyof Organization]
-                                    )
-                                    setEditState({ ...editState, [field]: false })
+                                    );
+
+                                    // remove self from list of fields being edited
+                                    setEditState(prevState => {
+                                        const state = {...prevState}
+                                        delete state[field]
+                                        return state;
+                                    });
+
+                                    // remove self from validation checker
+                                    setStatus(prevState => {
+                                        const state = { ...prevState }
+                                        delete state[field]
+                                        return state;
+                                    })
                                 }}
                                 onEdit={() => setEditState({ ...editState, [field]: true })}
                                 defaultDisplay={<Typography width='80%'>{editData[field as keyof OrganizationEdit]}</Typography>}
@@ -189,7 +227,7 @@ const OrgEditor = (
                     flexWrap: 'nowrap' 
                 }}
             >
-                <Button color='error' variant='contained'>Save Changes</Button>
+                <Button color='error' variant='contained' disabled={!savable}>Save Changes</Button>
             </Box>
         </Paper>
     );
