@@ -12,6 +12,7 @@ import {
     DialogActions,
     Switch,
     FormControlLabel,
+    Box
 } from "@mui/material";
 
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
@@ -237,37 +238,44 @@ const AdminUpsertMeeting = ({
 
     return (
         <Dialog open={open} onClose={onClose}>
-            <DialogTitle>Upsert Meeting</DialogTitle>
+            <DialogTitle>{id ? "Update" : "Create"} Meeting</DialogTitle>
             <DialogContent>
-                <TextField
-                    value={meetingTitle}
-                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        setMeetingTitle(event.target.value)
-                    }
-                    label="Title"
-                />
+                <Box sx={{ width: '100%', display: 'flex', flexWrap: 'nowrap', alignItems: 'center', height: '80px' }}>
+                    <TextField
+                        value={meetingTitle}
+                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                            setMeetingTitle(event.target.value)
+                        }
+                        label="Title"
+                        sx={{ width: '100%', height: '60px' }}
+                    />
+                    <TextField
+                        value={!loading ? String(roomId) : ""}
+                        label="Room"
+                        select
+                        onChange={(event) =>
+                            setRoomId(Number(event.target.value) || undefined)
+                        }
+                        sx={{ width: '30%', height: '60px', marginLeft: '10px' }}
+                    >
+                        <MenuItem value={"undefined"}>Virtual</MenuItem>
+                        {availableRooms.map((room) => (
+                            <MenuItem key={room.id} value={String(room.id)}>
+                                {room.name}
+                            </MenuItem>
+                        ))}
+                    </TextField>
+                </Box>
                 <TextField
                     value={meetingDesc}
                     onChange={(event: ChangeEvent<HTMLInputElement>) =>
                         setMeetingDesc(event.target.value)
                     }
                     label="Description"
+                    fullWidth
+                    multiline
+                    rows={4}
                 />
-
-                <Select
-                    value={!loading ? String(roomId) : ""}
-                    label="Room"
-                    onChange={(event: SelectChangeEvent) =>
-                        setRoomId(Number(event.target.value) || undefined)
-                    }
-                >
-                    <MenuItem value={"undefined"}>Virtual</MenuItem>
-                    {availableRooms.map((room) => (
-                        <MenuItem key={room.id} value={String(room.id)}>
-                            {room.name}
-                        </MenuItem>
-                    ))}
-                </Select>
 
                 <DatePicker 
                     label='Meeting Day'
@@ -286,18 +294,22 @@ const AdminUpsertMeeting = ({
                             }
                         }
                     }
+                    sx={{ width: '100%', marginTop: '10px', marginBottom: '10px'}}
                 />
-                <TimePicker 
-                    label='Start'
-                    value={startTime}
-                    onChange={setStartTime}
-                />
+                <Box sx={{ width: '100%', display: 'flex', flexWrap: 'nowrap', alignItems: 'center'}}>
+                    <TimePicker 
+                        label='Start'
+                        value={startTime}
+                        onChange={setStartTime}
+                        sx={{ marginRight: '10px'}}
+                    />
 
-                <TimePicker 
-                    label='End'
-                    value={endTime}
-                    onChange={setEndTime}
-                />
+                    <TimePicker 
+                        label='End'
+                        value={endTime}
+                        onChange={setEndTime}
+                    />
+                </Box>
                 <FormControlLabel
                     control={
                         <Switch
@@ -307,6 +319,7 @@ const AdminUpsertMeeting = ({
                             }
                         />
                     }
+                    sx={{ marginTop: '10px'}}
                     label="is public?"
                 />
             </DialogContent>

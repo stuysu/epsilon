@@ -4,7 +4,7 @@ import OrgContext from "../../comps/context/OrgContext";
 import { Box, Typography, useMediaQuery } from "@mui/material";
 import OrgMember from "../../comps/pages/orgs/OrgMember";
 import OrgMeeting from "../../comps/pages/orgs/OrgMeeting";
-import { sortByRole } from "../../utils/DataFormatters";
+import { sortByDate, sortByRole } from "../../utils/DataFormatters";
 
 const Overview = () => {
     const organization: OrgContextType = useContext(OrgContext);
@@ -62,7 +62,7 @@ const Overview = () => {
                 <Typography variant="h3" color="primary.main" width="100%">
                     Upcoming Meetings
                 </Typography>
-                {organization.meetings.map(meeting => (
+                {organization.meetings.sort(sortByDate).map(meeting => (
                     <OrgMeeting
                         key={meeting.id}
                         id={meeting.id}

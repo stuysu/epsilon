@@ -3,6 +3,7 @@ import OrgContext from "../../comps/context/OrgContext";
 import { Box, Typography, useMediaQuery } from "@mui/material";
 
 import OrgMeeting from "../../comps/pages/orgs/OrgMeeting";
+import { sortByDate } from "../../utils/DataFormatters";
 
 const Meetings = () => {
     const organization: OrgContextType = useContext(OrgContext);
@@ -15,7 +16,7 @@ const Meetings = () => {
             </Typography>
 
             <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
-                {organization.meetings.map((meeting, i) => (
+                {organization.meetings.sort(sortByDate).map((meeting, i) => (
                     <OrgMeeting
                         id={meeting.id || -1}
                         title={meeting.title || "No Title"}

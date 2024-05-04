@@ -10,17 +10,7 @@ import OrgMeeting from "../../../comps/pages/orgs/OrgMeeting";
 
 import { useMediaQuery } from "@mui/material";
 
-// using any types because i can't be bothered
-const sortByStart = (m1: any, m2: any): number => {
-    if (m1.start_time < m2.start_time) {
-        return -1;
-    }
-    if (m1.start_time > m2.start_time) {
-        return 1;
-    }
-
-    return 0;
-};
+import { sortByDate } from "../../../utils/DataFormatters";
 
 const Meetings = () => {
     const organization = useContext(OrgContext);
@@ -55,7 +45,7 @@ const Meetings = () => {
             <Typography variant="h1" align="center" width="100%">
                 Manage Meetings
             </Typography>
-            {organization.meetings.sort(sortByStart).map((meeting) => (
+            {organization.meetings.sort(sortByDate).map((meeting) => (
                 <OrgMeeting
                     key={meeting.id}
                     id={meeting.id}

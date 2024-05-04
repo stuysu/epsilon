@@ -9,3 +9,10 @@ export const sortByRole = (member1 : Partial<Membership>, member2 : Partial<Memb
 }
 
 export const capitalizeWords = (s : string) => s.split(" ").map(substr => substr.slice(0, 1).toUpperCase() + substr.slice(1).toLowerCase()).join(" ")
+
+export const sortByDate = (meeting1: Partial<Meeting>, meeting2: Partial<Meeting>) => {
+    if (!meeting1.start_time || !meeting2.start_time) return 0;
+    if (meeting1.start_time > meeting2.start_time) return 1;
+    if (meeting1.start_time < meeting2.start_time) return -1;
+    return 0;
+}
