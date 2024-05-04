@@ -88,6 +88,16 @@ const Meetings = () => {
                             );
                         }
 
+                        if (organization.setOrg) {
+                            // update org
+                            organization.setOrg(
+                                {
+                                    ...organization,
+                                    meetings: organization.meetings.filter(m => m.id !== meeting.id)
+                                }
+                            )
+                        }
+
                         enqueueSnackbar("Deleted Meeting!", {
                             variant: "success",
                         });

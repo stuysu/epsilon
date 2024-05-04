@@ -25,11 +25,6 @@ const getDefaultTime = () => {
     return dayjs().startOf('day').hour(15).minute(45)
 };
 
-const getDayStart = (day : Dayjs) => {
-    let dayStart = new Date(day.year(), day.month(), day.date());
-    return dayjs(dayStart);
-}
-
 /* TODO: block off rooms on days they are unavailable */
 const AdminUpsertMeeting = ({
     id,
