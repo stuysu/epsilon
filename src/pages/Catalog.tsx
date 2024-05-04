@@ -81,30 +81,26 @@ const Catalog = () => {
             ));
         } else {
             // get orgs with search params
-            
 
             let additionalQuery = [];
             if (searchParams.tags.length) {
-                additionalQuery.push(
-                    searchParams.tags
-                        .map((tag) => `tags.cs.{${tag}}`)
-                        .join(",")
-                )
+                let tagReqs = searchParams.tags
+                    .map((tag) => `tags.cs.{${tag}}`)
+                    .join(",")
+                additionalQuery.push(`and(or(${tagReqs}))`)
             }
 
             if (searchParams.meetingDays.length) {
-                additionalQuery.push(
-                    searchParams.meetingDays
-                        .map((day) => `meeting_days.cs.{${day}}`)
-                        .join(",")
-                )
+                let dayReqs = searchParams.meetingDays
+                    .map((day) => `meeting_days.cs.{${day}}`)
+                    .join(",")
+                additionalQuery.push(`and(or(${dayReqs}))`)
             }
             if (searchParams.commitmentLevels.length) {
-                additionalQuery.push(
-                    searchParams.commitmentLevels
-                        .map((level) => `commitment_level.eq.${level}`)
-                        .join(",")
-                )
+                let commitmentReqs = searchParams.commitmentLevels
+                    .map((level) => `commitment_level.eq.${level}`)
+                    .join(",");
+                additionalQuery.push(`and(or(${commitmentReqs}))`)
             }
 
             let andQuery = '';
@@ -112,12 +108,12 @@ const Catalog = () => {
                 andQuery = `,and(${additionalQuery.join(",")})`
             }
 
-            var orQuery = `and(or(name.ilike.%${searchParams.name}%,keywords.ilike.%${searchParams.name}%)${andQuery})`;
+            var catalogQuery = `and(or(name.ilike.%${searchParams.name}%,keywords.ilike.%${searchParams.name}%)${andQuery})`;
 
             ({ data: orgData, error: orgError } = await supabase
                 .from("organizations")
                 .select("*")
-                .or(orQuery)
+                .or(catalogQuery)
                 // .ilike("name", `%${searchParams.name}%`)
                 .range(originalOffset, originalOffset + querySize - 1));
         }
