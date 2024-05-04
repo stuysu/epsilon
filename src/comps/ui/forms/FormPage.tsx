@@ -78,7 +78,7 @@ const FormPage = <T extends unknown>({
             newStatus === status[field].value
         )
             return;
-        
+
         setStatus((prevState) => ({
             ...prevState,
             [field]: {
@@ -86,7 +86,7 @@ const FormPage = <T extends unknown>({
                 value: newStatus,
             },
         }));
-    }, [])
+    }, [status])
 
     const parseChildren = (c: ReactNode) => {
         let childs: ReactNode[] = [];

@@ -90,19 +90,23 @@ const OrgEditor = (
     
     const [editData, setEditData] = useState<OrganizationEdit>({}); // proposed edits (should be different from current organization)
     const [editState, setEditState] = useState<EditState>({});
-    const [formStatus, setFormStatus] = useState<FormStatus>({});
+    const [status, setStatus] = useState<FormStatus>({});
 
-    const updateFormStatus = useCallback((field : string, bool : boolean) => {
-        setFormStatus(
-            (prevState) => ({
-                ...prevState,
-                [field]: {
-                    dirty: true,
-                    value: bool,
-                },
-            })
+    const changeStatus = useCallback((field: string, newStatus: boolean) => {
+        if (
+            status[field] &&
+            newStatus === status[field].value
         )
-    }, [])
+            return;
+
+        setStatus((prevState) => ({
+            ...prevState,
+            [field]: {
+                dirty: true,
+                value: newStatus,
+            },
+        }));
+    }, [status])
 
     
 
@@ -165,7 +169,7 @@ const OrgEditor = (
                                         value={editData[field as keyof OrganizationEdit]}
                                         required={OrgRequirements[field].required}
                                         requirements={OrgRequirements[field].requirements}
-                                        changeStatus={updateFormStatus}
+                                        changeStatus={changeStatus}
                                         multiline
                                         rows={4}
                                     />
