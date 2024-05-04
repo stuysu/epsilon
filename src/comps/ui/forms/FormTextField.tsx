@@ -22,10 +22,12 @@ type Props = {
         dirty: boolean;
         value: boolean;
     };
-    changeStatus?: (newStatus: boolean) => void;
+    changeStatus?: (field: string, newStatus: boolean) => void;
+    hideHelper?: boolean;
 };
 
 const FormTextField = ({
+    field,
     description,
     required,
     requirements,
@@ -33,6 +35,7 @@ const FormTextField = ({
     onChange,
     status,
     changeStatus,
+    hideHelper,
     ...textFieldProps
 }: Props & TextFieldProps) => {
     useEffect(() => {
@@ -42,7 +45,7 @@ const FormTextField = ({
 
             /* incase component gets "dirtied" and then goes back to undefined */
             if (!required && targetValue.length === 0) {
-                changeStatus(true);
+                changeStatus(field, true);
                 return;
             }
 
@@ -51,7 +54,7 @@ const FormTextField = ({
                     requirements.minChar &&
                     targetValue.length < requirements.minChar
                 ) {
-                    changeStatus(false);
+                    changeStatus(field, false);
                     return;
                 }
 
@@ -60,14 +63,14 @@ const FormTextField = ({
                     requirements.minWords &&
                     targetValue.trim().split(" ").length < requirements.minWords
                 ) {
-                    changeStatus(false);
+                    changeStatus(field, false);
                     return;
                 }
 
-                changeStatus(true);
+                changeStatus(field, true);
             } else {
                 if (required) {
-                    changeStatus(targetValue.length > 0);
+                    changeStatus(field, targetValue.length > 0);
                 }
             }
         };
@@ -180,6 +183,7 @@ const FormTextField = ({
             onChange={textChanged}
             value={value}
             helperText={
+                !hideHelper && 
                 <>
                     {description?.split("\n").map((line) => (
                         <>

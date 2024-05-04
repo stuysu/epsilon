@@ -17,6 +17,8 @@ import FormChipText from "../comps/ui/forms/FormChipText";
 import FormTagSelect from "../comps/ui/forms/FormTagSelect";
 import FormCheckbox from "../comps/ui/forms/FormCheckbox";
 
+import OrgRequirements from "../utils/OrgRequirements";
+
 type FormType = {
     name: string;
     url: string;
@@ -213,12 +215,8 @@ const Create = () => {
                     <FormTextField
                         label="Name"
                         field="name"
-                        required
-                        requirements={{
-                            minChar: 3,
-                            maxChar: 40,
-                            onlyAlpha: true,
-                        }}
+                        required={OrgRequirements.name.required}
+                        requirements={OrgRequirements.name.requirements}
                         sx={{ width: isMobile ? "100%" : "50%" }}
                     />
                     <FormTextField
@@ -227,14 +225,8 @@ const Create = () => {
                         description={
                             "https://site.com/<this is the part you are entering>\nExample: https://site.com/suit"
                         }
-                        required
-                        requirements={{
-                            minChar: 3,
-                            maxChar: 40,
-                            disableSpaces: true,
-                            onlyAlpha: true,
-                            lowercase: true,
-                        }}
+                        required={OrgRequirements.url.required}
+                        requirements={OrgRequirements.url.requirements}
                         sx={{
                             marginLeft: isMobile ? "" : "20px",
                             marginTop: isMobile ? "20px" : "",
@@ -256,7 +248,7 @@ const Create = () => {
                         description={
                             "None: Any amount\nLow: <= 3 meetings a month\nMedium: 4-8 meetings a month\nHigh: 9+ Meetings a month"
                         }
-                        required
+                        required={OrgRequirements.commitment_level.required}
                         selections={[
                             {
                                 id: "NONE",
@@ -294,8 +286,8 @@ const Create = () => {
                             "Publication",
                         ]}
                         description="Select up to 3 tags that best represent your activity"
-                        required={false}
-                        requirements={{ maxSelect: 3 }}
+                        required={OrgRequirements.tags.required}
+                        requirements={OrgRequirements.tags.requirements}
                         sx={{
                             width: "100%",
                             marginLeft: isMobile ? "" : "20px",
@@ -307,11 +299,8 @@ const Create = () => {
                     <FormChipText
                         field="keywords"
                         label="Keywords"
-                        requirements={{
-                            onlyAlpha: true,
-                            lowercase: true,
-                            maxChips: 3,
-                        }}
+                        required={OrgRequirements.keywords.required}
+                        requirements={OrgRequirements.keywords.requirements}
                         description={`Choose up to 3 keywords relating to your activity. They will not be publicly visible but they will help your activity show up in search results. This can be things like alternate names or acronyms. For example, the Student Union might add 'SU' as a keyword. Add a keyword with <ENTER>`}
                     />
                 </FormSection>
@@ -320,17 +309,14 @@ const Create = () => {
                         label="Socials (optional)"
                         field="socials"
                         sx={{ width: "100%" }}
-                        requirements={{
-                            maxChar: 100,
-                        }}
+                        required={OrgRequirements.socials.required}
+                        requirements={OrgRequirements.socials.requirements}
                     />
                 </FormSection>
                 <FormUpload
                     field="picture"
-                    requirements={{
-                        maxSize: [5, "MB"],
-                        types: ["image/*"],
-                    }}
+                    requirements={OrgRequirements.picture.requirements}
+                    required={OrgRequirements.picture.required}
                     preview
                     sx={{ marginTop: "20px" }}
                 />
@@ -341,11 +327,8 @@ const Create = () => {
                     label="Mission"
                     field="mission"
                     multiline
-                    requirements={{
-                        minChar: 20,
-                        maxChar: 150,
-                    }}
-                    required
+                    requirements={OrgRequirements.mission.requirements}
+                    required={OrgRequirements.mission.required}
                     sx={multilineStyle}
                     rows={4}
                     description="A quick blurb of what this organization is all about"
@@ -354,11 +337,8 @@ const Create = () => {
                     label="Purpose"
                     field="purpose"
                     multiline
-                    requirements={{
-                        minWords: 100,
-                        maxWords: 400,
-                    }}
-                    required
+                    requirements={OrgRequirements.purpose.requirements}
+                    required={OrgRequirements.purpose.required}
                     sx={multilineStyle}
                     rows={4}
                     description="This will serve as the official description of the club. Please include a brief statement about what is expected of general members involved in the club."
@@ -367,11 +347,8 @@ const Create = () => {
                     label="Benefit"
                     field="benefit"
                     multiline
-                    requirements={{
-                        minWords: 200,
-                        maxWords: 400,
-                    }}
-                    required
+                    requirements={OrgRequirements.benefit.requirements}
+                    required={OrgRequirements.benefit.required}
                     sx={multilineStyle}
                     rows={4}
                     description="How will this activity benefit the Stuyvesant community?"
@@ -380,11 +357,8 @@ const Create = () => {
                     label="Appointment Procedures"
                     field="appointment_procedures"
                     multiline
-                    requirements={{
-                        minWords: 50,
-                        maxWords: 400,
-                    }}
-                    required
+                    requirements={OrgRequirements.appointment_procedures.requirements}
+                    required={OrgRequirements.appointment_procedures.required}
                     sx={multilineStyle}
                     rows={4}
                     description="What are the leadership positions and how are they appointed? Are there any specific protocols members are expected to follow? What is the policy for transfer of leadership between school years? How will leaders be removed if necessary?"
@@ -393,11 +367,8 @@ const Create = () => {
                     label="Uniqueness"
                     field="uniqueness"
                     multiline
-                    requirements={{
-                        minWords: 75,
-                        maxWords: 400,
-                    }}
-                    required
+                    requirements={OrgRequirements.uniqueness.requirements}
+                    required={OrgRequirements.uniqueness.required}
                     sx={multilineStyle}
                     rows={4}
                     description="What makes your organization unique?"
@@ -405,11 +376,8 @@ const Create = () => {
                 <FormTextField
                     label="Meeting Schedule"
                     field="meeting_schedule"
-                    requirements={{
-                        minChar: 50,
-                        maxChar: 1000,
-                    }}
-                    required
+                    requirements={OrgRequirements.meeting_schedule.requirements}
+                    required={OrgRequirements.meeting_schedule.required}
                     sx={multilineStyle}
                     rows={4}
                     description={`Something like "Our meeting schedule varies throughout the year, but we meet at least once a month and up to 3 times in the Spring."`}
@@ -425,7 +393,7 @@ const Create = () => {
                             { id: "THURSDAY", display: "Thursday" },
                             { id: "FRIDAY", display: "Friday" },
                         ]}
-                        required
+                        required={OrgRequirements.meeting_days.required}
                     />
                 </FormSection>
                 <FormSection sx={{ marginTop: "20px", width: "100%" }}>
@@ -438,10 +406,8 @@ const Create = () => {
                         <FormTextField
                             label="Returning Info"
                             field="returning_info"
-                            requirements={{
-                                minChar: 50,
-                                maxChar: 1000,
-                            }}
+                            requirements={OrgRequirements.returning_info.requirements}
+                            required={OrgRequirements.returning_info.required}
                             sx={multilineStyle}
                             rows={4}
                             description={
