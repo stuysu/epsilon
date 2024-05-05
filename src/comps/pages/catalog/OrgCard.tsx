@@ -33,8 +33,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                 }}
             >
                 <Avatar
-                    src={organization.picture}
-
+                    src={organization.picture || ""}
                     sx={{
                         width: '170px',
                         height: '170px',

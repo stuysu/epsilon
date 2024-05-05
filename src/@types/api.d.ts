@@ -3,7 +3,7 @@ interface Organization {
     name: string;
     url: string;
     socials?: string;
-    picture?: string;
+    picture?: string | null;
     mission?: string;
     purpose?: string;
     benefit?: string;
@@ -26,7 +26,7 @@ interface OrganizationEdit {
     name?: Organization['name'];
     url?: Organization['url'];
     socials?: Organization['socials'];
-    picture?: Organization['picture'] | File;
+    picture?: Organization['picture'];
     mission?: Organization['mission'];
     purpose?: Organization['purpose'];
     benefit?: Organization['benefit'];

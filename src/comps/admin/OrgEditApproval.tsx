@@ -12,6 +12,7 @@ type OrgKey = keyof Organization;
 const editFields: EditKey[] = [
     "name",
     "url",
+    "socials",
     "picture",
     "mission",
     "purpose",
@@ -20,6 +21,8 @@ const editFields: EditKey[] = [
     "uniqueness",
     "meeting_schedule",
     "meeting_days",
+    "keywords",
+    "tags",
     "commitment_level",
 ];
 
@@ -41,7 +44,7 @@ const OrgEditApproval = ({
             let field: EditKey = key as EditKey;
             if (!editFields.includes(field)) continue;
 
-            if (edit[field]) {
+            if (edit[field] !== null) {
                 changedFields.push(key);
             }
         }

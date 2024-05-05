@@ -216,7 +216,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                 >
                     <Avatar
                         src={
-                            organization.picture
+                            organization.picture || ""
                         }
                         style={{
                             width: '100%',

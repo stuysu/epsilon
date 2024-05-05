@@ -73,7 +73,7 @@ const Overview = () => {
                         is_public={meeting.is_public}
                         room_name={meeting.rooms?.name}
                         org_name={organization.name}
-                        org_picture={organization.picture}
+                        org_picture={organization.picture || ""}
                         isMobile={isMeetingMobile}
                         onlyUpcoming
                     />

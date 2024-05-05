@@ -200,6 +200,7 @@ const NavBar = () => {
                     >
                         {user.memberships?.map((membership, i) => (
                             <OrgBar
+                                key={membership.id}
                                 name={membership?.organizations?.name}
                                 role={membership?.role}
                                 role_name={membership?.role_name}
