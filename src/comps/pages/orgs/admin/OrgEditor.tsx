@@ -387,8 +387,8 @@ const OrgEditor = (
             elevation={1}
             sx={{ padding: '10px'}}
         >
+            <Typography variant='h3'>Picture{pendingPicture ? " - Pending" : ""}</Typography>
             <Box sx={{ width: '200px', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '20px'}}>
-                <Typography variant='h3'>Picture{pendingPicture ? " - Pending" : ""}</Typography>
                 <Box>
                     <Avatar 
                         src={
