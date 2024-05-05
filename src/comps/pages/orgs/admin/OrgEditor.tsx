@@ -1,5 +1,5 @@
 import { ReactNode, useCallback, useEffect, useState } from "react";
-import { Box, Button, Paper, TextField, Typography } from "@mui/material";
+import { Avatar, Box, Button, Paper, TextField, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import FormTextField from "../../../ui/forms/FormTextField";
 import OrgRequirements from "../../../../utils/OrgRequirements";
@@ -79,7 +79,8 @@ const hiddenFields: string[] = [
     "id",
     "organization_id",
     "created_at",
-    "updated_at"
+    "updated_at",
+    "picture" // picture field has custom logic
 ]
 
 /* 
@@ -108,11 +109,25 @@ const OrgEditor = (
     const [editState, setEditState] = useState<EditState>({}); // whether or not a field is being edited
     const [status, setStatus] = useState<FormStatus>({}); // validation status for that field
 
+    /* picture */
+    const [editPicture, setEditPicture] = useState<File | null | undefined>();
+    const oldPicture = existingEdit['picture'] === undefined ? organization['picture'] : existingEdit['picture'];
+
     /* validation */
     const [savable, setSavable] = useState(false);
 
     useEffect(() => {
-        /* check if there is anything to save */
+        /* check if picture is saved before terminating if no other fields are saved */
+
+        if (
+            editPicture !== undefined &&
+            editPicture !== oldPicture
+        ) {
+            setSavable(true);
+            return;
+        }
+
+        /* check if there is anything to save, if not, terminate */
         let editedFields : string[] = Object.keys(editState)
         if (!editedFields.length) {
             setSavable(false);
@@ -122,6 +137,8 @@ const OrgEditor = (
         /* check if the edited fields are different from the original */
         let atleastOneDiff = false;
         for (let field of editedFields) {
+            if (hiddenFields.includes(field)) continue;
+
             let editedValue = editData[field as keyof OrganizationEdit];
             let originalValue = existingEdit[field as keyof OrganizationEdit] || organization[field as keyof Organization];
 
@@ -132,7 +149,7 @@ const OrgEditor = (
         }
 
         setSavable(atleastOneDiff);
-    }, [status, editState, editData])
+    }, [status, editState, editData, editPicture])
 
     /* update form data if existingEdit changes */
     useEffect(() => {
@@ -203,6 +220,51 @@ const OrgEditor = (
             }
         }
 
+        /* custom logic for adding picture to the payload */
+        /* picture is not in the original payload so nothing will manage it in the original loop. it is only edited here  */
+        if (
+            editPicture === null && 
+            (existingEdit === undefined ? organization['picture'] : existingEdit['picture']) !== null
+        ) {
+            // picture is null but it wasn't null before
+            // picture has to be empty quotes to differentiate it from a null field in OrgEditApproval
+            payload.picture = "";
+            allNull = false; // even though all the fields could be null, this edit is worth keeping because the picture is different 
+        } else if (
+            editPicture !== (existingEdit === undefined ? organization['picture'] : existingEdit['picture'])
+        ) {
+            // picture is different, but needs to be uploaded first
+            /* Note: any indication of the picture failing to upload will kill the entire org edit process */
+
+            let filePath = `org-pictures/${organization.id}/${Date.now()}-${organization.url}-profile${editPicture!.name.split(".").pop()}`;
+
+            let { data: storageData, error: storageError } =
+                await supabase.storage
+                    .from("public-files")
+                    .upload(filePath, editPicture!);
+
+            if (storageError || !storageData) {
+                return enqueueSnackbar(
+                    "Error uploading image to storage. Contact it@stuysu.org for support.",
+                    { variant: "error" },
+                );
+            }
+
+            let { data: urlData } = await supabase.storage
+                .from("public-files")
+                .getPublicUrl(filePath);
+
+            if (!urlData) {
+                return enqueueSnackbar(
+                    "Failed to retrieve image url after upload. Contact it@stuysu.org for support.",
+                    { variant: "error" },
+                );
+            }
+
+            payload.picture = urlData.publicUrl;
+            allNull = false;
+        }
+
         if (allNull) {
             // delete the existing organization edit if it exists
             if (existingEdit.id) {
@@ -243,6 +305,7 @@ const OrgEditor = (
 
             // reset edit state
             setEditState({})
+            setEditPicture(undefined);
             setStatus({})
 
             return;
@@ -288,6 +351,7 @@ const OrgEditor = (
 
         // reset edit state
         setEditState({})
+        setEditPicture(undefined);
         setStatus({})
     }
 
@@ -316,11 +380,65 @@ const OrgEditor = (
         )
     }
 
+    const pendingPicture = existingEdit.picture !== undefined && existingEdit.picture !== organization.picture;
+
     return (
         <Paper
             elevation={1}
             sx={{ padding: '10px'}}
         >
+            <Box sx={{ width: '200px', display: 'flex', flexWrap: 'wrap', justifyContent: 'center', marginBottom: '20px'}}>
+                <Typography variant='h3'>Picture{pendingPicture ? " - Pending" : ""}</Typography>
+                <Box>
+                    <Avatar 
+                        src={
+                            editPicture !== undefined ? 
+                            (editPicture ? URL.createObjectURL(editPicture) : "") : 
+                            (oldPicture || "")
+                        }
+                        sx={{
+                            width: '170px',
+                            height: '170px',
+                            borderRadius: '100%',
+                            fontSize: '70px'
+                        }}
+                    >
+                        {(organization.name || "O").slice(0, 1).toUpperCase()}
+                    </Avatar>
+                </Box>
+                <Button
+                    variant="contained"
+                    component="label"
+                    sx={{ marginTop: '10px' }}
+                >
+                    Upload Image
+                    <input
+                        type="file"
+                        accept='images/*'
+                        id="input-file-upload"
+                        onChange={e => { 
+                            if (!e.target.files) return;
+                            setEditPicture(e.target.files[0] || null);
+                        }}
+                        value={editPicture?.webkitRelativePath}
+                        hidden
+                    />
+                </Button>
+                <Button
+                    variant="contained"
+                    sx={{ marginTop: '10px' }}
+                    onClick={() => {
+                        if (!oldPicture) {
+                            // if there was no old picture to begin with, then removing the picture is like making no edit
+                            setEditPicture(undefined);
+                        } else {
+                            setEditPicture(null);
+                        }
+                    }}
+                >
+                    Remove Image
+                </Button>
+            </Box>
             {
                 textFields.map(
                         field => {

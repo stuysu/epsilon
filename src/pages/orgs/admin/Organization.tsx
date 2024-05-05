@@ -12,6 +12,10 @@ import { Box, Typography } from "@mui/material";
 const Organization = () => {
     const { enqueueSnackbar } = useSnackbar();
     const organization = useContext(OrgContext);
+
+    /* You may notice that some of these fields are undefined when in the database the undefined value is stored as null */
+    /* undefined = frontend user has not set it yet */
+    /* null = frontend user has set it to the null value */
     const [pendingEdit, setPendingEdit] = useState<OrganizationEdit>({
         id: undefined,
         organization_id: undefined,

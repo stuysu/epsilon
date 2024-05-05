@@ -27,7 +27,7 @@ const OrgBar = ({ name, url, role, role_name, picture }: Props) => {
             sx={{ height: "75px" }}
         >
             <ListItemAvatar>
-                <Avatar alt={name} src={picture}>{name?.charAt(0).toUpperCase()}</Avatar>
+                <Avatar alt={name} src={picture || ""}>{name?.charAt(0).toUpperCase()}</Avatar>
             </ListItemAvatar>
             <ListItemText
                 primary={name}

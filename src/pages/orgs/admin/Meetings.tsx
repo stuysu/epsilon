@@ -55,7 +55,7 @@ const Meetings = () => {
                     end_time={meeting.end_time}
                     room_name={meeting.rooms?.name}
                     org_name={organization.name}
-                    org_picture={organization.picture}
+                    org_picture={organization.picture || ""}
                     is_public={meeting.is_public}
                     isMobile={isMeetingMobile}
                     onEdit={() => {
