@@ -93,7 +93,7 @@ const PendingMember = ({
                     last_name={last_name}
                 />
             </Box>
-            <Box sx={{ width: '200px' }}>
+            <Box sx={{ width: '200px', display: 'flex', flexWrap: 'nowrap' }}>
                 <Button onClick={handleApprove} variant='contained' sx={{ height: '40px' }}>Approve</Button>
                 <Button onClick={handleReject} variant='contained' sx={{ height: '40px', marginLeft: '10px'}}>Reject</Button>
             </Box>
