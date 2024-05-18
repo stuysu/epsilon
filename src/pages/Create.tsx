@@ -74,12 +74,12 @@ const Create = () => {
     const isMobile = useMediaQuery("(max-width: 620px)");
 
     const createActivity = async () => {
-        let payload = {
+        let body = {
             creator_id: user.id,
             name: formData.name,
             url: formData.url.toLowerCase(),
             socials: formData.socials,
-            picture: null, // update after creating initial org
+            // picture: null, // update after creating initial org
             mission: formData.mission,
             purpose: formData.purpose,
             benefit: formData.benefit,
@@ -95,11 +95,7 @@ const Create = () => {
             returning_info: formData.returning_info,
         };
 
-        let { data: orgCreateData, error: orgCreateError } = await supabase
-            .from("organizations")
-            .insert(payload).select(`
-        id
-      `);
+        let { data: orgCreateData, error: orgCreateError } = await supabase.functions.invoke('create-organization', { body })
 
         if (orgCreateError || !orgCreateData) {
             return enqueueSnackbar(
@@ -108,10 +104,9 @@ const Create = () => {
             );
         }
 
-        let orgId = orgCreateData[0].id;
+        let orgId = orgCreateData.id;
 
         /* Create picture if organization is successfully created */
-
         /* convert picture to url */
         if (formData.picture) {
             let filePath = `org-pictures/${orgId}/${Date.now()}-${formData.url}-profile${formData.picture.name.split(".").pop()}`;
