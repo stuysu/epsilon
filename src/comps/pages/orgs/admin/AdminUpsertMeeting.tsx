@@ -203,22 +203,23 @@ const AdminUpsertMeeting = ({
         } else {
             // create
             isInsert = true;
-            supabaseReturn = await supabase
-                .from("meetings")
-                .insert({
-                    organization_id: organization.id,
-                    title: meetingTitle,
-                    description: meetingDesc,
-                    room_id: roomId || null,
-                    start_time: startTime.toISOString(),
-                    end_time: endTime.toISOString(),
-                    is_public: isPub,
-                })
-                .select(returnSelect);
+            supabaseReturn = await supabase.functions.invoke('create-meeting', 
+                {
+                    body: {
+                        organization_id: organization.id,
+                        title: meetingTitle,
+                        description: meetingDesc,
+                        room_id: roomId || null,
+                        start_time: startTime.toISOString(),
+                        end_time: endTime.toISOString(),
+                        is_public: isPub
+                    }
+                }
+            );
             isCreated = true;
         }
-
         if (supabaseReturn.error) {
+            
             enqueueSnackbar(
                 "Error creating meeting. Contact it@stuysu.org for support.",
                 { variant: "error" },
@@ -232,7 +233,7 @@ const AdminUpsertMeeting = ({
             enqueueSnackbar("Meeting updated!", { variant: "success" });
         }
 
-        onSave(supabaseReturn.data[0] as Partial<Meeting>, isInsert);
+        onSave(supabaseReturn.data as Partial<Meeting>, isInsert);
         onClose();
     };
 
