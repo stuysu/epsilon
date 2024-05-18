@@ -70,15 +70,16 @@ const Meetings = () => {
                         });
                     }}
                     onDelete={async () => {
-                        let { error } = await supabase
-                            .from("meetings")
-                            .delete()
-                            .eq("id", meeting.id);
+                        let { error } = await supabase.functions.invoke('delete-meeting', 
+                            {
+                                body: {
+                                    id: meeting.id
+                                }
+                            }
+                        )
+
                         if (error) {
-                            return enqueueSnackbar(
-                                "Error deleting meeting. Contact it@stuysu.org for support.",
-                                { variant: "error" },
-                            );
+                            return enqueueSnackbar("Error deleting meeting. Contact it@stuysu.org for support.", { variant: 'error' });
                         }
 
                         if (organization.setOrg) {
