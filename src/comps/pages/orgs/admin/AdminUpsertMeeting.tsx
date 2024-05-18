@@ -185,18 +185,20 @@ const AdminUpsertMeeting = ({
 
         if (id) {
             // update
-            supabaseReturn = await supabase
-                .from("meetings")
-                .update({
-                    title: meetingTitle,
-                    description: meetingDesc,
-                    room_id: roomId || null,
-                    start_time: startTime.toISOString(),
-                    end_time: endTime.toISOString(),
-                    is_public: isPub,
-                })
-                .eq("id", id)
-                .select(returnSelect);
+            supabaseReturn = await supabase.functions.invoke('edit-meeting',
+                {
+                    body: {
+                        organization_id: organization.id,
+                        id, 
+                        title: meetingTitle,
+                        description: meetingDesc,
+                        room_id: roomId || null,
+                        start_time: startTime.toISOString(),
+                        end_time: endTime.toISOString(),
+                        is_public: isPub,
+                    }
+                }
+            )
         } else {
             // create
             isInsert = true;
@@ -209,7 +211,8 @@ const AdminUpsertMeeting = ({
                         room_id: roomId || null,
                         start_time: startTime.toISOString(),
                         end_time: endTime.toISOString(),
-                        is_public: isPub
+                        is_public: isPub,
+                        notify_faculty: false
                     }
                 }
             );
