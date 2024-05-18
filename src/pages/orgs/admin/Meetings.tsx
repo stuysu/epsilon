@@ -1,6 +1,5 @@
 import { useContext, useState } from "react";
 import OrgContext from "../../../comps/context/OrgContext";
-import AdminMeeting from "../../../comps/pages/orgs/admin/AdminMeeting";
 import AdminUpsertMeeting from "../../../comps/pages/orgs/admin/AdminUpsertMeeting";
 
 import { Box, Button, Typography } from "@mui/material";
