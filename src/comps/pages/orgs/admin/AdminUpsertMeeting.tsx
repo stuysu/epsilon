@@ -147,7 +147,6 @@ const AdminUpsertMeeting = ({
     const handleSave = async () => {
         let supabaseReturn;
 
-        let isCreated = false;
         let isInsert = false;
         let returnSelect = `
             id,
@@ -214,7 +213,6 @@ const AdminUpsertMeeting = ({
                     }
                 }
             );
-            isCreated = true;
         }
         if (supabaseReturn.error) {
             
@@ -225,7 +223,7 @@ const AdminUpsertMeeting = ({
             return;
         }
 
-        if (isCreated) {
+        if (isInsert) {
             enqueueSnackbar("Meeting created!", { variant: "success" });
         } else {
             enqueueSnackbar("Meeting updated!", { variant: "success" });
