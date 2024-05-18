@@ -52,10 +52,7 @@ const PostEditor = ({
             return enqueueSnackbar("Missing post description.", { variant: "error" })
         }
 
-        let { data, error } = await supabase
-            .from("posts")
-            .insert(postData)
-            .select();
+        let { data, error } = await supabase.functions.invoke('create-post', { body: postData })
 
         if (error || !data) {
             return enqueueSnackbar(
@@ -74,7 +71,7 @@ const PostEditor = ({
             updated_at: undefined,
         });
 
-        if (onCreate) onCreate(data[0] as Post);
+        if (onCreate) onCreate(data as Post);
         enqueueSnackbar("Post created!", { variant: "success" });
     };
 
