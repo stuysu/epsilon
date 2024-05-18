@@ -37,6 +37,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     ];
 
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [attemptingInteract, setAttemptingInteract] = useState(false); // if in middle of sending join request, lock the button
 
     useEffect(() => {
         let isCorrectIndex = false;
@@ -103,25 +104,13 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
             : "CANCEL JOIN"
         : "JOIN";
     const handleInteract = async () => {
+        setAttemptingInteract(true);
         if (interactString === "JOIN") {
             /* JOIN ORGANIZATION */
-            const { data, error } = await supabase
-                .from("memberships")
-                .insert({ organization_id: organization.id, user_id: user.id })
-                .select(`
-                    id,
-                    role,
-                    role_name,
-                    active,
-                    users (
-                        id,
-                        first_name,
-                        last_name,
-                        email,
-                        picture,
-                        is_faculty
-                    )
-                `);
+            let body = {
+                organization_id: organization.id
+            }
+            const { data, error } = await supabase.functions.invoke("join-organization", { body } );
             if (error || !data) {
                 return enqueueSnackbar(
                     "Unable to join organization. Contact it@stuysu.org for support.",
@@ -134,7 +123,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                 organization.setOrg(
                     {
                         ...organization,
-                        memberships: [...organization.memberships, data[0]]
+                        memberships: [...organization.memberships, data]
                     }
                 )
             }
@@ -175,6 +164,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
 
             enqueueSnackbar("Left organization!", { variant: "success" });
         }
+        setAttemptingInteract(false);
     };
 
     let disabled = false;
@@ -242,7 +232,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                 <Button
                     variant="contained"
                     onClick={handleInteract}
-                    disabled={disabled}
+                    disabled={disabled || attemptingInteract}
                     sx={{
                         marginTop: "20px",
                         width: isMobile ? "80%" : "100%",
