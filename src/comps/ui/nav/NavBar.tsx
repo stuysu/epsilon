@@ -8,12 +8,14 @@ import {
     Divider,
     ListSubheader,
     ListItemButton,
-    Switch,
-    FormGroup,
-    FormControlLabel,
+    ListItemIcon,
     IconButton,
 } from "@mui/material";
-import { Brightness4Rounded, Brightness7Rounded, Menu } from "@mui/icons-material";
+import {
+    Brightness4Rounded,
+    Brightness7Rounded,
+    Menu,
+} from "@mui/icons-material";
 import { CSSProperties, useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../../supabaseClient";
@@ -21,6 +23,14 @@ import UserContext from "../../context/UserContext";
 import { useSnackbar } from "notistack";
 import OrgBar from "../../pages/home/ui/OrgBar";
 import { ThemeContext } from "../../context/ThemeProvider";
+
+/* Navbar Button Icons */
+import HomeIcon from "@mui/icons-material/Home";
+import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import FeedIcon from "@mui/icons-material/Feed";
+import PeopleIcon from "@mui/icons-material/People";
+import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 const navStyles: CSSProperties = {
     width: "100%",
@@ -92,9 +102,12 @@ const NavBar = () => {
                         alignItems: "center",
                     }}
                 >
-
-                    <IconButton onClick={theme.toggleColorMode} color='inherit'>
-                        {theme.colorMode ?  <Brightness4Rounded /> : <Brightness7Rounded />}
+                    <IconButton onClick={theme.toggleColorMode} color="inherit">
+                        {theme.colorMode ? (
+                            <Brightness4Rounded />
+                        ) : (
+                            <Brightness7Rounded />
+                        )}
                     </IconButton>
                 </Box>
             </Box>
@@ -167,14 +180,23 @@ const NavBar = () => {
                     <List sx={{ width: "100%" }}>
                         {user.signed_in && (
                             <ListItemButton onClick={signOut}>
+                                <ListItemIcon>
+                                    <PowerSettingsNewIcon />
+                                </ListItemIcon>
                                 <ListItemText>Sign Out</ListItemText>
                             </ListItemButton>
                         )}
                         <ListItemButton onClick={() => navigate("/")}>
+                            <ListItemIcon>
+                                <HomeIcon />
+                            </ListItemIcon>
                             <ListItemText>Home</ListItemText>
                         </ListItemButton>
                         {user.admin && (
                             <ListItemButton onClick={() => navigate("/admin")}>
+                                <ListItemIcon>
+                                    <AdminPanelSettingsIcon />
+                                </ListItemIcon>
                                 <ListItemText>Admin</ListItemText>
                             </ListItemButton>
                         )}
@@ -185,35 +207,50 @@ const NavBar = () => {
                         subheader={<ListSubheader>Discover</ListSubheader>}
                     >
                         <ListItemButton onClick={() => navigate("/catalog")}>
+                            <ListItemIcon>
+                                <FeedIcon />
+                            </ListItemIcon>
                             <ListItemText>Catalog</ListItemText>
                         </ListItemButton>
-                        <ListItemButton onClick={() => navigate("/meetings")}>
-                            <ListItemText>Meetings</ListItemText>
-                        </ListItemButton>
+                        {user.signed_in && (
+                            <ListItemButton
+                                onClick={() => navigate("/meetings")}
+                            >
+                                <ListItemIcon>
+                                    <PeopleIcon />
+                                </ListItemIcon>
+                                <ListItemText>Meetings</ListItemText>
+                            </ListItemButton>
+                        )}
                     </List>
 
                     <Divider />
 
-                    <List
-                        sx={{ width: "100%" }}
-                        subheader={<ListSubheader>My Activities</ListSubheader>}
-                    >
-                        {user.memberships?.map((membership, i) => (
-                            <OrgBar
-                                key={membership.id}
-                                name={membership?.organizations?.name}
-                                role={membership?.role}
-                                role_name={membership?.role_name}
-                                url={membership?.organizations?.url || "/"}
-                                picture={membership?.organizations?.picture}
-                            />
-                        ))}
-                        {user.signed_in && (
+                    {user.signed_in && (
+                        <List
+                            sx={{ width: "100%" }}
+                            subheader={
+                                <ListSubheader>My Activities</ListSubheader>
+                            }
+                        >
+                            {user.memberships?.map((membership, i) => (
+                                <OrgBar
+                                    key={membership.id}
+                                    name={membership?.organizations?.name}
+                                    role={membership?.role}
+                                    role_name={membership?.role_name}
+                                    url={membership?.organizations?.url || "/"}
+                                    picture={membership?.organizations?.picture}
+                                />
+                            ))}
                             <ListItemButton onClick={() => navigate("/create")}>
+                                <ListItemIcon>
+                                    <AddCircleIcon />
+                                </ListItemIcon>
                                 <ListItemText>Create Activity</ListItemText>
                             </ListItemButton>
-                        )}
-                    </List>
+                        </List>
+                    )}
                 </Box>
             </Drawer>
         </>

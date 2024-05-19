@@ -23,18 +23,18 @@ const Posts = () => {
         );
 
     return (
-        <Box sx={{ width: "100%", display: 'flex', flexWrap: 'wrap' }}>
-            <Typography variant='h1' width='100%'>Manage Posts</Typography>
+        <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
+            <Typography variant="h1" width="100%">
+                Manage Posts
+            </Typography>
             <PostEditor
                 orgId={organization.id}
                 onCreate={(newPost) => {
                     if (organization.setOrg) {
-                        organization.setOrg(
-                            {
-                                ...organization,
-                                posts: [...organization.posts, newPost]
-                            }
-                        )
+                        organization.setOrg({
+                            ...organization,
+                            posts: [...organization.posts, newPost],
+                        });
                     }
                 }}
             />
@@ -48,12 +48,12 @@ const Posts = () => {
                         editable
                         onDelete={() => {
                             if (organization.setOrg) {
-                                organization.setOrg(
-                                    {
-                                        ...organization,
-                                        posts: organization.posts.filter(p => p.id !== post.id)
-                                    }
-                                )
+                                organization.setOrg({
+                                    ...organization,
+                                    posts: organization.posts.filter(
+                                        (p) => p.id !== post.id,
+                                    ),
+                                });
                             }
                         }}
                     />

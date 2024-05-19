@@ -47,21 +47,25 @@ const Post = ({
                 orgId={content.organization_id}
                 onCancel={() => setEditing(false)}
                 onSave={(newData) => {
-                    let postIndex = organization.posts.findIndex(p => p.id === newData.id);
+                    let postIndex = organization.posts.findIndex(
+                        (p) => p.id === newData.id,
+                    );
 
-                    if (!~postIndex) return enqueueSnackbar("Could not update frontend. Refresh to see changes.", { variant: 'warning' });
+                    if (!~postIndex)
+                        return enqueueSnackbar(
+                            "Could not update frontend. Refresh to see changes.",
+                            { variant: "warning" },
+                        );
 
                     if (organization.setOrg) {
-                        organization.setOrg(
-                            {
-                                ...organization,
-                                posts: [
-                                    ...organization.posts.slice(0, postIndex),
-                                    newData,
-                                    ...organization.posts.slice(postIndex + 1)
-                                ]
-                            }
-                        )
+                        organization.setOrg({
+                            ...organization,
+                            posts: [
+                                ...organization.posts.slice(0, postIndex),
+                                newData,
+                                ...organization.posts.slice(postIndex + 1),
+                            ],
+                        });
                     }
 
                     setEditing(false);
@@ -71,27 +75,59 @@ const Post = ({
     }
 
     let isEdited = content.created_at !== content.updated_at;
-    let postTime = isEdited ? dayjs(content.updated_at) : dayjs(content.created_at);
-    let timeStr = `${postTime.month()+1}/${postTime.date()}/${postTime.year()}`
+    let postTime = isEdited
+        ? dayjs(content.updated_at)
+        : dayjs(content.created_at);
+    let timeStr = `${postTime.month() + 1}/${postTime.date()}/${postTime.year()}`;
 
     return (
-        <Paper elevation={1} sx={{ width: '500px', margin: '10px', padding: '15px', height: '350px'}}>
-            <Box sx={{ width: '100%', display: 'flex', flexWrap: 'nowrap'}}>
-                <Box sx={{ width: '70%'}}>
-                    <Typography variant='h3' width='100%'>{content.title}</Typography>
+        <Paper
+            elevation={1}
+            sx={{
+                width: "500px",
+                margin: "10px",
+                padding: "15px",
+                height: "350px",
+            }}
+        >
+            <Box sx={{ width: "100%", display: "flex", flexWrap: "nowrap" }}>
+                <Box sx={{ width: "70%" }}>
+                    <Typography variant="h3" width="100%">
+                        {content.title}
+                    </Typography>
                 </Box>
-                <Box sx={{ width: '30%', display: 'flex', justfiyContent: 'center', alignItems: 'center'}}>
-                    <Typography>{timeStr}{isEdited ? " [Edited]" : ""}</Typography>
+                <Box
+                    sx={{
+                        width: "30%",
+                        display: "flex",
+                        justfiyContent: "center",
+                        alignItems: "center",
+                    }}
+                >
+                    <Typography>
+                        {timeStr}
+                        {isEdited ? " [Edited]" : ""}
+                    </Typography>
                 </Box>
             </Box>
-            <Box sx={{ width: '100%', height: '200px', overflowY: 'auto'}}>
-                <Typography variant='body1' width='100%'>{content.description}</Typography>
+            <Box sx={{ width: "100%", height: "200px", overflowY: "auto" }}>
+                <Typography variant="body1" width="100%">
+                    {content.description}
+                </Typography>
             </Box>
-            <Box sx={{ marginTop: '20px'}}>
+            <Box sx={{ marginTop: "20px" }}>
                 {editable && (
                     <>
-                        <Button onClick={deletePost} variant='contained'>Delete</Button>
-                        <Button onClick={() => setEditing(true)} variant='contained' sx={{ marginLeft: '10px'}}>Edit</Button>
+                        <Button onClick={deletePost} variant="contained">
+                            Delete
+                        </Button>
+                        <Button
+                            onClick={() => setEditing(true)}
+                            variant="contained"
+                            sx={{ marginLeft: "10px" }}
+                        >
+                            Edit
+                        </Button>
                     </>
                 )}
             </Box>

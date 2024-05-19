@@ -72,21 +72,20 @@ const FormPage = <T extends unknown>({
         }
     };
 
-    const changeStatus = useCallback((field: string, newStatus: boolean) => {
-        if (
-            status[field] &&
-            newStatus === status[field].value
-        )
-            return;
+    const changeStatus = useCallback(
+        (field: string, newStatus: boolean) => {
+            if (status[field] && newStatus === status[field].value) return;
 
-        setStatus((prevState) => ({
-            ...prevState,
-            [field]: {
-                dirty: true,
-                value: newStatus,
-            },
-        }));
-    }, [status])
+            setStatus((prevState) => ({
+                ...prevState,
+                [field]: {
+                    dirty: true,
+                    value: newStatus,
+                },
+            }));
+        },
+        [status],
+    );
 
     const parseChildren = (c: ReactNode) => {
         let childs: ReactNode[] = [];
@@ -117,7 +116,7 @@ const FormPage = <T extends unknown>({
                     onChange: (newValue: any) =>
                         childOnChange(child.props.field, newValue),
                     status: status[child.props.field],
-                    changeStatus
+                    changeStatus,
                 };
 
                 childs.push(

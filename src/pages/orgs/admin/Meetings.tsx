@@ -70,26 +70,30 @@ const Meetings = () => {
                         });
                     }}
                     onDelete={async () => {
-                        let { error } = await supabase.functions.invoke('delete-meeting', 
+                        let { error } = await supabase.functions.invoke(
+                            "delete-meeting",
                             {
                                 body: {
-                                    id: meeting.id
-                                }
-                            }
-                        )
+                                    id: meeting.id,
+                                },
+                            },
+                        );
 
                         if (error) {
-                            return enqueueSnackbar("Error deleting meeting. Contact it@stuysu.org for support.", { variant: 'error' });
+                            return enqueueSnackbar(
+                                "Error deleting meeting. Contact it@stuysu.org for support.",
+                                { variant: "error" },
+                            );
                         }
 
                         if (organization.setOrg) {
                             // update org
-                            organization.setOrg(
-                                {
-                                    ...organization,
-                                    meetings: organization.meetings.filter(m => m.id !== meeting.id)
-                                }
-                            )
+                            organization.setOrg({
+                                ...organization,
+                                meetings: organization.meetings.filter(
+                                    (m) => m.id !== meeting.id,
+                                ),
+                            });
                         }
 
                         enqueueSnackbar("Deleted Meeting!", {
@@ -99,7 +103,7 @@ const Meetings = () => {
                 />
             ))}
 
-            <Box sx={{ width: '100%', paddingLeft: '10px'}}>
+            <Box sx={{ width: "100%", paddingLeft: "10px" }}>
                 <Button
                     onClick={() =>
                         setEditState({
@@ -113,8 +117,8 @@ const Meetings = () => {
                             editing: true,
                         })
                     }
-                    variant='contained'
-                    sx={{ marginTop: '20px' }}
+                    variant="contained"
+                    sx={{ marginTop: "20px" }}
                 >
                     Create Meeting
                 </Button>

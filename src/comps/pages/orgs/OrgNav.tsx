@@ -51,16 +51,23 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
             if (currentIndex === 0) {
                 isCorrectIndex = location.pathname === main;
             } else {
-                isCorrectIndex = location.pathname.startsWith(navLinks[currentIndex]?.to)
+                isCorrectIndex = location.pathname.startsWith(
+                    navLinks[currentIndex]?.to,
+                );
             }
         }
 
-		if (!isCorrectIndex) {
-			const correctIndex = navLinks.slice(1).findIndex(link => location.pathname.startsWith(link.to)) + 1;
-			setCurrentIndex(~correctIndex ? correctIndex : 0);
-		}
-    }, [navLinks, location.pathname, currentIndex])
-    
+        if (!isCorrectIndex) {
+            const correctIndex =
+                navLinks
+                    .slice(1)
+                    .findIndex((link) =>
+                        location.pathname.startsWith(link.to),
+                    ) + 1;
+            setCurrentIndex(~correctIndex ? correctIndex : 0);
+        }
+    }, [navLinks, location.pathname, currentIndex]);
+
     const isInOrg: boolean = organization.memberships?.find(
         (m) => m.users?.id === user.id,
     )
@@ -108,9 +115,12 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
         if (interactString === "JOIN") {
             /* JOIN ORGANIZATION */
             let body = {
-                organization_id: organization.id
-            }
-            const { data, error } = await supabase.functions.invoke("join-organization", { body } );
+                organization_id: organization.id,
+            };
+            const { data, error } = await supabase.functions.invoke(
+                "join-organization",
+                { body },
+            );
             if (error || !data) {
                 return enqueueSnackbar(
                     "Unable to join organization. Contact it@stuysu.org for support.",
@@ -120,12 +130,10 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
 
             // update context
             if (organization.setOrg) {
-                organization.setOrg(
-                    {
-                        ...organization,
-                        memberships: [...organization.memberships, data]
-                    }
-                )
+                organization.setOrg({
+                    ...organization,
+                    memberships: [...organization.memberships, data],
+                });
             }
 
             enqueueSnackbar("Sent organization a join request!", {
@@ -154,12 +162,12 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
 
             // update context
             if (organization.setOrg) {
-                organization.setOrg(
-                    {
-                        ...organization,
-                        memberships: organization.memberships.filter(m => m.users?.id !== user.id)
-                    }
-                )
+                organization.setOrg({
+                    ...organization,
+                    memberships: organization.memberships.filter(
+                        (m) => m.users?.id !== user.id,
+                    ),
+                });
             }
 
             enqueueSnackbar("Left organization!", { variant: "success" });
@@ -205,18 +213,18 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     }}
                 >
                     <Avatar
-                        src={
-                            organization.picture || ""
-                        }
+                        src={organization.picture || ""}
                         style={{
-                            width: '100%',
-                            height: '100%',
+                            width: "100%",
+                            height: "100%",
                             borderRadius: "100%",
                             boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-                            fontSize: '100px'
+                            fontSize: "100px",
                         }}
                         alt={`organization ${organization.name}`}
-                    >{organization.name.charAt(0).toUpperCase()}</Avatar>
+                    >
+                        {organization.name.charAt(0).toUpperCase()}
+                    </Avatar>
                 </Box>
                 <Typography variant="h3" align="center" width="100%">
                     {organization.name}

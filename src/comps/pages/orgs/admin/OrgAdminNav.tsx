@@ -35,9 +35,7 @@ const OrgAdminNav = () => {
         },
     ];
 
-    return (
-        <RouteTabs tabs={navLinks} />
-    );
+    return <RouteTabs tabs={navLinks} />;
 };
 
 export default OrgAdminNav;

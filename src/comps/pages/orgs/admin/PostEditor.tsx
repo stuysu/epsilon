@@ -46,13 +46,17 @@ const PostEditor = ({
 
     const createPost = async () => {
         if (!postData.title) {
-            return enqueueSnackbar("Missing post title.", { variant: 'error' })
+            return enqueueSnackbar("Missing post title.", { variant: "error" });
         }
         if (!postData.description) {
-            return enqueueSnackbar("Missing post description.", { variant: "error" })
+            return enqueueSnackbar("Missing post description.", {
+                variant: "error",
+            });
         }
 
-        let { data, error } = await supabase.functions.invoke('create-post', { body: postData })
+        let { data, error } = await supabase.functions.invoke("create-post", {
+            body: postData,
+        });
 
         if (error || !data) {
             return enqueueSnackbar(
@@ -96,37 +100,54 @@ const PostEditor = ({
     return (
         <Paper
             elevation={1}
-            sx={{ width: '500px', padding: '15px', height: '350px', margin: '10px' }}
+            sx={{
+                width: "500px",
+                padding: "15px",
+                height: "350px",
+                margin: "10px",
+            }}
         >
-            <Typography variant='h3' width='100%'>{content ? "Update Post" : "Create Post"}</Typography>
-            <Box sx={{ marginBottom: '10px'}}>
-                <TextField 
-                    value={postData['title']}
-                    name={'title'}
-                    label='Title'
+            <Typography variant="h3" width="100%">
+                {content ? "Update Post" : "Create Post"}
+            </Typography>
+            <Box sx={{ marginBottom: "10px" }}>
+                <TextField
+                    value={postData["title"]}
+                    name={"title"}
+                    label="Title"
                     onChange={onChange}
                     fullWidth
                 />
 
-                <TextField 
-                    value={postData['description']}
-                    name={'description'}
-                    label='Description'
+                <TextField
+                    value={postData["description"]}
+                    name={"description"}
+                    label="Description"
                     onChange={onChange}
                     fullWidth
                     multiline
                     rows={5}
-                    sx={{ marginTop: '10px'}}
+                    sx={{ marginTop: "10px" }}
                 />
             </Box>
 
             {content ? (
                 <>
-                    <Button onClick={savePost} variant='contained'>Save</Button>
-                    <Button onClick={onCancel} variant='contained' sx={{ marginLeft: '10px'}}>Cancel</Button>
+                    <Button onClick={savePost} variant="contained">
+                        Save
+                    </Button>
+                    <Button
+                        onClick={onCancel}
+                        variant="contained"
+                        sx={{ marginLeft: "10px" }}
+                    >
+                        Cancel
+                    </Button>
                 </>
             ) : (
-                <Button onClick={createPost} variant='contained'>Create</Button>
+                <Button onClick={createPost} variant="contained">
+                    Create
+                </Button>
             )}
         </Paper>
     );

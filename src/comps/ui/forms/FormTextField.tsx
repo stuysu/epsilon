@@ -183,16 +183,17 @@ const FormTextField = ({
             onChange={textChanged}
             value={value}
             helperText={
-                !hideHelper && 
-                <>
-                    {description?.split("\n").map((line) => (
-                        <>
-                            {line}
-                            <br />
-                        </>
-                    ))}
-                    {helperText}
-                </>
+                !hideHelper && (
+                    <>
+                        {description?.split("\n").map((line) => (
+                            <>
+                                {line}
+                                <br />
+                            </>
+                        ))}
+                        {helperText}
+                    </>
+                )
             }
             {...textFieldProps}
         />

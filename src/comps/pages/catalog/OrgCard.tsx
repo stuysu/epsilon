@@ -35,14 +35,16 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                 <Avatar
                     src={organization.picture || ""}
                     sx={{
-                        width: '170px',
-                        height: '170px',
+                        width: "170px",
+                        height: "170px",
                         borderRadius: "100%",
                         boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-                        fontSize: '60px'
+                        fontSize: "60px",
                     }}
                     alt={`${organization.name}`}
-                >{organization.name?.charAt(0).toUpperCase()}</Avatar>
+                >
+                    {organization.name?.charAt(0).toUpperCase()}
+                </Avatar>
             </Box>
             <Box sx={{ width: "100%", padding: "20px" }}>
                 <Typography variant="h3" align="center">

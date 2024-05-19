@@ -95,7 +95,8 @@ const Create = () => {
             returning_info: formData.returning_info,
         };
 
-        let { data: orgCreateData, error: orgCreateError } = await supabase.functions.invoke('create-organization', { body })
+        let { data: orgCreateData, error: orgCreateError } =
+            await supabase.functions.invoke("create-organization", { body });
 
         if (orgCreateError || !orgCreateData) {
             return enqueueSnackbar(
@@ -352,7 +353,9 @@ const Create = () => {
                     label="Appointment Procedures"
                     field="appointment_procedures"
                     multiline
-                    requirements={OrgRequirements.appointment_procedures.requirements}
+                    requirements={
+                        OrgRequirements.appointment_procedures.requirements
+                    }
                     required={OrgRequirements.appointment_procedures.required}
                     sx={multilineStyle}
                     rows={4}
@@ -401,7 +404,9 @@ const Create = () => {
                         <FormTextField
                             label="Returning Info"
                             field="returning_info"
-                            requirements={OrgRequirements.returning_info.requirements}
+                            requirements={
+                                OrgRequirements.returning_info.requirements
+                            }
                             required={OrgRequirements.returning_info.required}
                             sx={multilineStyle}
                             rows={4}
