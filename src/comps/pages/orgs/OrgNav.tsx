@@ -8,6 +8,7 @@ import {
     List,
     ListItemButton,
     ListItemText,
+    ListItemIcon,
     Avatar,
 } from "@mui/material";
 
@@ -18,7 +19,11 @@ import { supabase } from "../../../supabaseClient";
 import { useSnackbar } from "notistack";
 
 import { useLocation, useNavigate } from "react-router-dom";
-import { CollectionsOutlined } from "@mui/icons-material";
+import InfoIcon from '@mui/icons-material/Info';
+import ArticleIcon from '@mui/icons-material/Article';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import PeopleIcon from '@mui/icons-material/People';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const organization = useContext<OrgContextType>(OrgContext);
@@ -30,10 +35,10 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const location = useLocation();
 
     const navLinks = [
-        { to: main, display: "Overview" },
-        { to: `${main}/charter`, display: "Charter" },
-        { to: `${main}/meetings`, display: "Meetings" },
-        { to: `${main}/members`, display: "Members" },
+        { to: main, display: "Overview", icon: <InfoIcon /> },
+        { to: `${main}/charter`, display: "Charter", icon: <ArticleIcon /> },
+        { to: `${main}/meetings`, display: "Meetings", icon: <CalendarMonthIcon /> },
+        { to: `${main}/members`, display: "Members", icon: <PeopleIcon /> },
     ];
 
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -185,7 +190,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     }
 
     if (isAdmin) {
-        navLinks.push({ to: `${main}/admin`, display: "Admin" });
+        navLinks.push({ to: `${main}/admin`, display: "Admin", icon: <AdminPanelSettingsIcon /> });
     }
 
     return (
@@ -263,6 +268,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                             setCurrentIndex(i);
                         }}
                     >
+                        {linkData.icon && <ListItemIcon>{linkData.icon}</ListItemIcon>}
                         <ListItemText>{linkData.display}</ListItemText>
                     </ListItemButton>
                 ))}

@@ -1,12 +1,11 @@
-import { SvgIconComponent } from "@mui/icons-material";
 import { Box, Tab, Tabs } from "@mui/material";
-import { useEffect, useState } from "react";
+import { useEffect, useState, ReactNode } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 type TabProps = {
     to: string;
     label: string;
-    icon?: SvgIconComponent;
+    icon?: ReactNode;
 };
 
 type Props = {

@@ -29,7 +29,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import FeedIcon from "@mui/icons-material/Feed";
-import PeopleIcon from "@mui/icons-material/People";
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 
 const navStyles: CSSProperties = {
@@ -217,7 +217,7 @@ const NavBar = () => {
                                 onClick={() => navigate("/meetings")}
                             >
                                 <ListItemIcon>
-                                    <PeopleIcon />
+                                    <CalendarMonthIcon />
                                 </ListItemIcon>
                                 <ListItemText>Meetings</ListItemText>
                             </ListItemButton>
