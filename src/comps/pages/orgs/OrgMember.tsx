@@ -11,7 +11,7 @@ type Props = {
 };
 
 const formatCapitals = (txt?: string) => {
-    if (!txt) return ""
+    if (!txt) return "";
     return txt.slice(0, 1).toUpperCase() + txt.slice(1).toLowerCase();
 };
 
@@ -24,14 +24,15 @@ const OrgMember = ({
     last_name,
     is_faculty,
 }: Props) => {
-    let l1 = role_name || formatCapitals(role) + (is_faculty ? " - Faculty" : "")
+    let l1 =
+        role_name || formatCapitals(role) + (is_faculty ? " - Faculty" : "");
 
     return (
-        <ListItem
-            sx={{ height: "75px" }}
-        >
+        <ListItem sx={{ height: "75px" }}>
             <ListItemAvatar>
-                <Avatar alt={`${first_name} ${last_name}`} src={picture}>{(first_name || 'O').charAt(0).toUpperCase()}</Avatar>
+                <Avatar alt={`${first_name} ${last_name}`} src={picture}>
+                    {(first_name || "O").charAt(0).toUpperCase()}
+                </Avatar>
             </ListItemAvatar>
             <ListItemText
                 primary={`${first_name} ${last_name}`}

@@ -19,7 +19,7 @@ const OrgContext = React.createContext<OrgContextType>({
     join_instructions: "",
     memberships: [],
     meetings: [],
-    posts: []
+    posts: [],
 });
 
 export default OrgContext;

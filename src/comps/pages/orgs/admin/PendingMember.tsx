@@ -35,23 +35,23 @@ const PendingMember = ({
             return;
         }
 
-        let memberIndex = organization.memberships.findIndex(m => m.id === id);
+        let memberIndex = organization.memberships.findIndex(
+            (m) => m.id === id,
+        );
         let memberData = organization.memberships[memberIndex];
 
         memberData.active = true;
 
         // update context
         if (organization.setOrg) {
-            organization.setOrg(
-                {
-                    ...organization,
-                    memberships: [
-                        ...organization.memberships.slice(0, memberIndex),
-                        memberData,
-                        ...organization.memberships.slice(memberIndex+1)
-                    ]
-                }
-            )
+            organization.setOrg({
+                ...organization,
+                memberships: [
+                    ...organization.memberships.slice(0, memberIndex),
+                    memberData,
+                    ...organization.memberships.slice(memberIndex + 1),
+                ],
+            });
         }
 
         enqueueSnackbar("Member approved!", { variant: "success" });
@@ -72,20 +72,27 @@ const PendingMember = ({
 
         // update context
         if (organization.setOrg) {
-            organization.setOrg(
-                {
-                    ...organization,
-                    memberships: organization.memberships.filter(m => m.id !== id)
-                }
-            )
+            organization.setOrg({
+                ...organization,
+                memberships: organization.memberships.filter(
+                    (m) => m.id !== id,
+                ),
+            });
         }
 
         enqueueSnackbar("User rejected!", { variant: "success" });
     };
 
     return (
-        <Box sx={{ width: '100%', display: 'flex', flexWrap: 'nowrap', alignItems: 'center' }}>
-            <Box sx={{ width: '100%' }}>
+        <Box
+            sx={{
+                width: "100%",
+                display: "flex",
+                flexWrap: "nowrap",
+                alignItems: "center",
+            }}
+        >
+            <Box sx={{ width: "100%" }}>
                 <OrgMember
                     email={email}
                     picture={picture}
@@ -93,11 +100,22 @@ const PendingMember = ({
                     last_name={last_name}
                 />
             </Box>
-            <Box sx={{ width: '200px', display: 'flex', flexWrap: 'nowrap' }}>
-                <Button onClick={handleApprove} variant='contained' sx={{ height: '40px' }}>Approve</Button>
-                <Button onClick={handleReject} variant='contained' sx={{ height: '40px', marginLeft: '10px'}}>Reject</Button>
+            <Box sx={{ width: "200px", display: "flex", flexWrap: "nowrap" }}>
+                <Button
+                    onClick={handleApprove}
+                    variant="contained"
+                    sx={{ height: "40px" }}
+                >
+                    Approve
+                </Button>
+                <Button
+                    onClick={handleReject}
+                    variant="contained"
+                    sx={{ height: "40px", marginLeft: "10px" }}
+                >
+                    Reject
+                </Button>
             </Box>
-            
         </Box>
     );
 };

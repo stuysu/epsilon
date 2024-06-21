@@ -40,29 +40,38 @@ const Overview = () => {
                 <Typography variant="h3" color="primary.main" width="100%">
                     Leaders
                 </Typography>
-                {organization.memberships?.sort(sortByRole).map(
-                    (member, i) =>
-                        (["FACULTY", "ADMIN", "CREATOR"].includes(
-                            member.role || "",
-                        ) && member.active) && (
-                            <OrgMember
-                                key={i}
-                                role={member.role || "MEMBER"}
-                                role_name={member.role_name}
-                                email={member.users?.email || "no email"}
-                                picture={member.users?.picture }
-                                first_name={member.users?.first_name || "First"}
-                                last_name={member.users?.last_name || "Last"}
-                                is_faculty={member.users?.is_faculty || false}
-                            />
-                        ),
-                )}
+                {organization.memberships
+                    ?.sort(sortByRole)
+                    .map(
+                        (member, i) =>
+                            ["FACULTY", "ADMIN", "CREATOR"].includes(
+                                member.role || "",
+                            ) &&
+                            member.active && (
+                                <OrgMember
+                                    key={i}
+                                    role={member.role || "MEMBER"}
+                                    role_name={member.role_name}
+                                    email={member.users?.email || "no email"}
+                                    picture={member.users?.picture}
+                                    first_name={
+                                        member.users?.first_name || "First"
+                                    }
+                                    last_name={
+                                        member.users?.last_name || "Last"
+                                    }
+                                    is_faculty={
+                                        member.users?.is_faculty || false
+                                    }
+                                />
+                            ),
+                    )}
             </Box>
             <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
                 <Typography variant="h3" color="primary.main" width="100%">
                     Upcoming Meetings
                 </Typography>
-                {organization.meetings.sort(sortByDate).map(meeting => (
+                {organization.meetings.sort(sortByDate).map((meeting) => (
                     <OrgMeeting
                         key={meeting.id}
                         id={meeting.id}

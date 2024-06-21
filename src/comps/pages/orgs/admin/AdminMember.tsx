@@ -29,7 +29,7 @@ const AdminMember = ({
     role,
     role_name,
     isCreator,
-    is_faculty
+    is_faculty,
 }: {
     id: number;
     userId: number;
@@ -37,13 +37,13 @@ const AdminMember = ({
     last_name: string;
     email: string;
     picture?: string;
-    role: Membership['role'];
+    role: Membership["role"];
     role_name?: string;
     isCreator: boolean;
     is_faculty?: boolean;
 }) => {
     const user = useContext(UserContext);
-    const organization = useContext(OrgContext)
+    const organization = useContext(OrgContext);
 
     const { enqueueSnackbar } = useSnackbar();
     const [editState, setEditState] = useState({
@@ -77,12 +77,12 @@ const AdminMember = ({
         }
 
         if (organization.setOrg) {
-            organization.setOrg(
-                {
-                    ...organization,
-                    memberships: organization.memberships.filter(m => m.id !== id)
-                }
-            )
+            organization.setOrg({
+                ...organization,
+                memberships: organization.memberships.filter(
+                    (m) => m.id !== id,
+                ),
+            });
         }
 
         enqueueSnackbar("Member kicked!", { variant: "success" });
@@ -126,11 +126,13 @@ const AdminMember = ({
         }
 
         if (organization.setOrg) {
-            let existingMemberIndex = organization.memberships.findIndex(m => m.id === id);
+            let existingMemberIndex = organization.memberships.findIndex(
+                (m) => m.id === id,
+            );
             if (!~existingMemberIndex) {
                 enqueueSnackbar(
                     "Could not update frontend. Refresh to see changes.",
-                    { variant: "warning" }
+                    { variant: "warning" },
                 );
                 handleClose();
                 return;
@@ -138,20 +140,18 @@ const AdminMember = ({
 
             let existingMember = organization.memberships[existingMemberIndex];
 
-            organization.setOrg(
-                {
-                    ...organization,
-                    memberships: [
-                        ...organization.memberships.slice(0, existingMemberIndex),
-                        {
-                            ...existingMember,
-                            role: editState.role,
-                            role_name: editState.role_name
-                        },
-                        ...organization.memberships.slice(existingMemberIndex+1) 
-                    ]
-                }
-            )
+            organization.setOrg({
+                ...organization,
+                memberships: [
+                    ...organization.memberships.slice(0, existingMemberIndex),
+                    {
+                        ...existingMember,
+                        role: editState.role,
+                        role_name: editState.role_name,
+                    },
+                    ...organization.memberships.slice(existingMemberIndex + 1),
+                ],
+            });
         }
 
         enqueueSnackbar("Member updated!", { variant: "success" });
@@ -159,8 +159,15 @@ const AdminMember = ({
     };
 
     return (
-        <Box sx={{ width: '100%', display: 'flex', flexWrap: 'nowrap', alignItems: 'center' }}>
-            <Box sx={{ width: '100%'}}>
+        <Box
+            sx={{
+                width: "100%",
+                display: "flex",
+                flexWrap: "nowrap",
+                alignItems: "center",
+            }}
+        >
+            <Box sx={{ width: "100%" }}>
                 <OrgMember
                     role={role}
                     role_name={role_name}
@@ -171,9 +178,13 @@ const AdminMember = ({
                     is_faculty={is_faculty}
                 />
             </Box>
-            <Box sx={{ width: '200px' }}>
+            <Box sx={{ width: "200px" }}>
                 {role !== "CREATOR" || isCreator ? (
-                    <Button onClick={handleEdit} variant="contained" sx={{ height: '40px'}}>
+                    <Button
+                        onClick={handleEdit}
+                        variant="contained"
+                        sx={{ height: "40px" }}
+                    >
                         Edit
                     </Button>
                 ) : (
@@ -182,7 +193,11 @@ const AdminMember = ({
 
                 {userId !== user.id &&
                 (isCreator || role === "MEMBER" || role === "ADVISOR") ? (
-                    <Button onClick={handleKick} variant="contained" sx={{ height: '40px', marginLeft: '10px'}}>
+                    <Button
+                        onClick={handleKick}
+                        variant="contained"
+                        sx={{ height: "40px", marginLeft: "10px" }}
+                    >
                         Kick
                     </Button>
                 ) : (

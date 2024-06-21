@@ -11,7 +11,7 @@ interface Organization {
     uniqueness?: string;
     meeting_schedule?: string;
     meeting_days?: string[];
-    keywords? : string;
+    keywords?: string;
     tags?: string[];
     commitment_level?: "NONE" | "LOW" | "MEDIUM" | "HIGH";
     state: "PENDING" | "LOCKED" | "UNLOCKED" | "ADMIN";
@@ -23,20 +23,20 @@ interface Organization {
 interface OrganizationEdit {
     id?: number;
     organization_id?: Organization[id];
-    name?: Organization['name'];
-    url?: Organization['url'];
-    socials?: Organization['socials'];
-    picture?: Organization['picture'];
-    mission?: Organization['mission'];
-    purpose?: Organization['purpose'];
-    benefit?: Organization['benefit'];
-    appointment_procedures?: Organization['appointment_procedures'];
-    uniqueness?: Organization['uniqueness'];
-    meeting_schedule?: Organization['meeting_schedule'];
-    meeting_days?: Organization['meeting_days'];
-    keywords?: Organization['keywords'];
-    tags?: Organization['tags'];
-    commitment_level?: Organization['commitment_level'];
+    name?: Organization["name"];
+    url?: Organization["url"];
+    socials?: Organization["socials"];
+    picture?: Organization["picture"];
+    mission?: Organization["mission"];
+    purpose?: Organization["purpose"];
+    benefit?: Organization["benefit"];
+    appointment_procedures?: Organization["appointment_procedures"];
+    uniqueness?: Organization["uniqueness"];
+    meeting_schedule?: Organization["meeting_schedule"];
+    meeting_days?: Organization["meeting_days"];
+    keywords?: Organization["keywords"];
+    tags?: Organization["tags"];
+    commitment_level?: Organization["commitment_level"];
 }
 
 /* FOR ADMIN PANEL (Approving Organization Edit Requests)*/

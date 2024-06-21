@@ -20,39 +20,37 @@ const tags = [
     "STEM",
     "Student Support & Government",
     "Hobby & Special Interest",
-    "Publication"
-]
+    "Publication",
+];
 
-const commitmentLevels = [
-    'NONE',
-    'LOW',
-    'MEDIUM',
-    'HIGH'
-]
+const commitmentLevels = ["NONE", "LOW", "MEDIUM", "HIGH"];
 
-const meetingDays = [
-    'MONDAY',
-    'TUESDAY',
-    'WEDNESDAY',
-    'THURSDAY',
-    'FRIDAY'
-]
+const meetingDays = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
 
 const onlyAlpha = /[^a-z0-9 ]/gi;
 
-const SearchFilter = ({ value, onChange, isOneColumn, isTwoColumn, isTwoWrap }: Props) => {
-    
-
+const SearchFilter = ({
+    value,
+    onChange,
+    isOneColumn,
+    isTwoColumn,
+    isTwoWrap,
+}: Props) => {
     return (
         <Box
             sx={{
-                width: isOneColumn || isTwoWrap ? "100%" : (isTwoColumn ? '30%' : '25%'),
+                width:
+                    isOneColumn || isTwoWrap
+                        ? "100%"
+                        : isTwoColumn
+                          ? "30%"
+                          : "25%",
                 height: isOneColumn || isTwoWrap ? " " : "100vh",
                 padding: "20px",
                 position: isOneColumn || isTwoWrap ? "relative" : "sticky",
                 top: 0,
                 paddingTop: "40px",
-                overflowY: 'auto'
+                overflowY: "auto",
             }}
         >
             <Box
@@ -73,76 +71,112 @@ const SearchFilter = ({ value, onChange, isOneColumn, isTwoColumn, isTwoWrap }: 
                     }}
                 />
             </Box>
-            <Box sx={{ width: "100%", marginTop: '20px' }}>
+            <Box sx={{ width: "100%", marginTop: "20px" }}>
                 <Typography sx={{ width: "100%" }}>Tags</Typography>
-                <Stack direction='row' spacing={1} flexWrap='wrap' useFlexGap sx={{ marginTop: '10px'}}>
-                    {
-                        tags.map(
-                            tag => (
-                                <Chip 
-                                    label={capitalizeWords(tag)}
-                                    onClick={() => {
-                                        let exists = value.tags.findIndex(v => v === tag) !== -1;
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    flexWrap="wrap"
+                    useFlexGap
+                    sx={{ marginTop: "10px" }}
+                >
+                    {tags.map((tag) => (
+                        <Chip
+                            label={capitalizeWords(tag)}
+                            onClick={() => {
+                                let exists =
+                                    value.tags.findIndex((v) => v === tag) !==
+                                    -1;
 
-                                        onChange({
-                                            ...value,
-                                            tags: exists ? value.tags.filter(v => v !== tag) : [tag, ...value.tags]
-                                        });
-                                    }}
-                                    variant={value.tags.find(v => v === tag) ? 'filled' : 'outlined'}
-                                    clickable
-                                />
-                            )
-                        )
-                    }
+                                onChange({
+                                    ...value,
+                                    tags: exists
+                                        ? value.tags.filter((v) => v !== tag)
+                                        : [tag, ...value.tags],
+                                });
+                            }}
+                            variant={
+                                value.tags.find((v) => v === tag)
+                                    ? "filled"
+                                    : "outlined"
+                            }
+                            clickable
+                        />
+                    ))}
                 </Stack>
             </Box>
-            <Box sx={{ width: "100%", marginTop: '20px' }}>
+            <Box sx={{ width: "100%", marginTop: "20px" }}>
                 <Typography sx={{ width: "100%" }}>Commitment Level</Typography>
-                <Stack direction='row' spacing={1} flexWrap='wrap' useFlexGap sx={{ marginTop: '10px'}}>
-                    {
-                        commitmentLevels.map(
-                            level => (
-                                <Chip 
-                                    label={capitalizeWords(level)}
-                                    onClick={() => {
-                                        let exists = value.commitmentLevels.findIndex(v => v === level) !== -1;
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    flexWrap="wrap"
+                    useFlexGap
+                    sx={{ marginTop: "10px" }}
+                >
+                    {commitmentLevels.map((level) => (
+                        <Chip
+                            label={capitalizeWords(level)}
+                            onClick={() => {
+                                let exists =
+                                    value.commitmentLevels.findIndex(
+                                        (v) => v === level,
+                                    ) !== -1;
 
-                                        onChange({
-                                            ...value,
-                                            commitmentLevels: exists ? value.commitmentLevels.filter(v => v !== level) : [level, ...value.commitmentLevels]
-                                        });
-                                    }}
-                                    variant={value.commitmentLevels.find(v => v === level) ? 'filled' : 'outlined'}
-                                    clickable
-                                />
-                            )
-                        )
-                    }
+                                onChange({
+                                    ...value,
+                                    commitmentLevels: exists
+                                        ? value.commitmentLevels.filter(
+                                              (v) => v !== level,
+                                          )
+                                        : [level, ...value.commitmentLevels],
+                                });
+                            }}
+                            variant={
+                                value.commitmentLevels.find((v) => v === level)
+                                    ? "filled"
+                                    : "outlined"
+                            }
+                            clickable
+                        />
+                    ))}
                 </Stack>
             </Box>
-            <Box sx={{ width: "100%", marginTop: '20px' }}>
+            <Box sx={{ width: "100%", marginTop: "20px" }}>
                 <Typography sx={{ width: "100%" }}>Meeting Days</Typography>
-                <Stack direction='row' spacing={1} flexWrap='wrap' useFlexGap sx={{ marginTop: '10px'}}>
-                    {
-                        meetingDays.map(
-                            day => (
-                                <Chip 
-                                    label={capitalizeWords(day)}
-                                    onClick={() => {
-                                        let exists = value.meetingDays.findIndex(v => v === day) !== -1;
+                <Stack
+                    direction="row"
+                    spacing={1}
+                    flexWrap="wrap"
+                    useFlexGap
+                    sx={{ marginTop: "10px" }}
+                >
+                    {meetingDays.map((day) => (
+                        <Chip
+                            label={capitalizeWords(day)}
+                            onClick={() => {
+                                let exists =
+                                    value.meetingDays.findIndex(
+                                        (v) => v === day,
+                                    ) !== -1;
 
-                                        onChange({
-                                            ...value,
-                                            meetingDays: exists ? value.meetingDays.filter(v => v !== day) : [day, ...value.meetingDays]
-                                        });
-                                    }}
-                                    variant={value.meetingDays.find(v => v === day) ? 'filled' : 'outlined'}
-                                    clickable
-                                />
-                            )
-                        )
-                    }
+                                onChange({
+                                    ...value,
+                                    meetingDays: exists
+                                        ? value.meetingDays.filter(
+                                              (v) => v !== day,
+                                          )
+                                        : [day, ...value.meetingDays],
+                                });
+                            }}
+                            variant={
+                                value.meetingDays.find((v) => v === day)
+                                    ? "filled"
+                                    : "outlined"
+                            }
+                            clickable
+                        />
+                    ))}
                 </Stack>
             </Box>
         </Box>

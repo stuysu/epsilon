@@ -8,6 +8,7 @@ import {
     List,
     ListItemButton,
     ListItemText,
+    ListItemIcon,
     Avatar,
 } from "@mui/material";
 
@@ -18,7 +19,11 @@ import { supabase } from "../../../supabaseClient";
 import { useSnackbar } from "notistack";
 
 import { useLocation, useNavigate } from "react-router-dom";
-import { CollectionsOutlined } from "@mui/icons-material";
+import InfoIcon from '@mui/icons-material/Info';
+import ArticleIcon from '@mui/icons-material/Article';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import PeopleIcon from '@mui/icons-material/People';
+import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
 
 const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const organization = useContext<OrgContextType>(OrgContext);
@@ -30,13 +35,14 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const location = useLocation();
 
     const navLinks = [
-        { to: main, display: "Overview" },
-        { to: `${main}/charter`, display: "Charter" },
-        { to: `${main}/meetings`, display: "Meetings" },
-        { to: `${main}/members`, display: "Members" },
+        { to: main, display: "Overview", icon: <InfoIcon /> },
+        { to: `${main}/charter`, display: "Charter", icon: <ArticleIcon /> },
+        { to: `${main}/meetings`, display: "Meetings", icon: <CalendarMonthIcon /> },
+        { to: `${main}/members`, display: "Members", icon: <PeopleIcon /> },
     ];
 
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [attemptingInteract, setAttemptingInteract] = useState(false); // if in middle of sending join request, lock the button
 
     useEffect(() => {
         let isCorrectIndex = false;
@@ -50,16 +56,23 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
             if (currentIndex === 0) {
                 isCorrectIndex = location.pathname === main;
             } else {
-                isCorrectIndex = location.pathname.startsWith(navLinks[currentIndex]?.to)
+                isCorrectIndex = location.pathname.startsWith(
+                    navLinks[currentIndex]?.to,
+                );
             }
         }
 
-		if (!isCorrectIndex) {
-			const correctIndex = navLinks.slice(1).findIndex(link => location.pathname.startsWith(link.to)) + 1;
-			setCurrentIndex(~correctIndex ? correctIndex : 0);
-		}
-    }, [navLinks, location.pathname, currentIndex])
-    
+        if (!isCorrectIndex) {
+            const correctIndex =
+                navLinks
+                    .slice(1)
+                    .findIndex((link) =>
+                        location.pathname.startsWith(link.to),
+                    ) + 1;
+            setCurrentIndex(~correctIndex ? correctIndex : 0);
+        }
+    }, [navLinks, location.pathname, currentIndex]);
+
     const isInOrg: boolean = organization.memberships?.find(
         (m) => m.users?.id === user.id,
     )
@@ -103,25 +116,16 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
             : "CANCEL JOIN"
         : "JOIN";
     const handleInteract = async () => {
+        setAttemptingInteract(true);
         if (interactString === "JOIN") {
             /* JOIN ORGANIZATION */
-            const { data, error } = await supabase
-                .from("memberships")
-                .insert({ organization_id: organization.id, user_id: user.id })
-                .select(`
-                    id,
-                    role,
-                    role_name,
-                    active,
-                    users (
-                        id,
-                        first_name,
-                        last_name,
-                        email,
-                        picture,
-                        is_faculty
-                    )
-                `);
+            let body = {
+                organization_id: organization.id,
+            };
+            const { data, error } = await supabase.functions.invoke(
+                "join-organization",
+                { body },
+            );
             if (error || !data) {
                 return enqueueSnackbar(
                     "Unable to join organization. Contact it@stuysu.org for support.",
@@ -131,12 +135,10 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
 
             // update context
             if (organization.setOrg) {
-                organization.setOrg(
-                    {
-                        ...organization,
-                        memberships: [...organization.memberships, data[0]]
-                    }
-                )
+                organization.setOrg({
+                    ...organization,
+                    memberships: [...organization.memberships, data],
+                });
             }
 
             enqueueSnackbar("Sent organization a join request!", {
@@ -165,16 +167,17 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
 
             // update context
             if (organization.setOrg) {
-                organization.setOrg(
-                    {
-                        ...organization,
-                        memberships: organization.memberships.filter(m => m.users?.id !== user.id)
-                    }
-                )
+                organization.setOrg({
+                    ...organization,
+                    memberships: organization.memberships.filter(
+                        (m) => m.users?.id !== user.id,
+                    ),
+                });
             }
 
             enqueueSnackbar("Left organization!", { variant: "success" });
         }
+        setAttemptingInteract(false);
     };
 
     let disabled = false;
@@ -187,7 +190,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     }
 
     if (isAdmin) {
-        navLinks.push({ to: `${main}/admin`, display: "Admin" });
+        navLinks.push({ to: `${main}/admin`, display: "Admin", icon: <AdminPanelSettingsIcon /> });
     }
 
     return (
@@ -215,18 +218,18 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     }}
                 >
                     <Avatar
-                        src={
-                            organization.picture || ""
-                        }
+                        src={organization.picture || ""}
                         style={{
-                            width: '100%',
-                            height: '100%',
+                            width: "100%",
+                            height: "100%",
                             borderRadius: "100%",
                             boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-                            fontSize: '100px'
+                            fontSize: "100px",
                         }}
                         alt={`organization ${organization.name}`}
-                    >{organization.name.charAt(0).toUpperCase()}</Avatar>
+                    >
+                        {organization.name.charAt(0).toUpperCase()}
+                    </Avatar>
                 </Box>
                 <Typography variant="h3" align="center" width="100%">
                     {organization.name}
@@ -242,7 +245,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                 <Button
                     variant="contained"
                     onClick={handleInteract}
-                    disabled={disabled}
+                    disabled={disabled || attemptingInteract}
                     sx={{
                         marginTop: "20px",
                         width: isMobile ? "80%" : "100%",
@@ -265,6 +268,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                             setCurrentIndex(i);
                         }}
                     >
+                        {linkData.icon && <ListItemIcon>{linkData.icon}</ListItemIcon>}
                         <ListItemText>{linkData.display}</ListItemText>
                     </ListItemButton>
                 ))}

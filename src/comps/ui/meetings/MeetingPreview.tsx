@@ -67,7 +67,9 @@ const MeetingPreview = ({
 
     return (
         <Dialog open={open}>
-            <DialogTitle variant="h2">{organizationName || "Untitled Organization"}</DialogTitle>
+            <DialogTitle variant="h2">
+                {organizationName || "Untitled Organization"}
+            </DialogTitle>
             <IconButton
                 sx={{
                     position: "absolute",

@@ -55,7 +55,7 @@ const Catalog = () => {
     const [seed, setSeed] = useState(Math.random());
 
     const isTwo = useMediaQuery("(max-width: 1525px)");
-    const isTwoWrap = useMediaQuery("(max-width: 1100px)")
+    const isTwoWrap = useMediaQuery("(max-width: 1100px)");
     const isOne = useMediaQuery("(max-width: 700px)");
 
     let columns = 3;
@@ -86,26 +86,26 @@ const Catalog = () => {
             if (searchParams.tags.length) {
                 let tagReqs = searchParams.tags
                     .map((tag) => `tags.cs.{${tag}}`)
-                    .join(",")
-                orgReqs.push(`and(or(${tagReqs}))`)
+                    .join(",");
+                orgReqs.push(`and(or(${tagReqs}))`);
             }
 
             if (searchParams.meetingDays.length) {
                 let dayReqs = searchParams.meetingDays
                     .map((day) => `meeting_days.cs.{${day}}`)
-                    .join(",")
-                orgReqs.push(`and(or(${dayReqs}))`)
+                    .join(",");
+                orgReqs.push(`and(or(${dayReqs}))`);
             }
             if (searchParams.commitmentLevels.length) {
                 let commitmentReqs = searchParams.commitmentLevels
                     .map((level) => `commitment_level.eq.${level}`)
                     .join(",");
-                orgReqs.push(`and(or(${commitmentReqs}))`)
+                orgReqs.push(`and(or(${commitmentReqs}))`);
             }
 
-            let orgReqsQuery = '';
+            let orgReqsQuery = "";
             if (orgReqs.length) {
-                orgReqsQuery = `,and(${orgReqs.join(",")})`
+                orgReqsQuery = `,and(${orgReqs.join(",")})`;
             }
 
             var catalogQuery = `and(or(name.ilike.%${searchParams.name}%,keywords.ilike.%${searchParams.name}%)${orgReqsQuery})`;
@@ -167,7 +167,7 @@ const Catalog = () => {
             />
             <Box
                 sx={{
-                    width: isOne || isTwoWrap ? "100%" : (isTwo ? '70%' : '75%'),
+                    width: isOne || isTwoWrap ? "100%" : isTwo ? "70%" : "75%",
                     padding: "20px",
                     position: "relative",
                 }}

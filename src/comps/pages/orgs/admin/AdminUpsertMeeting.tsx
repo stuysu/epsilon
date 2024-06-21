@@ -6,13 +6,11 @@ import {
     DialogContent,
     DialogTitle,
     TextField,
-    Select,
     MenuItem,
-    SelectChangeEvent,
     DialogActions,
     Switch,
     FormControlLabel,
-    Box
+    Box,
 } from "@mui/material";
 
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
@@ -23,7 +21,7 @@ import dayjs, { Dayjs } from "dayjs";
 import { useSnackbar } from "notistack";
 
 const getDefaultTime = () => {
-    return dayjs().startOf('day').hour(15).minute(45)
+    return dayjs().startOf("day").hour(15).minute(45);
 };
 
 /* TODO: block off rooms on days they are unavailable */
@@ -60,11 +58,11 @@ const AdminUpsertMeeting = ({
 
     /* date inputs */
     const [startTime, setStartTime] = useState<Dayjs | null>(
-        start ? dayjs(start) : getDefaultTime()
+        start ? dayjs(start) : getDefaultTime(),
     );
     const [endTime, setEndTime] = useState<Dayjs | null>(
-        end ? dayjs(end) : getDefaultTime() 
-    )
+        end ? dayjs(end) : getDefaultTime(),
+    );
 
     const [isPub, setIsPub] = useState(
         isPublic === undefined ? true : isPublic,
@@ -107,12 +105,14 @@ const AdminUpsertMeeting = ({
             type roomMeta = {
                 room_id: number;
                 meeting_id: number;
-            }
+            };
 
-            let { data, error } = await supabase.rpc("get_booked_rooms", {
-                meeting_start: startTime.toISOString(),
-                meeting_end: endTime.toISOString(),
-            }).returns<roomMeta[]>();
+            let { data, error } = await supabase
+                .rpc("get_booked_rooms", {
+                    meeting_start: startTime.toISOString(),
+                    meeting_end: endTime.toISOString(),
+                })
+                .returns<roomMeta[]>();
 
             if (error || !data) {
                 enqueueSnackbar(
@@ -122,20 +122,18 @@ const AdminUpsertMeeting = ({
                 return;
             }
 
-            data = data.filter(meta => meta.meeting_id !== id); // remove this current meeting's booking from time slot
-            
+            data = data.filter((meta) => meta.meeting_id !== id); // remove this current meeting's booking from time slot
+
             let availRooms = allRooms.filter(
-                (room) => !~data!.findIndex(meta => meta.room_id === room.id), // room does not exist in booked rooms
-            )
+                (room) => !~data!.findIndex((meta) => meta.room_id === room.id), // room does not exist in booked rooms
+            );
 
             // check if the currently selected room id is no longer valid
-            if (roomId && ~data.findIndex(meta => meta.room_id === roomId)) {
+            if (roomId && ~data.findIndex((meta) => meta.room_id === roomId)) {
                 setRoomId(undefined);
             }
 
-            setAvailableRooms(
-                availRooms
-            );
+            setAvailableRooms(availRooms);
         };
 
         filterRooms();
@@ -143,13 +141,11 @@ const AdminUpsertMeeting = ({
 
     useEffect(() => {
         // if available room changes due to time, check if room id chosen before is still valid
-        
-    }, [availableRooms, roomId])
+    }, [availableRooms, roomId]);
 
     const handleSave = async () => {
         let supabaseReturn;
 
-        let isCreated = false;
         let isInsert = false;
         let returnSelect = `
             id,
@@ -166,46 +162,52 @@ const AdminUpsertMeeting = ({
         `;
 
         if (!meetingTitle || !meetingTitle.length) {
-            console.log(meetingTitle)
-            enqueueSnackbar("Missing meeting title.", { variant: 'error' });
+            console.log(meetingTitle);
+            enqueueSnackbar("Missing meeting title.", { variant: "error" });
             return;
         }
 
         if (!startTime) {
-            enqueueSnackbar("Missing start time for meeting.", { variant: 'error' });
+            enqueueSnackbar("Missing start time for meeting.", {
+                variant: "error",
+            });
             return;
         }
 
         if (!endTime) {
-            enqueueSnackbar("Missing end time for meeting.", { variant: 'error' });
+            enqueueSnackbar("Missing end time for meeting.", {
+                variant: "error",
+            });
             return;
         }
 
         if (endTime.isBefore(startTime)) {
-            enqueueSnackbar("Meeting start time cannot be before meeting end time.", { variant: 'error' })
+            enqueueSnackbar(
+                "Meeting start time cannot be before meeting end time.",
+                { variant: "error" },
+            );
             return;
         }
 
         if (id) {
             // update
-            supabaseReturn = await supabase
-                .from("meetings")
-                .update({
+            supabaseReturn = await supabase.functions.invoke("edit-meeting", {
+                body: {
+                    organization_id: organization.id,
+                    id,
                     title: meetingTitle,
                     description: meetingDesc,
                     room_id: roomId || null,
                     start_time: startTime.toISOString(),
                     end_time: endTime.toISOString(),
                     is_public: isPub,
-                })
-                .eq("id", id)
-                .select(returnSelect);
+                },
+            });
         } else {
             // create
             isInsert = true;
-            supabaseReturn = await supabase
-                .from("meetings")
-                .insert({
+            supabaseReturn = await supabase.functions.invoke("create-meeting", {
+                body: {
                     organization_id: organization.id,
                     title: meetingTitle,
                     description: meetingDesc,
@@ -213,11 +215,10 @@ const AdminUpsertMeeting = ({
                     start_time: startTime.toISOString(),
                     end_time: endTime.toISOString(),
                     is_public: isPub,
-                })
-                .select(returnSelect);
-            isCreated = true;
+                    notify_faculty: false,
+                },
+            });
         }
-
         if (supabaseReturn.error) {
             enqueueSnackbar(
                 "Error creating meeting. Contact it@stuysu.org for support.",
@@ -226,13 +227,13 @@ const AdminUpsertMeeting = ({
             return;
         }
 
-        if (isCreated) {
+        if (isInsert) {
             enqueueSnackbar("Meeting created!", { variant: "success" });
         } else {
             enqueueSnackbar("Meeting updated!", { variant: "success" });
         }
 
-        onSave(supabaseReturn.data[0] as Partial<Meeting>, isInsert);
+        onSave(supabaseReturn.data as Partial<Meeting>, isInsert);
         onClose();
     };
 
@@ -240,14 +241,22 @@ const AdminUpsertMeeting = ({
         <Dialog open={open} onClose={onClose}>
             <DialogTitle>{id ? "Update" : "Create"} Meeting</DialogTitle>
             <DialogContent>
-                <Box sx={{ width: '100%', display: 'flex', flexWrap: 'nowrap', alignItems: 'center', height: '80px' }}>
+                <Box
+                    sx={{
+                        width: "100%",
+                        display: "flex",
+                        flexWrap: "nowrap",
+                        alignItems: "center",
+                        height: "80px",
+                    }}
+                >
                     <TextField
                         value={meetingTitle}
                         onChange={(event: ChangeEvent<HTMLInputElement>) =>
                             setMeetingTitle(event.target.value)
                         }
                         label="Title"
-                        sx={{ width: '100%', height: '60px' }}
+                        sx={{ width: "100%", height: "60px" }}
                     />
                     <TextField
                         value={!loading ? String(roomId) : ""}
@@ -256,7 +265,11 @@ const AdminUpsertMeeting = ({
                         onChange={(event) =>
                             setRoomId(Number(event.target.value) || undefined)
                         }
-                        sx={{ width: '30%', height: '60px', marginLeft: '10px' }}
+                        sx={{
+                            width: "30%",
+                            height: "60px",
+                            marginLeft: "10px",
+                        }}
                     >
                         <MenuItem value={"undefined"}>Virtual</MenuItem>
                         {availableRooms.map((room) => (
@@ -277,35 +290,49 @@ const AdminUpsertMeeting = ({
                     rows={4}
                 />
 
-                <DatePicker 
-                    label='Meeting Day'
+                <DatePicker
+                    label="Meeting Day"
                     value={startTime}
-                    onChange={(newStartTime) => 
-                        {
-                            if (!newStartTime) return;
+                    onChange={(newStartTime) => {
+                        if (!newStartTime) return;
 
-                            setStartTime(newStartTime);
+                        setStartTime(newStartTime);
 
-                            // also change day of end time
-                            if (!endTime) {
-                                setEndTime(newStartTime);
-                            } else {
-                                setEndTime(endTime?.year(newStartTime.year()).month(newStartTime.month()).date(newStartTime.date()))
-                            }
+                        // also change day of end time
+                        if (!endTime) {
+                            setEndTime(newStartTime);
+                        } else {
+                            setEndTime(
+                                endTime
+                                    ?.year(newStartTime.year())
+                                    .month(newStartTime.month())
+                                    .date(newStartTime.date()),
+                            );
                         }
-                    }
-                    sx={{ width: '100%', marginTop: '10px', marginBottom: '10px'}}
+                    }}
+                    sx={{
+                        width: "100%",
+                        marginTop: "10px",
+                        marginBottom: "10px",
+                    }}
                 />
-                <Box sx={{ width: '100%', display: 'flex', flexWrap: 'nowrap', alignItems: 'center'}}>
-                    <TimePicker 
-                        label='Start'
+                <Box
+                    sx={{
+                        width: "100%",
+                        display: "flex",
+                        flexWrap: "nowrap",
+                        alignItems: "center",
+                    }}
+                >
+                    <TimePicker
+                        label="Start"
                         value={startTime}
                         onChange={setStartTime}
-                        sx={{ marginRight: '10px'}}
+                        sx={{ marginRight: "10px" }}
                     />
 
-                    <TimePicker 
-                        label='End'
+                    <TimePicker
+                        label="End"
                         value={endTime}
                         onChange={setEndTime}
                     />
@@ -319,7 +346,7 @@ const AdminUpsertMeeting = ({
                             }
                         />
                     }
-                    sx={{ marginTop: '10px'}}
+                    sx={{ marginTop: "10px" }}
                     label="is public?"
                 />
             </DialogContent>

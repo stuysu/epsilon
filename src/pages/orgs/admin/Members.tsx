@@ -22,7 +22,7 @@ const Members = () => {
                 picture: member.users?.picture,
                 role_name: member.role_name,
                 role: member.role,
-                is_faculty: member.users?.is_faculty
+                is_faculty: member.users?.is_faculty,
             };
         });
 
@@ -35,21 +35,23 @@ const Members = () => {
             <Typography variant="h1" align="center" width="100%">
                 Manage Members
             </Typography>
-            {members?.sort(sortByRole).map((member, i) => (
-                <AdminMember
-                    id={member.membershipId || -1}
-                    userId={member.userId || -1}
-                    first_name={member.first_name || "First"}
-                    last_name={member.last_name || "Last"}
-                    email={member.email || ""}
-                    picture={member.picture}
-                    role={member.role || "MEMBER"}
-                    role_name={member.role_name}
-                    isCreator={userMember?.role === "CREATOR"}
-                    is_faculty={member.is_faculty}
-                    key={i}
-                />
-            ))}
+            {members
+                ?.sort(sortByRole)
+                .map((member, i) => (
+                    <AdminMember
+                        id={member.membershipId || -1}
+                        userId={member.userId || -1}
+                        first_name={member.first_name || "First"}
+                        last_name={member.last_name || "Last"}
+                        email={member.email || ""}
+                        picture={member.picture}
+                        role={member.role || "MEMBER"}
+                        role_name={member.role_name}
+                        isCreator={userMember?.role === "CREATOR"}
+                        is_faculty={member.is_faculty}
+                        key={i}
+                    />
+                ))}
         </Box>
     );
 };

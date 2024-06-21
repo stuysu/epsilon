@@ -34,7 +34,7 @@ const OrgMeeting = ({
     isMobile,
     onlyUpcoming,
     onEdit,
-    onDelete
+    onDelete,
 }: Props) => {
     const [open, setOpen] = useState(false);
     let startTime = dayjs(start_time).format("L LT");
@@ -67,26 +67,34 @@ const OrgMeeting = ({
                     {startTime} to {endTime}
                 </Typography>
                 <Typography>Location: {room_name || "Virtual"}</Typography>
-                {is_public ? <Typography>Public</Typography> : <Typography>Private</Typography>}
+                {is_public ? (
+                    <Typography>Public</Typography>
+                ) : (
+                    <Typography>Private</Typography>
+                )}
             </Box>
             <Box sx={{ height: "60px", width: "100%" }}>
                 <Button variant="contained" onClick={() => setOpen(true)}>
                     View More
                 </Button>
-                {
-                    onEdit && (
-                        <Button variant='contained' onClick={onEdit} sx={{ marginLeft: '10px'}}>
-                            Edit
-                        </Button>
-                    )
-                }
-                {
-                    onDelete && (
-                        <Button variant='contained' onClick={onDelete} sx={{ marginLeft: '10px'}}>
-                            Delete
-                        </Button>
-                    )
-                }
+                {onEdit && (
+                    <Button
+                        variant="contained"
+                        onClick={onEdit}
+                        sx={{ marginLeft: "10px" }}
+                    >
+                        Edit
+                    </Button>
+                )}
+                {onDelete && (
+                    <Button
+                        variant="contained"
+                        onClick={onDelete}
+                        sx={{ marginLeft: "10px" }}
+                    >
+                        Delete
+                    </Button>
+                )}
             </Box>
             <MeetingPreview
                 id={id}

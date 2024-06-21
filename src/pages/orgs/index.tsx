@@ -38,7 +38,7 @@ const OrgRouter = () => {
         join_instructions: "",
         memberships: [],
         meetings: [],
-        posts: []
+        posts: [],
     });
 
     useEffect(() => {

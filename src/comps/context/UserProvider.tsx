@@ -67,16 +67,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                       id,
                       name,
                       url,
-                      picture,
-                      meetings (
-                          title,
-                          description,
-                          start_time,
-                          end_time,
-                          rooms (
-                              name
-                          )
-                      )
+                      picture
                   )
               )
           `,
