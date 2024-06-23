@@ -31,6 +31,7 @@ import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import FeedIcon from "@mui/icons-material/Feed";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AddCircleIcon from "@mui/icons-material/AddCircle";
+import InfoIcon from '@mui/icons-material/Info';
 
 const navStyles: CSSProperties = {
     width: "100%",
@@ -251,6 +252,19 @@ const NavBar = () => {
                             </ListItemButton>
                         </List>
                     )}
+
+                    <Divider />
+                    <List
+                        sx={{ width: "100%" }}
+                        subheader={<ListSubheader>Info</ListSubheader>}
+                    >
+                        <ListItemButton onClick={() => navigate("/about")}>
+                            <ListItemIcon>
+                                <InfoIcon />
+                            </ListItemIcon>
+                            <ListItemText>About</ListItemText>
+                        </ListItemButton>
+                    </List>
                 </Box>
             </Drawer>
         </>
