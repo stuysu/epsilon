@@ -19,6 +19,8 @@ import FormCheckbox from "../comps/ui/forms/FormCheckbox";
 
 import OrgRequirements from "../utils/OrgRequirements";
 
+import { PUBLIC_URL } from "../constants";
+
 type FormType = {
     name: string;
     url: string;
@@ -155,8 +157,8 @@ const Create = () => {
         }
 
         enqueueSnackbar("Organization created!", { variant: "success" });
-        /* redirect after creation */
-        navigate(`/${formData.url}`);
+        /* redirect after creation (with refresh) */
+        window.location.href = `${PUBLIC_URL}/${formData.url}`
     };
 
     return (
