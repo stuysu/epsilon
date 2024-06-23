@@ -4,9 +4,9 @@ import { supabase } from "../supabaseClient";
 
 import { useSnackbar } from "notistack";
 
-import { Box, useMediaQuery, Typography } from "@mui/material";
+import { Box, useMediaQuery, Typography, Badge } from "@mui/material";
 
-import { DateCalendar } from "@mui/x-date-pickers";
+import { DateCalendar, DayCalendarSkeleton, PickersDay, PickersDayProps } from "@mui/x-date-pickers";
 
 import dayjs, { Dayjs } from "dayjs";
 import DaySchedule from "../comps/pages/allmeetings/DaySchedule";
@@ -14,6 +14,23 @@ import DaySchedule from "../comps/pages/allmeetings/DaySchedule";
 type CachedMeetings = {
     [date: string]: CalendarMeeting[];
 };
+
+function ServerDay(props: PickersDayProps<Dayjs> & { highlightedDays?: number[] }) {
+    const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
+  
+    const isSelected =
+      !props.outsideCurrentMonth && highlightedDays.indexOf(props.day.date()) >= 0;
+  
+    return (
+      <Badge
+        key={props.day.toString()}
+        overlap="circular"
+        badgeContent={isSelected ? '🔴' : undefined}
+      >
+        <PickersDay {...other} outsideCurrentMonth={outsideCurrentMonth} day={day} />
+      </Badge>
+    );
+  }
 
 const AllMeetings = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -27,6 +44,31 @@ const AllMeetings = () => {
     /* month adjuster */
     const [time, setTime] = useState<Dayjs>(dayjs());
 
+    /* days with meetings */
+    const [loading, setLoading] = useState(false);
+    const [highlightedDays, setHighlightedDays] = useState<number[]>([]);
+
+    const updateHighlightedDays = async (month: number, year: number) => {
+        const { data, error } = await supabase.rpc("get_unique_meeting_days", { month: month + 1, year });
+
+        /* database function returns null if can't find any meetings */
+        if (!data) {
+            setHighlightedDays([]);
+            setLoading(false);
+            return;
+        }
+
+        if (error) {
+            enqueueSnackbar("Error fetching meeting days", { variant: "error" });
+
+            setHighlightedDays([]);
+            return;
+        }
+
+        setHighlightedDays(data as number[]);
+        setLoading(false);
+    }
+
     useEffect(() => {
         let dayString = `${time.year()}/${time.month()}/${time.date()}`;
         if (cachedMeetings[dayString]) {
@@ -35,6 +77,8 @@ const AllMeetings = () => {
 
         let dayStart = new Date(time.year(), time.month(), time.date());
         let nextDayStart = new Date(time.year(), time.month(), time.date() + 1);
+
+        updateHighlightedDays(time.month(), time.year());
 
         const fetchMeetings = async () => {
             const { data, error } = await supabase
@@ -101,6 +145,23 @@ const AllMeetings = () => {
                     <DateCalendar
                         views={["day"]}
                         onChange={(newValue) => setTime(newValue)}
+                        onMonthChange={(date: Dayjs) => {
+                            let month = date.month();
+                            let year = date.year();
+
+                            setLoading(true);
+                            updateHighlightedDays(month, year);
+                        }}
+                        loading={loading}
+                        renderLoading={() => <DayCalendarSkeleton />}
+                        slots={{
+                            day: ServerDay
+                        }}
+                        slotProps={{
+                            day: {
+                                highlightedDays
+                            } as any
+                        }}
                         sx={{ width: "100%" }}
                     />
                 </Box>
