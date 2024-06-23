@@ -12,6 +12,8 @@ import FormTextField from "../../../ui/forms/FormTextField";
 import OrgRequirements from "../../../../utils/OrgRequirements";
 import { capitalizeWords } from "../../../../utils/DataFormatters";
 import { supabase } from "../../../../supabaseClient";
+import { PUBLIC_URL } from "../../../../constants";
+import { useNavigate } from "react-router-dom";
 
 type Props = {
     organization: Partial<Organization>; // Make organization a prop to allow component to become reusable
@@ -164,6 +166,9 @@ const OrgEditor = ({
 
     /* validation */
     const [savable, setSavable] = useState(false);
+
+    /* redirection */
+    const navigate = useNavigate();
 
     useEffect(() => {
         /* check if picture is saved before terminating if no other fields are saved */
@@ -377,18 +382,36 @@ const OrgEditor = ({
 
         let data, error;
 
-        if (existingEdit.id === undefined) {
-            // insert new
-            ({ data, error } = await supabase
-                .from("organizationedits")
-                .insert({ organization_id: organization.id, ...payload })
-                .select());
+        if (organization.state !== "PENDING") {
+
+            if (existingEdit.id === undefined) {
+                // insert new
+                ({ data, error } = await supabase
+                    .from("organizationedits")
+                    .insert({ organization_id: organization.id, ...payload })
+                    .select());
+            } else {
+                // update old
+                ({ data, error } = await supabase
+                    .from("organizationedits")
+                    .update({ organization_id: organization.id, ...payload })
+                    .eq("id", existingEdit.id)
+                    .select());
+            }
         } else {
-            // update old
+            /* PENDING ORGANIZATION SHOULD JUST BE ALLOWED TO UPDATE */
+            
+            // filter out null fields
+            for (let key of Object.keys(payload)) {
+                if (payload[key] === null) {
+                    delete payload[key];
+                }
+            }
+
             ({ data, error } = await supabase
-                .from("organizationedits")
-                .update({ organization_id: organization.id, ...payload })
-                .eq("id", existingEdit.id)
+                .from("organizations")
+                .update(payload)
+                .eq("id", organization.id)
                 .select());
         }
 
@@ -406,17 +429,25 @@ const OrgEditor = ({
             );
         }
 
-        // update frontend to reflect changes
-        setPendingEdit(data[0] as OrganizationEdit);
+        if (organization.state === "PENDING") {
+            if (payload.url) {
+                window.location.href = `${PUBLIC_URL}/${payload.url}/admin/org-edits`;
+            } else {
+                navigate(0);
+            }
+        } else {
+            // update frontend to reflect changes
+            setPendingEdit(data[0] as OrganizationEdit);
 
-        enqueueSnackbar("Organization edit request sent!", {
-            variant: "success",
-        });
+            enqueueSnackbar("Organization edit request sent!", {
+                variant: "success",
+            });
 
-        // reset edit state
-        setEditState({});
-        setEditPicture(undefined);
-        setStatus({});
+            // reset edit state
+            setEditState({});
+            setEditPicture(undefined);
+            setStatus({});
+        }
     };
 
     const changeStatus = useCallback(
@@ -517,10 +548,11 @@ const OrgEditor = ({
                         key={field}
                         field={field}
                         pending={
-                            existingEdit[field as keyof OrganizationEdit] !==
+                            (existingEdit[field as keyof OrganizationEdit] !==
                                 null &&
                             existingEdit[field as keyof OrganizationEdit] !==
-                                undefined
+                                undefined) ||
+                            organization.state === "PENDING"
                         }
                         editing={editState[field]}
                         onCancel={() => {

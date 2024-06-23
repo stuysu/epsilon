@@ -1,7 +1,6 @@
 import { CSSProperties, useContext, useState } from "react";
 import UserContext from "../comps/context/UserContext";
 
-import { useNavigate } from "react-router-dom";
 import { Typography, useMediaQuery } from "@mui/material";
 import MultiPageForm from "../comps/ui/forms/MultiPageForm";
 import FormPage from "../comps/ui/forms/FormPage";
@@ -70,7 +69,6 @@ const multilineStyle: CSSProperties = {
 const Create = () => {
     const user = useContext(UserContext);
     const { enqueueSnackbar } = useSnackbar();
-    const navigate = useNavigate();
 
     const [formData, setFormData] = useState<FormType>(emptyForm);
     const isMobile = useMediaQuery("(max-width: 620px)");
