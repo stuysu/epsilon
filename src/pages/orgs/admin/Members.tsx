@@ -48,6 +48,7 @@ const Members = () => {
                         role={member.role || "MEMBER"}
                         role_name={member.role_name}
                         isCreator={userMember?.role === "CREATOR"}
+                        isAdmin={userMember?.role === "ADMIN"}
                         is_faculty={member.is_faculty}
                         key={i}
                     />

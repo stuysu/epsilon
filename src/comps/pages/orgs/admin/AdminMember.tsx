@@ -28,7 +28,8 @@ const AdminMember = ({
     picture,
     role,
     role_name,
-    isCreator,
+    isCreator, // referring to client user
+    isAdmin, // referring to client user
     is_faculty,
 }: {
     id: number;
@@ -40,6 +41,7 @@ const AdminMember = ({
     role: Membership["role"];
     role_name?: string;
     isCreator: boolean;
+    isAdmin: boolean;
     is_faculty?: boolean;
 }) => {
     const user = useContext(UserContext);
@@ -179,30 +181,32 @@ const AdminMember = ({
                 />
             </Box>
             <Box sx={{ width: "200px" }}>
-                {role !== "CREATOR" || isCreator ? (
-                    <Button
-                        onClick={handleEdit}
-                        variant="contained"
-                        sx={{ height: "40px" }}
-                    >
-                        Edit
-                    </Button>
-                ) : (
-                    <></>
-                )}
+                {
+                    (isCreator || role === "MEMBER" || role === "ADVISOR" || userId == user.id) && 
+                    (
+                        <Button
+                            onClick={handleEdit}
+                            variant="contained"
+                            sx={{ height: "40px" }}
+                        >
+                            Edit
+                        </Button>
+                    )
+                }
 
-                {userId !== user.id &&
-                (isCreator || role === "MEMBER" || role === "ADVISOR") ? (
-                    <Button
-                        onClick={handleKick}
-                        variant="contained"
-                        sx={{ height: "40px", marginLeft: "10px" }}
-                    >
-                        Kick
-                    </Button>
-                ) : (
-                    <></>
-                )}
+                {
+                    userId !== user.id &&
+                    (isCreator || role === "MEMBER" || role === "ADVISOR") && 
+                    (
+                        <Button
+                            onClick={handleKick}
+                            variant="contained"
+                            sx={{ height: "40px", marginLeft: "10px" }}
+                        >
+                            Kick
+                        </Button>
+                    )
+                }
             </Box>
             <Dialog open={editState.editing} onClose={handleClose}>
                 <DialogTitle>Edit User</DialogTitle>
@@ -213,17 +217,23 @@ const AdminMember = ({
                         onChange={handleType}
                         label="Role Name"
                     />
-                    {!(isCreator && user.id === userId) && (
-                        <Select
-                            value={editState.role}
-                            label="Role"
-                            onChange={handleSelect}
-                        >
-                            <MenuItem value={"MEMBER"}>Member</MenuItem>
-                            <MenuItem value={"ADVISOR"}>Advisor</MenuItem>
-                            <MenuItem value={"ADMIN"}>Admin</MenuItem>
-                        </Select>
-                    )}
+                    {
+                        (
+                            (isCreator && userId !== user.id) ||
+                            (isAdmin && role !== "ADMIN" && role !== "CREATOR" && userId !== user.id)
+                        ) &&
+                        (
+                            <Select
+                                value={editState.role}
+                                label="Role"
+                                onChange={handleSelect}
+                            >
+                                <MenuItem value={"MEMBER"}>Member</MenuItem>
+                                <MenuItem value={"ADVISOR"}>Advisor</MenuItem>
+                                <MenuItem value={"ADMIN"}>Admin</MenuItem>
+                            </Select>
+                        )
+                    }
                 </DialogContent>
                 <DialogActions>
                     <Button variant="contained" onClick={handleClose}>
