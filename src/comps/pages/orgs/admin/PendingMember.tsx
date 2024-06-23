@@ -22,10 +22,12 @@ const PendingMember = ({
     const organization = useContext(OrgContext);
 
     const handleApprove = async () => {
-        const { error } = await supabase
-            .from("memberships")
-            .update({ active: true })
-            .eq("id", id);
+        const { error } = await supabase.functions.invoke(
+            "approve-member", 
+            {
+                body: { member_id: id }
+            }
+        )
 
         if (error) {
             enqueueSnackbar(
