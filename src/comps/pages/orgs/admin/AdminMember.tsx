@@ -230,7 +230,12 @@ const AdminMember = ({
                             >
                                 <MenuItem value={"MEMBER"}>Member</MenuItem>
                                 <MenuItem value={"ADVISOR"}>Advisor</MenuItem>
-                                <MenuItem value={"ADMIN"}>Admin</MenuItem>
+                                {
+                                    isCreator &&
+                                    (
+                                        <MenuItem value={"ADMIN"}>Admin</MenuItem>
+                                    )
+                                }
                             </Select>
                         )
                     }
