@@ -18,6 +18,7 @@ import { supabase } from "../../../../supabaseClient";
 import { useSnackbar } from "notistack";
 import OrgMember from "../OrgMember";
 import OrgContext from "../../../context/OrgContext";
+import ConfirmationDialog from "../../../ui/ConfirmationDialog";
 
 const AdminMember = ({
     id,
@@ -54,6 +55,9 @@ const AdminMember = ({
         role_name: "",
         editing: false,
     });
+
+    /* KICK CONFIRMATION */
+    const [kickConfirmOpen, setKickConfirmOpen] = useState(false);
 
     const handleEdit = () => {
         setEditState({
@@ -199,7 +203,7 @@ const AdminMember = ({
                     (isCreator || role === "MEMBER" || role === "ADVISOR") && 
                     (
                         <Button
-                            onClick={handleKick}
+                            onClick={() => setKickConfirmOpen(true)}
                             variant="contained"
                             sx={{ height: "40px", marginLeft: "10px" }}
                         >
@@ -208,6 +212,13 @@ const AdminMember = ({
                     )
                 }
             </Box>
+            <ConfirmationDialog 
+                open={kickConfirmOpen} 
+                title={`Kick ${user.first_name} ${user.last_name}?`}
+                description={"This action can't be reversed."}
+                onConfirm={handleKick}
+                onClose={() => setKickConfirmOpen(false)}
+            />
             <Dialog open={editState.editing} onClose={handleClose}>
                 <DialogTitle>Edit User</DialogTitle>
                 <DialogContent>
