@@ -75,7 +75,6 @@ const Create = () => {
 
     const createActivity = async () => {
         let body = {
-            creator_id: user.id,
             name: formData.name,
             url: formData.url.toLowerCase(),
             socials: formData.socials,
