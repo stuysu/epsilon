@@ -36,6 +36,15 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
     const theme = React.useMemo(
         () =>
             createTheme({
+                components: {
+                    MuiTypography: {
+                        styleOverrides: {
+                            root: {
+                                wordWrap: "break-word"
+                            }
+                        }
+                    }
+                },
                 palette: {
                     mode: prefersDarkMode ? "dark" : "light",
                     primary: {

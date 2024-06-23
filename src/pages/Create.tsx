@@ -1,7 +1,6 @@
 import { CSSProperties, useContext, useState } from "react";
 import UserContext from "../comps/context/UserContext";
 
-import { useNavigate } from "react-router-dom";
 import { Typography, useMediaQuery } from "@mui/material";
 import MultiPageForm from "../comps/ui/forms/MultiPageForm";
 import FormPage from "../comps/ui/forms/FormPage";
@@ -18,6 +17,8 @@ import FormTagSelect from "../comps/ui/forms/FormTagSelect";
 import FormCheckbox from "../comps/ui/forms/FormCheckbox";
 
 import OrgRequirements from "../utils/OrgRequirements";
+
+import { PUBLIC_URL } from "../constants";
 
 type FormType = {
     name: string;
@@ -68,14 +69,12 @@ const multilineStyle: CSSProperties = {
 const Create = () => {
     const user = useContext(UserContext);
     const { enqueueSnackbar } = useSnackbar();
-    const navigate = useNavigate();
 
     const [formData, setFormData] = useState<FormType>(emptyForm);
     const isMobile = useMediaQuery("(max-width: 620px)");
 
     const createActivity = async () => {
         let body = {
-            creator_id: user.id,
             name: formData.name,
             url: formData.url.toLowerCase(),
             socials: formData.socials,
@@ -155,8 +154,8 @@ const Create = () => {
         }
 
         enqueueSnackbar("Organization created!", { variant: "success" });
-        /* redirect after creation */
-        navigate(`/${formData.url}`);
+        /* redirect after creation (with refresh) */
+        window.location.href = `${PUBLIC_URL}/${formData.url}`
     };
 
     return (
