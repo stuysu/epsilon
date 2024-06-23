@@ -9,6 +9,7 @@ import { lazy, Suspense } from "react";
 import Home from "./Home";
 import AllMeetings from "./AllMeetings";
 import NavBar from "../comps/ui/nav/NavBar";
+import About from "./About";
 const Catalog = lazy(() => import("./Catalog"));
 const Create = lazy(() => import("./Create"));
 const OrgRouter = lazy(() => import("./orgs"));
@@ -42,6 +43,7 @@ const Pages = () => {
                     <Route path={"/"} Component={Home} />
                     <Route path={"/catalog"} Component={Catalog} />
                     <Route path={"/create"} Component={Create} />
+                    <Route path={"/about"} Component={About} />
                     <Route path={"/meetings"} Component={AllMeetings} />
                     <Route path={"/admin/*"} Component={AdminRouter} />
                     <Route path={"/:orgUrl/*"} Component={OrgRouter} />
