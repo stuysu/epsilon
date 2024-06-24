@@ -84,6 +84,13 @@ const ApproveEdit = () => {
                     );
                     setView(undefined);
                 }}
+                onReject={() => {
+                    // remove self from pending edits
+                    setPendingEdits(
+                        pendingEdits.filter((e) => e.id !== view.id),
+                    );
+                    setView(undefined);
+                }}
             />
         );
     }

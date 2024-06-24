@@ -29,8 +29,9 @@ const editFields: EditKey[] = [
 const OrgEditApproval = ({
     onBack,
     onApprove,
+    onReject,
     ...edit
-}: { onBack: () => void; onApprove: () => void } & EditType) => {
+}: { onBack: () => void; onReject: () => void; onApprove: () => void } & EditType) => {
     const { enqueueSnackbar } = useSnackbar();
 
     /* fetch current org data to compare to */
@@ -109,6 +110,24 @@ const OrgEditApproval = ({
         onApprove();
     };
 
+    const reject = async () => {
+        let error;
+        ({ error } = await supabase
+            .from("organizationedits")
+            .delete()
+            .eq("id", edit.id));
+
+        if (error) {
+            return enqueueSnackbar(
+                "Error deleting organization edit. Contact it@stuysu.org for support.",
+                { variant: "error" },
+            );
+        }
+
+        enqueueSnackbar("Organization edit rejected.", { variant: "success" });
+        onReject();
+    }
+
     return (
         <Box>
             <Button variant="contained" onClick={onBack}>
@@ -116,6 +135,9 @@ const OrgEditApproval = ({
             </Button>
             <Button variant="contained" onClick={approve}>
                 Approve
+            </Button>
+            <Button variant="contained" onClick={reject}>
+                Reject
             </Button>
             <h1>{edit.organization_name}</h1>
             {fields.map((field, i) => {
