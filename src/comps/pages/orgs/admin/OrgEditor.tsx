@@ -294,7 +294,8 @@ const OrgEditor = ({
             editPicture !==
             (existingEdit === undefined
                 ? organization["picture"]
-                : existingEdit["picture"])
+                : existingEdit["picture"]) &&
+            editPicture
         ) {
             // picture is different, but needs to be uploaded first
             /* Note: any indication of the picture failing to upload will kill the entire org edit process */
@@ -581,7 +582,14 @@ const OrgEditor = ({
                             setEditState({ ...editState, [field]: true })
                         }
                         defaultDisplay={
-                            <Typography width="80%">
+                            <Typography 
+                                sx={{ 
+                                    wordWrap: "break-word",
+                                    wordBreak: 'break-all',
+                                    width: "80%", 
+                                    display: "block"
+                                }}
+                            >
                                 {editData[field as keyof OrganizationEdit]}
                             </Typography>
                         }
