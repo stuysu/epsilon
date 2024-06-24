@@ -8,12 +8,16 @@ import { useSnackbar } from "notistack";
 const PostEditor = ({
     content,
     orgId,
+    orgName,
+    orgPicture,
     onSave,
     onCancel,
     onCreate,
 }: {
     content?: Post;
-    orgId: number;
+    orgId?: number;
+    orgName?: string;
+    orgPicture?: string;
     onSave?: (newData: Post) => void;
     onCancel?: () => void;
     onCreate?: (newData: Post) => void;
@@ -22,7 +26,11 @@ const PostEditor = ({
 
     let [postData, setPostData] = useState<Partial<Post>>({
         id: undefined,
-        organization_id: orgId,
+        organizations: {
+            id: orgId,
+            name: orgName,
+            picture: orgPicture,
+        },
         title: "",
         description: "",
         created_at: undefined,
@@ -54,8 +62,14 @@ const PostEditor = ({
             });
         }
 
+        let payload = {
+            title: postData.title,
+            description: postData.description,
+            organization_id: orgId,
+        }
+
         let { data, error } = await supabase.functions.invoke("create-post", {
-            body: postData,
+            body: payload,
         });
 
         if (error || !data) {
@@ -68,21 +82,36 @@ const PostEditor = ({
         // reset values
         setPostData({
             id: undefined,
-            organization_id: orgId,
+            organizations: {
+                id: orgId,
+                name: orgName,
+                picture: orgPicture,
+            },
             title: "",
             description: "",
             created_at: undefined,
             updated_at: undefined,
         });
 
+        data.organizations = {
+            id: orgId,
+            name: orgName,
+            picture: orgPicture
+        }
+
         if (onCreate) onCreate(data as Post);
         enqueueSnackbar("Post created!", { variant: "success" });
     };
 
     const savePost = async () => {
+        let payload = {
+            title: postData.title,
+            description: postData.description
+        }
+
         let { data, error } = await supabase
             .from("posts")
-            .update(postData)
+            .update(payload)
             .eq("id", postData.id)
             .select();
 
@@ -93,6 +122,12 @@ const PostEditor = ({
             );
         }
 
+        data[0].organizations = {
+            id: orgId,
+            name: orgName,
+            picture: orgPicture
+        }
+
         if (onSave) onSave(data[0] as Post);
         enqueueSnackbar("Post updated!", { variant: "success" });
     };
@@ -101,9 +136,9 @@ const PostEditor = ({
         <Paper
             elevation={1}
             sx={{
-                width: "500px",
+                width: "550px",
                 padding: "15px",
-                height: "350px",
+                height: "400px",
                 margin: "10px",
             }}
         >
@@ -126,7 +161,7 @@ const PostEditor = ({
                     onChange={onChange}
                     fullWidth
                     multiline
-                    rows={5}
+                    rows={7}
                     sx={{ marginTop: "10px" }}
                 />
             </Box>

@@ -1,6 +1,7 @@
-import { Box, Button, Card, Typography } from "@mui/material";
+import { Box, Button, Card, Typography, ListItem, ListItemText, ListItemAvatar, Avatar } from "@mui/material";
 import { useState } from "react";
 import MeetingPreview from "../../../ui/meetings/MeetingPreview";
+import dayjs from "dayjs";
 
 const UpcomingMeeting = (
     {
@@ -29,26 +30,42 @@ const UpcomingMeeting = (
 
     const [open, setOpen] = useState(false);
 
+    let start = dayjs(start_time);
+    let end = dayjs(end_time);
+
+    const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "October", "September", "November", "December"]
+
     return (
-        <Box sx={{ width: "100%", padding: "20px"}}>
+        <Box sx={{ width: "100%", paddingLeft: "30px", paddingRight: "30px", paddingTop: "10px", paddingBottom: "10px" }}>
             <Card
                 elevation={2}
                 sx={{
                     width: "100%",
-                    height: "250px",
+                    height: "300px",
                     padding: "20px"
                 }}
             >
-                <Box>
-                    <Typography variant="h2">{org_name}</Typography>
-                </Box>
-                <Box>
-                    <Box>
-                        {title}
-                    </Box>
-                    <Box>
-                        {start_time} - {end_time}
-                    </Box>
+                <ListItem>
+                    <ListItemAvatar>
+                        <Avatar alt={org_name} src={org_picture || ""}>
+                            {org_name.charAt(0).toUpperCase()}
+                        </Avatar>
+                    </ListItemAvatar>
+                    
+                    <ListItemText
+                        primary={org_name}
+                    />
+                </ListItem>
+                <Box sx={{ height: "150px"}}>
+                    <Typography variant="h3">{title}</Typography>
+                    <Typography>
+                        {daysOfWeek[start.day()]}, {monthNames[start.month()]}{" "}
+                        {start.date()} {start.year()}, {start.format("LT")} to{" "}
+                        {end.format("LT")} <br />
+                        Location: {room_name || "Virtual"} <br />
+                        {is_public ? "Public" : "Private"}
+                    </Typography>
                 </Box>
                 <Button variant="contained" onClick={() => setOpen(true)}>Show</Button>
                 <MeetingPreview

@@ -29,6 +29,8 @@ const Posts = () => {
             </Typography>
             <PostEditor
                 orgId={organization.id}
+                orgName={organization.name}
+                orgPicture={organization.picture as string}
                 onCreate={(newPost) => {
                     if (organization.setOrg) {
                         organization.setOrg({

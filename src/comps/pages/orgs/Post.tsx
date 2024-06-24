@@ -1,4 +1,4 @@
-import { Box, Button, Paper, Typography } from "@mui/material";
+import { Box, Button, ListItem, ListItemText, ListItemAvatar, Paper, Typography, Avatar, Card } from "@mui/material";
 import { supabase } from "../../../supabaseClient";
 
 import { useState, useContext } from "react";
@@ -44,7 +44,9 @@ const Post = ({
         return (
             <PostEditor
                 content={content}
-                orgId={content.organization_id}
+                orgId={content.organizations?.id as number}
+                orgName={content.organizations?.name as string}
+                orgPicture={content.organizations?.picture as string}
                 onCancel={() => setEditing(false)}
                 onSave={(newData) => {
                     let postIndex = organization.posts.findIndex(
@@ -81,36 +83,33 @@ const Post = ({
     let timeStr = `${postTime.month() + 1}/${postTime.date()}/${postTime.year()}`;
 
     return (
-        <Paper
-            elevation={1}
+        <Card
+            variant="outlined"
             sx={{
-                width: "500px",
+                width: "550px",
                 margin: "10px",
                 padding: "15px",
-                height: "350px",
+                height: "400px",
             }}
         >
-            <Box sx={{ width: "100%", display: "flex", flexWrap: "nowrap" }}>
-                <Box sx={{ width: "70%" }}>
-                    <Typography variant="h3" width="100%">
-                        {content.title}
-                    </Typography>
-                </Box>
-                <Box
-                    sx={{
-                        width: "30%",
-                        display: "flex",
-                        justfiyContent: "center",
-                        alignItems: "center",
-                    }}
-                >
-                    <Typography>
-                        {timeStr}
-                        {isEdited ? " [Edited]" : ""}
-                    </Typography>
-                </Box>
-            </Box>
-            <Box sx={{ width: "100%", height: "200px", overflowY: "auto" }}>
+            <ListItem>
+                <ListItemAvatar>
+                    <Avatar alt={content.organizations?.name} src={content.organizations?.picture || ""}>
+                        {content.organizations?.name?.charAt(0).toUpperCase()}
+                    </Avatar>
+                </ListItemAvatar>
+                
+                <ListItemText
+                    primary={content.organizations?.name}
+                    secondary={timeStr + (isEdited ? " [Edited]" : "")}
+                />
+            </ListItem>
+           
+            <Typography variant="h3" width="100%">
+                {content.title}
+            </Typography>
+
+            <Box sx={{ width: "100%", height: "170px", overflowY: "auto" }}>
                 <Typography variant="body1" width="100%">
                     {content.description}
                 </Typography>
@@ -131,7 +130,7 @@ const Post = ({
                     </>
                 )}
             </Box>
-        </Paper>
+        </Card>
     );
 };
 

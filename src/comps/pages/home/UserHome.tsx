@@ -105,7 +105,11 @@ const UserHome = () => {
                     description,
                     created_at,
                     updated_at,
-                    organization_id
+                    organizations!inner (
+                        name,
+                        picture,
+                        id
+                    )
                 `,
                 )
                 .in("organization_id", [userOrgIds])
@@ -128,88 +132,93 @@ const UserHome = () => {
 
     return (
         <Box sx={{ width: "100%" }}>
-            <Typography variant="h1" width="100%" align="center">
+            <Typography variant="h1" width="100%" align="center" marginBottom="50px">
                 Welcome back {user.first_name}!
             </Typography>
                 
-                <Grid container>
-                    <Grid item xs={12} sm={6} md={4} lg={4} xl={4} justifyContent={"center"}>
-                        <Box sx={{ width: "100%", display: "flex", justifyContent: "center", flexWrap: "wrap", paddingLeft: "10px" }}>
-                            <Typography variant="h2" width="100%" align="center">
-                                My Memberships
-                            </Typography>
-                            <Paper
-                                elevation={2}
-                                sx={{
-                                    width: "400px",
-                                    height: "300px",
-                                    overflowY: "auto",
-                                }}
-                            >
-                                {user.memberships?.map(membership => (
-                                    <OrgBar
-                                        key={membership.id}
-                                        name={
-                                            membership?.organizations?.name || "No Name"
-                                        }
-                                        role={membership?.role || "MEMBER"}
-                                        role_name={membership?.role_name}
-                                        url={membership?.organizations?.url || "/"}
-                                        picture={membership?.organizations?.picture}
-                                    />
-                                ))}
-                                {
-                                    user.memberships?.length === 0 && (
-                                        <Typography variant="h3" align="center">
-                                            You are not a member of any organizations
-                                        </Typography>
-                                    )
-                                }
-                            </Paper>
-                        </Box>
-                    </Grid>
-                    <Grid item xs={12} sm={6} md={8} lg={8} xl={8}>
+            <Grid container>
+                <Grid item xs={12} sm={6} md={4} lg={4} xl={4} justifyContent={"center"}>
+                    <Box sx={{ width: "100%", display: "flex", justifyContent: "center", flexWrap: "wrap", paddingLeft: "10px" }}>
                         <Typography variant="h2" width="100%" align="center">
-                            Upcoming Meetings
+                            My Memberships
                         </Typography>
-                        <Carousel responsive={responsive}>
+                        <Paper
+                            elevation={2}
+                            sx={{
+                                width: "400px",
+                                height: "310px",
+                                overflowY: "auto",
+                            }}
+                        >
+                            {user.memberships?.map(membership => (
+                                <OrgBar
+                                    key={membership.id}
+                                    name={
+                                        membership?.organizations?.name || "No Name"
+                                    }
+                                    role={membership?.role || "MEMBER"}
+                                    role_name={membership?.role_name}
+                                    url={membership?.organizations?.url || "/"}
+                                    picture={membership?.organizations?.picture}
+                                />
+                            ))}
                             {
-                                upcomingMeetings.map(meeting => (
-                                    <UpcomingMeeting
-                                        key={meeting.id}
-                                        id={meeting.id}
-                                        title={meeting.title}
-                                        description={meeting.description}
-                                        start_time={meeting.start_time}
-                                        end_time={meeting.end_time}
-                                        org_name={meeting.organizations.name}
-                                        org_picture={meeting.organizations.picture}
-                                        room_name={meeting.rooms?.name}
-                                        is_public={meeting.is_public}
-                                    />
-                                ))
+                                user.memberships?.length === 0 && (
+                                    <Typography variant="h3" align="center">
+                                        You are not a member of any organizations
+                                    </Typography>
+                                )
                             }
-                        </Carousel>
+                        </Paper>
+                    </Box>
+                </Grid>
+                <Grid item xs={12} sm={6} md={8} lg={8} xl={8}>
+                    <Typography variant="h2" width="100%" align="center">
+                        Upcoming Meetings
+                    </Typography>
+                    <Carousel responsive={responsive}>
                         {
-                            upcomingMeetings.length === 0 && (
-                                <Typography variant="h3" align="center">
-                                    No upcoming meetings
-                                </Typography>
-                            )
+                            upcomingMeetings.map(meeting => (
+                                <UpcomingMeeting
+                                    key={meeting.id}
+                                    id={meeting.id}
+                                    title={meeting.title}
+                                    description={meeting.description}
+                                    start_time={meeting.start_time}
+                                    end_time={meeting.end_time}
+                                    org_name={meeting.organizations.name}
+                                    org_picture={meeting.organizations.picture}
+                                    room_name={meeting.rooms?.name}
+                                    is_public={meeting.is_public}
+                                />
+                            ))
                         }
-                    </Grid>
-                    <Grid item xs={12}>
-                        {
-                            posts.map(post => (
+                    </Carousel>
+                    {
+                        upcomingMeetings.length === 0 && (
+                            <Typography variant="h3" align="center">
+                                No upcoming meetings
+                            </Typography>
+                        )
+                    }
+                </Grid>
+                <Box sx={{ width: "100%", marginTop: "50px" }}>
+                    <Typography variant="h1" align="center">Posts</Typography>
+                </Box>
+                {
+                    posts.map(post => (
+                        <Grid item xs={12} sm={12} md={6} lg={4}>
+                            <Box width="100%" display="flex" justifyContent="center" padding="10px">
                                 <Post
                                     key={post.id}
                                     content={post}
                                 />
-                            ))
-                        }
-                    </Grid>
-                </Grid>
-            </Box>
+                            </Box>
+                        </Grid>
+                    ))
+                }
+            </Grid>
+        </Box>
     );
 };
 

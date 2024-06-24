@@ -97,7 +97,12 @@ const OrgRouter = () => {
                         title,
                         description,
                         created_at,
-                        updated_at
+                        updated_at,
+                        organizations (
+                            name,
+                            picture,
+                            id
+                        )
                     )
                 `,
                 )
