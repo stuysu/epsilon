@@ -89,7 +89,7 @@ interface Permission {
 
 interface Post {
     id: number;
-    organization_id: number;
+    organizations?: Partial<Organization>;
     title: string;
     description: string;
     created_at: string;

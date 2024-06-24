@@ -1,62 +1,223 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import UserContext from "../../context/UserContext";
-import { Paper, Box, Typography, useMediaQuery } from "@mui/material";
+import { Paper, Box, Typography, useMediaQuery, Grid } from "@mui/material";
 import OrgBar from "./ui/OrgBar";
+
+import Carousel from "react-multi-carousel";
+import "react-multi-carousel/lib/styles.css";
+import { useSnackbar } from "notistack";
+import { supabase } from "../../../supabaseClient";
+import UpcomingMeeting from "./ui/UpcomingMeeting";
+import Post from "../orgs/Post";
+const responsive = {
+  superLargeDesktop: {
+    // the naming can be any, depends on you.
+    breakpoint: { max: 4000, min: 3000 },
+    items: 3
+  },
+  desktop: {
+    breakpoint: { max: 3000, min: 1024 },
+    items: 2
+  },
+  tablet: {
+    breakpoint: { max: 1024, min: 464 },
+    items: 1
+  },
+  mobile: {
+    breakpoint: { max: 464, min: 0 },
+    items: 1
+  }
+};
+
+type meetingType = {
+    id: number;
+    title: string;
+    description: string;
+    start_time: string;
+    end_time: string;
+    organizations: {
+        name: string;
+        picture: string;
+    };
+    rooms: {
+        name: string;
+    };
+    is_public: boolean;
+};
 
 const UserHome = () => {
     const user = React.useContext(UserContext);
-    const isMobile = useMediaQuery("(max-width: 900px)");
+    const isMobile = useMediaQuery("(max-width: 1024px)");
+
+    const [upcomingMeetings, setUpcomingMeetings] = useState<meetingType[]>([]);
+    const [posts, setPosts] = useState<Post[]>([])
+
+    const { enqueueSnackbar } = useSnackbar();
+
+    useEffect(() => {
+
+        const fetchMeetings = async () => {
+            let userOrgIds = user.memberships?.map((membership) => membership.organizations?.id);
+
+            const { data, error } = await supabase
+                .from("meetings")
+                .select(
+                    `
+                    id,
+                    title,
+                    description,
+                    start_time,
+                    end_time,
+                    organizations (
+                        name,
+                        picture
+                    ),
+                    rooms (
+                        name
+                    ),
+                    is_public
+                `,
+                )
+                .in("organization_id", [userOrgIds])
+                .gte("start_time", new Date().toISOString())
+                .order("start_time")
+                .returns<meetingType[]>();
+
+            if (error || !data) {
+                return enqueueSnackbar(
+                    "Failed to load meetings. Contact it@stuysu.org for support.",
+                    { variant: "error" },
+                );
+            }
+
+            setUpcomingMeetings(data);
+        }
+
+        const fetchPosts = async () => {
+            let userOrgIds = user.memberships?.map((membership) => membership.organizations?.id);
+
+            const { data, error } = await supabase
+                .from("posts")
+                .select(
+                    `
+                    id,
+                    title,
+                    description,
+                    created_at,
+                    updated_at,
+                    organizations!inner (
+                        name,
+                        picture,
+                        id
+                    )
+                `,
+                )
+                .in("organization_id", [userOrgIds])
+                .order("created_at")
+                .returns<Post[]>();
+
+            if (error || !data) {
+                return enqueueSnackbar(
+                    "Failed to load posts. Contact it@stuysu.org for support.",
+                    { variant: "error" },
+                );
+            }
+
+            setPosts(data);
+        }
+
+        fetchMeetings();
+        fetchPosts();
+    }, [user])
 
     return (
-        <Box sx={{ width: "100%", paddingTop: "30px" }}>
-            <Typography variant="h1" width="100%" align="center">
+        <Box sx={{ width: "100%" }}>
+            <Typography variant="h1" width="100%" align="center" marginBottom="50px">
                 Welcome back {user.first_name}!
             </Typography>
-
-            <Box
-                sx={{
-                    width: "100%",
-                    display: "flex",
-                    flexWrap: isMobile ? "wrap" : "nowrap",
-                    justifyContent: "space-around",
-                }}
-            >
-                <Paper
-                    elevation={1}
-                    sx={{
-                        width: "500px",
-                        marginTop: "20px",
-                        display: "flex",
-                        justifyContent: "center",
-                        flexWrap: "wrap",
-                        paddingBottom: "20px",
-                    }}
-                >
+                
+            <Grid container>
+                <Grid item xs={12} sm={6} md={4} lg={4} xl={4} justifyContent={"center"}>
+                    <Box sx={{ width: "100%", display: "flex", justifyContent: "center", flexWrap: "wrap", paddingLeft: "10px" }}>
+                        <Typography variant="h2" width="100%" align="center">
+                            My Memberships
+                        </Typography>
+                        <Paper
+                            elevation={2}
+                            sx={{
+                                width: "400px",
+                                height: "310px",
+                                overflowY: "auto",
+                            }}
+                        >
+                            {user.memberships?.map(membership => (
+                                <OrgBar
+                                    key={membership.id}
+                                    name={
+                                        membership?.organizations?.name || "No Name"
+                                    }
+                                    role={membership?.role || "MEMBER"}
+                                    role_name={membership?.role_name}
+                                    url={membership?.organizations?.url || "/"}
+                                    picture={membership?.organizations?.picture}
+                                />
+                            ))}
+                            {
+                                user.memberships?.length === 0 && (
+                                    <Typography variant="h3" align="center">
+                                        You are not a member of any organizations
+                                    </Typography>
+                                )
+                            }
+                        </Paper>
+                    </Box>
+                </Grid>
+                <Grid item xs={12} sm={6} md={8} lg={8} xl={8}>
                     <Typography variant="h2" width="100%" align="center">
-                        My Memberships
+                        Upcoming Meetings
                     </Typography>
-                    <Paper
-                        elevation={2}
-                        sx={{
-                            width: "400px",
-                            height: "200px",
-                            overflowY: "scroll",
-                        }}
-                    >
-                        {user.memberships?.map((membership, i) => (
-                            <OrgBar
-                                name={
-                                    membership?.organizations?.name || "No Name"
-                                }
-                                role={membership?.role || "MEMBER"}
-                                role_name={membership?.role_name}
-                                url={membership?.organizations?.url || "/"}
-                                picture={membership?.organizations?.picture}
-                            />
-                        ))}
-                    </Paper>
-                </Paper>
-            </Box>
+                    <Carousel responsive={responsive}>
+                        {
+                            upcomingMeetings.map(meeting => (
+                                <UpcomingMeeting
+                                    key={meeting.id}
+                                    id={meeting.id}
+                                    title={meeting.title}
+                                    description={meeting.description}
+                                    start_time={meeting.start_time}
+                                    end_time={meeting.end_time}
+                                    org_name={meeting.organizations.name}
+                                    org_picture={meeting.organizations.picture}
+                                    room_name={meeting.rooms?.name}
+                                    is_public={meeting.is_public}
+                                />
+                            ))
+                        }
+                    </Carousel>
+                    {
+                        upcomingMeetings.length === 0 && (
+                            <Typography variant="h3" align="center">
+                                No upcoming meetings
+                            </Typography>
+                        )
+                    }
+                </Grid>
+                <Box sx={{ width: "100%", marginTop: "50px" }}>
+                    <Typography variant="h1" align="center">Posts</Typography>
+                </Box>
+                {
+                    posts.map(post => (
+                        <Grid item xs={12} sm={12} md={6} lg={4}>
+                            <Box width="100%" display="flex" justifyContent="center" padding="10px">
+                                <Post
+                                    key={post.id}
+                                    content={post}
+                                />
+                            </Box>
+                        </Grid>
+                    ))
+                }
+            </Grid>
         </Box>
     );
 };
