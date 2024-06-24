@@ -110,7 +110,7 @@ interface Meeting {
 interface Strike {
     id: number;
     organization?: Partial<Organization>;
-    admin?: Partial<User>;
+    users?: Partial<User>;
     reason: string;
     created_at: string;
 }
