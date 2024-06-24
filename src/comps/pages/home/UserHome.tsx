@@ -123,7 +123,7 @@ const UserHome = () => {
                 );
             }
 
-            setPosts(data);
+            setPosts(data.reverse());
         }
 
         fetchMeetings();
