@@ -31,10 +31,10 @@ const OrgApproval = ({
     };
 
     const reject = async () => {
-        const { error } = await supabase
-            .from("organizations")
-            .delete()
-            .eq("id", org.id);
+        const { error } = await supabase.functions.invoke(
+            "reject-organization",
+            { body: { organization_id: org.id }}
+        )
         if (error) {
             return enqueueSnackbar(
                 "Error rejecting organization. Contact it@stuysu.org for support.",
