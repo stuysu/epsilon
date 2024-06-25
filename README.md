@@ -1,18 +1,19 @@
-# Epsilon
+# [Epsilon](https://epsilon.stuysu.org/)
 
-the everything platform for stuyvesant high school
+The all in one platform for Stuyvesant High School's needs.
+https://epsilon.stuysu.org/
 
-## current services
+## Current Services:
 
 -   StuyActivities [wip]
 -   Opportunities [planned]
--   schedule/schedules [planned]
--   votes [planned]
--   valentines [planned]
--   mobile app [planned]
+-   Schedule/Schedules [planned]
+-   Votes [planned]
+-   Valentines [planned]
+-   Mobile App [planned]
 -   StuyArista [planned]
 
-## stack
+## Stack
 
 -   typescript + react -> netlify
 -   supabase = postgres -> docker -> digital ocean
