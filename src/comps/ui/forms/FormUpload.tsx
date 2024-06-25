@@ -1,6 +1,7 @@
 import { ChangeEvent, useEffect } from "react";
 
 import { Paper, Box, PaperProps, Button, Typography } from "@mui/material";
+import { useSnackbar } from "notistack";
 
 type FileType = "image/png" | "image/jpeg" | "image/webp" | "image/*";
 
@@ -34,6 +35,8 @@ const FormUpload = ({
     changeStatus,
     ...paperProps
 }: Props & PaperProps) => {
+    const { enqueueSnackbar } = useSnackbar();
+
     useEffect(() => {
         const validate = (targetValue: any) => {
             if (!changeStatus) return;
@@ -55,6 +58,16 @@ const FormUpload = ({
 
     const fileChanged = (event: ChangeEvent<HTMLInputElement>) => {
         if (!event.target.files) return;
+        if (
+            requirements?.maxSize && 
+            event.target.files[0].size > requirements?.maxSize![0] * 1024 * 1024
+        ) {
+            return enqueueSnackbar(
+                `File size exceeds ${requirements.maxSize[0]}MB limit.`,
+                { variant: "error" },
+            );
+        }
+        
         if (!onChange) return;
 
         onChange(event.target.files[0]);
