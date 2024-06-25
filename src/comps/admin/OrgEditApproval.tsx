@@ -81,27 +81,20 @@ const OrgEditApproval = ({
         }
 
         /* apply changes to organization */
-        ({ error } = await supabase
-            .from("organizations")
-            .update(updatedFields)
-            .eq("id", edit.organization_id));
+        ({ error } = await supabase.functions.invoke(
+            "approve-organization-edit",
+            {
+                body: {
+                    organization_id: edit.organization_id,
+                    updated_fields: updatedFields,
+                    edit_id: edit.id,
+                },
+            },
+        ));
 
         if (error) {
             return enqueueSnackbar(
                 "Error updating organization. Contact it@stuysu.org for support.",
-                { variant: "error" },
-            );
-        }
-
-        /* delete organization edit */
-        ({ error } = await supabase
-            .from("organizationedits")
-            .delete()
-            .eq("id", edit.id));
-
-        if (error) {
-            return enqueueSnackbar(
-                "Error deleting old organization edit. Please let it@stuysu.org know about this issue.",
                 { variant: "error" },
             );
         }
@@ -112,10 +105,15 @@ const OrgEditApproval = ({
 
     const reject = async () => {
         let error;
-        ({ error } = await supabase
-            .from("organizationedits")
-            .delete()
-            .eq("id", edit.id));
+        ({ error } = await supabase.functions.invoke(
+            "reject-organization-edit",
+            {
+                body: {
+                    organization_id: edit.organization_id,
+                    edit_id: edit.id,
+                },
+            },
+        ))
 
         if (error) {
             return enqueueSnackbar(
