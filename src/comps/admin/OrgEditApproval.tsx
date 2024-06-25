@@ -105,10 +105,15 @@ const OrgEditApproval = ({
 
     const reject = async () => {
         let error;
-        ({ error } = await supabase
-            .from("organizationedits")
-            .delete()
-            .eq("id", edit.id));
+        ({ error } = await supabase.functions.invoke(
+            "reject-organization-edit",
+            {
+                body: {
+                    organization_id: edit.organization_id,
+                    edit_id: edit.id,
+                },
+            },
+        ))
 
         if (error) {
             return enqueueSnackbar(
