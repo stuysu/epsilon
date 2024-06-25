@@ -10,6 +10,7 @@ import CalendarMonth from "@mui/icons-material/CalendarMonth";
 import PostAddIcon from '@mui/icons-material/PostAdd';
 import ReportProblemIcon from '@mui/icons-material/ReportProblem';
 import EditIcon from '@mui/icons-material/Edit';
+import EmailIcon from '@mui/icons-material/Email';
 
 const OrgAdminNav = () => {
     const organization = useContext<OrgContextType>(OrgContext);
@@ -46,6 +47,11 @@ const OrgAdminNav = () => {
             label: "Org Edits",
             icon: <EditIcon />
         },
+        {
+            to: `${main}/messages`,
+            label: "Messages",
+            icon: <EmailIcon />
+        }
     ];
 
     return <RouteTabs tabs={navLinks} />;

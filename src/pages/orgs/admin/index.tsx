@@ -14,6 +14,7 @@ import Organization from "./Organization";
 
 import OrgAdminNav from "../../../comps/pages/orgs/admin/OrgAdminNav";
 import { Box } from "@mui/material";
+import Messages from "./Messages";
 
 const OrgAdminRouter = () => {
     const user = useContext<UserContextType>(UserContext);
@@ -46,6 +47,7 @@ const OrgAdminRouter = () => {
                         <Route path={"/posts"} Component={Posts} />
                         <Route path={"/strikes"} Component={Strikes} />
                         <Route path={"/org-edits"} Component={Organization} />
+                        <Route path={"/messages"} Component={Messages} />
                         <Route path={"/*"} Component={Members} />
                     </Routes>
                 </>

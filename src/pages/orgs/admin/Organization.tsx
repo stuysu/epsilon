@@ -69,9 +69,6 @@ const Organization = () => {
                 existingEdit={pendingEdit}
                 setPendingEdit={setPendingEdit}
             />
-            <OrgChat 
-                organization_id={organization.id}
-            />
         </Box>
     );
 };

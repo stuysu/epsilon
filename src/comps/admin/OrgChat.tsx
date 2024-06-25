@@ -1,8 +1,10 @@
-import { Box, TextField, Button } from "@mui/material"
-import { useContext, useEffect, useState } from "react"
+import { Box, TextField, Button, Card, ListItem, ListItemText, ListItemAvatar, Avatar, Typography, IconButton } from "@mui/material"
+import { useContext, useEffect, useState, useRef } from "react"
 import { supabase } from "../../supabaseClient"
 import { useSnackbar } from "notistack"
 import UserContext from "../context/UserContext"
+import dayjs from "dayjs"
+import { Delete } from "@mui/icons-material"
 
 type OrgMessage = {
     id: number,
@@ -12,7 +14,8 @@ type OrgMessage = {
         first_name: string,
         last_name: string,
         picture?: string
-    }
+    },
+    created_at: string
 }
 
 const OrgChat = (
@@ -28,6 +31,8 @@ const OrgChat = (
     const [message, setMessage] = useState("");
     const { enqueueSnackbar } = useSnackbar();
 
+    const chatBoxRef = useRef<HTMLDivElement>(null);
+
     // fetch messages from the database
     useEffect(() => {
         const fetchMessages = async () => {
@@ -40,7 +45,8 @@ const OrgChat = (
                         first_name,
                         last_name,
                         picture
-                    ) 
+                    ),
+                    created_at 
                 `)
                 .eq('organization_id', organization_id)
                 .returns<OrgMessage[]>();
@@ -50,11 +56,17 @@ const OrgChat = (
                 return;
             }
 
-            setMessages(messageData);
+            setMessages(messageData.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()));
         }
 
         fetchMessages();
     }, []);
+
+    useEffect(() => {
+        if (chatBoxRef.current) {
+          chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
+        }
+      }, [messages]); // Assuming `messages` is your state variable that holds the chat messages      
 
     const sendMessage = async () => {
         const { data, error } = await supabase.functions.invoke(
@@ -73,7 +85,7 @@ const OrgChat = (
         }
 
         setMessage("");
-        setMessages([
+        let newMessages = [
             ...messages, 
             { 
                 id: data.id, 
@@ -83,29 +95,77 @@ const OrgChat = (
                     first_name: user.first_name, 
                     last_name: user.last_name, 
                     picture: user.picture
-                } 
+                },
+                created_at: new Date().toISOString() 
             } 
-        ]);
+        ]
+        setMessages(newMessages.sort((a, b) => new Date(a.created_at).getTime() - new Date(b.created_at).getTime()));
+    }
+
+    const deleteMessage = async (messageId: number) => {
+        const { error } = await supabase.from("orgmessages")
+            .delete()
+            .eq("id", messageId);
+
+        if (error) {
+            enqueueSnackbar("Failed to delete message", { variant: "error" });
+            return;
+        }
+
+        setMessages(messages.filter(message => message.id !== messageId));
     }
 
     return (
-        <Box>
-            <Box>
+        <Card 
+            variant="outlined" 
+            sx={{ 
+                width: "100%",
+                padding: "15px"
+            }}
+        >
+            <Typography variant="h2">Messages</Typography>
+            <Box sx={{ height: "400px", overflow: "auto" }} ref={chatBoxRef}>
                 {
-                    messages.map(message => (
-                        <Box key={message.id}>
-                            <img src={message.users.picture} alt="User's profile" />
-                            <p>{message.users.first_name} {message.users.last_name}</p>
-                            <p>{message.content}</p>
-                        </Box>
-                    ))
+                    messages.map(message => {
+                        let messageTime = dayjs(message.created_at);
+                        let timeStr = `${messageTime.month() + 1}/${messageTime.date()}/${messageTime.year()}`;
+                        return (
+                            <ListItem key={message.id}>
+                                <ListItemAvatar>
+                                    <Avatar alt={message.users.first_name} src={message.users.picture || ""}>
+                                        {message.users.first_name?.charAt(0).toUpperCase()}
+                                    </Avatar>
+                                </ListItemAvatar>
+                                <ListItemText
+                                    primary={message.users.first_name + " " + message.users.last_name}
+                                    secondary={
+                                        <>
+                                            <Typography component="span" variant="body2" color="textPrimary">
+                                                {timeStr}
+                                            </Typography>
+                                            {/* Add a break or any other separator as needed */}
+                                            <br />
+                                            {message.content}
+                                        </>
+                                    }
+                                />
+                                {
+                                    message.users.id === user.id && (
+                                        <IconButton onClick={() => deleteMessage(message.id)}>
+                                            <Delete />
+                                        </IconButton>
+                                    )
+                                }
+                            </ListItem>
+                        )
+                    })
                 }
-                <Box>
-                    <TextField value={message} onChange={(e) => setMessage(e.target.value)} />
-                    <Button onClick={sendMessage}>Submit</Button>
-                </Box>
             </Box>
-        </Box>
+            <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap", alignItems: "center"}}>
+                <TextField label="Type message here." sx={{ width: "80%" }} value={message} onChange={(e) => setMessage(e.target.value)} />
+                <Button variant="contained" sx={{ width: "100px", marginLeft: "15px" }} onClick={sendMessage}>Send</Button>
+            </Box>
+        </Card>
     )
 }
 
