@@ -44,7 +44,7 @@ const Meetings = () => {
             <Typography variant="h1" align="center" width="100%">
                 Manage Meetings
             </Typography>
-            {organization.meetings.sort(sortByDate).map((meeting) => (
+            {organization.meetings.sort(sortByDate).reverse().map((meeting) => (
                 <OrgMeeting
                     key={meeting.id}
                     id={meeting.id}

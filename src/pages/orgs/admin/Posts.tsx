@@ -43,7 +43,7 @@ const Posts = () => {
             <Typography variant="h1" align="center" width="100%">
                 Manage Posts
             </Typography>
-            {organization.posts.sort(sortPostByDate).map((post, i) => {
+            {organization.posts.sort(sortPostByDate).reverse().map((post, i) => {
                 return (
                     <Post
                         content={post}

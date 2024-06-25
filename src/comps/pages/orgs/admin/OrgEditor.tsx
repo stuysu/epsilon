@@ -522,6 +522,15 @@ const OrgEditor = ({
                         id="input-file-upload"
                         onChange={(e) => {
                             if (!e.target.files) return;
+                            if (e.target.files[0].size > 1024 * 1024 * OrgRequirements.picture?.requirements?.maxSize[0]) {
+                                return enqueueSnackbar(
+                                    `File is too large. Max size is ${OrgRequirements.picture?.requirements?.maxSize[0]}MB.`, 
+                                    {
+                                        variant: "error",
+                                    }
+                                );
+                            }
+
                             setEditPicture(e.target.files[0] || null);
                         }}
                         value={editPicture?.webkitRelativePath}

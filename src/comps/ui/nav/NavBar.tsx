@@ -234,16 +234,17 @@ const NavBar = () => {
                                 <ListSubheader>My Activities</ListSubheader>
                             }
                         >
-                            {user.memberships?.map((membership, i) => (
-                                <OrgBar
-                                    key={membership.id}
-                                    name={membership?.organizations?.name}
-                                    role={membership?.role}
-                                    role_name={membership?.role_name}
-                                    url={membership?.organizations?.url || "/"}
-                                    picture={membership?.organizations?.picture}
-                                />
-                            ))}
+                            {user.memberships?.map((membership, i) => {
+                                if (membership.active)
+                                    return (<OrgBar
+                                        key={membership.id}
+                                        name={membership?.organizations?.name}
+                                        role={membership?.role}
+                                        role_name={membership?.role_name}
+                                        url={membership?.organizations?.url || "/"}
+                                        picture={membership?.organizations?.picture}
+                                    />)
+                            })}
                             <ListItemButton onClick={() => navigate("/create")}>
                                 <ListItemIcon>
                                     <AddCircleIcon />

@@ -123,7 +123,7 @@ const UserHome = () => {
                 );
             }
 
-            setPosts(data);
+            setPosts(data.reverse());
         }
 
         fetchMeetings();
@@ -150,18 +150,21 @@ const UserHome = () => {
                                 overflowY: "auto",
                             }}
                         >
-                            {user.memberships?.map(membership => (
-                                <OrgBar
-                                    key={membership.id}
-                                    name={
-                                        membership?.organizations?.name || "No Name"
-                                    }
-                                    role={membership?.role || "MEMBER"}
-                                    role_name={membership?.role_name}
-                                    url={membership?.organizations?.url || "/"}
-                                    picture={membership?.organizations?.picture}
-                                />
-                            ))}
+                            {user.memberships?.map(membership => {
+                                if (membership.active)
+                                    return (
+                                        <OrgBar
+                                            key={membership.id}
+                                            name={
+                                                membership?.organizations?.name || "No Name"
+                                            }
+                                            role={membership?.role || "MEMBER"}
+                                            role_name={membership?.role_name}
+                                            url={membership?.organizations?.url || "/"}
+                                            picture={membership?.organizations?.picture}
+                                        />
+                                    )
+                            })}
                             {
                                 user.memberships?.length === 0 && (
                                     <Typography variant="h3" align="center">
