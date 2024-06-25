@@ -11,6 +11,8 @@ const AdminNav = () => {
             <Link to="/admin/strikes">Strikes</Link>
             <br />
             <Link to="/admin/send-email">Send Email</Link>
+            <br />
+            <Link to="/admin/send-message">Send Message</Link>
         </Box>
     );
 };
