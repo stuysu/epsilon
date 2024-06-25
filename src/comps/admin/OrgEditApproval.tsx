@@ -5,6 +5,7 @@ import { Box, Button } from "@mui/material";
 
 import { supabase } from "../../supabaseClient";
 import { useSnackbar } from "notistack";
+import OrgChat from "./OrgChat";
 
 type EditKey = keyof EditType;
 type OrgKey = keyof Organization;
@@ -151,6 +152,8 @@ const OrgEditApproval = ({
                     </Box>
                 );
             })}
+
+            <OrgChat organization_id={edit.organization_id} />
         </Box>
     );
 };
