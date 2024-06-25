@@ -14,10 +14,11 @@ const OrgApproval = ({
     const { enqueueSnackbar } = useSnackbar();
 
     const approve = async () => {
-        const { error } = await supabase
-            .from("organizations")
-            .update({ state: "UNLOCKED" })
-            .eq("id", org.id);
+        const { error } = await supabase.functions.invoke(
+            "approve-organization",
+            { body: { organization_id: org.id }}
+        )
+
         if (error) {
             return enqueueSnackbar(
                 "Error approving organization. Contact it@stuysu.org for support.",
