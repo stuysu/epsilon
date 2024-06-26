@@ -33,6 +33,7 @@ import FeedIcon from "@mui/icons-material/Feed";
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import InfoIcon from '@mui/icons-material/Info';
+import GavelIcon from '@mui/icons-material/Gavel';
 
 const navStyles: CSSProperties = {
     width: "100%",
@@ -265,6 +266,12 @@ const NavBar = () => {
                                 <InfoIcon />
                             </ListItemIcon>
                             <ListItemText>About</ListItemText>
+                        </ListItemButton>
+                        <ListItemButton onClick={() => navigate("/rules")}>
+                            <ListItemIcon>
+                                <GavelIcon />
+                            </ListItemIcon>
+                            <ListItemText>Rules</ListItemText>
                         </ListItemButton>
                     </List>
                 </Box>

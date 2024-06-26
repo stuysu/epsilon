@@ -21,7 +21,10 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                     transition: "0.2s background ease-out",
                 },
             }}
-            onClick={() => navigate(`/${organization.url}`)}
+            onClick={() => {
+                const scrollPosition = window.scrollY
+                navigate(`/${organization.url}`)
+            }}
         >
             <Box
                 sx={{
