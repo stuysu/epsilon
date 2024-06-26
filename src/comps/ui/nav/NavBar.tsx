@@ -10,6 +10,7 @@ import {
     ListItemButton,
     ListItemIcon,
     IconButton,
+    Avatar,
 } from "@mui/material";
 import {
     Brightness4Rounded,
@@ -134,7 +135,7 @@ const NavBar = () => {
                                 padding: "20px",
                             }}
                         >
-                            <img
+                            <Avatar
                                 alt={`${user.first_name} ${user.last_name}`}
                                 style={{
                                     width: "110px",
@@ -142,12 +143,12 @@ const NavBar = () => {
                                     borderRadius: "100%",
                                     boxShadow:
                                         "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+                                    fontSize: "50px"
                                 }}
-                                src={
-                                    user.picture ||
-                                    "https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png"
-                                }
-                            />
+                                src={user.picture}
+                            >
+                                {user.first_name?.charAt(0).toUpperCase()}
+                            </Avatar>
                         </Box>
                         <Box
                             sx={{
@@ -165,7 +166,7 @@ const NavBar = () => {
                                         {user.email || "No Email"}
                                     </Typography>
                                     <Typography width="100%">
-                                        ID: {user.id || "No ID"}
+                                        ID: {String(user.id).padStart(5, '0') || "No ID"}
                                     </Typography>
                                     <Typography width="100%">
                                         Grade: {user.grade || "No Grade"}

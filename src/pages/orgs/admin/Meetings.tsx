@@ -36,7 +36,7 @@ const Meetings = () => {
         editing: false,
     });
 
-    if (organization.state === "LOCKED" || organization.state === "PENDING")
+    if (organization.state === "LOCKED" || organization.state === "PENDING" || organization.state === "PUNISHED")
         return <h2>Meetings are disabled for this organization.</h2>;
 
     return (

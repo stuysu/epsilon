@@ -8,7 +8,6 @@ import OrgEditor from "../../../comps/pages/orgs/admin/OrgEditor";
 
 import { useSnackbar } from "notistack";
 import { Box, Typography } from "@mui/material";
-import OrgChat from "../../../comps/admin/OrgChat";
 
 const Organization = () => {
     const { enqueueSnackbar } = useSnackbar();

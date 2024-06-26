@@ -195,7 +195,8 @@ const Catalog = () => {
                                 searchState.orgs.map((org, i) => {
                                     if (
                                         org.state === "PENDING" ||
-                                        org.state === "LOCKED"
+                                        org.state === "LOCKED" ||
+                                        org.state === "PUNISHED"
                                     )
                                         return <></>;
                                     return (
