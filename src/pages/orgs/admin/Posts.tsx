@@ -13,7 +13,7 @@ import { sortPostByDate } from "../../../utils/DataFormatters";
 const Posts = () => {
     const organization = useContext(OrgContext);
 
-    if (organization.state === "LOCKED" || organization.state === "PENDING")
+    if (organization.state === "LOCKED" || organization.state === "PENDING"  || organization.state === "PUNISHED")
         return (
             <Box>
                 <Typography variant="h2">

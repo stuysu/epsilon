@@ -14,7 +14,7 @@ interface Organization {
     keywords?: string;
     tags?: string[];
     commitment_level?: "NONE" | "LOW" | "MEDIUM" | "HIGH";
-    state: "PENDING" | "LOCKED" | "UNLOCKED" | "ADMIN";
+    state: "PENDING" | "LOCKED" | "UNLOCKED" | "ADMIN" | "PUNISHED";
     joinable?: boolean;
     join_instructions?: string;
     memberships?: Partial<Membership>[];
