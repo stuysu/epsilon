@@ -165,7 +165,7 @@ const NavBar = () => {
                                         {user.email || "No Email"}
                                     </Typography>
                                     <Typography width="100%">
-                                        ID: {user.id || "No ID"}
+                                        ID: {String(user.id).padStart(5, '0') || "No ID"}
                                     </Typography>
                                     <Typography width="100%">
                                         Grade: {user.grade || "No Grade"}
