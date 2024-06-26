@@ -10,6 +10,7 @@ import Home from "./Home";
 import AllMeetings from "./AllMeetings";
 import NavBar from "../comps/ui/nav/NavBar";
 import About from "./About";
+import Rules from "./Rules";
 const Catalog = lazy(() => import("./Catalog"));
 const Create = lazy(() => import("./Create"));
 const OrgRouter = lazy(() => import("./orgs"));
@@ -45,6 +46,7 @@ const Pages = () => {
                     <Route path={"/create"} Component={Create} />
                     <Route path={"/about"} Component={About} />
                     <Route path={"/meetings"} Component={AllMeetings} />
+                    <Route path={"/rules"} Component={Rules} />
                     <Route path={"/admin/*"} Component={AdminRouter} />
                     <Route path={"/:orgUrl/*"} Component={OrgRouter} />
                 </Routes>

@@ -1,5 +1,6 @@
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import { ReactNode } from "react";
+import { useNavigate } from "react-router-dom";
 
 const Center = ({ children } : { children? : ReactNode }) => {
     return (
@@ -26,8 +27,11 @@ const Credit = ({ title, children } : { title: string, children?: ReactNode }) =
 }
 
 const About = () => {
+    const navigate = useNavigate();
+
     return (
         <Box sx={{ width: "100%", padding: "20px"}}>
+            <Button variant="contained" onClick={() => navigate("/")}>Back to home</Button>
             <Box sx={{ width: "100%", display: "flex", justifyContent: "center", flexWrap: "wrap"}}>
                 <h1>Epsilon</h1>
                 <Break />
