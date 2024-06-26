@@ -53,9 +53,11 @@ const EditField = ({
 }) => {
     return (
         <>
-            <Typography width="100%" variant="h4" sx={{ paddingLeft: "10px" }}>
-                {capitalizeWords(field.split("_").join(" "))}
-                {pending ? " - Pending" : " - Approved"}
+            <Typography width="100%" sx={{ paddingLeft: "10px" }}>
+                {capitalizeWords(field.split("_").join(" "))}{" - "}
+                <span style={{ color: pending ? "gray" : "#2ecc71" }}>
+                    {pending ? "Pending" : "Approved"}
+                </span>
             </Typography>
             <Box
                 sx={{
@@ -92,7 +94,7 @@ const EditField = ({
                         {defaultDisplay}
                         <Box
                             sx={{
-                                width: "15%",
+                                width: "60px",
                                 position: "absolute",
                                 right: "20px",
                             }}
@@ -158,11 +160,13 @@ const OrgEditor = ({
     const [status, setStatus] = useState<FormStatus>({}); // validation status for that field
 
     /* picture */
-    const [editPicture, setEditPicture] = useState<File | null | undefined>();
+    const [editPicture, setEditPicture] = useState<File | null | undefined | string>();
+
     const oldPicture =
-        existingEdit["picture"] === undefined
+        (existingEdit["picture"] === undefined || existingEdit["picture"] === null)
             ? organization["picture"]
             : existingEdit["picture"];
+        
 
     /* validation */
     const [savable, setSavable] = useState(false);
@@ -281,10 +285,10 @@ const OrgEditor = ({
         /* custom logic for adding picture to the payload */
         /* picture is not in the original payload so nothing will manage it in the original loop. it is only edited here  */
         if (
-            editPicture === null &&
+            editPicture === "" &&
             (existingEdit === undefined
                 ? organization["picture"]
-                : existingEdit["picture"]) !== null
+                : existingEdit["picture"]) !== ""
         ) {
             // picture is null but it wasn't null before
             // picture has to be empty quotes to differentiate it from a null field in OrgEditApproval
@@ -295,12 +299,12 @@ const OrgEditor = ({
             (existingEdit === undefined
                 ? organization["picture"]
                 : existingEdit["picture"]) &&
-            editPicture
+                editPicture
         ) {
             // picture is different, but needs to be uploaded first
             /* Note: any indication of the picture failing to upload will kill the entire org edit process */
 
-            let filePath = `org-pictures/${organization.id}/${Date.now()}-${organization.url}-profile${editPicture!.name.split(".").pop()}`;
+            let filePath = `org-pictures/${organization.id}/${Date.now()}-${organization.url}-profile${(editPicture as File)!.name.split(".").pop()}`;
 
             let { data: storageData, error: storageError } =
                 await supabase.storage
@@ -474,13 +478,22 @@ const OrgEditor = ({
     };
 
     const pendingPicture =
-        existingEdit.picture !== undefined &&
+        existingEdit.picture !== undefined && existingEdit.picture !== null &&
         existingEdit.picture !== organization.picture;
+    
+    const putPicture = editPicture !== undefined
+    ? editPicture
+        ? URL.createObjectURL(editPicture as File)
+        : ""
+    : oldPicture || ""
 
     return (
         <Paper elevation={1} sx={{ padding: "10px" }}>
-            <Typography variant="h3">
-                Picture{pendingPicture ? " - Pending" : ""}
+            <Typography variant="h4">
+                Picture -{" "}
+                <span style={{ color: pendingPicture ? "gray" : "#2ecc71" }}>
+                    {pendingPicture ? " Pending" : "Approved"}
+                </span> 
             </Typography>
             <Box
                 sx={{
@@ -493,13 +506,7 @@ const OrgEditor = ({
             >
                 <Box>
                     <Avatar
-                        src={
-                            editPicture !== undefined
-                                ? editPicture
-                                    ? URL.createObjectURL(editPicture)
-                                    : ""
-                                : oldPicture || ""
-                        }
+                        src={putPicture}
                         sx={{
                             width: "170px",
                             height: "170px",
@@ -533,7 +540,7 @@ const OrgEditor = ({
 
                             setEditPicture(e.target.files[0] || null);
                         }}
-                        value={editPicture?.webkitRelativePath}
+                        value={editPicture ? (editPicture as File).webkitRelativePath : ""}
                         hidden
                     />
                 </Button>
@@ -545,12 +552,26 @@ const OrgEditor = ({
                             // if there was no old picture to begin with, then removing the picture is like making no edit
                             setEditPicture(undefined);
                         } else {
-                            setEditPicture(null);
+                            setEditPicture("");
                         }
                     }}
                 >
                     Remove Image
                 </Button>
+                {
+                    (editPicture !== undefined && organization.picture) &&
+                    (
+                        <Button
+                        variant="contained"
+                        sx={{ marginTop: "10px" }}
+                        onClick={async () => {
+                            setEditPicture(undefined);
+                          }}
+                    >
+                        Reset Image
+                    </Button>
+                    )
+                }
             </Box>
             {textFields.map((field) => {
                 return (
