@@ -1,6 +1,6 @@
 /* ORG ROUTING INFORMATION HERE */
-import React, { useEffect, useState } from "react";
-import { Routes, Route, useParams } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Routes, Route, useParams, useNavigate } from "react-router-dom";
 import OrgContext from "../../comps/context/OrgContext";
 import { supabase } from "../../supabaseClient";
 
@@ -12,13 +12,14 @@ import Meetings from "./Meetings";
 import Members from "./Members";
 import OrgAdminRouter from "./admin";
 import { useSnackbar } from "notistack";
-import { Box, useMediaQuery } from "@mui/material";
+import { Box, useMediaQuery, Button } from "@mui/material";
 
 const OrgRouter = () => {
     const { enqueueSnackbar } = useSnackbar();
     const { orgUrl } = useParams();
 
     const isMobile = useMediaQuery("(max-width: 1000px)");
+    const navigate = useNavigate();
 
     const [org, setOrg] = useState<OrgContextType>({
         id: -1,
@@ -133,27 +134,38 @@ const OrgRouter = () => {
             {org.id === -1 ? (
                 <div></div> /* ORG DOESN'T EXIST HERE */
             ) : (
-                <Box
-                    sx={{
-                        width: "100%",
-                        display: "flex",
-                        flexWrap: isMobile ? "wrap" : "nowrap",
-                    }}
-                >
-                    <OrgNav isMobile={isMobile} />
-                    <Box sx={{ width: "100%", padding: "10px" }}>
-                        <Routes>
-                            <Route path={`/`} Component={Overview} />
-                            <Route path={`/charter`} Component={Charter} />
-                            <Route path={`/meetings`} Component={Meetings} />
-                            <Route path={`/members`} Component={Members} />
-                            <Route
-                                path={`/admin/*`}
-                                Component={OrgAdminRouter}
-                            />
-                        </Routes>
+                <>
+                    <Box sx={{ width: "100%", marginTop: "20px", paddingLeft: "20px"}}>
+                        <Button
+                            onClick={() => navigate("/catalog")} 
+                            variant="contained" 
+                            sx={{ width: "80px"}}
+                        >
+                            Back
+                        </Button>
                     </Box>
-                </Box>
+                    <Box
+                        sx={{
+                            width: "100%",
+                            display: "flex",
+                            flexWrap: isMobile ? "wrap" : "nowrap",
+                        }}
+                    >
+                        <OrgNav isMobile={isMobile} />
+                        <Box sx={{ width: "100%", padding: "10px" }}>
+                            <Routes>
+                                <Route path={`/`} Component={Overview} />
+                                <Route path={`/charter`} Component={Charter} />
+                                <Route path={`/meetings`} Component={Meetings} />
+                                <Route path={`/members`} Component={Members} />
+                                <Route
+                                    path={`/admin/*`}
+                                    Component={OrgAdminRouter}
+                                />
+                            </Routes>
+                        </Box>
+                    </Box>
+                </>
             )}
         </OrgContext.Provider>
     );

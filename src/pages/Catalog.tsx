@@ -52,7 +52,7 @@ const Catalog = () => {
         tags: [],
     });
 
-    const [seed, setSeed] = useState(Math.random());
+    const [seed, setSeed] = useState(sessionStorage.getItem("seed") ? parseFloat(sessionStorage.getItem("seed") as string) : Math.random());
 
     const isTwo = useMediaQuery("(max-width: 1525px)");
     const isTwoWrap = useMediaQuery("(max-width: 1100px)");
@@ -133,16 +133,22 @@ const Catalog = () => {
             more = false;
         }
 
-        setSearchState({
-            orgs: finalOrgs,
-            offset: originalOffset + querySize,
-            more,
+        setSearchState(() => {
+            return {
+                orgs: finalOrgs,
+                offset: originalOffset + querySize,
+                more
+            }
         });
     };
 
     useEffect(() => {
         getOrgs(true);
     }, [seed, searchParams]);
+
+    useEffect(() => {
+        sessionStorage.setItem("seed", seed.toString());
+    }, [seed]);
 
     /*
   Testing
