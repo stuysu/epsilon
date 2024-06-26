@@ -246,9 +246,17 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                         organization
                         .socials
                         .split(" ")
-                        .map((social, i) => (
-                            <Link key={i} to={social} style={{ textAlign: "center" }}>{social}</Link>
-                        ))
+                        .map((social, i) => {
+                            if (!social.startsWith("http")) {
+                                return (
+                                    <Typography textAlign="center">{social}</Typography>
+                                )
+                            }
+
+                            return (
+                                <Link key={i} to={social} style={{ textAlign: "center" }}>{social}</Link>
+                            )
+                        })
                     )}
                 <Button
                     variant="contained"
