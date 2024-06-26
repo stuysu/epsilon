@@ -68,6 +68,8 @@ const AdminUpsertMeeting = ({
         isPublic === undefined ? true : isPublic,
     );
 
+    const [notifyFaculty, setNotifyFaculty] = useState(false);
+
     const [allRooms, setAllRooms] = useState<Room[]>([]);
     const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
 
@@ -147,19 +149,6 @@ const AdminUpsertMeeting = ({
         let supabaseReturn;
 
         let isInsert = false;
-        let returnSelect = `
-            id,
-            is_public,
-            title,
-            description,
-            start_time,
-            end_time,
-            rooms (
-                id,
-                name,
-                floor
-            )
-        `;
 
         if (!meetingTitle || !meetingTitle.length) {
             console.log(meetingTitle);
@@ -215,7 +204,7 @@ const AdminUpsertMeeting = ({
                     start_time: startTime.toISOString(),
                     end_time: endTime.toISOString(),
                     is_public: isPub,
-                    notify_faculty: false,
+                    notify_faculty: notifyFaculty,
                 },
             });
         }
@@ -349,6 +338,22 @@ const AdminUpsertMeeting = ({
                     sx={{ marginTop: "10px" }}
                     label="is public?"
                 />
+                {
+                    !id && (
+                        <FormControlLabel
+                            control={
+                                <Switch
+                                    checked={notifyFaculty}
+                                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                                        setNotifyFaculty(event.target.checked)
+                                    }
+                                />
+                            }
+                            sx={{ marginTop: "10px" }}
+                            label="notify faculty?"
+                        />
+                    )
+                }
             </DialogContent>
             <DialogActions>
                 <Button variant="contained" onClick={onClose}>
