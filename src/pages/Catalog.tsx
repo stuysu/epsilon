@@ -181,10 +181,20 @@ const Catalog = () => {
                     loader={<Loading />}
                     endMessage={
                         <Box>
-                            <Typography align="center" variant="h3">
-                                Total of {approvedOrgs.length}{" "}
-                                {`Organization${approvedOrgs.length > 1 ? "s" : ""}`}
-                            </Typography>
+                            {
+                                approvedOrgs.length === 0 ? 
+                                (
+                                    <Typography align="center" variant="h3">
+                                        No Organizations Found.
+                                    </Typography>
+                                ) :
+                                (
+                                    <Typography align="center" variant="h3">
+                                        Total of {approvedOrgs.length}{" "}
+                                        {`Organization${approvedOrgs.length > 1 ? "s" : ""}`}
+                                    </Typography>
+                                )
+                            }
                         </Box>
                     }
                     style={{ overflow: "hidden", paddingTop: "20px" }}
