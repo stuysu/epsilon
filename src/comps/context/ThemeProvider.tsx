@@ -48,7 +48,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                 palette: {
                     mode: prefersDarkMode ? "dark" : "light",
                     primary: {
-                        main: "#3498db",
+                        main: "#34c5db",
                         contrastText: "#fff",
                     },
                     secondary: {
@@ -56,8 +56,8 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                         contrastText: "#fff",
                     },
                     background: {
-                        default: prefersDarkMode ? "#1e2124" : "#FFFFFF",
-                        paper: prefersDarkMode ? "#1e2124" : "#FFFFFF",
+                        default: prefersDarkMode ? "#071a24" : "#ebf5f2",
+                        paper: prefersDarkMode ? "#071a24" : "#ebf5f2",
                     },
                 },
                 typography: {
