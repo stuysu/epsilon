@@ -18,7 +18,7 @@ import UserContext from "../../context/UserContext";
 import { supabase } from "../../../supabaseClient";
 import { useSnackbar } from "notistack";
 
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import InfoIcon from '@mui/icons-material/Info';
 import ArticleIcon from '@mui/icons-material/Article';
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
@@ -238,10 +238,26 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     variant="body1"
                     align="center"
                     width="100%"
-                    sx={{ overflowX: "hidden" }}
+                    sx={{ overflowX: "hidden", marginBottom: "20px" }}
                 >
                     {organization.mission}
                 </Typography>
+                    {organization.socials && (
+                        organization
+                        .socials
+                        .split(" ")
+                        .map((social, i) => {
+                            if (!social.startsWith("http")) {
+                                return (
+                                    <Typography textAlign="center">{social}</Typography>
+                                )
+                            }
+
+                            return (
+                                <Link key={i} to={social} style={{ textAlign: "center" }}>{social}</Link>
+                            )
+                        })
+                    )}
                 <Button
                     variant="contained"
                     onClick={handleInteract}
