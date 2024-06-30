@@ -296,7 +296,7 @@ const Create = () => {
                         label="Keywords"
                         required={OrgRequirements.keywords.required}
                         requirements={OrgRequirements.keywords.requirements}
-                        description={`Choose up to 3 keywords relating to your activity. They will not be publicly visible but they will help your activity show up in search results. This can be things like alternate names or acronyms. For example, the Student Union might add 'SU' as a keyword. Add a keyword with <ENTER>`}
+                        description={`You are allowed up to 3 keywords that describe your activity. They will not be publicly visible but will help your activity show up in search results. Examples of keywords include alternate names or acronyms, such as 'SU' for the Student Union. Create a keyword using <ENTER> or <,> PLEASE NOTE: You cannot paste a list of keywords, you must type them manually.`}
                     />
                 </FormSection>
                 <FormSection sx={{ width: "100%", marginTop: "20px" }}>
