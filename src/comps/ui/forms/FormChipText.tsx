@@ -1,5 +1,5 @@
 import { Autocomplete, TextField, Chip } from "@mui/material";
-import { useEffect, SyntheticEvent } from "react";
+import { useEffect, useState, SyntheticEvent, KeyboardEvent, useRef } from "react";
 
 type Requirements = {
     maxChips?: number;
@@ -27,11 +27,14 @@ const FormChipText = ({
     description,
     required,
     requirements,
-    value,
+    value = [],
     onChange,
     changeStatus,
     label,
 }: Props) => {
+    const [inputValue, setInputValue] = useState("");
+    const inputRef = useRef<HTMLInputElement | null>(null);
+
     useEffect(() => {
         const validate = (newValue?: string[]) => {
             if (!changeStatus) return;
@@ -48,7 +51,7 @@ const FormChipText = ({
         };
 
         validate(value);
-    }, [required, requirements, value, changeStatus]);
+    }, [required, requirements, value, changeStatus, field]);
 
     const valueChanged = (event: SyntheticEvent, newValue: string[]) => {
         if (requirements?.maxChips && newValue.length > requirements.maxChips) {
@@ -68,6 +71,22 @@ const FormChipText = ({
         }
     };
 
+    const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        if ((event.key === 'Enter' || event.key === ',') && inputValue.trim()) {
+            event.preventDefault();
+            if (inputValue && !value.includes(inputValue.trim())) {
+                const newValue = [...value, inputValue.trim()];
+                valueChanged(event as SyntheticEvent, newValue);
+            }
+
+            setInputValue(""); // Clear the input value
+        }
+    };
+
+    const handleInputChange = (event: SyntheticEvent, newInputValue: string) => {
+        setInputValue(newInputValue);
+    };
+
     return (
         <Autocomplete
             multiple
@@ -75,21 +94,32 @@ const FormChipText = ({
             options={[]}
             value={value}
             onChange={valueChanged}
-            renderTags={(value, props) => {
-                return value.map((option, index) => (
-                    <Chip label={option} {...props({ index })} />
-                ));
+            inputValue={inputValue}
+            onInputChange={handleInputChange}
+            renderTags={(value, getTagProps) => {
+                return value.map((option, index) => {
+                    const { key, ...tagProps } = getTagProps({ index });
+                    return (
+                        <Chip
+                            key={index}
+                            label={option}
+                            {...tagProps}
+                        />
+                    );
+                });
             }}
             renderInput={(params) => (
                 <TextField
-                    label={label}
                     {...params}
-                    helperText={description?.split("\n").map((line) => (
-                        <>
+                    label={label}
+                    helperText={description?.split("\n").map((line, i) => (
+                        <span key={i}>
                             {line}
                             <br />
-                        </>
+                        </span>
                     ))}
+                    onKeyDown={handleKeyDown}
+                    inputRef={inputRef}
                 />
             )}
         />
