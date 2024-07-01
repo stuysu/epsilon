@@ -1,9 +1,10 @@
 import { useEffect, useState, useContext } from "react";
 import { supabase } from "../../supabaseClient";
-import { Button } from "@mui/material";
+import { Box, Button, Card, Typography } from "@mui/material";
 
 import OrgApproval from "../../comps/admin/OrgApproval";
 import { useSnackbar } from "notistack";
+import PendingOrgCard from "../../comps/admin/PendingOrgCard";
 
 const ApprovePending = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -80,22 +81,20 @@ const ApprovePending = () => {
     }
 
     return (
-        <div>
-            <h1>Org Approvals</h1>
-            <div>
+        <Box>
+            <Typography variant="h1" align="center">Org Approvals</Typography>
+            <Box sx={{ width: "100%", display: "flex", justifyContent: "center", flexWrap: "wrap", padding: "10px" }}>
                 {pendingOrgs.map((org, i) => (
-                    <div key={i}>
-                        {org.name || "NO NAME"}
-                        <Button
-                            variant="contained"
-                            onClick={() => setView(org)}
-                        >
-                            View
-                        </Button>
-                    </div>
+                    <Box key={i} sx={{ width: "100%", display: "flex", justifyContent: "center", marginTop: "10px", marginBottom: "10px"}}>
+                        <PendingOrgCard 
+                            name={org.name}
+                            picture={org.picture || ""}
+                            onView={() => setView(org)}
+                        />
+                    </Box>
                 ))}
-            </div>
-        </div>
+            </Box>
+        </Box>
     );
 };
 

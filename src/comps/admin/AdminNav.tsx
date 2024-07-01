@@ -3,6 +3,7 @@ import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import EditIcon from '@mui/icons-material/Edit';
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import EmailIcon from "@mui/icons-material/Email";
+import { Box } from "@mui/material";
 
 const AdminNav = () => {
     let navLinks = [
@@ -29,7 +30,9 @@ const AdminNav = () => {
     ];
 
     return (
-        <RouteTabs tabs={navLinks} />
+        <Box sx={{ width: "100%", display: "flex", justifyContent: "center"}}>
+            <RouteTabs tabs={navLinks} />
+        </Box>
     );
 };
 

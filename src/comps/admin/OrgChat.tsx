@@ -69,6 +69,11 @@ const OrgChat = (
       }, [messages]); // Assuming `messages` is your state variable that holds the chat messages      
 
     const sendMessage = async () => {
+        if (!message) {
+            enqueueSnackbar("Message cannot be empty", { variant: "error" });
+            return;
+        }
+
         const { data, error } = await supabase.functions.invoke(
             "create-organization-message",
             {
@@ -162,7 +167,21 @@ const OrgChat = (
                 }
             </Box>
             <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap", alignItems: "center"}}>
-                <TextField label="Type message here." sx={{ width: "80%" }} value={message} onChange={(e) => setMessage(e.target.value)} />
+                <TextField 
+                    label="Type message here." 
+                    sx={{ width: "80%" }} 
+                    value={message} 
+                    onChange={(e) => setMessage(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter") {
+                            e.preventDefault();
+
+                            if (message) {
+                                sendMessage();
+                            }
+                        }
+                    }} 
+                />
                 <Button variant="contained" sx={{ width: "100px", marginLeft: "15px" }} onClick={sendMessage}>Send</Button>
             </Box>
         </Card>
