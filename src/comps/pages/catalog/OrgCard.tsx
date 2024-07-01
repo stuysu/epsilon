@@ -22,7 +22,6 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                 },
             }}
             onClick={() => {
-                const scrollPosition = window.scrollY
                 navigate(`/${organization.url}`)
             }}
         >

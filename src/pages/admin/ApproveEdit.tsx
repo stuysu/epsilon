@@ -1,9 +1,11 @@
 import { useEffect, useState } from "react";
-import { Box, Button } from "@mui/material";
+import { Box, Button, Typography } from "@mui/material";
 import OrgEditApproval from "../../comps/admin/OrgEditApproval";
 
 import { supabase } from "../../supabaseClient";
 import { useSnackbar } from "notistack";
+
+import PendingOrgCard from "../../comps/admin/PendingOrgCard";
 
 const ApproveEdit = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -96,22 +98,22 @@ const ApproveEdit = () => {
     }
 
     return (
-        <div>
-            <h1>Approve Edits</h1>
-            {pendingEdits.map((edit, i) => {
-                return (
-                    <Box key={i}>
-                        {edit.organization_name || "NO NAME"}
-                        <Button
-                            variant="contained"
-                            onClick={() => setView(edit)}
-                        >
-                            View
-                        </Button>
-                    </Box>
-                );
-            })}
-        </div>
+        <Box>
+            <Typography variant="h1" align="center">Approve Edits</Typography>
+            <Box sx={{ width: "100%", display: "flex", justifyContent: "center", flexWrap: "wrap", padding: "10px" }}>
+                {pendingEdits.map((edit, i) => {
+                    return (
+                        <Box key={i} sx={{ width: "100%", display: "flex", justifyContent: "center", marginTop: "10px", marginBottom: "10px" }}>
+                            <PendingOrgCard 
+                                name={edit.organization_name}
+                                picture={edit.organization_picture || ""}
+                                onView={() => setView(edit)}
+                            />
+                        </Box>
+                    );
+                })}
+            </Box>
+        </Box>
     );
 };
 
