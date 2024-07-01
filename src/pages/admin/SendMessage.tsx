@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 import { useState } from "react";
 import OrgChat from "../../comps/admin/OrgChat";
@@ -9,18 +9,22 @@ const SendMessage = () => {
 
     return (
         <Box>
-            <h1>Send Message</h1>
-            <OrgSelector 
-                onSelect={(oid) => setOrgId(oid)}
-            />
-            {
-                orgId &&
-                (
-                    <OrgChat 
-                        organization_id={orgId}
-                    />
-                )
-            }
+            <Typography variant="h1" align="center">Approve Edits</Typography>
+            <Box sx={{ width: "100%", display: "flex", justifyContent: "center", marginTop: "20px" }}>
+                <OrgSelector 
+                    onSelect={(oid) => setOrgId(oid)}
+                />
+            </Box>
+            <Box sx={{ marginTop: "20px", width: "100%", display: "flex", justifyContent: "center", padding: "20px" }}>
+                {
+                    orgId &&
+                    (
+                        <OrgChat 
+                            organization_id={orgId}
+                        />
+                    )
+                }
+            </Box>
         </Box>
     )
 }

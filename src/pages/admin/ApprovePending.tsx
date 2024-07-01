@@ -31,6 +31,8 @@ const ApprovePending = () => {
                     uniqueness,
                     meeting_schedule,
                     meeting_days,
+                    keywords,
+                    tags,
                     commitment_level,
                     state,
                     joinable,

@@ -60,7 +60,7 @@ const OrgChat = (
         }
 
         fetchMessages();
-    }, []);
+    }, [organization_id]);
 
     useEffect(() => {
         if (chatBoxRef.current) {
@@ -166,10 +166,10 @@ const OrgChat = (
                     })
                 }
             </Box>
-            <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap", alignItems: "center"}}>
+            <Box sx={{ width: "100%", display: "flex", flexWrap: "nowrap", alignItems: "center"}}>
                 <TextField 
                     label="Type message here." 
-                    sx={{ width: "80%" }} 
+                    sx={{ width: "80%", marginRight: "15px" }} 
                     value={message} 
                     onChange={(e) => setMessage(e.target.value)}
                     onKeyDown={(e) => {
@@ -182,7 +182,7 @@ const OrgChat = (
                         }
                     }} 
                 />
-                <Button variant="contained" sx={{ width: "100px", marginLeft: "15px" }} onClick={sendMessage}>Send</Button>
+                <Button variant="contained" sx={{ width: "20%" }} onClick={sendMessage}>Send</Button>
             </Box>
         </Card>
     )

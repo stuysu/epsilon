@@ -455,6 +455,28 @@ const OrgEditor = ({
         }
     };
 
+    const deleteEdit = async () => {
+        if (existingEdit.id) {
+            let { error: deleteError } = await supabase
+                .from("organizationedits")
+                .delete()
+                .eq("organization_id", organization.id);
+            if (deleteError) {
+                enqueueSnackbar(
+                    "Error removing redundant organization edit.",
+                    { variant: "error" },
+                );
+            }
+
+            enqueueSnackbar("Removed redundant organization edit!", {
+                variant: "success",
+            });
+
+            // reset
+            navigate(0);
+        }
+    }
+
     const changeStatus = useCallback(
         (field: string, newStatus: boolean) => {
             if (status[field] && newStatus === status[field].value) return;
@@ -476,16 +498,18 @@ const OrgEditor = ({
             [field]: value,
         });
     };
-
-    const pendingPicture =
-        existingEdit.picture !== undefined && existingEdit.picture !== null &&
-        existingEdit.picture !== organization.picture;
+    
+    const pendingPicture = organization.state === "PENDING" ||
+        (existingEdit.picture !== undefined && existingEdit.picture !== null &&
+        existingEdit.picture !== organization.picture);
     
     const putPicture = editPicture !== undefined
     ? editPicture
         ? URL.createObjectURL(editPicture as File)
         : ""
-    : oldPicture || ""
+    : oldPicture || "";
+    
+    const allNull = Object.keys(existingEdit).every((key) => existingEdit[key as keyof(OrganizationEdit)] === undefined);
 
     return (
         <Paper elevation={1} sx={{ padding: "10px" }}>
@@ -658,7 +682,7 @@ const OrgEditor = ({
                     padding: "20px",
                     display: "flex",
                     flexDirection: "row-reverse",
-                    flexWrap: "nowrap",
+                    flexWrap: "nowrap"
                 }}
             >
                 <Button
@@ -666,8 +690,17 @@ const OrgEditor = ({
                     variant="contained"
                     disabled={!savable}
                     onClick={saveChanges}
+                    sx={{ marginLeft: "10px"}}
                 >
                     Save Changes
+                </Button>
+                <Button
+                    color='error'
+                    variant='contained'
+                    disabled={allNull}
+                    onClick={deleteEdit}
+                >
+                    Delete Edit
                 </Button>
             </Box>
         </Paper>

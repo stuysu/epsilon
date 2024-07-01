@@ -246,10 +246,16 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                         organization
                         .socials
                         .split(" ")
-                        .map((social, i) => {
+                        .map((social, i, a) => {
                             if (!social.startsWith("http")) {
+                                let outText = social;
+
+                                if (i !== a.length - 1) {
+                                    outText += " ";
+                                }
+                                
                                 return (
-                                    <Typography textAlign="center">{social}</Typography>
+                                    outText
                                 )
                             }
 
