@@ -1,6 +1,6 @@
 import { useState } from "react";
 
-import { Box, TextField, Button } from "@mui/material";
+import { Box, TextField, Button, Card } from "@mui/material";
 
 import { supabase } from "../../supabaseClient";
 
@@ -44,17 +44,22 @@ const OrgSelector = ({
     };
 
     return (
-        <Box sx={{ background: "black" }}>
-            <TextField
-                onChange={(e) => setOrgName(e.target.value)}
-                label="Search for Organization"
-                value={orgName}
-                error={inputError.length !== 0}
-                helperText={inputError}
-                onFocus={() => setInputError("")}
-            />
-            <Button onClick={searchOrg}>Submit</Button>
-        </Box>
+        <Card variant="outlined" sx={{ width: "500px", height: "300px", display: "flex", flexWrap: "wrap", padding: "20px" }}>
+            <Box sx={{ width: "100%", display: "flex", justifyContent: "center", height: "80%", alignItems: "center"}}>
+                <TextField
+                    onChange={(e) => setOrgName(e.target.value)}
+                    label="Search for Organization"
+                    value={orgName}
+                    error={inputError.length !== 0}
+                    helperText={inputError}
+                    onFocus={() => setInputError("")}
+                    sx={{ width: "100%" }}
+                />
+            </Box>
+            <Box sx={{ width: "100%", display: "flex", justifyContent: "center"}}>
+                <Button onClick={searchOrg} sx={{ height: "40px", width: "50%" }} variant="contained">Submit</Button>
+            </Box>
+        </Card>
     );
 };
 

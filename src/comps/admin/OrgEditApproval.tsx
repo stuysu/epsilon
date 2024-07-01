@@ -1,7 +1,7 @@
 import { useContext, useEffect, useState } from "react";
 import UserContext from "../context/UserContext";
 
-import { Box, Button } from "@mui/material";
+import { Avatar, Box, Button, Card, Divider, Typography } from "@mui/material";
 
 import { supabase } from "../../supabaseClient";
 import { useSnackbar } from "notistack";
@@ -37,6 +37,7 @@ const OrgEditApproval = ({
 
     /* fetch current org data to compare to */
     let [currentOrg, setCurrentOrg] = useState<Partial<Organization>>({});
+    const [buttonsDisabled, setButtonsDisabled] = useState(false);
     let [fields, setChangedFields] = useState<string[]>([]);
 
     useEffect(() => {
@@ -74,6 +75,7 @@ const OrgEditApproval = ({
     }, [edit]);
 
     const approve = async () => {
+        setButtonsDisabled(true);
         let error;
         let updatedFields: any = {};
 
@@ -94,17 +96,20 @@ const OrgEditApproval = ({
         ));
 
         if (error) {
+            setButtonsDisabled(false);
             return enqueueSnackbar(
                 "Error updating organization. Contact it@stuysu.org for support.",
                 { variant: "error" },
             );
         }
 
+        setButtonsDisabled(false);
         enqueueSnackbar("Organization edit approved!", { variant: "success" });
         onApprove();
     };
 
     const reject = async () => {
+        setButtonsDisabled(true);
         let error;
         ({ error } = await supabase.functions.invoke(
             "reject-organization-edit",
@@ -117,43 +122,66 @@ const OrgEditApproval = ({
         ))
 
         if (error) {
+            setButtonsDisabled(false);
             return enqueueSnackbar(
                 "Error deleting organization edit. Contact it@stuysu.org for support.",
                 { variant: "error" },
             );
         }
 
+        setButtonsDisabled(false);
         enqueueSnackbar("Organization edit rejected.", { variant: "success" });
         onReject();
     }
 
     return (
-        <Box>
-            <Button variant="contained" onClick={onBack}>
-                Back
-            </Button>
-            <Button variant="contained" onClick={approve}>
-                Approve
-            </Button>
-            <Button variant="contained" onClick={reject}>
-                Reject
-            </Button>
-            <h1>{edit.organization_name}</h1>
-            {fields.map((field, i) => {
-                let f1: OrgKey = field as OrgKey;
-                let f2: EditKey = field as EditKey;
+        <Box sx={{ padding: "30px", display: "flex", flexWrap: "wrap" }}>
+            <Box sx={{ width: "100%", marginBottom: "20px" }}>
+                <Button variant="contained" onClick={onBack} sx={{ marginRight: "10px"}}>
+                    Back
+                </Button>
+                <Button variant="contained" onClick={approve} color="success" sx={{ marginRight: "10px"}} disabled={buttonsDisabled}>
+                    Approve
+                </Button>
+                <Button variant="contained" onClick={reject} color="secondary" sx={{ marginRight: "10px"}} disabled={buttonsDisabled}>
+                    Reject
+                </Button>
+            </Box>
+            <Typography variant="h1" width="100%">{edit.organization_name}: changes</Typography>
+            <Card sx={{ width: "100%", maxWidth: "1000px", margin: "10px", padding: "10px" }}>
+                {fields.map((field, i) => {
+                    let f2: EditKey = field as EditKey;
 
-                /* need to explicitly define this because interface Organization has non-string fields */
-                let v1 = currentOrg[f1] as string;
+                    if (f2 === 'picture') {
+                        return (
+                            <>
+                                <Typography variant="h5" fontWeight={600}>
+                                    {field}
+                                </Typography>
+                                <Avatar src={edit[f2] as string} alt={edit.organization_name} style={{ width: "150px", height: "150px", fontSize: "60px" }}>
+                                        {edit.organization_name.charAt(0).toUpperCase()}
+                                </Avatar>
+                                <Divider sx={{ margin: "10px" }}/>
+                            </>
+                        );
+                    }
 
-                return (
-                    <Box key={i}>
-                        <b>{field}</b>: {v1 || "NONE"} {"->"} {`"${edit[f2]}"`}
-                    </Box>
-                );
-            })}
-
-            <OrgChat organization_id={edit.organization_id} />
+                    return (
+                        <>
+                            <Typography variant="h5" fontWeight={600}>
+                                {field}
+                            </Typography>
+                            <Typography variant="body2">
+                                {`"${edit[f2]}"`}
+                            </Typography>
+                            <Divider sx={{ margin: "10px" }}/>
+                        </>
+                    );
+                })}
+            </Card>
+            <Box sx={{ maxWidth: "700px", width: "100%", margin: "10px" }}>
+                <OrgChat organization_id={edit.organization_id} />
+            </Box>
         </Box>
     );
 };

@@ -1,8 +1,10 @@
-import { Box, Button } from "@mui/material";
+import { Avatar, Box, Button, Card, Divider, Typography } from "@mui/material";
 import { supabase } from "../../supabaseClient";
 
 import { useSnackbar } from "notistack";
 import OrgChat from "./OrgChat";
+
+import { useState } from "react";
 
 const OrgApproval = ({
     onBack,
@@ -13,14 +15,17 @@ const OrgApproval = ({
     onDecision: () => void;
 } & Partial<OrgContextType>) => {
     const { enqueueSnackbar } = useSnackbar();
+    const [buttonsDisabled, setButtonsDisabled] = useState(false);
 
     const approve = async () => {
+        setButtonsDisabled(true);
         const { error } = await supabase.functions.invoke(
             "approve-organization",
             { body: { organization_id: org.id }}
         )
 
         if (error) {
+            setButtonsDisabled(false);
             return enqueueSnackbar(
                 "Error approving organization. Contact it@stuysu.org for support.",
                 { variant: "error" },
@@ -28,15 +33,18 @@ const OrgApproval = ({
         }
 
         enqueueSnackbar("Organization approved!", { variant: "success" });
+        setButtonsDisabled(false);
         onDecision();
     };
 
     const reject = async () => {
+        setButtonsDisabled(true);
         const { error } = await supabase.functions.invoke(
             "reject-organization",
             { body: { organization_id: org.id }}
         )
         if (error) {
+            setButtonsDisabled(false);
             return enqueueSnackbar(
                 "Error rejecting organization. Contact it@stuysu.org for support.",
                 { variant: "error" },
@@ -44,43 +52,87 @@ const OrgApproval = ({
         }
 
         enqueueSnackbar("Organization rejected!", { variant: "success" });
+        setButtonsDisabled(false);
         onDecision();
     };
 
     return (
-        <Box>
-            <Box>
-                <Button variant="contained" onClick={onBack}>
+        <Box sx={{ padding: "30px", display: "flex", flexWrap: "wrap" }}>
+            <Box sx={{ width: "100%", marginBottom: "20px" }}>
+                <Button variant="contained" onClick={onBack} sx={{ marginRight: "10px"}}>
                     Back
                 </Button>
-                <Button variant="contained" onClick={approve}>
+                <Button variant="contained" onClick={approve} color="success" sx={{ marginRight: "10px"}} disabled={buttonsDisabled}>
                     Approve
                 </Button>
-                <Button variant="contained" onClick={reject}>
+                <Button variant="contained" onClick={reject} color="secondary" sx={{ marginRight: "10px"}} disabled={buttonsDisabled}>
                     Reject
                 </Button>
-                <p>name: {org.name}</p>
-                <p>url: {org.url}</p>
-                <p>picture: {org.picture}</p>
-                <p>mission: {org.mission}</p>
-                <p>purpose: {org.purpose}</p>
-                <p>benefit: {org.benefit}</p>
-                <p>appointment procedures: {org.appointment_procedures}</p>
-                <p>uniqueness: {org.uniqueness}</p>
-                <p>meeting schedule: {org.meeting_schedule}</p>
-                <p>meeting days: {org.meeting_days}</p>
-                <p>commitment_level: {org.commitment_level}</p>
-                <p>
-                    creator:{" "}
-                    {
-                        org.memberships?.find((m) => m.role === "CREATOR")?.users
-                            ?.email
-                    }
-                </p>
             </Box>
-            <OrgChat
-                organization_id={org.id as number}
-            />
+            <Card sx={{ width: "100%", maxWidth: "1000px", margin: "10px", padding: "10px" }}>
+                <Typography variant="h5" fontWeight={600}>Name:</Typography>
+                <Typography variant="body2">{org.name}</Typography>
+                <Divider sx={{ margin: "10px" }}/>
+
+                <Typography variant="h5" fontWeight={600}>URL:</Typography>
+                <Typography variant="body2">{org.url}</Typography>
+                <Divider sx={{ margin: "10px" }}/>
+
+                <Typography variant="h5" fontWeight={600}>Picture:</Typography>
+                {org.picture ? <Avatar src={org.picture} alt={org.name} sx={{ width: "150px", height: "150px" }} /> : "No picture provided"}
+                <Divider sx={{ margin: "10px" }}/>
+
+                <Typography variant="h5" fontWeight={600}>Mission:</Typography>
+                <Typography variant="body2">{org.mission}</Typography>
+                <Divider sx={{ margin: "10px" }}/>
+
+                <Typography variant="h5" fontWeight={600}>Purpose:</Typography>
+                <Typography variant="body2">{org.purpose}</Typography>
+                <Divider sx={{ margin: "10px" }}/>
+
+                <Typography variant="h5" fontWeight={600}>Benefit:</Typography>
+                <Typography variant="body2">{org.benefit}</Typography>
+                <Divider sx={{ margin: "10px" }}/>
+
+                <Typography variant="h5" fontWeight={600}>Appointment Procedures:</Typography>
+                <Typography variant="body2">{org.appointment_procedures}</Typography>
+                <Divider sx={{ margin: "10px" }}/>
+
+                <Typography variant="h5" fontWeight={600}>Uniqueness:</Typography>
+                <Typography variant="body2">{org.uniqueness}</Typography>
+                <Divider sx={{ margin: "10px" }}/>
+
+                <Typography variant="h5" fontWeight={600}>Meeting Schedule:</Typography>
+                <Typography variant="body2">{org.meeting_schedule}</Typography>
+                <Divider sx={{ margin: "10px" }}/>
+
+                <Typography variant="h5" fontWeight={600}>Meeting Days:</Typography>
+                <Typography variant="body2">{org.meeting_days?.join(", ")}</Typography>
+                <Divider sx={{ margin: "10px" }}/>
+
+                <Typography variant="h5" fontWeight={600}>Commitment Level:</Typography>
+                <Typography variant="body2">{org.commitment_level}</Typography>
+                <Divider sx={{ margin: "10px" }}/>
+
+                <Typography variant="h5" fontWeight={600}>Keywords:</Typography>
+                <Typography variant="body2">{org.keywords || "none"}</Typography>
+                <Divider sx={{ margin: "10px" }}/>
+
+                <Typography variant="h5" fontWeight={600}>Tags:</Typography>
+                <Typography variant="body2">{org.tags?.join(", ") || "none"}</Typography>
+                <Divider sx={{ margin: "10px" }}/>
+
+                <Typography variant="h5" fontWeight={600}>Creator:</Typography>
+                <Typography variant="body2">
+                    {org.memberships?.find((m) => m.role === "CREATOR")?.users?.email}
+                </Typography>
+                <Divider sx={{ margin: "10px" }}/>
+            </Card>
+            <Box sx={{ maxWidth: "700px", width: "100%", margin: "10px" }}>
+                <OrgChat
+                    organization_id={org.id as number}
+                />
+            </Box>
         </Box>
     );
 };
