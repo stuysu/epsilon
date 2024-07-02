@@ -76,6 +76,7 @@ const AdminUpsertMeeting = ({
     // fixes select menu item bug where it is trying to map over undefined rooms
     const [loading, setLoading] = useState(true);
 
+
     /* Filtering out rooms that are taken for that day */
     useEffect(() => {
         const fetchRooms = async () => {
@@ -89,8 +90,10 @@ const AdminUpsertMeeting = ({
                 return;
             }
 
-            setAllRooms(data);
-            setLoading(false);
+            setAllRooms((prev) => {
+                setLoading(false);
+                return (data as Room[]);
+            });
         };
 
         fetchRooms();
@@ -138,7 +141,10 @@ const AdminUpsertMeeting = ({
             );
 
             // check if the currently selected room id is no longer valid
-            if (roomId && !~availRooms.findIndex((meta) => meta.id === roomId)) {
+            /* NOTE: if a meeting is invalid because of some update on the backend, 
+            it'll still show the room but once u click into it, it'll only show virtual.
+            */
+            if (!loading && roomId && !~availRooms.findIndex((meta) => meta.id === roomId)) {
                 setRoomId(undefined);
             }
 
