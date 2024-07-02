@@ -114,3 +114,10 @@ interface Strike {
     reason: string;
     created_at: string;
 }
+
+interface Announcement {
+    id: number;
+    content: string;
+    created_at: string;
+    updated_at: string;
+}
