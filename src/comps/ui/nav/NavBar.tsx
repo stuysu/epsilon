@@ -45,7 +45,10 @@ const navStyles: CSSProperties = {
 
 const titleStyle: CSSProperties = {
     color: "inherit",
-    fontSize: "40px",
+    fontSize: "25px",
+    height: "100%",
+    display: "flex",
+    alignItems: "center"
 };
 
 const linkStyle: CSSProperties = {
@@ -85,13 +88,13 @@ const NavBar = () => {
             <Box sx={navStyles}>
                 <Button
                     onClick={() => setDrawerOpen(!drawerOpen)}
-                    sx={{ borderRadius: "100%" }}
+                    sx={{ borderRadius: "100%", width: "50px" }}
                 >
                     <Menu />
                 </Button>
                 <Box sx={titleStyle}>
                     <Link style={linkStyle} to="/">
-                        Epsilon
+                        EPSILON
                     </Link>
                 </Box>
                 <Box
