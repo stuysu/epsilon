@@ -78,7 +78,7 @@ const Strikes = () => {
 
     return (
         <Box>
-            <Typography variant="h1" align="center">Approve Edits</Typography>
+            <Typography variant="h1" align="center">Strikes</Typography>
             <Box sx={{ width: "100%", display: "flex", justifyContent: "center", marginTop: "20px" }}>
                 <OrgSelector
                     onSelect={(orgId, orgName) => {
