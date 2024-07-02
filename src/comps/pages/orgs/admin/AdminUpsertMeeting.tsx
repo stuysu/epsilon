@@ -76,6 +76,7 @@ const AdminUpsertMeeting = ({
     // fixes select menu item bug where it is trying to map over undefined rooms
     const [loading, setLoading] = useState(true);
 
+
     /* Filtering out rooms that are taken for that day */
     useEffect(() => {
         const fetchRooms = async () => {
@@ -89,8 +90,10 @@ const AdminUpsertMeeting = ({
                 return;
             }
 
-            setAllRooms(data);
-            setLoading(false);
+            setAllRooms((prev) => {
+                setLoading(false);
+                return (data as Room[]);
+            });
         };
 
         fetchRooms();
@@ -125,13 +128,23 @@ const AdminUpsertMeeting = ({
             }
 
             data = data.filter((meta) => meta.meeting_id !== id); // remove this current meeting's booking from time slot
+            
+            /* 
+            room is available if:
+            - it does not exist in booked rooms
+            - the day of the start time (mon-fri) is included within the room's available days
+            */
+            const days : Room['available_days'] = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"]
 
             let availRooms = allRooms.filter(
-                (room) => !~data!.findIndex((meta) => meta.room_id === room.id), // room does not exist in booked rooms
+                (room) => !~data!.findIndex((meta) => meta.room_id === room.id) && room.available_days.includes(days[startTime!.day()]),
             );
 
             // check if the currently selected room id is no longer valid
-            if (roomId && ~data.findIndex((meta) => meta.room_id === roomId)) {
+            /* NOTE: if a meeting is invalid because of some update on the backend, 
+            it'll still show the room but once u click into it, it'll only show virtual.
+            */
+            if (!loading && roomId && !~availRooms.findIndex((meta) => meta.id === roomId)) {
                 setRoomId(undefined);
             }
 
@@ -140,10 +153,6 @@ const AdminUpsertMeeting = ({
 
         filterRooms();
     }, [allRooms, startTime, endTime]);
-
-    useEffect(() => {
-        // if available room changes due to time, check if room id chosen before is still valid
-    }, [availableRooms, roomId]);
 
     const handleSave = async () => {
         let supabaseReturn;
