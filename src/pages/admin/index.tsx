@@ -11,6 +11,7 @@ import ApproveEdit from "./ApproveEdit";
 import Strikes from "./Strikes";
 import SendMessage from "./SendMessage";
 import Announcements from "./Announcements";
+import Rooms from "./Rooms";
 
 const AdminRouter = () => {
     const user = useContext(UserContext);
@@ -28,6 +29,7 @@ const AdminRouter = () => {
                 <Route path="/strikes" Component={Strikes} />
                 <Route path="/send-message" Component={SendMessage} />
                 <Route path="/announcements" Component={Announcements} />
+                <Route path="/rooms" Component={Rooms} />
                 <Route path="/*" Component={ApprovePending} />
             </Routes>
         </div>

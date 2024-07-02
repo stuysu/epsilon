@@ -29,7 +29,7 @@ const RouteTabs = ({ tabs }: Props) => {
     }, [location.pathname, currentTab, tabs]);
 
     return (
-        <Box>
+        <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
             <Tabs
                 indicatorColor="secondary"
                 textColor="inherit"
