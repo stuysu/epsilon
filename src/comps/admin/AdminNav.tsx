@@ -4,6 +4,7 @@ import EditIcon from '@mui/icons-material/Edit';
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import EmailIcon from "@mui/icons-material/Email";
 import CampaignIcon from '@mui/icons-material/Campaign';
+import MeetingRoomIcon from '@mui/icons-material/MeetingRoom';
 import { Box } from "@mui/material";
 
 const AdminNav = () => {
@@ -32,6 +33,11 @@ const AdminNav = () => {
             to: "/admin/announcements",
             label: "Announcements",
             icon: <CampaignIcon />
+        },
+        {
+            to: "/admin/rooms",
+            label: "Rooms",
+            icon: <MeetingRoomIcon />
         }
     ];
 
