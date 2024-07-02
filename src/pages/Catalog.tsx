@@ -198,7 +198,7 @@ const Catalog = () => {
                     position: "relative",
                 }}
             >
-                <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap", paddingTop: "10px" }}>
+                <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap", paddingTop: "10px", marginBottom: "20px" }}>
                     <Typography variant="h3">Announcements</Typography>
                     {
                         announcements.map((announcement, i) => {
