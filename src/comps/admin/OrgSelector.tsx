@@ -44,7 +44,7 @@ const OrgSelector = ({
     };
 
     return (
-        <Card variant="outlined" sx={{ width: "500px", height: "300px", display: "flex", flexWrap: "wrap", padding: "20px" }}>
+        <Card variant="outlined" sx={{ width: "500px", height: "250px", display: "flex", flexWrap: "wrap", padding: "20px" }}>
             <Box sx={{ width: "100%", display: "flex", justifyContent: "center", height: "80%", alignItems: "center"}}>
                 <TextField
                     onChange={(e) => setOrgName(e.target.value)}
