@@ -14,6 +14,7 @@ import { useSnackbar } from "notistack";
 import { useState } from "react";
 
 import { supabase } from "../../supabaseClient";
+import ConfirmationDialog from "../ui/ConfirmationDialog";
 
 const AdminRoom = (
     {
@@ -22,25 +23,41 @@ const AdminRoom = (
         floor,
         availableDays,
         comments,
-        approvalRequired
+        approvalRequired,
+        onDelete,
+        create,
+        onCreate
     } :
     {
-        roomId: number,
-        name: string,
+        roomId?: number,
+        name?: string,
         floor?: number,
-        availableDays: Room['available_days'],
+        availableDays?: Room['available_days'],
         comments?: string,
-        approvalRequired: boolean
+        approvalRequired?: boolean,
+        onDelete?: () => void,
+        create?: boolean,
+        onCreate?: (
+            room: {
+                name: string,
+                floor: number,
+                available_days: string,
+                comments: string,
+                approval_required: boolean
+            }
+        ) => void
     }
 ) => {
     const { enqueueSnackbar } = useSnackbar();
 
     const [roomName, setRoomName] = useState(name);
     const [roomFloor, setRoomFloor] = useState(floor);
-    const [roomAvailableDays, setRoomAvailableDays] = useState(availableDays);
+    const [roomAvailableDays, setRoomAvailableDays] = useState(availableDays || []);
     const [roomApprovalRequired, setRoomApprovalRequired] = useState(approvalRequired);
 
     const [isChanged, setIsChanged] = useState(false);
+
+    const [confirm, setConfirm] = useState(false);
 
     const saveRoom = async () => {
         if (!isChanged) return;
@@ -78,6 +95,52 @@ const AdminRoom = (
         enqueueSnackbar(`Room ${roomName} saved!`, { variant: "success" });
     }
 
+    const deleteRoom = async () => {
+        const { error: deleteError } = await supabase.functions.invoke(
+            "delete-room",
+            {
+                body: {
+                    room_id: roomId
+                }
+            }
+        );
+
+        if (deleteError) {
+            enqueueSnackbar("Failed to delete room", { variant: "error" });
+            return;
+        }
+
+        enqueueSnackbar(`Room ${roomName} deleted!`, { variant: "success" });
+
+        if (onDelete) onDelete();
+    }
+
+    const createRoom = async () => {
+        const { error: createError } = await supabase.from("rooms")
+            .insert({
+                name: roomName,
+                floor: roomFloor,
+                available_days: roomAvailableDays.join(", "),
+                comments,
+                approval_required: roomApprovalRequired
+            })
+        if (createError) {
+            enqueueSnackbar("Failed to create room", { variant: "error" });
+            return;
+        }
+
+        enqueueSnackbar(`Room ${roomName} created!`, { variant: "success" });
+        if (onCreate) {
+            onCreate({ 
+                name: roomName || "", 
+                floor: roomFloor || -1, 
+                available_days: roomAvailableDays.join(", "), 
+                comments: "",
+                approval_required: roomApprovalRequired || false
+            });
+        }
+    }
+
     return (
         <Card sx={{ width: "600px", display: "flex", flexWrap: "wrap", padding: "25px", margin: "15px"}}>
             <Box sx={{ width: "100%", display: "flex" }}>
@@ -94,7 +157,7 @@ const AdminRoom = (
                 <TextField
                     sx={{ width: "50%" }} 
                     label="Floor"
-                    value={roomFloor}
+                    value={roomFloor || ""}
                     onChange={(e) => {
                         setRoomFloor(parseInt(e.target.value));
                         setIsChanged(true);
@@ -134,7 +197,7 @@ const AdminRoom = (
                                                     if (e.target.checked) {
                                                         setRoomAvailableDays([...roomAvailableDays, day]);
                                                     } else {
-                                                        setRoomAvailableDays(roomAvailableDays.filter((d) => d !== day));
+                                                        setRoomAvailableDays(roomAvailableDays?.filter((d) => d !== day));
                                                     }
 
                                                     setIsChanged(true);
@@ -148,12 +211,33 @@ const AdminRoom = (
                     }
                 </FormGroup>
             </FormControl>
-
-            <Button onClick={saveRoom} disabled={!isChanged} variant="contained">
-                Save
-            </Button>
-                
             
+            <Box sx={{ width: "100%", paddingLeft: "10px"}}>
+                {
+                    create ? (
+                        <Button onClick={createRoom} variant="contained">
+                            Create
+                        </Button>
+                    ) : (
+                        <>
+                            <Button onClick={saveRoom} disabled={!isChanged} variant="contained" sx={{ marginRight: "10px"}}>
+                                Save
+                            </Button>
+                            <Button onClick={() => setConfirm(true)} variant="contained" color="error">
+                                Delete
+                            </Button>
+                        </>
+                    )
+                }
+            </Box>
+                
+            <ConfirmationDialog 
+                title="Delete Room?"
+                description={`Are you sure you want to delete ${roomName}?`}
+                onConfirm={deleteRoom}
+                onClose={() => setConfirm(false)}
+                open={confirm}
+            />
         </Card>
     )
 }
