@@ -23,7 +23,7 @@ const PendingOrgCard = (
         >
             <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
                 <Avatar src={picture} alt={name} sx={{ width: "225px", height: "225px", boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px", fontSize: "70px" }}>
-                    {name ? name[0] : ""}
+                    {name ? name[0].toUpperCase() : ""}
                 </Avatar>
             </Box>
             <Box sx={{ width: "100%", padding: "20px" }}>
