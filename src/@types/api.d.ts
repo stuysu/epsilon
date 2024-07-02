@@ -77,6 +77,8 @@ interface Room {
         | "WEDNESDAY"
         | "THURSDAY"
         | "FRIDAY"
+        | "SATURDAY"
+        | "SUNDAY"
     )[];
     comments?: string;
 }
