@@ -3,6 +3,7 @@ import PendingActionsIcon from '@mui/icons-material/PendingActions';
 import EditIcon from '@mui/icons-material/Edit';
 import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import EmailIcon from "@mui/icons-material/Email";
+import CampaignIcon from '@mui/icons-material/Campaign';
 import { Box } from "@mui/material";
 
 const AdminNav = () => {
@@ -27,6 +28,11 @@ const AdminNav = () => {
             label: "Send Message",
             icon: <EmailIcon />
         },
+        {
+            to: "/admin/announcements",
+            label: "Announcements",
+            icon: <CampaignIcon />
+        }
     ];
 
     return (

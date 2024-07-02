@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 
-import { Box, useMediaQuery, Typography } from "@mui/material";
+import { Box, useMediaQuery, Typography, Card } from "@mui/material";
 import { Masonry } from "@mui/lab";
 
 import OrgCard from "../comps/pages/catalog/OrgCard";
@@ -53,6 +53,8 @@ const Catalog = () => {
     });
 
     const [seed, setSeed] = useState(sessionStorage.getItem("seed") ? parseFloat(sessionStorage.getItem("seed") as string) : Math.random());
+
+    const [announcements, setAnnouncements] = useState<Announcement[]>([]);
 
     const isTwo = useMediaQuery("(max-width: 1525px)");
     const isTwoWrap = useMediaQuery("(max-width: 1100px)");
@@ -150,6 +152,24 @@ const Catalog = () => {
         sessionStorage.setItem("seed", seed.toString());
     }, [seed]);
 
+    useEffect(() => {
+        const fetchAnnouncements = async () => {
+            const { data, error } = await supabase.from("announcements").select("*");
+
+            if (error || !data) {
+                enqueueSnackbar(
+                    "Failed to load announcements. Contact it@stuysu.org for support.",
+                    { variant: "error" },
+                )
+                return;
+            }
+
+            setAnnouncements(data as Announcement[]);
+        }
+
+        fetchAnnouncements();
+    }, [])
+
     /*
   Testing
   useEffect(() => {
@@ -178,6 +198,18 @@ const Catalog = () => {
                     position: "relative",
                 }}
             >
+                <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap", paddingTop: "10px" }}>
+                    <Typography variant="h3">Announcements</Typography>
+                    {
+                        announcements.map((announcement, i) => {
+                            return (
+                                <Card key={i} sx={{ width: "100%", display: "flex", justifyContent: "center", marginTop: "10px", padding: "20px" }}>
+                                    <Typography variant="body1" width="100%">{announcement.content}</Typography>
+                                </Card>
+                            );
+                        })
+                    }
+                </Box>
                 <Typography variant="h3">Catalog</Typography>
 
                 <InfiniteScroll
