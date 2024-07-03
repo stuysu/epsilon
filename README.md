@@ -5,7 +5,8 @@ https://epsilon.stuysu.org/
 
 ## Current Services:
 
--   StuyActivities [wip]
+-   Activities [finished]
+-   Attendance [finished]
 -   Opportunities [planned]
 -   Schedule/Schedules [planned]
 -   Votes [planned]
