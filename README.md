@@ -3,6 +3,8 @@
 The all in one platform for Stuyvesant High School's needs.
 https://epsilon.stuysu.org/
 
+[Contributing Guide](https://github.com/stuysu/epsilon/wiki)
+
 ## Current Services:
 
 -   Activities [finished]
