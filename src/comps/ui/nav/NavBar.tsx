@@ -16,6 +16,7 @@ import {
     Brightness4Rounded,
     Brightness7Rounded,
     Menu,
+    PersonSearch,
 } from "@mui/icons-material";
 import { CSSProperties, useContext, useEffect, useState } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
@@ -230,6 +231,23 @@ const NavBar = () => {
                         )}
                     </List>
 
+                    <Divider />
+
+                    
+                    {user.signed_in && (
+                        <List
+                            sx={{ width: "100%" }}
+                            subheader={<ListSubheader>Modules</ListSubheader>}
+                        >
+                            <ListItemButton onClick={() => navigate("/modules/attendance")}>
+                                <ListItemIcon>
+                                    <PersonSearch />
+                                </ListItemIcon>
+                                <ListItemText>Attendance</ListItemText>
+                            </ListItemButton>
+                        </List>
+                    )}
+                    
                     <Divider />
 
                     {user.signed_in && (
