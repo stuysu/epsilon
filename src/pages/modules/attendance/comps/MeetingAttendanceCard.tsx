@@ -15,9 +15,9 @@ const MeetingAttendanceCard = (
     return (
         <Card sx={{ width: "300px", margin: "10px", padding: "10px"}}>
             <Typography variant="h5">{title}</Typography>
-            <Button variant="outlined" onClick={() => navigate(`meeting/${id}`)}>View</Button>
+            <Button variant="outlined" onClick={() => navigate(`meeting-admin/${id}`)}>View</Button>
         </Card>
-    )
+    );
 }
 
 export default MeetingAttendanceCard;
