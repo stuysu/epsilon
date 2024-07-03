@@ -100,7 +100,8 @@ interface Post {
 
 interface Meeting {
     id: number;
-    organization?: Partial<Organization>;
+    organizations?: Partial<Organization>;
+    attendance?: Partial<Attendance>[];
     rooms?: Partial<Room>;
     is_public: boolean;
     title: string;
@@ -120,6 +121,15 @@ interface Strike {
 interface Announcement {
     id: number;
     content: string;
+    created_at: string;
+    updated_at: string;
+}
+
+interface Attendance {
+    id: number;
+    organization_id: number;
+    meeting_id: number;
+    user_id: number;
     created_at: string;
     updated_at: string;
 }

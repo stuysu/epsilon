@@ -3,13 +3,24 @@ import { Helmet } from "react-helmet"
 import Loading from "../../comps/ui/Loading"
 
 import { Routes, Route, useLocation } from "react-router-dom";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useContext } from "react";
 
 import AttendanceRouter from "./attendance";
 import InvalidModule from "./InvalidModule";
 
+import UserContext from "../../comps/context/UserContext";
+import { Typography } from "@mui/material";
+
 const ModuleRouter = () => {
     const location = useLocation();
+    const user = useContext(UserContext);
+
+    if (!user.signed_in) {
+        return (
+            <Typography variant="h1" width="100%" align='center'>You must be signed in to use modules</Typography>
+        )
+    }
+    
 
     return (
         <div>
