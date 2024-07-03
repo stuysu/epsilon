@@ -21,3 +21,4 @@ https://epsilon.stuysu.org/
 -   typescript + react -> netlify
 -   supabase = postgres -> docker -> digital ocean
 -   [epsilon backend](https://github.com/stuysu/epsilon-database)
+-   [epsilon functions](https://github.com/stuysu/epsilon-functions)
