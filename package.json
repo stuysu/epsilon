@@ -24,9 +24,11 @@
         "notistack": "^3.0.1",
         "qrcode.react": "^3.1.0",
         "react": "^18.2.0",
+        "react-custom-scrollbars-2": "^4.5.0",
         "react-dom": "^18.2.0",
         "react-helmet": "^6.1.0",
         "react-infinite-scroll-component": "^6.1.0",
+        "react-measure": "^2.5.2",
         "react-multi-carousel": "^2.8.5",
         "react-router-dom": "^6.22.0",
         "react-scripts": "^5.0.1",
@@ -61,6 +63,7 @@
     "devDependencies": {
         "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
         "@types/react-helmet": "^6.1.11",
+        "@types/react-measure": "^2.0.12",
         "prettier": "^3.2.5",
         "supabase": "^1.142.2"
     }
