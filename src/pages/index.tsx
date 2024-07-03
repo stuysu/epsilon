@@ -11,6 +11,8 @@ import AllMeetings from "./AllMeetings";
 import NavBar from "../comps/ui/nav/NavBar";
 import About from "./About";
 import Rules from "./Rules";
+
+const ModuleRouter = lazy(() => import("./modules/ModuleRouter"));
 const Catalog = lazy(() => import("./Catalog"));
 const Create = lazy(() => import("./Create"));
 const OrgRouter = lazy(() => import("./orgs"));
@@ -26,7 +28,7 @@ const Pages = () => {
                     property="og:url"
                     content={PUBLIC_URL + location.pathname}
                 />
-                <meta property="og:site_name" content={"epsilon"} />
+                <meta property="og:site_name" content={"Epsilon"} />
                 <meta property="og:type" content={"website"} />
                 <meta
                     property="og:description"
@@ -47,6 +49,7 @@ const Pages = () => {
                     <Route path={"/about"} Component={About} />
                     <Route path={"/meetings"} Component={AllMeetings} />
                     <Route path={"/rules"} Component={Rules} />
+                    <Route path={"/modules/*"} Component={ModuleRouter} />
                     <Route path={"/admin/*"} Component={AdminRouter} />
                     <Route path={"/:orgUrl/*"} Component={OrgRouter} />
                 </Routes>
