@@ -89,7 +89,8 @@ const NavBar = () => {
             <Box sx={navStyles}>
                 <Button
                     onClick={() => setDrawerOpen(!drawerOpen)}
-                    sx={{ borderRadius: "100%", width: "50px" }}
+                    style={{maxWidth: '50px', maxHeight: '50px', minWidth: '50px', minHeight: '50px'}}
+                    sx={ { borderRadius: 50 } }
                 >
                     <Menu />
                 </Button>
