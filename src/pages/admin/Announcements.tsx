@@ -73,11 +73,6 @@ const Announcements = () => {
                         label="Content"
                         onChange={(e) => setContent(e.target.value)}
                         onKeyDown={(e) => {
-                            if (e.key === "Enter") {
-                                e.preventDefault();
-
-                                createAnnouncement();
-                            }
                         }}
                     />
                     <Button sx={{ width: "100%", marginTop: "10px" }} variant="contained" onClick={createAnnouncement}>Create</Button>
