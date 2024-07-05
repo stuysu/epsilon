@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet"
 import Loading from "../../comps/ui/Loading"
 
 import { Routes, Route, useLocation } from "react-router-dom";
-import { lazy, Suspense, useContext } from "react";
+import { Suspense, useContext } from "react";
 
 import AttendanceRouter from "./attendance";
 import InvalidModule from "./InvalidModule";

@@ -1,5 +1,4 @@
-import { useContext, useEffect, useState } from "react";
-import UserContext from "../context/UserContext";
+import { useEffect, useState } from "react";
 
 import { Avatar, Box, Button, Card, Divider, Typography } from "@mui/material";
 
@@ -8,7 +7,6 @@ import { useSnackbar } from "notistack";
 import OrgChat from "./OrgChat";
 
 type EditKey = keyof EditType;
-type OrgKey = keyof Organization;
 
 const editFields: EditKey[] = [
     "name",

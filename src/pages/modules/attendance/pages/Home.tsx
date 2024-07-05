@@ -77,7 +77,7 @@ const Home = () => {
                             {!user.memberships?.length && <MenuItem value={-1}>No Organizations</MenuItem>}
                             {
                                 user.memberships?.map((membership) => {
-                                    if (!['ADMIN', 'CREATOR'].includes(membership.role || "")) return;
+                                    if (!['ADMIN', 'CREATOR'].includes(membership.role || "")) return null;
 
                                     return (
                                         <MenuItem 

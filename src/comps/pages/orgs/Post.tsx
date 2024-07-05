@@ -1,4 +1,4 @@
-import { Box, Button, ListItem, ListItemText, ListItemAvatar, Paper, Typography, Avatar, Card } from "@mui/material";
+import { Box, Button, ListItem, ListItemText, ListItemAvatar, Typography, Avatar, Card } from "@mui/material";
 import { supabase } from "../../../supabaseClient";
 
 import { useState, useContext } from "react";

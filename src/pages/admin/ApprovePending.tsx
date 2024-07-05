@@ -1,6 +1,6 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState} from "react";
 import { supabase } from "../../supabaseClient";
-import { Box, Button, Card, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 import OrgApproval from "../../comps/admin/OrgApproval";
 import { useSnackbar } from "notistack";
