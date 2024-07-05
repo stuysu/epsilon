@@ -63,7 +63,7 @@ const MeetingAttendance = () => {
         }
 
         validateMeeting();
-    }, [meetingId]);
+    }, [meetingId, enqueueSnackbar]);
 
     if (!valid) {
         return (

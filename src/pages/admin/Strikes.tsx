@@ -50,7 +50,7 @@ const Strikes = () => {
         };
 
         fetchOrgStrikes();
-    }, [orgId]);
+    }, [orgId, enqueueSnackbar]);
 
     const issueStrike = async () => {
         const { data, error } = await supabase.functions.invoke(

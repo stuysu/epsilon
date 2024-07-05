@@ -56,7 +56,7 @@ const MeetingAdminAttendance = () => {
             setMeeting(meetingData);
         }
         fetchMeetingData();
-    }, [meetingId]);
+    }, [meetingId, enqueueSnackbar]);
 
     const updateStatus = async (userId?: number, isPresent?: boolean) => {
         if (userId === undefined || isPresent === undefined) {

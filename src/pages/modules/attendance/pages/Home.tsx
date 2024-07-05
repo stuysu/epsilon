@@ -37,7 +37,7 @@ const Home = () => {
         }
 
         updateOrgId();
-    }, []);
+    });
 
     useEffect(() => {
         const fetchOrgMeetings = async () => {
@@ -57,7 +57,7 @@ const Home = () => {
         }
 
         fetchOrgMeetings();
-    }, [selectedOrgId])
+    }, [selectedOrgId, enqueueSnackbar])
 
     return (
         <Box>

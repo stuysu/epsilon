@@ -186,7 +186,7 @@ const AdminMember = ({
             </Box>
             <Box sx={{ width: "200px" }}>
                 {
-                    (isCreator || role === "MEMBER" || role === "ADVISOR" || userId == user.id) && 
+                    (isCreator || role === "MEMBER" || role === "ADVISOR" || userId === user.id) &&
                     (
                         <Button
                             onClick={handleEdit}
