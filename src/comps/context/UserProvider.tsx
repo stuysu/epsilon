@@ -96,7 +96,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 let grade;
                 let d = new Date();
 
-                if (!data[0].is_faculty) {
+                if (!data[0].is_faculty && data[0].grad_year) {
                     if (d.getMonth() < 8) {
                         grade = 12 - (data[0].grad_year - d.getFullYear());
                     } else {
