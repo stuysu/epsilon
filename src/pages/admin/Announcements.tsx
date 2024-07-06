@@ -101,7 +101,7 @@ const Announcements = () => {
                         label="Content"
                         onChange={(e) => setContent(e.target.value)}
                         onKeyDown={(e) => {
-                            if (e.key === 'Enter' && e.ctrlKey) {
+                            if (e.key === "Enter" && e.ctrlKey) {
                                 e.preventDefault();
 
                                 createAnnouncement();
