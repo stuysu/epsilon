@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import OrgEditApproval from "../../comps/admin/OrgEditApproval";
 
 import { supabase } from "../../supabaseClient";
@@ -72,7 +72,7 @@ const ApproveEdit = () => {
         };
 
         fetchPendingEdits();
-    }, []);
+    });
 
     if (view) {
         return (
@@ -99,12 +99,31 @@ const ApproveEdit = () => {
 
     return (
         <Box>
-            <Typography variant="h1" align="center">Approve Edits</Typography>
-            <Box sx={{ width: "100%", display: "flex", justifyContent: "center", flexWrap: "wrap", padding: "10px" }}>
+            <Typography variant="h1" align="center">
+                Approve Edits
+            </Typography>
+            <Box
+                sx={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    flexWrap: "wrap",
+                    padding: "10px",
+                }}
+            >
                 {pendingEdits.map((edit, i) => {
                     return (
-                        <Box key={i} sx={{ width: "100%", display: "flex", justifyContent: "center", marginTop: "10px", marginBottom: "10px" }}>
-                            <PendingOrgCard 
+                        <Box
+                            key={i}
+                            sx={{
+                                width: "100%",
+                                display: "flex",
+                                justifyContent: "center",
+                                marginTop: "10px",
+                                marginBottom: "10px",
+                            }}
+                        >
+                            <PendingOrgCard
                                 name={edit.organization_name}
                                 picture={edit.organization_picture || ""}
                                 onView={() => setView(edit)}

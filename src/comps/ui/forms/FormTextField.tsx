@@ -76,7 +76,7 @@ const FormTextField = ({
         };
 
         validate(value);
-    }, [required, requirements, value, changeStatus]);
+    }, [required, requirements, field, value, changeStatus]);
 
     const textChanged = (event: ChangeEvent<HTMLInputElement>) => {
         let targetValue = event.target.value;

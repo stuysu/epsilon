@@ -1,49 +1,83 @@
-import { Box, Button, Card, Typography, ListItem, ListItemText, ListItemAvatar, Avatar } from "@mui/material";
+import {
+    Box,
+    Button,
+    Card,
+    Typography,
+    ListItem,
+    ListItemText,
+    ListItemAvatar,
+    Avatar,
+} from "@mui/material";
 import { useState } from "react";
 import MeetingPreview from "../../../ui/meetings/MeetingPreview";
 import dayjs from "dayjs";
 
-const UpcomingMeeting = (
-    {
-        id,
-        title,
-        description,
-        start_time,
-        end_time,
-        org_name,
-        org_picture,
-        room_name,
-        is_public
-    } :
-    {
-        id: number;
-        title: string;
-        description: string;
-        start_time: string;
-        end_time: string;
-        org_name: string;
-        org_picture: string;
-        room_name?: string;
-        is_public: boolean;
-    }
-) => {
-
+const UpcomingMeeting = ({
+    id,
+    title,
+    description,
+    start_time,
+    end_time,
+    org_name,
+    org_picture,
+    room_name,
+    is_public,
+}: {
+    id: number;
+    title: string;
+    description: string;
+    start_time: string;
+    end_time: string;
+    org_name: string;
+    org_picture: string;
+    room_name?: string;
+    is_public: boolean;
+}) => {
     const [open, setOpen] = useState(false);
 
     let start = dayjs(start_time);
     let end = dayjs(end_time);
 
-    const daysOfWeek = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-    const monthNames = ["January", "February", "March", "April", "May", "June", "July", "August", "October", "September", "November", "December"]
+    const daysOfWeek = [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+    ];
+    const monthNames = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "October",
+        "September",
+        "November",
+        "December",
+    ];
 
     return (
-        <Box sx={{ width: "100%", paddingLeft: "30px", paddingRight: "30px", paddingTop: "10px", paddingBottom: "10px" }}>
+        <Box
+            sx={{
+                width: "100%",
+                paddingLeft: "30px",
+                paddingRight: "30px",
+                paddingTop: "10px",
+                paddingBottom: "10px",
+            }}
+        >
             <Card
                 elevation={2}
                 sx={{
                     width: "100%",
                     height: "300px",
-                    padding: "20px"
+                    padding: "20px",
                 }}
             >
                 <ListItem>
@@ -52,12 +86,10 @@ const UpcomingMeeting = (
                             {org_name.charAt(0).toUpperCase()}
                         </Avatar>
                     </ListItemAvatar>
-                    
-                    <ListItemText
-                        primary={org_name}
-                    />
+
+                    <ListItemText primary={org_name} />
                 </ListItem>
-                <Box sx={{ height: "150px"}}>
+                <Box sx={{ height: "150px" }}>
                     <Typography variant="h3">{title}</Typography>
                     <Typography>
                         {daysOfWeek[start.day()]}, {monthNames[start.month()]}{" "}
@@ -67,7 +99,9 @@ const UpcomingMeeting = (
                         {is_public ? "Public" : "Private"}
                     </Typography>
                 </Box>
-                <Button variant="contained" onClick={() => setOpen(true)}>Show</Button>
+                <Button variant="contained" onClick={() => setOpen(true)}>
+                    Show
+                </Button>
                 <MeetingPreview
                     id={id}
                     title={title}
@@ -84,6 +118,6 @@ const UpcomingMeeting = (
             </Card>
         </Box>
     );
-}
+};
 
 export default UpcomingMeeting;

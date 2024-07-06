@@ -1,9 +1,9 @@
-import { PUBLIC_URL } from "../../constants"
-import { Helmet } from "react-helmet"
-import Loading from "../../comps/ui/Loading"
+import { PUBLIC_URL } from "../../constants";
+import { Helmet } from "react-helmet";
+import Loading from "../../comps/ui/Loading";
 
 import { Routes, Route, useLocation } from "react-router-dom";
-import { lazy, Suspense, useContext } from "react";
+import { Suspense, useContext } from "react";
 
 import AttendanceRouter from "./attendance";
 import InvalidModule from "./InvalidModule";
@@ -17,10 +17,11 @@ const ModuleRouter = () => {
 
     if (!user.signed_in) {
         return (
-            <Typography variant="h1" width="100%" align='center'>You must be signed in to use modules</Typography>
-        )
+            <Typography variant="h1" width="100%" align="center">
+                You must be signed in to use modules
+            </Typography>
+        );
     }
-    
 
     return (
         <div>
@@ -33,9 +34,7 @@ const ModuleRouter = () => {
                 <meta property="og:type" content={"website"} />
                 <meta
                     property="og:description"
-                    content={
-                        "The everything part of the everything app."
-                    }
+                    content={"The everything part of the everything app."}
                 />
                 <meta property={"og:title"} content={"Epsilon"} />
                 <title>Modules | Epsilon</title>
@@ -47,7 +46,7 @@ const ModuleRouter = () => {
                 </Routes>
             </Suspense>
         </div>
-    )
-}
+    );
+};
 
 export default ModuleRouter;

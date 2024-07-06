@@ -56,7 +56,7 @@ const Organization = () => {
         };
 
         fetchEdits();
-    }, [organization]);
+    }, [organization, enqueueSnackbar]);
 
     return (
         <Box sx={{ width: "100%" }}>

@@ -50,23 +50,23 @@ const Strikes = () => {
         };
 
         fetchOrgStrikes();
-    }, [orgId]);
+    }, [orgId, enqueueSnackbar]);
 
     const issueStrike = async () => {
         const { data, error } = await supabase.functions.invoke(
-            "issue-strike", 
+            "issue-strike",
             {
-                body: { 
+                body: {
                     organization_id: orgId,
-                    reason  
-                }
-            }
-        )
+                    reason,
+                },
+            },
+        );
 
         if (error) {
             enqueueSnackbar(
                 "Error issuing strike. Contact it@stuysu.org for support",
-                { variant: "error" }
+                { variant: "error" },
             );
             return;
         }
@@ -74,12 +74,21 @@ const Strikes = () => {
         setOrgStrikes([...orgStrikes, data as Strike]);
         enqueueSnackbar("Strike issued!", { variant: "success" });
         setReason("");
-    }
+    };
 
     return (
         <Box>
-            <Typography variant="h1" align="center">Strikes</Typography>
-            <Box sx={{ width: "100%", display: "flex", justifyContent: "center", marginTop: "20px" }}>
+            <Typography variant="h1" align="center">
+                Strikes
+            </Typography>
+            <Box
+                sx={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    marginTop: "20px",
+                }}
+            >
                 <OrgSelector
                     onSelect={(orgId, orgName) => {
                         setReason("");
@@ -89,56 +98,113 @@ const Strikes = () => {
                 />
             </Box>
 
-            {
-                orgId && (
-                    <>
-                        <Box sx={{ width: "100%", display: "flex", justifyContent: "center", flexWrap: "wrap" }}>
-                            <Typography variant="h2" width="100%" align="center">Org: {orgName}</Typography>
-                            <Box sx={{ width: "500px", display: "flex", justifyContent: "center", flexWrap: "wrap"}}>
-                                <Typography variant="h3" width="100%">Give Strike</Typography>
-                                <TextField
-                                    sx={{ width: "100%" }} 
-                                    label="Reason" 
-                                    value={reason} 
-                                    onChange={e => setReason(e.target.value)}
-                                    multiline
-                                    rows={4} 
-                                />
-                                <Button onClick={issueStrike} variant="contained" sx={{ width: "100%", marginTop: "10px"}}>Issue</Button>
+            {orgId && (
+                <>
+                    <Box
+                        sx={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "center",
+                            flexWrap: "wrap",
+                        }}
+                    >
+                        <Typography variant="h2" width="100%" align="center">
+                            Org: {orgName}
+                        </Typography>
+                        <Box
+                            sx={{
+                                width: "500px",
+                                display: "flex",
+                                justifyContent: "center",
+                                flexWrap: "wrap",
+                            }}
+                        >
+                            <Typography variant="h3" width="100%">
+                                Give Strike
+                            </Typography>
+                            <TextField
+                                sx={{ width: "100%" }}
+                                label="Reason"
+                                value={reason}
+                                onChange={(e) => setReason(e.target.value)}
+                                multiline
+                                rows={4}
+                            />
+                            <Button
+                                onClick={issueStrike}
+                                variant="contained"
+                                sx={{ width: "100%", marginTop: "10px" }}
+                            >
+                                Issue
+                            </Button>
+                        </Box>
+                    </Box>
+
+                    <Box
+                        sx={{
+                            marginTop: "10px",
+                            width: "100%",
+                            display: "flex",
+                            flexWrap: "wrap",
+                            justifyContent: "center",
+                        }}
+                    >
+                        {orgStrikes.map((strike, i) => (
+                            <Box
+                                sx={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                }}
+                            >
+                                <Card
+                                    key={i}
+                                    sx={{
+                                        width: "500px",
+                                        padding: "20px",
+                                        marginTop: "10px",
+                                        marginBottom: "10px",
+                                    }}
+                                >
+                                    <Typography variant="h2">
+                                        {strike.reason}
+                                    </Typography>
+                                    <Typography variant="body1">
+                                        Issued by {strike.users?.first_name}{" "}
+                                        {strike.users?.last_name}
+                                    </Typography>
+                                    <Button
+                                        onClick={async () => {
+                                            const { error } = await supabase
+                                                .from("strikes")
+                                                .delete()
+                                                .eq("id", strike.id);
+
+                                            if (error) {
+                                                enqueueSnackbar(
+                                                    "Error deleting strike. Contact it@stuysu.org for support",
+                                                    { variant: "error" },
+                                                );
+                                            }
+
+                                            setOrgStrikes(
+                                                orgStrikes.filter(
+                                                    (s) => s.id !== strike.id,
+                                                ),
+                                            );
+                                            enqueueSnackbar("Strike deleted!", {
+                                                variant: "success",
+                                            });
+                                        }}
+                                    >
+                                        Delete
+                                    </Button>
+                                </Card>
                             </Box>
-                        </Box>
-
-                        <Box sx={{ marginTop: "10px", width: "100%", display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
-                            {
-                                orgStrikes.map((strike, i) => (
-                                    <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
-                                        <Card key={i} sx={{ width: "500px", padding: "20px", marginTop: "10px", marginBottom: "10px"}}>
-                                            <Typography variant="h2">{strike.reason}</Typography>
-                                            <Typography variant="body1">Issued by {strike.users?.first_name} {strike.users?.last_name}</Typography>
-                                            <Button onClick={async () => {
-                                                const { error } = await supabase
-                                                    .from("strikes")
-                                                    .delete()
-                                                    .eq("id", strike.id);
-
-                                                if (error) {
-                                                    enqueueSnackbar(
-                                                        "Error deleting strike. Contact it@stuysu.org for support",
-                                                        { variant: "error" }
-                                                    )
-                                                }
-
-                                                setOrgStrikes(orgStrikes.filter(s => s.id !== strike.id));
-                                                enqueueSnackbar("Strike deleted!", { variant: "success" });
-                                            }}>Delete</Button>
-                                        </Card>
-                                    </Box>
-                                ))
-                            }
-                        </Box>
-                    </>
-                )
-            }
+                        ))}
+                    </Box>
+                </>
+            )}
         </Box>
     );
 };

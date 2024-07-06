@@ -52,14 +52,14 @@ const FormUpload = ({
         };
 
         validate(value);
-    }, [required, requirements, value, changeStatus]);
+    }, [required, requirements, field, value, changeStatus]);
 
     const hasFile = value ? true : false;
 
     const fileChanged = (event: ChangeEvent<HTMLInputElement>) => {
         if (!event.target.files) return;
         if (
-            requirements?.maxSize && 
+            requirements?.maxSize &&
             event.target.files[0].size > requirements?.maxSize![0] * 1024 * 1024
         ) {
             return enqueueSnackbar(
@@ -67,7 +67,7 @@ const FormUpload = ({
                 { variant: "error" },
             );
         }
-        
+
         if (!onChange) return;
 
         onChange(event.target.files[0]);

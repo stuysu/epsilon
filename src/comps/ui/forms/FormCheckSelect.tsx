@@ -53,7 +53,7 @@ const FormCheckSelect = ({
         };
 
         validate(value);
-    }, [required, value, changeStatus]);
+    }, [required, field, value, changeStatus]);
 
     let checked: string[] = value || [];
 

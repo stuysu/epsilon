@@ -15,7 +15,7 @@ type ApiRoom = {
     approval_required: boolean;
     available_days: string;
     comments?: string;
-}
+};
 
 const getDefaultTime = () => {
     return dayjs().startOf("day").hour(15).minute(45);
@@ -23,7 +23,7 @@ const getDefaultTime = () => {
 
 const Rooms = () => {
     const [rooms, setRooms] = useState<ApiRoom[]>([]);
-    const { enqueueSnackbar } = useSnackbar()
+    const { enqueueSnackbar } = useSnackbar();
 
     /* force reservation data */
     const [forceOrgId, setForceOrgId] = useState<number | undefined>();
@@ -33,38 +33,36 @@ const Rooms = () => {
     const [loading, setLoading] = useState<boolean>(false);
 
     /* date inputs */
-    const [startTime, setStartTime] = useState<Dayjs | null>(
-        getDefaultTime(),
-    );
-    const [endTime, setEndTime] = useState<Dayjs | null>(
-        getDefaultTime(),
-    );
+    const [startTime, setStartTime] = useState<Dayjs | null>(getDefaultTime());
+    const [endTime, setEndTime] = useState<Dayjs | null>(getDefaultTime());
 
     useEffect(() => {
         const fetchRooms = async () => {
-            const { data: roomData, error: roomFetchError } = await supabase.from("rooms")
+            const { data: roomData, error: roomFetchError } = await supabase
+                .from("rooms")
                 .select("*")
                 .returns<ApiRoom[]>();
-            
+
             if (roomFetchError || !roomData) {
                 enqueueSnackbar("Failed to fetch rooms", { variant: "error" });
                 return;
             }
 
             setRooms(roomData);
-        }
+        };
 
         const fetchAllRooms = async () => {
-            const { data: roomData, error: roomFetchError } = await supabase.from("rooms")
+            const { data: roomData, error: roomFetchError } = await supabase
+                .from("rooms")
                 .select("*")
                 .returns<ApiRoom[]>();
-            
+
             if (roomFetchError || !roomData) {
                 enqueueSnackbar("Failed to fetch rooms", { variant: "error" });
                 return;
             }
 
-            setAllRooms(prev => {
+            setAllRooms((prev) => {
                 setLoading(false);
 
                 if (roomData.length) {
@@ -73,54 +71,69 @@ const Rooms = () => {
 
                 return roomData;
             });
-        }
+        };
 
         fetchRooms();
         fetchAllRooms();
-    }, []);
+    });
 
     const forceReserve = async () => {
         const { error: reserveError } = await supabase.functions.invoke(
-            'force-reserve', 
+            "force-reserve",
             {
                 body: {
                     room_id: forceRoomId,
                     organization_id: forceOrgId,
                     start_time: startTime?.toISOString(),
                     end_time: endTime?.toISOString(),
-                }
-            }
-        )
+                },
+            },
+        );
 
         if (reserveError) {
-            enqueueSnackbar("Failed to force reserve room", { variant: "error" });
+            enqueueSnackbar("Failed to force reserve room", {
+                variant: "error",
+            });
             return;
         }
 
         enqueueSnackbar("Room reserved successfully", { variant: "success" });
-        
+
         /* reset state */
         setForceOrgId(undefined);
         setForceOrgName(undefined);
         setStartTime(getDefaultTime());
         setEndTime(getDefaultTime());
-    }
+    };
 
     return (
         <Box>
-            <Typography variant="h1" width="100%" align="center">Rooms</Typography>
-            
-            <Box sx={{ width: "100%",
+            <Typography variant="h1" width="100%" align="center">
+                Rooms
+            </Typography>
+
+            <Box
+                sx={{
+                    width: "100%",
+                    display: "flex",
+                    flexWrap: "wrap",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    height: "auto",
+                    padding: "10px",
+                }}
+            >
+                <Typography variant="h2" width="100%" align="center">
+                    Force Reservation
+                </Typography>
+                <Box
+                    sx={{
+                        width: "100%",
                         display: "flex",
-                        flexWrap: "wrap",
                         justifyContent: "center",
-                        alignItems: "center",
-                        height: "auto",
-                        padding: "10px" }}>
-                
-                <Typography variant="h2" width="100%" align="center">Force Reservation</Typography>
-                <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
-                    <OrgSelector 
+                    }}
+                >
+                    <OrgSelector
                         onSelect={(orgId, orgName) => {
                             setForceOrgId(orgId);
                             setForceOrgName(orgName);
@@ -128,8 +141,16 @@ const Rooms = () => {
                     />
                 </Box>
                 {forceOrgId && (
-                    <Box sx={{ maxWidth: "600px", width: "100%", marginTop: "10px" }}>
-                        <Typography variant="h4" width="100%">Force Reserve for {forceOrgName}:</Typography>
+                    <Box
+                        sx={{
+                            maxWidth: "600px",
+                            width: "100%",
+                            marginTop: "10px",
+                        }}
+                    >
+                        <Typography variant="h4" width="100%">
+                            Force Reserve for {forceOrgName}:
+                        </Typography>
                         <DatePicker
                             label="Meeting Day"
                             value={startTime}
@@ -181,7 +202,9 @@ const Rooms = () => {
                                 label="Room"
                                 select
                                 onChange={(event) =>
-                                    setForceRoomId(Number(event.target.value) || undefined)
+                                    setForceRoomId(
+                                        Number(event.target.value) || undefined,
+                                    )
                                 }
                                 sx={{
                                     width: "30%",
@@ -190,46 +213,60 @@ const Rooms = () => {
                                 }}
                             >
                                 {allRooms.map((room) => (
-                                    <MenuItem key={room.id} value={String(room.id)}>
+                                    <MenuItem
+                                        key={room.id}
+                                        value={String(room.id)}
+                                    >
                                         {room.name}
                                     </MenuItem>
                                 ))}
                             </TextField>
                         </Box>
                         <Button
-                            onClick={forceReserve} 
-                            sx={{ width: "100%", marginTop: "10px"}} 
+                            onClick={forceReserve}
+                            sx={{ width: "100%", marginTop: "10px" }}
                             variant="outlined"
                         >
                             Force Reservation
                         </Button>
-                    </Box>)
-                }
+                    </Box>
+                )}
             </Box>
-            
-            <Typography variant="h2" width="100%" align="center" sx={{ marginTop: "20px" }}>Manage Rooms</Typography>
+
+            <Typography
+                variant="h2"
+                width="100%"
+                align="center"
+                sx={{ marginTop: "20px" }}
+            >
+                Manage Rooms
+            </Typography>
             <AdminRoom
-                create 
+                create
                 onCreate={(room) => setRooms([...rooms, room as ApiRoom])}
             />
-            <Box sx={{ width: "100%", display: 'flex', flexWrap: "wrap" }}>
-                {
-                    rooms.map((room) => (
-                        <AdminRoom
-                            key={room.id} 
-                            roomId={room.id}
-                            name={room.name}
-                            floor={room.floor as number}
-                            availableDays={room.available_days.split(", ") as Room['available_days']}
-                            comments={room.comments}
-                            approvalRequired={room.approval_required}
-                            onDelete={() => setRooms(rooms.filter(r => r.id !== room.id))}
-                        />
-                    ))
-                }
+            <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
+                {rooms.map((room) => (
+                    <AdminRoom
+                        key={room.id}
+                        roomId={room.id}
+                        name={room.name}
+                        floor={room.floor as number}
+                        availableDays={
+                            room.available_days.split(
+                                ", ",
+                            ) as Room["available_days"]
+                        }
+                        comments={room.comments}
+                        approvalRequired={room.approval_required}
+                        onDelete={() =>
+                            setRooms(rooms.filter((r) => r.id !== room.id))
+                        }
+                    />
+                ))}
             </Box>
         </Box>
-    )
-}
+    );
+};
 
 export default Rooms;

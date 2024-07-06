@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect, useMemo, useState } from "react";
 
 import {
     Box,
@@ -19,11 +19,11 @@ import { supabase } from "../../../supabaseClient";
 import { useSnackbar } from "notistack";
 
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import InfoIcon from '@mui/icons-material/Info';
-import ArticleIcon from '@mui/icons-material/Article';
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
-import PeopleIcon from '@mui/icons-material/People';
-import AdminPanelSettingsIcon from '@mui/icons-material/AdminPanelSettings';
+import InfoIcon from "@mui/icons-material/Info";
+import ArticleIcon from "@mui/icons-material/Article";
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
+import PeopleIcon from "@mui/icons-material/People";
+import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 
 const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const organization = useContext<OrgContextType>(OrgContext);
@@ -37,7 +37,11 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const navLinks = [
         { to: main, display: "Overview", icon: <InfoIcon /> },
         { to: `${main}/charter`, display: "Charter", icon: <ArticleIcon /> },
-        { to: `${main}/meetings`, display: "Meetings", icon: <CalendarMonthIcon /> },
+        {
+            to: `${main}/meetings`,
+            display: "Meetings",
+            icon: <CalendarMonthIcon />,
+        },
         { to: `${main}/members`, display: "Members", icon: <PeopleIcon /> },
     ];
 
@@ -71,13 +75,11 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     ) + 1;
             setCurrentIndex(~correctIndex ? correctIndex : 0);
         }
-    }, [navLinks, location.pathname, currentIndex]);
+    }, [navLinks, location.pathname, currentIndex, main]);
 
-    const isInOrg: boolean = organization.memberships?.find(
+    const isInOrg: boolean = !!organization.memberships?.find(
         (m) => m.users?.id === user.id,
-    )
-        ? true
-        : false;
+    );
     let isCreator = false;
     let isAdmin = false;
     let isActive = false;
@@ -190,7 +192,11 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     }
 
     if (isAdmin) {
-        navLinks.push({ to: `${main}/admin`, display: "Admin", icon: <AdminPanelSettingsIcon /> });
+        navLinks.push({
+            to: `${main}/admin`,
+            display: "Admin",
+            icon: <AdminPanelSettingsIcon />,
+        });
     }
 
     return (
@@ -242,28 +248,28 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                 >
                     {organization.mission}
                 </Typography>
-                    {organization.socials && (
-                        organization
-                        .socials
-                        .split(" ")
-                        .map((social, i, a) => {
-                            if (!social.startsWith("http")) {
-                                let outText = social;
+                {organization.socials &&
+                    organization.socials.split(" ").map((social, i, a) => {
+                        if (!social.startsWith("http")) {
+                            let outText = social;
 
-                                if (i !== a.length - 1) {
-                                    outText += " ";
-                                }
-                                
-                                return (
-                                    outText
-                                )
+                            if (i !== a.length - 1) {
+                                outText += " ";
                             }
 
-                            return (
-                                <Link key={i} to={social} style={{ textAlign: "center" }}>{social}</Link>
-                            )
-                        })
-                    )}
+                            return outText;
+                        }
+
+                        return (
+                            <Link
+                                key={i}
+                                to={social}
+                                style={{ textAlign: "center" }}
+                            >
+                                {social}
+                            </Link>
+                        );
+                    })}
                 <Button
                     variant="contained"
                     onClick={handleInteract}
@@ -290,7 +296,9 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                             setCurrentIndex(i);
                         }}
                     >
-                        {linkData.icon && <ListItemIcon>{linkData.icon}</ListItemIcon>}
+                        {linkData.icon && (
+                            <ListItemIcon>{linkData.icon}</ListItemIcon>
+                        )}
                         <ListItemText>{linkData.display}</ListItemText>
                     </ListItemButton>
                 ))}

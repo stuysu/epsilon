@@ -76,7 +76,6 @@ const AdminUpsertMeeting = ({
     // fixes select menu item bug where it is trying to map over undefined rooms
     const [loading, setLoading] = useState(true);
 
-
     /* Filtering out rooms that are taken for that day */
     useEffect(() => {
         const fetchRooms = async () => {
@@ -92,12 +91,12 @@ const AdminUpsertMeeting = ({
 
             setAllRooms((prev) => {
                 setLoading(false);
-                return (data as Room[]);
+                return data as Room[];
             });
         };
 
         fetchRooms();
-    }, []);
+    });
 
     useEffect(() => {
         const filterRooms = async () => {
@@ -128,23 +127,37 @@ const AdminUpsertMeeting = ({
             }
 
             data = data.filter((meta) => meta.meeting_id !== id); // remove this current meeting's booking from time slot
-            
+
             /* 
             room is available if:
             - it does not exist in booked rooms
             - the day of the start time (mon-fri) is included within the room's available days
             */
-            const days : Room['available_days'] = ["SUNDAY", "MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY", "SATURDAY"]
+            const days: Room["available_days"] = [
+                "SUNDAY",
+                "MONDAY",
+                "TUESDAY",
+                "WEDNESDAY",
+                "THURSDAY",
+                "FRIDAY",
+                "SATURDAY",
+            ];
 
             let availRooms = allRooms.filter(
-                (room) => !~data!.findIndex((meta) => meta.room_id === room.id) && room.available_days.includes(days[startTime!.day()]),
+                (room) =>
+                    !~data!.findIndex((meta) => meta.room_id === room.id) &&
+                    room.available_days.includes(days[startTime!.day()]),
             );
 
             // check if the currently selected room id is no longer valid
             /* NOTE: if a meeting is invalid because of some update on the backend, 
             it'll still show the room but once u click into it, it'll only show virtual.
             */
-            if (!loading && roomId && !~availRooms.findIndex((meta) => meta.id === roomId)) {
+            if (
+                !loading &&
+                roomId &&
+                !~availRooms.findIndex((meta) => meta.id === roomId)
+            ) {
                 setRoomId(undefined);
             }
 
@@ -152,7 +165,7 @@ const AdminUpsertMeeting = ({
         };
 
         filterRooms();
-    }, [allRooms, startTime, endTime]);
+    }, [loading, allRooms, id, roomId, startTime, endTime, enqueueSnackbar]);
 
     const handleSave = async () => {
         let supabaseReturn;
@@ -347,22 +360,20 @@ const AdminUpsertMeeting = ({
                     sx={{ marginTop: "10px" }}
                     label="is public?"
                 />
-                {
-                    !id && (
-                        <FormControlLabel
-                            control={
-                                <Switch
-                                    checked={notifyFaculty}
-                                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                                        setNotifyFaculty(event.target.checked)
-                                    }
-                                />
-                            }
-                            sx={{ marginTop: "10px" }}
-                            label="notify faculty?"
-                        />
-                    )
-                }
+                {!id && (
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={notifyFaculty}
+                                onChange={(
+                                    event: ChangeEvent<HTMLInputElement>,
+                                ) => setNotifyFaculty(event.target.checked)}
+                            />
+                        }
+                        sx={{ marginTop: "10px" }}
+                        label="notify faculty?"
+                    />
+                )}
             </DialogContent>
             <DialogActions>
                 <Button variant="contained" onClick={onClose}>

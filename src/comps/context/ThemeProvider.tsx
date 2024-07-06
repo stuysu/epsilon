@@ -40,10 +40,10 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                     MuiTypography: {
                         styleOverrides: {
                             root: {
-                                wordWrap: "break-word"
-                            }
-                        }
-                    }
+                                wordWrap: "break-word",
+                            },
+                        },
+                    },
                 },
                 palette: {
                     mode: prefersDarkMode ? "dark" : "light",

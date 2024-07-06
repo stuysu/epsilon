@@ -6,7 +6,12 @@ import { useSnackbar } from "notistack";
 
 import { Box, useMediaQuery, Typography, Badge } from "@mui/material";
 
-import { DateCalendar, DayCalendarSkeleton, PickersDay, PickersDayProps } from "@mui/x-date-pickers";
+import {
+    DateCalendar,
+    DayCalendarSkeleton,
+    PickersDay,
+    PickersDayProps,
+} from "@mui/x-date-pickers";
 
 import dayjs, { Dayjs } from "dayjs";
 import DaySchedule from "../comps/pages/allmeetings/DaySchedule";
@@ -15,22 +20,29 @@ type CachedMeetings = {
     [date: string]: CalendarMeeting[];
 };
 
-function ServerDay(props: PickersDayProps<Dayjs> & { highlightedDays?: number[] }) {
+function ServerDay(
+    props: PickersDayProps<Dayjs> & { highlightedDays?: number[] },
+) {
     const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
-  
+
     const isSelected =
-      !props.outsideCurrentMonth && highlightedDays.indexOf(props.day.date()) >= 0;
-  
+        !props.outsideCurrentMonth &&
+        highlightedDays.indexOf(props.day.date()) >= 0;
+
     return (
-      <Badge
-        key={props.day.toString()}
-        overlap="circular"
-        badgeContent={isSelected ? '🔴' : undefined}
-      >
-        <PickersDay {...other} outsideCurrentMonth={outsideCurrentMonth} day={day} />
-      </Badge>
+        <Badge
+            key={props.day.toString()}
+            overlap="circular"
+            badgeContent={isSelected ? "🔴" : undefined}
+        >
+            <PickersDay
+                {...other}
+                outsideCurrentMonth={outsideCurrentMonth}
+                day={day}
+            />
+        </Badge>
     );
-  }
+}
 
 const AllMeetings = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -49,7 +61,10 @@ const AllMeetings = () => {
     const [highlightedDays, setHighlightedDays] = useState<number[]>([]);
 
     const updateHighlightedDays = async (month: number, year: number) => {
-        const { data, error } = await supabase.rpc("get_unique_meeting_days", { month: month + 1, year });
+        const { data, error } = await supabase.rpc("get_unique_meeting_days", {
+            month: month + 1,
+            year,
+        });
 
         /* database function returns null if can't find any meetings */
         if (!data) {
@@ -59,7 +74,9 @@ const AllMeetings = () => {
         }
 
         if (error) {
-            enqueueSnackbar("Error fetching meeting days", { variant: "error" });
+            enqueueSnackbar("Error fetching meeting days", {
+                variant: "error",
+            });
 
             setHighlightedDays([]);
             return;
@@ -67,7 +84,7 @@ const AllMeetings = () => {
 
         setHighlightedDays(data as number[]);
         setLoading(false);
-    }
+    };
 
     useEffect(() => {
         let dayString = `${time.year()}/${time.month()}/${time.date()}`;
@@ -155,12 +172,12 @@ const AllMeetings = () => {
                         loading={loading}
                         renderLoading={() => <DayCalendarSkeleton />}
                         slots={{
-                            day: ServerDay
+                            day: ServerDay,
                         }}
                         slotProps={{
                             day: {
-                                highlightedDays
-                            } as any
+                                highlightedDays,
+                            } as any,
                         }}
                         sx={{ width: "100%" }}
                     />

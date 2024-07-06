@@ -9,24 +9,32 @@ const SendMessage = () => {
 
     return (
         <Box>
-            <Typography variant="h1" align="center">Send Message</Typography>
-            <Box sx={{ width: "100%", display: "flex", justifyContent: "center", marginTop: "20px" }}>
-                <OrgSelector 
-                    onSelect={(oid) => setOrgId(oid)}
-                />
+            <Typography variant="h1" align="center">
+                Send Message
+            </Typography>
+            <Box
+                sx={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    marginTop: "20px",
+                }}
+            >
+                <OrgSelector onSelect={(oid) => setOrgId(oid)} />
             </Box>
-            <Box sx={{ marginTop: "20px", width: "100%", display: "flex", justifyContent: "center", padding: "20px" }}>
-                {
-                    orgId &&
-                    (
-                        <OrgChat 
-                            organization_id={orgId}
-                        />
-                    )
-                }
+            <Box
+                sx={{
+                    marginTop: "20px",
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    padding: "20px",
+                }}
+            >
+                {orgId && <OrgChat organization_id={orgId} />}
             </Box>
         </Box>
-    )
-}
+    );
+};
 
 export default SendMessage;

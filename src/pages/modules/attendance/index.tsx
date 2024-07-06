@@ -9,11 +9,17 @@ const AttendanceRouter = () => {
         <div>
             <Routes>
                 <Route path="/" Component={Home} />
-                <Route path="/meeting/:meetingId" Component={MeetingAttendance} />
-                <Route path="/meeting-admin/:meetingId" Component={MeetingAdminAttendance} />
+                <Route
+                    path="/meeting/:meetingId"
+                    Component={MeetingAttendance}
+                />
+                <Route
+                    path="/meeting-admin/:meetingId"
+                    Component={MeetingAdminAttendance}
+                />
             </Routes>
         </div>
-    )
-}
+    );
+};
 
 export default AttendanceRouter;

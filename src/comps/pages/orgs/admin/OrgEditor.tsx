@@ -1,12 +1,5 @@
 import { ReactNode, useCallback, useEffect, useState } from "react";
-import {
-    Avatar,
-    Box,
-    Button,
-    Paper,
-    TextField,
-    Typography,
-} from "@mui/material";
+import { Avatar, Box, Button, Paper, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import FormTextField from "../../../ui/forms/FormTextField";
 import OrgRequirements from "../../../../utils/OrgRequirements";
@@ -54,7 +47,8 @@ const EditField = ({
     return (
         <>
             <Typography width="100%" sx={{ paddingLeft: "10px" }}>
-                {capitalizeWords(field.split("_").join(" "))}{" - "}
+                {capitalizeWords(field.split("_").join(" "))}
+                {" - "}
                 <span style={{ color: pending ? "gray" : "#2ecc71" }}>
                     {pending ? "Pending" : "Approved"}
                 </span>
@@ -160,13 +154,15 @@ const OrgEditor = ({
     const [status, setStatus] = useState<FormStatus>({}); // validation status for that field
 
     /* picture */
-    const [editPicture, setEditPicture] = useState<File | null | undefined | string>();
+    const [editPicture, setEditPicture] = useState<
+        File | null | undefined | string
+    >();
 
     const oldPicture =
-        (existingEdit["picture"] === undefined || existingEdit["picture"] === null)
+        existingEdit["picture"] === undefined ||
+        existingEdit["picture"] === null
             ? organization["picture"]
             : existingEdit["picture"];
-        
 
     /* validation */
     const [savable, setSavable] = useState(false);
@@ -206,7 +202,15 @@ const OrgEditor = ({
         }
 
         setSavable(atleastOneDiff);
-    }, [status, editState, editData, editPicture]);
+    }, [
+        status,
+        existingEdit,
+        editState,
+        editData,
+        editPicture,
+        oldPicture,
+        organization,
+    ]);
 
     /* update form data if existingEdit changes */
     useEffect(() => {
@@ -231,7 +235,7 @@ const OrgEditor = ({
         }
 
         setEditData(baseData);
-    }, [existingEdit]);
+    }, [existingEdit, organization]);
 
     const saveChanges = async () => {
         if (!savable) {
@@ -267,11 +271,12 @@ const OrgEditor = ({
                 if (payload[field].length !== oldValue.length) {
                     diff = true;
                 } else {
-                    payload[field].map((v: any, i: number) => {
+                    for (const [i, v] of payload[field].entries()) {
                         if (v !== oldValue[i]) {
                             diff = true;
+                            break;
                         }
-                    });
+                    }
                 }
 
                 if (!diff) payload[field] = null;
@@ -296,10 +301,10 @@ const OrgEditor = ({
             allNull = false; // even though all the fields could be null, this edit is worth keeping because the picture is different
         } else if (
             editPicture !==
-            (existingEdit === undefined
-                ? organization["picture"]
-                : existingEdit["picture"]) &&
-                editPicture
+                (existingEdit === undefined
+                    ? organization["picture"]
+                    : existingEdit["picture"]) &&
+            editPicture
         ) {
             // picture is different, but needs to be uploaded first
             /* Note: any indication of the picture failing to upload will kill the entire org edit process */
@@ -388,7 +393,6 @@ const OrgEditor = ({
         let data, error;
 
         if (organization.state !== "PENDING") {
-
             if (existingEdit.id === undefined) {
                 // insert new
                 ({ data, error } = await supabase
@@ -405,7 +409,7 @@ const OrgEditor = ({
             }
         } else {
             /* PENDING ORGANIZATION SHOULD JUST BE ALLOWED TO UPDATE */
-            
+
             // filter out null fields
             for (let key of Object.keys(payload)) {
                 if (payload[key] === null) {
@@ -462,10 +466,9 @@ const OrgEditor = ({
                 .delete()
                 .eq("organization_id", organization.id);
             if (deleteError) {
-                enqueueSnackbar(
-                    "Error removing redundant organization edit.",
-                    { variant: "error" },
-                );
+                enqueueSnackbar("Error removing redundant organization edit.", {
+                    variant: "error",
+                });
             }
 
             enqueueSnackbar("Removed redundant organization edit!", {
@@ -475,7 +478,7 @@ const OrgEditor = ({
             // reset
             navigate(0);
         }
-    }
+    };
 
     const changeStatus = useCallback(
         (field: string, newStatus: boolean) => {
@@ -498,18 +501,23 @@ const OrgEditor = ({
             [field]: value,
         });
     };
-    
-    const pendingPicture = organization.state === "PENDING" ||
-        (existingEdit.picture !== undefined && existingEdit.picture !== null &&
-        existingEdit.picture !== organization.picture);
-    
-    const putPicture = editPicture !== undefined
-    ? editPicture
-        ? URL.createObjectURL(editPicture as File)
-        : ""
-    : oldPicture || "";
-    
-    const allNull = Object.keys(existingEdit).every((key) => existingEdit[key as keyof(OrganizationEdit)] === undefined);
+
+    const pendingPicture =
+        organization.state === "PENDING" ||
+        (existingEdit.picture !== undefined &&
+            existingEdit.picture !== null &&
+            existingEdit.picture !== organization.picture);
+
+    const putPicture =
+        editPicture !== undefined
+            ? editPicture
+                ? URL.createObjectURL(editPicture as File)
+                : ""
+            : oldPicture || "";
+
+    const allNull = Object.keys(existingEdit).every(
+        (key) => existingEdit[key as keyof OrganizationEdit] === undefined,
+    );
 
     return (
         <Paper elevation={1} sx={{ padding: "10px" }}>
@@ -517,7 +525,7 @@ const OrgEditor = ({
                 Picture -{" "}
                 <span style={{ color: pendingPicture ? "gray" : "#2ecc71" }}>
                     {pendingPicture ? " Pending" : "Approved"}
-                </span> 
+                </span>
             </Typography>
             <Box
                 sx={{
@@ -553,18 +561,28 @@ const OrgEditor = ({
                         id="input-file-upload"
                         onChange={(e) => {
                             if (!e.target.files) return;
-                            if (e.target.files[0].size > 1024 * 1024 * OrgRequirements.picture?.requirements?.maxSize[0]) {
+                            if (
+                                e.target.files[0].size >
+                                1024 *
+                                    1024 *
+                                    OrgRequirements.picture?.requirements
+                                        ?.maxSize[0]
+                            ) {
                                 return enqueueSnackbar(
-                                    `File is too large. Max size is ${OrgRequirements.picture?.requirements?.maxSize[0]}MB.`, 
+                                    `File is too large. Max size is ${OrgRequirements.picture?.requirements?.maxSize[0]}MB.`,
                                     {
                                         variant: "error",
-                                    }
+                                    },
                                 );
                             }
 
                             setEditPicture(e.target.files[0] || null);
                         }}
-                        value={editPicture ? (editPicture as File).webkitRelativePath : ""}
+                        value={
+                            editPicture
+                                ? (editPicture as File).webkitRelativePath
+                                : ""
+                        }
                         hidden
                     />
                 </Button>
@@ -582,20 +600,17 @@ const OrgEditor = ({
                 >
                     Remove Image
                 </Button>
-                {
-                    (editPicture !== undefined && organization.picture) &&
-                    (
-                        <Button
+                {editPicture !== undefined && organization.picture && (
+                    <Button
                         variant="contained"
                         sx={{ marginTop: "10px" }}
                         onClick={async () => {
                             setEditPicture(undefined);
-                          }}
+                        }}
                     >
                         Reset Image
                     </Button>
-                    )
-                }
+                )}
             </Box>
             {textFields.map((field) => {
                 return (
@@ -605,8 +620,9 @@ const OrgEditor = ({
                         pending={
                             (existingEdit[field as keyof OrganizationEdit] !==
                                 null &&
-                            existingEdit[field as keyof OrganizationEdit] !==
-                                undefined) ||
+                                existingEdit[
+                                    field as keyof OrganizationEdit
+                                ] !== undefined) ||
                             organization.state === "PENDING"
                         }
                         editing={editState[field]}
@@ -636,12 +652,12 @@ const OrgEditor = ({
                             setEditState({ ...editState, [field]: true })
                         }
                         defaultDisplay={
-                            <Typography 
-                                sx={{ 
+                            <Typography
+                                sx={{
                                     wordWrap: "break-word",
-                                    wordBreak: 'break-all',
-                                    width: "80%", 
-                                    display: "block"
+                                    wordBreak: "break-all",
+                                    width: "80%",
+                                    display: "block",
                                 }}
                             >
                                 {editData[field as keyof OrganizationEdit]}
@@ -682,7 +698,7 @@ const OrgEditor = ({
                     padding: "20px",
                     display: "flex",
                     flexDirection: "row-reverse",
-                    flexWrap: "nowrap"
+                    flexWrap: "nowrap",
                 }}
             >
                 <Button
@@ -690,13 +706,13 @@ const OrgEditor = ({
                     variant="contained"
                     disabled={!savable}
                     onClick={saveChanges}
-                    sx={{ marginLeft: "10px"}}
+                    sx={{ marginLeft: "10px" }}
                 >
                     Save Changes
                 </Button>
                 <Button
-                    color='error'
-                    variant='contained'
+                    color="error"
+                    variant="contained"
                     disabled={allNull}
                     onClick={deleteEdit}
                 >

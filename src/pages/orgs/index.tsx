@@ -135,11 +135,17 @@ const OrgRouter = () => {
                 <div></div> /* ORG DOESN'T EXIST HERE */
             ) : (
                 <>
-                    <Box sx={{ width: "100%", marginTop: "20px", paddingLeft: "20px"}}>
+                    <Box
+                        sx={{
+                            width: "100%",
+                            marginTop: "20px",
+                            paddingLeft: "20px",
+                        }}
+                    >
                         <Button
-                            onClick={() => navigate("/catalog")} 
-                            variant="contained" 
-                            sx={{ width: "80px"}}
+                            onClick={() => navigate("/catalog")}
+                            variant="contained"
+                            sx={{ width: "80px" }}
                         >
                             Back
                         </Button>
@@ -156,7 +162,10 @@ const OrgRouter = () => {
                             <Routes>
                                 <Route path={`/`} Component={Overview} />
                                 <Route path={`/charter`} Component={Charter} />
-                                <Route path={`/meetings`} Component={Meetings} />
+                                <Route
+                                    path={`/meetings`}
+                                    Component={Meetings}
+                                />
                                 <Route path={`/members`} Component={Members} />
                                 <Route
                                     path={`/admin/*`}

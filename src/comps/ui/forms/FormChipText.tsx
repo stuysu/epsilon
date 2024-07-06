@@ -1,5 +1,11 @@
 import { Autocomplete, TextField, Chip } from "@mui/material";
-import { useEffect, useState, SyntheticEvent, KeyboardEvent, useRef } from "react";
+import {
+    useEffect,
+    useState,
+    SyntheticEvent,
+    KeyboardEvent,
+    useRef,
+} from "react";
 
 type Requirements = {
     maxChips?: number;
@@ -72,7 +78,7 @@ const FormChipText = ({
     };
 
     const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
-        if ((event.key === 'Enter' || event.key === ',') && inputValue.trim()) {
+        if ((event.key === "Enter" || event.key === ",") && inputValue.trim()) {
             event.preventDefault();
             if (inputValue && !value.includes(inputValue.trim())) {
                 const newValue = [...value, inputValue.trim()];
@@ -83,7 +89,10 @@ const FormChipText = ({
         }
     };
 
-    const handleInputChange = (event: SyntheticEvent, newInputValue: string) => {
+    const handleInputChange = (
+        event: SyntheticEvent,
+        newInputValue: string,
+    ) => {
         setInputValue(newInputValue);
     };
 
@@ -99,13 +108,7 @@ const FormChipText = ({
             renderTags={(value, getTagProps) => {
                 return value.map((option, index) => {
                     const { key, ...tagProps } = getTagProps({ index });
-                    return (
-                        <Chip
-                            key={index}
-                            label={option}
-                            {...tagProps}
-                        />
-                    );
+                    return <Chip key={index} label={option} {...tagProps} />;
                 });
             }}
             renderInput={(params) => (

@@ -50,7 +50,7 @@ const FormTagSelect = ({
         };
 
         validate(value);
-    }, [changeStatus]);
+    }, [changeStatus, field, required, value]);
 
     const valueChanged = (event: SyntheticEvent, newValue: string[]) => {
         if (

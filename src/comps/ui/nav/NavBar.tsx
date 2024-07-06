@@ -31,10 +31,10 @@ import HomeIcon from "@mui/icons-material/Home";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import FeedIcon from "@mui/icons-material/Feed";
-import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
+import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import InfoIcon from '@mui/icons-material/Info';
-import GavelIcon from '@mui/icons-material/Gavel';
+import InfoIcon from "@mui/icons-material/Info";
+import GavelIcon from "@mui/icons-material/Gavel";
 
 const navStyles: CSSProperties = {
     width: "100%",
@@ -49,7 +49,7 @@ const titleStyle: CSSProperties = {
     fontSize: "25px",
     height: "100%",
     display: "flex",
-    alignItems: "center"
+    alignItems: "center",
 };
 
 const linkStyle: CSSProperties = {
@@ -149,7 +149,7 @@ const NavBar = () => {
                                     borderRadius: "100%",
                                     boxShadow:
                                         "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-                                    fontSize: "50px"
+                                    fontSize: "50px",
                                 }}
                                 src={user.picture}
                             >
@@ -172,7 +172,9 @@ const NavBar = () => {
                                         {user.email || "No Email"}
                                     </Typography>
                                     <Typography width="100%">
-                                        ID: {String(user.id).padStart(5, '0') || "No ID"}
+                                        ID:{" "}
+                                        {String(user.id).padStart(5, "0") ||
+                                            "No ID"}
                                     </Typography>
                                     <Typography width="100%">
                                         Grade: {user.grade || "No Grade"}
@@ -234,13 +236,14 @@ const NavBar = () => {
 
                     <Divider />
 
-                    
                     {user.signed_in && (
                         <List
                             sx={{ width: "100%" }}
                             subheader={<ListSubheader>Modules</ListSubheader>}
                         >
-                            <ListItemButton onClick={() => navigate("/modules/attendance")}>
+                            <ListItemButton
+                                onClick={() => navigate("/modules/attendance")}
+                            >
                                 <ListItemIcon>
                                     <PersonSearch />
                                 </ListItemIcon>
@@ -248,7 +251,7 @@ const NavBar = () => {
                             </ListItemButton>
                         </List>
                     )}
-                    
+
                     <Divider />
 
                     {user.signed_in && (
@@ -260,14 +263,25 @@ const NavBar = () => {
                         >
                             {user.memberships?.map((membership, i) => {
                                 if (membership.active)
-                                    return (<OrgBar
-                                        key={membership.id}
-                                        name={membership?.organizations?.name}
-                                        role={membership?.role}
-                                        role_name={membership?.role_name}
-                                        url={membership?.organizations?.url || "/"}
-                                        picture={membership?.organizations?.picture}
-                                    />)
+                                    return (
+                                        <OrgBar
+                                            key={membership.id}
+                                            name={
+                                                membership?.organizations?.name
+                                            }
+                                            role={membership?.role}
+                                            role_name={membership?.role_name}
+                                            url={
+                                                membership?.organizations
+                                                    ?.url || "/"
+                                            }
+                                            picture={
+                                                membership?.organizations
+                                                    ?.picture
+                                            }
+                                        />
+                                    );
+                                return null;
                             })}
                             <ListItemButton onClick={() => navigate("/create")}>
                                 <ListItemIcon>

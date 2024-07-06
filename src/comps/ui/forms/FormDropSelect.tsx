@@ -55,7 +55,7 @@ const FormDropSelect = ({
         };
 
         validate(value);
-    }, [required, value, changeStatus]);
+    }, [required, field, value, changeStatus]);
 
     const selectionChanged = (event: SelectChangeEvent<unknown>) => {
         if (!onChange) return;

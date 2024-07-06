@@ -1,6 +1,6 @@
-import { useEffect, useState, useContext } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
-import { Box, Button, Card, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 import OrgApproval from "../../comps/admin/OrgApproval";
 import { useSnackbar } from "notistack";
@@ -66,7 +66,7 @@ const ApprovePending = () => {
         };
 
         fetchPendingOrgs();
-    }, []);
+    });
 
     if (view) {
         return (
@@ -84,11 +84,30 @@ const ApprovePending = () => {
 
     return (
         <Box>
-            <Typography variant="h1" align="center">Org Approvals</Typography>
-            <Box sx={{ width: "100%", display: "flex", justifyContent: "center", flexWrap: "wrap", padding: "10px" }}>
+            <Typography variant="h1" align="center">
+                Org Approvals
+            </Typography>
+            <Box
+                sx={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    flexWrap: "wrap",
+                    padding: "10px",
+                }}
+            >
                 {pendingOrgs.map((org, i) => (
-                    <Box key={i} sx={{ width: "100%", display: "flex", justifyContent: "center", marginTop: "10px", marginBottom: "10px"}}>
-                        <PendingOrgCard 
+                    <Box
+                        key={i}
+                        sx={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "center",
+                            marginTop: "10px",
+                            marginBottom: "10px",
+                        }}
+                    >
+                        <PendingOrgCard
                             name={org.name}
                             picture={org.picture || ""}
                             onView={() => setView(org)}
