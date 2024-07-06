@@ -37,7 +37,11 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const navLinks = [
         { to: main, display: "Overview", icon: <InfoIcon /> },
         { to: `${main}/charter`, display: "Charter", icon: <ArticleIcon /> },
-        { to: `${main}/meetings`, display: "Meetings", icon: <CalendarMonthIcon /> },
+        {
+            to: `${main}/meetings`,
+            display: "Meetings",
+            icon: <CalendarMonthIcon />,
+        },
         { to: `${main}/members`, display: "Members", icon: <PeopleIcon /> },
     ];
 

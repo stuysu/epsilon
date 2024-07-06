@@ -64,7 +64,7 @@
         "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
         "@types/react-helmet": "^6.1.11",
         "@types/react-measure": "^2.0.12",
-        "prettier": "^3.2.5",
+        "prettier": "^3.3.2",
         "supabase": "^1.142.2"
     }
 }
