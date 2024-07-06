@@ -66,7 +66,7 @@ const PostEditor = ({
             title: postData.title,
             description: postData.description,
             organization_id: orgId,
-        }
+        };
 
         let { data, error } = await supabase.functions.invoke("create-post", {
             body: payload,
@@ -96,8 +96,8 @@ const PostEditor = ({
         data.organizations = {
             id: orgId,
             name: orgName,
-            picture: orgPicture
-        }
+            picture: orgPicture,
+        };
 
         if (onCreate) onCreate(data as Post);
         enqueueSnackbar("Post created!", { variant: "success" });
@@ -106,8 +106,8 @@ const PostEditor = ({
     const savePost = async () => {
         let payload = {
             title: postData.title,
-            description: postData.description
-        }
+            description: postData.description,
+        };
 
         let { data, error } = await supabase
             .from("posts")
@@ -125,8 +125,8 @@ const PostEditor = ({
         data[0].organizations = {
             id: orgId,
             name: orgName,
-            picture: orgPicture
-        }
+            picture: orgPicture,
+        };
 
         if (onSave) onSave(data[0] as Post);
         enqueueSnackbar("Post updated!", { variant: "success" });

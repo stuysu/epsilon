@@ -13,7 +13,11 @@ import { sortPostByDate } from "../../../utils/DataFormatters";
 const Posts = () => {
     const organization = useContext(OrgContext);
 
-    if (organization.state === "LOCKED" || organization.state === "PENDING"  || organization.state === "PUNISHED")
+    if (
+        organization.state === "LOCKED" ||
+        organization.state === "PENDING" ||
+        organization.state === "PUNISHED"
+    )
         return (
             <Box>
                 <Typography variant="h2">
@@ -43,24 +47,27 @@ const Posts = () => {
             <Typography variant="h1" align="center" width="100%">
                 Manage Posts
             </Typography>
-            {organization.posts.sort(sortPostByDate).reverse().map((post, i) => {
-                return (
-                    <Post
-                        content={post}
-                        editable
-                        onDelete={() => {
-                            if (organization.setOrg) {
-                                organization.setOrg({
-                                    ...organization,
-                                    posts: organization.posts.filter(
-                                        (p) => p.id !== post.id,
-                                    ),
-                                });
-                            }
-                        }}
-                    />
-                );
-            })}
+            {organization.posts
+                .sort(sortPostByDate)
+                .reverse()
+                .map((post, i) => {
+                    return (
+                        <Post
+                            content={post}
+                            editable
+                            onDelete={() => {
+                                if (organization.setOrg) {
+                                    organization.setOrg({
+                                        ...organization,
+                                        posts: organization.posts.filter(
+                                            (p) => p.id !== post.id,
+                                        ),
+                                    });
+                                }
+                            }}
+                        />
+                    );
+                })}
         </Box>
     );
 };

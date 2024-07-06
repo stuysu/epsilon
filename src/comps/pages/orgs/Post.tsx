@@ -1,4 +1,13 @@
-import { Box, Button, ListItem, ListItemText, ListItemAvatar, Typography, Avatar, Card } from "@mui/material";
+import {
+    Box,
+    Button,
+    ListItem,
+    ListItemText,
+    ListItemAvatar,
+    Typography,
+    Avatar,
+    Card,
+} from "@mui/material";
 import { supabase } from "../../../supabaseClient";
 
 import { useState, useContext } from "react";
@@ -94,17 +103,20 @@ const Post = ({
         >
             <ListItem>
                 <ListItemAvatar>
-                    <Avatar alt={content.organizations?.name} src={content.organizations?.picture || ""}>
+                    <Avatar
+                        alt={content.organizations?.name}
+                        src={content.organizations?.picture || ""}
+                    >
                         {content.organizations?.name?.charAt(0).toUpperCase()}
                     </Avatar>
                 </ListItemAvatar>
-                
+
                 <ListItemText
                     primary={content.organizations?.name}
                     secondary={timeStr + (isEdited ? " [Edited]" : "")}
                 />
             </ListItem>
-           
+
             <Typography variant="h3" width="100%">
                 {content.title}
             </Typography>

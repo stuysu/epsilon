@@ -185,23 +185,21 @@ const AdminMember = ({
                 />
             </Box>
             <Box sx={{ width: "200px" }}>
-                {
-                    (isCreator || role === "MEMBER" || role === "ADVISOR" || userId === user.id) &&
-                    (
-                        <Button
-                            onClick={handleEdit}
-                            variant="contained"
-                            sx={{ height: "40px" }}
-                        >
-                            Edit
-                        </Button>
-                    )
-                }
+                {(isCreator ||
+                    role === "MEMBER" ||
+                    role === "ADVISOR" ||
+                    userId === user.id) && (
+                    <Button
+                        onClick={handleEdit}
+                        variant="contained"
+                        sx={{ height: "40px" }}
+                    >
+                        Edit
+                    </Button>
+                )}
 
-                {
-                    userId !== user.id &&
-                    (isCreator || role === "MEMBER" || role === "ADVISOR") && 
-                    (
+                {userId !== user.id &&
+                    (isCreator || role === "MEMBER" || role === "ADVISOR") && (
                         <Button
                             onClick={() => setKickConfirmOpen(true)}
                             variant="contained"
@@ -209,11 +207,10 @@ const AdminMember = ({
                         >
                             Kick
                         </Button>
-                    )
-                }
+                    )}
             </Box>
-            <ConfirmationDialog 
-                open={kickConfirmOpen} 
+            <ConfirmationDialog
+                open={kickConfirmOpen}
                 title={`Kick ${user.first_name} ${user.last_name}?`}
                 description={"This action can't be reversed."}
                 onConfirm={handleKick}
@@ -228,28 +225,23 @@ const AdminMember = ({
                         onChange={handleType}
                         label="Role Name"
                     />
-                    {
-                        (
-                            (isCreator && userId !== user.id) ||
-                            (isAdmin && role !== "ADMIN" && role !== "CREATOR" && userId !== user.id)
-                        ) &&
-                        (
-                            <Select
-                                value={editState.role}
-                                label="Role"
-                                onChange={handleSelect}
-                            >
-                                <MenuItem value={"MEMBER"}>Member</MenuItem>
-                                <MenuItem value={"ADVISOR"}>Advisor</MenuItem>
-                                {
-                                    isCreator &&
-                                    (
-                                        <MenuItem value={"ADMIN"}>Admin</MenuItem>
-                                    )
-                                }
-                            </Select>
-                        )
-                    }
+                    {((isCreator && userId !== user.id) ||
+                        (isAdmin &&
+                            role !== "ADMIN" &&
+                            role !== "CREATOR" &&
+                            userId !== user.id)) && (
+                        <Select
+                            value={editState.role}
+                            label="Role"
+                            onChange={handleSelect}
+                        >
+                            <MenuItem value={"MEMBER"}>Member</MenuItem>
+                            <MenuItem value={"ADVISOR"}>Advisor</MenuItem>
+                            {isCreator && (
+                                <MenuItem value={"ADMIN"}>Admin</MenuItem>
+                            )}
+                        </Select>
+                    )}
                 </DialogContent>
                 <DialogActions>
                     <Button variant="contained" onClick={handleClose}>

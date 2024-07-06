@@ -22,7 +22,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                 },
             }}
             onClick={() => {
-                navigate(`/${organization.url}`)
+                navigate(`/${organization.url}`);
             }}
         >
             <Box

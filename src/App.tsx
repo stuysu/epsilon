@@ -8,7 +8,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { CssBaseline } from "@mui/material";
 import { SnackbarProvider } from "notistack";
-import { Scrollbars } from 'react-custom-scrollbars-2';
+import { Scrollbars } from "react-custom-scrollbars-2";
 
 const App = () => {
     const [autoHeightMax, setAutoHeightMax] = useState(window.innerHeight);
@@ -18,23 +18,29 @@ const App = () => {
             setAutoHeightMax(window.innerHeight);
         };
 
-        window.addEventListener('resize', handleResize);
+        window.addEventListener("resize", handleResize);
 
         // Cleanup function to remove the event listener
-        return () => window.removeEventListener('resize', handleResize);
+        return () => window.removeEventListener("resize", handleResize);
     }, []);
 
     // Custom thumb component with type annotations
-    const renderThumb = ({ style, ...props }: { style: CSSProperties, [key: string]: any }) => {
+    const renderThumb = ({
+        style,
+        ...props
+    }: {
+        style: CSSProperties;
+        [key: string]: any;
+    }) => {
         const thumbStyle: CSSProperties = {
-            backgroundColor: 'grey',
-            borderRadius: '4px', // Adjust this value as needed to match your design
+            backgroundColor: "grey",
+            borderRadius: "4px", // Adjust this value as needed to match your design
         };
         return <div style={{ ...style, ...thumbStyle }} {...props} />;
     };
 
     return (
-        <Scrollbars 
+        <Scrollbars
             universal
             autoHeight
             autoHeightMin={100}

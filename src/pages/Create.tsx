@@ -155,7 +155,7 @@ const Create = () => {
 
         enqueueSnackbar("Organization created!", { variant: "success" });
         /* redirect after creation (with refresh) */
-        window.location.href = `${PUBLIC_URL}/${formData.url}`
+        window.location.href = `${PUBLIC_URL}/${formData.url}`;
     };
 
     return (

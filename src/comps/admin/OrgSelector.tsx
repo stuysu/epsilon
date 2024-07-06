@@ -44,8 +44,25 @@ const OrgSelector = ({
     };
 
     return (
-        <Card variant="outlined" sx={{ width: "500px", height: "250px", display: "flex", flexWrap: "wrap", padding: "20px" }}>
-            <Box sx={{ width: "100%", display: "flex", justifyContent: "center", height: "80%", alignItems: "center"}}>
+        <Card
+            variant="outlined"
+            sx={{
+                width: "500px",
+                height: "250px",
+                display: "flex",
+                flexWrap: "wrap",
+                padding: "20px",
+            }}
+        >
+            <Box
+                sx={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    height: "80%",
+                    alignItems: "center",
+                }}
+            >
                 <TextField
                     onChange={(e) => setOrgName(e.target.value)}
                     label="Search for Organization"
@@ -56,8 +73,20 @@ const OrgSelector = ({
                     sx={{ width: "100%" }}
                 />
             </Box>
-            <Box sx={{ width: "100%", display: "flex", justifyContent: "center"}}>
-                <Button onClick={searchOrg} sx={{ height: "40px", width: "50%" }} variant="contained">Submit</Button>
+            <Box
+                sx={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                }}
+            >
+                <Button
+                    onClick={searchOrg}
+                    sx={{ height: "40px", width: "50%" }}
+                    variant="contained"
+                >
+                    Submit
+                </Button>
             </Box>
         </Card>
     );

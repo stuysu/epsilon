@@ -52,7 +52,11 @@ const Catalog = () => {
         tags: [],
     });
 
-    const [seed, setSeed] = useState(sessionStorage.getItem("seed") ? parseFloat(sessionStorage.getItem("seed") as string) : Math.random());
+    const [seed, setSeed] = useState(
+        sessionStorage.getItem("seed")
+            ? parseFloat(sessionStorage.getItem("seed") as string)
+            : Math.random(),
+    );
 
     const [announcements, setAnnouncements] = useState<Announcement[]>([]);
 
@@ -139,8 +143,8 @@ const Catalog = () => {
             return {
                 orgs: finalOrgs,
                 offset: originalOffset + querySize,
-                more
-            }
+                more,
+            };
         });
     };
 
@@ -154,21 +158,23 @@ const Catalog = () => {
 
     useEffect(() => {
         const fetchAnnouncements = async () => {
-            const { data, error } = await supabase.from("announcements").select("*");
+            const { data, error } = await supabase
+                .from("announcements")
+                .select("*");
 
             if (error || !data) {
                 enqueueSnackbar(
                     "Failed to load announcements. Contact it@stuysu.org for support.",
                     { variant: "error" },
-                )
+                );
                 return;
             }
 
             setAnnouncements(data as Announcement[]);
-        }
+        };
 
         fetchAnnouncements();
-    }, [])
+    });
 
     /*
   Testing
@@ -198,17 +204,34 @@ const Catalog = () => {
                     position: "relative",
                 }}
             >
-                <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap", paddingTop: "10px", marginBottom: "20px" }}>
+                <Box
+                    sx={{
+                        width: "100%",
+                        display: "flex",
+                        flexWrap: "wrap",
+                        paddingTop: "10px",
+                        marginBottom: "20px",
+                    }}
+                >
                     <Typography variant="h3">Announcements</Typography>
-                    {
-                        announcements.map((announcement, i) => {
-                            return (
-                                <Card key={i} sx={{ width: "100%", display: "flex", justifyContent: "center", marginTop: "10px", padding: "20px" }}>
-                                    <Typography variant="body1" width="100%">{announcement.content}</Typography>
-                                </Card>
-                            );
-                        })
-                    }
+                    {announcements.map((announcement, i) => {
+                        return (
+                            <Card
+                                key={i}
+                                sx={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    marginTop: "10px",
+                                    padding: "20px",
+                                }}
+                            >
+                                <Typography variant="body1" width="100%">
+                                    {announcement.content}
+                                </Typography>
+                            </Card>
+                        );
+                    })}
                 </Box>
                 <Typography variant="h3">Catalog</Typography>
 
@@ -219,20 +242,16 @@ const Catalog = () => {
                     loader={<Loading />}
                     endMessage={
                         <Box>
-                            {
-                                approvedOrgs.length === 0 ? 
-                                (
-                                    <Typography align="center" variant="h3">
-                                        No Organizations Found.
-                                    </Typography>
-                                ) :
-                                (
-                                    <Typography align="center" variant="h3">
-                                        Total of {approvedOrgs.length}{" "}
-                                        {`Organization${approvedOrgs.length > 1 ? "s" : ""}`}
-                                    </Typography>
-                                )
-                            }
+                            {approvedOrgs.length === 0 ? (
+                                <Typography align="center" variant="h3">
+                                    No Organizations Found.
+                                </Typography>
+                            ) : (
+                                <Typography align="center" variant="h3">
+                                    Total of {approvedOrgs.length}{" "}
+                                    {`Organization${approvedOrgs.length > 1 ? "s" : ""}`}
+                                </Typography>
+                            )}
                         </Box>
                     }
                     style={{ overflow: "hidden", paddingTop: "20px" }}

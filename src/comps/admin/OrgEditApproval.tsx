@@ -30,7 +30,11 @@ const OrgEditApproval = ({
     onApprove,
     onReject,
     ...edit
-}: { onBack: () => void; onReject: () => void; onApprove: () => void } & EditType) => {
+}: {
+    onBack: () => void;
+    onReject: () => void;
+    onApprove: () => void;
+} & EditType) => {
     const { enqueueSnackbar } = useSnackbar();
 
     /* fetch current org data to compare to */
@@ -70,7 +74,7 @@ const OrgEditApproval = ({
         };
 
         fetchCurrentOrg();
-    }, [edit]);
+    }, [edit, enqueueSnackbar]);
 
     const approve = async () => {
         setButtonsDisabled(true);
@@ -117,7 +121,7 @@ const OrgEditApproval = ({
                     edit_id: edit.id,
                 },
             },
-        ))
+        ));
 
         if (error) {
             setButtonsDisabled(false);
@@ -130,36 +134,71 @@ const OrgEditApproval = ({
         setButtonsDisabled(false);
         enqueueSnackbar("Organization edit rejected.", { variant: "success" });
         onReject();
-    }
+    };
 
     return (
         <Box sx={{ padding: "30px", display: "flex", flexWrap: "wrap" }}>
             <Box sx={{ width: "100%", marginBottom: "20px" }}>
-                <Button variant="contained" onClick={onBack} sx={{ marginRight: "10px"}}>
+                <Button
+                    variant="contained"
+                    onClick={onBack}
+                    sx={{ marginRight: "10px" }}
+                >
                     Back
                 </Button>
-                <Button variant="contained" onClick={approve} color="success" sx={{ marginRight: "10px"}} disabled={buttonsDisabled}>
+                <Button
+                    variant="contained"
+                    onClick={approve}
+                    color="success"
+                    sx={{ marginRight: "10px" }}
+                    disabled={buttonsDisabled}
+                >
                     Approve
                 </Button>
-                <Button variant="contained" onClick={reject} color="secondary" sx={{ marginRight: "10px"}} disabled={buttonsDisabled}>
+                <Button
+                    variant="contained"
+                    onClick={reject}
+                    color="secondary"
+                    sx={{ marginRight: "10px" }}
+                    disabled={buttonsDisabled}
+                >
                     Reject
                 </Button>
             </Box>
-            <Typography variant="h1" width="100%">{edit.organization_name}: changes</Typography>
-            <Card sx={{ width: "100%", maxWidth: "1000px", margin: "10px", padding: "10px" }}>
+            <Typography variant="h1" width="100%">
+                {edit.organization_name}: changes
+            </Typography>
+            <Card
+                sx={{
+                    width: "100%",
+                    maxWidth: "1000px",
+                    margin: "10px",
+                    padding: "10px",
+                }}
+            >
                 {fields.map((field, i) => {
                     let f2: EditKey = field as EditKey;
 
-                    if (f2 === 'picture') {
+                    if (f2 === "picture") {
                         return (
                             <>
                                 <Typography variant="h5" fontWeight={600}>
                                     {field}
                                 </Typography>
-                                <Avatar src={edit[f2] as string} alt={edit.organization_name} style={{ width: "150px", height: "150px", fontSize: "60px" }}>
-                                        {edit.organization_name.charAt(0).toUpperCase()}
+                                <Avatar
+                                    src={edit[f2] as string}
+                                    alt={edit.organization_name}
+                                    style={{
+                                        width: "150px",
+                                        height: "150px",
+                                        fontSize: "60px",
+                                    }}
+                                >
+                                    {edit.organization_name
+                                        .charAt(0)
+                                        .toUpperCase()}
                                 </Avatar>
-                                <Divider sx={{ margin: "10px" }}/>
+                                <Divider sx={{ margin: "10px" }} />
                             </>
                         );
                     }
@@ -172,7 +211,7 @@ const OrgEditApproval = ({
                             <Typography variant="body2">
                                 {`"${edit[f2]}"`}
                             </Typography>
-                            <Divider sx={{ margin: "10px" }}/>
+                            <Divider sx={{ margin: "10px" }} />
                         </>
                     );
                 })}
