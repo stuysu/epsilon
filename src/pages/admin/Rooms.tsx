@@ -48,7 +48,7 @@ const Rooms = () => {
                 return;
             }
     
-            setRooms(roomData);
+            setRooms([...roomData]); // Copy the array by value
             setAllRooms((prev) => {
                 setLoading(false);
     
@@ -56,7 +56,7 @@ const Rooms = () => {
                     setForceRoomId(roomData[0].id);
                 }
     
-                return roomData;
+                return [...roomData]; // Copy the array by value
             });
         };
     
