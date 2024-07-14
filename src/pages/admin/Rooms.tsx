@@ -42,24 +42,24 @@ const Rooms = () => {
                 .from("rooms")
                 .select("*")
                 .returns<ApiRoom[]>();
-    
+
             if (roomFetchError || !roomData) {
                 enqueueSnackbar("Failed to fetch rooms", { variant: "error" });
                 return;
             }
-    
+
             setRooms([...roomData]); // Copy the array by value
             setAllRooms((prev) => {
                 setLoading(false);
-    
+
                 if (roomData.length) {
                     setForceRoomId(roomData[0].id);
                 }
-    
+
                 return [...roomData]; // Copy the array by value
             });
         };
-    
+
         fetchRooms();
     }, []);
 
