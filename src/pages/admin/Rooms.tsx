@@ -42,40 +42,26 @@ const Rooms = () => {
                 .from("rooms")
                 .select("*")
                 .returns<ApiRoom[]>();
-
+    
             if (roomFetchError || !roomData) {
                 enqueueSnackbar("Failed to fetch rooms", { variant: "error" });
                 return;
             }
-
+    
             setRooms(roomData);
-        };
-
-        const fetchAllRooms = async () => {
-            const { data: roomData, error: roomFetchError } = await supabase
-                .from("rooms")
-                .select("*")
-                .returns<ApiRoom[]>();
-
-            if (roomFetchError || !roomData) {
-                enqueueSnackbar("Failed to fetch rooms", { variant: "error" });
-                return;
-            }
-
             setAllRooms((prev) => {
                 setLoading(false);
-
+    
                 if (roomData.length) {
                     setForceRoomId(roomData[0].id);
                 }
-
+    
                 return roomData;
             });
         };
-
+    
         fetchRooms();
-        fetchAllRooms();
-    });
+    }, []);
 
     const forceReserve = async () => {
         const { error: reserveError } = await supabase.functions.invoke(
