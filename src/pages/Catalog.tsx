@@ -174,7 +174,7 @@ const Catalog = () => {
         };
 
         fetchAnnouncements();
-    });
+    }, [enqueueSnackbar, setAnnouncements]);
 
     /*
   Testing
