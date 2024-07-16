@@ -20,7 +20,7 @@ import OrgRequirements from "../utils/OrgRequirements";
 
 import { PUBLIC_URL } from "../constants";
 
-import { useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
 import UnauthenticatedLanding from "../comps/pages/home/UnauthenticatedLanding";
 import { Warning } from "@mui/icons-material";
@@ -73,7 +73,7 @@ const multilineStyle: CSSProperties = {
 
 const Create = () => {
     const navigate = useNavigate();
-    const user : UserContextType = useContext(UserContext);
+    const user: UserContextType = useContext(UserContext);
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -173,9 +173,12 @@ const Create = () => {
 
     useEffect(() => {
         if (!user.signed_in) {
-            enqueueSnackbar("You must be signed in to create an organization.", {
-                variant: "warning",
-            });
+            enqueueSnackbar(
+                "You must be signed in to create an organization.",
+                {
+                    variant: "warning",
+                },
+            );
             navigate("/");
             return;
         }
