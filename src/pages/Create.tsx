@@ -23,6 +23,7 @@ import { PUBLIC_URL } from "../constants";
 import { useNavigate } from "react-router-dom"
 
 import UnauthenticatedLanding from "../comps/pages/home/UnauthenticatedLanding";
+import { Warning } from "@mui/icons-material";
 
 type FormType = {
     name: string;
@@ -165,6 +166,16 @@ const Create = () => {
 
     useEffect(() => {
         if (!user.signed_in) {
+            navigate("/");
+            return;
+        }
+    }, [user, navigate]);
+
+    useEffect(() => {
+        if (!user.signed_in) {
+            enqueueSnackbar("You must be signed in to create an organization.", {
+                variant: "warning",
+            });
             navigate("/");
             return;
         }
