@@ -10,10 +10,8 @@ const Strikes = () => {
     useEffect(() => {
         const fetchStrikes = async () => {
             try {
-                const { data, error } = await supabase
-                    .from("strikes")
-                    .select(
-                        `
+                const { data, error } = await supabase.from("strikes").select(
+                    `
                         id,
                         reason,
                         created_at,
@@ -26,7 +24,7 @@ const Strikes = () => {
                             picture
                         )
                     `,
-                    );
+                );
 
                 if (error || !data) {
                     throw error;
@@ -34,7 +32,9 @@ const Strikes = () => {
 
                 setOrgStrikes(data as Strike[]);
             } catch (error) {
-                enqueueSnackbar("Failed to load strikes.", { variant: "error" });
+                enqueueSnackbar("Failed to load strikes.", {
+                    variant: "error",
+                });
             }
         };
 
