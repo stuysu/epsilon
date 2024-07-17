@@ -72,17 +72,15 @@ const Create = () => {
 
     const [formData, setFormData] = useState<FormType>(emptyForm);
     const isMobile = useMediaQuery("(max-width: 620px)");
-    
-
-useEffect(() => {
     const checkFormFields = () => {
-        const fields = ["name", "url", "mission", "purpose", "benefit", "keywords", "tags", "appointment_procedures"];
+    const fields = ["name", "url", "mission", "purpose", "benefit", "keywords", "tags", "appointment_procedures"];
         return fields.some(field => {
             const value = formData[field as keyof FormType];
             return (typeof value === "string" && value.trim() !== "") || (Array.isArray(value) && value.length > 0);
         });
     };
 
+useEffect(() => {
     const handleBeforeUnload = (event: BeforeUnloadEvent) => {
         if (checkFormFields()) {
             event.preventDefault();
