@@ -1,4 +1,4 @@
-import { CSSProperties, useContext, useState } from "react";
+import { CSSProperties, useContext, useEffect, useState } from "react";
 import UserContext from "../comps/context/UserContext";
 
 import { Typography, useMediaQuery } from "@mui/material";
@@ -72,6 +72,31 @@ const Create = () => {
 
     const [formData, setFormData] = useState<FormType>(emptyForm);
     const isMobile = useMediaQuery("(max-width: 620px)");
+    
+
+useEffect(() => {
+    const checkFormFields = () => {
+        const fields = ["name", "url", "mission", "purpose", "benefit", "keywords", "tags", "appointment_procedures"];
+        return fields.some(field => {
+            const value = formData[field as keyof FormType];
+            return (typeof value === "string" && value.trim() !== "") || (Array.isArray(value) && value.length > 0);
+        });
+    };
+
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+        if (checkFormFields()) {
+            event.preventDefault();
+            event.returnValue = ''; // This is required for Chrome to show the prompt
+        }
+    };
+
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+        window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
+}, [formData]);
+
 
     const createActivity = async () => {
         let body = {
