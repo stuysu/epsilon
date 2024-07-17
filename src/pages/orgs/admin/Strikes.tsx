@@ -1,17 +1,21 @@
 import { Box, Typography, Card, Button } from "@mui/material";
-import { useState, useEffect } from "react";
+import { useContext, useState, useEffect } from "react";
 import { supabase } from "../../../supabaseClient";
 import { useSnackbar } from "notistack";
+import OrgContext from "../../../comps/context/OrgContext";
 
 const Strikes = () => {
+    const organization = useContext<OrgContextType>(OrgContext);
     const { enqueueSnackbar } = useSnackbar();
     const [orgStrikes, setOrgStrikes] = useState<Strike[]>([]);
 
     useEffect(() => {
         const fetchStrikes = async () => {
             try {
-                const { data, error } = await supabase.from("strikes").select(
-                    `
+                const { data, error } = await supabase
+                    .from("strikes")
+                    .select(
+                        `
                         id,
                         reason,
                         created_at,
@@ -24,7 +28,8 @@ const Strikes = () => {
                             picture
                         )
                     `,
-                );
+                    )
+                    .eq("organization_id", organization.id);
 
                 if (error || !data) {
                     throw error;
