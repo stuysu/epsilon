@@ -1,8 +1,25 @@
-import { Box, TextField, Button, Typography, Card } from "@mui/material";
+import {
+    Box,
+    TextField,
+    Button,
+    Typography,
+    Card,
+    useMediaQuery,
+} from "@mui/material";
 import { useState, useEffect } from "react";
-import OrgSelector from "../../comps/admin/OrgSelector";
-import { supabase } from "../../supabaseClient";
 import { useSnackbar } from "notistack";
+
+import { supabase } from "../../supabaseClient";
+import OrgSelector from "../../comps/admin/OrgSelector";
+import SearchFilter from "../../comps/pages/catalog/SearchFilter";
+
+const querySize = 10;
+
+type SearchState = {
+    orgs: Partial<Organization>[];
+    offset: number;
+    more: boolean;
+};
 
 const Strikes = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -10,40 +27,29 @@ const Strikes = () => {
     const [orgId, setOrgId] = useState<number>();
     const [orgName, setOrgName] = useState("");
     const [orgStrikes, setOrgStrikes] = useState<Strike[]>([]);
+
     const [reason, setReason] = useState("");
-    const [searchInput, setSearchInput] = useState("");
-    const [filteredOrgs, setFilteredOrgs] = useState<Organization[]>([]);
-    const [allOrgs, setAllOrgs] = useState<Organization[]>([]);
 
-    useEffect(() => {
-        const fetchAllOrgs = async () => {
-            const { data, error } = await supabase
-                .from("organizations")
-                .select("*");
-            if (error || !data) {
-                enqueueSnackbar(
-                    "Failed to load organizations. Contact it@stuysu.org for support.",
-                    { variant: "error" },
-                );
-                return;
-            }
-            setAllOrgs(data);
-        };
+    const [searchState, setSearchState] = useState<SearchState>({
+        orgs: [],
+        offset: 0,
+        more: true,
+    });
 
-        fetchAllOrgs();
-    }, [enqueueSnackbar]);
+    const [searchParams, setSearchParams] = useState<SearchParams>({
+        name: "",
+        meetingDays: [],
+        commitmentLevels: [],
+        tags: [],
+    });
 
-    useEffect(() => {
-        if (searchInput) {
-            setFilteredOrgs(
-                allOrgs.filter((org) =>
-                    org.name.toLowerCase().includes(searchInput.toLowerCase()),
-                ),
-            );
-        } else {
-            setFilteredOrgs([]);
-        }
-    }, [searchInput, allOrgs]);
+    const isTwo = useMediaQuery("(max-width: 1525px)");
+    const isTwoWrap = useMediaQuery("(max-width: 1100px)");
+    const isOne = useMediaQuery("(max-width: 700px)");
+
+    let columns = 3;
+    if (isTwo) columns = 2;
+    if (isOne) columns = 1;
 
     useEffect(() => {
         if (!orgId) return;
@@ -56,17 +62,24 @@ const Strikes = () => {
                     id,
                     reason,
                     created_at,
-                    organizations (name),
-                    users (first_name, last_name, picture)
-                `,
+                    organizations (
+                        name
+                    ),
+                    users (
+                        first_name,
+                        last_name,
+                        picture
+                    )
+                    `,
                 )
                 .eq("organization_id", orgId);
 
             if (error || !data) {
-                return enqueueSnackbar(
+                enqueueSnackbar(
                     "Failed to load strikes. Contact it@stuysu.org for support.",
                     { variant: "error" },
                 );
+                return;
             }
 
             setOrgStrikes(data as Strike[]);
@@ -74,6 +87,88 @@ const Strikes = () => {
 
         fetchOrgStrikes();
     }, [orgId, enqueueSnackbar]);
+
+    useEffect(() => {
+        getOrgs(true);
+    }, [searchParams]);
+
+    const getOrgs = async (isReset?: boolean) => {
+        const originalOffset = isReset ? 0 : searchState.offset;
+
+        let orgData, orgError;
+
+        if (
+            !searchParams.name.length &&
+            !searchParams.meetingDays.length &&
+            !searchParams.commitmentLevels.length &&
+            !searchParams.tags.length
+        ) {
+            // get orgs in random order (no search params)
+            ({ data: orgData, error: orgError } = await supabase
+                .from("organizations")
+                .select("*")
+                .order("name", { ascending: true })
+                .range(originalOffset, originalOffset + querySize - 1));
+        } else {
+            // get orgs with search params
+            let orgReqs = [];
+            if (searchParams.tags.length) {
+                let tagReqs = searchParams.tags
+                    .map((tag) => `tags.cs.{${tag}}`)
+                    .join(",");
+                orgReqs.push(`and(or(${tagReqs}))`);
+            }
+
+            if (searchParams.meetingDays.length) {
+                let dayReqs = searchParams.meetingDays
+                    .map((day) => `meeting_days.cs.{${day}}`)
+                    .join(",");
+                orgReqs.push(`and(or(${dayReqs}))`);
+            }
+            if (searchParams.commitmentLevels.length) {
+                let commitmentReqs = searchParams.commitmentLevels
+                    .map((level) => `commitment_level.eq.${level}`)
+                    .join(",");
+                orgReqs.push(`and(or(${commitmentReqs}))`);
+            }
+
+            let orgReqsQuery = "";
+            if (orgReqs.length) {
+                orgReqsQuery = `,and(${orgReqs.join(",")})`;
+            }
+
+            var catalogQuery = `and(or(name.ilike.%${searchParams.name}%,keywords.ilike.%${searchParams.name}%)${orgReqsQuery})`;
+
+            ({ data: orgData, error: orgError } = await supabase
+                .from("organizations")
+                .select("*")
+                .or(catalogQuery)
+                .range(originalOffset, originalOffset + querySize - 1));
+        }
+
+        if (orgError || !orgData) {
+            enqueueSnackbar(
+                "Error fetching organizations. Contact it@stuysu.org for support.",
+                { variant: "error" },
+            );
+            return;
+        }
+
+        let more = true;
+        let finalOrgs = isReset ? orgData : [...searchState.orgs, ...orgData];
+
+        if (orgData.length < querySize) {
+            more = false;
+        }
+
+        setSearchState(() => {
+            return {
+                orgs: finalOrgs,
+                offset: originalOffset + querySize,
+                more,
+            };
+        });
+    };
 
     const issueStrike = async () => {
         const { data, error } = await supabase.functions.invoke(
@@ -120,47 +215,7 @@ const Strikes = () => {
                     }}
                 />
             </Box>
-            <Box
-                sx={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                    marginTop: "20px",
-                }}
-            >
-                <TextField
-                    sx={{ width: "300px" }}
-                    label="Search Organizations"
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                />
-            </Box>
-            {filteredOrgs.length > 0 && (
-                <Box
-                    sx={{
-                        width: "100%",
-                        display: "flex",
-                        justifyContent: "center",
-                        marginTop: "10px",
-                        flexWrap: "wrap",
-                    }}
-                >
-                    {filteredOrgs.map((org) => (
-                        <Button
-                            key={org.id}
-                            onClick={() => {
-                                setOrgId(org.id);
-                                setOrgName(org.name);
-                                setSearchInput(""); // Clear search input after selecting an org
-                                setFilteredOrgs([]); // Clear filtered orgs after selecting an org
-                            }}
-                            sx={{ margin: "5px" }}
-                        >
-                            {org.name}
-                        </Button>
-                    ))}
-                </Box>
-            )}
+
             {orgId && (
                 <>
                     <Box
@@ -214,12 +269,12 @@ const Strikes = () => {
                     >
                         {orgStrikes.map((strike, i) => (
                             <Box
+                                key={i}
                                 sx={{
                                     width: "100%",
                                     display: "flex",
                                     justifyContent: "center",
                                 }}
-                                key={i}
                             >
                                 <Card
                                     sx={{
@@ -268,6 +323,38 @@ const Strikes = () => {
                     </Box>
                 </>
             )}
+
+            <Box
+                sx={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    marginTop: "20px",
+                }}
+            >
+                <SearchFilter
+                    value={searchParams}
+                    onChange={setSearchParams}
+                    isOneColumn={isOne}
+                    isTwoColumn={isTwo}
+                    isTwoWrap={isTwoWrap}
+                />
+            </Box>
+
+            <Box
+                sx={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    marginTop: "20px",
+                }}
+            >
+                {searchState.orgs.map((org) => (
+                    <Typography key={org.id} variant="body1">
+                        {org.name}
+                    </Typography>
+                ))}
+            </Box>
         </Box>
     );
 };
