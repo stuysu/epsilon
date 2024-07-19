@@ -29,11 +29,11 @@ type SearchState = {
     more: boolean;
 };
 
-/* 
+/*
 If there are search params
 - reset orgs to empty
 - new function that doesn't order by random, but gets by search params
-- should work with infinite scroll 
+- should work with infinite scroll
 */
 const querySize = 10;
 const Catalog = () => {
