@@ -1,6 +1,5 @@
 import { Box, TextField, Button, Typography, Card } from "@mui/material";
 import { useState, useEffect } from "react";
-import OrgSelector from "../../comps/admin/OrgSelector";
 import { supabase } from "../../supabaseClient";
 import { useSnackbar } from "notistack";
 
