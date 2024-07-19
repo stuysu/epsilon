@@ -226,7 +226,13 @@ const Catalog = () => {
                                     padding: "20px",
                                 }}
                             >
-                                <Typography variant="body1" width="100%">
+                                <Typography
+                                    variant="body1"
+                                    sx={{
+                                        width: "100%",
+                                        whiteSpace: "pre-line",
+                                    }}
+                                >
                                     {announcement.content}
                                 </Typography>
                             </Card>

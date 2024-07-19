@@ -1,14 +1,11 @@
 import { Box, TextField, Typography, Button, Card } from "@mui/material";
 import { useSnackbar } from "notistack";
-
 import { useEffect, useState } from "react";
-
 import { supabase } from "../../supabaseClient";
 
 const Announcements = () => {
     let [content, setContent] = useState("");
     let { enqueueSnackbar } = useSnackbar();
-
     let [announcements, setAnnouncements] = useState<Announcement[]>([]);
 
     useEffect(() => {
@@ -103,7 +100,6 @@ const Announcements = () => {
                         onKeyDown={(e) => {
                             if (e.key === "Enter" && e.ctrlKey) {
                                 e.preventDefault();
-
                                 createAnnouncement();
                             }
                         }}
@@ -147,7 +143,13 @@ const Announcements = () => {
                                     alignItems: "center",
                                 }}
                             >
-                                <Typography variant="body1" width="80%">
+                                <Typography
+                                    variant="body1"
+                                    sx={{
+                                        width: "80%",
+                                        whiteSpace: "pre-line",
+                                    }}
+                                >
                                     {announcement.content}
                                 </Typography>
                                 <Button
