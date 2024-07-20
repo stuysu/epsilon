@@ -6,6 +6,7 @@ import {
     KeyboardEvent,
     useRef,
 } from "react";
+import { useSnackbar } from "notistack";
 
 type Requirements = {
     maxChips?: number;
@@ -40,6 +41,7 @@ const FormChipText = ({
 }: Props) => {
     const [inputValue, setInputValue] = useState("");
     const inputRef = useRef<HTMLInputElement | null>(null);
+    const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
         const validate = (newValue?: string[]) => {
@@ -61,6 +63,9 @@ const FormChipText = ({
 
     const valueChanged = (event: SyntheticEvent, newValue: string[]) => {
         if (requirements?.maxChips && newValue.length > requirements.maxChips) {
+            enqueueSnackbar("You can enter up to 3 keywords only.", {
+                variant: "error",
+            });
             return;
         }
 
