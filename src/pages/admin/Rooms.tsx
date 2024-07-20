@@ -4,8 +4,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useSnackbar } from "notistack";
 import AdminRoom from "../../comps/admin/AdminRoom";
-import OrgSelector from "../../comps/admin/OrgSelector";
-
 import dayjs, { Dayjs } from "dayjs";
 
 type ApiRoom = {
@@ -15,6 +13,11 @@ type ApiRoom = {
     approval_required: boolean;
     available_days: string;
     comments?: string;
+};
+
+type Organization = {
+    id: number;
+    name: string;
 };
 
 const getDefaultTime = () => {
@@ -31,6 +34,11 @@ const Rooms = () => {
     const [forceRoomId, setForceRoomId] = useState<number | undefined>();
     const [allRooms, setAllRooms] = useState<ApiRoom[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
+
+    /* organization search data */
+    const [searchInput, setSearchInput] = useState("");
+    const [filteredOrgs, setFilteredOrgs] = useState<Organization[]>([]);
+    const [allOrgs, setAllOrgs] = useState<Organization[]>([]);
 
     /* date inputs */
     const [startTime, setStartTime] = useState<Dayjs | null>(getDefaultTime());
@@ -61,7 +69,37 @@ const Rooms = () => {
         };
 
         fetchRooms();
-    }, []);
+    }, [enqueueSnackbar]);
+
+    useEffect(() => {
+        const fetchAllOrgs = async () => {
+            const { data, error } = await supabase
+                .from("organizations")
+                .select("*");
+            if (error || !data) {
+                enqueueSnackbar(
+                    "Failed to load organizations. Contact support.",
+                    { variant: "error" },
+                );
+                return;
+            }
+            setAllOrgs(data);
+        };
+
+        fetchAllOrgs();
+    }, [enqueueSnackbar]);
+
+    useEffect(() => {
+        if (searchInput) {
+            setFilteredOrgs(
+                allOrgs.filter((org) =>
+                    org.name.toLowerCase().includes(searchInput.toLowerCase()),
+                ),
+            );
+        } else {
+            setFilteredOrgs([]);
+        }
+    }, [searchInput, allOrgs]);
 
     const forceReserve = async () => {
         const { error: reserveError } = await supabase.functions.invoke(
@@ -119,13 +157,39 @@ const Rooms = () => {
                         justifyContent: "center",
                     }}
                 >
-                    <OrgSelector
-                        onSelect={(orgId, orgName) => {
-                            setForceOrgId(orgId);
-                            setForceOrgName(orgName);
-                        }}
+                    <TextField
+                        sx={{ width: "300px" }}
+                        label="Search Organizations"
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
                     />
                 </Box>
+                {filteredOrgs.length > 0 && (
+                    <Box
+                        sx={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "center",
+                            marginTop: "10px",
+                            flexWrap: "wrap",
+                        }}
+                    >
+                        {filteredOrgs.map((org) => (
+                            <Button
+                                key={org.id}
+                                onClick={() => {
+                                    setForceOrgId(org.id);
+                                    setForceOrgName(org.name);
+                                    setSearchInput(""); // Clear search input after selecting an org
+                                    setFilteredOrgs([]); // Clear filtered orgs after selecting an org
+                                }}
+                                sx={{ margin: "5px" }}
+                            >
+                                {org.name}
+                            </Button>
+                        ))}
+                    </Box>
+                )}
                 {forceOrgId && (
                     <Box
                         sx={{
