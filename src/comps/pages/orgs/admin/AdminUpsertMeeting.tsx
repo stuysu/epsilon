@@ -96,7 +96,7 @@ const AdminUpsertMeeting = ({
         };
 
         fetchRooms();
-    });
+    }, []);
 
     useEffect(() => {
         const filterRooms = async () => {
@@ -165,7 +165,7 @@ const AdminUpsertMeeting = ({
         };
 
         filterRooms();
-    }, [loading, allRooms, id, roomId, startTime, endTime, enqueueSnackbar]);
+    }, [loading, id, roomId, startTime, endTime, enqueueSnackbar]);
 
     const handleSave = async () => {
         let supabaseReturn;
