@@ -102,8 +102,8 @@ const AdminUpsertMeeting = ({
         const filterRooms = async () => {
             if (!startTime || !endTime) return; // can't filter without these bounds
 
-            /* 
-      get ids of rooms that are booked. 
+            /*
+      get ids of rooms that are booked.
       there is a special case when we fetch an existing booked room from save
       */
             type roomMeta = {
@@ -128,7 +128,7 @@ const AdminUpsertMeeting = ({
 
             data = data.filter((meta) => meta.meeting_id !== id); // remove this current meeting's booking from time slot
 
-            /* 
+            /*
             room is available if:
             - it does not exist in booked rooms
             - the day of the start time (mon-fri) is included within the room's available days
@@ -150,7 +150,7 @@ const AdminUpsertMeeting = ({
             );
 
             // check if the currently selected room id is no longer valid
-            /* NOTE: if a meeting is invalid because of some update on the backend, 
+            /* NOTE: if a meeting is invalid because of some update on the backend,
             it'll still show the room but once u click into it, it'll only show virtual.
             */
             if (
