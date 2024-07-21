@@ -21,7 +21,9 @@ The following documentation is meant for Directors and Members.
     8. Error states
 3. Make sure to execute prettier (`npm run prettier`) to ensure that your code
    conforms to the project style guidelines. This will be automatically verified
-   during step 5.
+   during step 5. Alternatively, use `npx prettier --write` to scan and edit
+   specific files. (e.g. `npx prettier --write $(git diff --name-only)` to
+   only edit files that have unstaged changes)
 4. Verify via `git diff` that you have made the correct changes, and commit the
    changed files to a branch.
 5. Create a pull request explaining your changes. If the changes address an open
