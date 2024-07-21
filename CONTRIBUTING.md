@@ -32,3 +32,7 @@ The following documentation is meant for Directors and Members.
    modifications if needed.
 7. When your code passes all checks, congratulations! Your PR will be merged and
    closed, with automatic deployment via Netlify soon to follow.
+
+Note: Merges should be ideally be performed as fast-forwards (via Git CLI)
+if possible, and in lieu of that, a merge commit or rebase is acceptable.
+Changes should **_never_** be squashed.
