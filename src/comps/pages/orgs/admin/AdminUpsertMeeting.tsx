@@ -1,5 +1,4 @@
 import { useState, useEffect, ChangeEvent, useContext } from "react";
-
 import {
     Button,
     Dialog,
@@ -12,16 +11,18 @@ import {
     FormControlLabel,
     Box,
 } from "@mui/material";
-
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
-
 import { supabase } from "../../../../supabaseClient";
 import OrgContext from "../../../context/OrgContext";
 import dayjs, { Dayjs } from "dayjs";
 import { useSnackbar } from "notistack";
 
-const getDefaultTime = () => {
-    return dayjs().startOf("day").hour(15).minute(45);
+const getDefaultStartTime = () => {
+    return dayjs().startOf("day").hour(15).minute(35);
+};
+
+const getDefaultEndTime = () => {
+    return dayjs().startOf("day").hour(17).minute(0);
 };
 
 /* TODO: block off rooms on days they are unavailable */
@@ -53,15 +54,14 @@ const AdminUpsertMeeting = ({
 
     const [meetingTitle, setMeetingTitle] = useState(title || "");
     const [meetingDesc, setMeetingDesc] = useState(description || "");
-
     const [roomId, setRoomId] = useState(room_id);
 
     /* date inputs */
     const [startTime, setStartTime] = useState<Dayjs | null>(
-        start ? dayjs(start) : getDefaultTime(),
+        start ? dayjs(start) : getDefaultStartTime(),
     );
     const [endTime, setEndTime] = useState<Dayjs | null>(
-        end ? dayjs(end) : getDefaultTime(),
+        end ? dayjs(end) : getDefaultEndTime(),
     );
 
     const [isPub, setIsPub] = useState(
@@ -197,6 +197,21 @@ const AdminUpsertMeeting = ({
                 "Meeting start time cannot be before meeting end time.",
                 { variant: "error" },
             );
+            return;
+        }
+
+        if (endTime.diff(startTime, "minute") < 30) {
+            enqueueSnackbar("Meeting duration must be at least 30 minutes.", {
+                variant: "error",
+            });
+            return;
+        }
+
+        const currentTime = dayjs();
+        if (startTime.isBefore(currentTime)) {
+            enqueueSnackbar("Meeting cannot be scheduled in the past.", {
+                variant: "error",
+            });
             return;
         }
 
