@@ -7,12 +7,14 @@ const Announcements = () => {
     let [content, setContent] = useState("");
     let { enqueueSnackbar } = useSnackbar();
     let [announcements, setAnnouncements] = useState<Announcement[]>([]);
+    const [visibleAnnouncements, setVisibleAnnouncements] = useState(3);
 
     useEffect(() => {
         const fetchAnnouncements = async () => {
             const { data, error } = await supabase
                 .from("announcements")
-                .select("*");
+                .select("*")
+                .order("created_at", { ascending: false });
 
             if (error || !data) {
                 enqueueSnackbar(
@@ -122,53 +124,74 @@ const Announcements = () => {
                     justifyContent: "center",
                 }}
             >
-                {announcements.map((announcement, i) => {
-                    return (
-                        <Box
-                            key={i}
-                            sx={{
-                                width: "100%",
-                                display: "flex",
-                                flexWrap: "wrap",
-                                justifyContent: "center",
-                                marginTop: "10px",
-                            }}
-                        >
-                            <Card
+                {announcements
+                    .slice(0, visibleAnnouncements)
+                    .map((announcement, i) => {
+                        return (
+                            <Box
+                                key={i}
                                 sx={{
-                                    maxWidth: "600px",
                                     width: "100%",
                                     display: "flex",
-                                    padding: "10px",
-                                    alignItems: "center",
+                                    flexWrap: "wrap",
+                                    justifyContent: "center",
+                                    marginTop: "10px",
                                 }}
                             >
-                                <Typography
-                                    variant="body1"
+                                <Card
                                     sx={{
-                                        width: "80%",
-                                        whiteSpace: "pre-line",
+                                        maxWidth: "600px",
+                                        width: "100%",
+                                        display: "flex",
+                                        padding: "10px",
+                                        alignItems: "center",
                                     }}
                                 >
-                                    {announcement.content}
-                                </Typography>
-                                <Button
-                                    onClick={() =>
-                                        deleteAnnouncement(announcement.id)
-                                    }
-                                    sx={{
-                                        width: "15%",
-                                        marginLeft: "20px",
-                                        height: "40px",
-                                    }}
-                                    variant="contained"
-                                >
-                                    Delete
-                                </Button>
-                            </Card>
-                        </Box>
-                    );
-                })}
+                                    <Typography
+                                        variant="body1"
+                                        sx={{
+                                            width: "80%",
+                                            whiteSpace: "pre-line",
+                                        }}
+                                    >
+                                        {announcement.content}
+                                    </Typography>
+                                    <Button
+                                        onClick={() =>
+                                            deleteAnnouncement(announcement.id)
+                                        }
+                                        sx={{
+                                            width: "15%",
+                                            marginLeft: "20px",
+                                            height: "40px",
+                                        }}
+                                        variant="contained"
+                                    >
+                                        Delete
+                                    </Button>
+                                </Card>
+                            </Box>
+                        );
+                    })}
+                {visibleAnnouncements < announcements.length && (
+                    <Box
+                        sx={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "center",
+                            marginTop: "10px",
+                        }}
+                    >
+                        <Button
+                            variant="contained"
+                            onClick={() =>
+                                setVisibleAnnouncements((prev) => prev + 2)
+                            }
+                        >
+                            Show More
+                        </Button>
+                    </Box>
+                )}
             </Box>
         </Box>
     );

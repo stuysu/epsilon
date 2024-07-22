@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 
-import { Box, useMediaQuery, Typography, Card } from "@mui/material";
+import { Box, useMediaQuery, Typography, Card, Button } from "@mui/material";
 import { Masonry } from "@mui/lab";
 
 import OrgCard from "../comps/pages/catalog/OrgCard";
@@ -59,6 +59,7 @@ const Catalog = () => {
     );
 
     const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+    const [visibleAnnouncements, setVisibleAnnouncements] = useState(3);
 
     const isTwo = useMediaQuery("(max-width: 1525px)");
     const isTwoWrap = useMediaQuery("(max-width: 1100px)");
@@ -160,7 +161,8 @@ const Catalog = () => {
         const fetchAnnouncements = async () => {
             const { data, error } = await supabase
                 .from("announcements")
-                .select("*");
+                .select("*")
+                .order("created_at", { ascending: false }); // Sort by created_at in descending order
 
             if (error || !data) {
                 enqueueSnackbar(
@@ -175,7 +177,6 @@ const Catalog = () => {
 
         fetchAnnouncements();
     }, [enqueueSnackbar, setAnnouncements]);
-
     /*
   Testing
   useEffect(() => {
@@ -183,6 +184,10 @@ const Catalog = () => {
     console.log(`${Object.keys(getUnique(orgs)).length} unique orgs!`);
   }, [orgs])
   */
+
+    const loadMoreAnnouncements = () => {
+        setVisibleAnnouncements((prev) => prev + 2);
+    };
 
     let approvedOrgs = searchState.orgs.filter(
         (o) => o.state !== "PENDING" && o.state !== "LOCKED",
@@ -214,30 +219,49 @@ const Catalog = () => {
                     }}
                 >
                     <Typography variant="h3">Announcements</Typography>
-                    {announcements.map((announcement, i) => {
-                        return (
-                            <Card
-                                key={i}
-                                sx={{
-                                    width: "100%",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    marginTop: "10px",
-                                    padding: "20px",
-                                }}
-                            >
-                                <Typography
-                                    variant="body1"
+                    {announcements
+                        .slice(0, visibleAnnouncements)
+                        .map((announcement, i) => {
+                            return (
+                                <Card
+                                    key={i}
                                     sx={{
                                         width: "100%",
-                                        whiteSpace: "pre-line",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        marginTop: "10px",
+                                        padding: "20px",
                                     }}
                                 >
-                                    {announcement.content}
-                                </Typography>
-                            </Card>
-                        );
-                    })}
+                                    <Typography
+                                        variant="body1"
+                                        sx={{
+                                            width: "100%",
+                                            whiteSpace: "pre-line",
+                                        }}
+                                    >
+                                        {announcement.content}
+                                    </Typography>
+                                </Card>
+                            );
+                        })}
+                    {visibleAnnouncements < announcements.length && (
+                        <Box
+                            sx={{
+                                width: "100%",
+                                display: "flex",
+                                justifyContent: "center",
+                                marginTop: "10px",
+                            }}
+                        >
+                            <Button
+                                variant="contained"
+                                onClick={loadMoreAnnouncements}
+                            >
+                                Show More
+                            </Button>
+                        </Box>
+                    )}
                 </Box>
                 <Typography variant="h3">Catalog</Typography>
 
