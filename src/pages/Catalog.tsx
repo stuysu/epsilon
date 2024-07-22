@@ -163,7 +163,7 @@ const Catalog = () => {
                 .from("announcements")
                 .select("*")
                 .order('created_at', { ascending: false });
-    
+
             if (error || !data) {
                 enqueueSnackbar(
                     "Failed to load announcements. Contact it@stuysu.org for support.",
@@ -171,10 +171,10 @@ const Catalog = () => {
                 );
                 return;
             }
-    
+
             setAnnouncements(data as Announcement[]);
         };
-    
+
         fetchAnnouncements();
     }, [enqueueSnackbar, setAnnouncements]);
         /*
