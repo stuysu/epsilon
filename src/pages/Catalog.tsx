@@ -162,8 +162,8 @@ const Catalog = () => {
             const { data, error } = await supabase
                 .from("announcements")
                 .select("*")
-                .order("created_at", { ascending: false }); // Sort by created_at in descending order
-
+                .order('created_at', { ascending: false });
+    
             if (error || !data) {
                 enqueueSnackbar(
                     "Failed to load announcements. Contact it@stuysu.org for support.",
@@ -171,23 +171,19 @@ const Catalog = () => {
                 );
                 return;
             }
-
+    
             setAnnouncements(data as Announcement[]);
         };
-
+    
         fetchAnnouncements();
     }, [enqueueSnackbar, setAnnouncements]);
-    /*
+        /*
   Testing
   useEffect(() => {
     console.log(`${orgs.length} orgs!`)
     console.log(`${Object.keys(getUnique(orgs)).length} unique orgs!`);
   }, [orgs])
   */
-
-    const loadMoreAnnouncements = () => {
-        setVisibleAnnouncements((prev) => prev + 2);
-    };
 
     let approvedOrgs = searchState.orgs.filter(
         (o) => o.state !== "PENDING" && o.state !== "LOCKED",
@@ -219,32 +215,30 @@ const Catalog = () => {
                     }}
                 >
                     <Typography variant="h3">Announcements</Typography>
-                    {announcements
-                        .slice(0, visibleAnnouncements)
-                        .map((announcement, i) => {
-                            return (
-                                <Card
-                                    key={i}
+                    {announcements.slice(0, visibleAnnouncements).map((announcement, i) => {
+                        return (
+                            <Card
+                                key={i}
+                                sx={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    marginTop: "10px",
+                                    padding: "20px",
+                                }}
+                            >
+                                <Typography
+                                    variant="body1"
                                     sx={{
                                         width: "100%",
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        marginTop: "10px",
-                                        padding: "20px",
+                                        whiteSpace: "pre-line",
                                     }}
                                 >
-                                    <Typography
-                                        variant="body1"
-                                        sx={{
-                                            width: "100%",
-                                            whiteSpace: "pre-line",
-                                        }}
-                                    >
-                                        {announcement.content}
-                                    </Typography>
-                                </Card>
-                            );
-                        })}
+                                    {announcement.content}
+                                </Typography>
+                            </Card>
+                        );
+                    })}
                     {visibleAnnouncements < announcements.length && (
                         <Box
                             sx={{
@@ -256,7 +250,9 @@ const Catalog = () => {
                         >
                             <Button
                                 variant="contained"
-                                onClick={loadMoreAnnouncements}
+                                onClick={() =>
+                                    setVisibleAnnouncements((prev) => prev + 2)
+                                }
                             >
                                 Show More
                             </Button>
