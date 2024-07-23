@@ -185,7 +185,7 @@ const Announcements = () => {
                         <Button
                             variant="contained"
                             onClick={() =>
-                                setVisibleAnnouncements((prev) => prev + 2)
+                                setVisibleAnnouncements((prev) => prev + 3)
                             }
                         >
                             Show More
