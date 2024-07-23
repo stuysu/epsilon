@@ -162,7 +162,7 @@ const Catalog = () => {
             const { data, error } = await supabase
                 .from("announcements")
                 .select("*")
-                .order('created_at', { ascending: false });
+                .order("created_at", { ascending: false });
 
             if (error || !data) {
                 enqueueSnackbar(
@@ -177,7 +177,7 @@ const Catalog = () => {
 
         fetchAnnouncements();
     }, [enqueueSnackbar, setAnnouncements]);
-        /*
+    /*
   Testing
   useEffect(() => {
     console.log(`${orgs.length} orgs!`)
@@ -215,30 +215,32 @@ const Catalog = () => {
                     }}
                 >
                     <Typography variant="h3">Announcements</Typography>
-                    {announcements.slice(0, visibleAnnouncements).map((announcement, i) => {
-                        return (
-                            <Card
-                                key={i}
-                                sx={{
-                                    width: "100%",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    marginTop: "10px",
-                                    padding: "20px",
-                                }}
-                            >
-                                <Typography
-                                    variant="body1"
+                    {announcements
+                        .slice(0, visibleAnnouncements)
+                        .map((announcement, i) => {
+                            return (
+                                <Card
+                                    key={i}
                                     sx={{
                                         width: "100%",
-                                        whiteSpace: "pre-line",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        marginTop: "10px",
+                                        padding: "20px",
                                     }}
                                 >
-                                    {announcement.content}
-                                </Typography>
-                            </Card>
-                        );
-                    })}
+                                    <Typography
+                                        variant="body1"
+                                        sx={{
+                                            width: "100%",
+                                            whiteSpace: "pre-line",
+                                        }}
+                                    >
+                                        {announcement.content}
+                                    </Typography>
+                                </Card>
+                            );
+                        })}
                     {visibleAnnouncements < announcements.length && (
                         <Box
                             sx={{
