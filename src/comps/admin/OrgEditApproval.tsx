@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Avatar, Box, Button, Card, Divider, Typography } from "@mui/material";
+import { Avatar, Box, Card, Divider, Typography } from "@mui/material";
 
 import { supabase } from "../../supabaseClient";
 import { useSnackbar } from "notistack";
