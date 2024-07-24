@@ -51,9 +51,9 @@ const ScheduleMeeting = ({ meeting }: Props) => {
                     marginRight: "10px",
                 }}
             >
-                <Button variant="contained" onClick={() => setOpen(true)}>
+                <AsyncButton variant="contained" onClick={() => setOpen(true)}>
                     View
-                </Button>
+                </AsyncButton>
             </Box>
             <MeetingPreview
                 id={meeting.id}

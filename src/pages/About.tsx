@@ -50,9 +50,9 @@ const About = () => {
 
     return (
         <Box sx={{ width: "100%", padding: "20px" }}>
-            <Button variant="contained" onClick={() => navigate("/")}>
+            <AsyncButton variant="contained" onClick={() => navigate("/")}>
                 Back to home
-            </Button>
+            </AsyncButton>
             <Box
                 sx={{
                     width: "100%",

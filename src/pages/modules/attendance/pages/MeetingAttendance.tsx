@@ -170,7 +170,7 @@ const MeetingAttendance = () => {
                             Status: {isPresent ? "Present" : "Absent"}
                         </Typography>
                     </Box>
-                    <Button
+                    <AsyncButton
                         onClick={markPresent}
                         disabled={isPresent}
                         sx={{ width: "100%" }}
@@ -178,7 +178,7 @@ const MeetingAttendance = () => {
                         variant="contained"
                     >
                         Mark Present
-                    </Button>
+                    </AsyncButton>
                 </Card>
             </Box>
         </Box>

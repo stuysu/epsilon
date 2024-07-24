@@ -73,7 +73,7 @@ const SendMessage = () => {
                     }}
                 >
                     {filteredOrgs.map((org) => (
-                        <Button
+                        <AsyncButton
                             key={org.id}
                             onClick={() => {
                                 setOrgId(org.id);
@@ -84,7 +84,7 @@ const SendMessage = () => {
                             sx={{ margin: "5px" }}
                         >
                             {org.name}
-                        </Button>
+                        </AsyncButton>
                     ))}
                 </Box>
             )}

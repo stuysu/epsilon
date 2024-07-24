@@ -6,9 +6,9 @@ const Rules = () => {
 
     return (
         <Box sx={{ padding: "40px" }}>
-            <Button variant="contained" onClick={() => navigate("/")}>
+            <AsyncButton variant="contained" onClick={() => navigate("/")}>
                 Back to home
-            </Button>
+            </AsyncButton>
             <Typography
                 variant={"h4"}
                 color="primary"

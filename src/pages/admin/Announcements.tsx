@@ -106,13 +106,13 @@ const Announcements = () => {
                             }
                         }}
                     />
-                    <Button
+                    <AsyncButton
                         sx={{ width: "100%", marginTop: "10px" }}
                         variant="contained"
                         onClick={createAnnouncement}
                     >
                         Create
-                    </Button>
+                    </AsyncButton>
                 </Box>
             </Box>
             <Box
@@ -156,7 +156,7 @@ const Announcements = () => {
                                     >
                                         {announcement.content}
                                     </Typography>
-                                    <Button
+                                    <AsyncButton
                                         onClick={() =>
                                             deleteAnnouncement(announcement.id)
                                         }
@@ -168,7 +168,7 @@ const Announcements = () => {
                                         variant="contained"
                                     >
                                         Delete
-                                    </Button>
+                                    </AsyncButton>
                                 </Card>
                             </Box>
                         );
@@ -182,14 +182,14 @@ const Announcements = () => {
                             marginTop: "10px",
                         }}
                     >
-                        <Button
+                        <AsyncButton
                             variant="contained"
                             onClick={() =>
                                 setVisibleAnnouncements((prev) => prev + 3)
                             }
                         >
                             Show More
-                        </Button>
+                        </AsyncButton>
                     </Box>
                 )}
             </Box>

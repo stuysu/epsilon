@@ -77,13 +77,13 @@ const UnauthenticatedLanding = () => {
                                 marginBottom: "15px",
                             }}
                         >
-                            <Button
+                            <AsyncButton
                                 sx={{ height: "40px", width: "50%" }}
                                 variant="contained"
                                 onClick={() => navigate("/catalog")}
                             >
                                 View Catalog
-                            </Button>
+                            </AsyncButton>
                         </Box>
                         <Box
                             sx={{
@@ -93,13 +93,13 @@ const UnauthenticatedLanding = () => {
                                 alignItems: "center",
                             }}
                         >
-                            <Button
+                            <AsyncButton
                                 sx={{ height: "40px", width: "50%" }}
                                 variant="contained"
                                 onClick={() => navigate("/meetings")}
                             >
                                 View Meetings
-                            </Button>
+                            </AsyncButton>
                         </Box>
                     </Box>
                 </Box>

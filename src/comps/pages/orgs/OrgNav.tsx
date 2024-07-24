@@ -270,7 +270,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                             </Link>
                         );
                     })}
-                <Button
+                <AsyncButton
                     variant="contained"
                     onClick={handleInteract}
                     disabled={disabled || attemptingInteract}
@@ -280,7 +280,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     }}
                 >
                     {interactString}
-                </Button>
+                </AsyncButton>
             </Box>
 
             <Divider sx={{ marginTop: "20px", height: "2px" }} />

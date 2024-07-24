@@ -111,7 +111,7 @@ const Meetings = () => {
                 ))}
 
             <Box sx={{ width: "100%", paddingLeft: "10px" }}>
-                <Button
+                <AsyncButton
                     onClick={() =>
                         setEditState({
                             id: undefined,
@@ -128,7 +128,7 @@ const Meetings = () => {
                     sx={{ marginTop: "20px" }}
                 >
                     Create Meeting
-                </Button>
+                </AsyncButton>
             </Box>
 
             {editState.editing && (

@@ -87,7 +87,7 @@ const NavBar = () => {
     return (
         <>
             <Box sx={navStyles}>
-                <Button
+                <AsyncButton
                     onClick={() => setDrawerOpen(!drawerOpen)}
                     style={{
                         maxWidth: "50px",
@@ -98,7 +98,7 @@ const NavBar = () => {
                     sx={{ borderRadius: 50 }}
                 >
                     <Menu />
-                </Button>
+                </AsyncButton>
                 <Box sx={titleStyle}>
                     <Link style={linkStyle} to="/">
                         EPSILON

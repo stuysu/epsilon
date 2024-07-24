@@ -175,7 +175,7 @@ const Rooms = () => {
                         }}
                     >
                         {filteredOrgs.map((org) => (
-                            <Button
+                            <AsyncButton
                                 key={org.id}
                                 onClick={() => {
                                     setForceOrgId(org.id);
@@ -186,7 +186,7 @@ const Rooms = () => {
                                 sx={{ margin: "5px" }}
                             >
                                 {org.name}
-                            </Button>
+                            </AsyncButton>
                         ))}
                     </Box>
                 )}
@@ -272,13 +272,13 @@ const Rooms = () => {
                                 ))}
                             </TextField>
                         </Box>
-                        <Button
+                        <AsyncButton
                             onClick={forceReserve}
                             sx={{ width: "100%", marginTop: "10px" }}
                             variant="outlined"
                         >
                             Force Reservation
-                        </Button>
+                        </AsyncButton>
                     </Box>
                 )}
             </Box>

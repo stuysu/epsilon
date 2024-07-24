@@ -1,6 +1,5 @@
 import { useState, useEffect, ChangeEvent, useContext } from "react";
 import {
-    Button,
     Dialog,
     DialogContent,
     DialogTitle,
@@ -16,6 +15,7 @@ import { supabase } from "../../../../supabaseClient";
 import OrgContext from "../../../context/OrgContext";
 import dayjs, { Dayjs } from "dayjs";
 import { useSnackbar } from "notistack";
+import AsyncButton from "../../../ui/AsyncButton";
 
 const getDefaultStartTime = () => {
     return dayjs().startOf("day").hour(15).minute(35);
@@ -391,12 +391,12 @@ const AdminUpsertMeeting = ({
                 )}
             </DialogContent>
             <DialogActions>
-                <Button variant="contained" onClick={onClose}>
+                <AsyncButton variant="contained" onClick={onClose}>
                     Cancel
-                </Button>
-                <Button variant="contained" onClick={handleSave}>
+                </AsyncButton>
+                <AsyncButton variant="contained" onClick={handleSave}>
                     Save
-                </Button>
+                </AsyncButton>
             </DialogActions>
         </Dialog>
     );

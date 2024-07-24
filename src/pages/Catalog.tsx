@@ -250,14 +250,14 @@ const Catalog = () => {
                                 marginTop: "10px",
                             }}
                         >
-                            <Button
+                            <AsyncButton
                                 variant="contained"
                                 onClick={() =>
                                     setVisibleAnnouncements((prev) => prev + 3)
                                 }
                             >
                                 Show More
-                            </Button>
+                            </AsyncButton>
                         </Box>
                     )}
                 </Box>

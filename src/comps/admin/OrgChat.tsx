@@ -222,13 +222,13 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                         }
                     }}
                 />
-                <Button
+                <AsyncButton
                     variant="contained"
                     sx={{ width: "20%" }}
                     onClick={sendMessage}
                 >
                     Send
-                </Button>
+                </AsyncButton>
             </Box>
         </Card>
     );

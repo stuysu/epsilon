@@ -227,26 +227,26 @@ const AdminRoom = ({
 
             <Box sx={{ width: "100%", paddingLeft: "10px" }}>
                 {create ? (
-                    <Button onClick={createRoom} variant="contained">
+                    <AsyncButton onClick={createRoom} variant="contained">
                         Create
-                    </Button>
+                    </AsyncButton>
                 ) : (
                     <>
-                        <Button
+                        <AsyncButton
                             onClick={saveRoom}
                             disabled={!isChanged}
                             variant="contained"
                             sx={{ marginRight: "10px" }}
                         >
                             Save
-                        </Button>
-                        <Button
+                        </AsyncButton>
+                        <AsyncButton
                             onClick={() => setConfirm(true)}
                             variant="contained"
                             color="error"
                         >
                             Delete
-                        </Button>
+                        </AsyncButton>
                     </>
                 )}
             </Box>

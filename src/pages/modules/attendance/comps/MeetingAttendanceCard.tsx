@@ -13,12 +13,12 @@ const MeetingAttendanceCard = ({
     return (
         <Card sx={{ width: "300px", margin: "10px", padding: "10px" }}>
             <Typography variant="h5">{title}</Typography>
-            <Button
+            <AsyncButton
                 variant="outlined"
                 onClick={() => navigate(`meeting-admin/${id}`)}
             >
                 View
-            </Button>
+            </AsyncButton>
         </Card>
     );
 };

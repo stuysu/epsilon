@@ -132,7 +132,7 @@ const MeetingAdminAttendance = () => {
     return (
         <Box>
             <Box sx={{ width: "100%", paddingLeft: "40px", marginTop: "20px" }}>
-                <Button
+                <AsyncButton
                     onClick={() => {
                         let oid = meeting?.organizations?.id;
 
@@ -146,7 +146,7 @@ const MeetingAdminAttendance = () => {
                     sx={{ width: "80px" }}
                 >
                     Back
-                </Button>
+                </AsyncButton>
             </Box>
             <Typography variant="h1" width="100%" align="center">
                 {meeting?.title}
@@ -281,7 +281,7 @@ const MeetingAdminAttendance = () => {
                                         justifyContent: "center",
                                     }}
                                 >
-                                    <Button
+                                    <AsyncButton
                                         variant="outlined"
                                         color={isPresent ? "error" : "success"}
                                         onClick={() =>
@@ -291,7 +291,7 @@ const MeetingAdminAttendance = () => {
                                         {isPresent
                                             ? "Mark Absent"
                                             : "Mark Present"}
-                                    </Button>
+                                    </AsyncButton>
                                 </Box>
                             </Box>
                         );

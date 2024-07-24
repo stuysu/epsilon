@@ -2,7 +2,6 @@ import { useContext, useState, ChangeEvent } from "react";
 import UserContext from "../../../context/UserContext";
 
 import {
-    Button,
     Dialog,
     DialogContent,
     DialogTitle,
@@ -19,6 +18,7 @@ import { useSnackbar } from "notistack";
 import OrgMember from "../OrgMember";
 import OrgContext from "../../../context/OrgContext";
 import ConfirmationDialog from "../../../ui/ConfirmationDialog";
+import AsyncButton from "../../../ui/AsyncButton";
 
 const AdminMember = ({
     id,
@@ -189,24 +189,24 @@ const AdminMember = ({
                     role === "MEMBER" ||
                     role === "ADVISOR" ||
                     userId === user.id) && (
-                    <Button
+                    <AsyncButton
                         onClick={handleEdit}
                         variant="contained"
                         sx={{ height: "40px" }}
                     >
                         Edit
-                    </Button>
+                    </AsyncButton>
                 )}
 
                 {userId !== user.id &&
                     (isCreator || role === "MEMBER" || role === "ADVISOR") && (
-                        <Button
+                        <AsyncButton
                             onClick={() => setKickConfirmOpen(true)}
                             variant="contained"
                             sx={{ height: "40px", marginLeft: "10px" }}
                         >
                             Kick
-                        </Button>
+                        </AsyncButton>
                     )}
             </Box>
             <ConfirmationDialog
@@ -244,12 +244,12 @@ const AdminMember = ({
                     )}
                 </DialogContent>
                 <DialogActions>
-                    <Button variant="contained" onClick={handleClose}>
+                    <AsyncButton variant="contained" onClick={handleClose}>
                         Cancel
-                    </Button>
-                    <Button variant="contained" onClick={handleSave}>
+                    </AsyncButton>
+                    <AsyncButton variant="contained" onClick={handleSave}>
                         Save
-                    </Button>
+                    </AsyncButton>
                 </DialogActions>
             </Dialog>
         </Box>

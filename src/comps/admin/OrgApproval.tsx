@@ -59,14 +59,14 @@ const OrgApproval = ({
     return (
         <Box sx={{ padding: "30px", display: "flex", flexWrap: "wrap" }}>
             <Box sx={{ width: "100%", marginBottom: "20px" }}>
-                <Button
+                <AsyncButton
                     variant="contained"
                     onClick={onBack}
                     sx={{ marginRight: "10px" }}
                 >
                     Back
-                </Button>
-                <Button
+                </AsyncButton>
+                <AsyncButton
                     variant="contained"
                     onClick={approve}
                     color="success"
@@ -74,8 +74,8 @@ const OrgApproval = ({
                     disabled={buttonsDisabled}
                 >
                     Approve
-                </Button>
-                <Button
+                </AsyncButton>
+                <AsyncButton
                     variant="contained"
                     onClick={reject}
                     color="secondary"
@@ -83,7 +83,7 @@ const OrgApproval = ({
                     disabled={buttonsDisabled}
                 >
                     Reject
-                </Button>
+                </AsyncButton>
             </Box>
             <Card
                 sx={{

@@ -168,21 +168,21 @@ const PostEditor = ({
 
             {content ? (
                 <>
-                    <Button onClick={savePost} variant="contained">
+                    <AsyncButton onClick={savePost} variant="contained">
                         Save
-                    </Button>
-                    <Button
+                    </AsyncButton>
+                    <AsyncButton
                         onClick={onCancel}
                         variant="contained"
                         sx={{ marginLeft: "10px" }}
                     >
                         Cancel
-                    </Button>
+                    </AsyncButton>
                 </>
             ) : (
-                <Button onClick={createPost} variant="contained">
+                <AsyncButton onClick={createPost} variant="contained">
                     Create
-                </Button>
+                </AsyncButton>
             )}
         </Paper>
     );

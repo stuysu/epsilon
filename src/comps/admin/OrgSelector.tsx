@@ -80,13 +80,13 @@ const OrgSelector = ({
                     justifyContent: "center",
                 }}
             >
-                <Button
+                <AsyncButton
                     onClick={searchOrg}
                     sx={{ height: "40px", width: "50%" }}
                     variant="contained"
                 >
                     Submit
-                </Button>
+                </AsyncButton>
             </Box>
         </Card>
     );

@@ -100,20 +100,20 @@ const PendingMember = ({
                 />
             </Box>
             <Box sx={{ width: "200px", display: "flex", flexWrap: "nowrap" }}>
-                <Button
+                <AsyncButton
                     onClick={handleApprove}
                     variant="contained"
                     sx={{ height: "40px" }}
                 >
                     Approve
-                </Button>
-                <Button
+                </AsyncButton>
+                <AsyncButton
                     onClick={handleReject}
                     variant="contained"
                     sx={{ height: "40px", marginLeft: "10px" }}
                 >
                     Reject
-                </Button>
+                </AsyncButton>
             </Box>
         </Box>
     );

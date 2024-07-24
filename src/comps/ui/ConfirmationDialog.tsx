@@ -31,15 +31,15 @@ export default function ConfirmationDialog({
                 </DialogContent>
             )}
             <DialogActions>
-                <Button
+                <AsyncButton
                     onClick={() => {
                         onClose();
                         if (onCancel) onCancel();
                     }}
                 >
                     Cancel
-                </Button>
-                <Button
+                </AsyncButton>
+                <AsyncButton
                     onClick={() => {
                         onClose();
                         if (onConfirm) onConfirm();
@@ -47,7 +47,7 @@ export default function ConfirmationDialog({
                     autoFocus
                 >
                     Confirm
-                </Button>
+                </AsyncButton>
             </DialogActions>
         </Dialog>
     );

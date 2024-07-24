@@ -50,7 +50,7 @@ const PendingOrgCard = ({
                     paddingRight: "40px",
                 }}
             >
-                <Button
+                <AsyncButton
                     variant="contained"
                     onClick={onView}
                     sx={{
@@ -58,7 +58,7 @@ const PendingOrgCard = ({
                     }}
                 >
                     View
-                </Button>
+                </AsyncButton>
             </Box>
         </Card>
     );
