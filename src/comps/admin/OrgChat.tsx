@@ -1,7 +1,6 @@
 import {
     Box,
     TextField,
-    Button,
     Card,
     ListItem,
     ListItemText,
@@ -16,6 +15,7 @@ import { useSnackbar } from "notistack";
 import UserContext from "../context/UserContext";
 import dayjs from "dayjs";
 import { Delete } from "@mui/icons-material";
+import AsyncButton from "../ui/AsyncButton";
 
 type OrgMessage = {
     id: number;

@@ -1,7 +1,6 @@
 import {
     Typography,
     Box,
-    Button,
     Drawer,
     List,
     ListItemText,
@@ -35,6 +34,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import InfoIcon from "@mui/icons-material/Info";
 import GavelIcon from "@mui/icons-material/Gavel";
+import AsyncButton from "../AsyncButton";
 
 const navStyles: CSSProperties = {
     width: "100%",

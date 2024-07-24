@@ -1,6 +1,5 @@
 import {
     Box,
-    Button,
     TextField,
     FormGroup,
     FormControlLabel,
@@ -13,6 +12,7 @@ import { useSnackbar } from "notistack";
 import { useState } from "react";
 
 import { supabase } from "../../supabaseClient";
+import AsyncButton from "../ui/AsyncButton";
 import ConfirmationDialog from "../ui/ConfirmationDialog";
 
 const AdminRoom = ({

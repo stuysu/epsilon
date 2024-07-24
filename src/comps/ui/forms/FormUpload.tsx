@@ -1,7 +1,8 @@
 import { ChangeEvent, useEffect } from "react";
 
-import { Paper, Box, PaperProps, Button, Typography } from "@mui/material";
+import { Paper, Box, PaperProps, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
+import AsyncButton from "../AsyncButton";
 
 type FileType = "image/png" | "image/jpeg" | "image/webp" | "image/*";
 

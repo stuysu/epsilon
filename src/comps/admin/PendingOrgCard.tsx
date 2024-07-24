@@ -1,4 +1,5 @@
-import { Card, Button, Avatar, Box, Typography } from "@mui/material";
+import { Card, Avatar, Box, Typography } from "@mui/material";
+import AsyncButton from "../ui/AsyncButton";
 
 const PendingOrgCard = ({
     name,

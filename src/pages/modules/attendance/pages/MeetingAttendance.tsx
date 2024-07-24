@@ -1,4 +1,4 @@
-import { Avatar, Box, Card, Typography, Button } from "@mui/material";
+import { Avatar, Box, Card, Typography } from "@mui/material";
 import { useContext, useEffect } from "react";
 
 import { useParams } from "react-router-dom";
@@ -8,6 +8,7 @@ import { useState } from "react";
 import { supabase } from "../../../../supabaseClient";
 import { useSnackbar } from "notistack";
 import UserContext from "../../../../comps/context/UserContext";
+import AsyncButton from "../../../../comps/ui/AsyncButton";
 
 const MeetingAttendance = () => {
     const user = useContext(UserContext);
