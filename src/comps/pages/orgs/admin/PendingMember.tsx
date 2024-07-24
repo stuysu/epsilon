@@ -1,9 +1,10 @@
 import { supabase } from "../../../../supabaseClient";
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useContext } from "react";
 import OrgContext from "../../../context/OrgContext";
 import OrgMember from "../OrgMember";
+import AsyncButton from "../../../ui/AsyncButton";
 
 const PendingMember = ({
     id,

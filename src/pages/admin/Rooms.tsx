@@ -1,10 +1,11 @@
-import { Box, Typography, TextField, MenuItem, Button } from "@mui/material";
+import { Box, Typography, TextField, MenuItem } from "@mui/material";
 import { TimePicker, DatePicker } from "@mui/x-date-pickers";
 import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useSnackbar } from "notistack";
 import AdminRoom from "../../comps/admin/AdminRoom";
 import dayjs, { Dayjs } from "dayjs";
+import AsyncButton from "../../comps/ui/AsyncButton";
 
 type ApiRoom = {
     id: number;
@@ -177,7 +178,7 @@ const Rooms = () => {
                         {filteredOrgs.map((org) => (
                             <AsyncButton
                                 key={org.id}
-                                onClick={() => {
+                                onClick={async () => {
                                     setForceOrgId(org.id);
                                     setForceOrgName(org.name);
                                     setSearchInput(""); // Clear search input after selecting an org
