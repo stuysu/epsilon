@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Card, Typography } from "@mui/material";
+import { Avatar, Box, Card, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -8,6 +8,7 @@ import { supabase } from "../../../../supabaseClient";
 import { PUBLIC_URL } from "../../../../constants";
 
 import QRCode from "qrcode.react";
+import AsyncButton from "../../../../comps/ui/AsyncButton";
 
 const MeetingAdminAttendance = () => {
     const params = useParams();

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../supabaseClient";
 
-import { Box, useMediaQuery, Typography, Card, Button } from "@mui/material";
+import { Box, useMediaQuery, Typography, Card } from "@mui/material";
 import { Masonry } from "@mui/lab";
 
 import OrgCard from "../comps/pages/catalog/OrgCard";
@@ -11,6 +11,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 import Loading from "../comps/ui/Loading";
 import SearchFilter from "../comps/pages/catalog/SearchFilter";
+import AsyncButton from "../comps/ui/AsyncButton";
 
 /*
 function getUnique(arr : Partial<Organization>[]) {

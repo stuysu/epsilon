@@ -1,4 +1,4 @@
-import { Box, Typography, Button } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 import { Auth } from "@supabase/auth-ui-react";
 import { ThemeSupa } from "@supabase/auth-ui-shared";
@@ -8,6 +8,7 @@ import { supabase } from "../../../supabaseClient";
 import { useNavigate } from "react-router-dom";
 
 import { PUBLIC_URL } from "../../../constants";
+import AsyncButton from "../../ui/AsyncButton";
 
 const UnauthenticatedLanding = () => {
     const navigate = useNavigate();

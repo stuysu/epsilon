@@ -1,11 +1,11 @@
 import {
-    Button,
     Dialog,
     DialogActions,
     DialogContent,
     DialogContentText,
     DialogTitle,
 } from "@mui/material";
+import AsyncButton from "./AsyncButton";
 
 export default function ConfirmationDialog({
     title,

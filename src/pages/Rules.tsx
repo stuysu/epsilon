@@ -1,5 +1,6 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useNavigate, Link } from "react-router-dom";
+import AsyncButton from "../comps/ui/AsyncButton";
 
 const Rules = () => {
     const navigate = useNavigate();

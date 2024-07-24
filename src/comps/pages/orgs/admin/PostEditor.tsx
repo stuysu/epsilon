@@ -1,8 +1,9 @@
-import { Paper, Box, TextField, Button, Typography } from "@mui/material";
+import { Paper, Box, TextField, Typography } from "@mui/material";
 import { useEffect, useState, ChangeEvent } from "react";
 
 import { supabase } from "../../../../supabaseClient";
 import { useSnackbar } from "notistack";
+import AsyncButton from "../../../ui/AsyncButton";
 
 /* if content is null, then it is creating post */
 const PostEditor = ({
