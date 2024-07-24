@@ -40,12 +40,12 @@ const MeetingAdminAttendance = () => {
                                 last_name,
                                 picture,
                                 email
-                            )   
+                            )
                         )
                     ),
                     attendance (
                         user_id
-                    )    
+                    )
                 `,
                     )
                     .eq("id", meetingId)

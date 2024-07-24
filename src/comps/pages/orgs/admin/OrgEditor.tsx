@@ -130,7 +130,7 @@ const hiddenFields: string[] = [
     "picture", // picture field has custom logic
 ];
 
-/* 
+/*
 TextField Statuses:
 - default is Approved
 - once changed but not saved is Unsaved
