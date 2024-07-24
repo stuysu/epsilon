@@ -52,7 +52,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                         last_name,
                         picture
                     ),
-                    created_at 
+                    created_at
                 `,
                 )
                 .eq("organization_id", organization_id)
