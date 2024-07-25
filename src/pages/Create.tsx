@@ -167,22 +167,27 @@ const Create = () => {
     useEffect(() => {
         if (!user.signed_in) {
             navigate("/");
-            return;
-        }
-    }, [user, navigate]);
-
-    useEffect(() => {
-        if (!user.signed_in) {
             enqueueSnackbar(
                 "You must be signed in to create an organization.",
                 {
                     variant: "warning",
                 },
             );
-            navigate("/");
             return;
         }
-    }, [user, navigate]);
+    }, [user, navigate, enqueueSnackbar]);
+
+    useEffect(() => {
+        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+            event.preventDefault();
+        };
+
+        window.addEventListener("beforeunload", handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+        };
+    }, []);
 
     return (
         <MultiPageForm
