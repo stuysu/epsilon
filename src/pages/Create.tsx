@@ -80,28 +80,42 @@ const Create = () => {
     const [formData, setFormData] = useState<FormType>(emptyForm);
     const isMobile = useMediaQuery("(max-width: 620px)");
     const checkFormFields = () => {
-    const fields = ["name", "url", "mission", "purpose", "benefit", "keywords", "tags", "appointment_procedures"];
-        return fields.some(field => {
+        const fields = [
+            "name",
+            "url",
+            "mission",
+            "purpose",
+            "benefit",
+            "keywords",
+            "tags",
+            "appointment_procedures",
+        ];
+
+        return fields.some((field) => {
             const value = formData[field as keyof FormType];
-            return (typeof value === "string" && value.trim() !== "") || (Array.isArray(value) && value.length > 0);
+            if (typeof value === "string") {
+                return value.trim() !== "";
+            }
+            if (Array.isArray(value)) {
+                return value.length > 0;
+            }
+            return false;
         });
     };
 
-useEffect(() => {
-    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-        if (checkFormFields()) {
-            event.preventDefault();
-            event.returnValue = ''; // This is required for Chrome to show the prompt
-        }
-    };
+    useEffect(() => {
+        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+            if (checkFormFields()) {
+                event.preventDefault();
+            }
+        };
 
-    window.addEventListener('beforeunload', handleBeforeUnload);
+        window.addEventListener("beforeunload", handleBeforeUnload);
 
-    return () => {
-        window.removeEventListener('beforeunload', handleBeforeUnload);
-    };
-}, [formData]);
-
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+        };
+    }, [formData]);
 
     const createActivity = async () => {
         let body = {
@@ -190,22 +204,14 @@ useEffect(() => {
     useEffect(() => {
         if (!user.signed_in) {
             navigate("/");
-            return;
-        }
-    }, [user, navigate]);
-
-    useEffect(() => {
-        if (!user.signed_in) {
             enqueueSnackbar(
                 "You must be signed in to create an organization.",
                 {
                     variant: "warning",
                 },
             );
-            navigate("/");
-            return;
         }
-    }, [user, navigate]);
+    }, [user, navigate, enqueueSnackbar]);
 
     return (
         <MultiPageForm
