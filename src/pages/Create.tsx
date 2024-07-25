@@ -20,6 +20,11 @@ import OrgRequirements from "../utils/OrgRequirements";
 
 import { PUBLIC_URL } from "../constants";
 
+import { useNavigate } from "react-router-dom";
+
+import UnauthenticatedLanding from "../comps/pages/home/UnauthenticatedLanding";
+import { Warning } from "@mui/icons-material";
+
 type FormType = {
     name: string;
     url: string;
@@ -67,7 +72,9 @@ const multilineStyle: CSSProperties = {
 };
 
 const Create = () => {
-    const user = useContext(UserContext);
+    const navigate = useNavigate();
+    const user: UserContextType = useContext(UserContext);
+
     const { enqueueSnackbar } = useSnackbar();
 
     const [formData, setFormData] = useState<FormType>(emptyForm);
@@ -126,7 +133,6 @@ useEffect(() => {
                 { variant: "error" },
             );
         }
-
         let orgId = orgCreateData.id;
 
         /* Create picture if organization is successfully created */
@@ -180,6 +186,26 @@ useEffect(() => {
         /* redirect after creation (with refresh) */
         window.location.href = `${PUBLIC_URL}/${formData.url}`;
     };
+
+    useEffect(() => {
+        if (!user.signed_in) {
+            navigate("/");
+            return;
+        }
+    }, [user, navigate]);
+
+    useEffect(() => {
+        if (!user.signed_in) {
+            enqueueSnackbar(
+                "You must be signed in to create an organization.",
+                {
+                    variant: "warning",
+                },
+            );
+            navigate("/");
+            return;
+        }
+    }, [user, navigate]);
 
     return (
         <MultiPageForm

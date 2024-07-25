@@ -2,7 +2,6 @@ import { useContext, useEffect, useMemo, useState } from "react";
 
 import {
     Box,
-    Button,
     Typography,
     Divider,
     List,
@@ -24,6 +23,7 @@ import ArticleIcon from "@mui/icons-material/Article";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import PeopleIcon from "@mui/icons-material/People";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import AsyncButton from "../../ui/AsyncButton";
 
 const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const organization = useContext<OrgContextType>(OrgContext);
@@ -270,7 +270,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                             </Link>
                         );
                     })}
-                <Button
+                <AsyncButton
                     variant="contained"
                     onClick={handleInteract}
                     disabled={disabled || attemptingInteract}
@@ -280,7 +280,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     }}
                 >
                     {interactString}
-                </Button>
+                </AsyncButton>
             </Box>
 
             <Divider sx={{ marginTop: "20px", height: "2px" }} />

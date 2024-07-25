@@ -12,7 +12,8 @@ import Meetings from "./Meetings";
 import Members from "./Members";
 import OrgAdminRouter from "./admin";
 import { useSnackbar } from "notistack";
-import { Box, useMediaQuery, Button } from "@mui/material";
+import { Box, useMediaQuery } from "@mui/material";
+import AsyncButton from "../../comps/ui/AsyncButton";
 
 const OrgRouter = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -142,13 +143,13 @@ const OrgRouter = () => {
                             paddingLeft: "20px",
                         }}
                     >
-                        <Button
+                        <AsyncButton
                             onClick={() => navigate("/catalog")}
                             variant="contained"
                             sx={{ width: "80px" }}
                         >
                             Back
-                        </Button>
+                        </AsyncButton>
                     </Box>
                     <Box
                         sx={{

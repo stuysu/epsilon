@@ -1,5 +1,6 @@
 import { Autocomplete, TextField, Chip, SxProps } from "@mui/material";
 import { SyntheticEvent, useEffect } from "react";
+import { useSnackbar } from "notistack";
 
 type Requirements = {
     maxSelect?: number;
@@ -34,6 +35,8 @@ const FormTagSelect = ({
     label,
     sx,
 }: Props) => {
+    const { enqueueSnackbar } = useSnackbar();
+
     useEffect(() => {
         const validate = (newValue?: string[]) => {
             if (!changeStatus) return;
@@ -57,6 +60,9 @@ const FormTagSelect = ({
             requirements?.maxSelect &&
             newValue.length > requirements.maxSelect
         ) {
+            enqueueSnackbar("You can select up to 3 tags only.", {
+                variant: "error",
+            });
             return;
         }
 
@@ -82,11 +88,11 @@ const FormTagSelect = ({
                     label={label}
                     value={undefined}
                     {...params}
-                    helperText={description?.split("\n").map((line) => (
-                        <>
+                    helperText={description?.split("\n").map((line, i) => (
+                        <span key={i}>
                             {line}
                             <br />
-                        </>
+                        </span>
                     ))}
                 />
             )}

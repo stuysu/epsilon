@@ -1,8 +1,9 @@
 import { useState } from "react";
 
-import { Box, TextField, Button, Card } from "@mui/material";
+import { Box, TextField, Card } from "@mui/material";
 
 import { supabase } from "../../supabaseClient";
+import AsyncButton from "../ui/AsyncButton";
 
 const OrgSelector = ({
     onSelect,
@@ -80,13 +81,13 @@ const OrgSelector = ({
                     justifyContent: "center",
                 }}
             >
-                <Button
+                <AsyncButton
                     onClick={searchOrg}
                     sx={{ height: "40px", width: "50%" }}
                     variant="contained"
                 >
                     Submit
-                </Button>
+                </AsyncButton>
             </Box>
         </Card>
     );

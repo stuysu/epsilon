@@ -1,6 +1,5 @@
 import {
     Box,
-    Button,
     Card,
     Typography,
     ListItem,
@@ -11,6 +10,7 @@ import {
 import { useState } from "react";
 import MeetingPreview from "../../../ui/meetings/MeetingPreview";
 import dayjs from "dayjs";
+import AsyncButton from "../../../ui/AsyncButton";
 
 const UpcomingMeeting = ({
     id,
@@ -99,9 +99,9 @@ const UpcomingMeeting = ({
                         {is_public ? "Public" : "Private"}
                     </Typography>
                 </Box>
-                <Button variant="contained" onClick={() => setOpen(true)}>
+                <AsyncButton variant="contained" onClick={() => setOpen(true)}>
                     Show
-                </Button>
+                </AsyncButton>
                 <MeetingPreview
                     id={id}
                     title={title}

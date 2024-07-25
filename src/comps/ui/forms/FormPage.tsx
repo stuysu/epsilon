@@ -11,10 +11,11 @@ import {
     useCallback,
 } from "react";
 
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 
 import FormSection from "./FormSection";
 import FormRender from "./FormRender";
+import AsyncButton from "../AsyncButton";
 
 type Props<T> = {
     title: string;
@@ -163,13 +164,13 @@ const FormPage = <T extends unknown>({
                     }}
                 >
                     {!first && (
-                        <Button
+                        <AsyncButton
                             onClick={onBack}
                             variant="contained"
                             sx={{ width: "150px", height: "40px" }}
                         >
                             Back
-                        </Button>
+                        </AsyncButton>
                     )}
                 </Box>
                 <Box
@@ -181,23 +182,23 @@ const FormPage = <T extends unknown>({
                     }}
                 >
                     {last ? (
-                        <Button
+                        <AsyncButton
                             onClick={onSubmit}
                             variant="contained"
                             disabled={!valid}
                             sx={{ width: "150px", height: "40px" }}
                         >
                             {submitText ? submitText : "Submit"}
-                        </Button>
+                        </AsyncButton>
                     ) : (
-                        <Button
+                        <AsyncButton
                             onClick={onNext}
                             variant="contained"
                             disabled={!valid}
                             sx={{ width: "150px", height: "40px" }}
                         >
                             Next
-                        </Button>
+                        </AsyncButton>
                     )}
                 </Box>
             </Box>

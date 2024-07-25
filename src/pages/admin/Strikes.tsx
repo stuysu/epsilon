@@ -1,20 +1,49 @@
-import { Box, TextField, Button, Typography, Card } from "@mui/material";
-
+import { Box, TextField, Typography, Card } from "@mui/material";
 import { useState, useEffect } from "react";
-
-import OrgSelector from "../../comps/admin/OrgSelector";
-
 import { supabase } from "../../supabaseClient";
 import { useSnackbar } from "notistack";
+import AsyncButton from "../../comps/ui/AsyncButton";
 
 const Strikes = () => {
     const { enqueueSnackbar } = useSnackbar();
 
-    const [orgId, setOrgId] = useState<Number>();
+    const [orgId, setOrgId] = useState<number>();
     const [orgName, setOrgName] = useState("");
     const [orgStrikes, setOrgStrikes] = useState<Strike[]>([]);
-
     const [reason, setReason] = useState("");
+    const [searchInput, setSearchInput] = useState("");
+    const [filteredOrgs, setFilteredOrgs] = useState<Organization[]>([]);
+    const [allOrgs, setAllOrgs] = useState<Organization[]>([]);
+
+    useEffect(() => {
+        const fetchAllOrgs = async () => {
+            const { data, error } = await supabase
+                .from("organizations")
+                .select("*");
+            if (error || !data) {
+                enqueueSnackbar(
+                    "Failed to load organizations. Contact it@stuysu.org for support.",
+                    { variant: "error" },
+                );
+                return;
+            }
+            setAllOrgs(data);
+        };
+
+        fetchAllOrgs();
+    }, [enqueueSnackbar]);
+
+    useEffect(() => {
+        if (searchInput) {
+            setFilteredOrgs(
+                allOrgs.filter((org) =>
+                    org.name.toLowerCase().includes(searchInput.toLowerCase()),
+                ),
+            );
+        } else {
+            setFilteredOrgs([]);
+        }
+    }, [searchInput, allOrgs]);
 
     useEffect(() => {
         if (!orgId) return;
@@ -27,14 +56,8 @@ const Strikes = () => {
                     id,
                     reason,
                     created_at,
-                    organizations (
-                        name
-                    ),
-                    users (
-                        first_name,
-                        last_name,
-                        picture
-                    )
+                    organizations (name),
+                    users (first_name, last_name, picture)
                 `,
                 )
                 .eq("organization_id", orgId);
@@ -89,15 +112,39 @@ const Strikes = () => {
                     marginTop: "20px",
                 }}
             >
-                <OrgSelector
-                    onSelect={(orgId, orgName) => {
-                        setReason("");
-                        setOrgId(orgId);
-                        setOrgName(orgName);
-                    }}
+                <TextField
+                    sx={{ width: "300px" }}
+                    label="Search Organizations"
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e.target.value)}
                 />
             </Box>
-
+            {filteredOrgs.length > 0 && (
+                <Box
+                    sx={{
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        marginTop: "10px",
+                        flexWrap: "wrap",
+                    }}
+                >
+                    {filteredOrgs.map((org) => (
+                        <AsyncButton
+                            key={org.id}
+                            onClick={() => {
+                                setOrgId(org.id);
+                                setOrgName(org.name);
+                                setSearchInput(""); // Clear search input after selecting an org
+                                setFilteredOrgs([]); // Clear filtered orgs after selecting an org
+                            }}
+                            sx={{ margin: "5px" }}
+                        >
+                            {org.name}
+                        </AsyncButton>
+                    ))}
+                </Box>
+            )}
             {orgId && (
                 <>
                     <Box
@@ -130,13 +177,13 @@ const Strikes = () => {
                                 multiline
                                 rows={4}
                             />
-                            <Button
+                            <AsyncButton
                                 onClick={issueStrike}
                                 variant="contained"
                                 sx={{ width: "100%", marginTop: "10px" }}
                             >
                                 Issue
-                            </Button>
+                            </AsyncButton>
                         </Box>
                     </Box>
 
@@ -156,9 +203,9 @@ const Strikes = () => {
                                     display: "flex",
                                     justifyContent: "center",
                                 }}
+                                key={i}
                             >
                                 <Card
-                                    key={i}
                                     sx={{
                                         width: "500px",
                                         padding: "20px",
@@ -173,7 +220,7 @@ const Strikes = () => {
                                         Issued by {strike.users?.first_name}{" "}
                                         {strike.users?.last_name}
                                     </Typography>
-                                    <Button
+                                    <AsyncButton
                                         onClick={async () => {
                                             const { error } = await supabase
                                                 .from("strikes")
@@ -198,7 +245,7 @@ const Strikes = () => {
                                         }}
                                     >
                                         Delete
-                                    </Button>
+                                    </AsyncButton>
                                 </Card>
                             </Box>
                         ))}

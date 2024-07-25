@@ -1,9 +1,10 @@
 import { supabase } from "../../../../supabaseClient";
-import { Box, Button } from "@mui/material";
+import { Box } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useContext } from "react";
 import OrgContext from "../../../context/OrgContext";
 import OrgMember from "../OrgMember";
+import AsyncButton from "../../../ui/AsyncButton";
 
 const PendingMember = ({
     id,
@@ -100,20 +101,20 @@ const PendingMember = ({
                 />
             </Box>
             <Box sx={{ width: "200px", display: "flex", flexWrap: "nowrap" }}>
-                <Button
+                <AsyncButton
                     onClick={handleApprove}
                     variant="contained"
                     sx={{ height: "40px" }}
                 >
                     Approve
-                </Button>
-                <Button
+                </AsyncButton>
+                <AsyncButton
                     onClick={handleReject}
                     variant="contained"
                     sx={{ height: "40px", marginLeft: "10px" }}
                 >
                     Reject
-                </Button>
+                </AsyncButton>
             </Box>
         </Box>
     );

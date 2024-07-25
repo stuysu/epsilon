@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Paper, Box, Button } from "@mui/material";
+import { Paper, Box } from "@mui/material";
 import dayjs from "dayjs";
 import MeetingPreview from "../../ui/meetings/MeetingPreview";
+import AsyncButton from "../../ui/AsyncButton";
 
 type Props = {
     meeting: CalendarMeeting;
@@ -51,9 +52,9 @@ const ScheduleMeeting = ({ meeting }: Props) => {
                     marginRight: "10px",
                 }}
             >
-                <Button variant="contained" onClick={() => setOpen(true)}>
+                <AsyncButton variant="contained" onClick={() => setOpen(true)}>
                     View
-                </Button>
+                </AsyncButton>
             </Box>
             <MeetingPreview
                 id={meeting.id}

@@ -1,4 +1,5 @@
-import { Card, Button, Avatar, Box, Typography } from "@mui/material";
+import { Card, Avatar, Box, Typography } from "@mui/material";
+import AsyncButton from "../ui/AsyncButton";
 
 const PendingOrgCard = ({
     name,
@@ -50,7 +51,7 @@ const PendingOrgCard = ({
                     paddingRight: "40px",
                 }}
             >
-                <Button
+                <AsyncButton
                     variant="contained"
                     onClick={onView}
                     sx={{
@@ -58,7 +59,7 @@ const PendingOrgCard = ({
                     }}
                 >
                     View
-                </Button>
+                </AsyncButton>
             </Box>
         </Card>
     );

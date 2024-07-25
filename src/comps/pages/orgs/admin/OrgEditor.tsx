@@ -1,5 +1,5 @@
 import { ReactNode, useCallback, useEffect, useState } from "react";
-import { Avatar, Box, Button, Paper, Typography } from "@mui/material";
+import { Avatar, Box, Paper, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import FormTextField from "../../../ui/forms/FormTextField";
 import OrgRequirements from "../../../../utils/OrgRequirements";
@@ -7,6 +7,7 @@ import { capitalizeWords } from "../../../../utils/DataFormatters";
 import { supabase } from "../../../../supabaseClient";
 import { PUBLIC_URL } from "../../../../constants";
 import { useNavigate } from "react-router-dom";
+import AsyncButton from "../../../ui/AsyncButton";
 
 type Props = {
     organization: Partial<Organization>; // Make organization a prop to allow component to become reusable
@@ -74,13 +75,13 @@ const EditField = ({
                                 right: "20px",
                             }}
                         >
-                            <Button
+                            <AsyncButton
                                 onClick={onCancel}
                                 variant="contained"
                                 sx={{ width: "100%" }}
                             >
                                 Cancel
-                            </Button>
+                            </AsyncButton>
                         </Box>
                     </>
                 ) : (
@@ -93,13 +94,13 @@ const EditField = ({
                                 right: "20px",
                             }}
                         >
-                            <Button
+                            <AsyncButton
                                 onClick={onEdit}
                                 variant="contained"
                                 sx={{ width: "100%" }}
                             >
                                 Edit
-                            </Button>
+                            </AsyncButton>
                         </Box>
                     </>
                 )}
@@ -129,7 +130,7 @@ const hiddenFields: string[] = [
     "picture", // picture field has custom logic
 ];
 
-/* 
+/*
 TextField Statuses:
 - default is Approved
 - once changed but not saved is Unsaved
@@ -549,7 +550,7 @@ const OrgEditor = ({
                         {(organization.name || "O").slice(0, 1).toUpperCase()}
                     </Avatar>
                 </Box>
-                <Button
+                <AsyncButton
                     variant="contained"
                     component="label"
                     sx={{ marginTop: "10px" }}
@@ -585,8 +586,8 @@ const OrgEditor = ({
                         }
                         hidden
                     />
-                </Button>
-                <Button
+                </AsyncButton>
+                <AsyncButton
                     variant="contained"
                     sx={{ marginTop: "10px" }}
                     onClick={() => {
@@ -599,9 +600,9 @@ const OrgEditor = ({
                     }}
                 >
                     Remove Image
-                </Button>
+                </AsyncButton>
                 {editPicture !== undefined && organization.picture && (
-                    <Button
+                    <AsyncButton
                         variant="contained"
                         sx={{ marginTop: "10px" }}
                         onClick={async () => {
@@ -609,7 +610,7 @@ const OrgEditor = ({
                         }}
                     >
                         Reset Image
-                    </Button>
+                    </AsyncButton>
                 )}
             </Box>
             {textFields.map((field) => {
@@ -701,7 +702,7 @@ const OrgEditor = ({
                     flexWrap: "nowrap",
                 }}
             >
-                <Button
+                <AsyncButton
                     color="error"
                     variant="contained"
                     disabled={!savable}
@@ -709,15 +710,15 @@ const OrgEditor = ({
                     sx={{ marginLeft: "10px" }}
                 >
                     Save Changes
-                </Button>
-                <Button
+                </AsyncButton>
+                <AsyncButton
                     color="error"
                     variant="contained"
                     disabled={allNull}
                     onClick={deleteEdit}
                 >
                     Delete Edit
-                </Button>
+                </AsyncButton>
             </Box>
         </Paper>
     );

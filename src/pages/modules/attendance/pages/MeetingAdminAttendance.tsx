@@ -1,4 +1,4 @@
-import { Avatar, Box, Button, Card, Typography } from "@mui/material";
+import { Avatar, Box, Card, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -8,6 +8,7 @@ import { supabase } from "../../../../supabaseClient";
 import { PUBLIC_URL } from "../../../../constants";
 
 import QRCode from "qrcode.react";
+import AsyncButton from "../../../../comps/ui/AsyncButton";
 
 const MeetingAdminAttendance = () => {
     const params = useParams();
@@ -39,12 +40,12 @@ const MeetingAdminAttendance = () => {
                                 last_name,
                                 picture,
                                 email
-                            )   
+                            )
                         )
                     ),
                     attendance (
                         user_id
-                    )    
+                    )
                 `,
                     )
                     .eq("id", meetingId)
@@ -132,7 +133,7 @@ const MeetingAdminAttendance = () => {
     return (
         <Box>
             <Box sx={{ width: "100%", paddingLeft: "40px", marginTop: "20px" }}>
-                <Button
+                <AsyncButton
                     onClick={() => {
                         let oid = meeting?.organizations?.id;
 
@@ -146,7 +147,7 @@ const MeetingAdminAttendance = () => {
                     sx={{ width: "80px" }}
                 >
                     Back
-                </Button>
+                </AsyncButton>
             </Box>
             <Typography variant="h1" width="100%" align="center">
                 {meeting?.title}
@@ -281,7 +282,7 @@ const MeetingAdminAttendance = () => {
                                         justifyContent: "center",
                                     }}
                                 >
-                                    <Button
+                                    <AsyncButton
                                         variant="outlined"
                                         color={isPresent ? "error" : "success"}
                                         onClick={() =>
@@ -291,7 +292,7 @@ const MeetingAdminAttendance = () => {
                                         {isPresent
                                             ? "Mark Absent"
                                             : "Mark Present"}
-                                    </Button>
+                                    </AsyncButton>
                                 </Box>
                             </Box>
                         );
