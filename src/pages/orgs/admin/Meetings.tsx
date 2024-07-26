@@ -49,6 +49,27 @@ const Meetings = () => {
             <Typography variant="h1" align="center" width="100%">
                 Manage Meetings
             </Typography>
+
+            <Box sx={{ width: "100%", paddingLeft: "10px", marginTop: "20px" }}>
+                <AsyncButton
+                    onClick={() =>
+                        setEditState({
+                            id: undefined,
+                            title: undefined,
+                            description: undefined,
+                            start: undefined,
+                            end: undefined,
+                            room: undefined,
+                            isPublic: undefined,
+                            editing: true,
+                        })
+                    }
+                    variant="contained"
+                >
+                    Create Meeting
+                </AsyncButton>
+            </Box>
+
             {organization.meetings
                 .sort(sortByDate)
                 .reverse()
@@ -110,27 +131,6 @@ const Meetings = () => {
                         }}
                     />
                 ))}
-
-            <Box sx={{ width: "100%", paddingLeft: "10px" }}>
-                <AsyncButton
-                    onClick={() =>
-                        setEditState({
-                            id: undefined,
-                            title: undefined,
-                            description: undefined,
-                            start: undefined,
-                            end: undefined,
-                            room: undefined,
-                            isPublic: undefined,
-                            editing: true,
-                        })
-                    }
-                    variant="contained"
-                    sx={{ marginTop: "20px" }}
-                >
-                    Create Meeting
-                </AsyncButton>
-            </Box>
 
             {editState.editing && (
                 <AdminUpsertMeeting
