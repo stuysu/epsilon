@@ -45,30 +45,31 @@ const Rooms = () => {
     const [startTime, setStartTime] = useState<Dayjs | null>(getDefaultTime());
     const [endTime, setEndTime] = useState<Dayjs | null>(getDefaultTime());
 
-    useEffect(() => {
-        const fetchRooms = async () => {
-            const { data: roomData, error: roomFetchError } = await supabase
-                .from("rooms")
-                .select("*")
-                .returns<ApiRoom[]>();
+    const fetchRooms = async () => {
+        setLoading(true);
+        const { data: roomData, error: roomFetchError } = await supabase
+            .from("rooms")
+            .select("*")
+            .returns<ApiRoom[]>();
 
-            if (roomFetchError || !roomData) {
-                enqueueSnackbar("Failed to fetch rooms", { variant: "error" });
-                return;
+        if (roomFetchError || !roomData) {
+            enqueueSnackbar("Failed to fetch rooms", { variant: "error" });
+            return;
+        }
+
+        setRooms([...roomData]);
+        setAllRooms(() => {
+            setLoading(false);
+
+            if (roomData.length) {
+                setForceRoomId(roomData[0].id);
             }
 
-            setRooms([...roomData]);
-            setAllRooms((prev) => {
-                setLoading(false);
+            return [...roomData];
+        });
+    };
 
-                if (roomData.length) {
-                    setForceRoomId(roomData[0].id);
-                }
-
-                return [...roomData];
-            });
-        };
-
+    useEffect(() => {
         fetchRooms();
     }, [enqueueSnackbar]);
 
@@ -292,10 +293,7 @@ const Rooms = () => {
             >
                 Manage Rooms
             </Typography>
-            <AdminRoom
-                create
-                onCreate={(room) => setRooms([...rooms, room as ApiRoom])}
-            />
+            <AdminRoom create onCreate={() => fetchRooms()} />
             <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
                 {rooms.map((room) => (
                     <AdminRoom
