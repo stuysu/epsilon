@@ -93,15 +93,7 @@ const UnauthenticatedLanding = () => {
                                 justifyContent: "center",
                                 alignItems: "center",
                             }}
-                        >
-                            <AsyncButton
-                                sx={{ height: "40px", width: "50%" }}
-                                variant="contained"
-                                onClick={() => navigate("/meetings")}
-                            >
-                                View Meetings
-                            </AsyncButton>
-                        </Box>
+                        ></Box>
                     </Box>
                 </Box>
             </Box>
