@@ -11,6 +11,7 @@ import InfiniteScroll from "react-infinite-scroll-component";
 
 import Loading from "../comps/ui/Loading";
 import SearchFilter from "../comps/pages/catalog/SearchFilter";
+import AsyncButton from "../comps/ui/AsyncButton";
 
 /*
 function getUnique(arr : Partial<Organization>[]) {
@@ -29,11 +30,11 @@ type SearchState = {
     more: boolean;
 };
 
-/* 
+/*
 If there are search params
 - reset orgs to empty
 - new function that doesn't order by random, but gets by search params
-- should work with infinite scroll 
+- should work with infinite scroll
 */
 const querySize = 10;
 const Catalog = () => {
@@ -59,6 +60,7 @@ const Catalog = () => {
     );
 
     const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+    const [visibleAnnouncements, setVisibleAnnouncements] = useState(3);
 
     const isTwo = useMediaQuery("(max-width: 1525px)");
     const isTwoWrap = useMediaQuery("(max-width: 1100px)");
@@ -160,7 +162,8 @@ const Catalog = () => {
         const fetchAnnouncements = async () => {
             const { data, error } = await supabase
                 .from("announcements")
-                .select("*");
+                .select("*")
+                .order("created_at", { ascending: false });
 
             if (error || !data) {
                 enqueueSnackbar(
@@ -175,7 +178,6 @@ const Catalog = () => {
 
         fetchAnnouncements();
     }, [enqueueSnackbar, setAnnouncements]);
-
     /*
   Testing
   useEffect(() => {
@@ -214,24 +216,51 @@ const Catalog = () => {
                     }}
                 >
                     <Typography variant="h3">Announcements</Typography>
-                    {announcements.map((announcement, i) => {
-                        return (
-                            <Card
-                                key={i}
-                                sx={{
-                                    width: "100%",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    marginTop: "10px",
-                                    padding: "20px",
-                                }}
+                    {announcements
+                        .slice(0, visibleAnnouncements)
+                        .map((announcement, i) => {
+                            return (
+                                <Card
+                                    key={i}
+                                    sx={{
+                                        width: "100%",
+                                        display: "flex",
+                                        justifyContent: "center",
+                                        marginTop: "10px",
+                                        padding: "20px",
+                                    }}
+                                >
+                                    <Typography
+                                        variant="body1"
+                                        sx={{
+                                            width: "100%",
+                                            whiteSpace: "pre-line",
+                                        }}
+                                    >
+                                        {announcement.content}
+                                    </Typography>
+                                </Card>
+                            );
+                        })}
+                    {visibleAnnouncements < announcements.length && (
+                        <Box
+                            sx={{
+                                width: "100%",
+                                display: "flex",
+                                justifyContent: "center",
+                                marginTop: "10px",
+                            }}
+                        >
+                            <AsyncButton
+                                variant="contained"
+                                onClick={() =>
+                                    setVisibleAnnouncements((prev) => prev + 3)
+                                }
                             >
-                                <Typography variant="body1" width="100%">
-                                    {announcement.content}
-                                </Typography>
-                            </Card>
-                        );
-                    })}
+                                Show More
+                            </AsyncButton>
+                        </Box>
+                    )}
                 </Box>
                 <Typography variant="h3">Catalog</Typography>
 

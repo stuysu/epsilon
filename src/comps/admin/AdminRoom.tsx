@@ -1,6 +1,5 @@
 import {
     Box,
-    Button,
     TextField,
     FormGroup,
     FormControlLabel,
@@ -13,6 +12,7 @@ import { useSnackbar } from "notistack";
 import { useState } from "react";
 
 import { supabase } from "../../supabaseClient";
+import AsyncButton from "../ui/AsyncButton";
 import ConfirmationDialog from "../ui/ConfirmationDialog";
 
 const AdminRoom = ({
@@ -227,26 +227,26 @@ const AdminRoom = ({
 
             <Box sx={{ width: "100%", paddingLeft: "10px" }}>
                 {create ? (
-                    <Button onClick={createRoom} variant="contained">
+                    <AsyncButton onClick={createRoom} variant="contained">
                         Create
-                    </Button>
+                    </AsyncButton>
                 ) : (
                     <>
-                        <Button
+                        <AsyncButton
                             onClick={saveRoom}
                             disabled={!isChanged}
                             variant="contained"
                             sx={{ marginRight: "10px" }}
                         >
                             Save
-                        </Button>
-                        <Button
+                        </AsyncButton>
+                        <AsyncButton
                             onClick={() => setConfirm(true)}
                             variant="contained"
                             color="error"
                         >
                             Delete
-                        </Button>
+                        </AsyncButton>
                     </>
                 )}
             </Box>

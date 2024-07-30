@@ -1,14 +1,15 @@
-import { Box, Button, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { useNavigate, Link } from "react-router-dom";
+import AsyncButton from "../comps/ui/AsyncButton";
 
 const Rules = () => {
     const navigate = useNavigate();
 
     return (
         <Box sx={{ padding: "40px" }}>
-            <Button variant="contained" onClick={() => navigate("/")}>
+            <AsyncButton variant="contained" onClick={() => navigate("/")}>
                 Back to home
-            </Button>
+            </AsyncButton>
             <Typography
                 variant={"h4"}
                 color="primary"

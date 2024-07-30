@@ -1,9 +1,10 @@
-import { Box, Paper, Typography, Button } from "@mui/material";
+import { Box, Paper, Typography } from "@mui/material";
 
 import { useState } from "react";
 import dayjs from "dayjs";
 
 import MeetingPreview from "../../ui/meetings/MeetingPreview";
+import AsyncButton from "../../ui/AsyncButton";
 
 type Props = {
     id?: number;
@@ -74,26 +75,26 @@ const OrgMeeting = ({
                 )}
             </Box>
             <Box sx={{ height: "60px", width: "100%" }}>
-                <Button variant="contained" onClick={() => setOpen(true)}>
+                <AsyncButton variant="contained" onClick={() => setOpen(true)}>
                     View More
-                </Button>
+                </AsyncButton>
                 {onEdit && (
-                    <Button
+                    <AsyncButton
                         variant="contained"
                         onClick={onEdit}
                         sx={{ marginLeft: "10px" }}
                     >
                         Edit
-                    </Button>
+                    </AsyncButton>
                 )}
                 {onDelete && (
-                    <Button
+                    <AsyncButton
                         variant="contained"
                         onClick={onDelete}
                         sx={{ marginLeft: "10px" }}
                     >
                         Delete
-                    </Button>
+                    </AsyncButton>
                 )}
             </Box>
             <MeetingPreview

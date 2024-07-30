@@ -1,7 +1,8 @@
-import { Box, TextField, Button, Typography, Card } from "@mui/material";
+import { Box, TextField, Typography, Card } from "@mui/material";
 import { useState, useEffect } from "react";
 import { supabase } from "../../supabaseClient";
 import { useSnackbar } from "notistack";
+import AsyncButton from "../../comps/ui/AsyncButton";
 
 const Strikes = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -129,7 +130,7 @@ const Strikes = () => {
                     }}
                 >
                     {filteredOrgs.map((org) => (
-                        <Button
+                        <AsyncButton
                             key={org.id}
                             onClick={() => {
                                 setOrgId(org.id);
@@ -140,7 +141,7 @@ const Strikes = () => {
                             sx={{ margin: "5px" }}
                         >
                             {org.name}
-                        </Button>
+                        </AsyncButton>
                     ))}
                 </Box>
             )}
@@ -176,13 +177,13 @@ const Strikes = () => {
                                 multiline
                                 rows={4}
                             />
-                            <Button
+                            <AsyncButton
                                 onClick={issueStrike}
                                 variant="contained"
                                 sx={{ width: "100%", marginTop: "10px" }}
                             >
                                 Issue
-                            </Button>
+                            </AsyncButton>
                         </Box>
                     </Box>
 
@@ -219,7 +220,7 @@ const Strikes = () => {
                                         Issued by {strike.users?.first_name}{" "}
                                         {strike.users?.last_name}
                                     </Typography>
-                                    <Button
+                                    <AsyncButton
                                         onClick={async () => {
                                             const { error } = await supabase
                                                 .from("strikes")
@@ -244,7 +245,7 @@ const Strikes = () => {
                                         }}
                                     >
                                         Delete
-                                    </Button>
+                                    </AsyncButton>
                                 </Card>
                             </Box>
                         ))}

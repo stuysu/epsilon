@@ -1,8 +1,9 @@
-import { Paper, Box, TextField, Button, Typography } from "@mui/material";
+import { Paper, Box, TextField, Typography } from "@mui/material";
 import { useEffect, useState, ChangeEvent } from "react";
 
 import { supabase } from "../../../../supabaseClient";
 import { useSnackbar } from "notistack";
+import AsyncButton from "../../../ui/AsyncButton";
 
 /* if content is null, then it is creating post */
 const PostEditor = ({
@@ -168,21 +169,21 @@ const PostEditor = ({
 
             {content ? (
                 <>
-                    <Button onClick={savePost} variant="contained">
+                    <AsyncButton onClick={savePost} variant="contained">
                         Save
-                    </Button>
-                    <Button
+                    </AsyncButton>
+                    <AsyncButton
                         onClick={onCancel}
                         variant="contained"
                         sx={{ marginLeft: "10px" }}
                     >
                         Cancel
-                    </Button>
+                    </AsyncButton>
                 </>
             ) : (
-                <Button onClick={createPost} variant="contained">
+                <AsyncButton onClick={createPost} variant="contained">
                     Create
-                </Button>
+                </AsyncButton>
             )}
         </Paper>
     );

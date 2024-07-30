@@ -1,7 +1,6 @@
 import {
     Box,
     TextField,
-    Button,
     Card,
     ListItem,
     ListItemText,
@@ -16,6 +15,7 @@ import { useSnackbar } from "notistack";
 import UserContext from "../context/UserContext";
 import dayjs from "dayjs";
 import { Delete } from "@mui/icons-material";
+import AsyncButton from "../ui/AsyncButton";
 
 type OrgMessage = {
     id: number;
@@ -52,7 +52,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                         last_name,
                         picture
                     ),
-                    created_at 
+                    created_at
                 `,
                 )
                 .eq("organization_id", organization_id)
@@ -222,13 +222,13 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                         }
                     }}
                 />
-                <Button
+                <AsyncButton
                     variant="contained"
                     sx={{ width: "20%" }}
                     onClick={sendMessage}
                 >
                     Send
-                </Button>
+                </AsyncButton>
             </Box>
         </Card>
     );

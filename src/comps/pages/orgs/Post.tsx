@@ -1,6 +1,5 @@
 import {
     Box,
-    Button,
     ListItem,
     ListItemText,
     ListItemAvatar,
@@ -17,6 +16,7 @@ import { useSnackbar } from "notistack";
 
 import dayjs from "dayjs";
 import OrgContext from "../../context/OrgContext";
+import AsyncButton from "../../ui/AsyncButton";
 
 /* This post component will serve as both the admin and member post. depending on role, differeing functionality */
 const Post = ({
@@ -129,16 +129,16 @@ const Post = ({
             <Box sx={{ marginTop: "20px" }}>
                 {editable && (
                     <>
-                        <Button onClick={deletePost} variant="contained">
+                        <AsyncButton onClick={deletePost} variant="contained">
                             Delete
-                        </Button>
-                        <Button
+                        </AsyncButton>
+                        <AsyncButton
                             onClick={() => setEditing(true)}
                             variant="contained"
                             sx={{ marginLeft: "10px" }}
                         >
                             Edit
-                        </Button>
+                        </AsyncButton>
                     </>
                 )}
             </Box>

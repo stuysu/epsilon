@@ -1,7 +1,8 @@
 import { ChangeEvent, useEffect } from "react";
 
-import { Paper, Box, PaperProps, Button, Typography } from "@mui/material";
+import { Paper, Box, PaperProps, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
+import AsyncButton from "../AsyncButton";
 
 type FileType = "image/png" | "image/jpeg" | "image/webp" | "image/*";
 
@@ -96,7 +97,7 @@ const FormUpload = ({
                     padding: "10px",
                 }}
             >
-                <Button
+                <AsyncButton
                     variant="contained"
                     component="label"
                     sx={{ width: "100%", height: hasFile ? "auto" : "100%" }}
@@ -114,11 +115,11 @@ const FormUpload = ({
                         value={value?.webkitRelativePath}
                         hidden
                     />
-                </Button>
+                </AsyncButton>
                 <Typography>{value?.name}</Typography>
 
                 {hasFile && (
-                    <Button
+                    <AsyncButton
                         onClick={() => onChange?.(undefined)}
                         variant="contained"
                         sx={{
@@ -128,7 +129,7 @@ const FormUpload = ({
                         }}
                     >
                         Remove
-                    </Button>
+                    </AsyncButton>
                 )}
             </Box>
             {preview && hasFile && (

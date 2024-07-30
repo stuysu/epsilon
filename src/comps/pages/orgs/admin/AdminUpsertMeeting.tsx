@@ -1,7 +1,5 @@
 import { useState, useEffect, ChangeEvent, useContext } from "react";
-
 import {
-    Button,
     Dialog,
     DialogContent,
     DialogTitle,
@@ -12,16 +10,19 @@ import {
     FormControlLabel,
     Box,
 } from "@mui/material";
-
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
-
 import { supabase } from "../../../../supabaseClient";
 import OrgContext from "../../../context/OrgContext";
 import dayjs, { Dayjs } from "dayjs";
 import { useSnackbar } from "notistack";
+import AsyncButton from "../../../ui/AsyncButton";
 
-const getDefaultTime = () => {
-    return dayjs().startOf("day").hour(15).minute(45);
+const getDefaultStartTime = () => {
+    return dayjs().startOf("day").hour(15).minute(35);
+};
+
+const getDefaultEndTime = () => {
+    return dayjs().startOf("day").hour(17).minute(0);
 };
 
 /* TODO: block off rooms on days they are unavailable */
@@ -53,15 +54,14 @@ const AdminUpsertMeeting = ({
 
     const [meetingTitle, setMeetingTitle] = useState(title || "");
     const [meetingDesc, setMeetingDesc] = useState(description || "");
-
     const [roomId, setRoomId] = useState(room_id);
 
     /* date inputs */
     const [startTime, setStartTime] = useState<Dayjs | null>(
-        start ? dayjs(start) : getDefaultTime(),
+        start ? dayjs(start) : getDefaultStartTime(),
     );
     const [endTime, setEndTime] = useState<Dayjs | null>(
-        end ? dayjs(end) : getDefaultTime(),
+        end ? dayjs(end) : getDefaultEndTime(),
     );
 
     const [isPub, setIsPub] = useState(
@@ -96,14 +96,14 @@ const AdminUpsertMeeting = ({
         };
 
         fetchRooms();
-    });
+    }, []);
 
     useEffect(() => {
         const filterRooms = async () => {
             if (!startTime || !endTime) return; // can't filter without these bounds
 
-            /* 
-      get ids of rooms that are booked. 
+            /*
+      get ids of rooms that are booked.
       there is a special case when we fetch an existing booked room from save
       */
             type roomMeta = {
@@ -128,7 +128,7 @@ const AdminUpsertMeeting = ({
 
             data = data.filter((meta) => meta.meeting_id !== id); // remove this current meeting's booking from time slot
 
-            /* 
+            /*
             room is available if:
             - it does not exist in booked rooms
             - the day of the start time (mon-fri) is included within the room's available days
@@ -150,7 +150,7 @@ const AdminUpsertMeeting = ({
             );
 
             // check if the currently selected room id is no longer valid
-            /* NOTE: if a meeting is invalid because of some update on the backend, 
+            /* NOTE: if a meeting is invalid because of some update on the backend,
             it'll still show the room but once u click into it, it'll only show virtual.
             */
             if (
@@ -165,7 +165,7 @@ const AdminUpsertMeeting = ({
         };
 
         filterRooms();
-    }, [loading, allRooms, id, roomId, startTime, endTime, enqueueSnackbar]);
+    }, [loading, id, roomId, startTime, endTime, enqueueSnackbar]);
 
     const handleSave = async () => {
         let supabaseReturn;
@@ -197,6 +197,21 @@ const AdminUpsertMeeting = ({
                 "Meeting start time cannot be before meeting end time.",
                 { variant: "error" },
             );
+            return;
+        }
+
+        if (endTime.diff(startTime, "minute") < 30) {
+            enqueueSnackbar("Meeting duration must be at least 30 minutes.", {
+                variant: "error",
+            });
+            return;
+        }
+
+        const currentTime = dayjs();
+        if (startTime.isBefore(currentTime)) {
+            enqueueSnackbar("Meeting cannot be scheduled in the past.", {
+                variant: "error",
+            });
             return;
         }
 
@@ -376,12 +391,12 @@ const AdminUpsertMeeting = ({
                 )}
             </DialogContent>
             <DialogActions>
-                <Button variant="contained" onClick={onClose}>
+                <AsyncButton variant="contained" onClick={onClose}>
                     Cancel
-                </Button>
-                <Button variant="contained" onClick={handleSave}>
+                </AsyncButton>
+                <AsyncButton variant="contained" onClick={handleSave}>
                     Save
-                </Button>
+                </AsyncButton>
             </DialogActions>
         </Dialog>
     );

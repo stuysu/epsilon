@@ -79,6 +79,43 @@ const Create = () => {
 
     const [formData, setFormData] = useState<FormType>(emptyForm);
     const isMobile = useMediaQuery("(max-width: 620px)");
+    const checkFormFields = () => {
+        const fields = [
+            "name",
+            "url",
+            "mission",
+            "purpose",
+            "benefit",
+            "keywords",
+            "tags",
+            "appointment_procedures",
+        ];
+
+        return fields.some((field) => {
+            const value = formData[field as keyof FormType];
+            if (typeof value === "string") {
+                return value.trim() !== "";
+            }
+            if (Array.isArray(value)) {
+                return value.length > 0;
+            }
+            return false;
+        });
+    };
+
+    useEffect(() => {
+        const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+            if (checkFormFields()) {
+                event.preventDefault();
+            }
+        };
+
+        window.addEventListener("beforeunload", handleBeforeUnload);
+
+        return () => {
+            window.removeEventListener("beforeunload", handleBeforeUnload);
+        };
+    }, [formData]);
 
     const createActivity = async () => {
         let body = {
@@ -167,22 +204,14 @@ const Create = () => {
     useEffect(() => {
         if (!user.signed_in) {
             navigate("/");
-            return;
-        }
-    }, [user, navigate]);
-
-    useEffect(() => {
-        if (!user.signed_in) {
             enqueueSnackbar(
                 "You must be signed in to create an organization.",
                 {
                     variant: "warning",
                 },
             );
-            navigate("/");
-            return;
         }
-    }, [user, navigate]);
+    }, [user, navigate, enqueueSnackbar]);
 
     return (
         <MultiPageForm

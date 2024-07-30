@@ -1,4 +1,4 @@
-import { Avatar, Box, Card, Typography, Button } from "@mui/material";
+import { Avatar, Box, Card, Typography } from "@mui/material";
 import { useContext, useEffect } from "react";
 
 import { useParams } from "react-router-dom";
@@ -8,6 +8,7 @@ import { useState } from "react";
 import { supabase } from "../../../../supabaseClient";
 import { useSnackbar } from "notistack";
 import UserContext from "../../../../comps/context/UserContext";
+import AsyncButton from "../../../../comps/ui/AsyncButton";
 
 const MeetingAttendance = () => {
     const user = useContext(UserContext);
@@ -44,12 +45,12 @@ const MeetingAttendance = () => {
                                 last_name,
                                 picture,
                                 email
-                            )   
+                            )
                         )
                     ),
                     attendance (
                         user_id
-                    )    
+                    )
                 `,
                     )
                     .eq("id", meetingId)
@@ -170,7 +171,7 @@ const MeetingAttendance = () => {
                             Status: {isPresent ? "Present" : "Absent"}
                         </Typography>
                     </Box>
-                    <Button
+                    <AsyncButton
                         onClick={markPresent}
                         disabled={isPresent}
                         sx={{ width: "100%" }}
@@ -178,7 +179,7 @@ const MeetingAttendance = () => {
                         variant="contained"
                     >
                         Mark Present
-                    </Button>
+                    </AsyncButton>
                 </Card>
             </Box>
         </Box>

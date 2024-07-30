@@ -1,12 +1,11 @@
-import { Box, Typography, TextField, MenuItem, Button } from "@mui/material";
+import { Box, Typography, TextField, MenuItem } from "@mui/material";
 import { TimePicker, DatePicker } from "@mui/x-date-pickers";
 import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useSnackbar } from "notistack";
 import AdminRoom from "../../comps/admin/AdminRoom";
-import OrgSelector from "../../comps/admin/OrgSelector";
-
 import dayjs, { Dayjs } from "dayjs";
+import AsyncButton from "../../comps/ui/AsyncButton";
 
 type ApiRoom = {
     id: number;
@@ -15,6 +14,11 @@ type ApiRoom = {
     approval_required: boolean;
     available_days: string;
     comments?: string;
+};
+
+type Organization = {
+    id: number;
+    name: string;
 };
 
 const getDefaultTime = () => {
@@ -32,36 +36,72 @@ const Rooms = () => {
     const [allRooms, setAllRooms] = useState<ApiRoom[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
 
+    /* organization search data */
+    const [searchInput, setSearchInput] = useState("");
+    const [filteredOrgs, setFilteredOrgs] = useState<Organization[]>([]);
+    const [allOrgs, setAllOrgs] = useState<Organization[]>([]);
+
     /* date inputs */
     const [startTime, setStartTime] = useState<Dayjs | null>(getDefaultTime());
     const [endTime, setEndTime] = useState<Dayjs | null>(getDefaultTime());
 
-    useEffect(() => {
-        const fetchRooms = async () => {
-            const { data: roomData, error: roomFetchError } = await supabase
-                .from("rooms")
-                .select("*")
-                .returns<ApiRoom[]>();
+    const fetchRooms = async () => {
+        setLoading(true);
+        const { data: roomData, error: roomFetchError } = await supabase
+            .from("rooms")
+            .select("*")
+            .returns<ApiRoom[]>();
 
-            if (roomFetchError || !roomData) {
-                enqueueSnackbar("Failed to fetch rooms", { variant: "error" });
-                return;
+        if (roomFetchError || !roomData) {
+            enqueueSnackbar("Failed to fetch rooms", { variant: "error" });
+            return;
+        }
+
+        setRooms([...roomData]);
+        setAllRooms(() => {
+            setLoading(false);
+
+            if (roomData.length) {
+                setForceRoomId(roomData[0].id);
             }
 
-            setRooms([...roomData]);
-            setAllRooms((prev) => {
-                setLoading(false);
+            return [...roomData];
+        });
+    };
 
-                if (roomData.length) {
-                    setForceRoomId(roomData[0].id);
-                }
+    useEffect(() => {
+        fetchRooms();
+    }, [enqueueSnackbar]);
 
-                return [...roomData];
-            });
+    useEffect(() => {
+        const fetchAllOrgs = async () => {
+            const { data, error } = await supabase
+                .from("organizations")
+                .select("*");
+            if (error || !data) {
+                enqueueSnackbar(
+                    "Failed to load organizations. Contact support.",
+                    { variant: "error" },
+                );
+                return;
+            }
+            setAllOrgs(data);
         };
 
-        fetchRooms();
-    }, []);
+        fetchAllOrgs();
+    }, [enqueueSnackbar]);
+
+    useEffect(() => {
+        if (searchInput) {
+            setFilteredOrgs(
+                allOrgs.filter((org) =>
+                    org.name.toLowerCase().includes(searchInput.toLowerCase()),
+                ),
+            );
+        } else {
+            setFilteredOrgs([]);
+        }
+    }, [searchInput, allOrgs]);
 
     const forceReserve = async () => {
         const { error: reserveError } = await supabase.functions.invoke(
@@ -119,13 +159,39 @@ const Rooms = () => {
                         justifyContent: "center",
                     }}
                 >
-                    <OrgSelector
-                        onSelect={(orgId, orgName) => {
-                            setForceOrgId(orgId);
-                            setForceOrgName(orgName);
-                        }}
+                    <TextField
+                        sx={{ width: "300px" }}
+                        label="Search Organizations"
+                        value={searchInput}
+                        onChange={(e) => setSearchInput(e.target.value)}
                     />
                 </Box>
+                {filteredOrgs.length > 0 && (
+                    <Box
+                        sx={{
+                            width: "100%",
+                            display: "flex",
+                            justifyContent: "center",
+                            marginTop: "10px",
+                            flexWrap: "wrap",
+                        }}
+                    >
+                        {filteredOrgs.map((org) => (
+                            <AsyncButton
+                                key={org.id}
+                                onClick={async () => {
+                                    setForceOrgId(org.id);
+                                    setForceOrgName(org.name);
+                                    setSearchInput(""); // Clear search input after selecting an org
+                                    setFilteredOrgs([]); // Clear filtered orgs after selecting an org
+                                }}
+                                sx={{ margin: "5px" }}
+                            >
+                                {org.name}
+                            </AsyncButton>
+                        ))}
+                    </Box>
+                )}
                 {forceOrgId && (
                     <Box
                         sx={{
@@ -208,13 +274,13 @@ const Rooms = () => {
                                 ))}
                             </TextField>
                         </Box>
-                        <Button
+                        <AsyncButton
                             onClick={forceReserve}
                             sx={{ width: "100%", marginTop: "10px" }}
                             variant="outlined"
                         >
                             Force Reservation
-                        </Button>
+                        </AsyncButton>
                     </Box>
                 )}
             </Box>
@@ -227,10 +293,7 @@ const Rooms = () => {
             >
                 Manage Rooms
             </Typography>
-            <AdminRoom
-                create
-                onCreate={(room) => setRooms([...rooms, room as ApiRoom])}
-            />
+            <AdminRoom create onCreate={() => fetchRooms()} />
             <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
                 {rooms.map((room) => (
                     <AdminRoom

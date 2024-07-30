@@ -1,10 +1,11 @@
-import { Avatar, Box, Button, Card, Divider, Typography } from "@mui/material";
+import { Avatar, Box, Card, Divider, Typography } from "@mui/material";
 import { supabase } from "../../supabaseClient";
 
 import { useSnackbar } from "notistack";
 import OrgChat from "./OrgChat";
 
 import { useState } from "react";
+import AsyncButton from "../ui/AsyncButton";
 
 const OrgApproval = ({
     onBack,
@@ -59,14 +60,14 @@ const OrgApproval = ({
     return (
         <Box sx={{ padding: "30px", display: "flex", flexWrap: "wrap" }}>
             <Box sx={{ width: "100%", marginBottom: "20px" }}>
-                <Button
+                <AsyncButton
                     variant="contained"
                     onClick={onBack}
                     sx={{ marginRight: "10px" }}
                 >
                     Back
-                </Button>
-                <Button
+                </AsyncButton>
+                <AsyncButton
                     variant="contained"
                     onClick={approve}
                     color="success"
@@ -74,8 +75,8 @@ const OrgApproval = ({
                     disabled={buttonsDisabled}
                 >
                     Approve
-                </Button>
-                <Button
+                </AsyncButton>
+                <AsyncButton
                     variant="contained"
                     onClick={reject}
                     color="secondary"
@@ -83,7 +84,7 @@ const OrgApproval = ({
                     disabled={buttonsDisabled}
                 >
                     Reject
-                </Button>
+                </AsyncButton>
             </Box>
             <Card
                 sx={{
