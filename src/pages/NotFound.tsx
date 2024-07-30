@@ -1,12 +1,12 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Box, Typography, Button } from '@mui/material';
+import React from "react";
+import { useNavigate } from "react-router-dom";
+import { Box, Typography, Button } from "@mui/material";
 
 const NotFound = () => {
     const navigate = useNavigate();
 
     const handleGoHome = () => {
-        navigate('/');
+        navigate("/");
     };
 
     return (
@@ -22,13 +22,14 @@ const NotFound = () => {
                 404 - Page Not Found
             </Typography>
             <Typography variant="body1" gutterBottom>
-                Although Epsilon encompasses many services for Stuyvesant, it unfortunately does not have everything.
+                Although Epsilon encompasses many services for Stuyvesant, it
+                unfortunately does not have everything.
             </Typography>
             <Button
                 variant="contained"
                 color="primary"
                 onClick={handleGoHome}
-                sx={{ mt: 3, padding: '10px 20px', fontSize: '16px' }}
+                sx={{ mt: 3, padding: "10px 20px", fontSize: "16px" }}
             >
                 Go to Home
             </Button>
