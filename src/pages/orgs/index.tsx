@@ -113,6 +113,7 @@ const OrgRouter = () => {
                 enqueueSnackbar("Error fetching organization.", {
                     variant: "error",
                 });
+                navigate("/pagenotfound");
                 return;
             }
 
