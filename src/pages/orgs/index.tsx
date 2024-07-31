@@ -6,6 +6,7 @@ import { supabase } from "../../supabaseClient";
 
 import OrgNav from "../../comps/pages/orgs/OrgNav";
 
+import NotFound from "./NotFound";
 import Overview from "./Overview";
 import Charter from "./Charter";
 import Meetings from "./Meetings";
@@ -114,14 +115,10 @@ const OrgRouter = () => {
                 enqueueSnackbar("Error fetching organization.", {
                     variant: "error",
                 });
-                navigate("/pagenotfound");
                 return;
             }
 
             if (data?.length === 0) {
-                enqueueSnackbar("Invalid organization URL.", {
-                    variant: "error",
-                });
                 return;
             }
 
@@ -134,7 +131,7 @@ const OrgRouter = () => {
     return (
         <OrgContext.Provider value={{ ...org, setOrg }}>
             {org.id === -1 ? (
-                <div></div> /* ORG DOESN'T EXIST HERE */
+                <NotFound />
             ) : (
                 <>
                     <Box

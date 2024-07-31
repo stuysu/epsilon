@@ -11,7 +11,6 @@ import AllMeetings from "./AllMeetings";
 import NavBar from "../comps/ui/nav/NavBar";
 import About from "./About";
 import Rules from "./Rules";
-import NotFound from "./NotFound";
 
 const ModuleRouter = lazy(() => import("./modules/ModuleRouter"));
 const Catalog = lazy(() => import("./Catalog"));
@@ -53,7 +52,6 @@ const Pages = () => {
                     <Route path={"/modules/*"} Component={ModuleRouter} />
                     <Route path={"/admin/*"} Component={AdminRouter} />
                     <Route path={"/:orgUrl/*"} Component={OrgRouter} />
-                    <Route path={"/pagenotfound"} Component={NotFound} />
                 </Routes>
             </Suspense>
         </div>
