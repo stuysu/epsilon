@@ -1,8 +1,9 @@
-import { Box, TextField, Typography, Card } from "@mui/material";
+import { Box, Typography, Card } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import AsyncButton from "../../comps/ui/AsyncButton";
+import TextEditor from "../../comps/ui/TextEditor";
 
 const Announcements = () => {
     let [content, setContent] = useState("");
@@ -93,7 +94,7 @@ const Announcements = () => {
                     Create Announcement
                 </Typography>
                 <Box sx={{ width: "500px" }}>
-                    <TextField
+                    <TextEditor
                         sx={{ width: "100%" }}
                         multiline
                         rows={3}
@@ -154,9 +155,8 @@ const Announcements = () => {
                                             width: "80%",
                                             whiteSpace: "pre-line",
                                         }}
-                                    >
-                                        {announcement.content}
-                                    </Typography>
+                                        dangerouslySetInnerHTML={{ __html: announcement.content }}
+                                    />
                                     <AsyncButton
                                         onClick={() =>
                                             deleteAnnouncement(announcement.id)
