@@ -13,10 +13,10 @@ const FlavorText = [
     "Have you tried turning it off and on again?",
     "Thank you! But our page is in another castle!",
     "This is fine. 🔥",
-    "Imagine spamming refresh to see all the 404 easter eggs and stumbling upon this one first…"
-    "Nate, what did you break this time?"
-    "Bruh."
-    "How did you even get here?"
+    "Imagine spamming refresh to see all the 404 easter eggs and stumbling upon this one first…",
+    "Nate, what did you break this time?",
+    "Bruh.",
+    "How did you even get here?",
     "You broke the site. Congrats.",
 ];
 
