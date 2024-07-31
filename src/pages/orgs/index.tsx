@@ -2,6 +2,7 @@
 import { useEffect, useState } from "react";
 import { Routes, Route, useParams, useNavigate } from "react-router-dom";
 import OrgContext from "../../comps/context/OrgContext";
+import Loading from "../../comps/ui/Loading";
 import { supabase } from "../../supabaseClient";
 
 import OrgNav from "../../comps/pages/orgs/OrgNav";
@@ -43,6 +44,7 @@ const OrgRouter = () => {
         meetings: [],
         posts: [],
     });
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const getOrgData = async () => {
@@ -125,9 +127,10 @@ const OrgRouter = () => {
             setOrg(data[0] as OrgContextType);
         };
 
-        getOrgData();
+        getOrgData().then(() => setLoading(false));
     }, [orgUrl, enqueueSnackbar]);
 
+    if (loading) return <Loading />;
     return (
         <OrgContext.Provider value={{ ...org, setOrg }}>
             {org.id === -1 ? (
