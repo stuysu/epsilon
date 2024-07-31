@@ -2,10 +2,12 @@
 import { useEffect, useState } from "react";
 import { Routes, Route, useParams, useNavigate } from "react-router-dom";
 import OrgContext from "../../comps/context/OrgContext";
+import Loading from "../../comps/ui/Loading";
 import { supabase } from "../../supabaseClient";
 
 import OrgNav from "../../comps/pages/orgs/OrgNav";
 
+import NotFound from "./NotFound";
 import Overview from "./Overview";
 import Charter from "./Charter";
 import Meetings from "./Meetings";
@@ -42,6 +44,7 @@ const OrgRouter = () => {
         meetings: [],
         posts: [],
     });
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const getOrgData = async () => {
@@ -118,22 +121,20 @@ const OrgRouter = () => {
             }
 
             if (data?.length === 0) {
-                enqueueSnackbar("Invalid organization URL.", {
-                    variant: "error",
-                });
                 return;
             }
 
             setOrg(data[0] as OrgContextType);
         };
 
-        getOrgData();
+        getOrgData().then(() => setLoading(false));
     }, [orgUrl, enqueueSnackbar]);
 
+    if (loading) return <Loading />;
     return (
         <OrgContext.Provider value={{ ...org, setOrg }}>
             {org.id === -1 ? (
-                <div></div> /* ORG DOESN'T EXIST HERE */
+                <NotFound />
             ) : (
                 <>
                     <Box
