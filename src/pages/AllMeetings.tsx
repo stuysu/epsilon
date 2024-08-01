@@ -15,6 +15,7 @@ import {
 
 import dayjs, { Dayjs } from "dayjs";
 import DaySchedule from "../comps/pages/allmeetings/DaySchedule";
+import LoginGate from "../comps/ui/LoginGate";
 
 type CachedMeetings = {
     [date: string]: CalendarMeeting[];
@@ -137,7 +138,7 @@ const AllMeetings = () => {
     }, [time, enqueueSnackbar, cachedMeetings]);
 
     return (
-        <Box sx={{ width: "100%", paddingLeft: "20px" }}>
+        <LoginGate sx={{ width: "100%", paddingLeft: "20px" }}>
             <Typography variant="h1">All Meetings</Typography>
             <Box
                 sx={{
@@ -186,7 +187,7 @@ const AllMeetings = () => {
                     <DaySchedule day={time} meetings={meetings} />
                 </Box>
             </Box>
-        </Box>
+        </LoginGate>
     );
 };
 

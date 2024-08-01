@@ -12,6 +12,7 @@ import { supabase } from "../../../../supabaseClient";
 import { useSnackbar } from "notistack";
 import MeetingAttendanceCard from "../comps/MeetingAttendanceCard";
 import { useSearchParams } from "react-router-dom";
+import LoginGate from "../../../../comps/ui/LoginGate";
 
 const Home = () => {
     const user = useContext(UserContext);
@@ -70,7 +71,7 @@ const Home = () => {
     }, [selectedOrgId, enqueueSnackbar]);
 
     return (
-        <Box>
+        <LoginGate>
             <Typography variant="h1" width="100%" align="center">
                 Attendance
             </Typography>
@@ -133,7 +134,7 @@ const Home = () => {
                     </Box>
                 )}
             </Box>
-        </Box>
+        </LoginGate>
     );
 };
 
