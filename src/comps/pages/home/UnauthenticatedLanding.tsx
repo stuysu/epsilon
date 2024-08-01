@@ -1,14 +1,9 @@
 import { Box, Typography } from "@mui/material";
 
-import { Auth } from "@supabase/auth-ui-react";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
-
-import { supabase } from "../../../supabaseClient";
-
 import { useNavigate } from "react-router-dom";
 
-import { PUBLIC_URL } from "../../../constants";
 import AsyncButton from "../../ui/AsyncButton";
+import LoginButton from "../../ui/LoginButton";
 
 const UnauthenticatedLanding = () => {
     const navigate = useNavigate();
@@ -53,22 +48,7 @@ const UnauthenticatedLanding = () => {
                             flexWrap: "wrap",
                         }}
                     >
-                        <Box
-                            sx={{
-                                width: "100%",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                            }}
-                        >
-                            <Auth
-                                redirectTo={PUBLIC_URL}
-                                supabaseClient={supabase}
-                                appearance={{ theme: ThemeSupa }}
-                                providers={["google"]}
-                                onlyThirdPartyProviders
-                            />
-                        </Box>
+                        <LoginButton />
                         <Box
                             sx={{
                                 width: "100%",
