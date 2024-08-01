@@ -3,28 +3,17 @@ import { Helmet } from "react-helmet";
 import Loading from "../../comps/ui/Loading";
 
 import { Routes, Route, useLocation } from "react-router-dom";
-import { Suspense, useContext } from "react";
+import { Suspense } from "react";
 
 import AttendanceRouter from "./attendance";
 import InvalidModule from "./InvalidModule";
-
-import UserContext from "../../comps/context/UserContext";
-import { Typography } from "@mui/material";
+import LoginGate from "../../comps/ui/LoginGate";
 
 const ModuleRouter = () => {
     const location = useLocation();
-    const user = useContext(UserContext);
-
-    if (!user.signed_in) {
-        return (
-            <Typography variant="h1" width="100%" align="center">
-                You must be signed in to use modules
-            </Typography>
-        );
-    }
 
     return (
-        <div>
+        <LoginGate page="use modules">
             <Helmet>
                 <meta
                     property="og:url"
@@ -45,7 +34,7 @@ const ModuleRouter = () => {
                     <Route path="/*" Component={InvalidModule} />
                 </Routes>
             </Suspense>
-        </div>
+        </LoginGate>
     );
 };
 
