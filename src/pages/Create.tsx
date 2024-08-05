@@ -29,10 +29,11 @@ type FormType = {
     socials: string;
     picture?: File;
     mission: string;
-    purpose: string;
+    goals: string;
     benefit: string;
     appointment_procedures: string;
     uniqueness: string;
+    meeting_description: string;
     meeting_schedule: string;
     meeting_days: string[];
     keywords: string[];
@@ -41,6 +42,7 @@ type FormType = {
     join_instructions: string;
     returning: boolean;
     returning_info: string;
+    fair: boolean;
 };
 
 const emptyForm: FormType = {
@@ -49,10 +51,11 @@ const emptyForm: FormType = {
     socials: "",
     picture: undefined,
     mission: "",
-    purpose: "",
+    goals: "",
     benefit: "",
     appointment_procedures: "",
     uniqueness: "",
+    meeting_description: "",
     meeting_schedule: "",
     meeting_days: [],
     keywords: [],
@@ -61,6 +64,7 @@ const emptyForm: FormType = {
     join_instructions: "",
     returning: false,
     returning_info: "",
+    fair: false,
 };
 
 const multilineStyle: CSSProperties = {
@@ -81,7 +85,9 @@ const Create = () => {
             "name",
             "url",
             "mission",
-            "purpose",
+            "goals",
+            "meeting_description",
+            "meeting_schedule",
             "benefit",
             "keywords",
             "tags",
@@ -121,18 +127,20 @@ const Create = () => {
             socials: formData.socials,
             // picture: null, // update after creating initial org
             mission: formData.mission,
-            purpose: formData.purpose,
+            goals: formData.goals,
             benefit: formData.benefit,
             keywords: formData.keywords.join(",").toLowerCase(),
             tags: formData.tags,
             appointment_procedures: formData.appointment_procedures,
             uniqueness: formData.uniqueness,
+            meeting_description: formData.meeting_description,
             meeting_schedule: formData.meeting_schedule,
             meeting_days: formData.meeting_days,
             commitment_level: formData.commitment_level,
             join_instructions: formData.join_instructions,
             is_returning: formData.returning,
             returning_info: formData.returning_info,
+            fair: formData.fair,
         };
 
         let { data: orgCreateData, error: orgCreateError } =
@@ -370,14 +378,14 @@ const Create = () => {
                         description="A quick blurb of what this organization is all about"
                     />
                     <FormTextField
-                        label="Purpose"
-                        field="purpose"
+                        label="Goals"
+                        field="goals"
                         multiline
-                        requirements={OrgRequirements.purpose.requirements}
-                        required={OrgRequirements.purpose.required}
+                        requirements={OrgRequirements.goals.requirements}
+                        required={OrgRequirements.goals.required}
                         sx={multilineStyle}
                         rows={4}
-                        description="This will serve as the official description of the club. Please include a brief statement about what is expected of general members involved in the club."
+                        description="GOALS FIELD"
                     />
                     <FormTextField
                         label="Benefit"
@@ -412,6 +420,18 @@ const Create = () => {
                         sx={multilineStyle}
                         rows={4}
                         description="What makes your organization unique?"
+                    />
+                    <FormTextField
+                        label="Meeting Description"
+                        field="meeting_description"
+                        multiline
+                        requirements={
+                            OrgRequirements.meeting_description.requirements
+                        }
+                        required={OrgRequirements.meeting_description.required}
+                        sx={multilineStyle}
+                        rows={4}
+                        description="MEETING DESCRIPTION FIELD"
                     />
                     <FormTextField
                         label="Meeting Schedule"
@@ -461,6 +481,13 @@ const Create = () => {
                                 }
                             />
                         )}
+                    </FormSection>
+                    <FormSection sx={{ marginTop: "20px", width: "100%" }}>
+                        <FormCheckbox
+                            field="fair"
+                            label="Interested in the Clubs/Pubs fair?"
+                            description="CLUBS PUBS FAIR FIELD"
+                        />
                     </FormSection>
                 </FormPage>
             </MultiPageForm>

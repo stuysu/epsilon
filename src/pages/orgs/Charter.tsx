@@ -31,9 +31,15 @@ const Charter = () => {
             </Typography>
             <Typography>{organization.meeting_schedule || "None"}</Typography>
             <Typography variant="h3" color="primary.main">
-                What is the purpose of this activity?
+                GOALS
             </Typography>
-            <Typography>{organization.purpose || "None"}</Typography>
+            <Typography>{organization.goals || "None"}</Typography>
+            <Typography variant="h3" color="primary.main">
+                MEETING DESCRIPTION
+            </Typography>
+            <Typography>
+                {organization.meeting_description || "None"}
+            </Typography>
             <Typography variant="h3" color="primary.main">
                 How does this activity benefit Stuyvesant?
             </Typography>

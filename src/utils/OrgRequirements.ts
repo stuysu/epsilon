@@ -11,10 +11,11 @@ type validatorField =
     | "socials"
     | "picture"
     | "mission"
-    | "purpose"
+    | "goals"
     | "benefit"
     | "appointment_procedures"
     | "uniqueness"
+    | "meeting_description"
     | "meeting_schedule"
     | "meeting_days"
     | "returning_info"
@@ -83,7 +84,7 @@ const OrgRequirements: OrgValidator = {
             maxChar: 150,
         },
     },
-    purpose: {
+    goals: {
         required: true,
         requirements: {
             minWords: 100,
@@ -109,6 +110,13 @@ const OrgRequirements: OrgValidator = {
         requirements: {
             minWords: 75,
             maxWords: 400,
+        },
+    },
+    meeting_description: {
+        required: true,
+        requirements: {
+            minWords: 150,
+            maxWords: 250,
         },
     },
     meeting_schedule: {

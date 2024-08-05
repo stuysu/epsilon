@@ -15,15 +15,17 @@ const editFields: EditKey[] = [
     "socials",
     "picture",
     "mission",
-    "purpose",
+    "goals",
     "benefit",
     "appointment_procedures",
     "uniqueness",
+    "meeting_description",
     "meeting_schedule",
     "meeting_days",
     "keywords",
     "tags",
     "commitment_level",
+    "fair",
 ];
 
 const OrgEditApproval = ({

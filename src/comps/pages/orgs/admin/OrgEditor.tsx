@@ -115,10 +115,11 @@ const textFields = [
     "url",
     "socials",
     "mission",
-    "purpose",
+    "goals",
     "benefit",
     "appointment_procedures",
     "uniqueness",
+    "meeting_description",
     "meeting_schedule",
 ];
 
@@ -372,15 +373,17 @@ const OrgEditor = ({
                 url: undefined,
                 picture: undefined,
                 mission: undefined,
-                purpose: undefined,
+                goals: undefined,
                 benefit: undefined,
                 appointment_procedures: undefined,
                 uniqueness: undefined,
+                meeting_description: undefined,
                 meeting_schedule: undefined,
                 meeting_days: undefined,
                 keywords: undefined,
                 tags: undefined,
                 commitment_level: undefined,
+                fair: undefined,
             });
 
             // reset edit state
