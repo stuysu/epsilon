@@ -41,9 +41,9 @@ const Charter = () => {
                 {organization.meeting_description || "None"}
             </Typography>
             <Typography variant="h3" color="primary.main">
-                How does this activity benefit Stuyvesant?
+                CLUB DESCRIPTION
             </Typography>
-            <Typography>{organization.benefit || "None"}</Typography>
+            <Typography>{organization.purpose || "None"}</Typography>
             <Typography variant="h3" color="primary.main">
                 How does this activity appoint leaders?
             </Typography>

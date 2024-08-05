@@ -16,7 +16,7 @@ const editFields: EditKey[] = [
     "picture",
     "mission",
     "goals",
-    "benefit",
+    "purpose",
     "appointment_procedures",
     "uniqueness",
     "meeting_description",

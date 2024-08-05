@@ -133,9 +133,9 @@ const OrgApproval = ({
                 <Divider sx={{ margin: "10px" }} />
 
                 <Typography variant="h5" fontWeight={600}>
-                    Benefit:
+                    Description:
                 </Typography>
-                <Typography variant="body2">{org.benefit}</Typography>
+                <Typography variant="body2">{org.purpose}</Typography>
                 <Divider sx={{ margin: "10px" }} />
 
                 <Typography variant="h5" fontWeight={600}>

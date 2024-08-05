@@ -29,8 +29,8 @@ type FormType = {
     socials: string;
     picture?: File;
     mission: string;
+    purpose: string;
     goals: string;
-    benefit: string;
     appointment_procedures: string;
     uniqueness: string;
     meeting_description: string;
@@ -51,8 +51,8 @@ const emptyForm: FormType = {
     socials: "",
     picture: undefined,
     mission: "",
+    purpose: "",
     goals: "",
-    benefit: "",
     appointment_procedures: "",
     uniqueness: "",
     meeting_description: "",
@@ -85,10 +85,10 @@ const Create = () => {
             "name",
             "url",
             "mission",
+            "purpose",
             "goals",
             "meeting_description",
             "meeting_schedule",
-            "benefit",
             "keywords",
             "tags",
             "appointment_procedures",
@@ -128,7 +128,7 @@ const Create = () => {
             // picture: null, // update after creating initial org
             mission: formData.mission,
             goals: formData.goals,
-            benefit: formData.benefit,
+            purpose: formData.purpose,
             keywords: formData.keywords.join(",").toLowerCase(),
             tags: formData.tags,
             appointment_procedures: formData.appointment_procedures,
@@ -368,14 +368,14 @@ const Create = () => {
 
                 <FormPage title="Charter Information">
                     <FormTextField
-                        label="Mission"
+                        label="Origin Story"
                         field="mission"
                         multiline
                         requirements={OrgRequirements.mission.requirements}
                         required={OrgRequirements.mission.required}
                         sx={multilineStyle}
                         rows={4}
-                        description="A quick blurb of what this organization is all about"
+                        description="Tell us, in simple words, why you want to create this club. This information won’t be displayed on Epsilon, we will use it to gauge your passion and reasoning in forming this club."
                     />
                     <FormTextField
                         label="Goals"
@@ -385,17 +385,41 @@ const Create = () => {
                         required={OrgRequirements.goals.required}
                         sx={multilineStyle}
                         rows={4}
-                        description="GOALS FIELD"
+                        description="What are your specific, realistic, and timely goals for this club to accomplish? This is for us to better support you throughout the year and can be edited as needed."
                     />
                     <FormTextField
-                        label="Benefit"
-                        field="benefit"
+                        label="Club Description"
+                        field="purpose"
                         multiline
-                        requirements={OrgRequirements.benefit.requirements}
-                        required={OrgRequirements.benefit.required}
+                        requirements={OrgRequirements.purpose.requirements}
+                        required={OrgRequirements.purpose.required}
                         sx={multilineStyle}
                         rows={4}
-                        description="How will this activity benefit the Stuyvesant community?"
+                        description="This is what will be displayed on Epsilon: What do you want the Stuyvesant Community to know about your club?"
+                    />
+                    <FormTextField
+                        label="Meeting Description"
+                        field="meeting_description"
+                        multiline
+                        requirements={
+                            OrgRequirements.meeting_description.requirements
+                        }
+                        required={OrgRequirements.meeting_description.required}
+                        sx={multilineStyle}
+                        rows={4}
+                        description="What would a typical meeting look like? Describe with as much detail as possible how a meeting will be structured, and what activities will be specific to your club."
+                    />
+                    <FormTextField
+                        label="Meeting Schedule"
+                        field="meeting_schedule"
+                        multiline
+                        requirements={
+                            OrgRequirements.meeting_schedule.requirements
+                        }
+                        required={OrgRequirements.meeting_schedule.required}
+                        sx={multilineStyle}
+                        rows={4}
+                        description="What is your activity’s meeting schedule? Are there periods of time where your club will pause meetings?"
                     />
                     <FormTextField
                         label="Appointment Procedures"
@@ -409,7 +433,7 @@ const Create = () => {
                         }
                         sx={multilineStyle}
                         rows={4}
-                        description="What are the leadership positions and how are they appointed? Are there any specific protocols members are expected to follow? What is the policy for transfer of leadership between school years? How will leaders be removed if necessary?"
+                        description="How many leaders will your club have? What will be their roles?"
                     />
                     <FormTextField
                         label="Uniqueness"
@@ -419,30 +443,7 @@ const Create = () => {
                         required={OrgRequirements.uniqueness.required}
                         sx={multilineStyle}
                         rows={4}
-                        description="What makes your organization unique?"
-                    />
-                    <FormTextField
-                        label="Meeting Description"
-                        field="meeting_description"
-                        multiline
-                        requirements={
-                            OrgRequirements.meeting_description.requirements
-                        }
-                        required={OrgRequirements.meeting_description.required}
-                        sx={multilineStyle}
-                        rows={4}
-                        description="MEETING DESCRIPTION FIELD"
-                    />
-                    <FormTextField
-                        label="Meeting Schedule"
-                        field="meeting_schedule"
-                        requirements={
-                            OrgRequirements.meeting_schedule.requirements
-                        }
-                        required={OrgRequirements.meeting_schedule.required}
-                        sx={multilineStyle}
-                        rows={4}
-                        description={`Something like "Our meeting schedule varies throughout the year, but we meet at least once a month and up to 3 times in the Spring."`}
+                        description="Why are you chartering this club and not joining another one?"
                     />
                     <FormSection sx={{ marginTop: "20px" }}>
                         <FormCheckSelect
@@ -468,6 +469,7 @@ const Create = () => {
                             <FormTextField
                                 label="Returning Info"
                                 field="returning_info"
+                                multiline
                                 requirements={
                                     OrgRequirements.returning_info.requirements
                                 }
@@ -477,7 +479,7 @@ const Create = () => {
                                 sx={multilineStyle}
                                 rows={4}
                                 description={
-                                    "Give us an idea of the things your club did last year!"
+                                    "Why should we allow your club to be rechartered? In what ways have you achieved the mission that your club stated in its charter last year?"
                                 }
                             />
                         )}
@@ -485,10 +487,15 @@ const Create = () => {
                     <FormSection sx={{ marginTop: "20px", width: "100%" }}>
                         <FormCheckbox
                             field="fair"
-                            label="Interested in the Clubs/Pubs fair?"
-                            description="CLUBS PUBS FAIR FIELD"
+                            label="Do you want to represent your club at the Club Pub Fair?"
+                            description="Check this box if so."
                         />
                     </FormSection>
+                    <Typography sx={{ marginTop: "1rem" }}>
+                        If you have additional information to share about your
+                        club, please use the "Messages" feature in your club
+                        admin panel.
+                    </Typography>
                 </FormPage>
             </MultiPageForm>
         </LoginGate>

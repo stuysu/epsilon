@@ -5,8 +5,8 @@ interface Organization {
     socials?: string;
     picture?: string | null;
     mission?: string;
+    purpose?: string;
     goals?: string;
-    benefit?: string;
     appointment_procedures?: string;
     uniqueness?: string;
     meeting_description?: string;
@@ -30,8 +30,8 @@ interface OrganizationEdit {
     socials?: Organization["socials"];
     picture?: Organization["picture"];
     mission?: Organization["mission"];
+    purpose?: Organization["purpose"];
     goals?: Organization["goals"];
-    benefit?: Organization["benefit"];
     appointment_procedures?: Organization["appointment_procedures"];
     uniqueness?: Organization["uniqueness"];
     meeting_description?: Organization["meeting_description"];
