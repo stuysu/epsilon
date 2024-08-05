@@ -75,7 +75,6 @@ const MultiPageForm = <T extends unknown>({
         }
     });
 
-    /* TODO: create a ui that tracks the current page you are on */
     return (
         <Box {...boxProps}>
             <Box sx={{ height: "10%", width: "100%", padding: "20px" }}>

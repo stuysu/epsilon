@@ -53,7 +53,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                     {organization.name}
                 </Typography>
                 <Typography variant="body1" align="center">
-                    {organization.mission}
+                    {organization.purpose}
                 </Typography>
             </Box>
         </Card>

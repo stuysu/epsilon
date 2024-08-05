@@ -17,9 +17,9 @@ const Charter = () => {
                 Charter
             </Typography>
             <Typography variant="h3" color="primary.main">
-                Mission Statement:
+                What is this club?
             </Typography>
-            <Typography>{organization.mission || "None"}</Typography>
+            <Typography>{organization.purpose || "None"}</Typography>
             <Typography variant="h3" color="primary.main">
                 What days does this organization meet?
             </Typography>
@@ -31,19 +31,11 @@ const Charter = () => {
             </Typography>
             <Typography>{organization.meeting_schedule || "None"}</Typography>
             <Typography variant="h3" color="primary.main">
-                GOALS
-            </Typography>
-            <Typography>{organization.goals || "None"}</Typography>
-            <Typography variant="h3" color="primary.main">
-                MEETING DESCRIPTION
+                What would a typical meeting look like?
             </Typography>
             <Typography>
                 {organization.meeting_description || "None"}
             </Typography>
-            <Typography variant="h3" color="primary.main">
-                CLUB DESCRIPTION
-            </Typography>
-            <Typography>{organization.purpose || "None"}</Typography>
             <Typography variant="h3" color="primary.main">
                 How does this activity appoint leaders?
             </Typography>

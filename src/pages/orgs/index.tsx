@@ -58,7 +58,6 @@ const OrgRouter = () => {
                     socials,
                     url,
                     picture,
-                    mission,
                     purpose,
                     goals,
                     appointment_procedures,

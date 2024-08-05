@@ -3,7 +3,7 @@ import { Avatar, Box, Paper, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import FormTextField from "../../../ui/forms/FormTextField";
 import OrgRequirements from "../../../../utils/OrgRequirements";
-import { capitalizeWords } from "../../../../utils/DataFormatters";
+import orgFieldMap from "../../../../utils/OrgFieldMap";
 import { supabase } from "../../../../supabaseClient";
 import { PUBLIC_URL } from "../../../../constants";
 import { useNavigate } from "react-router-dom";
@@ -48,7 +48,7 @@ const EditField = ({
     return (
         <>
             <Typography width="100%" sx={{ paddingLeft: "10px" }}>
-                {capitalizeWords(field.split("_").join(" "))}
+                {orgFieldMap(field)}
                 {" - "}
                 <span style={{ color: pending ? "gray" : "#2ecc71" }}>
                     {pending ? "Pending" : "Approved"}
@@ -114,7 +114,6 @@ const textFields = [
     "name",
     "url",
     "socials",
-    "mission",
     "goals",
     "purpose",
     "appointment_procedures",
@@ -670,9 +669,7 @@ const OrgEditor = ({
                         editDisplay={
                             <FormTextField
                                 sx={{ width: "80%" }}
-                                label={capitalizeWords(
-                                    field.split("_").join(" "),
-                                )}
+                                label={orgFieldMap(field)}
                                 field={field}
                                 onChange={(val) =>
                                     updateEdit(
