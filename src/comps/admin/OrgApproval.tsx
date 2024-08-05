@@ -121,7 +121,7 @@ const OrgApproval = ({
                 <Divider sx={{ margin: "10px" }} />
 
                 <Typography variant="h5" fontWeight={600}>
-                    Mission:
+                    Origin Story:
                 </Typography>
                 <Typography variant="body2">{org.mission}</Typography>
                 <Divider sx={{ margin: "10px" }} />
@@ -133,7 +133,7 @@ const OrgApproval = ({
                 <Divider sx={{ margin: "10px" }} />
 
                 <Typography variant="h5" fontWeight={600}>
-                    Description:
+                    Club Description:
                 </Typography>
                 <Typography variant="body2">{org.purpose}</Typography>
                 <Divider sx={{ margin: "10px" }} />
@@ -158,6 +158,8 @@ const OrgApproval = ({
                 <Typography variant="body2">
                     {org.meeting_description}
                 </Typography>
+                <Divider sx={{ margin: "10px" }} />
+
                 <Typography variant="h5" fontWeight={600}>
                     Meeting Schedule:
                 </Typography>
@@ -192,6 +194,8 @@ const OrgApproval = ({
                 <Typography variant="body2">
                     {org.tags?.join(", ") || "none"}
                 </Typography>
+                <Divider sx={{ margin: "10px" }} />
+
                 <Typography variant="h5" fontWeight={600}>
                     Clubs/Pubs Fair Interest:
                 </Typography>
