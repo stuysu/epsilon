@@ -74,7 +74,7 @@ const multilineStyle: CSSProperties = {
 };
 
 const Create = () => {
-    const navigate = useNavigate();
+    const [submitting, setSubmitting] = useState<boolean>(false);
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -107,6 +107,9 @@ const Create = () => {
     };
 
     useEffect(() => {
+        if (submitting) {
+            window.location.href = `${PUBLIC_URL}/${formData.url}`;
+        }
         const handleBeforeUnload = (event: BeforeUnloadEvent) => {
             if (checkFormFields()) {
                 event.preventDefault();
@@ -118,7 +121,7 @@ const Create = () => {
         return () => {
             window.removeEventListener("beforeunload", handleBeforeUnload);
         };
-    }, [formData]);
+    }, [formData, submitting]);
 
     const createActivity = async () => {
         let body = {
@@ -203,7 +206,7 @@ const Create = () => {
 
         enqueueSnackbar("Organization created!", { variant: "success" });
         /* redirect after creation (with refresh) */
-        window.location.href = `${PUBLIC_URL}/${formData.url}`;
+        setSubmitting(true);
     };
     return (
         <LoginGate>
