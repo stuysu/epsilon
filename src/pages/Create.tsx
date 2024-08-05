@@ -424,6 +424,22 @@ const Create = () => {
                         rows={4}
                         description="What is your activity’s meeting schedule? Are there periods of time where your club will pause meetings?"
                     />
+                    <FormSection
+                        sx={{ marginTop: "20px", marginBottom: "20px" }}
+                    >
+                        <FormCheckSelect
+                            label="Meeting Days"
+                            field="meeting_days"
+                            selections={[
+                                { id: "MONDAY", display: "Monday" },
+                                { id: "TUESDAY", display: "Tuesday" },
+                                { id: "WEDNESDAY", display: "Wednesday" },
+                                { id: "THURSDAY", display: "Thursday" },
+                                { id: "FRIDAY", display: "Friday" },
+                            ]}
+                            required={OrgRequirements.meeting_days.required}
+                        />
+                    </FormSection>
                     <FormTextField
                         label="Appointment Procedures"
                         field="appointment_procedures"
@@ -448,20 +464,6 @@ const Create = () => {
                         rows={4}
                         description="Why are you chartering this club and not joining another one?"
                     />
-                    <FormSection sx={{ marginTop: "20px" }}>
-                        <FormCheckSelect
-                            label="Meeting Days"
-                            field="meeting_days"
-                            selections={[
-                                { id: "MONDAY", display: "Monday" },
-                                { id: "TUESDAY", display: "Tuesday" },
-                                { id: "WEDNESDAY", display: "Wednesday" },
-                                { id: "THURSDAY", display: "Thursday" },
-                                { id: "FRIDAY", display: "Friday" },
-                            ]}
-                            required={OrgRequirements.meeting_days.required}
-                        />
-                    </FormSection>
                     <FormSection sx={{ marginTop: "20px", width: "100%" }}>
                         <FormCheckbox
                             field="returning"
