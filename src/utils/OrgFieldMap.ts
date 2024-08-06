@@ -2,6 +2,7 @@
 import { capitalizeWords } from "./DataFormatters";
 
 const textFieldMap: { [index: string]: string } = {
+    mission: "Origin Story",
     purpose: "Club Description",
 };
 
