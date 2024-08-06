@@ -32,7 +32,7 @@ The following documentation is meant for Directors and Members.
    in your commit or PR description.
 6. Request a review from a Director. They will review your changes, and ask for
    modifications if needed.
-7. When your code passes all checks(CI *and* reviewer) — **especially for new, unreviewed commits, if any** —congratulations! Your PR will be merged and
+7. When your code passes all checks(CI _and_ reviewer) — **especially for new, unreviewed commits, if any** —congratulations! Your PR will be merged and
    closed, with automatic deployment via Netlify soon to follow.
 
 Note: Merges should be ideally be performed as fast-forwards (via Git CLI)

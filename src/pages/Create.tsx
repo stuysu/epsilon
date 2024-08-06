@@ -1,6 +1,6 @@
-import { CSSProperties, useEffect, useState } from "react";
+import { CSSProperties, useContext, useEffect, useState } from "react";
 
-import { Typography, useMediaQuery } from "@mui/material";
+import { Box, Typography, useMediaQuery } from "@mui/material";
 import MultiPageForm from "../comps/ui/forms/MultiPageForm";
 import FormPage from "../comps/ui/forms/FormPage";
 import FormTextField from "../comps/ui/forms/FormTextField";
@@ -22,6 +22,7 @@ import { PUBLIC_URL } from "../constants";
 import { useNavigate } from "react-router-dom";
 
 import LoginGate from "../comps/ui/LoginGate";
+import UserContext from "../comps/context/UserContext";
 
 type FormType = {
     name: string;
@@ -76,6 +77,9 @@ const multilineStyle: CSSProperties = {
 const Create = () => {
     const [submitting, setSubmitting] = useState<boolean>(false);
 
+    const user: UserContextType = useContext(UserContext);
+    const [eligible, setEligible] = useState<boolean>(true);
+
     const { enqueueSnackbar } = useSnackbar();
 
     const [formData, setFormData] = useState<FormType>(emptyForm);
@@ -107,11 +111,33 @@ const Create = () => {
     };
 
     useEffect(() => {
+        if (!eligible) return;
+        const fetchPendingCharters = async () => {
+            const owned = await supabase
+                .from("memberships")
+                .select(
+                    `
+                    user_id,
+                    role,
+		            organization_id,
+                    organizations!inner(id)
+                `,
+                )
+                .eq("user_id", user.id)
+                .eq("role", "CREATOR")
+                .eq("organizations.state", "PENDING");
+            if ((owned?.data?.length || 0) > 0) setEligible(false);
+        };
+
+        fetchPendingCharters();
+    }, [user]);
+
+    useEffect(() => {
         if (submitting) {
             window.location.href = `${PUBLIC_URL}/${formData.url}`;
         }
         const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-            if (checkFormFields()) {
+            if (checkFormFields() && !submitting) {
                 event.preventDefault();
             }
         };
@@ -208,6 +234,19 @@ const Create = () => {
         /* redirect after creation (with refresh) */
         setSubmitting(true);
     };
+    if (!eligible)
+        return (
+            <Box
+                sx={{
+                    width: "100%",
+                }}
+            >
+                <Typography align="center" variant="h3">
+                    You may not submit a second charter if you already have one
+                    pending.
+                </Typography>
+            </Box>
+        );
     return (
         <LoginGate>
             <MultiPageForm
