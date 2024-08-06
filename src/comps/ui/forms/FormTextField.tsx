@@ -99,14 +99,9 @@ const FormTextField = ({
                 .join(" ");
         }
 
-        if (
-            requirements?.disableSpaces &&
-            targetValue.charAt(targetValue.length - 1) === " "
-        ) {
+        if (requirements?.disableSpaces && targetValue.indexOf(" ") !== -1) {
             if (targetValue.length === 1) {
                 targetValue = "";
-            } else if (targetValue.charAt(targetValue.length - 2) === "-") {
-                return;
             } else {
                 targetValue = targetValue.replace(/ +/g, "-");
             }
