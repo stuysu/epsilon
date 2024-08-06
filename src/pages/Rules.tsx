@@ -1,5 +1,5 @@
-import { Box, Typography } from "@mui/material";
-import { useNavigate, Link } from "react-router-dom";
+import { Box, Link, Typography } from "@mui/material";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
 import AsyncButton from "../comps/ui/AsyncButton";
 
 const Rules = () => {
@@ -34,7 +34,8 @@ const Rules = () => {
                         each week, Saturday. Once fully approved, the charter
                         will be visible on the&nbsp;
                         <Link
-                            color="secondary"
+                            color="primary"
+                            component={RouterLink}
                             to="https://epsilon.stuysu.org/catalog"
                         >
                             Epsilon website
@@ -71,15 +72,19 @@ const Rules = () => {
                         All Activities must adhere to the New York City
                         Department of Education{" "}
                         <Link
-                            color="secondary"
-                            to="https://www.schools.nyc.gov/docs/default-source/default-document-library/a-601-english"
+                            color="primary"
+                            href="https://www.schools.nyc.gov/docs/default-source/default-document-library/a-601-english"
+                            target="_blank"
+                            rel="noreferrer"
                         >
                             Chancellor’s Regulation A-601
                         </Link>
                         . Any Activity that violates this regulation or other{" "}
                         <Link
-                            color="secondary"
-                            to="https://www.schools.nyc.gov/about-us/policies/chancellors-regulations"
+                            color="primary"
+                            href="https://www.schools.nyc.gov/about-us/policies/chancellors-regulations"
+                            target="_blank"
+                            rel="noreferrer"
                         >
                             Chancellor’s Regulations
                         </Link>
@@ -89,8 +94,10 @@ const Rules = () => {
                     <li>
                         All Activities must adhere to the{" "}
                         <Link
-                            color="secondary"
-                            to="https://stuy.enschool.org/apps/pages/index.jsp?uREC_ID=126635&type=d"
+                            color="primary"
+                            href="https://stuy.enschool.org/apps/pages/index.jsp?uREC_ID=126635&type=d"
+                            target="_blank"
+                            rel="noreferrer"
                         >
                             Stuyvesant Code of Conduct
                         </Link>
