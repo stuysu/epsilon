@@ -68,7 +68,7 @@ const ApprovePending = () => {
         };
 
         fetchPendingOrgs();
-    });
+    }, []);
 
     if (view) {
         return (
