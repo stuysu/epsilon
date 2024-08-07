@@ -8,6 +8,7 @@ import {
     ListItemButton,
     ListItemText,
     ListItemIcon,
+    Link,
     Avatar,
 } from "@mui/material";
 
@@ -17,7 +18,7 @@ import UserContext from "../../context/UserContext";
 import { supabase } from "../../../supabaseClient";
 import { useSnackbar } from "notistack";
 
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link as NavLink, useLocation, useNavigate } from "react-router-dom";
 import InfoIcon from "@mui/icons-material/Info";
 import ArticleIcon from "@mui/icons-material/Article";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
@@ -263,6 +264,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                         return (
                             <Link
                                 key={i}
+                                component={NavLink}
                                 to={social}
                                 style={{ textAlign: "center" }}
                             >
