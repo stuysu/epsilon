@@ -33,7 +33,7 @@ const OrgRequirements: OrgValidator = {
         required: true,
         requirements: {
             minChar: 3,
-            maxChar: 40,
+            maxChar: 60,
             onlyAlpha: true,
         },
     },
