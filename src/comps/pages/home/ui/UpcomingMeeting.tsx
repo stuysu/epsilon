@@ -11,6 +11,7 @@ import { useState } from "react";
 import MeetingPreview from "../../../ui/meetings/MeetingPreview";
 import dayjs from "dayjs";
 import AsyncButton from "../../../ui/AsyncButton";
+import { daysOfWeek, monthNames } from "../../../../utils/TimeStrings";
 
 const UpcomingMeeting = ({
     id,
@@ -37,30 +38,6 @@ const UpcomingMeeting = ({
 
     let start = dayjs(start_time);
     let end = dayjs(end_time);
-
-    const daysOfWeek = [
-        "Monday",
-        "Tuesday",
-        "Wednesday",
-        "Thursday",
-        "Friday",
-        "Saturday",
-        "Sunday",
-    ];
-    const monthNames = [
-        "January",
-        "February",
-        "March",
-        "April",
-        "May",
-        "June",
-        "July",
-        "August",
-        "October",
-        "September",
-        "November",
-        "December",
-    ];
 
     return (
         <Box

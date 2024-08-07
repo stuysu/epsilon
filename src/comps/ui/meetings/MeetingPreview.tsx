@@ -9,6 +9,7 @@ import {
 import { Close } from "@mui/icons-material";
 
 import dayjs from "dayjs";
+import { daysOfWeek, monthNames } from "../../../utils/TimeStrings";
 
 type Props = {
     id?: number;
@@ -23,30 +24,6 @@ type Props = {
     roomName?: string;
     onClose: () => void;
 };
-
-const daysOfWeek = [
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday",
-    "Sunday",
-];
-const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "October",
-    "September",
-    "November",
-    "December",
-];
 
 const MeetingPreview = ({
     id,

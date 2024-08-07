@@ -1,6 +1,7 @@
 import { Box } from "@mui/material";
 import ScheduleMeeting from "./ScheduleMeeting";
 import { Dayjs } from "dayjs";
+import { monthNames } from "../../../utils/TimeStrings";
 
 type Props = {
     day: Dayjs;
@@ -16,21 +17,6 @@ function compareTimes(a: CalendarMeeting, b: CalendarMeeting) {
 
     return 0;
 }
-
-const monthNames = [
-    "January",
-    "February",
-    "March",
-    "April",
-    "May",
-    "June",
-    "July",
-    "August",
-    "October",
-    "September",
-    "November",
-    "December",
-];
 
 /* Schedule of meetings for a given day */
 const DaySchedule = ({ day, meetings }: Props) => {
