@@ -1,6 +1,6 @@
-import { CSSProperties, useEffect, useState } from "react";
+import { CSSProperties, useContext, useEffect, useState } from "react";
 
-import { Typography, useMediaQuery } from "@mui/material";
+import { Box, Typography, useMediaQuery } from "@mui/material";
 import MultiPageForm from "../comps/ui/forms/MultiPageForm";
 import FormPage from "../comps/ui/forms/FormPage";
 import FormTextField from "../comps/ui/forms/FormTextField";
@@ -22,6 +22,7 @@ import { PUBLIC_URL } from "../constants";
 import { useNavigate } from "react-router-dom";
 
 import LoginGate from "../comps/ui/LoginGate";
+import UserContext from "../comps/context/UserContext";
 
 type FormType = {
     name: string;
@@ -30,9 +31,10 @@ type FormType = {
     picture?: File;
     mission: string;
     purpose: string;
-    benefit: string;
+    goals: string;
     appointment_procedures: string;
     uniqueness: string;
+    meeting_description: string;
     meeting_schedule: string;
     meeting_days: string[];
     keywords: string[];
@@ -41,6 +43,7 @@ type FormType = {
     join_instructions: string;
     returning: boolean;
     returning_info: string;
+    fair: boolean;
 };
 
 const emptyForm: FormType = {
@@ -50,9 +53,10 @@ const emptyForm: FormType = {
     picture: undefined,
     mission: "",
     purpose: "",
-    benefit: "",
+    goals: "",
     appointment_procedures: "",
     uniqueness: "",
+    meeting_description: "",
     meeting_schedule: "",
     meeting_days: [],
     keywords: [],
@@ -61,6 +65,7 @@ const emptyForm: FormType = {
     join_instructions: "",
     returning: false,
     returning_info: "",
+    fair: false,
 };
 
 const multilineStyle: CSSProperties = {
@@ -70,8 +75,10 @@ const multilineStyle: CSSProperties = {
 };
 
 const Create = () => {
-    return <Typography> Under construction...</Typography>;
-    const navigate = useNavigate();
+    const [submitting, setSubmitting] = useState<boolean>(false);
+
+    const user: UserContextType = useContext(UserContext);
+    const [eligible, setEligible] = useState<boolean>(true);
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -83,7 +90,9 @@ const Create = () => {
             "url",
             "mission",
             "purpose",
-            "benefit",
+            "goals",
+            "meeting_description",
+            "meeting_schedule",
             "keywords",
             "tags",
             "appointment_procedures",
@@ -102,8 +111,33 @@ const Create = () => {
     };
 
     useEffect(() => {
+        if (!eligible) return;
+        const fetchPendingCharters = async () => {
+            const owned = await supabase
+                .from("memberships")
+                .select(
+                    `
+                    user_id,
+                    role,
+		            organization_id,
+                    organizations!inner(id)
+                `,
+                )
+                .eq("user_id", user.id)
+                .eq("role", "CREATOR")
+                .eq("organizations.state", "PENDING");
+            if ((owned?.data?.length || 0) > 0) setEligible(false);
+        };
+
+        fetchPendingCharters();
+    }, [user]);
+
+    useEffect(() => {
+        if (submitting) {
+            window.location.href = `${PUBLIC_URL}/${formData.url}`;
+        }
         const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-            if (checkFormFields()) {
+            if (checkFormFields() && !submitting) {
                 event.preventDefault();
             }
         };
@@ -113,7 +147,7 @@ const Create = () => {
         return () => {
             window.removeEventListener("beforeunload", handleBeforeUnload);
         };
-    }, [formData]);
+    }, [formData, submitting]);
 
     const createActivity = async () => {
         let body = {
@@ -122,18 +156,20 @@ const Create = () => {
             socials: formData.socials,
             // picture: null, // update after creating initial org
             mission: formData.mission,
+            goals: formData.goals,
             purpose: formData.purpose,
-            benefit: formData.benefit,
             keywords: formData.keywords.join(",").toLowerCase(),
             tags: formData.tags,
             appointment_procedures: formData.appointment_procedures,
             uniqueness: formData.uniqueness,
+            meeting_description: formData.meeting_description,
             meeting_schedule: formData.meeting_schedule,
             meeting_days: formData.meeting_days,
             commitment_level: formData.commitment_level,
             join_instructions: formData.join_instructions,
             is_returning: formData.returning,
             returning_info: formData.returning_info,
+            fair: formData.fair,
         };
 
         let { data: orgCreateData, error: orgCreateError } =
@@ -196,8 +232,21 @@ const Create = () => {
 
         enqueueSnackbar("Organization created!", { variant: "success" });
         /* redirect after creation (with refresh) */
-        window.location.href = `${PUBLIC_URL}/${formData.url}`;
+        setSubmitting(true);
     };
+    if (!eligible)
+        return (
+            <Box
+                sx={{
+                    width: "100%",
+                }}
+            >
+                <Typography align="center" variant="h3">
+                    You may not submit a second charter if you already have one
+                    pending.
+                </Typography>
+            </Box>
+        );
     return (
         <LoginGate>
             <MultiPageForm
@@ -361,71 +410,62 @@ const Create = () => {
 
                 <FormPage title="Charter Information">
                     <FormTextField
-                        label="Mission"
+                        label="Origin Story"
                         field="mission"
                         multiline
                         requirements={OrgRequirements.mission.requirements}
                         required={OrgRequirements.mission.required}
                         sx={multilineStyle}
                         rows={4}
-                        description="A quick blurb of what this organization is all about"
+                        description="Tell us, in simple words, why you want to create this club. This information won’t be displayed on Epsilon, we will use it to gauge your passion and reasoning in forming this club."
                     />
                     <FormTextField
-                        label="Purpose"
+                        label="Goals"
+                        field="goals"
+                        multiline
+                        requirements={OrgRequirements.goals.requirements}
+                        required={OrgRequirements.goals.required}
+                        sx={multilineStyle}
+                        rows={4}
+                        description="What are your specific, realistic, and timely goals for this club to accomplish? This is for us to better support you throughout the year and can be edited as needed."
+                    />
+                    <FormTextField
+                        label="Club Description"
                         field="purpose"
                         multiline
                         requirements={OrgRequirements.purpose.requirements}
                         required={OrgRequirements.purpose.required}
                         sx={multilineStyle}
                         rows={4}
-                        description="This will serve as the official description of the club. Please include a brief statement about what is expected of general members involved in the club."
+                        description="This is what will be displayed on Epsilon: What do you want the Stuyvesant Community to know about your club?"
                     />
                     <FormTextField
-                        label="Benefit"
-                        field="benefit"
-                        multiline
-                        requirements={OrgRequirements.benefit.requirements}
-                        required={OrgRequirements.benefit.required}
-                        sx={multilineStyle}
-                        rows={4}
-                        description="How will this activity benefit the Stuyvesant community?"
-                    />
-                    <FormTextField
-                        label="Appointment Procedures"
-                        field="appointment_procedures"
+                        label="Meeting Description"
+                        field="meeting_description"
                         multiline
                         requirements={
-                            OrgRequirements.appointment_procedures.requirements
+                            OrgRequirements.meeting_description.requirements
                         }
-                        required={
-                            OrgRequirements.appointment_procedures.required
-                        }
+                        required={OrgRequirements.meeting_description.required}
                         sx={multilineStyle}
                         rows={4}
-                        description="What are the leadership positions and how are they appointed? Are there any specific protocols members are expected to follow? What is the policy for transfer of leadership between school years? How will leaders be removed if necessary?"
-                    />
-                    <FormTextField
-                        label="Uniqueness"
-                        field="uniqueness"
-                        multiline
-                        requirements={OrgRequirements.uniqueness.requirements}
-                        required={OrgRequirements.uniqueness.required}
-                        sx={multilineStyle}
-                        rows={4}
-                        description="What makes your organization unique?"
+                        description="What would a typical meeting look like? Describe with as much detail as possible how a meeting will be structured, and what activities will be specific to your club."
                     />
                     <FormTextField
                         label="Meeting Schedule"
                         field="meeting_schedule"
+                        multiline
                         requirements={
                             OrgRequirements.meeting_schedule.requirements
                         }
                         required={OrgRequirements.meeting_schedule.required}
                         sx={multilineStyle}
                         rows={4}
-                        description={`Something like "Our meeting schedule varies throughout the year, but we meet at least once a month and up to 3 times in the Spring."`}
+                        description="What is your activity’s meeting schedule? Are there periods of time where your club will pause meetings?"
                     />
-                    <FormSection sx={{ marginTop: "20px" }}>
+                    <FormSection
+                        sx={{ marginTop: "20px", marginBottom: "20px" }}
+                    >
                         <FormCheckSelect
                             label="Meeting Days"
                             field="meeting_days"
@@ -439,6 +479,30 @@ const Create = () => {
                             required={OrgRequirements.meeting_days.required}
                         />
                     </FormSection>
+                    <FormTextField
+                        label="Appointment Procedures"
+                        field="appointment_procedures"
+                        multiline
+                        requirements={
+                            OrgRequirements.appointment_procedures.requirements
+                        }
+                        required={
+                            OrgRequirements.appointment_procedures.required
+                        }
+                        sx={multilineStyle}
+                        rows={4}
+                        description="How many leaders will your club have? What will be their roles?"
+                    />
+                    <FormTextField
+                        label="Uniqueness"
+                        field="uniqueness"
+                        multiline
+                        requirements={OrgRequirements.uniqueness.requirements}
+                        required={OrgRequirements.uniqueness.required}
+                        sx={multilineStyle}
+                        rows={4}
+                        description="Why are you chartering this club and not joining another one?"
+                    />
                     <FormSection sx={{ marginTop: "20px", width: "100%" }}>
                         <FormCheckbox
                             field="returning"
@@ -449,6 +513,7 @@ const Create = () => {
                             <FormTextField
                                 label="Returning Info"
                                 field="returning_info"
+                                multiline
                                 requirements={
                                     OrgRequirements.returning_info.requirements
                                 }
@@ -458,11 +523,23 @@ const Create = () => {
                                 sx={multilineStyle}
                                 rows={4}
                                 description={
-                                    "Give us an idea of the things your club did last year!"
+                                    "Why should we allow your club to be rechartered? In what ways have you achieved the mission that your club stated in its charter last year?"
                                 }
                             />
                         )}
                     </FormSection>
+                    <FormSection sx={{ marginTop: "20px", width: "100%" }}>
+                        <FormCheckbox
+                            field="fair"
+                            label="Do you want to represent your club at the Club Pub Fair?"
+                            description="Check this box if so."
+                        />
+                    </FormSection>
+                    <Typography sx={{ marginTop: "1rem" }}>
+                        If you have additional information to share about your
+                        club, please use the "Messages" feature in your club
+                        admin panel.
+                    </Typography>
                 </FormPage>
             </MultiPageForm>
         </LoginGate>

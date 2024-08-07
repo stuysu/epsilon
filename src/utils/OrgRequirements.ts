@@ -12,9 +12,10 @@ type validatorField =
     | "picture"
     | "mission"
     | "purpose"
-    | "benefit"
+    | "goals"
     | "appointment_procedures"
     | "uniqueness"
+    | "meeting_description"
     | "meeting_schedule"
     | "meeting_days"
     | "returning_info"
@@ -79,43 +80,50 @@ const OrgRequirements: OrgValidator = {
     mission: {
         required: true,
         requirements: {
-            minChar: 20,
-            maxChar: 150,
+            minWords: 150,
+            maxWords: 400,
+        },
+    },
+    goals: {
+        required: true,
+        requirements: {
+            minWords: 150,
+            maxWords: 300,
         },
     },
     purpose: {
         required: true,
         requirements: {
-            minWords: 100,
-            maxWords: 400,
-        },
-    },
-    benefit: {
-        required: true,
-        requirements: {
-            minWords: 200,
-            maxWords: 400,
+            minWords: 50,
+            maxWords: 150,
         },
     },
     appointment_procedures: {
         required: true,
         requirements: {
             minWords: 50,
-            maxWords: 400,
+            maxWords: 100,
         },
     },
     uniqueness: {
         required: true,
         requirements: {
-            minWords: 75,
+            minWords: 150,
             maxWords: 400,
+        },
+    },
+    meeting_description: {
+        required: true,
+        requirements: {
+            minWords: 150,
+            maxWords: 250,
         },
     },
     meeting_schedule: {
         required: true,
         requirements: {
-            minChar: 50,
-            maxChar: 1000,
+            minWords: 50,
+            maxWords: 300,
         },
     },
     meeting_days: {
@@ -124,8 +132,8 @@ const OrgRequirements: OrgValidator = {
     returning_info: {
         required: false,
         requirements: {
-            minChar: 50,
-            maxChar: 1000,
+            minWords: 100,
+            maxWords: 300,
         },
     },
 };

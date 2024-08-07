@@ -6,9 +6,10 @@ interface Organization {
     picture?: string | null;
     mission?: string;
     purpose?: string;
-    benefit?: string;
+    goals?: string;
     appointment_procedures?: string;
     uniqueness?: string;
+    meeting_description?: string;
     meeting_schedule?: string;
     meeting_days?: string[];
     keywords?: string;
@@ -18,6 +19,7 @@ interface Organization {
     joinable?: boolean;
     join_instructions?: string;
     memberships?: Partial<Membership>[];
+    fair?: boolean;
 }
 
 interface OrganizationEdit {
@@ -29,14 +31,16 @@ interface OrganizationEdit {
     picture?: Organization["picture"];
     mission?: Organization["mission"];
     purpose?: Organization["purpose"];
-    benefit?: Organization["benefit"];
+    goals?: Organization["goals"];
     appointment_procedures?: Organization["appointment_procedures"];
     uniqueness?: Organization["uniqueness"];
+    meeting_description?: Organization["meeting_description"];
     meeting_schedule?: Organization["meeting_schedule"];
     meeting_days?: Organization["meeting_days"];
     keywords?: Organization["keywords"];
     tags?: Organization["tags"];
     commitment_level?: Organization["commitment_level"];
+    fair?: Organization["fair"];
 }
 
 /* FOR ADMIN PANEL (Approving Organization Edit Requests)*/

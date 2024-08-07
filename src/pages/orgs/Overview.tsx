@@ -25,10 +25,10 @@ const Overview = () => {
                 Overview
             </Typography>
             <Typography variant="h3" color="primary.main" width="100%">
-                Mission:
+                Description:
             </Typography>
             <Typography variant="body1" width="100%">
-                {organization.mission || "None"}
+                {organization.purpose || "None"}
             </Typography>
             <Typography variant="h3" color="primary.main" width="100%">
                 Meeting Schedule:

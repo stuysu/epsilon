@@ -6,6 +6,7 @@ import { supabase } from "../../supabaseClient";
 import { useSnackbar } from "notistack";
 import OrgChat from "./OrgChat";
 import AsyncButton from "../ui/AsyncButton";
+import orgFieldMap from "../../utils/OrgFieldMap";
 
 type EditKey = keyof EditType;
 
@@ -15,15 +16,17 @@ const editFields: EditKey[] = [
     "socials",
     "picture",
     "mission",
+    "goals",
     "purpose",
-    "benefit",
     "appointment_procedures",
     "uniqueness",
+    "meeting_description",
     "meeting_schedule",
     "meeting_days",
     "keywords",
     "tags",
     "commitment_level",
+    "fair",
 ];
 
 const OrgEditApproval = ({
@@ -207,7 +210,7 @@ const OrgEditApproval = ({
                     return (
                         <>
                             <Typography variant="h5" fontWeight={600}>
-                                {field}
+                                {orgFieldMap(field)}
                             </Typography>
                             <Typography variant="body2">
                                 {`"${edit[f2]}"`}

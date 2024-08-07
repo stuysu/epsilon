@@ -25,14 +25,16 @@ const Organization = () => {
         picture: undefined,
         mission: undefined,
         purpose: undefined,
-        benefit: undefined,
+        goals: undefined,
         appointment_procedures: undefined,
         uniqueness: undefined,
+        meeting_description: undefined,
         meeting_schedule: undefined,
         meeting_days: undefined,
         keywords: undefined,
         tags: undefined,
         commitment_level: undefined,
+        fair: undefined,
     });
 
     // eslint-disable-next-line

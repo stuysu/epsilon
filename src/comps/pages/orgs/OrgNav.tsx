@@ -246,7 +246,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     width="100%"
                     sx={{ overflowX: "hidden", marginBottom: "20px" }}
                 >
-                    {organization.mission}
+                    {organization.purpose}
                 </Typography>
                 {organization.socials &&
                     organization.socials.split(" ").map((social, i, a) => {

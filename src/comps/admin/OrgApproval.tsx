@@ -121,21 +121,21 @@ const OrgApproval = ({
                 <Divider sx={{ margin: "10px" }} />
 
                 <Typography variant="h5" fontWeight={600}>
-                    Mission:
+                    Origin Story:
                 </Typography>
                 <Typography variant="body2">{org.mission}</Typography>
                 <Divider sx={{ margin: "10px" }} />
 
                 <Typography variant="h5" fontWeight={600}>
-                    Purpose:
+                    Goals:
                 </Typography>
-                <Typography variant="body2">{org.purpose}</Typography>
+                <Typography variant="body2">{org.goals}</Typography>
                 <Divider sx={{ margin: "10px" }} />
 
                 <Typography variant="h5" fontWeight={600}>
-                    Benefit:
+                    Club Description:
                 </Typography>
-                <Typography variant="body2">{org.benefit}</Typography>
+                <Typography variant="body2">{org.purpose}</Typography>
                 <Divider sx={{ margin: "10px" }} />
 
                 <Typography variant="h5" fontWeight={600}>
@@ -150,6 +150,14 @@ const OrgApproval = ({
                     Uniqueness:
                 </Typography>
                 <Typography variant="body2">{org.uniqueness}</Typography>
+                <Divider sx={{ margin: "10px" }} />
+
+                <Typography variant="h5" fontWeight={600}>
+                    Meeting Description:
+                </Typography>
+                <Typography variant="body2">
+                    {org.meeting_description}
+                </Typography>
                 <Divider sx={{ margin: "10px" }} />
 
                 <Typography variant="h5" fontWeight={600}>
@@ -185,6 +193,14 @@ const OrgApproval = ({
                 </Typography>
                 <Typography variant="body2">
                     {org.tags?.join(", ") || "none"}
+                </Typography>
+                <Divider sx={{ margin: "10px" }} />
+
+                <Typography variant="h5" fontWeight={600}>
+                    Clubs/Pubs Fair Interest:
+                </Typography>
+                <Typography variant="body2">
+                    {org.fair ? "YES" : "NO"}
                 </Typography>
                 <Divider sx={{ margin: "10px" }} />
 
