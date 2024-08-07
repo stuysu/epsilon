@@ -236,9 +236,8 @@ const Catalog = () => {
                                             width: "100%",
                                             whiteSpace: "pre-line",
                                         }}
-                                    >
-                                        {announcement.content}
-                                    </Typography>
+                                        dangerouslySetInnerHTML={{ __html: announcement.content }}
+                                    />
                                 </Card>
                             );
                         })}
