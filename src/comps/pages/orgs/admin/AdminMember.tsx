@@ -211,7 +211,7 @@ const AdminMember = ({
             </Box>
             <ConfirmationDialog
                 open={kickConfirmOpen}
-                title={`Kick ${user.first_name} ${user.last_name}?`}
+                title={`Kick ${first_name} ${last_name}?`}
                 description={"This action can't be reversed."}
                 onConfirm={handleKick}
                 onClose={() => setKickConfirmOpen(false)}
