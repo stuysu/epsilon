@@ -38,7 +38,8 @@ const ApprovePending = () => {
                     fair,
                     state,
                     joinable,
-                    join_instructions,
+                    is_returning,
+                    returning_info,
                     memberships (
                         id,
                         role,

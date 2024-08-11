@@ -18,6 +18,8 @@ interface Organization {
     state: "PENDING" | "LOCKED" | "UNLOCKED" | "ADMIN" | "PUNISHED";
     joinable?: boolean;
     join_instructions?: string;
+    is_returning?: boolean;
+    returning_info?: string;
     memberships?: Partial<Membership>[];
     fair?: boolean;
 }

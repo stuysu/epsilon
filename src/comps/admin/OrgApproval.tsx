@@ -153,6 +153,16 @@ const OrgApproval = ({
                 <Divider sx={{ margin: "10px" }} />
 
                 <Typography variant="h5" fontWeight={600}>
+                    Returning Info:
+                </Typography>
+                <Typography variant="body2">
+                    {org.is_returning
+                        ? org?.returning_info || "NO INFO SUBMITTED"
+                        : "Claims to not be a returning club."}
+                </Typography>
+                <Divider sx={{ margin: "10px" }} />
+
+                <Typography variant="h5" fontWeight={600}>
                     Meeting Description:
                 </Typography>
                 <Typography variant="body2">

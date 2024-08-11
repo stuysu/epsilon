@@ -97,6 +97,7 @@ const Create = () => {
             "tags",
             "appointment_procedures",
         ];
+        if (formData.returning && !formData.returning_info) return false;
 
         return fields.some((field) => {
             const value = formData[field as keyof FormType];
@@ -511,7 +512,7 @@ const Create = () => {
                         <FormCheckbox
                             field="returning"
                             label="Returning?"
-                            description="Check this box if your club was chartered last year."
+                            description="Check this box if your club was chartered last year. You MUST answer the following question if this is the case."
                         />
                         {formData.returning && (
                             <FormTextField
