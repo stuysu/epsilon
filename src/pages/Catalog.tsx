@@ -121,6 +121,9 @@ const Catalog = () => {
             ({ data: orgData, error: orgError } = await supabase
                 .from("organizations")
                 .select("*")
+                .neq("state", "PENDING")
+                .neq("state", "LOCKED")
+                .neq("state", "PUNISHED")
                 .or(catalogQuery)
                 // .ilike("name", `%${searchParams.name}%`)
                 .range(originalOffset, originalOffset + querySize - 1));
@@ -289,12 +292,6 @@ const Catalog = () => {
                         {
                             searchState.orgs.length ? (
                                 searchState.orgs.map((org, i) => {
-                                    if (
-                                        org.state === "PENDING" ||
-                                        org.state === "LOCKED" ||
-                                        org.state === "PUNISHED"
-                                    )
-                                        return <></>;
                                     return (
                                         <OrgCard organization={org} key={i} />
                                     );
