@@ -3,6 +3,7 @@ import "./App.css";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "./comps/context/ThemeProvider";
 import UserProvider from "./comps/context/UserProvider";
+import AlertDisplay from "./comps/ui/AlertDisplay";
 import Pages from "./pages";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -53,6 +54,7 @@ const App = () => {
             <LocalizationProvider dateAdapter={AdapterDayjs}>
                 <ThemeProvider>
                     <CssBaseline />
+                    <AlertDisplay />
                     <SnackbarProvider maxSnack={4} autoHideDuration={3000}>
                         <BrowserRouter>
                             <UserProvider>

@@ -34,7 +34,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
 import InfoIcon from "@mui/icons-material/Info";
 import GavelIcon from "@mui/icons-material/Gavel";
-import ArchiveIcon from '@mui/icons-material/Archive';
+import ArchiveIcon from "@mui/icons-material/Archive";
 import AsyncButton from "../AsyncButton";
 
 const navStyles: CSSProperties = {
@@ -315,7 +315,11 @@ const NavBar = () => {
                             </ListItemIcon>
                             <ListItemText>Rules</ListItemText>
                         </ListItemButton>
-                        <ListItemButton component="a" href="https://docs.google.com/spreadsheets/d/1TyFnEPhY3gM-yRJKYDJkQSfHC6OsvC5ftkkoahjVcCU" target="_blank">
+                        <ListItemButton
+                            component="a"
+                            href="https://docs.google.com/spreadsheets/d/1TyFnEPhY3gM-yRJKYDJkQSfHC6OsvC5ftkkoahjVcCU"
+                            target="_blank"
+                        >
                             <ListItemIcon>
                                 <ArchiveIcon />
                             </ListItemIcon>
