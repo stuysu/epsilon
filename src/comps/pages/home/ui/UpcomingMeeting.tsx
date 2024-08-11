@@ -59,7 +59,11 @@ const UpcomingMeeting = ({
             >
                 <ListItem>
                     <ListItemAvatar>
-                        <Avatar alt={org_name} src={org_picture || ""}>
+                        <Avatar
+                            alt={org_name}
+                            src={org_picture || ""}
+                            sx={{ objectFit: "cover" }}
+                        >
                             {org_name.charAt(0).toUpperCase()}
                         </Avatar>
                     </ListItemAvatar>

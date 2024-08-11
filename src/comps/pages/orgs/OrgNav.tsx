@@ -226,12 +226,13 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                 >
                     <Avatar
                         src={organization.picture || ""}
-                        style={{
+                        sx={{
                             width: "100%",
                             height: "100%",
                             borderRadius: "100%",
                             boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
                             fontSize: "100px",
+                            objectFit: "cover",
                         }}
                         alt={`organization ${organization.name}`}
                     >

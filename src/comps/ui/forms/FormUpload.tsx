@@ -147,7 +147,7 @@ const FormUpload = ({
                         src={value ? URL.createObjectURL(value) : ""}
                         width="200px"
                         height="200px"
-                        style={{ borderRadius: "100%" }}
+                        style={{ borderRadius: "100%", objectFit: "cover" }}
                     />
                 </Box>
             )}

@@ -547,6 +547,7 @@ const OrgEditor = ({
                             height: "170px",
                             borderRadius: "100%",
                             fontSize: "70px",
+                            objectFit: "cover",
                         }}
                     >
                         {(organization.name || "O").slice(0, 1).toUpperCase()}

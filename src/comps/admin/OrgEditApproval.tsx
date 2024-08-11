@@ -196,6 +196,7 @@ const OrgEditApproval = ({
                                         width: "150px",
                                         height: "150px",
                                         fontSize: "60px",
+                                        objectFit: "cover",
                                     }}
                                 >
                                     {edit.organization_name

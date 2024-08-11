@@ -34,6 +34,7 @@ const PendingOrgCard = ({
                         height: "225px",
                         boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
                         fontSize: "70px",
+                        objectFit: "cover",
                     }}
                 >
                     {name ? name[0].toUpperCase() : ""}

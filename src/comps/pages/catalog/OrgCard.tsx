@@ -42,6 +42,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                         borderRadius: "100%",
                         boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
                         fontSize: "60px",
+                        objectFit: "cover",
                     }}
                     alt={`${organization.name}`}
                 >

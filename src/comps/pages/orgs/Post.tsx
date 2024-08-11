@@ -106,6 +106,7 @@ const Post = ({
                     <Avatar
                         alt={content.organizations?.name}
                         src={content.organizations?.picture || ""}
+                        sx={{ objectFit: "cover" }}
                     >
                         {content.organizations?.name?.charAt(0).toUpperCase()}
                     </Avatar>
