@@ -14,7 +14,7 @@ const PendingOrgCard = ({
         <Card
             sx={{
                 width: "100%",
-                height: "420px",
+                minHeight: "420px",
                 padding: "20px",
                 maxWidth: "600px",
             }}
