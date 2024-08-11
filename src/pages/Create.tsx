@@ -176,10 +176,14 @@ const Create = () => {
             await supabase.functions.invoke("create-organization", { body });
 
         if (orgCreateError || !orgCreateData) {
-            return enqueueSnackbar(
-                "Error creating organization. Contact it@stuysu.org for support.",
-                { variant: "error" },
-            );
+            const error = await orgCreateError?.context.text();
+            let message = "Contact it@stuysu.org for support.";
+            if (error) {
+                message = error;
+            }
+            return enqueueSnackbar("Error creating organization. " + message, {
+                variant: "error",
+            });
         }
         let orgId = orgCreateData.id;
 
