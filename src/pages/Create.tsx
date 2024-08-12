@@ -422,7 +422,7 @@ const Create = () => {
                         required={OrgRequirements.mission.required}
                         sx={multilineStyle}
                         rows={4}
-                        description="Tell us, in simple words, why you want to create this club. This information won’t be displayed on Epsilon, we will use it to gauge your passion and reasoning in forming this club."
+                        description="Tell us, in simple words, why you want to create this club OR what motivates you to lead it this year. This information won’t be displayed on Epsilon, we will use it to gauge your passion and reasoning in forming this club."
                     />
                     <FormTextField
                         label="Goals"
