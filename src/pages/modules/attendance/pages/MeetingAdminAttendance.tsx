@@ -65,8 +65,18 @@ const MeetingAdminAttendance = () => {
         fetchMeetingData();
     }, [meetingId, enqueueSnackbar]);
 
-    const updateStatus = async (userId?: number, firstName?: string, lastName?: string, isPresent?: boolean) => {
-        if (userId === undefined || firstName == undefined || lastName == undefined || isPresent === undefined) {
+    const updateStatus = async (
+        userId?: number,
+        firstName?: string,
+        lastName?: string,
+        isPresent?: boolean,
+    ) => {
+        if (
+            userId === undefined ||
+            firstName == undefined ||
+            lastName == undefined ||
+            isPresent === undefined
+        ) {
             enqueueSnackbar("Invalid parameters.", { variant: "error" });
             return;
         }
@@ -286,7 +296,12 @@ const MeetingAdminAttendance = () => {
                                         variant="outlined"
                                         color={isPresent ? "error" : "success"}
                                         onClick={() =>
-                                            updateStatus(userId, member.users?.first_name, member.users?.last_name, isPresent)
+                                            updateStatus(
+                                                userId,
+                                                member.users?.first_name,
+                                                member.users?.last_name,
+                                                isPresent,
+                                            )
                                         }
                                     >
                                         {isPresent
