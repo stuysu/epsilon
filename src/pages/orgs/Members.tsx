@@ -14,7 +14,7 @@ const Members = () => {
                 {
                     organization.memberships.filter((member) => member.active)
                         .length
-                }{" "}
+                }
                 Members
             </Typography>
             {organization.memberships
