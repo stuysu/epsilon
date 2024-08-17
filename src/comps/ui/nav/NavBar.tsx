@@ -179,7 +179,7 @@ const NavBar = () => {
                                     </Typography>
                                     <Typography width="100%">
                                         ID:{" "}
-                                        {String(user.id).padStart(5, "0") ||
+                                        {String(user.id).padStart(4, "0") ||
                                             "No ID"}
                                     </Typography>
                                     <Typography width="100%">
