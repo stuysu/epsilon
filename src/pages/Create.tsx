@@ -275,12 +275,12 @@ const Create = () => {
                         <br />
                         <br />
                         Once you’re confident that your Activity abides by all
-                        the regulations, log in to your StuyActivities account
-                        (You've already done that!) and fill out the Chartering
-                        form below. Keep in mind that your charter will be
-                        public, so do your best to provide helpful, substantive
-                        responses to the questions, and avoid including
-                        confusing, inappropriate, or incorrect information.{" "}
+                        the regulations, log in to your Epsilon account (You've
+                        already done that!) and fill out the Chartering form
+                        below. Keep in mind that your charter will be public, so
+                        do your best to provide helpful, substantive responses
+                        to the questions, and avoid including confusing,
+                        inappropriate, or incorrect information.
                         <br />
                         <br />
                         Once you’ve submitted your club’s charter, please allow
@@ -288,7 +288,7 @@ const Create = () => {
                         review your charter. Unless there are any issues with
                         your charter (i.e. lack of compliance with the rules or
                         unclear submissions) the SU Admins will approve it. Once
-                        your activity is approved, it will appear in the
+                        your activity is approved, it will appear in the Epsilon
                         StuyActivities Catalog, and you can begin adding members
                         and scheduling meetings. If you have any questions or
                         concerns regarding the chartering process, please reach
