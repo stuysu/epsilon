@@ -81,49 +81,49 @@ const OrgRequirements: OrgValidator = {
         required: true,
         requirements: {
             minWords: 150,
-            maxWords: 400,
+            maxWords: 800,
         },
     },
     goals: {
         required: true,
         requirements: {
             minWords: 150,
-            maxWords: 300,
+            maxWords: 600,
         },
     },
     purpose: {
         required: true,
         requirements: {
             minWords: 50,
-            maxWords: 150,
+            maxWords: 300,
         },
     },
     appointment_procedures: {
         required: true,
         requirements: {
             minWords: 50,
-            maxWords: 100,
+            maxWords: 200,
         },
     },
     uniqueness: {
         required: true,
         requirements: {
             minWords: 150,
-            maxWords: 400,
+            maxWords: 800,
         },
     },
     meeting_description: {
         required: true,
         requirements: {
             minWords: 150,
-            maxWords: 250,
+            maxWords: 500,
         },
     },
     meeting_schedule: {
         required: true,
         requirements: {
             minWords: 50,
-            maxWords: 300,
+            maxWords: 600,
         },
     },
     meeting_days: {
@@ -133,7 +133,7 @@ const OrgRequirements: OrgValidator = {
         required: false,
         requirements: {
             minWords: 100,
-            maxWords: 300,
+            maxWords: 600,
         },
     },
 };
