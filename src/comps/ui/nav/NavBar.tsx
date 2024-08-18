@@ -62,6 +62,7 @@ const NavBar = () => {
     const user = useContext(UserContext);
     const { enqueueSnackbar } = useSnackbar();
     const [drawerOpen, setDrawerOpen] = useState(false);
+    const [fourDigitId, setFourDigitId] = useState<Number | null>(null);
     const location = useLocation(); // disable drawer when location changes
     const navigate = useNavigate();
 
@@ -84,6 +85,17 @@ const NavBar = () => {
     useEffect(() => {
         setDrawerOpen(false);
     }, [location]);
+    useEffect(() => {
+        const fetchID = async () => {
+            const { data, error } = await supabase
+                .from("fourdigitids")
+                .select("value")
+                .maybeSingle();
+            if (error) console.log(error);
+            else if (data) setFourDigitId(data.value as Number);
+        };
+        fetchID();
+    }, [user]);
 
     return (
         <>
@@ -177,11 +189,15 @@ const NavBar = () => {
                                     <Typography width="100%">
                                         {user.email || "No Email"}
                                     </Typography>
-                                    <Typography width="100%">
-                                        ID:{" "}
-                                        {String(user.id).padStart(4, "0") ||
-                                            "No ID"}
-                                    </Typography>
+                                    {fourDigitId && (
+                                        <Typography width="100%">
+                                            ID:{" "}
+                                            {String(fourDigitId).padStart(
+                                                4,
+                                                "0",
+                                            )}
+                                        </Typography>
+                                    )}
                                     <Typography width="100%">
                                         Grade: {user.grade || "No Grade"}
                                     </Typography>
