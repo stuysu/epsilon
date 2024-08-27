@@ -123,7 +123,11 @@ const Post = ({
             </Typography>
 
             <Box sx={{ width: "100%", height: "170px", overflowY: "auto" }}>
-                <Typography variant="body1" width="100%">
+                <Typography
+                    variant="body1"
+                    width="100%"
+                    sx={{ whiteSpace: "pre-line" }}
+                >
                     {content.description}
                 </Typography>
             </Box>
