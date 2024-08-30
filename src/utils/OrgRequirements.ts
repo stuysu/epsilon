@@ -80,7 +80,7 @@ const OrgRequirements: OrgValidator = {
     mission: {
         required: true,
         requirements: {
-            minWords: 150,
+            minWords: 75,
             maxWords: 800,
         },
     },
@@ -132,7 +132,7 @@ const OrgRequirements: OrgValidator = {
     returning_info: {
         required: false,
         requirements: {
-            minWords: 100,
+            minWords: 75,
             maxWords: 600,
         },
     },
