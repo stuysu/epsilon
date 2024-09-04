@@ -87,7 +87,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                     await supabase.auth.signOut();
 
                     enqueueSnackbar(
-                        "Unverified account. If you are a freshmen (class of 2028), we are waiting for school administration to provide us with account verification information. Please contact it@stuysu.org for support if you have an unrelated issue.",
+                        "Unverified account. Please contact it@stuysu.org for support.",
                         { variant: "error" },
                     );
                     return;
