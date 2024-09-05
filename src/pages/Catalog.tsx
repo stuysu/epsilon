@@ -7,8 +7,6 @@ import { Masonry } from "@mui/lab";
 import OrgCard from "../comps/pages/catalog/OrgCard";
 import { useSnackbar } from "notistack";
 
-import InfiniteScroll from "react-infinite-scroll-component";
-
 import Loading from "../comps/ui/Loading";
 import SearchFilter from "../comps/pages/catalog/SearchFilter";
 import AsyncButton from "../comps/ui/AsyncButton";
@@ -71,6 +69,7 @@ const Catalog = () => {
     if (isOne) columns = 1;
 
     const getOrgs = async (isReset?: boolean) => {
+        console.log("GETTING ORGS");
         const originalOffset = isReset ? 0 : searchState.offset;
         // setSearchState({...searchState, offset: originalOffset + querySize});
 
@@ -192,6 +191,7 @@ const Catalog = () => {
     let approvedOrgs = searchState.orgs.filter(
         (o) => o.state !== "PENDING" && o.state !== "LOCKED",
     );
+    console.log(searchState);
 
     return (
         <Box sx={{ display: "flex", position: "relative", flexWrap: "wrap" }}>
@@ -267,15 +267,26 @@ const Catalog = () => {
                 </Box>
                 <Typography variant="h3">Catalog</Typography>
 
-                <InfiniteScroll
-                    dataLength={searchState.offset}
-                    next={getOrgs}
-                    hasMore={searchState.more}
-                    loader={<Loading />}
-                    endMessage={
+                <Box>
+                    {searchState.orgs.length ? (
+                        <Masonry columns={columns} spacing={2}>
+                            {searchState.orgs.map((org, i) => {
+                                return <OrgCard organization={org} key={i} />;
+                            })}
+                        </Masonry>
+                    ) : (
+                        <></>
+                    )}
+                    {searchState.more ? (
+                        <Loading />
+                    ) : (
                         <Box>
                             {approvedOrgs.length === 0 ? (
-                                <Typography align="center" variant="h3">
+                                <Typography
+                                    align="center"
+                                    variant="h3"
+                                    sx={{ paddingTop: "1em" }}
+                                >
                                     No Organizations Found.
                                 </Typography>
                             ) : (
@@ -285,23 +296,8 @@ const Catalog = () => {
                                 </Typography>
                             )}
                         </Box>
-                    }
-                    style={{ overflow: "hidden", paddingTop: "20px" }}
-                >
-                    <Masonry columns={columns} spacing={2}>
-                        {
-                            searchState.orgs.length ? (
-                                searchState.orgs.map((org, i) => {
-                                    return (
-                                        <OrgCard organization={org} key={i} />
-                                    );
-                                })
-                            ) : (
-                                <Box></Box>
-                            ) /* To make masonry resize accordingly */
-                        }
-                    </Masonry>
-                </InfiniteScroll>
+                    )}
+                </Box>
             </Box>
         </Box>
     );
