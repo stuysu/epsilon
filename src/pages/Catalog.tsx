@@ -70,9 +70,7 @@ const Catalog = () => {
     if (isOne) columns = 1;
 
     const getOrgs = async (searchState: SearchState, isReset?: boolean) => {
-        console.log("GETTING ORGS");
         const originalOffset = isReset ? 0 : searchState.offset;
-        console.log({ isReset, originalOffset, searchState });
         // setSearchState({...searchState, offset: originalOffset + querySize});
 
         let orgData, orgError;
@@ -210,18 +208,10 @@ const Catalog = () => {
             }
         };
     }, [loadingObserver, searchState]);
-    /*
-  Testing
-  useEffect(() => {
-    console.log(`${orgs.length} orgs!`)
-    console.log(`${Object.keys(getUnique(orgs)).length} unique orgs!`);
-  }, [orgs])
-  */
 
     let approvedOrgs = searchState.orgs.filter(
         (o) => o.state !== "PENDING" && o.state !== "LOCKED",
     );
-    console.log(searchState);
 
     return (
         <Box sx={{ display: "flex", position: "relative", flexWrap: "wrap" }}>
