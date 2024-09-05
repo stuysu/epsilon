@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "../supabaseClient";
 
 import { Box, useMediaQuery, Typography, Card } from "@mui/material";
@@ -37,6 +37,7 @@ If there are search params
 const querySize = 10;
 const Catalog = () => {
     const { enqueueSnackbar } = useSnackbar();
+    const loadingObserver = useRef(null);
 
     const [searchState, setSearchState] = useState<SearchState>({
         orgs: [],
@@ -68,9 +69,10 @@ const Catalog = () => {
     if (isTwo) columns = 2;
     if (isOne) columns = 1;
 
-    const getOrgs = async (isReset?: boolean) => {
+    const getOrgs = async (searchState: SearchState, isReset?: boolean) => {
         console.log("GETTING ORGS");
         const originalOffset = isReset ? 0 : searchState.offset;
+        console.log({ isReset, originalOffset, searchState });
         // setSearchState({...searchState, offset: originalOffset + querySize});
 
         let orgData, orgError;
@@ -153,7 +155,14 @@ const Catalog = () => {
     };
 
     useEffect(() => {
-        getOrgs(true);
+        getOrgs(
+            {
+                orgs: [],
+                offset: 0,
+                more: true,
+            },
+            true,
+        );
     }, [seed, searchParams]);
 
     useEffect(() => {
@@ -180,6 +189,27 @@ const Catalog = () => {
 
         fetchAnnouncements();
     }, [enqueueSnackbar, setAnnouncements]);
+
+    useEffect(() => {
+        const observer = new IntersectionObserver(
+            (entries) => {
+                if (entries[0].isIntersecting) {
+                    getOrgs(searchState);
+                }
+            },
+            { threshold: 0.1 },
+        );
+
+        if (loadingObserver.current) {
+            observer.observe(loadingObserver.current);
+        }
+
+        return () => {
+            if (loadingObserver.current) {
+                observer.unobserve(loadingObserver.current);
+            }
+        };
+    }, [loadingObserver, searchState]);
     /*
   Testing
   useEffect(() => {
@@ -268,17 +298,23 @@ const Catalog = () => {
                 <Typography variant="h3">Catalog</Typography>
 
                 <Box>
-                    {searchState.orgs.length ? (
-                        <Masonry columns={columns} spacing={2}>
-                            {searchState.orgs.map((org, i) => {
-                                return <OrgCard organization={org} key={i} />;
-                            })}
-                        </Masonry>
-                    ) : (
-                        <></>
-                    )}
+                    <Masonry
+                        columns={columns}
+                        spacing={2}
+                        sx={
+                            searchState.orgs.length
+                                ? undefined
+                                : { display: "none" }
+                        }
+                    >
+                        {searchState.orgs.map((org, i) => {
+                            return <OrgCard organization={org} key={i} />;
+                        })}
+                    </Masonry>
                     {searchState.more ? (
-                        <Loading />
+                        <div ref={loadingObserver}>
+                            <Loading />
+                        </div>
                     ) : (
                         <Box>
                             {approvedOrgs.length === 0 ? (
