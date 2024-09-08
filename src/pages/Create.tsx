@@ -304,7 +304,7 @@ const Create = () => {
                         }}
                     >
                         <FormTextField
-                            label="Name"
+                            label="Club Name"
                             field="name"
                             required={OrgRequirements.name.required}
                             requirements={OrgRequirements.name.requirements}

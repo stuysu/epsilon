@@ -95,7 +95,7 @@ const OrgApproval = ({
                 }}
             >
                 <Typography variant="h5" fontWeight={600}>
-                    Name:
+                    Club Name:
                 </Typography>
                 <Typography variant="body2">{org.name}</Typography>
                 <Divider sx={{ margin: "10px" }} />
