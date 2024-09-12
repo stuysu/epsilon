@@ -87,7 +87,7 @@ const OrgRequirements: OrgValidator = {
     goals: {
         required: true,
         requirements: {
-            minWords: 150,
+            minWords: 75,
             maxWords: 600,
         },
     },
@@ -108,7 +108,7 @@ const OrgRequirements: OrgValidator = {
     uniqueness: {
         required: true,
         requirements: {
-            minWords: 150,
+            minWords: 50,
             maxWords: 800,
         },
     },
