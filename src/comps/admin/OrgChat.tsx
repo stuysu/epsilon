@@ -1,6 +1,5 @@
 import {
     Box,
-    TextField,
     Card,
     ListItem,
     ListItemText,
@@ -16,6 +15,7 @@ import UserContext from "../context/UserContext";
 import dayjs from "dayjs";
 import { Delete } from "@mui/icons-material";
 import AsyncButton from "../ui/AsyncButton";
+import TextEditor from "../ui/TextEditor";
 
 type OrgMessage = {
     id: number;
@@ -184,7 +184,11 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                                         </Typography>
                                         {/* Add a break or any other separator as needed */}
                                         <br />
-                                        {message.content}
+                                        <div
+                                            dangerouslySetInnerHTML={{
+                                                __html: message.content,
+                                            }}
+                                        />
                                     </>
                                 }
                             />
@@ -203,13 +207,13 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                 sx={{
                     width: "100%",
                     display: "flex",
-                    flexWrap: "nowrap",
-                    alignItems: "center",
+                    flexDirection: "column",
+                    alignItems: "flex-end",
                 }}
             >
-                <TextField
+                <TextEditor
                     label="Type message here."
-                    sx={{ width: "80%", marginRight: "15px" }}
+                    sx={{ width: "100%", marginBottom: "10px" }}
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     onKeyDown={(e) => {
