@@ -121,7 +121,6 @@ const Catalog = () => {
                 .from("organizations")
                 .select("*")
                 .neq("state", "PENDING")
-                .neq("state", "LOCKED")
                 .neq("state", "PUNISHED")
                 .or(catalogQuery)
                 // .ilike("name", `%${searchParams.name}%`)
@@ -209,9 +208,7 @@ const Catalog = () => {
         };
     }, [loadingObserver, searchState]);
 
-    let approvedOrgs = searchState.orgs.filter(
-        (o) => o.state !== "PENDING" && o.state !== "LOCKED",
-    );
+    let approvedOrgs = searchState.orgs.filter((o) => o.state !== "PENDING");
 
     return (
         <Box sx={{ display: "flex", position: "relative", flexWrap: "wrap" }}>
