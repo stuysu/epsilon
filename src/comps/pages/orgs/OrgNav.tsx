@@ -185,9 +185,10 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
 
     let disabled = false;
     if (isCreator) disabled = true;
-    if (!isInOrg && !organization.joinable) disabled = true;
-
-    if (!user.signed_in) {
+    if (!isInOrg && !organization.joinable) {
+        interactString = "JOINING DISABLED";
+        disabled = true;
+    } else if (!user.signed_in) {
         interactString = "sign in to join";
         disabled = true;
     }
