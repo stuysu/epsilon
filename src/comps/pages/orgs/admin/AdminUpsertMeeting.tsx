@@ -246,10 +246,14 @@ const AdminUpsertMeeting = ({
             });
         }
         if (supabaseReturn.error) {
-            enqueueSnackbar(
-                "Error creating meeting. Contact it@stuysu.org for support.",
-                { variant: "error" },
-            );
+            const error = await supabaseReturn.error?.context.text();
+            let message = "Contact it@stuysu.org for support.";
+            if (error) {
+                message = error;
+            }
+            enqueueSnackbar("Error creating meeting. " + message, {
+                variant: "error",
+            });
             return;
         }
 
