@@ -29,6 +29,7 @@ import { ThemeContext } from "../../context/ThemeProvider";
 import HomeIcon from "@mui/icons-material/Home";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
+import SettingsIcon from "@mui/icons-material/Settings";
 import FeedIcon from "@mui/icons-material/Feed";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
@@ -230,6 +231,16 @@ const NavBar = () => {
                                     <AdminPanelSettingsIcon />
                                 </ListItemIcon>
                                 <ListItemText>Admin</ListItemText>
+                            </ListItemButton>
+                        )}
+                        {user.signed_in && (
+                            <ListItemButton
+                                onClick={() => navigate("/settings")}
+                            >
+                                <ListItemIcon>
+                                    <SettingsIcon />
+                                </ListItemIcon>
+                                <ListItemText>Settings</ListItemText>
                             </ListItemButton>
                         )}
                     </List>

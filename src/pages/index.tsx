@@ -14,6 +14,7 @@ import Rules from "./Rules";
 
 const ModuleRouter = lazy(() => import("./modules/ModuleRouter"));
 const Catalog = lazy(() => import("./Catalog"));
+const Settings = lazy(() => import("./Settings"));
 const Create = lazy(() => import("./Create"));
 const OrgRouter = lazy(() => import("./orgs"));
 const AdminRouter = lazy(() => import("./admin"));
@@ -45,6 +46,7 @@ const Pages = () => {
                 <Routes>
                     <Route path={"/"} Component={Home} />
                     <Route path={"/catalog"} Component={Catalog} />
+                    <Route path={"/settings"} Component={Settings} />
                     <Route path={"/create"} Component={Create} />
                     <Route path={"/about"} Component={About} />
                     <Route path={"/meetings"} Component={AllMeetings} />
