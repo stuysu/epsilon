@@ -65,6 +65,11 @@ const Settings = () => {
                             : "Unknown",
                     };
                 });
+                mergedData.sort((membershipA, membershipB) =>
+                    membershipA.organization_name.localeCompare(
+                        membershipB.organization_name,
+                    ),
+                );
 
                 setMemberships(mergedData);
             }
