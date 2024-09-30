@@ -266,8 +266,9 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                         return (
                             <Link
                                 key={i}
-                                component={NavLink}
-                                to={social}
+                                href={social}
+                                target="_blank"
+                                rel="noopener noreferrer"
                                 style={{ textAlign: "center" }}
                             >
                                 {social}
