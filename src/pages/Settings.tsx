@@ -89,7 +89,7 @@ const Settings = () => {
             .eq("user_id", user.id)
             .select();
 
-        if (error || !data || data[0].allow_notifications !== !currentValue) {
+        if (error || !data || data?.length < 1 || data[0].allow_notifications !== !currentValue) {
             enqueueSnackbar("Failed to update notification settings", {
                 variant: "error",
             });
