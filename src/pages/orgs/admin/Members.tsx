@@ -3,11 +3,14 @@ import OrgContext from "../../../comps/context/OrgContext";
 import UserContext from "../../../comps/context/UserContext";
 
 import AdminMember from "../../../comps/pages/orgs/admin/AdminMember";
-import { Box, Typography } from "@mui/material";
+import { Box, Button, TextField, Typography } from "@mui/material";
 
 import { sortByRole } from "../../../utils/DataFormatters";
+import { useSnackbar } from "notistack";
 
 const Members = () => {
+    const { enqueueSnackbar } = useSnackbar();
+
     const user = useContext(UserContext);
     const organization = useContext<OrgContextType>(OrgContext);
     const members = organization.memberships
@@ -25,6 +28,7 @@ const Members = () => {
                 is_faculty: member.users?.is_faculty,
             };
         });
+    const member_emails = members.map((member) => member.email).join(", ");
 
     const userMember = organization.memberships.find(
         (member) => member.users?.id === user.id,
@@ -35,6 +39,53 @@ const Members = () => {
             <Typography variant="h1" align="center" width="100%">
                 Manage Members
             </Typography>
+            <Box
+                sx={{
+                    width: "100%",
+                    display: "flex",
+                    flexWrap: "nowrap",
+                    alignItems: "center",
+                    paddingLeft: "16px",
+                    paddingRight: "16px",
+                }}
+            >
+                <Box
+                    sx={{
+                        paddingTop: "8px",
+                        paddingBottom: "8px",
+                        width: "100%",
+                    }}
+                >
+                    <TextField
+                        disabled
+                        fullWidth
+                        value={member_emails}
+                        variant="outlined"
+                    />
+                </Box>
+                <Box sx={{ paddingLeft: "16px", width: "100px" }}>
+                    <Button
+                        onClick={async () => {
+                            try {
+                                await navigator.clipboard.writeText(
+                                    member_emails,
+                                );
+                                enqueueSnackbar("Copied emails to clipboard!", {
+                                    variant: "success",
+                                });
+                            } catch (error) {
+                                enqueueSnackbar(
+                                    "Failed to copy emails to clipboard. :( Try manually copying from the page.",
+                                    { variant: "error" },
+                                );
+                            }
+                        }}
+                        variant="contained"
+                    >
+                        Copy
+                    </Button>
+                </Box>
+            </Box>
             {members
                 ?.sort(sortByRole)
                 .map((member, i) => (
