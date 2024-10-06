@@ -6,9 +6,10 @@ import { enqueueSnackbar } from "notistack";
 import LoginGate from "../comps/ui/LoginGate";
 
 type Memberships = {
+    id: number;
     organization_id: number;
+    organization_name: string;
     allow_notifications: boolean;
-    organization_name?: string;
 };
 
 const Settings = () => {
@@ -20,14 +21,8 @@ const Settings = () => {
             const { data: membershipsData, error: membershipsError } =
                 await supabase
                     .from("memberships")
-                    .select(
-                        `
-                    organization_id,
-                    allow_notifications
-                `,
-                    )
-                    .eq("user_id", user.id)
-                    .returns<Memberships[]>();
+                    .select(`id, organization_id`)
+                    .eq("user_id", user.id);
 
             if (membershipsError) {
                 enqueueSnackbar("Failed to fetch memberships", {
@@ -37,9 +32,20 @@ const Settings = () => {
             }
 
             if (membershipsData && membershipsData.length > 0) {
-                const organizationIds = membershipsData.map(
-                    (m) => m.organization_id,
-                );
+                const membershipIds = membershipsData.map((m) => m.id);
+                const organizationIds = membershipsData.map((m) => m.organization_id);
+
+                const { data: notificationsData, error: notificationsError } = await supabase
+                    .from("membershipnotifications")
+                    .select("membership_id, allow_notifications")
+                    .in("membership_id", membershipIds);
+
+                if (notificationsError) {
+                    enqueueSnackbar("Failed to fetch notification settings", {
+                        variant: "error",
+                    });
+                    return;
+                }
 
                 const { data: organizationsData, error: organizationsError } =
                     await supabase
@@ -55,21 +61,19 @@ const Settings = () => {
                 }
 
                 const mergedData = membershipsData.map((membership) => {
-                    const organization = organizationsData.find(
-                        (org) => org.id === membership.organization_id,
+                    const notification = notificationsData.find(
+                        (n) => n.membership_id === membership.id
                     );
+                    const organization = organizationsData.find(
+                        (org) => org.id === membership.organization_id
+                    );
+
                     return {
                         ...membership,
-                        organization_name: organization
-                            ? organization.name
-                            : "Unknown",
+                        allow_notifications: notification ? notification.allow_notifications : true,
+                        organization_name: organization ? organization.name : "Unknown",
                     };
                 });
-                mergedData.sort((membershipA, membershipB) =>
-                    membershipA.organization_name.localeCompare(
-                        membershipB.organization_name,
-                    ),
-                );
 
                 setMemberships(mergedData);
             }
@@ -79,17 +83,15 @@ const Settings = () => {
     }, [user.id]);
 
     const handleToggle = async (
-        organization_id: number,
+        membership_id: number,
         currentValue: boolean,
     ) => {
-        const { data, error } = await supabase
-            .from("memberships")
+        const { error } = await supabase
+            .from("membershipnotifications")
             .update({ allow_notifications: !currentValue })
-            .eq("organization_id", organization_id)
-            .eq("user_id", user.id)
-            .select();
+            .eq("membership_id", membership_id);
 
-        if (error || !data || data?.length < 1 || data[0].allow_notifications !== !currentValue) {
+        if (error) {
             enqueueSnackbar("Failed to update notification settings", {
                 variant: "error",
             });
@@ -98,7 +100,7 @@ const Settings = () => {
 
         setMemberships((prevMemberships) =>
             prevMemberships.map((membership) =>
-                membership.organization_id === organization_id
+                membership.id === membership_id
                     ? { ...membership, allow_notifications: !currentValue }
                     : membership,
             ),
@@ -170,7 +172,7 @@ const Settings = () => {
                 >
                     {memberships.map((membership) => (
                         <Paper
-                            key={membership.organization_id}
+                            key={membership.id}
                             elevation={1}
                             sx={{
                                 width: "100%",
@@ -203,7 +205,7 @@ const Settings = () => {
                                     checked={membership.allow_notifications}
                                     onChange={() =>
                                         handleToggle(
-                                            membership.organization_id,
+                                            membership.id,
                                             membership.allow_notifications,
                                         )
                                     }
