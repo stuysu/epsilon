@@ -33,12 +33,15 @@ const Settings = () => {
 
             if (membershipsData && membershipsData.length > 0) {
                 const membershipIds = membershipsData.map((m) => m.id);
-                const organizationIds = membershipsData.map((m) => m.organization_id);
+                const organizationIds = membershipsData.map(
+                    (m) => m.organization_id,
+                );
 
-                const { data: notificationsData, error: notificationsError } = await supabase
-                    .from("membershipnotifications")
-                    .select("membership_id, allow_notifications")
-                    .in("membership_id", membershipIds);
+                const { data: notificationsData, error: notificationsError } =
+                    await supabase
+                        .from("membershipnotifications")
+                        .select("membership_id, allow_notifications")
+                        .in("membership_id", membershipIds);
 
                 if (notificationsError) {
                     enqueueSnackbar("Failed to fetch notification settings", {
@@ -62,16 +65,20 @@ const Settings = () => {
 
                 const mergedData = membershipsData.map((membership) => {
                     const notification = notificationsData.find(
-                        (n) => n.membership_id === membership.id
+                        (n) => n.membership_id === membership.id,
                     );
                     const organization = organizationsData.find(
-                        (org) => org.id === membership.organization_id
+                        (org) => org.id === membership.organization_id,
                     );
 
                     return {
                         ...membership,
-                        allow_notifications: notification ? notification.allow_notifications : true,
-                        organization_name: organization ? organization.name : "Unknown",
+                        allow_notifications: notification
+                            ? notification.allow_notifications
+                            : true,
+                        organization_name: organization
+                            ? organization.name
+                            : "Unknown",
                     };
                 });
 
