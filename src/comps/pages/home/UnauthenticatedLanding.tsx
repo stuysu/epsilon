@@ -13,6 +13,20 @@ const UnauthenticatedLanding = () => {
         <Box>
             <Box
                 sx={{
+                    position: "fixed",
+                    width: "100vw",
+                    height: "100vh",
+                    backgroundImage: `url(${PUBLIC_URL}/textures/login.png)`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    opacity: 0.5,
+                    filter: "blur(50px)",
+                    mixBlendMode: "color-dodge",
+                    zIndex: -1,
+                }}
+            />
+            <Box
+                sx={{
                     width: "100%",
                     height: "700px",
                     display: "flex",
@@ -22,7 +36,7 @@ const UnauthenticatedLanding = () => {
             >
                 <Box
                     sx={{
-                        width: "500px",
+                        width: "300px",
                         display: "flex",
                         justifyContent: "center",
                         flexWrap: "wrap",
@@ -36,7 +50,7 @@ const UnauthenticatedLanding = () => {
                         <img
                             src={`${PUBLIC_URL}/wordmark.svg`}
                             alt="Epsilon"
-                            style={{ maxWidth: "100%", height: "auto" }}
+                            style={{ maxWidth: "100%", height: "auto", mixBlendMode: "color-dodge"}}
                         />
                         <Typography align="center" variant="body1">
                             The all in one platform for Stuyvesant High School's
