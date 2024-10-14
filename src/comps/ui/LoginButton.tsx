@@ -1,26 +1,33 @@
-import { Auth } from "@supabase/auth-ui-react";
-import { PUBLIC_URL } from "../../constants";
 import { supabase } from "../../supabaseClient";
-import { ThemeSupa } from "@supabase/auth-ui-shared";
-import { Box } from "@mui/material";
+import { PUBLIC_URL } from "../../constants";
+import "./LoginButton.css";
 
-const LoginButton = () => (
-    <Box
-        sx={{
-            width: "100%",
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "center",
-        }}
-    >
-        <Auth
-            redirectTo={PUBLIC_URL}
-            supabaseClient={supabase}
-            appearance={{ theme: ThemeSupa }}
-            providers={["google"]}
-            onlyThirdPartyProviders
-        />
-    </Box>
-);
+const LoginButton = () => {
+    const signInWithGoogle = async () => {
+        const { error } = await supabase.auth.signInWithOAuth({
+            provider: "google",
+            options: {
+                redirectTo: PUBLIC_URL,
+            },
+        });
+        if (error) {
+            console.error("Error Sining In with Google", error.message);
+        }
+    };
+
+    return (
+        <button
+            onClick={signInWithGoogle}
+            className="login-button"
+        >
+            <img
+                src={`${PUBLIC_URL}/Google.svg`}
+                alt="Google Icon"
+                className="google-icon"
+            />
+            Sign in with Google
+        </button>
+    );
+};
 
 export default LoginButton;
