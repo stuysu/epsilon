@@ -2,8 +2,12 @@ import { Box } from "@mui/material";
 import { PUBLIC_URL } from "../../../constants";
 
 import LoginButton from "../../ui/LoginButton";
+import { useContext } from "react";
+import { ThemeContext } from "../../context/ThemeProvider";
 
 const UnauthenticatedLanding = () => {
+    const theme = useContext(ThemeContext);
+    const wordmarkSrc = theme.colorMode ? `${PUBLIC_URL}/wordmark.svg` : `${PUBLIC_URL}/wordmark_light.svg`;
     return (
         <Box>
             <Box
@@ -14,8 +18,8 @@ const UnauthenticatedLanding = () => {
                     backgroundImage: `url(${PUBLIC_URL}/textures/login.png)`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
-                    opacity: 0.3,
-                    filter: "blur(50px)",
+                    opacity: 0.5,
+                    filter: "blur(100px)",
                     mixBlendMode: "color-dodge",
                     pointerEvents: "none",
                     zIndex: 0,
@@ -32,13 +36,13 @@ const UnauthenticatedLanding = () => {
                 }}
             >
                 <img
-                    src={`${PUBLIC_URL}/wordmark.svg`}
+                    src={wordmarkSrc}
                     alt="Epsilon"
                     style={{
                         marginBottom: "40px",
                         maxWidth: "300px",
                         height: "auto",
-                        mixBlendMode: "color-dodge",
+                        mixBlendMode: theme.colorMode ? "color-dodge" : "normal",
                         position: "relative",
                         zIndex: 1,
                     }}
