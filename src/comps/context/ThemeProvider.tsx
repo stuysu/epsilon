@@ -61,7 +61,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                     },
                 },
                 typography: {
-                    fontFamily: `'Roboto Condensed', sans-serif`,
+                    fontFamily: `'neue-haas-grotesk-display', sans-serif`,
                     htmlFontSize: 16,
                     h1: {
                         fontSize: "3rem",

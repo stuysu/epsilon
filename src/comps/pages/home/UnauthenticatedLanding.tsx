@@ -1,4 +1,5 @@
 import { Box, Typography } from "@mui/material";
+import { PUBLIC_URL } from "../../../constants";
 
 import { useNavigate } from "react-router-dom";
 
@@ -32,9 +33,11 @@ const UnauthenticatedLanding = () => {
                             width: "100%",
                         }}
                     >
-                        <Typography align="center" variant="h1">
-                            Epsilon
-                        </Typography>
+                        <img
+                            src={`${PUBLIC_URL}/wordmark.svg`}
+                            alt="Epsilon"
+                            style={{ maxWidth: "100%", height: "auto" }}
+                        />
                         <Typography align="center" variant="body1">
                             The all in one platform for Stuyvesant High School's
                             needs.
