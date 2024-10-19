@@ -6,6 +6,7 @@ import EmailIcon from "@mui/icons-material/Email";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import { Box } from "@mui/material";
+import { Send } from "@mui/icons-material";
 
 const AdminNav = () => {
     let navLinks = [
@@ -38,6 +39,11 @@ const AdminNav = () => {
             to: "/admin/rooms",
             label: "Rooms",
             icon: <MeetingRoomIcon />,
+        },
+        {
+            to: "/admin/club-admin-emails",
+            label: "Admin Emails",
+            icon: <Send />,
         },
     ];
 
