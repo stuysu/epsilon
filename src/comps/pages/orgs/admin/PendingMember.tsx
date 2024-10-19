@@ -12,7 +12,7 @@ const PendingMember = ({
     last_name,
     email,
     picture,
-    auto
+    auto,
 }: {
     id: number;
     first_name?: string;
@@ -86,21 +86,22 @@ const PendingMember = ({
     };
 
     useEffect(() => {
-        if(auto) {
+        if (auto) {
             handleApprove();
         }
     }, [auto]);
 
     return (
         <Box>
-            {!auto ?
+            {!auto ? (
                 <Box
                     sx={{
                         width: "100%",
                         display: "flex",
                         flexWrap: "nowrap",
                         alignItems: "center",
-                    }}>
+                    }}
+                >
                     <Box sx={{ width: "100%" }}>
                         <OrgMember
                             email={email}
@@ -109,7 +110,13 @@ const PendingMember = ({
                             last_name={last_name}
                         />
                     </Box>
-                    <Box sx={{ width: "200px", display: "flex", flexWrap: "nowrap" }}>
+                    <Box
+                        sx={{
+                            width: "200px",
+                            display: "flex",
+                            flexWrap: "nowrap",
+                        }}
+                    >
                         <AsyncButton
                             onClick={handleApprove}
                             variant="contained"
@@ -126,9 +133,9 @@ const PendingMember = ({
                         </AsyncButton>
                     </Box>
                 </Box>
-                :
+            ) : (
                 <></>
-            }
+            )}
         </Box>
     );
 };

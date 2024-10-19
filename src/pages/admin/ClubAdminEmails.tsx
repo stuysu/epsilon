@@ -5,10 +5,9 @@ import { Box, TextField, Typography } from "@mui/material";
 import AsyncButton from "../../comps/ui/AsyncButton";
 import UserContext from "../../comps/context/UserContext";
 
-
 const ClubAdminEmails = () => {
     const { enqueueSnackbar } = useSnackbar();
-    
+
     const user = useContext(UserContext);
 
     const [orgId, setOrgId] = useState<number>();
@@ -16,7 +15,8 @@ const ClubAdminEmails = () => {
     const [searchInput, setSearchInput] = useState("");
     const [filteredOrgs, setFilteredOrgs] = useState<Organization[]>([]);
     const [allOrgs, setAllOrgs] = useState<Organization[]>([]);
-    const [currentOrganization, setCurrentOrganization] = useState<Organization>();
+    const [currentOrganization, setCurrentOrganization] =
+        useState<Organization>();
     const [adminEmails, setAdminEmails] = useState<string>("");
 
     useEffect(() => {
@@ -55,30 +55,34 @@ const ClubAdminEmails = () => {
     //             ?.filter((membership) => membership.role === "ADMIN" || membership.role === "CREATOR")
     //             .map((membership) => membership.users?.email)
     //             .join(", ");
-            
+
     //         setAdminEmails(emails || "");
     //     }
     // }, [currentOrganization]);
 
     useEffect(() => {
         const fetchAdminEmails = async () => {
-            const { data: memberships, error: membershipsError } = await supabase
-                .from("memberships")
-                .select("user_id")
-                .eq("organization_id", currentOrganization?.id)
-                .in("role", ["ADMIN", "CREATOR"]);
-            
+            const { data: memberships, error: membershipsError } =
+                await supabase
+                    .from("memberships")
+                    .select("user_id")
+                    .eq("organization_id", currentOrganization?.id)
+                    .in("role", ["ADMIN", "CREATOR"]);
+
             if (membershipsError) {
-                enqueueSnackbar("Error fetching memberships. Please try again later.", { variant: "error" });
+                enqueueSnackbar(
+                    "Error fetching memberships. Please try again later.",
+                    { variant: "error" },
+                );
                 return;
             }
-            const userIds = memberships.map(membership => membership.user_id);
+            const userIds = memberships.map((membership) => membership.user_id);
 
             const { data: users, error: usersError } = await supabase
                 .from("users")
                 .select("email")
                 .in("id", userIds);
-            
+
             if (usersError) {
                 console.error("Error fetching users:", { variant: "error" });
                 return;
@@ -87,12 +91,12 @@ const ClubAdminEmails = () => {
             const adminEmails = users.map((user) => user.email).join(", ");
             setAdminEmails(adminEmails);
         };
-        if(currentOrganization) {
+        if (currentOrganization) {
             fetchAdminEmails();
         }
     }, [currentOrganization]);
 
-    return(
+    return (
         <Box>
             <Typography variant="h1" align="center">
                 Club Admin Emails
@@ -161,7 +165,7 @@ const ClubAdminEmails = () => {
                                 paddingLeft: "16px",
                                 paddingRight: "16px",
                                 marginLeft: "4em",
-                                marginRight: "4em"
+                                marginRight: "4em",
                             }}
                         >
                             <Box
@@ -179,27 +183,30 @@ const ClubAdminEmails = () => {
                                 />
                             </Box>
                             <Box sx={{ paddingLeft: "16px", width: "100px" }}>
-                            <AsyncButton
-                                onClick={async () => {
-                                    try {
-                                        await navigator.clipboard.writeText(
-                                            adminEmails,
-                                        );
-                                        enqueueSnackbar("Copied emails to clipboard!", {
-                                            variant: "success",
-                                        });
-                                    } catch (error) {
-                                        enqueueSnackbar(
-                                            "Failed to copy emails to clipboard. :( Try manually copying from the page.",
-                                            { variant: "error" },
-                                        );
-                                    }
-                                }}
-                                variant="contained"
-                            >
-                                Copy
-                            </AsyncButton>
-                        </Box>
+                                <AsyncButton
+                                    onClick={async () => {
+                                        try {
+                                            await navigator.clipboard.writeText(
+                                                adminEmails,
+                                            );
+                                            enqueueSnackbar(
+                                                "Copied emails to clipboard!",
+                                                {
+                                                    variant: "success",
+                                                },
+                                            );
+                                        } catch (error) {
+                                            enqueueSnackbar(
+                                                "Failed to copy emails to clipboard. :( Try manually copying from the page.",
+                                                { variant: "error" },
+                                            );
+                                        }
+                                    }}
+                                    variant="contained"
+                                >
+                                    Copy
+                                </AsyncButton>
+                            </Box>
                         </Box>
                     </Box>
                 </>
