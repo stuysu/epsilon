@@ -1,7 +1,7 @@
 import { supabase } from "../../../../supabaseClient";
 import { Box } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { useContext } from "react";
+import { useContext, useEffect } from "react";
 import OrgContext from "../../../context/OrgContext";
 import OrgMember from "../OrgMember";
 import AsyncButton from "../../../ui/AsyncButton";
@@ -12,12 +12,14 @@ const PendingMember = ({
     last_name,
     email,
     picture,
+    auto
 }: {
     id: number;
     first_name?: string;
     last_name?: string;
     email: string;
     picture: string | undefined;
+    auto: boolean;
 }) => {
     const { enqueueSnackbar } = useSnackbar();
     const organization = useContext(OrgContext);
@@ -83,39 +85,50 @@ const PendingMember = ({
         enqueueSnackbar("User rejected!", { variant: "success" });
     };
 
+    useEffect(() => {
+        if(auto) {
+            handleApprove();
+        }
+    }, [auto]);
+
     return (
-        <Box
-            sx={{
-                width: "100%",
-                display: "flex",
-                flexWrap: "nowrap",
-                alignItems: "center",
-            }}
-        >
-            <Box sx={{ width: "100%" }}>
-                <OrgMember
-                    email={email}
-                    picture={picture}
-                    first_name={first_name}
-                    last_name={last_name}
-                />
-            </Box>
-            <Box sx={{ width: "200px", display: "flex", flexWrap: "nowrap" }}>
-                <AsyncButton
-                    onClick={handleApprove}
-                    variant="contained"
-                    sx={{ height: "40px" }}
-                >
-                    Approve
-                </AsyncButton>
-                <AsyncButton
-                    onClick={handleReject}
-                    variant="contained"
-                    sx={{ height: "40px", marginLeft: "10px" }}
-                >
-                    Reject
-                </AsyncButton>
-            </Box>
+        <Box>
+            {!auto ?
+                <Box
+                    sx={{
+                        width: "100%",
+                        display: "flex",
+                        flexWrap: "nowrap",
+                        alignItems: "center",
+                    }}>
+                    <Box sx={{ width: "100%" }}>
+                        <OrgMember
+                            email={email}
+                            picture={picture}
+                            first_name={first_name}
+                            last_name={last_name}
+                        />
+                    </Box>
+                    <Box sx={{ width: "200px", display: "flex", flexWrap: "nowrap" }}>
+                        <AsyncButton
+                            onClick={handleApprove}
+                            variant="contained"
+                            sx={{ height: "40px" }}
+                        >
+                            Approve
+                        </AsyncButton>
+                        <AsyncButton
+                            onClick={handleReject}
+                            variant="contained"
+                            sx={{ height: "40px", marginLeft: "10px" }}
+                        >
+                            Reject
+                        </AsyncButton>
+                    </Box>
+                </Box>
+                :
+                <></>
+            }
         </Box>
     );
 };

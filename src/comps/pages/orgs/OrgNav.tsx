@@ -25,6 +25,7 @@ import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import PeopleIcon from "@mui/icons-material/People";
 import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import AsyncButton from "../../ui/AsyncButton";
+import { PostAdd } from "@mui/icons-material";
 
 const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const organization = useContext<OrgContextType>(OrgContext);
@@ -44,6 +45,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
             icon: <CalendarMonthIcon />,
         },
         { to: `${main}/members`, display: "Members", icon: <PeopleIcon /> },
+        { to: `${main}/posts`, display: "Posts", icon: <PostAdd />},
     ];
 
     const [currentIndex, setCurrentIndex] = useState(0);
