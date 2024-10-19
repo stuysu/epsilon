@@ -45,7 +45,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
             icon: <CalendarMonthIcon />,
         },
         { to: `${main}/members`, display: "Members", icon: <PeopleIcon /> },
-        { to: `${main}/posts`, display: "Posts", icon: <PostAdd />},
+        { to: `${main}/posts`, display: "Posts", icon: <PostAdd /> },
     ];
 
     const [currentIndex, setCurrentIndex] = useState(0);

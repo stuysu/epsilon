@@ -8,7 +8,7 @@ import AsyncButton from "../../../comps/ui/AsyncButton";
 const MemberRequests = () => {
     const organization = useContext<OrgContextType>(OrgContext);
     const [autoApprove, setAutoApprove] = useState(false);
-    
+
     const pendingMembers = organization.memberships
         ?.filter((member) => !member.active)
         .map((member) => {
@@ -20,7 +20,7 @@ const MemberRequests = () => {
                 picture: member.users?.picture,
             };
         });
-    
+
     const handleApproveAll = () => {
         setAutoApprove(true);
     };
@@ -30,11 +30,20 @@ const MemberRequests = () => {
             <Typography variant="h1" align="center" width="100%">
                 Member Requests
             </Typography>
-            <Box sx={{ width: "100%", display: "flex", justifyContent: "center", alignItems: "center", marginBottom: "1em", marginTop: "1em" }}>
+            <Box
+                sx={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    marginBottom: "1em",
+                    marginTop: "1em",
+                }}
+            >
                 <AsyncButton
                     onClick={handleApproveAll}
                     variant="contained"
-                    sx={{ height: "40px"}}
+                    sx={{ height: "40px" }}
                 >
                     Approve ALL
                 </AsyncButton>

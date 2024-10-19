@@ -11,16 +11,14 @@ const Posts = () => {
     useEffect(() => {
         setPosts(organization.posts.reverse());
     }, []);
-    
-    return(
+
+    return (
         <Box sx={{ width: "100%" }}>
             <Typography variant="h1" align="center" width="100%">
                 Posts
             </Typography>
             <Grid container>
-            
-            {posts.map(
-                (post) => (
+                {posts.map((post) => (
                     <Grid item xs={12} sm={12} md={6} lg={4} key={post.id}>
                         <Box
                             width="100%"
@@ -31,8 +29,7 @@ const Posts = () => {
                             <Post content={post} />
                         </Box>
                     </Grid>
-                )
-            )}
+                ))}
             </Grid>
         </Box>
     );
