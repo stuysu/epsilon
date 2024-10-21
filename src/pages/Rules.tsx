@@ -30,9 +30,8 @@ const Rules = () => {
                     <li>
                         For an Activity to operate, a charter must be submitted
                         and&nbsp;approved by&nbsp;the Clubs &amp; Pubs
-                        administrators. Approval will take place on a set day
-                        each week, Saturday. Once fully approved, the charter
-                        will be visible on the&nbsp;
+                        administrators. Once fully approved, the charter will be
+                        visible on the&nbsp;
                         <Link
                             color="primary"
                             component={RouterLink}
