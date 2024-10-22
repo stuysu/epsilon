@@ -139,11 +139,30 @@ const UserHome = () => {
                 variant="h1"
                 width="100%"
                 align="center"
-                marginBottom="50px"
+                marginBottom="20px"
             >
                 Welcome back {user.first_name}!
             </Typography>
 
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    marginBottom: "20px",
+                }}
+            >
+                <Box sx={{ background: "white", borderRadius: "8px" }}>
+                    <iframe
+                        src="https://docs.google.com/forms/d/e/1FAIpQLSe5fp1D8kJ1sHeDOFd_xokJoCReyBTT69hNVmruy9Kwr7t9_w/viewform?embedded=true"
+                        frameBorder="0"
+                        width="600"
+                        height="600"
+                        title="election-form"
+                    >
+                        Loading election form…
+                    </iframe>
+                </Box>
+            </Box>
             <Grid container>
                 <Grid
                     item
