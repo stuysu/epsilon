@@ -49,8 +49,20 @@ const Meetings = () => {
             <Typography variant="h1" align="center" width="100%">
                 Manage Meetings
             </Typography>
+            <Typography variant="h6" align="center" width="100%">
+                Reminder: Meeting attendance records MUST be kept up to date on
+                Epsilon in order to secure club funding.
+            </Typography>
 
-            <Box sx={{ width: "100%", paddingLeft: "10px", marginTop: "20px" }}>
+            <Box
+                sx={{
+                    display: "flex",
+                    justifyContent: "center",
+                    width: "100%",
+                    paddingLeft: "10px",
+                    marginTop: "20px",
+                }}
+            >
                 <AsyncButton
                     onClick={() =>
                         setEditState({
