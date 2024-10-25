@@ -17,16 +17,20 @@ const LoginGate = ({ page, children, sx }: Props): React.JSX.Element => {
         <Box
             sx={{
                 width: "100%",
-                height: "90vh",
+                height: "50vh",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
                 flexDirection: "column",
             }}
         >
-            <Typography align="center" variant="h1" sx={{
-                marginBottom: "40px"
-            }}>
+            <Typography
+                align="center"
+                variant="h1"
+                sx={{
+                    marginBottom: "40px",
+                }}
+            >
                 You must be signed in to {page}.
             </Typography>
             <LoginButton />
