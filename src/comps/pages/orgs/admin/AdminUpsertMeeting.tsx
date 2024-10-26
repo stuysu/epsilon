@@ -194,7 +194,7 @@ const AdminUpsertMeeting = ({
 
         if (endTime.isBefore(startTime)) {
             enqueueSnackbar(
-                "Meeting start time cannot be before meeting end time.",
+                "Meeting start time cannot be after meeting end time.",
                 { variant: "error" },
             );
             return;
