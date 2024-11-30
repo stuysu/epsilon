@@ -665,7 +665,9 @@ const OrgEditor = ({
                                     display: "block",
                                 }}
                             >
-                                {editData[field as keyof OrganizationEdit] || <em>&lt;empty&gt;</em>}
+                                {editData[field as keyof OrganizationEdit] || (
+                                    <em>&lt;empty&gt;</em>
+                                )}
                             </Typography>
                         }
                         editDisplay={
