@@ -68,6 +68,7 @@ const OrgRouter = () => {
                     commitment_level,
                     keywords,
                     tags,
+                    faculty_email,
                     fair,
                     state,
                     joinable,

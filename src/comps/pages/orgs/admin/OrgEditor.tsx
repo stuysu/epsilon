@@ -60,7 +60,6 @@ const EditField = ({
                     display: "flex",
                     flexWrap: "nowrap",
                     padding: "10px",
-                    marginTop: "10px",
                     position: "relative",
                     minHeight: "100px",
                 }}
@@ -666,7 +665,7 @@ const OrgEditor = ({
                                     display: "block",
                                 }}
                             >
-                                {editData[field as keyof OrganizationEdit]}
+                                {editData[field as keyof OrganizationEdit] || <em>&lt;empty&gt;</em>}
                             </Typography>
                         }
                         editDisplay={
