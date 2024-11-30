@@ -21,6 +21,7 @@ const OrgContext = React.createContext<OrgContextType>({
     memberships: [],
     meetings: [],
     posts: [],
+    faculty_email: "",
 });
 
 export default OrgContext;

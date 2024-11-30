@@ -27,6 +27,7 @@ const editFields: EditKey[] = [
     "tags",
     "commitment_level",
     "fair",
+    "faculty_email",
 ];
 
 const OrgEditApproval = ({

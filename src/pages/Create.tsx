@@ -44,6 +44,7 @@ type FormType = {
     returning: boolean;
     returning_info: string;
     fair: boolean;
+    faculty_email: string;
 };
 
 const emptyForm: FormType = {
@@ -66,6 +67,7 @@ const emptyForm: FormType = {
     returning: false,
     returning_info: "",
     fair: false,
+    faculty_email: "",
 };
 
 const multilineStyle: CSSProperties = {
@@ -96,6 +98,7 @@ const Create = () => {
             "keywords",
             "tags",
             "appointment_procedures",
+            "faculty_email",
         ];
         if (formData.returning && !formData.returning_info) return false;
 
@@ -171,6 +174,7 @@ const Create = () => {
             is_returning: formData.returning,
             returning_info: formData.returning_info,
             fair: formData.fair,
+            faculty_email: formData.faculty_email,
         };
 
         let { data: orgCreateData, error: orgCreateError } =
@@ -314,7 +318,7 @@ const Create = () => {
                             label="Url"
                             field="url"
                             description={
-                                "https://site.com/<this is the part you are entering>\nExample: https://site.com/suit"
+                                "https://epsilon.stuysu.org/<this is the part you are entering>\nExample: https://epsilon.stuysu.org/suit"
                             }
                             required={OrgRequirements.url.required}
                             requirements={OrgRequirements.url.requirements}
@@ -402,6 +406,18 @@ const Create = () => {
                             sx={{ width: "100%" }}
                             required={OrgRequirements.socials.required}
                             requirements={OrgRequirements.socials.requirements}
+                        />
+                    </FormSection>
+                    <FormSection sx={{ width: "100%", marginTop: "20px" }}>
+                        <FormTextField
+                            label="Faculty Advisor Email (optional)"
+                            field="faculty_email"
+                            sx={{ width: "100%" }}
+                            required={OrgRequirements.faculty_email.required}
+                            requirements={
+                                OrgRequirements.faculty_email.requirements
+                            }
+                            description="If a faculty member has agreed to be your club advisor, please input their preferred email here."
                         />
                     </FormSection>
                     <FormUpload
