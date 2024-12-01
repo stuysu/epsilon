@@ -135,8 +135,8 @@ const Strikes = () => {
                             onClick={() => {
                                 setOrgId(org.id);
                                 setOrgName(org.name);
-                                setSearchInput(""); // Clear search input after selecting an org
-                                setFilteredOrgs([]); // Clear filtered orgs after selecting an org
+                                setSearchInput("");
+                                setFilteredOrgs([]);
                             }}
                             sx={{ margin: "5px" }}
                         >
