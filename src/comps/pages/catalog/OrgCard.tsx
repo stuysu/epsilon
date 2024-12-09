@@ -25,7 +25,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                 flexDirection: "column",
                 overflow: "hidden",
                 padding: "20px",
-                justifyContent: "flex-start"
+                justifyContent: "flex-start",
             }}
             onClick={() => {
                 navigate(`/${organization.url}`);
@@ -78,7 +78,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                 <Typography
                     variant="body1"
                     align="center"
-                    fontSize={25}
+                    fontSize={20}
                     sx={{
                         textAlign: "center",
                         overflow: "hidden",
