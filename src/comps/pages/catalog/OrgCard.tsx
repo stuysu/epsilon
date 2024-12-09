@@ -14,12 +14,18 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                 borderRadius: "7px",
                 cursor: "pointer",
                 transition: "0.2s background ease-out",
+                justifyContent: "space-between",
                 "&:hover": {
                     background: theme.colorMode
                         ? "rgba(255, 255, 255, 0.2)"
                         : "rgba(100, 100, 100, 0.2)",
                     transition: "0.2s background ease-out",
                 },
+                height: "570px",
+                display: "flex",
+                flexDirection: "column",
+                overflow: "hidden",
+                padding: "20px",
             }}
             onClick={() => {
                 navigate(`/${organization.url}`);
@@ -31,7 +37,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
-                    paddingTop: "20px",
+                    flexDirection: "column",
                 }}
             >
                 <Avatar
@@ -48,12 +54,44 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                 >
                     {organization.name?.charAt(0).toUpperCase()}
                 </Avatar>
-            </Box>
-            <Box sx={{ width: "100%", padding: "20px" }}>
-                <Typography variant="h3" align="center">
+                <Typography
+                    variant="h3"
+                    align="center"
+                    sx={{
+                        marginTop: "30px",
+                        maxWidth: "100%",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "nowrap",
+                        textAlign: "center",
+                    }}
+                >
                     {organization.name}
                 </Typography>
-                <Typography variant="body1" align="center">
+            </Box>
+            <Box
+                sx={{
+                    width: "100%",
+                    overflow: "hidden",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "flex-start",
+                }}
+            >
+                <Typography
+                    variant="body1"
+                    align="center"
+                    fontSize={20}
+                    sx={{
+                        textAlign: "center",
+                        overflow: "hidden",
+                        textOverflow: "ellipsis",
+                        whiteSpace: "normal",
+                        display: "-webkit-box",
+                        WebkitBoxOrient: "vertical",
+                        WebkitLineClamp: 9,
+                    }}
+                >
                     {organization.purpose}
                 </Typography>
             </Box>
