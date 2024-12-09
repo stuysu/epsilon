@@ -14,7 +14,6 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                 borderRadius: "7px",
                 cursor: "pointer",
                 transition: "0.2s background ease-out",
-                justifyContent: "space-between",
                 "&:hover": {
                     background: theme.colorMode
                         ? "rgba(255, 255, 255, 0.2)"
@@ -26,6 +25,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                 flexDirection: "column",
                 overflow: "hidden",
                 padding: "20px",
+                justifyContent: "flex-start"
             }}
             onClick={() => {
                 navigate(`/${organization.url}`);
@@ -72,16 +72,13 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
             <Box
                 sx={{
                     width: "100%",
-                    overflow: "hidden",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "flex-start",
+                    marginTop: "20px",
                 }}
             >
                 <Typography
                     variant="body1"
                     align="center"
-                    fontSize={20}
+                    fontSize={25}
                     sx={{
                         textAlign: "center",
                         overflow: "hidden",
@@ -89,7 +86,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                         whiteSpace: "normal",
                         display: "-webkit-box",
                         WebkitBoxOrient: "vertical",
-                        WebkitLineClamp: 9,
+                        WebkitLineClamp: 7,
                     }}
                 >
                     {organization.purpose}
