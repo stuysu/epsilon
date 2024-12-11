@@ -12,6 +12,7 @@ import Strikes from "./Strikes";
 import SendMessage from "./SendMessage";
 import Announcements from "./Announcements";
 import Rooms from "./Rooms";
+import ClubAdminEmails from "./ClubAdminEmails";
 
 const AdminRouter = () => {
     const user = useContext(UserContext);
@@ -30,6 +31,7 @@ const AdminRouter = () => {
                 <Route path="/send-message" Component={SendMessage} />
                 <Route path="/announcements" Component={Announcements} />
                 <Route path="/rooms" Component={Rooms} />
+                <Route path="/club-admin-emails" Component={ClubAdminEmails} />
                 <Route path="/*" Component={ApprovePending} />
             </Routes>
         </div>
