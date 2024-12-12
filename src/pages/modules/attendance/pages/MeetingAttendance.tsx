@@ -131,16 +131,13 @@ const MeetingAttendance = () => {
                         width: "100%",
                         maxWidth: "400px",
                         height: "300px",
-                        padding: "15px",
+                        display: "flex",
+                        flexDirection: "column",
+                        alignItems: "center",
+                        justifyContent: "center",
                     }}
                 >
-                    <Box
-                        sx={{
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "center",
-                        }}
-                    >
+                    <Box>
                         <Avatar
                             src={user.picture}
                             alt={user.first_name + " " + user.last_name}
@@ -149,24 +146,12 @@ const MeetingAttendance = () => {
                             {user.first_name[0].toUpperCase()}
                         </Avatar>
                     </Box>
-                    <Box
-                        sx={{
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "center",
-                        }}
-                    >
+                    <Box>
                         <Typography variant="h4">
                             {user.first_name + " " + user.last_name}
                         </Typography>
                     </Box>
-                    <Box
-                        sx={{
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "center",
-                        }}
-                    >
+                    <Box>
                         <Typography variant="h5">
                             Status: {isPresent ? "Present" : "Absent"}
                         </Typography>
@@ -174,7 +159,7 @@ const MeetingAttendance = () => {
                     <AsyncButton
                         onClick={markPresent}
                         disabled={isPresent}
-                        sx={{ width: "100%" }}
+                        sx={{ width: "200px", margin: "10px" }}
                         color="success"
                         variant="contained"
                     >

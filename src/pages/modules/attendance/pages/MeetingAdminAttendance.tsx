@@ -1,4 +1,4 @@
-import { Avatar, Box, Card, Typography } from "@mui/material";
+import { Avatar, Box, Button, Card, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
@@ -19,6 +19,8 @@ const MeetingAdminAttendance = () => {
     const { enqueueSnackbar } = useSnackbar();
 
     const [meeting, setMeeting] = useState<Meeting | undefined>();
+
+    const [copied, setCopied] = useState(false);
 
     useEffect(() => {
         const fetchMeetingData = async () => {
@@ -73,8 +75,8 @@ const MeetingAdminAttendance = () => {
     ) => {
         if (
             userId === undefined ||
-            firstName == undefined ||
-            lastName == undefined ||
+            firstName === undefined ||
+            lastName === undefined ||
             isPresent === undefined
         ) {
             enqueueSnackbar("Invalid parameters.", { variant: "error" });
@@ -162,15 +164,14 @@ const MeetingAdminAttendance = () => {
             <Typography variant="h1" width="100%" align="center">
                 {meeting?.title}
             </Typography>
-            <Typography variant="body1" width="100%" align="center">
-                Send this link to allow attendees to mark their own attendance:{" "}
-                <br />
-                {`${PUBLIC_URL}/modules/attendance/meeting/${meetingId}`}
+            <Typography variant="body1" width="300px" align="center" margin="auto">
+                Send the QR code or the link below to your members to mark their attendance!
             </Typography>
             <div
                 style={{
                     display: "flex",
-                    justifyContent: "center",
+                    alignItems: "center",
+                    flexDirection: "column",
                     margin: "20px 0",
                 }}
             >
@@ -178,10 +179,16 @@ const MeetingAdminAttendance = () => {
                     value={`${PUBLIC_URL}/modules/attendance/meeting/${meetingId}`}
                     size={300}
                 />
+                <Button 
+                    onClick={() => {
+                        navigator.clipboard.writeText(`${PUBLIC_URL}/modules/attendance/meeting/${meetingId}`);
+                        setCopied(true);
+                    }}
+                    sx={{ width: "200px", marginTop: "20px" }}
+                >
+                    { copied ? "Copied!" : "Copy Link"}
+                </Button>
             </div>
-            <Typography variant="body1" width="100%" align="center">
-                Or send them this QR code
-            </Typography>
             <Box
                 sx={{
                     width: "100%",
