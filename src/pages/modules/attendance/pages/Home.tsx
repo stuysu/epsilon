@@ -71,12 +71,12 @@ const Home = () => {
     }, [selectedOrgId, enqueueSnackbar]);
 
     return (
-        <LoginGate>
+        <LoginGate sx={{ display: "flex", flexDirection: "column", alignItems: "center"}}>
             <Typography variant="h1" width="100%" align="center">
                 Attendance
             </Typography>
-            <Box sx={{ width: "100%" }}>
-                <Box sx={{ width: "250px", padding: "20px", height: "250px" }}>
+            <Box sx={{ width: "100" }}>
+                <Box sx={{ width: "250px", padding: "20px", marginLeft: "auto", marginRight: "auto" }}>
                     <FormControl fullWidth>
                         <InputLabel>Select Organization</InputLabel>
                         <Select
@@ -129,6 +129,7 @@ const Home = () => {
                                 key={meeting.id}
                                 title={meeting.title}
                                 id={meeting.id}
+                                startDate={meeting.start_time}
                             />
                         ))}
                     </Box>
