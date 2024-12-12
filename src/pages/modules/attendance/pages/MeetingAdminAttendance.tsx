@@ -238,48 +238,20 @@ const MeetingAdminAttendance = () => {
 
                                 <Box
                                     sx={{
-                                        width: "150px",
+                                        width: "",
                                         display: "flex",
-                                        justifyContent: "center",
                                         flexWrap: "wrap",
+                                        padding: "20px",
                                     }}
                                 >
                                     <Typography
                                         variant="body2"
-                                        width="100%"
-                                        align="center"
                                     >
                                         {userName}
-                                    </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        width="100%"
-                                        align="center"
-                                    >
+                                        <br />
                                         {userEmail}
-                                    </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        width="100%"
-                                        align="center"
-                                    >
+                                        <br />
                                         ID: {String(userId).padStart(5, "0")}
-                                    </Typography>
-                                </Box>
-                                <Box
-                                    sx={{
-                                        width: "50px",
-                                        display: "flex",
-                                        justifyContent: "center",
-                                    }}
-                                >
-                                    <Typography
-                                        variant="body1"
-                                        color={
-                                            isPresent ? "#2ecc71" : "secondary"
-                                        }
-                                    >
-                                        {isPresent ? "Present" : "Absent"}
                                     </Typography>
                                 </Box>
 
@@ -288,6 +260,7 @@ const MeetingAdminAttendance = () => {
                                         position: "absolute",
                                         right: 0,
                                         width: "130px",
+                                        height: "60px",
                                         display: "flex",
                                         justifyContent: "center",
                                     }}
