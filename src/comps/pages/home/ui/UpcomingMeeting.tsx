@@ -70,9 +70,17 @@ const UpcomingMeeting = ({
 
                     <ListItemText primary={org_name} />
                 </ListItem>
-                <Box sx={{ height: "150px" }}>
-                    <Typography variant="h3">{title}</Typography>
-                    <Typography>
+                <Box sx={{ height: "150px", paddingLeft: "10px" }}>
+                    <Typography variant="h3" noWrap sx={{ textOverflow: "ellipsis" }}>{title}</Typography>
+                    <Typography 
+                        noWrap 
+                        sx={{ 
+                            textOverflow: "ellipsis", 
+                            WebkitLineClamp: 3, 
+                            display: "-webkit-inline-box", 
+                            WebkitBoxOrient: "vertical" 
+                        }}
+                    >
                         {daysOfWeek[start.day()]}, {monthNames[start.month()]}{" "}
                         {start.date()} {start.year()}, {start.format("LT")} to{" "}
                         {end.format("LT")} <br />
@@ -80,7 +88,7 @@ const UpcomingMeeting = ({
                         {is_public ? "Public" : "Private"}
                     </Typography>
                 </Box>
-                <AsyncButton variant="contained" onClick={() => setOpen(true)}>
+                <AsyncButton variant="contained" onClick={() => setOpen(true)} sx={{ marginLeft: "10px" }}>
                     Show
                 </AsyncButton>
                 <MeetingPreview

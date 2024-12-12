@@ -118,11 +118,11 @@ const Post = ({
                 />
             </ListItem>
 
-            <Typography variant="h3" width="100%">
+            <Typography variant="h3" width="100%" sx={{ paddingLeft: "10px" }}>
                 {content.title}
             </Typography>
 
-            <Box sx={{ width: "100%", height: "170px", overflowY: "auto" }}>
+            <Box sx={{ width: "100%", height: "170px", overflowY: "auto", padding: "10px" }}>
                 <Typography
                     variant="body1"
                     width="100%"
