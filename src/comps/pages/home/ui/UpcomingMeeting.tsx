@@ -72,15 +72,7 @@ const UpcomingMeeting = ({
                 </ListItem>
                 <Box sx={{ height: "150px", paddingLeft: "10px" }}>
                     <Typography variant="h3" noWrap sx={{ textOverflow: "ellipsis" }}>{title}</Typography>
-                    <Typography 
-                        noWrap 
-                        sx={{ 
-                            textOverflow: "ellipsis", 
-                            WebkitLineClamp: 3, 
-                            display: "-webkit-inline-box", 
-                            WebkitBoxOrient: "vertical" 
-                        }}
-                    >
+                    <Typography>
                         {daysOfWeek[start.day()]}, {monthNames[start.month()]}{" "}
                         {start.date()} {start.year()}, {start.format("LT")} to{" "}
                         {end.format("LT")} <br />
