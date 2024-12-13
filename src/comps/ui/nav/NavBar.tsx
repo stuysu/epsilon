@@ -339,7 +339,7 @@ const NavBar = () => {
 
                     <Divider />
                     <List
-                        sx={{ width: "100%" }}
+                        sx={{ marginLeft: "10px" }}
                         subheader={<ListSubheader>Info</ListSubheader>}
                     >
                         <ListItemButton onClick={() => navigate("/about")}>
