@@ -17,6 +17,7 @@ import OrgAdminRouter from "./admin";
 import { useSnackbar } from "notistack";
 import { Box, useMediaQuery } from "@mui/material";
 import AsyncButton from "../../comps/ui/AsyncButton";
+import { Helmet } from "react-helmet";
 
 const OrgRouter = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -140,6 +141,10 @@ const OrgRouter = () => {
                 <NotFound />
             ) : (
                 <>
+                    <Helmet>
+                        <title>{org.name}</title>
+                        <meta name="description" content={org.purpose} />
+                    </Helmet>
                     <Box
                         sx={{
                             width: "100%",
