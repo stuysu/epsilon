@@ -139,14 +139,14 @@ const PostEditor = ({
             sx={{
                 width: "550px",
                 padding: "15px",
-                height: "400px",
+                height: "425px",
                 margin: "10px",
             }}
         >
-            <Typography variant="h3" width="100%">
+            <Typography variant="h3" width="100%" marginLeft="10px" marginBottom="20px">
                 {content ? "Update Post" : "Create Post"}
             </Typography>
-            <Box sx={{ marginBottom: "10px" }}>
+            <Box margin="10px">
                 <TextField
                     value={postData["title"]}
                     name={"title"}
@@ -167,24 +167,26 @@ const PostEditor = ({
                 />
             </Box>
 
-            {content ? (
-                <>
-                    <AsyncButton onClick={savePost} variant="contained">
-                        Save
+            <div style={{ marginLeft: "10px", marginTop: "20px" }}>
+                {content ? (
+                    <>
+                        <AsyncButton onClick={savePost} variant="contained">
+                            Save
+                        </AsyncButton>
+                        <AsyncButton
+                            onClick={onCancel}
+                            variant="contained"
+                            sx={{ marginLeft: "10px" }}
+                        >
+                            Cancel
+                        </AsyncButton>
+                    </>
+                ) : (
+                    <AsyncButton onClick={createPost} variant="contained">
+                        Create
                     </AsyncButton>
-                    <AsyncButton
-                        onClick={onCancel}
-                        variant="contained"
-                        sx={{ marginLeft: "10px" }}
-                    >
-                        Cancel
-                    </AsyncButton>
-                </>
-            ) : (
-                <AsyncButton onClick={createPost} variant="contained">
-                    Create
-                </AsyncButton>
-            )}
+                )}
+            </div>
         </Paper>
     );
 };

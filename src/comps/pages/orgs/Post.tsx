@@ -98,7 +98,7 @@ const Post = ({
                 width: "550px",
                 margin: "10px",
                 padding: "15px",
-                height: "400px",
+                height: "425px",
             }}
         >
             <ListItem>
@@ -118,11 +118,11 @@ const Post = ({
                 />
             </ListItem>
 
-            <Typography variant="h3" width="100%" sx={{ paddingLeft: "10px" }}>
+            <Typography variant="h3" width="100%" sx={{ paddingLeft: "10px", textOverflow: "ellipsis" }} noWrap>
                 {content.title}
             </Typography>
 
-            <Box sx={{ width: "100%", height: "170px", overflowY: "auto", padding: "10px" }}>
+            <Box sx={{ width: "100%", height: "200px", overflowY: "auto", padding: "10px" }}>
                 <Typography
                     variant="body1"
                     width="100%"
@@ -131,7 +131,7 @@ const Post = ({
                     {content.description}
                 </Typography>
             </Box>
-            <Box sx={{ marginTop: "20px" }}>
+            <Box marginTop="20px" marginLeft="10px">
                 {editable && (
                     <>
                         <AsyncButton onClick={deletePost} variant="contained">

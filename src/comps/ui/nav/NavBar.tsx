@@ -329,7 +329,7 @@ const NavBar = () => {
                                 return null;
                             })}
                             <ListItemButton onClick={() => navigate("/create")}>
-                                <ListItemIcon>
+                                <ListItemIcon sx={{ marginLeft: "10px" }}>
                                     <AddCircleIcon />
                                 </ListItemIcon>
                                 <ListItemText>Create Activity</ListItemText>

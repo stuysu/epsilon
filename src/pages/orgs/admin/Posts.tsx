@@ -27,10 +27,15 @@ const Posts = () => {
         );
 
     return (
-        <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
-            <Typography variant="h1" width="100%">
-                Manage Posts
-            </Typography>
+        <Box 
+            sx={{ 
+                width: "100%", 
+                display: "flex", 
+                flexWrap: "wrap", 
+                justifyContent: "center", 
+                marginTop: "25px" 
+            }}
+        >
             <PostEditor
                 orgId={organization.id}
                 orgName={organization.name}
