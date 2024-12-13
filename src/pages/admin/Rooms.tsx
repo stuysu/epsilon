@@ -287,14 +287,15 @@ const Rooms = () => {
 
             <Typography
                 variant="h2"
-                width="100%"
                 align="center"
                 sx={{ marginTop: "20px" }}
             >
                 Manage Rooms
             </Typography>
-            <AdminRoom create onCreate={() => fetchRooms()} />
-            <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
+            <div style={{ display: "flex", justifyContent: "center" }}>
+                <AdminRoom create onCreate={() => fetchRooms()} />
+            </div>
+            <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
                 {rooms.map((room) => (
                     <AdminRoom
                         key={room.id}

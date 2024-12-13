@@ -147,7 +147,7 @@ const AdminRoom = ({
                 margin: "15px",
             }}
         >
-            <Box sx={{ width: "100%", display: "flex" }}>
+            <Box sx={{ width: "100%", display: "flex", marginBottom: "10px" }}>
                 <TextField
                     sx={{ width: "50%", marginRight: "10px" }}
                     label="Room Name"
@@ -169,7 +169,7 @@ const AdminRoom = ({
                 />
             </Box>
 
-            <FormGroup>
+            <FormGroup sx={{ marginBottom: "10px" }}>
                 <FormControlLabel
                     control={
                         <Checkbox
@@ -225,7 +225,7 @@ const AdminRoom = ({
                 </FormGroup>
             </FormControl>
 
-            <Box sx={{ width: "100%", paddingLeft: "10px" }}>
+            <Box sx={{ width: "100%", marginTop: "10px" }}>
                 {create ? (
                     <AsyncButton onClick={createRoom} variant="contained">
                         Create
