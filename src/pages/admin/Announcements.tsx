@@ -144,32 +144,33 @@ const Announcements = () => {
                                         maxWidth: "600px",
                                         width: "100%",
                                         display: "flex",
-                                        padding: "10px",
-                                        alignItems: "center",
+                                        flexDirection: "column",
+                                        padding: "20px",
                                     }}
                                 >
                                     <Typography
                                         variant="body1"
                                         sx={{
-                                            width: "80%",
+                                            width: "100%",
                                             whiteSpace: "pre-line",
                                         }}
                                     >
                                         {announcement.content}
                                     </Typography>
-                                    <AsyncButton
-                                        onClick={() =>
-                                            deleteAnnouncement(announcement.id)
-                                        }
-                                        sx={{
-                                            width: "15%",
-                                            marginLeft: "20px",
-                                            height: "40px",
-                                        }}
-                                        variant="contained"
-                                    >
-                                        Delete
-                                    </AsyncButton>
+                                    <div style={{ display: "flex", gap: "10px", marginTop: "20px" }}>
+                                        <AsyncButton
+                                            onClick={() =>
+                                                deleteAnnouncement(announcement.id)
+                                            }
+                                            sx={{
+                                                width: "15%",
+                                                height: "40px",
+                                            }}
+                                            variant="contained"
+                                        >
+                                            Delete
+                                        </AsyncButton>
+                                    </div>
                                 </Card>
                             </Box>
                         );
