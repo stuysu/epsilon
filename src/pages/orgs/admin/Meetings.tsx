@@ -45,12 +45,12 @@ const Meetings = () => {
         return <h2>Meetings are disabled for this organization.</h2>;
 
     return (
-        <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
+        <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
             <Typography variant="h1" align="center" width="100%">
                 Manage Meetings
             </Typography>
 
-            <Box sx={{ width: "100%", paddingLeft: "10px", marginTop: "20px" }}>
+            <Box sx={{ width: "100%", paddingLeft: "10px", margin: "20px", display: "flex", justifyContent: "center" }}>
                 <AsyncButton
                     onClick={() =>
                         setEditState({

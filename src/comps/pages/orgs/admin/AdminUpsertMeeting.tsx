@@ -302,7 +302,7 @@ const AdminUpsertMeeting = ({
                         }}
                     >
                         <MenuItem value={"undefined"}>Virtual</MenuItem>
-                        {availableRooms.map((room) => (
+                        {availableRooms.sort((a, b) => a.name.localeCompare(b.name)).map((room) => (
                             <MenuItem key={room.id} value={String(room.id)}>
                                 {room.name}
                             </MenuItem>

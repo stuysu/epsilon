@@ -19,7 +19,7 @@ const Meetings = () => {
             </Typography>
 
             <LoginGate>
-                <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
+                <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap", justifyContent: "center" }}>
                     {organization.meetings
                         .sort(sortByDate)
                         .map((meeting, i) => (
