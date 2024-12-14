@@ -54,9 +54,15 @@ const MeetingAdminAttendance = () => {
                     .single();
 
             if (meetingFetchError || !meetingData) {
-                enqueueSnackbar("Failed to fetch meeting.", {
-                    variant: "error",
-                });
+                enqueueSnackbar(
+                    `Failed to fetch meeting. <${
+                        (await meetingFetchError?.context.text()) ||
+                        "Unknown Error"
+                    }>`,
+                    {
+                        variant: "error",
+                    },
+                );
                 return;
             }
 
@@ -105,9 +111,14 @@ const MeetingAdminAttendance = () => {
         }
 
         if (updateError) {
-            enqueueSnackbar("Failed to update attendance.", {
-                variant: "error",
-            });
+            enqueueSnackbar(
+                `Failed to update attendance. <${
+                    (await updateError?.context.text()) || "Unknown Error"
+                }>`,
+                {
+                    variant: "error",
+                },
+            );
             return;
         }
 
