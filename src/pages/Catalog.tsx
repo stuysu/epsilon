@@ -10,6 +10,7 @@ import { useSnackbar } from "notistack";
 import Loading from "../comps/ui/Loading";
 import SearchFilter from "../comps/pages/catalog/SearchFilter";
 import AsyncButton from "../comps/ui/AsyncButton";
+import TextLinks from "../comps/ui/TextLinks";
 
 /*
 function getUnique(arr : Partial<Organization>[]) {
@@ -250,15 +251,7 @@ const Catalog = () => {
                                         padding: "20px",
                                     }}
                                 >
-                                    <Typography
-                                        variant="body1"
-                                        sx={{
-                                            width: "100%",
-                                            whiteSpace: "pre-line",
-                                        }}
-                                    >
-                                        {announcement.content}
-                                    </Typography>
+                                    <TextLinks content={announcement.content} />
                                 </Card>
                             );
                         })}

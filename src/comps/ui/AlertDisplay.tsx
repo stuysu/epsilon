@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import Alert from "@mui/material/Alert";
-import DisplayLinks from "./DisplayLinks";
+import TextLinks from "./TextLinks";
 
 type AlertInfo = {
     message: string;
@@ -50,7 +50,7 @@ const AlertDisplay = () => {
                 data.severity === "error" ? undefined : () => setOpen(false)
             }
         >
-            <DisplayLinks text={data.message} />
+            <TextLinks content={data.message} />
         </Alert>
     );
 };
