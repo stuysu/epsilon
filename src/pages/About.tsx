@@ -83,7 +83,7 @@ const About = () => {
                     <br />
                     Rahul Deb, SU IT Co-Director '24-'25, SU IT '23-'24 <br />
                     <br />
-                    Nathaniel Moy, SU IT '23-'25 <br />
+                    Nathaniel Moy, SU IT Manager '24-'25, SU IT '23-'25 <br />
                     <br />
                     Adam Choi, SU IT '23-'25
                     <br />
