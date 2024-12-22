@@ -23,6 +23,7 @@ const UpcomingMeeting = ({
     org_picture,
     room_name,
     is_public,
+    sx,
 }: {
     id: number;
     title: string;
@@ -33,6 +34,7 @@ const UpcomingMeeting = ({
     org_picture: string;
     room_name?: string;
     is_public: boolean;
+    sx?: object;
 }) => {
     const [open, setOpen] = useState(false);
 
@@ -55,6 +57,9 @@ const UpcomingMeeting = ({
                     width: "100%",
                     height: "300px",
                     padding: "20px",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
                 }}
             >
                 <ListItem>
@@ -71,8 +76,23 @@ const UpcomingMeeting = ({
                     <ListItemText primary={org_name} />
                 </ListItem>
                 <Box sx={{ height: "150px" }}>
-                    <Typography variant="h3">{title}</Typography>
-                    <Typography>
+                    <Typography
+                        variant="h3"
+                        sx={{
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                        }}
+                    >
+                        {title}
+                    </Typography>
+                    <Typography
+                        sx={{
+                            whiteSpace: "nowrap",
+                            overflow: "hidden",
+                            textOverflow: "ellipsis",
+                        }}
+                    >
                         {daysOfWeek[start.day()]}, {monthNames[start.month()]}{" "}
                         {start.date()} {start.year()}, {start.format("LT")} to{" "}
                         {end.format("LT")} <br />
@@ -80,9 +100,14 @@ const UpcomingMeeting = ({
                         {is_public ? "Public" : "Private"}
                     </Typography>
                 </Box>
-                <AsyncButton variant="contained" onClick={() => setOpen(true)}>
-                    Show
-                </AsyncButton>
+                <Box sx={{ display: "flex", marginTop: "auto" }}>
+                    <AsyncButton
+                        variant="contained"
+                        onClick={() => setOpen(true)}
+                    >
+                        Show
+                    </AsyncButton>
+                </Box>
                 <MeetingPreview
                     id={id}
                     title={title}
