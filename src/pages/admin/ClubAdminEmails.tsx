@@ -49,17 +49,6 @@ const ClubAdminEmails = () => {
         }
     }, [searchInput, allOrgs]);
 
-    // useEffect(() => {
-    //     if(currentOrganization) {
-    //         const emails = currentOrganization?.memberships
-    //             ?.filter((membership) => membership.role === "ADMIN" || membership.role === "CREATOR")
-    //             .map((membership) => membership.users?.email)
-    //             .join(", ");
-
-    //         setAdminEmails(emails || "");
-    //     }
-    // }, [currentOrganization]);
-
     useEffect(() => {
         const fetchAdminEmails = async () => {
             const { data: memberships, error: membershipsError } =
@@ -84,7 +73,10 @@ const ClubAdminEmails = () => {
                 .in("id", userIds);
 
             if (usersError) {
-                console.error("Error fetching users:", { variant: "error" });
+                enqueueSnackbar(
+                    "Error fetching users. Please try again later.",
+                    { variant: "error" },
+                );
                 return;
             }
 
