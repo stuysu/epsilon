@@ -3,6 +3,7 @@ import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import AsyncButton from "../../comps/ui/AsyncButton";
+import DisplayLinks from "../../comps/ui/DisplayLinks";
 
 const Announcements = () => {
     let [content, setContent] = useState("");
@@ -148,15 +149,7 @@ const Announcements = () => {
                                         alignItems: "center",
                                     }}
                                 >
-                                    <Typography
-                                        variant="body1"
-                                        sx={{
-                                            width: "80%",
-                                            whiteSpace: "pre-line",
-                                        }}
-                                    >
-                                        {announcement.content}
-                                    </Typography>
+                                    <DisplayLinks text={announcement.content} />
                                     <AsyncButton
                                         onClick={() =>
                                             deleteAnnouncement(announcement.id)

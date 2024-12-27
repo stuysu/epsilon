@@ -224,6 +224,14 @@ const OrgApproval = ({
                     }
                 </Typography>
                 <Divider sx={{ margin: "10px" }} />
+
+                <Typography variant="h5" fontWeight={600}>
+                    Faculty Advisor:
+                </Typography>
+                <Typography variant="body2">
+                    {org?.faculty_email || "N/A"}
+                </Typography>
+                <Divider sx={{ margin: "10px" }} />
             </Card>
             <Box sx={{ maxWidth: "700px", width: "100%", margin: "10px" }}>
                 <OrgChat organization_id={org.id as number} />

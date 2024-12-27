@@ -3,6 +3,7 @@ import { supabase } from "../supabaseClient";
 
 import { Box, useMediaQuery, Typography, Card } from "@mui/material";
 import { Masonry } from "@mui/lab";
+import DisplayLinks from "../comps/ui/DisplayLinks";
 
 import OrgCard from "../comps/pages/catalog/OrgCard";
 import { useSnackbar } from "notistack";
@@ -250,15 +251,7 @@ const Catalog = () => {
                                         padding: "20px",
                                     }}
                                 >
-                                    <Typography
-                                        variant="body1"
-                                        sx={{
-                                            width: "100%",
-                                            whiteSpace: "pre-line",
-                                        }}
-                                    >
-                                        {announcement.content}
-                                    </Typography>
+                                    <DisplayLinks text={announcement.content} />
                                 </Card>
                             );
                         })}

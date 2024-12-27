@@ -23,26 +23,18 @@ const Rules = () => {
             <Typography paragraph>
                 If you are experiencing technical issues or difficulties
                 regarding the Epsilon website, please contact us at
-                it@stuysu.org, clubpu@stuysu.org, or an SU representative.
+                it@stuysu.org, clubpub@stuysu.org, or an SU representative.
             </Typography>
             <Typography>
                 <ol>
                     <li>
                         For an Activity to operate, a charter must be submitted
-                        and&nbsp;approved by&nbsp;the Clubs &amp; Pubs
-                        administrators. Approval will take place on a set day
-                        each week, Saturday. Once fully approved, the charter
-                        will be visible on the&nbsp;
-                        <Link
-                            color="primary"
-                            component={RouterLink}
-                            to="https://epsilon.stuysu.org/catalog"
-                        >
-                            Epsilon website
-                        </Link>
-                        . Activity leaders will be notified by email when their
-                        charter is in the catalog. Charters will be approved
-                        from August 1st to May 31st.
+                        and approved by the Clubs & Pubs administrators.
+                        Approval will take place on a set day each week. Once
+                        fully approved, the charter will be visible on the
+                        Epsilon website. Activity leaders will be notified by
+                        email when their charter is in the catalog. Charters
+                        will be approved from August 1st to May 31st.
                     </li>
                     <li>
                         All Activities must have at least two leaders (i.e. two
@@ -137,11 +129,11 @@ const Rules = () => {
                         inappropriate behavior, including disrespectful
                         comments, bullying, or code of conduct violations, the
                         meeting must be immediately ended. Report the issue to
-                        MPolazz@schools.nyc.gov and clubpub@stuysu.org
+                        MPolazz@schools.nyc.gov and clubpub@stuysu.org.
                     </li>
                     <li>
-                        Please email it@stuysu.org for general technical support
-                        and support using Epsilon.
+                        Please email help@stuyactivities.org for support using
+                        Epsilon and IT@stuysu.org for general technical support.
                     </li>
                 </ol>
             </Typography>
@@ -153,11 +145,10 @@ const Rules = () => {
                 it will receive a strike (or suspension if otherwise stated).
                 Any combination of 3 strikes will result in the revocation of
                 the Activity’s charter (the Activity must then reapply for a
-                charter if it wishes to exist). Strikes cannot be
-                appealed.&nbsp;Please note that all Activity meetings will be
-                audited by an SU Auditor, who will report to the directors of
-                the SU Clubs &amp; Pubs department, and will distribute strikes
-                accordingly.
+                charter if it wishes to exist). Strikes cannot be appealed.
+                Please note that all Activity meetings will be audited by an SU
+                Auditor, who will report to the directors of the SU Clubs & Pubs
+                department, and will distribute strikes accordingly.
             </Typography>
             <Typography>
                 <ol>
@@ -170,8 +161,8 @@ const Rules = () => {
                         roughhousing, racist, sexist, homophobic, or otherwise
                         disrespectful comments or statements, bullying (online
                         or in-person), and in general, any violation of the
-                        rules of the Student Code of Conduct&nbsp;or the
-                        Chancellor’s Regulations.
+                        rules of the Student Code of Conduct or the Chancellor’s
+                        Regulations.
                     </li>
                     <li>
                         If an Activity wishes to go on trips or engage in any
@@ -180,14 +171,14 @@ const Rules = () => {
                         <ul>
                             <li>
                                 Have the registered Activity faculty advisor
-                                (not the student leaders) email{" "}
+                                (not the student leaders) email
                                 clubpub@stuysu.org, the COSA (Mr. Polazzo) and
                                 the Assistant Principal (Mr. Moran) at least one
                                 week in advance with the Subject: “Activity
                                 Meeting Outside of School Premises: [ACTIVITY
-                                NAME]”. Mr. Polazzo can be reached at{" "}
-                                MPolazz@schools.nyc.gov and can be found in Room
-                                260. Mr. Moran can be reached at
+                                NAME]”. Mr. Polazzo can be reached at
+                                MPolazz@schools.nyc.gov and can be found in
+                                Room, 260. Mr. Moran can be reached at
                                 BMoran@schools.nyc.gov and can be found in Room
                                 103.
                             </li>
@@ -219,7 +210,7 @@ const Rules = () => {
                         If an Activity wishes to use the media carts from the
                         programming office, they may do so only with the
                         presence of a registered Activity faculty advisor to
-                        sign them&nbsp;in and out.
+                        sign them in and out.
                     </li>
                     <li>
                         Activities may not put up flyers or advertise their
@@ -249,11 +240,10 @@ const Rules = () => {
                 it will receive a strike (or suspension if otherwise stated).
                 Any combination of 3 strikes will result in the revocation of
                 the Activity’s charter (the Activity must then reapply for a
-                charter if it wishes to exist). Strikes cannot be
-                appealed.&nbsp;Please note that all Activity meetings will be
-                audited by an SU Auditor, who will report to the directors of
-                the SU Clubs &amp; Pubs department, and will distribute strikes
-                accordingly.
+                charter if it wishes to exist). Strikes cannot be appealed.
+                Please note that all Activity meetings will be audited by an SU
+                Auditor, who will report to the directors of the SU Clubs & Pubs
+                department, and will distribute strikes accordingly.
             </Typography>
             <Typography>
                 <ol>
@@ -475,11 +465,7 @@ const Rules = () => {
                         majority vote of the Budget Committee.
                     </li>
                 </ol>
-            </Typography>
-            <Typography variant={"h5"} color="primary">
-                Funding
-            </Typography>
-            <Typography>
+
                 <ul>
                     <li>
                         A Faculty Advisor must be present if:
@@ -522,6 +508,145 @@ const Rules = () => {
                     </li>
                 </ul>
             </Typography>
+            <Typography variant={"h5"} color="primary">
+                Fundraising
+            </Typography>
+            <Typography>
+                <ul>
+                    <li>
+                        <b>
+                            Please view the full list of fundraising guidelines{" "}
+                        </b>{" "}
+                        <Link
+                            color="primary"
+                            href="https://docs.google.com/document/d/10RD4PIHYYiHTLBMGyKlfOlHU60kzJ8l7PTl4jHjFOmQ/edit?usp=sharing"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            <b>here</b>
+                        </Link>{" "}
+                        <b>and the Staff Treasury Memo</b>{" "}
+                        <Link
+                            color="primary"
+                            href="https://docs.google.com/document/d/1iXmJKKf6PvroDvOQSekMJFwnokJHgCApGqKx4uNYfM0/edit?usp=sharing"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            <b>here</b>
+                        </Link>{" "}
+                        <b>before pursuing any fundraising endeavors</b>
+                    </li>
+                    <li>
+                        Purchases and Reimbursements:
+                        <ul>
+                            <li>
+                                All equipment, supplies, and services purchases
+                                should be made through FAMIS and ShopDOE as per
+                                NYC DOE Standard Operating Procedures (SOP).
+                                Only certain purchases may use General School
+                                Funds (GSF) with prior written approval from the
+                                Business Manager, APO, and Principal.
+                            </li>
+                            <li>
+                                Personal funds should not be used for school
+                                purchases without prior written approval.
+                                Reimbursements for such purchases are not
+                                allowed unless pre-approved in writing. No tax
+                                will be reimbursed; use the Tax-Exempt
+                                Certificate available in Room 105.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        Expenditure Requests:
+                        <ul>
+                            <li>
+                                Expenditure requests must use the "Request for
+                                Expenditure" form (fillable PDFs linked online
+                                or available in Room 105). Requests must include
+                                invoices (not statements, quotes, or estimates)
+                                and be submitted within two weeks of delivery or
+                                payment.
+                            </li>
+                            <li>
+                                Expenditure requests related to meetings,
+                                events, trips, or merchandise require additional
+                                documentation such as meeting agendas, signed
+                                attendance sheets, trip approval forms, and
+                                packing slips signed by the receiver.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        Deposit Procedures:
+                        <ul>
+                            <li>
+                                Deposits are handled only by Dina Ingram in Room
+                                105 or 273C (Tuesdays and Thursdays). Cash and
+                                checks should be separated by denomination, and
+                                checks must be made out to Stuyvesant High
+                                School, including the student's name and OSIS in
+                                the memo.
+                            </li>
+                            <li>
+                                The "Authorization to Collect General School
+                                Funds" form must be completed before any funds
+                                are collected, and no student is allowed to
+                                collect funds. Faculty advisors or another
+                                designated staff must supervise fundraising
+                                activities.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        Fundraising Rules:
+                        <ul>
+                            <li>
+                                All fundraising activities require prior
+                                approval using the "Authorization to Collect
+                                General School Funds" form, signed and submitted
+                                by the faculty advisor or coach. No students are
+                                allowed to handle or collect funds directly.
+                            </li>
+                            <li>
+                                Each fundraising event must have a "Final
+                                Statement at Conclusion of Revenue Producing
+                                Activity" form, listing all items sold, prices,
+                                and persons sold to, noting any profit or loss.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>
+                        Handling of Funds:
+                        <ul>
+                            <li>
+                                All funds should be deposited immediately after
+                                an event or no later than three days after.
+                                Funds must not be stored with students or off
+                                school grounds.
+                            </li>
+                            <li>
+                                Only cash and checks are accepted for deposits;
+                                electronic payments are not accepted unless
+                                through the school website for larger
+                                collections.
+                            </li>
+                        </ul>
+                    </li>
+                    <li>General Notes:</li>
+                    <ul>
+                        <li>
+                            All forms and documents related to financial
+                            transactions are available in Room 105.
+                        </li>
+                        <li>
+                            Checks for expenditures and deposits will be
+                            processed twice weekly (Tuesdays and Thursdays).
+                        </li>
+                    </ul>
+                </ul>
+            </Typography>
+            <br />
             <Typography paragraph>
                 ANY ACTIVITY THAT FAILS TO AGREE WITH THE ABOVE SET OF RULES
                 WILL NOT BE CHARTERED. THE STUYVESANT STUDENT UNION RESERVES THE

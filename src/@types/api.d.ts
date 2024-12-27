@@ -22,7 +22,9 @@ interface Organization {
     returning_info?: string;
     memberships?: Partial<Membership>[];
     fair?: boolean;
+    faculty_email?: string;
 }
+// see also: FormType in `src/pages/Create.tsx`
 
 interface OrganizationEdit {
     id?: number;
@@ -43,6 +45,7 @@ interface OrganizationEdit {
     tags?: Organization["tags"];
     commitment_level?: Organization["commitment_level"];
     fair?: Organization["fair"];
+    faculty_email?: Organization["faculty_email"];
 }
 
 /* FOR ADMIN PANEL (Approving Organization Edit Requests)*/

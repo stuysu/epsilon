@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Paper, Box } from "@mui/material";
+import { Paper, Box, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import MeetingPreview from "../../ui/meetings/MeetingPreview";
 import AsyncButton from "../../ui/AsyncButton";
@@ -34,11 +34,18 @@ const ScheduleMeeting = ({ meeting }: Props) => {
                 }}
             >
                 <Box sx={{ width: "100%", height: "50%" }}>
-                    <b>{meeting.organizations.name}</b> {startTime} - {endTime}
+                    <b>{meeting.organizations.name}</b> {startTime} – {endTime}
                 </Box>
                 <Box sx={{ width: "100%", height: "50%" }}>
                     <Box sx={{ width: "100%", height: "100%" }}>
-                        {meeting.title}
+                        {meeting.title}{" "}
+                        {meeting.rooms?.name ? (
+                            <Typography variant="body2" component="em">
+                                {"in " + meeting.rooms.name}
+                            </Typography>
+                        ) : (
+                            ""
+                        )}
                     </Box>
                 </Box>
             </Box>

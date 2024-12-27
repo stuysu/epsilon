@@ -35,6 +35,7 @@ const Organization = () => {
         tags: undefined,
         commitment_level: undefined,
         fair: undefined,
+        faculty_email: undefined,
     });
 
     // eslint-disable-next-line

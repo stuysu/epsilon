@@ -19,6 +19,7 @@ type validatorField =
     | "meeting_schedule"
     | "meeting_days"
     | "returning_info"
+    | "faculty_email"
     | string;
 
 type OrgValidator = {
@@ -134,6 +135,13 @@ const OrgRequirements: OrgValidator = {
         requirements: {
             minWords: 75,
             maxWords: 600,
+        },
+    },
+    faculty_email: {
+        required: false,
+        requirements: {
+            minChar: 10, // a@stuy.edu
+            maxChar: 64,
         },
     },
 };

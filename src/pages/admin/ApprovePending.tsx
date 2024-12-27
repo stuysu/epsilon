@@ -35,6 +35,7 @@ const ApprovePending = () => {
                     keywords,
                     tags,
                     commitment_level,
+                    faculty_email,
                     fair,
                     state,
                     joinable,

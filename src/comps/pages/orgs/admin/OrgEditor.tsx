@@ -60,7 +60,6 @@ const EditField = ({
                     display: "flex",
                     flexWrap: "nowrap",
                     padding: "10px",
-                    marginTop: "10px",
                     position: "relative",
                     minHeight: "100px",
                 }}
@@ -120,6 +119,7 @@ const textFields = [
     "uniqueness",
     "meeting_description",
     "meeting_schedule",
+    "faculty_email",
 ];
 
 const hiddenFields: string[] = [
@@ -383,6 +383,7 @@ const OrgEditor = ({
                 tags: undefined,
                 commitment_level: undefined,
                 fair: undefined,
+                faculty_email: undefined,
             });
 
             // reset edit state
@@ -664,7 +665,9 @@ const OrgEditor = ({
                                     display: "block",
                                 }}
                             >
-                                {editData[field as keyof OrganizationEdit]}
+                                {editData[field as keyof OrganizationEdit] || (
+                                    <em>&lt;empty&gt;</em>
+                                )}
                             </Typography>
                         }
                         editDisplay={
