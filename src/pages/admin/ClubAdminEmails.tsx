@@ -53,10 +53,9 @@ const ClubAdminEmails = () => {
         const fetchAdminEmails = async () => {
             const { data: memberships, error: membershipsError } =
                 await supabase
-                    .from("memberships")
-                    .select("user_id")
+                    .from("clubadmins")
+                    .select("email")
                     .eq("organization_id", currentOrganization?.id)
-                    .in("role", ["ADMIN", "CREATOR"]);
 
             if (membershipsError) {
                 enqueueSnackbar(
@@ -65,22 +64,7 @@ const ClubAdminEmails = () => {
                 );
                 return;
             }
-            const userIds = memberships.map((membership) => membership.user_id);
-
-            const { data: users, error: usersError } = await supabase
-                .from("users")
-                .select("email")
-                .in("id", userIds);
-
-            if (usersError) {
-                enqueueSnackbar(
-                    "Error fetching users. Please try again later.",
-                    { variant: "error" },
-                );
-                return;
-            }
-
-            const adminEmails = users.map((user) => user.email).join(", ");
+            const adminEmails = memberships.map((user) => user.email).join(", ");
             setAdminEmails(adminEmails);
         };
         if (currentOrganization) {
