@@ -4,6 +4,7 @@ import { PUBLIC_URL } from "../../../constants";
 import LoginButton from "../../ui/LoginButton";
 import { useContext } from "react";
 import { ThemeContext } from "../../context/ThemeProvider";
+import CatalogButton from "../../ui/CatalogButton";
 
 const UnauthenticatedLanding = () => {
     const theme = useContext(ThemeContext);
@@ -48,6 +49,7 @@ const UnauthenticatedLanding = () => {
                     }}
                 />
                 <LoginButton />
+                <CatalogButton />
             </Box>
         </Box>
     );

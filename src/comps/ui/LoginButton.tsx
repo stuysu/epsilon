@@ -1,6 +1,6 @@
 import { supabase } from "../../supabaseClient";
 import { PUBLIC_URL } from "../../constants";
-import "./LoginButton.css";
+import "./UnauthenticatedButtons.css";
 
 const LoginButton = () => {
     const signInWithGoogle = async () => {
@@ -18,7 +18,7 @@ const LoginButton = () => {
     return (
         <button
             onClick={signInWithGoogle}
-            className="login-button"
+            className="button"
         >
             <img
                 src={`${PUBLIC_URL}/Google.svg`}

@@ -1,4 +1,4 @@
-.login-button {
+.button {
     display: flex;
     width: 350px;
     background-color: rgba(31, 31, 31, 0.5);
@@ -16,7 +16,7 @@
     transition: background-color 0.2s ease;
 }
 
-.login-button:hover {
+.button:hover {
     background-color: rgba(54, 54, 54, 0.4);
 }
 
