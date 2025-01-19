@@ -50,7 +50,9 @@ const UnauthenticatedLanding = () => {
                             : "normal",
                         position: "relative",
                         zIndex: 1,
-                        filter: "brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(500%) hue-rotate(180deg) brightness(100%) contrast(88%)",
+                        filter: theme.colorMode
+                        ? "brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(500%) hue-rotate(180deg) brightness(100%) contrast(88%)"
+                        : "brightness(0) saturate(100%) invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(50%) contrast(100%)",
                     }}
                 />
                 <LoginButton />
