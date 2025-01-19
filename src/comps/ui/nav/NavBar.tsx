@@ -24,6 +24,7 @@ import UserContext from "../../context/UserContext";
 import { useSnackbar } from "notistack";
 import OrgBar from "../../pages/home/ui/OrgBar";
 import { ThemeContext } from "../../context/ThemeProvider";
+import { PUBLIC_URL } from "../../../constants";
 
 /* Navbar Button Icons */
 import HomeIcon from "@mui/icons-material/Home";
@@ -68,6 +69,9 @@ const NavBar = () => {
     const navigate = useNavigate();
 
     const theme = useContext(ThemeContext);
+    const wordmarkSrc = theme.colorMode
+        ? `${PUBLIC_URL}/wordmark.svg`
+        : `${PUBLIC_URL}/wordmark_light.svg`;
 
     const signOut = async () => {
         const { error } = await supabase.auth.signOut();
@@ -114,9 +118,22 @@ const NavBar = () => {
                     <Menu />
                 </AsyncButton>
                 <Box sx={titleStyle}>
-                    <Link style={linkStyle} to="/">
-                        EPSILON
-                    </Link>
+                    <span
+                        style={{ ...linkStyle, cursor: "pointer" }}
+                        onClick={() => navigate("/")}
+                    >
+                        <img
+                            src={wordmarkSrc}
+                            alt="Epsilon"
+                            style={{
+                                marginTop: "10px",
+                                maxWidth: "100px",
+                                height: "auto",
+                                position: "relative",
+                                zIndex: 1,
+                            }}
+                        />
+                    </span>
                 </Box>
                 <Box
                     sx={{

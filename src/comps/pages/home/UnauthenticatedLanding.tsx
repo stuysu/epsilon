@@ -1,81 +1,60 @@
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
+import { PUBLIC_URL } from "../../../constants";
 
-import { useNavigate } from "react-router-dom";
-
-import AsyncButton from "../../ui/AsyncButton";
 import LoginButton from "../../ui/LoginButton";
+import { useContext } from "react";
+import { ThemeContext } from "../../context/ThemeProvider";
+import CatalogButton from "../../ui/CatalogButton";
 
 const UnauthenticatedLanding = () => {
-    const navigate = useNavigate();
-
+    const theme = useContext(ThemeContext);
+    const wordmarkSrc = theme.colorMode
+        ? `${PUBLIC_URL}/wordmark.svg`
+        : `${PUBLIC_URL}/wordmark_light.svg`;
     return (
         <Box>
             <Box
                 sx={{
+                    position: "fixed",
+                    width: "100vw",
+                    height: "100vh",
+                    backgroundImage: `url(${PUBLIC_URL}/textures/login.png)`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    opacity: 0.5,
+                    filter: "blur(100px) brightness(0.9)",
+                    mixBlendMode: "color-dodge",
+                    pointerEvents: "none",
+                    zIndex: 0,
+                }}
+            />
+            <Box
+                sx={{
                     width: "100%",
-                    height: "700px",
+                    height: "90vh",
                     display: "flex",
                     justifyContent: "center",
                     alignItems: "center",
+                    flexDirection: "column",
                 }}
             >
-                <Box
-                    sx={{
-                        width: "500px",
-                        display: "flex",
-                        justifyContent: "center",
-                        flexWrap: "wrap",
+                <img
+                    src={wordmarkSrc}
+                    alt="Epsilon"
+                    style={{
+                        marginBottom: "40px",
+                        maxWidth: "300px",
+                        height: "auto",
+                        mixBlendMode: theme.colorMode
+                            ? "color-dodge"
+                            : "normal",
+                        position: "relative",
+                        zIndex: 1,
+                        filter: "brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(500%) hue-rotate(180deg) brightness(100%) contrast(88%)",
                     }}
-                >
-                    <Box
-                        sx={{
-                            width: "100%",
-                        }}
-                    >
-                        <Typography align="center" variant="h1">
-                            Epsilon
-                        </Typography>
-                        <Typography align="center" variant="body1">
-                            The all in one platform for Stuyvesant High School's
-                            needs.
-                        </Typography>
-                    </Box>
-                    <Box
-                        sx={{
-                            width: "50%",
-                            display: "flex",
-                            justifyContent: "center",
-                            flexWrap: "wrap",
-                        }}
-                    >
-                        <LoginButton />
-                        <Box
-                            sx={{
-                                width: "100%",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                                marginBottom: "15px",
-                            }}
-                        >
-                            <AsyncButton
-                                sx={{ height: "40px", width: "50%" }}
-                                variant="contained"
-                                onClick={() => navigate("/catalog")}
-                            >
-                                View Catalog
-                            </AsyncButton>
-                        </Box>
-                        <Box
-                            sx={{
-                                width: "100%",
-                                display: "flex",
-                                justifyContent: "center",
-                                alignItems: "center",
-                            }}
-                        ></Box>
-                    </Box>
-                </Box>
+                />
+                <LoginButton />
+                <CatalogButton />
             </Box>
         </Box>
     );
