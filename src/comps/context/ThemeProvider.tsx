@@ -98,7 +98,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                     body1: {
                         fontSize: "1rem",
                         fontVariationSettings: `'wght' 500`,
-                        lineHeight: "1.2rem",
+                        lineHeight: "1.1rem",
                         color: "#AEAEAECC",
                     },
                 },
