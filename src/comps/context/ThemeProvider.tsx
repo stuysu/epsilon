@@ -49,19 +49,19 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                     mode: prefersDarkMode ? "dark" : "light",
                     primary: {
                         main: "#34c5db",
-                        contrastText: "#fff",
+                        contrastText: "#d8d8d8",
                     },
                     secondary: {
                         main: "#e74c3c",
-                        contrastText: "#fff",
+                        contrastText: "#b8b8b8",
                     },
                     background: {
-                        default: prefersDarkMode ? "#0c161b" : "#ebf5f2",
-                        paper: prefersDarkMode ? "#0c161b" : "#ebf5f2",
+                        default: prefersDarkMode ? "#111111" : "#cdcdcd",
+                        paper: prefersDarkMode ? "#111111" : "#bfbfbf",
                     },
                 },
                 typography: {
-                    fontFamily: `'Roboto Condensed', sans-serif`,
+                    fontFamily: `'inter-variable', sans-serif`,
                     htmlFontSize: 16,
                     h1: {
                         fontSize: "3rem",
@@ -70,13 +70,15 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                     },
                     h2: {
                         fontSize: "2.6rem",
-                        fontWeight: 700,
+                        fontVariationSettings: "'wght' 100",
                         margin: "0.5rem 0",
                     },
                     h3: {
-                        fontSize: "2.2rem",
-                        fontWeight: 500,
+                        lineHeight: "1.6rem",
+                        fontSize: "1.6rem",
+                        fontVariationSettings: `'wght' 700`,
                         margin: "0.5rem 0",
+                        color: "#E8E8E8CC",
                     },
                     h4: {
                         fontSize: "1.8rem",
@@ -92,6 +94,12 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                         fontSize: "1rem",
                         fontWeight: 400,
                         margin: "0.5rem 0",
+                    },
+                    body1: {
+                        fontSize: "1rem",
+                        fontVariationSettings: `'wght' 500`,
+                        lineHeight: "1.2rem",
+                        color: "#AEAEAECC",
                     },
                 },
             }),
