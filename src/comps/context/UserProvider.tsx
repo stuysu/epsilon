@@ -1,10 +1,13 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { supabase } from "../../supabaseClient";
 import UserContext from "./UserContext";
 import { useSnackbar } from "notistack";
+import { ThemeContext } from "./ThemeProvider";
 
 const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const { enqueueSnackbar } = useSnackbar();
+    const { colorMode } = useContext(ThemeContext);
+    const [loading, setLoading] = useState(true);
 
     const [value, setValue] = React.useState<UserContextType>({
         signed_in: false,
@@ -79,6 +82,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                         "Error logging in. Contact it@stuysu.org for support.",
                         { variant: "error" },
                     );
+                    setLoading(false);
                     return;
                 }
 
@@ -90,6 +94,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                         "Unverified account. Please contact it@stuysu.org for support.",
                         { variant: "error" },
                     );
+                    setLoading(false);
                     return;
                 }
 
@@ -130,6 +135,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                         "Error fetching permissions. Contact it@stuysu.org for support.",
                         { variant: "error" },
                     );
+                    setLoading(false);
                 }
                 if (Array.isArray(data) && data?.length > 0) {
                     isAdmin = true;
@@ -150,6 +156,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                             "Unable to save profile picture to server. Please contact it@stuysu.org for support.",
                             { variant: "error" },
                         );
+                        setLoading(false);
                     }
 
                     enqueueSnackbar("Profile Picture Updated!", {
@@ -176,10 +183,23 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                     active: user.active,
                 });
             }
+            setLoading(false);
         };
 
         getUser();
     }, [enqueueSnackbar]);
+
+    if (loading) {
+        return (
+            <div
+                style={{
+                    backgroundColor: colorMode ? "#0c161b" : "#ebf5f2",
+                    width: "100vw",
+                    height: "100vh",
+                }}
+            />
+        );
+    }
 
     return (
         <UserContext.Provider value={value}>{children}</UserContext.Provider>
