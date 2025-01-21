@@ -105,8 +105,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                     height: "130px",
                                     borderRadius: "20px",
                                     position: "absolute",
-                                    boxShadow:
-                                        "inset 0 0 2px 2px rgba(255, 255, 255, 0.2)",
+                                    boxShadow: "inset 0 0 1px 1px rgba(255, 255, 255, 0.15)",
                                     zIndex: 10,
                                 }}
                             ></Box>

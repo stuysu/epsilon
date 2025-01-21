@@ -1,7 +1,16 @@
 import { useContext } from "react";
 import OrgContext from "../../comps/context/OrgContext";
+import * as Dialog from "@radix-ui/react-dialog";
 
-import { Box, Typography, useMediaQuery } from "@mui/material";
+import {
+    Avatar,
+    Box,
+    Typography,
+    useMediaQuery,
+    Stack,
+    Chip,
+    Divider,
+} from "@mui/material";
 import OrgMember from "../../comps/pages/orgs/OrgMember";
 import OrgMeeting from "../../comps/pages/orgs/OrgMeeting";
 import { sortByDate, sortByRole } from "../../utils/DataFormatters";
@@ -21,21 +30,109 @@ const Overview = () => {
 
     return (
         <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
-            <Typography variant="h1" align="center" width="100%">
-                Overview
-            </Typography>
-            <Typography variant="h3" color="primary.main" width="100%">
-                Description:
-            </Typography>
-            <Typography variant="body1" width="100%">
-                {organization.purpose || "None"}
-            </Typography>
-            <Typography variant="h3" color="primary.main" width="100%">
-                Meeting Schedule:
-            </Typography>
-            <Typography variant="body1" width="100%">
-                {organization.meeting_schedule || "None"}
-            </Typography>
+            <Stack direction="row" spacing={5}>
+                <Avatar
+                    src={organization.picture || ""}
+                    sx={{
+                        width: "250px",
+                        height: "250px",
+                        borderRadius: "25px",
+                        boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
+                        fontSize: "100px",
+                        objectFit: "cover",
+                    }}
+                    alt={`organization ${organization.name}`}
+                >
+                    {organization.name.charAt(0).toUpperCase()}
+                </Avatar>
+
+                <Stack>
+                    <Typography variant="h1" width="100%">
+                        {organization.name}
+                    </Typography>
+
+                    <Stack
+                        direction="row"
+                        maxWidth={150}
+                        spacing={1}
+                        paddingBottom={3}
+                    >
+                        {organization.tags?.map((tag, index) => (
+                            <Chip key={index} label={tag} variant="filled" />
+                        )) || <p>Uncategorized</p>}
+                    </Stack>
+
+                    <Typography
+                        variant="body1"
+                        width="100%"
+                        sx={{
+                            display: '-webkit-box',
+                            WebkitBoxOrient: 'vertical',
+                            overflow: 'hidden',
+                            WebkitLineClamp: 5,
+                            textOverflow: 'ellipsis',
+                        }}
+                    >
+                        {organization.purpose || "None"}
+                    </Typography>
+
+                </Stack>
+            </Stack>
+
+            <Divider sx={{ background: "#7d7d7d", opacity:"30%", width: "100%", marginTop: "20px"}} />
+
+            <Box
+                bgcolor="#1f1f1f80"
+                padding={0.5}
+                borderRadius={3}
+                boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
+            >
+                <Typography variant="h3" width="100%" margin={3}>
+                    Meeting Schedule
+                </Typography>
+
+                <Box borderRadius={2} overflow="hidden">
+                    <Box bgcolor="#36363666" padding={3}>
+                        <Typography variant="body1" width="100%">
+                            {organization.meeting_schedule || "None"}
+                        </Typography>
+                    </Box>
+
+                    <Stack marginTop={0.5} direction="row" spacing={0.5}>
+                        {[
+                            "Monday",
+                            "Tuesday",
+                            "Wednesday",
+                            "Thursday",
+                            "Friday",
+                        ].map((day) => (
+                            <Typography
+                                flexGrow="1"
+                                key={day}
+                                textAlign="center"
+                                sx={{
+                                    fontVariationSettings: "'wght' 700",
+                                    padding: "0.5rem",
+                                    backgroundColor:
+                                        organization.meeting_days?.includes(
+                                            day.toUpperCase(),
+                                        )
+                                            ? "#2D6AE2CC"
+                                            : "#36363666",
+                                    color: organization.meeting_days?.includes(
+                                        day.toUpperCase(),
+                                    )
+                                        ? "#E8E8E8CC"
+                                        : "inherit",
+                                }}
+                            >
+                                {day}
+                            </Typography>
+                        ))}
+                    </Stack>
+                </Box>
+            </Box>
+
             <Box sx={{ width: "100%" }}>
                 <Typography variant="h3" color="primary.main" width="100%">
                     Leaders

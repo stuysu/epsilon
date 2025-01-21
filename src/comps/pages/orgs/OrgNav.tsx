@@ -1,4 +1,4 @@
-import { useContext, useEffect, useMemo, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import {
     Box,
@@ -9,7 +9,6 @@ import {
     ListItemText,
     ListItemIcon,
     Link,
-    Avatar,
 } from "@mui/material";
 
 import OrgContext from "../../context/OrgContext";
@@ -18,7 +17,7 @@ import UserContext from "../../context/UserContext";
 import { supabase } from "../../../supabaseClient";
 import { useSnackbar } from "notistack";
 
-import { Link as NavLink, useLocation, useNavigate } from "react-router-dom";
+import {useLocation, useNavigate } from "react-router-dom";
 import InfoIcon from "@mui/icons-material/Info";
 import ArticleIcon from "@mui/icons-material/Article";
 import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
@@ -225,32 +224,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                         padding: "20px",
                     }}
                 >
-                    <Avatar
-                        src={organization.picture || ""}
-                        sx={{
-                            width: "100%",
-                            height: "100%",
-                            borderRadius: "100%",
-                            boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-                            fontSize: "100px",
-                            objectFit: "cover",
-                        }}
-                        alt={`organization ${organization.name}`}
-                    >
-                        {organization.name.charAt(0).toUpperCase()}
-                    </Avatar>
                 </Box>
-                <Typography variant="h3" align="center" width="100%">
-                    {organization.name}
-                </Typography>
-                <Typography
-                    variant="body1"
-                    align="center"
-                    width="100%"
-                    sx={{ overflowX: "hidden", marginBottom: "20px" }}
-                >
-                    {organization.purpose}
-                </Typography>
                 {organization.socials &&
                     organization.socials.split(" ").map((social, i, a) => {
                         if (!social.startsWith("http")) {

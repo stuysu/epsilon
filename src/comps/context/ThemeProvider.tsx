@@ -64,9 +64,11 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                     fontFamily: `'inter-variable', sans-serif`,
                     htmlFontSize: 16,
                     h1: {
-                        fontSize: "3rem",
-                        fontWeight: 700,
+                        fontVariationSettings: "'wght' 800",
+                        fontSize: "2.2rem",
+                        lineHeight: "2.2rem",
                         margin: "0.5rem 0",
+                        color: "#E8E8E8CC",
                     },
                     h2: {
                         fontSize: "2.6rem",
@@ -98,7 +100,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                     body1: {
                         fontSize: "1rem",
                         fontVariationSettings: `'wght' 500`,
-                        lineHeight: "1.1rem",
+                        lineHeight: "1.3rem",
                         color: "#AEAEAECC",
                     },
                 },
