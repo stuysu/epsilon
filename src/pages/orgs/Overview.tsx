@@ -196,7 +196,7 @@ const Overview = () => {
 
             <Stack direction="row" marginBottom={3} alignItems="center">
                 <Box>
-                    <Typography variant="h3" align="center" width={150}>
+                    <Typography variant="h3" align="center" width={100}>
                         {
                             organization.memberships.filter(
                                 (member) => member.active,
@@ -253,8 +253,8 @@ const Overview = () => {
                 </Typography>
 
                 <Box>
-                    <Typography variant="h3" align="center" width={150}>
-                        {organization.meetings.at(-1)?.start_time || "Never"}
+                    <Typography variant="h3" align="center" width={200}>
+                        {organization.meetings?.at(-1)?.start_time?.split('T')[0] ?? "Never"}
                     </Typography>
                     <Typography variant="body1" align="center">
                         Last Meeting
