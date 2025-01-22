@@ -194,52 +194,69 @@ const Overview = () => {
                 }}
             />
 
-            <Stack direction="row" marginBottom={3}>
+            <Stack direction="row" marginBottom={3} alignItems="center">
                 <Box>
-                    <Typography variant="h3" align="center" width="100%">
+                    <Typography variant="h3" align="center" width={150}>
                         {
                             organization.memberships.filter(
                                 (member) => member.active,
                             ).length
                         }
                     </Typography>
-                    <Typography variant="body1" align="center" width="100%">
+                    <Typography variant="body1" align="center">
                         Members
                     </Typography>
                 </Box>
 
+                <Typography variant="h1" align="center" sx={{opacity: "25%"}}>
+                    •
+                </Typography>
+
                 <Box>
-                    <Typography variant="h3" align="center" width="100%">
+                    <Typography variant="h3" align="center" width={150}>
                         12/3/31
                     </Typography>
-                    <Typography variant="body1" align="center" width="100%">
+                    <Typography variant="body1" align="center">
                         Initiated
                     </Typography>
                 </Box>
 
+                <Typography variant="h1" align="center" width="100%" sx={{opacity: "25%"}}>
+                    •
+                </Typography>
+
                 <Box>
-                    <Typography variant="h3" align="center" width="100%">
-                        {organization.state}
+                    <Typography variant="h3" align="center" width={150}>
+                        {organization.state.charAt(0) + organization.state.slice(1).toLowerCase()}
                     </Typography>
-                    <Typography variant="body1" align="center" width="100%">
-                        Activity Status
+                    <Typography variant="body1" align="center">
+                        State
                     </Typography>
                 </Box>
 
+                <Typography variant="h1" align="center" width="100%" sx={{opacity: "25%"}}>
+                    •
+                </Typography>
+
                 <Box>
-                    <Typography variant="h3" align="center" width="100%">
-                        {organization.commitment_level}
-                    </Typography>
-                    <Typography variant="body1" align="center" width="100%">
+                    <Typography variant="h3" align="center" width={150}>
+                            {organization.commitment_level
+                                ? organization.commitment_level.charAt(0).toUpperCase() + organization.commitment_level.slice(1).toLowerCase()
+                                : "None"}</Typography>
+                    <Typography variant="body1" align="center">
                         Commitment
                     </Typography>
                 </Box>
 
+                <Typography variant="h1" align="center" width="100%" sx={{opacity: "25%"}}>
+                    •
+                </Typography>
+
                 <Box>
-                    <Typography variant="h3" align="center" width="100%">
+                    <Typography variant="h3" align="center" width={150}>
                         {organization.meetings.at(-1)?.start_time || "Never"}
                     </Typography>
-                    <Typography variant="body1" align="center" width="100%">
+                    <Typography variant="body1" align="center">
                         Last Meeting
                     </Typography>
                 </Box>
