@@ -2,13 +2,9 @@ import { useContext, useEffect, useState } from "react";
 
 import {
     Box,
-    Typography,
     Divider,
     List,
-    ListItemButton,
-    ListItemText,
-    ListItemIcon,
-    Link,
+    Link, Typography,
 } from "@mui/material";
 
 import OrgContext from "../../context/OrgContext";
@@ -18,11 +14,6 @@ import { supabase } from "../../../supabaseClient";
 import { useSnackbar } from "notistack";
 
 import {useLocation, useNavigate } from "react-router-dom";
-import InfoIcon from "@mui/icons-material/Info";
-import ArticleIcon from "@mui/icons-material/Article";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
-import PeopleIcon from "@mui/icons-material/People";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import AsyncButton from "../../ui/AsyncButton";
 
 const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
@@ -35,14 +26,13 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const location = useLocation();
 
     const navLinks = [
-        { to: main, display: "Overview", icon: <InfoIcon /> },
-        { to: `${main}/charter`, display: "Charter", icon: <ArticleIcon /> },
+        { to: main, display: "Overview" },
+        { to: `${main}/charter`, display: "Charter"},
         {
             to: `${main}/meetings`,
-            display: "Meetings",
-            icon: <CalendarMonthIcon />,
+            display: "Meetings"
         },
-        { to: `${main}/members`, display: "Members", icon: <PeopleIcon /> },
+        { to: `${main}/members`, display: "Members" },
     ];
 
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -195,15 +185,14 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     if (isAdmin) {
         navLinks.push({
             to: `${main}/admin`,
-            display: "Admin",
-            icon: <AdminPanelSettingsIcon />,
+            display: "Admin"
         });
     }
 
     return (
         <Box
             sx={{
-                minWidth: "350px",
+                minWidth: "200px",
                 width: isMobile ? "100%" : "",
                 padding: isMobile ? "0px" : "20px",
             }}
@@ -216,14 +205,6 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     justifyContent: "center",
                 }}
             >
-                <Box
-                    sx={{
-                        width: "300px",
-                        height: "300px",
-                        borderRadius: "100%",
-                        padding: "20px",
-                    }}
-                >
                 </Box>
                 {organization.socials &&
                     organization.socials.split(" ").map((social, i, a) => {
@@ -268,29 +249,37 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     >
                         {interactString}
                     </AsyncButton>
-                </Box>
             </Box>
 
             <Divider sx={{ marginTop: "20px", height: "2px" }} />
 
             <List sx={{ width: "100%" }}>
                 {navLinks.map((linkData, i) => (
-                    <ListItemButton
+                    <Box
                         key={i}
-                        sx={{ height: `65px` }}
-                        selected={currentIndex === i}
+                        sx={{
+                            height: `30px`,
+                            display: "flex",
+                            alignItems: "center",
+                            cursor: "pointer",
+                            padding: "0 10px",
+                        }}
                         onClick={() => {
                             navigate(linkData.to);
                             setCurrentIndex(i);
                         }}
                     >
-                        {linkData.icon && (
-                            <ListItemIcon>{linkData.icon}</ListItemIcon>
-                        )}
-                        <ListItemText>{linkData.display}</ListItemText>
-                    </ListItemButton>
-                ))}
-            </List>
+                        <Typography
+                        sx={{
+                            fontVariationSettings: `'wght' 600`,
+                            color: currentIndex === i ? "rgba(232,232,232,80)" : "#rgba(174,174,174,80)"
+                        }}>
+                            {linkData.display
+                            }
+                        </Typography>
+                    </Box>
+                    ))}
+                    </List>
         </Box>
     );
 };

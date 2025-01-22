@@ -178,6 +178,7 @@ const OrgRouter = () => {
                                 />
                             </Routes>
                         </Box>
+                        <OrgNav isMobile={isMobile} />
                     </Box>
                 </>
             )}
