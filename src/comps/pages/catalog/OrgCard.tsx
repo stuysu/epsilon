@@ -38,7 +38,8 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                     sx={{
                         position: "relative",
                         borderRadius: "20px",
-                        boxShadow: "inset 0 0 1px 1px rgba(255, 255, 255, 0.075)",
+                        boxShadow:
+                            "inset 0 0 1px 1px rgba(255, 255, 255, 0.075)",
                         cursor: "pointer",
                         transition: "0.2s background ease-out",
                         "&:hover": {
@@ -47,7 +48,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                 : "rgba(100, 100, 100, 0.2)",
                             transition: "0.2s background ease-out",
                         },
-                        height: "440px",
+                        height: "450px",
                         display: "flex",
                         flexDirection: "column",
                         overflow: "visible",
@@ -105,7 +106,8 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                     height: "130px",
                                     borderRadius: "20px",
                                     position: "absolute",
-                                    boxShadow: "inset 0 0 1px 1px rgba(255, 255, 255, 0.15)",
+                                    boxShadow:
+                                        "inset 0 0 1px 1px rgba(255, 255, 255, 0.15)",
                                     zIndex: 10,
                                 }}
                             ></Box>
@@ -215,8 +217,18 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                 textTransform: "capitalize",
                             }}
                         >
-                            <Typography noWrap sx={{ fontVariationSettings: "'wght' 500",}}>Commitment Level</Typography>
-                            <Typography noWrap sx={{ fontVariationSettings: "'wght' 700",}}>{organization.commitment_level?.toLowerCase()}</Typography>
+                            <Typography
+                                noWrap
+                                sx={{ fontVariationSettings: "'wght' 500" }}
+                            >
+                                Commitment Level
+                            </Typography>
+                            <Typography
+                                noWrap
+                                sx={{ fontVariationSettings: "'wght' 700" }}
+                            >
+                                {organization.commitment_level?.toLowerCase()}
+                            </Typography>
                         </Stack>
                     </Box>
                 </Card>

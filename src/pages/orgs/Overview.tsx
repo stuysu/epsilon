@@ -1,6 +1,5 @@
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import OrgContext from "../../comps/context/OrgContext";
-
 import {
     Avatar,
     Box,
@@ -10,14 +9,106 @@ import {
     Chip,
     Divider,
 } from "@mui/material";
+import { useSnackbar } from "notistack";
+import { supabase } from "../../supabaseClient";
+import AsyncButton from "../../comps/ui/AsyncButton";
 import OrgMember from "../../comps/pages/orgs/OrgMember";
 import OrgMeeting from "../../comps/pages/orgs/OrgMeeting";
 import { sortByDate, sortByRole } from "../../utils/DataFormatters";
+import UserContext from "../../comps/context/UserContext";
 
 const Overview = () => {
     const organization: OrgContextType = useContext(OrgContext);
-
+    const user: UserContextType = useContext(UserContext);
+    const { enqueueSnackbar } = useSnackbar();
     const isMeetingMobile = useMediaQuery("(max-width: 1450px)");
+
+    const [attemptingInteract, setAttemptingInteract] = useState(false);
+
+    const isInOrg = !!organization.memberships?.find(
+        (m) => m.users?.id === user.id,
+    );
+    const isCreator =
+        isInOrg &&
+        organization.memberships?.find((m) => m.users?.id === user.id)?.role ===
+            "CREATOR";
+    const isActive =
+        isInOrg &&
+        organization.memberships?.find((m) => m.users?.id === user.id)?.active;
+
+    let interactString = isInOrg
+        ? isActive
+            ? "LEAVE"
+            : "CANCEL JOIN"
+        : "JOIN";
+    let disabled = false;
+
+    if (isCreator) disabled = true;
+    if (!isInOrg && !organization.joinable) {
+        interactString = "JOINING DISABLED";
+        disabled = true;
+    } else if (!user.signed_in) {
+        interactString = "Sign In To Join";
+        disabled = true;
+    }
+
+    const handleInteract = async () => {
+        setAttemptingInteract(true);
+        try {
+            if (interactString === "JOIN") {
+                const body = { organization_id: organization.id };
+                const { data, error } = await supabase.functions.invoke(
+                    "join-organization",
+                    { body },
+                );
+
+                if (error || !data) {
+                    enqueueSnackbar("Unable to join organization.", {
+                        variant: "error",
+                    });
+                    return;
+                }
+                if (organization.setOrg) {
+                    organization.setOrg({
+                        ...organization,
+                        memberships: [...organization.memberships, data],
+                    });
+                }
+                enqueueSnackbar("Sent organization a join request!", {
+                    variant: "success",
+                });
+            } else if (
+                interactString === "LEAVE" ||
+                interactString === "CANCEL JOIN"
+            ) {
+                const membership = organization.memberships?.find(
+                    (m) => m.users?.id === user.id,
+                );
+                const { error } = await supabase
+                    .from("memberships")
+                    .delete()
+                    .eq("id", membership?.id);
+
+                if (error) {
+                    enqueueSnackbar("Unable to leave organization.", {
+                        variant: "error",
+                    });
+                    return;
+                }
+                if (organization.setOrg) {
+                    organization.setOrg({
+                        ...organization,
+                        memberships: organization.memberships.filter(
+                            (m) => m.users?.id !== user.id,
+                        ),
+                    });
+                }
+                enqueueSnackbar("Left organization!", { variant: "success" });
+            }
+        } finally {
+            setAttemptingInteract(false);
+        }
+    };
 
     if (organization.id === -1) {
         return (
@@ -74,6 +165,22 @@ const Overview = () => {
                     >
                         {organization.purpose || "None"}
                     </Typography>
+
+                    <Box
+                        sx={{
+                            display: "flex",
+                            width: "100%",
+                            marginTop: 2,
+                        }}
+                    >
+                        <AsyncButton
+                            variant="contained"
+                            onClick={handleInteract}
+                            disabled={disabled || attemptingInteract}
+                        >
+                            {interactString}
+                        </AsyncButton>
+                    </Box>
                 </Stack>
             </Stack>
 
@@ -82,121 +189,114 @@ const Overview = () => {
                     background: "#7d7d7d",
                     opacity: "30%",
                     width: "100%",
-                    marginTop: "20px",
+                    marginTop: "40px",
                     marginBottom: "20px",
                 }}
             />
 
-            <Stack
-            direction="row"
-            marginBottom={3}>
-            <Box>
-                <Typography variant="h3" align="center" width="100%">
-                    {
-                        organization.memberships.filter(
-                            (member) => member.active,
-                        ).length
-                    }
-                </Typography>
-                <Typography variant="body1" align="center" width="100%">
-                    Members
-                </Typography>
-            </Box>
+            <Stack direction="row" marginBottom={3}>
+                <Box>
+                    <Typography variant="h3" align="center" width="100%">
+                        {
+                            organization.memberships.filter(
+                                (member) => member.active,
+                            ).length
+                        }
+                    </Typography>
+                    <Typography variant="body1" align="center" width="100%">
+                        Members
+                    </Typography>
+                </Box>
 
-            <Box>
-                <Typography variant="h3" align="center" width="100%">
-                    12/3/31
-                </Typography>
-                <Typography variant="body1" align="center" width="100%">
-                    Initiated
-                </Typography>
-            </Box>
+                <Box>
+                    <Typography variant="h3" align="center" width="100%">
+                        12/3/31
+                    </Typography>
+                    <Typography variant="body1" align="center" width="100%">
+                        Initiated
+                    </Typography>
+                </Box>
 
-            <Box>
-                <Typography variant="h3" align="center" width="100%">
-                    {organization.state}
-                </Typography>
-                <Typography variant="body1" align="center" width="100%">
-Activity Status
-                </Typography>
-            </Box>
+                <Box>
+                    <Typography variant="h3" align="center" width="100%">
+                        {organization.state}
+                    </Typography>
+                    <Typography variant="body1" align="center" width="100%">
+                        Activity Status
+                    </Typography>
+                </Box>
 
-            <Box>
-                <Typography variant="h3" align="center" width="100%">
-                    {organization.commitment_level}
-                </Typography>
-                <Typography variant="body1" align="center" width="100%">
-                    Commitment
-                </Typography>
-            </Box>
+                <Box>
+                    <Typography variant="h3" align="center" width="100%">
+                        {organization.commitment_level}
+                    </Typography>
+                    <Typography variant="body1" align="center" width="100%">
+                        Commitment
+                    </Typography>
+                </Box>
 
-            <Box>
-                <Typography variant="h3" align="center" width="100%">
-                    {organization.meetings.at(-1)?.start_time || "Never"}
-                </Typography>
-                <Typography variant="body1" align="center" width="100%">
-                    Last Meeting
-                </Typography>
-            </Box>
+                <Box>
+                    <Typography variant="h3" align="center" width="100%">
+                        {organization.meetings.at(-1)?.start_time || "Never"}
+                    </Typography>
+                    <Typography variant="body1" align="center" width="100%">
+                        Last Meeting
+                    </Typography>
+                </Box>
             </Stack>
 
-            <Box
-                position="relative"
-                width={"100%"}
-                marginBottom={3}
-            >
+            <Box position="relative" width={"100%"} marginBottom={3}>
+                <Box
+                    bgcolor="#1f1f1f80"
+                    padding={0.5}
+                    borderRadius={3}
+                    boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
+                >
+                    <Typography variant="h3" width="100%" margin={3}>
+                        Meeting Schedule
+                    </Typography>
 
-            <Box
-                bgcolor="#1f1f1f80"
-                padding={0.5}
-                borderRadius={3}
-                boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
-            >
-                <Typography variant="h3" width="100%" margin={3}>
-                    Meeting Schedule
-                </Typography>
+                    <Box borderRadius={2} overflow="hidden">
+                        <Box bgcolor="#36363666" padding={3}>
+                            <Typography variant="body1" width="100%">
+                                {organization.meeting_schedule || "None"}
+                            </Typography>
+                        </Box>
 
-                <Box borderRadius={2} overflow="hidden">
-                    <Box bgcolor="#36363666" padding={3}>
-                        <Typography variant="body1" width="100%">
-                            {organization.meeting_schedule || "None"}
-                        </Typography>
-                    </Box>
-
-                    <Stack marginTop={0.5} direction="row" spacing={0.5}>
-                        {[
-                            "Monday",
-                            "Tuesday",
-                            "Wednesday",
-                            "Thursday",
-                            "Friday",
-                        ].map((day) => (
-                            <Typography
-                                flexGrow="1"
-                                key={day}
-                                textAlign="center"
-                                sx={{
-                                    fontVariationSettings: "'wght' 700",
-                                    padding: "0.5rem",
-                                    backgroundColor:
-                                        organization.meeting_days?.includes(
+                        <Stack marginTop={0.5} direction="row" spacing={0.5}>
+                            {[
+                                "Monday",
+                                "Tuesday",
+                                "Wednesday",
+                                "Thursday",
+                                "Friday",
+                            ].map((day) => (
+                                <Typography
+                                    flexGrow="1"
+                                    key={day}
+                                    textAlign="center"
+                                    sx={{
+                                        fontVariationSettings: "'wght' 700",
+                                        padding: "0.5rem",
+                                        backgroundColor:
+                                            organization.meeting_days?.includes(
+                                                day.toUpperCase(),
+                                            )
+                                                ? "#2D6AE2CC"
+                                                : "#36363666",
+                                        color: organization.meeting_days?.includes(
                                             day.toUpperCase(),
                                         )
-                                            ? "#2D6AE2CC"
-                                            : "#36363666",
-                                    color: organization.meeting_days?.includes(
-                                        day.toUpperCase(),
-                                    )
-                                        ? "#E8E8E8CC"
-                                        : "inherit",
-                                }}
-                            >
-                                {day}
-                            </Typography>
-                        ))}
-                    </Stack>
+                                            ? "#E8E8E8CC"
+                                            : "inherit",
+                                    }}
+                                >
+                                    {day}
+                                </Typography>
+                            ))}
+                        </Stack>
+                    </Box>
                 </Box>
-            </Box>
 
                 <Box
                     bgcolor="rgba(85, 98, 246, 0.1)"
@@ -208,19 +308,12 @@ Activity Status
                     borderRadius={3}
                     zIndex={-1}
                     sx={{
-                        filter: "blur(40px)"
+                        filter: "blur(40px)",
                     }}
                 />
-
             </Box>
 
-
-            <Box
-                position="relative"
-                width={"100%"}
-                marginBottom={3}
-            >
-
+            <Box position="relative" width={"100%"} marginBottom={3}>
                 <Box
                     bgcolor="#1f1f1f80"
                     padding={0.5}
@@ -244,16 +337,22 @@ Activity Status
                                             key={i}
                                             role={member.role || "MEMBER"}
                                             role_name={member.role_name}
-                                            email={member.users?.email || "no email"}
+                                            email={
+                                                member.users?.email ||
+                                                "no email"
+                                            }
                                             picture={member.users?.picture}
                                             first_name={
-                                                member.users?.first_name || "First"
+                                                member.users?.first_name ||
+                                                "First"
                                             }
                                             last_name={
-                                                member.users?.last_name || "Last"
+                                                member.users?.last_name ||
+                                                "Last"
                                             }
                                             is_faculty={
-                                                member.users?.is_faculty || false
+                                                member.users?.is_faculty ||
+                                                false
                                             }
                                         />
                                     ),
@@ -271,20 +370,12 @@ Activity Status
                     borderRadius={3}
                     zIndex={-1}
                     sx={{
-                        filter: "blur(40px)"
+                        filter: "blur(40px)",
                     }}
                 />
-
             </Box>
 
-
-
-            <Box
-                position="relative"
-                width={"100%"}
-                marginBottom={3}
-            >
-
+            <Box position="relative" width={"100%"} marginBottom={3}>
                 <Box
                     bgcolor="#1f1f1f80"
                     padding={0.5}
@@ -296,27 +387,34 @@ Activity Status
                     </Typography>
 
                     {organization.meetings.length === 0 ? (
-    <Typography variant="body1" width="100%" marginLeft={3} marginBottom={3}>
-        No meetings scheduled...
-    </Typography>
-) : (
-    organization.meetings.sort(sortByDate).map((meeting) => (
-        <OrgMeeting
-            key={meeting.id}
-            id={meeting.id}
-            title={meeting.title}
-            description={meeting.description}
-            start_time={meeting.start_time}
-            end_time={meeting.end_time}
-            is_public={meeting.is_public}
-            room_name={meeting.rooms?.name}
-            org_name={organization.name}
-            org_picture={organization.picture || ""}
-            isMobile={isMeetingMobile}
-            onlyUpcoming
-        />
-    ))
-)}
+                        <Typography
+                            variant="body1"
+                            width="100%"
+                            marginLeft={3}
+                            marginBottom={3}
+                        >
+                            No meetings scheduled...
+                        </Typography>
+                    ) : (
+                        organization.meetings
+                            .sort(sortByDate)
+                            .map((meeting) => (
+                                <OrgMeeting
+                                    key={meeting.id}
+                                    id={meeting.id}
+                                    title={meeting.title}
+                                    description={meeting.description}
+                                    start_time={meeting.start_time}
+                                    end_time={meeting.end_time}
+                                    is_public={meeting.is_public}
+                                    room_name={meeting.rooms?.name}
+                                    org_name={organization.name}
+                                    org_picture={organization.picture || ""}
+                                    isMobile={isMeetingMobile}
+                                    onlyUpcoming
+                                />
+                            ))
+                    )}
                 </Box>
 
                 <Box
@@ -329,12 +427,10 @@ Activity Status
                     borderRadius={3}
                     zIndex={-1}
                     sx={{
-                        filter: "blur(40px)"
+                        filter: "blur(40px)",
                     }}
                 />
-
             </Box>
-
         </Box>
     );
 };
