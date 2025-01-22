@@ -9,7 +9,7 @@ import {
     ListItemButton,
     ListItemIcon,
     IconButton,
-    Avatar,
+    Avatar, Stack,
 } from "@mui/material";
 import {
     Brightness4Rounded,
