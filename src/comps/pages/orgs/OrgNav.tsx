@@ -1,7 +1,5 @@
 import { useContext, useEffect, useState } from "react";
-
-import { Box, Divider, List, Link, Typography } from "@mui/material";
-
+import { Box, List, Typography } from "@mui/material";
 import OrgContext from "../../context/OrgContext";
 
 import { useLocation, useNavigate } from "react-router-dom";
@@ -69,41 +67,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                 padding: isMobile ? "0px" : "20px",
             }}
         >
-            <Box
-                sx={{
-                    width: "100%",
-                    display: "flex",
-                    flexWrap: "wrap",
-                    justifyContent: "center",
-                }}
-            ></Box>
-            {organization.socials &&
-                organization.socials.split(" ").map((social, i, a) => {
-                    if (!social.startsWith("http")) {
-                        let outText = social;
-
-                        if (i !== a.length - 1) {
-                            outText += " ";
-                        }
-
-                        return outText;
-                    }
-
-                    return (
-                        <Link
-                            key={i}
-                            href={social}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ textAlign: "center" }}
-                        >
-                            {social}
-                        </Link>
-                    );
-                })}
-
-            <Divider sx={{ marginTop: "20px", height: "2px" }} />
-
+            <Typography>About this Activity</Typography>
             <List sx={{ width: "100%" }}>
                 {navLinks.map((linkData, i) => (
                     <Box

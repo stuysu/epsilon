@@ -10,7 +10,15 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
     const theme = useContext(ThemeContext);
 
     return (
-        <Box>
+        <Box
+            sx={{
+                position: "relative",
+                transition: "transform 0.2s ease-in-out",
+                "&:hover": {
+                    transform: "translateY(-5px)"
+                },
+            }}
+        >
             <Box sx={{ marginTop: 5 }}></Box>
             <Box
                 sx={{
@@ -41,12 +49,12 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                         boxShadow:
                             "inset 0 0 1px 1px rgba(255, 255, 255, 0.075)",
                         cursor: "pointer",
-                        transition: "0.2s background ease-out",
+                        transition: "0.2s background ease-in-out, box-shadow 0.2s ease-in-out",
                         "&:hover": {
                             background: theme.colorMode
                                 ? "rgba(255, 255, 255, 0.05)"
                                 : "rgba(100, 100, 100, 0.2)",
-                            transition: "0.2s background ease-out",
+                            boxShadow: "inset 0 0 1px 1px rgba(255, 255, 255, 0.075), 0px 5px 15px rgba(0, 0, 0, 0.3)",
                         },
                         height: "450px",
                         display: "flex",
@@ -119,15 +127,23 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                     height: "130px",
                                     borderRadius: "20px",
                                     position: "absolute",
-                                    fontSize: "60px",
                                     opacity: 0.25,
                                     objectFit: "cover",
-                                    filter: "blur(30px)",
+                                    filter: "blur(25px)",
                                 }}
-                                alt={`${organization.name}`}
                             >
-                                {organization.name?.charAt(0).toUpperCase()}
                             </Avatar>
+
+                            <Box
+                                sx={{
+                                    width: "130px",
+                                    height: "130px",
+                                    backgroundColor: "rgb(23,23,23)",
+                                    borderRadius: "20px",
+                                    position: "absolute",
+                                }}
+                            >
+                            </Box>
 
                             <Avatar
                                 src={organization.picture || ""}

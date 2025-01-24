@@ -8,6 +8,7 @@ import {
     Stack,
     Chip,
     Divider,
+    Link
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { supabase } from "../../supabaseClient";
@@ -40,7 +41,7 @@ const Overview = () => {
         ? isActive
             ? "LEAVE"
             : "CANCEL JOIN"
-        : "JOIN";
+        : "Join this Activity";
     let disabled = false;
 
     if (isCreator) disabled = true;
@@ -121,20 +122,35 @@ const Overview = () => {
     return (
         <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
             <Stack direction="row" spacing={5}>
-                <Avatar
-                    src={organization.picture || ""}
-                    sx={{
-                        width: "250px",
-                        height: "250px",
-                        borderRadius: "25px",
-                        boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-                        fontSize: "100px",
-                        objectFit: "cover",
-                    }}
-                    alt={`organization ${organization.name}`}
-                >
-                    {organization.name.charAt(0).toUpperCase()}
-                </Avatar>
+                <Box>
+                    <Avatar
+                        src={organization.picture || ""}
+                        sx={{
+                            width: "250px",
+                            height: "250px",
+                            borderRadius: "25px",
+                            objectFit: "cover",
+                            position: "absolute",
+                            zIndex: 0,
+                            filter: "blur(30px)",
+                            opacity: 0.3
+                        }}
+                    />
+                    <Avatar
+                        src={organization.picture || ""}
+                        sx={{
+                            width: "250px",
+                            height: "250px",
+                            borderRadius: "25px",
+                            objectFit: "cover",
+                            position: "relative",
+                            zIndex: 1
+                        }}
+                        alt={`organization ${organization.name}`}
+                    >
+                        {organization.name.charAt(0).toUpperCase()}
+                    </Avatar>
+                </Box>
 
                 <Stack>
                     <Typography variant="h1" width="100%">
@@ -143,12 +159,15 @@ const Overview = () => {
 
                     <Stack
                         direction="row"
-                        maxWidth={150}
+                        flexWrap="wrap"
+                        marginBottom={3}
                         spacing={1}
-                        paddingBottom={3}
                     >
                         {organization.tags?.map((tag, index) => (
-                            <Chip key={index} label={tag} variant="filled" />
+                            <Chip key={index} label={tag} variant="filled" sx={{
+                                borderRadius: 2,
+                                boxShadow: "inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
+                            }}/>
                         )) || <p>Uncategorized</p>}
                     </Stack>
 
@@ -171,6 +190,7 @@ const Overview = () => {
                             display: "flex",
                             width: "100%",
                             marginTop: 2,
+                            alignItems: "center",
                         }}
                     >
                         <AsyncButton
@@ -180,6 +200,26 @@ const Overview = () => {
                         >
                             {interactString}
                         </AsyncButton>
+                        <Box sx={{ marginLeft: 2}}>
+                            {organization.socials &&
+                                organization.socials
+                                    .split(" ")
+                                    .map((social, i) =>
+                                        social.startsWith("http") ? (
+                                            <Link
+                                                key={i}
+                                                href={social}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                style={{
+                                                    marginRight: "10px",
+                                                }}
+                                            >
+                                                {social}
+                                            </Link>
+                                        ) : null
+                                    )}
+                        </Box>
                     </Box>
                 </Stack>
             </Stack>
@@ -316,7 +356,7 @@ const Overview = () => {
                 </Box>
 
                 <Box
-                    bgcolor="rgba(85, 98, 246, 0.1)"
+                    bgcolor="rgba(85, 98, 246, 0.05)"
                     position="absolute"
                     top="0"
                     left="0"
@@ -378,7 +418,7 @@ const Overview = () => {
                 </Box>
 
                 <Box
-                    bgcolor="rgba(228, 174, 59, 0.1)"
+                    bgcolor="rgba(228, 174, 59, 0.05)"
                     position="absolute"
                     top="0"
                     left="0"
@@ -410,7 +450,7 @@ const Overview = () => {
                             marginLeft={3}
                             marginBottom={3}
                         >
-                            No meetings scheduled...
+                            Sign in to view meetings
                         </Typography>
                     ) : (
                         organization.meetings
@@ -435,7 +475,7 @@ const Overview = () => {
                 </Box>
 
                 <Box
-                    bgcolor="#75FB7A1A"
+                    bgcolor="#75FB7A"
                     position="absolute"
                     top="0"
                     left="0"
@@ -444,6 +484,7 @@ const Overview = () => {
                     borderRadius={3}
                     zIndex={-1}
                     sx={{
+                        opacity: "0.05",
                         filter: "blur(40px)",
                     }}
                 />
