@@ -155,7 +155,15 @@ const NavBar = () => {
                         alignItems: "center",
                     }}
                 >
-                    <IconButton onClick={theme.toggleColorMode} color="inherit">
+                    <IconButton
+                        onClick={() => {
+                            theme.toggleColorMode();
+                            if (theme.colorMode) {
+                                enqueueSnackbar("Light mode is experimental.", {variant: "warning"});
+                            }
+                        }}
+                        color="inherit"
+                    >
                         {theme.colorMode ? (
                             <Brightness4Rounded />
                         ) : (
