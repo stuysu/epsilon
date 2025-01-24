@@ -108,7 +108,7 @@ const NavBar = () => {
     return (
         <>
             <div
-                className={`z-50 fixed top-[50px] left-0 w-full h-[calc(100vh-50px)] bg-transparent backdrop-blur-xl transition-opacity duration-300 ${
+                className={`z-50 fixed left-0 w-full h-full bg-transparent backdrop-blur-xl transition-opacity duration-300 ${
                     isHovered ? "opacity-100" : "opacity-0 pointer-events-none"
                 }`}
             ></div>
@@ -200,6 +200,7 @@ const NavBar = () => {
                             marginLeft: "3px",
                             position: "relative",
                             top: "2px",
+                            cursor: "pointer",
                         }}
                         onMouseEnter={() => setIsHovered(true)}
                         onMouseLeave={() => setIsHovered(false)}
@@ -212,7 +213,10 @@ const NavBar = () => {
                             marginLeft: "3px",
                             position: "relative",
                             top: "2px",
+                            cursor: "pointer",
                         }}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onMouseLeave={() => setIsHovered(false)}
                     >
                         StuyActivities
                     </span>

@@ -144,13 +144,12 @@ const OrgRouter = () => {
                         sx={{
                             width: "100%",
                             marginTop: "20px",
-                            paddingLeft: "20px",
                         }}
                     >
                         <AsyncButton
                             onClick={() => navigate("/catalog")}
                             variant="contained"
-                            sx={{ width: "120px" }}
+                            sx={{ width: "200px" }}
                         >
                             Back to Catalogue
                         </AsyncButton>
@@ -178,7 +177,7 @@ const OrgRouter = () => {
                                 />
                             </Routes>
                         </Box>
-                        <OrgNav isMobile={isMobile} />
+                        <Box width={25}></Box>
                     </Box>
                 </>
             )}
