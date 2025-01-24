@@ -18,7 +18,7 @@ import {
     PersonSearch,
 } from "@mui/icons-material";
 import { CSSProperties, useContext, useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../../supabaseClient";
 import UserContext from "../../context/UserContext";
 import { useSnackbar } from "notistack";
@@ -155,6 +155,17 @@ const NavBar = () => {
                     </IconButton>
                 </Box>
             </Box>
+
+            <Stack direction="row" spacing={3} sx={{fontSize:"20px", fontVariationSettings: "'wght' 700",
+                marginLeft: 7, marginTop: 3, marginBottom: 1}}>
+                <i className="bx bx-home-alt bx-fw"></i>Dashboard
+                <i className="bx bx-group bx-fw"></i>StuyActivities
+                <i className="bx bx-calendar bx-fw"></i>Schedule
+                <i className="bx bx-note bx-fw"></i>Voting
+                <i className="bx bx-glasses bx-fw"></i>Opportunities
+                <i className="bx bx-file bx-fw"></i>About
+            </Stack>
+            <Divider></Divider>
 
             <Drawer
                 anchor="left"
