@@ -72,7 +72,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                     },
                     h2: {
                         fontSize: "2.6rem",
-                        fontVariationSettings: "'wght' 100",
+                        fontVariationSettings: "'wght' 700",
                         margin: "0.5rem 0",
                     },
                     h3: {
@@ -84,17 +84,17 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                     },
                     h4: {
                         fontSize: "1.8rem",
-                        fontWeight: 500,
+                        fontVariationSettings: `'wght' 500`,
                         margin: "0.5rem 0",
                     },
                     h5: {
                         fontSize: "1.4rem",
-                        fontWeight: 400,
+                        fontVariationSettings: `'wght' 500`,
                         margin: "0.5rem 0",
                     },
                     h6: {
                         fontSize: "1rem",
-                        fontWeight: 400,
+                        fontVariationSettings: `'wght' 500`,
                         margin: "0.5rem 0",
                     },
                     body1: {

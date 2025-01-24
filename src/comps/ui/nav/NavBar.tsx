@@ -108,7 +108,7 @@ const NavBar = () => {
     return (
         <>
             <div
-                className={`bg-black/40 z-50 fixed left-0 w-full h-full bg-transparent backdrop-blur-3xl transition-opacity duration-300 ${
+                className={`bg-black/40 z-50 fixed left-0 w-full h-full backdrop-blur-3xl transition-opacity duration-300 ${
                     isHovered ? "opacity-100" : "opacity-0 pointer-events-none"
                 }`}
             ></div>
@@ -205,9 +205,10 @@ const NavBar = () => {
                             top: "2px",
                             cursor: "pointer"
                         }}
+                        onMouseEnter={() => setIsHovered(true)}
                         onClick={() => {
-                            setIsHovered(false);
                             navigate("/");
+                            setTimeout(() => setIsHovered(false), 300);
                         }}
                     >
                         Home
@@ -221,9 +222,10 @@ const NavBar = () => {
                             top: "2px",
                             cursor: "pointer",
                         }}
+                        onMouseEnter={() => setIsHovered(true)}
                         onClick={() => {
-                            setIsHovered(false);
                             navigate("/catalog");
+                            setTimeout(() => setIsHovered(false), 300);
                         }}
                     >
                         StuyActivities
