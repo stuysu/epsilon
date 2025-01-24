@@ -9,7 +9,8 @@ import {
     ListItemButton,
     ListItemIcon,
     IconButton,
-    Avatar, Stack,
+    Avatar,
+    Stack,
 } from "@mui/material";
 import {
     Brightness4Rounded,
@@ -156,15 +157,96 @@ const NavBar = () => {
                 </Box>
             </Box>
 
-            <Stack direction="row" spacing={3} sx={{fontSize:"20px", fontVariationSettings: "'wght' 700",
-                marginLeft: 7, marginTop: 3, marginBottom: 1}}>
-                <i className="bx bx-home-alt bx-fw"></i>Dashboard
-                <i className="bx bx-group bx-fw"></i>StuyActivities
-                <i className="bx bx-calendar bx-fw"></i>Schedule
-                <i className="bx bx-note bx-fw"></i>Voting
-                <i className="bx bx-glasses bx-fw"></i>Opportunities
-                <i className="bx bx-file bx-fw"></i>About
-            </Stack>
+            <Box>
+                <Box
+                    sx={{
+                        position: "absolute",
+                        width: "100%",
+                        height: "100px",
+                        top: "0px",
+                        backgroundImage: `url(${PUBLIC_URL}/textures/menubar.png)`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        pointerEvents: "none",
+                        opacity: 0.5,
+                        filter: "blur(10px)",
+                        zIndex: 1,
+                    }}
+                />
+                <Stack
+                    direction="row"
+                    spacing={3.5}
+                    sx={{
+                        fontSize: "20px",
+                        fontVariationSettings: "'wght' 700",
+                        position: "relative",
+                        marginLeft: 7,
+                        marginTop: 3,
+                        marginBottom: 1,
+                    }}
+                >
+                    <i className="bx bx-home-alt"></i>
+                    <span
+                        style={{
+                            marginLeft: "3px",
+                            position: "relative",
+                            top: "2px",
+                        }}
+                    >
+                        Dashboard
+                    </span>
+                    <i className="bx bx-group"></i>
+                    <span
+                        style={{
+                            marginLeft: "3px",
+                            position: "relative",
+                            top: "2px",
+                        }}
+                    >
+                        StuyActivities
+                    </span>
+                    <i className="bx bx-calendar"></i>
+                    <span
+                        style={{
+                            marginLeft: "3px",
+                            position: "relative",
+                            top: "2px",
+                        }}
+                    >
+                        Schedule
+                    </span>
+                    <i className="bx bx-note"></i>
+                    <span
+                        style={{
+                            marginLeft: "3px",
+                            position: "relative",
+                            top: "2px",
+                        }}
+                    >
+                        Voting
+                    </span>
+                    <i className="bx bx-glasses"></i>
+                    <span
+                        style={{
+                            marginLeft: "3px",
+                            position: "relative",
+                            top: "2px",
+                        }}
+                    >
+                        Opportunities
+                    </span>
+                    <i className="bx bx-file"></i>
+                    <span
+                        style={{
+                            marginLeft: "3px",
+                            position: "relative",
+                            top: "2px",
+                        }}
+                    >
+                        About
+                    </span>
+                </Stack>
+            </Box>
             <Divider></Divider>
 
             <Drawer
