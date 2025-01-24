@@ -10,23 +10,9 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
     const theme = useContext(ThemeContext);
 
     return (
-        <Box
-            sx={{
-                position: "relative",
-                transition: "transform 0.2s ease-in-out",
-                "&:hover": {
-                    transform: "translateY(-5px)"
-                },
-            }}
-        >
-            <Box sx={{ marginTop: 5 }}></Box>
-            <Box
-                sx={{
-                    position: "relative",
-                    borderRadius: "20px",
-                    overflow: "visible",
-                }}
-            >
+        <div className="relative transition-transform duration-200 ease-in-out hover:-translate-y-1">
+            <div className="mt-5"></div>
+            <div className="relative rounded-2xl overflow-visible">
                 <Box
                     sx={{
                         position: "absolute",
@@ -248,8 +234,8 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                         </Stack>
                     </Box>
                 </Card>
-            </Box>
-        </Box>
+            </div>
+        </div>
     );
 };
 

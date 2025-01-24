@@ -46,6 +46,7 @@ const navStyles: CSSProperties = {
     display: "flex",
     flexWrap: "wrap",
     position: "relative",
+    zIndex: 50,
 };
 
 const titleStyle: CSSProperties = {
@@ -66,6 +67,7 @@ const NavBar = () => {
     const { enqueueSnackbar } = useSnackbar();
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [fourDigitId, setFourDigitId] = useState<Number | null>(null);
+    const [isHovered, setIsHovered] = useState(false);
     const location = useLocation(); // disable drawer when location changes
     const navigate = useNavigate();
 
@@ -105,6 +107,12 @@ const NavBar = () => {
 
     return (
         <>
+            <div
+                className={`z-50 fixed top-[50px] left-0 w-full h-[calc(100vh-50px)] bg-transparent backdrop-blur-xl transition-opacity duration-300 ${
+                    isHovered ? "opacity-100" : "opacity-0 pointer-events-none"
+                }`}
+            ></div>
+
             <Box sx={navStyles}>
                 <AsyncButton
                     onClick={() => setDrawerOpen(!drawerOpen)}
@@ -177,6 +185,7 @@ const NavBar = () => {
                     direction="row"
                     spacing={3.5}
                     sx={{
+                        zIndex: 50,
                         fontSize: "20px",
                         fontVariationSettings: "'wght' 700",
                         position: "relative",
@@ -192,6 +201,8 @@ const NavBar = () => {
                             position: "relative",
                             top: "2px",
                         }}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onMouseLeave={() => setIsHovered(false)}
                     >
                         Dashboard
                     </span>

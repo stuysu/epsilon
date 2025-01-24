@@ -41,7 +41,7 @@ const Overview = () => {
         ? isActive
             ? "LEAVE"
             : "CANCEL JOIN"
-        : "Join this Activity";
+        : "JOIN";
     let disabled = false;
 
     if (isCreator) disabled = true;
@@ -254,7 +254,7 @@ const Overview = () => {
 
                 <Box>
                     <Typography variant="h3" align="center" width={150}>
-                        12/3/31
+                        Start Date
                     </Typography>
                     <Typography variant="body1" align="center">
                         Initiated
@@ -294,7 +294,7 @@ const Overview = () => {
 
                 <Box>
                     <Typography variant="h3" align="center" width={200}>
-                        {organization.meetings?.at(-1)?.start_time?.split('T')[0] ?? "Never"}
+                        {organization.meetings?.at(-1)?.start_time?.split('T')[0] ?? "No Meetings"}
                     </Typography>
                     <Typography variant="body1" align="center">
                         Last Meeting
@@ -450,7 +450,7 @@ const Overview = () => {
                             marginLeft={3}
                             marginBottom={3}
                         >
-                            Sign in to view meetings
+                           No past or future meetings.
                         </Typography>
                     ) : (
                         organization.meetings
