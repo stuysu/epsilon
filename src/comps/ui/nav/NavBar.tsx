@@ -108,7 +108,7 @@ const NavBar = () => {
     return (
         <>
             <div
-                className={`z-50 fixed left-0 w-full h-full bg-transparent backdrop-blur-xl transition-opacity duration-300 ${
+                className={`bg-black/40 z-50 fixed left-0 w-full h-full bg-transparent backdrop-blur-3xl transition-opacity duration-300 ${
                     isHovered ? "opacity-100" : "opacity-0 pointer-events-none"
                 }`}
             ></div>
@@ -165,7 +165,9 @@ const NavBar = () => {
                 </Box>
             </Box>
 
-            <Box>
+            <Box
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}>
                 <Box
                     sx={{
                         position: "absolute",
@@ -196,27 +198,33 @@ const NavBar = () => {
                 >
                     <i className="bx bx-home-alt"></i>
                     <span
+                        className={"transition-colors hover:text-gray-300"}
                         style={{
                             marginLeft: "3px",
                             position: "relative",
                             top: "2px",
-                            cursor: "pointer",
+                            cursor: "pointer"
                         }}
-                        onMouseEnter={() => setIsHovered(true)}
-                        onMouseLeave={() => setIsHovered(false)}
+                        onClick={() => {
+                            setIsHovered(false);
+                            navigate("/");
+                        }}
                     >
-                        Dashboard
+                        Home
                     </span>
                     <i className="bx bx-group"></i>
                     <span
+                        className={"transition-colors hover:text-gray-300"}
                         style={{
                             marginLeft: "3px",
                             position: "relative",
                             top: "2px",
                             cursor: "pointer",
                         }}
-                        onMouseEnter={() => setIsHovered(true)}
-                        onMouseLeave={() => setIsHovered(false)}
+                        onClick={() => {
+                            setIsHovered(false);
+                            navigate("/catalog");
+                        }}
                     >
                         StuyActivities
                     </span>
