@@ -1,5 +1,5 @@
-@import url("https://fonts.googleapis.com/css2?family=Roboto+Condensed:wght@300;400;700&display=swap");
 @import url("https://use.typekit.net/trt3qfc.css");
+@import url("https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css");
 
 * {
     box-sizing: border-box;
@@ -10,7 +10,7 @@ body {
     margin: 0;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    font-family: "Roboto Condensed", sans-serif;
+    font-family: "inter-variable", sans-serif;
 }
 
 html {

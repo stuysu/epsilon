@@ -10,6 +10,8 @@ import {
     ListItemIcon,
     IconButton,
     Avatar,
+    Stack,
+    useMediaQuery,
 } from "@mui/material";
 import {
     Brightness4Rounded,
@@ -18,7 +20,7 @@ import {
     PersonSearch,
 } from "@mui/icons-material";
 import { CSSProperties, useContext, useEffect, useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../../supabaseClient";
 import UserContext from "../../context/UserContext";
 import { useSnackbar } from "notistack";
@@ -45,6 +47,7 @@ const navStyles: CSSProperties = {
     display: "flex",
     flexWrap: "wrap",
     position: "relative",
+    zIndex: 50,
 };
 
 const titleStyle: CSSProperties = {
@@ -61,10 +64,12 @@ const linkStyle: CSSProperties = {
 };
 
 const NavBar = () => {
+    const showBigNav = useMediaQuery("(min-width:950px)");
     const user = useContext(UserContext);
     const { enqueueSnackbar } = useSnackbar();
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [fourDigitId, setFourDigitId] = useState<Number | null>(null);
+    const [isHovered, setIsHovered] = useState(false);
     const location = useLocation(); // disable drawer when location changes
     const navigate = useNavigate();
 
@@ -104,6 +109,12 @@ const NavBar = () => {
 
     return (
         <>
+            <div
+                className={`bg-black/40 z-50 fixed left-0 w-full h-full backdrop-blur-3xl transition-opacity duration-300 ${
+                    isHovered ? "opacity-100" : "opacity-0 pointer-events-none"
+                }`}
+            ></div>
+
             <Box sx={navStyles}>
                 <AsyncButton
                     onClick={() => setDrawerOpen(!drawerOpen)}
@@ -146,7 +157,17 @@ const NavBar = () => {
                         alignItems: "center",
                     }}
                 >
-                    <IconButton onClick={theme.toggleColorMode} color="inherit">
+                    <IconButton
+                        onClick={() => {
+                            theme.toggleColorMode();
+                            if (theme.colorMode) {
+                                enqueueSnackbar("Light mode is experimental.", {
+                                    variant: "warning",
+                                });
+                            }
+                        }}
+                        color="inherit"
+                    >
                         {theme.colorMode ? (
                             <Brightness4Rounded />
                         ) : (
@@ -155,6 +176,129 @@ const NavBar = () => {
                     </IconButton>
                 </Box>
             </Box>
+
+            <Box
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+            >
+                <Box
+                    sx={{
+                        position: "absolute",
+                        width: "100%",
+                        height: "100px",
+                        top: "0px",
+                        backgroundImage: `url(${PUBLIC_URL}/textures/menubar.png)`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        pointerEvents: "none",
+                        opacity: 0.5,
+                        filter: "blur(10px)",
+                        zIndex: 1,
+                        display: showBigNav ? "block" : "none",
+                    }}
+                />
+                <Stack
+                    direction="row"
+                    spacing={3.5}
+                    sx={{
+                        zIndex: 50,
+                        fontSize: "20px",
+                        fontVariationSettings: "'wght' 700",
+                        position: "relative",
+                        marginLeft: 7,
+                        marginTop: 3,
+                        marginBottom: 1,
+                        display: showBigNav ? "flex" : "none",
+                    }}
+                >
+                    <i className="bx bx-home-alt"></i>
+                    <span
+                        className={"transition-colors hover:text-gray-300"}
+                        style={{
+                            marginLeft: "3px",
+                            position: "relative",
+                            top: "2px",
+                            cursor: "pointer",
+                        }}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onClick={() => {
+                            navigate("/");
+                            setTimeout(() => setIsHovered(false), 300);
+                        }}
+                    >
+                        Home
+                    </span>
+                    <i className="bx bx-group"></i>
+                    <span
+                        className={"transition-colors hover:text-gray-300"}
+                        style={{
+                            marginLeft: "3px",
+                            position: "relative",
+                            top: "2px",
+                            cursor: "pointer",
+                        }}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onClick={() => {
+                            navigate("/catalog");
+                            setTimeout(() => setIsHovered(false), 300);
+                        }}
+                    >
+                        StuyActivities
+                    </span>
+                    <i className="bx bx-calendar"></i>
+                    <span
+                        className={"transition-colors hover:text-gray-300"}
+                        style={{
+                            marginLeft: "3px",
+                            position: "relative",
+                            top: "2px",
+                            cursor: "pointer",
+                        }}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onClick={() => {
+                            navigate("/meetings");
+                            setTimeout(() => setIsHovered(false), 300);
+                        }}
+                    >
+                        Meetings
+                    </span>
+                    <i className="bx bx-note"></i>
+                    <span
+                        className={"transition-colors hover:text-gray-300"}
+                        style={{
+                            marginLeft: "3px",
+                            position: "relative",
+                            top: "2px",
+                            cursor: "pointer",
+                        }}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onClick={() => {
+                            window.location.href = "https://vote.stuysu.org";
+                            setTimeout(() => setIsHovered(false), 300);
+                        }}
+                    >
+                        Voting Site
+                    </span>
+                    <i className="bx bx-file"></i>
+                    <span
+                        className={"transition-colors hover:text-gray-300"}
+                        style={{
+                            marginLeft: "3px",
+                            position: "relative",
+                            top: "2px",
+                            cursor: "pointer",
+                        }}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onClick={() => {
+                            navigate("/about");
+                            setTimeout(() => setIsHovered(false), 300);
+                        }}
+                    >
+                        About
+                    </span>
+                </Stack>
+            </Box>
+            <Divider></Divider>
 
             <Drawer
                 anchor="left"

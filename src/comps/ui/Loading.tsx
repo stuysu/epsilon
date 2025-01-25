@@ -5,13 +5,13 @@ const Loading = ({ fullscreen = false }: { fullscreen?: boolean }) => {
     return (
         <Box
             sx={{
-                width: "100%",
-                height: fullscreen ? "100vh" : "100%",
+                width: "100vw",
+                height: "100vh",
                 display: "flex",
-                position: fullscreen ? "fixed" : "relative",
-                textAlign: "center",
+                position: "fixed",
                 alignItems: "center",
                 justifyContent: "center",
+                zIndex: 1000,
             }}
         >
             <CircularProgress />

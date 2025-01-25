@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import OrgContext from "../../comps/context/OrgContext";
-import { Box, Typography } from "@mui/material";
+import { Divider, Stack, Typography } from "@mui/material";
 
 const formatDays = (meeting_days: string[]) => {
     return meeting_days
@@ -12,41 +12,42 @@ const Charter = () => {
     const organization: OrgContextType = useContext(OrgContext);
 
     return (
-        <Box>
+        <Stack spacing={3}>
             <Typography variant="h1" align="center" width="100%">
                 Charter
             </Typography>
-            <Typography variant="h3" color="primary.main">
-                What is this club?
-            </Typography>
+            <Typography variant="h3">What is this club?</Typography>
             <Typography>{organization.purpose || "None"}</Typography>
-            <Typography variant="h3" color="primary.main">
+            <Divider></Divider>
+            <Typography variant="h3">
                 What days does this organization meet?
             </Typography>
             <Typography>
                 {formatDays(organization.meeting_days || []) || "None"}
             </Typography>
-            <Typography variant="h3" color="primary.main">
-                What is the meeting schedule?
-            </Typography>
+            <Divider></Divider>
+            <Typography variant="h3">What is the meeting schedule?</Typography>
             <Typography>{organization.meeting_schedule || "None"}</Typography>
-            <Typography variant="h3" color="primary.main">
+            <Divider></Divider>
+            <Typography variant="h3">
                 What would a typical meeting look like?
             </Typography>
             <Typography>
                 {organization.meeting_description || "None"}
             </Typography>
-            <Typography variant="h3" color="primary.main">
+            <Divider></Divider>
+            <Typography variant="h3">
                 How does this activity appoint leaders?
             </Typography>
             <Typography>
                 {organization.appointment_procedures || "None"}
             </Typography>
-            <Typography variant="h3" color="primary.main">
+            <Divider></Divider>
+            <Typography variant="h3">
                 What makes this activity unique?
             </Typography>
             <Typography>{organization.uniqueness || "None"}</Typography>
-        </Box>
+        </Stack>
     );
 };
 

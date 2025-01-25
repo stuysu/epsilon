@@ -135,13 +135,8 @@ const UserHome = () => {
 
     return (
         <Box sx={{ width: "100%" }}>
-            <Typography
-                variant="h1"
-                width="100%"
-                align="center"
-                marginBottom="50px"
-            >
-                Welcome back {user.first_name}!
+            <Typography variant="h1" align="center" margin="50px">
+                Welcome back, {user.first_name}!
             </Typography>
 
             <Grid container>
@@ -163,7 +158,7 @@ const UserHome = () => {
                             paddingLeft: "10px",
                         }}
                     >
-                        <Typography variant="h2" width="100%" align="center">
+                        <Typography variant="h1" width="100%" align="center">
                             My Memberships
                         </Typography>
                         <Paper
@@ -206,7 +201,7 @@ const UserHome = () => {
                     </Box>
                 </Grid>
                 <Grid item xs={12} sm={6} md={8} lg={8} xl={8}>
-                    <Typography variant="h2" width="100%" align="center">
+                    <Typography variant="h1" width="100%" align="center">
                         Upcoming Meetings
                     </Typography>
                     <Carousel responsive={responsive}>

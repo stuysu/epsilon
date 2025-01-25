@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 import Loading from "../comps/ui/Loading";
 
 import { Routes, Route, useLocation } from "react-router-dom";
-import { lazy, Suspense } from "react";
+import { lazy, Suspense, useState } from "react";
 
 // Pages
 import Home from "./Home";
@@ -11,6 +11,7 @@ import AllMeetings from "./AllMeetings";
 import NavBar from "../comps/ui/nav/NavBar";
 import About from "./About";
 import Rules from "./Rules";
+import { Typography } from "@mui/material";
 
 const ModuleRouter = lazy(() => import("./modules/ModuleRouter"));
 const Catalog = lazy(() => import("./Catalog"));
@@ -21,6 +22,7 @@ const AdminRouter = lazy(() => import("./admin"));
 
 const Pages = () => {
     const location = useLocation();
+    const [showDesignBanner, setDesignBanner] = useState(true); // State for banner visibility
 
     return (
         <div>
@@ -55,6 +57,23 @@ const Pages = () => {
                     <Route path={"/admin/*"} Component={AdminRouter} />
                     <Route path={"/:orgUrl/*"} Component={OrgRouter} />
                 </Routes>
+                {showDesignBanner && (
+                    <div
+                        style={{ zIndex: 51 }}
+                        className="fixed flex bottom-0 w-full h-12 border-t border-stone-700 bg-stone-900/85 backdrop-blur-xl items-center justify-center"
+                    >
+                        <p className="text-center text-gray-200">
+                            We’re redesigning Epsilon! Excuse our appearance
+                            while we build a better experience.
+                        </p>
+                        <button
+                            onClick={() => setDesignBanner(false)}
+                            className="absolute right-5"
+                        >
+                            <i className="bx bx-x bx-md text-gray-200"></i>
+                        </button>
+                    </div>
+                )}
             </Suspense>
         </div>
     );

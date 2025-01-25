@@ -16,10 +16,7 @@ const LoginButton = () => {
     };
 
     return (
-        <button
-            onClick={signInWithGoogle}
-            className="button"
-        >
+        <button onClick={signInWithGoogle} className="button">
             <img
                 src={`${PUBLIC_URL}/Google.svg`}
                 alt="Google Icon"

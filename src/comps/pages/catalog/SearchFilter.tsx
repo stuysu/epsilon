@@ -1,4 +1,5 @@
-import { Box, Typography, TextField, Stack, Chip } from "@mui/material";
+import { Box, Typography, Stack, Chip, InputBase } from "@mui/material";
+
 import { capitalizeWords } from "../../../utils/DataFormatters";
 
 type Props = {
@@ -61,9 +62,18 @@ const SearchFilter = ({
                     justifyContent: "center",
                 }}
             >
-                <TextField
-                    label="Search"
-                    sx={{ width: "100%" }}
+                <InputBase
+                    placeholder="Search Activities"
+                    sx={{
+                        borderRadius: "10px",
+                        width: "100%",
+                        padding: "20px",
+                        paddingBottom: "17px",
+                        fontVariationSettings: `'wght' 700`,
+                        backgroundColor: "#1F1F1F80",
+                        boxShadow:
+                            "0px 0px 2px 0px rgba(255, 255, 255, 0.30) inset",
+                    }}
                     value={value.name}
                     onChange={(e) => {
                         e.target.value = e.target.value.replace(onlyAlpha, "");

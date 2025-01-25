@@ -280,7 +280,7 @@ const Catalog = () => {
                 <Box>
                     <Masonry
                         columns={columns}
-                        spacing={2}
+                        spacing={isOne ? 0 : 2}
                         sx={
                             searchState.orgs.length
                                 ? undefined
