@@ -62,7 +62,7 @@ const Pages = () => {
                         style={{ zIndex: 51 }}
                         className="fixed flex bottom-0 w-full h-12 border-t border-stone-700 bg-stone-900/85 backdrop-blur-xl items-center justify-center"
                     >
-                        <Typography className="text-center">Epsilon is undergoing redesign until March 2025. Please excuse our appearance.</Typography>
+                        <Typography className="text-center">We’re redesigning Epsilon! Excuse our appearance while we build a better experience.</Typography>
                         <button
                             onClick={() => setDesignBanner(false)}
                             className="absolute right-5"

@@ -275,17 +275,6 @@ const NavBar = () => {
                     >
                         Voting Site
                     </span>
-                    <i className="bx bx-glasses opacity-50"></i>
-                    <span
-                        style={{
-                            opacity: 0.5,
-                            marginLeft: "3px",
-                            position: "relative",
-                            top: "2px",
-                        }}
-                    >
-                        Opportunities
-                    </span>
                     <i className="bx bx-file"></i>
                     <span
                         className={"transition-colors hover:text-gray-300"}
