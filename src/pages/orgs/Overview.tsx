@@ -191,13 +191,10 @@ const Overview = () => {
                         {organization.purpose || "None"}
                     </Typography>
 
-                    <Box
-                        sx={{
-                            display: "flex",
-                            width: "100%",
-                            marginTop: 2,
-                            alignItems: "center",
-                        }}
+                    <Stack
+                        direction={{ xs: "column", sm: "row" }}
+                        alignItems="center"
+                        marginTop={1}
                     >
                         <AsyncButton
                             variant="contained"
@@ -226,7 +223,7 @@ const Overview = () => {
                                         ) : null,
                                     )}
                         </Box>
-                    </Box>
+                    </Stack>
                 </Stack>
             </Stack>
 
