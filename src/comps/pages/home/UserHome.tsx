@@ -135,11 +135,7 @@ const UserHome = () => {
 
     return (
         <Box sx={{ width: "100%" }}>
-            <Typography
-                variant="h1"
-                align="center"
-                margin="50px"
-            >
+            <Typography variant="h1" align="center" margin="50px">
                 Welcome back, {user.first_name}!
             </Typography>
 

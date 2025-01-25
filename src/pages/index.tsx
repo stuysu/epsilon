@@ -62,7 +62,10 @@ const Pages = () => {
                         style={{ zIndex: 51 }}
                         className="fixed flex bottom-0 w-full h-12 border-t border-stone-700 bg-stone-900/85 backdrop-blur-xl items-center justify-center"
                     >
-                        <p className="text-center text-gray-200">We’re redesigning Epsilon! Excuse our appearance while we build a better experience.</p>
+                        <p className="text-center text-gray-200">
+                            We’re redesigning Epsilon! Excuse our appearance
+                            while we build a better experience.
+                        </p>
                         <button
                             onClick={() => setDesignBanner(false)}
                             className="absolute right-5"

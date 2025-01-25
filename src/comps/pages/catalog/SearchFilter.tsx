@@ -71,7 +71,8 @@ const SearchFilter = ({
                         paddingBottom: "17px",
                         fontVariationSettings: `'wght' 700`,
                         backgroundColor: "#1F1F1F80",
-                        boxShadow: "0px 0px 2px 0px rgba(255, 255, 255, 0.30) inset",
+                        boxShadow:
+                            "0px 0px 2px 0px rgba(255, 255, 255, 0.30) inset",
                     }}
                     value={value.name}
                     onChange={(e) => {

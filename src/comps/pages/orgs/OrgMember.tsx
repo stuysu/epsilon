@@ -1,4 +1,11 @@
-import { ListItem, ListItemAvatar, Avatar, ListItemText, Stack, Chip } from "@mui/material";
+import {
+    ListItem,
+    ListItemAvatar,
+    Avatar,
+    ListItemText,
+    Stack,
+    Chip,
+} from "@mui/material";
 
 type Props = {
     role?: Membership["role"];
@@ -29,27 +36,27 @@ const OrgMember = ({
 
     return (
         <Stack
-        direction={"row"}
-        alignItems={"center"}
-        sx={{background: "#36363680"}}
+            direction={"row"}
+            alignItems={"center"}
+            sx={{ background: "#36363680" }}
         >
-        <ListItem sx={{ height: "75px" }}>
-            <ListItemAvatar>
-                <Avatar alt={`${first_name} ${last_name}`} src={picture} sx={{borderRadius: "5px"}}>
-                    {(first_name || "O").charAt(0).toUpperCase()}
-                </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-                primary={`${first_name} ${last_name}`}
-                secondary={
-                    <>
-                        {email}
-                    </>
-                }
-            />
-        </ListItem>
-            <Chip label={l1} sx={{marginRight:"20px"}}/>
-            </Stack>
+            <ListItem sx={{ height: "75px" }}>
+                <ListItemAvatar>
+                    <Avatar
+                        alt={`${first_name} ${last_name}`}
+                        src={picture}
+                        sx={{ borderRadius: "5px" }}
+                    >
+                        {(first_name || "O").charAt(0).toUpperCase()}
+                    </Avatar>
+                </ListItemAvatar>
+                <ListItemText
+                    primary={`${first_name} ${last_name}`}
+                    secondary={<>{email}</>}
+                />
+            </ListItem>
+            <Chip label={l1} sx={{ marginRight: "20px" }} />
+        </Stack>
     );
 };
 

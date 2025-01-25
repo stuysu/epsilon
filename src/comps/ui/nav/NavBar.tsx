@@ -10,7 +10,8 @@ import {
     ListItemIcon,
     IconButton,
     Avatar,
-    Stack, useMediaQuery,
+    Stack,
+    useMediaQuery,
 } from "@mui/material";
 import {
     Brightness4Rounded,
@@ -160,7 +161,9 @@ const NavBar = () => {
                         onClick={() => {
                             theme.toggleColorMode();
                             if (theme.colorMode) {
-                                enqueueSnackbar("Light mode is experimental.", {variant: "warning"});
+                                enqueueSnackbar("Light mode is experimental.", {
+                                    variant: "warning",
+                                });
                             }
                         }}
                         color="inherit"
@@ -176,7 +179,8 @@ const NavBar = () => {
 
             <Box
                 onMouseEnter={() => setIsHovered(true)}
-                onMouseLeave={() => setIsHovered(false)}>
+                onMouseLeave={() => setIsHovered(false)}
+            >
                 <Box
                     sx={{
                         position: "absolute",
@@ -190,7 +194,7 @@ const NavBar = () => {
                         opacity: 0.5,
                         filter: "blur(10px)",
                         zIndex: 1,
-                        display: showBigNav ? "block": "none",
+                        display: showBigNav ? "block" : "none",
                     }}
                 />
                 <Stack
@@ -214,7 +218,7 @@ const NavBar = () => {
                             marginLeft: "3px",
                             position: "relative",
                             top: "2px",
-                            cursor: "pointer"
+                            cursor: "pointer",
                         }}
                         onMouseEnter={() => setIsHovered(true)}
                         onClick={() => {

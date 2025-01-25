@@ -15,7 +15,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                 position: "relative",
                 transition: "transform 0.4s cubic-bezier(0.3, 0.9, 0.3, 1)",
                 "&:hover": {
-                    transform: "translateY(-5px)"
+                    transform: "translateY(-5px)",
                 },
             }}
         >
@@ -43,12 +43,14 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                         boxShadow:
                             "inset 0 0 1px 1px rgba(255, 255, 255, 0.075)",
                         cursor: "pointer",
-                        transition: "0.2s background ease-in-out, box-shadow 0.2s ease-in-out",
+                        transition:
+                            "0.2s background ease-in-out, box-shadow 0.2s ease-in-out",
                         "&:hover": {
                             background: theme.colorMode
                                 ? "rgba(255, 255, 255, 0.05)"
                                 : "rgba(66,66,66,0.2)",
-                            boxShadow: "inset 0 0 1px 1px rgba(255, 255, 255, 0.075), 0px 5px 15px rgba(0, 0, 0, 0.3)",
+                            boxShadow:
+                                "inset 0 0 1px 1px rgba(255, 255, 255, 0.075), 0px 5px 15px rgba(0, 0, 0, 0.3)",
                         },
                         height: "450px",
                         display: "flex",
@@ -127,8 +129,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                     objectFit: "cover",
                                     filter: "blur(25px)",
                                 }}
-                            >
-                            </Avatar>
+                            ></Avatar>
 
                             <Box
                                 sx={{
@@ -138,8 +139,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                     borderRadius: "20px",
                                     position: "absolute",
                                 }}
-                            >
-                            </Box>
+                            ></Box>
 
                             <Avatar
                                 src={organization.picture || ""}

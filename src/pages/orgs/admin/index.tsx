@@ -51,7 +51,10 @@ const OrgAdminRouter = () => {
                     </Routes>
                 </>
             ) : (
-                <div>You don't have access to this page. If you believe this is an error, please contact IT@stuysu.org</div>
+                <div>
+                    You don't have access to this page. If you believe this is
+                    an error, please contact IT@stuysu.org
+                </div>
             )}
         </>
     );

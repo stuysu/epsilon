@@ -16,9 +16,7 @@ const Charter = () => {
             <Typography variant="h1" align="center" width="100%">
                 Charter
             </Typography>
-            <Typography variant="h3">
-                What is this club?
-            </Typography>
+            <Typography variant="h3">What is this club?</Typography>
             <Typography>{organization.purpose || "None"}</Typography>
             <Divider></Divider>
             <Typography variant="h3">
@@ -28,9 +26,7 @@ const Charter = () => {
                 {formatDays(organization.meeting_days || []) || "None"}
             </Typography>
             <Divider></Divider>
-            <Typography variant="h3">
-                What is the meeting schedule?
-            </Typography>
+            <Typography variant="h3">What is the meeting schedule?</Typography>
             <Typography>{organization.meeting_schedule || "None"}</Typography>
             <Divider></Divider>
             <Typography variant="h3">

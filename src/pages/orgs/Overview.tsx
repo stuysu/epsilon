@@ -8,7 +8,7 @@ import {
     Stack,
     Chip,
     Divider,
-    Link
+    Link,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { supabase } from "../../supabaseClient";
@@ -133,7 +133,7 @@ const Overview = () => {
                             position: "absolute",
                             zIndex: 0,
                             filter: "blur(30px)",
-                            opacity: 0.3
+                            opacity: 0.3,
                         }}
                     />
                     <Avatar
@@ -144,7 +144,7 @@ const Overview = () => {
                             borderRadius: "25px",
                             objectFit: "cover",
                             position: "relative",
-                            zIndex: 1
+                            zIndex: 1,
                         }}
                         alt={`organization ${organization.name}`}
                     >
@@ -164,10 +164,16 @@ const Overview = () => {
                         spacing={1}
                     >
                         {organization.tags?.map((tag, index) => (
-                            <Chip key={index} label={tag} variant="filled" sx={{
-                                borderRadius: 2,
-                                boxShadow: "inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
-                            }}/>
+                            <Chip
+                                key={index}
+                                label={tag}
+                                variant="filled"
+                                sx={{
+                                    borderRadius: 2,
+                                    boxShadow:
+                                        "inset 0 0 1px 1px rgba(255, 255, 255, 0.15)",
+                                }}
+                            />
                         )) || <p>Uncategorized</p>}
                     </Stack>
 
@@ -200,7 +206,7 @@ const Overview = () => {
                         >
                             {interactString}
                         </AsyncButton>
-                        <Box sx={{ marginLeft: 2}}>
+                        <Box sx={{ marginLeft: 2 }}>
                             {organization.socials &&
                                 organization.socials
                                     .split(" ")
@@ -217,7 +223,7 @@ const Overview = () => {
                                             >
                                                 {social}
                                             </Link>
-                                        ) : null
+                                        ) : null,
                                     )}
                         </Box>
                     </Box>
@@ -248,40 +254,59 @@ const Overview = () => {
                     </Typography>
                 </Box>
 
-                <Typography variant="h1" align="center" sx={{opacity: "25%"}}>
+                <Typography variant="h1" align="center" sx={{ opacity: "25%" }}>
                     •
                 </Typography>
 
                 <Box>
                     <Typography variant="h3" align="center" width={150}>
-                        {organization.state.charAt(0) + organization.state.slice(1).toLowerCase()}
+                        {organization.state.charAt(0) +
+                            organization.state.slice(1).toLowerCase()}
                     </Typography>
                     <Typography variant="body1" align="center">
                         State
                     </Typography>
                 </Box>
 
-                <Typography variant="h1" align="center" width="100%" sx={{opacity: "25%"}}>
+                <Typography
+                    variant="h1"
+                    align="center"
+                    width="100%"
+                    sx={{ opacity: "25%" }}
+                >
                     •
                 </Typography>
 
                 <Box>
                     <Typography variant="h3" align="center" width={150}>
-                            {organization.commitment_level
-                                ? organization.commitment_level.charAt(0).toUpperCase() + organization.commitment_level.slice(1).toLowerCase()
-                                : "None"}</Typography>
+                        {organization.commitment_level
+                            ? organization.commitment_level
+                                  .charAt(0)
+                                  .toUpperCase() +
+                              organization.commitment_level
+                                  .slice(1)
+                                  .toLowerCase()
+                            : "None"}
+                    </Typography>
                     <Typography variant="body1" align="center">
                         Commitment
                     </Typography>
                 </Box>
 
-                <Typography variant="h1" align="center" width="100%" sx={{opacity: "25%"}}>
+                <Typography
+                    variant="h1"
+                    align="center"
+                    width="100%"
+                    sx={{ opacity: "25%" }}
+                >
                     •
                 </Typography>
 
                 <Box>
                     <Typography variant="h3" align="center" width={200}>
-                        {organization.meetings?.at(-1)?.start_time?.split('T')[0] ?? "No Meetings"}
+                        {organization.meetings
+                            ?.at(-1)
+                            ?.start_time?.split("T")[0] ?? "No Meetings"}
                     </Typography>
                     <Typography variant="body1" align="center">
                         Last Meeting
@@ -437,7 +462,7 @@ const Overview = () => {
                             marginLeft={3}
                             marginBottom={3}
                         >
-                           No past or future meetings.
+                            No past or future meetings.
                         </Typography>
                     ) : (
                         organization.meetings
