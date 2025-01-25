@@ -1,11 +1,16 @@
-# [Epsilon](https://epsilon.stuysu.org/)
+<div align="center">
+  <img src="https://github.com/user-attachments/assets/09056c5d-e5f2-4332-9f23-ae4548c38f04" alt="Core Logo Large Gradient" width="400px" />
+</div>
 
-The all in one platform for Stuyvesant High School's needs.
-https://epsilon.stuysu.org/
+<div align="center">
+  The all-in-one platform for Stuyvesant High School's needs.
+  
+  https://epsilon.stuysu.org/
+  
+  [**Contributing Guide**](https://github.com/stuysu/epsilon/wiki)
+</div>
 
-[Contributing Guide](https://github.com/stuysu/epsilon/wiki)
-
-## Current Services:
+## Current Services
 
 -   Activities [finished]
 -   Attendance [finished]
