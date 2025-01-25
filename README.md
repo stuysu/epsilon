@@ -12,18 +12,18 @@
 
 ## Current Services
 
--   Activities [finished]
--   Attendance [finished]
--   Opportunities [planned]
--   Schedule/Schedules [planned]
--   Votes [planned]
--   Valentines [planned]
--   Mobile App [planned]
--   StuyArista [planned]
+- Activities [finished]
+- Attendance [finished]
+- Opportunities [planned]
+- Schedule/Schedules [planned]
+- Votes [planned]
+- Valentines [planned]
+- Mobile App [planned]
+- StuyArista [planned]
 
 ## Stack
 
--   typescript + react -> netlify
--   supabase = postgres -> docker -> digital ocean
--   [epsilon backend](https://github.com/stuysu/epsilon-database)
--   [epsilon functions](https://github.com/stuysu/epsilon-functions)
+- typescript + react -> netlify
+- supabase = postgres -> docker -> digital ocean
+- [epsilon backend](https://github.com/stuysu/epsilon-database)
+- [epsilon functions](https://github.com/stuysu/epsilon-functions)
