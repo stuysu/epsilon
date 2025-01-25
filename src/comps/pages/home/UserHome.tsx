@@ -158,9 +158,6 @@ const UserHome = () => {
                             paddingLeft: "10px",
                         }}
                     >
-                        <Typography variant="h1" width="100%" align="center">
-                            My Memberships
-                        </Typography>
                         <Paper
                             elevation={2}
                             sx={{
