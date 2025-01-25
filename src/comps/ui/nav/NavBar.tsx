@@ -10,7 +10,7 @@ import {
     ListItemIcon,
     IconButton,
     Avatar,
-    Stack,
+    Stack, useMediaQuery,
 } from "@mui/material";
 import {
     Brightness4Rounded,
@@ -63,6 +63,7 @@ const linkStyle: CSSProperties = {
 };
 
 const NavBar = () => {
+    const showBigNav = useMediaQuery("(min-width:950px)");
     const user = useContext(UserContext);
     const { enqueueSnackbar } = useSnackbar();
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -189,6 +190,7 @@ const NavBar = () => {
                         opacity: 0.5,
                         filter: "blur(10px)",
                         zIndex: 1,
+                        display: showBigNav ? "block": "none",
                     }}
                 />
                 <Stack
@@ -202,6 +204,7 @@ const NavBar = () => {
                         marginLeft: 7,
                         marginTop: 3,
                         marginBottom: 1,
+                        display: showBigNav ? "flex" : "none",
                     }}
                 >
                     <i className="bx bx-home-alt"></i>

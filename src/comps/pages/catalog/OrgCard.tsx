@@ -19,7 +19,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                 },
             }}
         >
-            <div className="mt-5"></div>
+            <div className="mt-10"></div>
             <div className="relative rounded-2xl overflow-visible">
                 <Box
                     sx={{
