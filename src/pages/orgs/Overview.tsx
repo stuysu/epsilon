@@ -121,7 +121,7 @@ const Overview = () => {
 
     return (
         <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
-            <Stack direction="row" spacing={5}>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={5}>
                 <Box>
                     <Avatar
                         src={organization.picture || ""}
@@ -240,7 +240,7 @@ const Overview = () => {
                 }}
             />
 
-            <Stack direction="row" marginBottom={3} alignItems="center">
+            <Stack direction={{ xs: "column", sm: "row" }} marginBottom={{ xs: 0, sm: 3 }} alignItems="center">
                 <Box>
                     <Typography variant="h3" align="center" width={100}>
                         {
