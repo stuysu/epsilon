@@ -47,7 +47,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                         "&:hover": {
                             background: theme.colorMode
                                 ? "rgba(255, 255, 255, 0.05)"
-                                : "rgba(100, 100, 100, 0.2)",
+                                : "rgba(66,66,66,0.2)",
                             boxShadow: "inset 0 0 1px 1px rgba(255, 255, 255, 0.075), 0px 5px 15px rgba(0, 0, 0, 0.3)",
                         },
                         height: "450px",
@@ -55,7 +55,9 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                         flexDirection: "column",
                         overflow: "visible",
                         padding: "30px",
-                        background: "rgba(31, 31, 31, 0.5)",
+                        background: theme.colorMode
+                            ? "rgba(31, 31, 31, 0.5)"
+                            : "rgba(100, 100, 100, 0.2)",
                         justifyContent: "flex-start",
                         zIndex: 1,
                     }}

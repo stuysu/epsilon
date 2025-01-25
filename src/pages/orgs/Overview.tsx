@@ -254,19 +254,6 @@ const Overview = () => {
 
                 <Box>
                     <Typography variant="h3" align="center" width={150}>
-                        Start Date
-                    </Typography>
-                    <Typography variant="body1" align="center">
-                        Initiated
-                    </Typography>
-                </Box>
-
-                <Typography variant="h1" align="center" width="100%" sx={{opacity: "25%"}}>
-                    •
-                </Typography>
-
-                <Box>
-                    <Typography variant="h3" align="center" width={150}>
                         {organization.state.charAt(0) + organization.state.slice(1).toLowerCase()}
                     </Typography>
                     <Typography variant="body1" align="center">

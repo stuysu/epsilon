@@ -16,38 +16,38 @@ const Charter = () => {
             <Typography variant="h1" align="center" width="100%">
                 Charter
             </Typography>
-            <Typography variant="h3" color="primary.main">
+            <Typography variant="h3">
                 What is this club?
             </Typography>
             <Typography>{organization.purpose || "None"}</Typography>
             <Divider></Divider>
-            <Typography variant="h3" color="primary.main">
+            <Typography variant="h3">
                 What days does this organization meet?
             </Typography>
             <Typography>
                 {formatDays(organization.meeting_days || []) || "None"}
             </Typography>
             <Divider></Divider>
-            <Typography variant="h3" color="primary.main">
+            <Typography variant="h3">
                 What is the meeting schedule?
             </Typography>
             <Typography>{organization.meeting_schedule || "None"}</Typography>
             <Divider></Divider>
-            <Typography variant="h3" color="primary.main">
+            <Typography variant="h3">
                 What would a typical meeting look like?
             </Typography>
             <Typography>
                 {organization.meeting_description || "None"}
             </Typography>
             <Divider></Divider>
-            <Typography variant="h3" color="primary.main">
+            <Typography variant="h3">
                 How does this activity appoint leaders?
             </Typography>
             <Typography>
                 {organization.appointment_procedures || "None"}
             </Typography>
             <Divider></Divider>
-            <Typography variant="h3" color="primary.main">
+            <Typography variant="h3">
                 What makes this activity unique?
             </Typography>
             <Typography>{organization.uniqueness || "None"}</Typography>
