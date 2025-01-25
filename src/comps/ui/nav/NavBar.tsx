@@ -243,27 +243,42 @@ const NavBar = () => {
                     </span>
                     <i className="bx bx-calendar"></i>
                     <span
+                        className={"transition-colors hover:text-gray-300"}
                         style={{
                             marginLeft: "3px",
                             position: "relative",
                             top: "2px",
+                            cursor: "pointer",
+                        }}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onClick={() => {
+                            navigate("/meetings");
+                            setTimeout(() => setIsHovered(false), 300);
                         }}
                     >
-                        Schedule
+                        Meetings
                     </span>
                     <i className="bx bx-note"></i>
                     <span
+                        className={"transition-colors hover:text-gray-300"}
                         style={{
                             marginLeft: "3px",
                             position: "relative",
                             top: "2px",
+                            cursor: "pointer",
+                        }}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onClick={() => {
+                            window.location.href = "https://vote.stuysu.org";
+                            setTimeout(() => setIsHovered(false), 300);
                         }}
                     >
-                        Voting
+                        Voting Site
                     </span>
-                    <i className="bx bx-glasses"></i>
+                    <i className="bx bx-glasses opacity-50"></i>
                     <span
                         style={{
+                            opacity: 0.5,
                             marginLeft: "3px",
                             position: "relative",
                             top: "2px",
@@ -273,10 +288,17 @@ const NavBar = () => {
                     </span>
                     <i className="bx bx-file"></i>
                     <span
+                        className={"transition-colors hover:text-gray-300"}
                         style={{
                             marginLeft: "3px",
                             position: "relative",
                             top: "2px",
+                            cursor: "pointer",
+                        }}
+                        onMouseEnter={() => setIsHovered(true)}
+                        onClick={() => {
+                            navigate("/about");
+                            setTimeout(() => setIsHovered(false), 300);
                         }}
                     >
                         About
