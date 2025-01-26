@@ -3,7 +3,7 @@ import { Helmet } from "react-helmet";
 import Loading from "../comps/ui/Loading";
 
 import { Routes, Route, useLocation } from "react-router-dom";
-import { lazy, Suspense, useState } from "react";
+import { lazy, Suspense, useEffect, useState } from "react";
 
 // Pages
 import Home from "./Home";
@@ -22,7 +22,21 @@ const AdminRouter = lazy(() => import("./admin"));
 
 const Pages = () => {
     const location = useLocation();
-    const [showDesignBanner, setDesignBanner] = useState(true); // State for banner visibility
+    const [showDesignBanner, setDesignBanner] = useState(
+        localStorage.getItem("bannerClosed") !== "true"
+    ); // State for banner visibility
+
+    useEffect(() => {
+        const bannerClosed = localStorage.getItem("bannerClosed");
+        if (bannerClosed === "true") {
+            setDesignBanner(false);
+        }
+    }, []);
+
+    const handleCloseBanner = () => {
+        setDesignBanner(false);
+        localStorage.setItem("bannerClosed", "true");
+    };
 
     return (
         <div>
@@ -67,7 +81,7 @@ const Pages = () => {
                             while we build a better experience.
                         </p>
                         <button
-                            onClick={() => setDesignBanner(false)}
+                            onClick={handleCloseBanner}
                             className="absolute right-5"
                         >
                             <i className="bx bx-x bx-md text-gray-200"></i>
