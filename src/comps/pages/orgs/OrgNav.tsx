@@ -52,7 +52,11 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
         }
     }, [navLinks, location.pathname, currentIndex, main]);
 
-    if (organization.memberships?.some((m) => m.role === "ADMIN")) {
+    if (
+        organization.memberships?.some(
+            (m) => m.role === "ADMIN" || m.role === "CREATOR",
+        )
+    ) {
         navLinks.push({
             to: `${main}/admin`,
             display: "Admin",
