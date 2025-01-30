@@ -70,9 +70,10 @@ const Valentines = () => {
             </p>
             <AsyncButton
                 onClick={async () => {
-                    const { data, error } = await supabase
+                    const { error } = await supabase
                         .from("valentinesmessages")
                         .insert({
+                            // might be funny to let people send messages to themselves
                             sender: user.id,
                             receiver,
                             message,
@@ -112,6 +113,70 @@ const Valentines = () => {
                 }}
             >
                 fetch all visible valentines
+            </AsyncButton>
+            <AsyncButton
+                onClick={async () => {
+                    const { data: settings, error: settingError } =
+                        await supabase
+                            .from("settings")
+                            .select("setting_value")
+                            .eq("name", "valentines_deadline")
+                            .maybeSingle();
+                    if (settingError || !settings) {
+                        enqueueSnackbar("Failed to fetch Valentines times!", {
+                            variant: "error",
+                        });
+                        return;
+                    }
+                    if (new Date() < new Date(settings.setting_value * 1000)) {
+                        enqueueSnackbar("Valentines are not released yet.");
+                        return;
+                    }
+
+                    const { data, error } = await supabase
+                        .from("valentinesmessages")
+                        .select(
+                            "id,sender,receiver,show_sender,message,background",
+                        )
+                        .eq("receiver", user.id)
+                        .not("verified_by", "is", null)
+                        .not("verified_at", "is", null)
+                        .returns<Valentine[]>();
+                    if (error) {
+                        enqueueSnackbar("Failed to load Valentines", {
+                            variant: "error",
+                        });
+                        return;
+                    }
+                    setValentines(data);
+                }}
+            >
+                fetch all RX'd valentines (should only work after the set date)
+            </AsyncButton>
+            <AsyncButton
+                onClick={async () => {
+                    const { data, error } = await supabase
+                        .from("valentinesmessages")
+                        .select(
+                            "id,sender,receiver,show_sender,message,background",
+                        )
+                        .is("verified_by", null)
+                        .is("verified_at", null)
+                        // don't spoil surprises!
+                        .neq("receiver", user.id)
+                        .returns<Valentine[]>();
+                    if (error) {
+                        enqueueSnackbar("Failed to load Valentines", {
+                            variant: "error",
+                        });
+                        return;
+                    }
+                    console.log(data);
+                    setValentines(data);
+                }}
+            >
+                fetch all valentines in moderation queue (need to be admin user
+                or else will only see your own drafts)
             </AsyncButton>
             <h2>fetched valentines ({valentines.length})</h2>
             {valentines.map((valentine) =>
