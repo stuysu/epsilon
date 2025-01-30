@@ -2,7 +2,7 @@ import { PUBLIC_URL } from "../constants";
 import { Helmet } from "react-helmet";
 import Loading from "../comps/ui/Loading";
 
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { lazy, Suspense, useEffect, useState } from "react";
 
 // Pages
@@ -11,7 +11,6 @@ import AllMeetings from "./AllMeetings";
 import NavBar from "../comps/ui/nav/NavBar";
 import About from "./About";
 import Rules from "./Rules";
-import { Typography } from "@mui/material";
 
 const ModuleRouter = lazy(() => import("./modules/ModuleRouter"));
 const Catalog = lazy(() => import("./Catalog"));
@@ -23,7 +22,7 @@ const AdminRouter = lazy(() => import("./admin"));
 const Pages = () => {
     const location = useLocation();
     const [showDesignBanner, setDesignBanner] = useState(
-        localStorage.getItem("bannerClosed") !== "true"
+        localStorage.getItem("bannerClosed") !== "true",
     ); // State for banner visibility
 
     useEffect(() => {

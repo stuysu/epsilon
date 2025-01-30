@@ -39,6 +39,7 @@ import AddCircleIcon from "@mui/icons-material/AddCircle";
 import InfoIcon from "@mui/icons-material/Info";
 import GavelIcon from "@mui/icons-material/Gavel";
 import ArchiveIcon from "@mui/icons-material/Archive";
+import FavoriteIcon from "@mui/icons-material/Favorite";
 import AsyncButton from "../AsyncButton";
 
 const navStyles: CSSProperties = {
@@ -317,7 +318,7 @@ const NavBar = () => {
                         name="Valentines"
                         iconClass="bx bx-book-heart"
                         onClick={() => {
-                            navigate("/valentines");
+                            navigate("/modules/valentines");
                             setTimeout(() => setIsHovered(false), 300);
                         }}
                         setIsHovered={setIsHovered}
@@ -485,6 +486,14 @@ const NavBar = () => {
                                     <PersonSearch />
                                 </ListItemIcon>
                                 <ListItemText>Attendance</ListItemText>
+                            </ListItemButton>
+                            <ListItemButton
+                                onClick={() => navigate("/modules/valentines")}
+                            >
+                                <ListItemIcon>
+                                    <FavoriteIcon />
+                                </ListItemIcon>
+                                <ListItemText>Valentines</ListItemText>
                             </ListItemButton>
                         </List>
                     )}
