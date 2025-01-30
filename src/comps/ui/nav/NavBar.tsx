@@ -1,16 +1,16 @@
 import {
-    Typography,
+    Avatar,
     Box,
-    Drawer,
-    List,
-    ListItemText,
     Divider,
-    ListSubheader,
+    Drawer,
+    IconButton,
+    List,
     ListItemButton,
     ListItemIcon,
-    IconButton,
-    Avatar,
+    ListItemText,
+    ListSubheader,
     Stack,
+    Typography,
     useMediaQuery,
 } from "@mui/material";
 import {
@@ -19,7 +19,7 @@ import {
     Menu,
     PersonSearch,
 } from "@mui/icons-material";
-import { CSSProperties, useContext, useEffect, useState } from "react";
+import { CSSProperties, FC, useContext, useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../../supabaseClient";
 import UserContext from "../../context/UserContext";
@@ -61,6 +61,40 @@ const titleStyle: CSSProperties = {
 const linkStyle: CSSProperties = {
     color: "inherit",
     textDecoration: "none",
+};
+
+// TODO: separate TabLink to independent file in nav folder (good first issue: reformat the other entries in the navigation tabs to use this component)
+interface TabLinkProps {
+    name: string;
+    iconClass: string;
+    onClick: () => void;
+    setIsHovered: (hovered: boolean) => void;
+}
+
+const TabLink: FC<TabLinkProps> = ({
+    name,
+    iconClass,
+    onClick,
+    setIsHovered,
+}) => {
+    return (
+        <>
+            <i className={iconClass}></i>
+            <span
+                className={"transition-colors hover:text-gray-300"}
+                style={{
+                    marginLeft: "3px",
+                    position: "relative",
+                    top: "2px",
+                    cursor: "pointer",
+                }}
+                onMouseEnter={() => setIsHovered(true)}
+                onClick={onClick}
+            >
+                {name}
+            </span>
+        </>
+    );
 };
 
 const NavBar = () => {
@@ -279,6 +313,15 @@ const NavBar = () => {
                     >
                         Voting Site
                     </span>
+                    <TabLink
+                        name="Valentines"
+                        iconClass="bx bx-book-heart"
+                        onClick={() => {
+                            navigate("/valentines");
+                            setTimeout(() => setIsHovered(false), 300);
+                        }}
+                        setIsHovered={setIsHovered}
+                    />
                     <i className="bx bx-file"></i>
                     <span
                         className={"transition-colors hover:text-gray-300"}
