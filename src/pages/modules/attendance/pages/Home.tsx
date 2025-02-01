@@ -34,7 +34,10 @@ const Home = () => {
                     return;
                 }
             } else {
-                let oid = user.memberships?.[0]?.organizations?.id;
+                let oid =
+                    user.memberships?.find((membership) =>
+                        ["ADMIN", "CREATOR"].includes(membership?.role || ""),
+                    )?.organizations?.id || 0;
                 if (oid) {
                     setSelectedOrgId(oid);
                     setSearchParams({ org: oid.toString() });
