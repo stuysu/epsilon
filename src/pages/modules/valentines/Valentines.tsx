@@ -178,21 +178,46 @@ const Valentines = () => {
                 fetch all valentines in moderation queue (need to be admin user
                 or else will only see your own drafts)
             </AsyncButton>
+
             <h2>fetched valentines ({valentines.length})</h2>
-            {valentines.map((valentine) =>
-                [
-                    "id",
-                    "sender",
-                    "receiver",
-                    "show_sender",
-                    "message",
-                    "background",
-                ].map((key: string) => (
-                    <p>
-                        {key}: {valentine[key]}
-                    </p>
-                )),
-            )}
+            {valentines.map((valentine) => (
+                <>
+                    {[
+                        "id",
+                        "sender",
+                        "receiver",
+                        "show_sender",
+                        "message",
+                        "background",
+                    ].map((key: string) => (
+                        <p>
+                            {key}: {valentine[key]}
+                        </p>
+                    ))}
+                    <AsyncButton
+                        onClick={async () => {
+                            const { error } = await supabase.functions.invoke(
+                                "valentines_approve",
+                                { body: { message_id: valentine.id } },
+                            );
+                            if (error) {
+                                const errorMessage = await error.context.text();
+                                enqueueSnackbar(
+                                    `Failed to approve Valentine! ${errorMessage}`,
+                                    { variant: "error" },
+                                );
+                                return;
+                            }
+                            enqueueSnackbar(
+                                "Approved Valentine! Please refetch...",
+                                { variant: "success" },
+                            );
+                        }}
+                    >
+                        approve??
+                    </AsyncButton>
+                </>
+            ))}
         </>
     );
 };
