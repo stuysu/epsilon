@@ -4,17 +4,8 @@ import { supabase } from "../../../supabaseClient";
 import { enqueueSnackbar } from "notistack";
 import { Input, InputBase } from "@mui/material";
 import UserContext from "../../../comps/context/UserContext";
-
-type Valentine = {
-    [key: string]: any;
-    id: number;
-    sender: number;
-    receiver: number;
-    show_sender: boolean;
-
-    message: string;
-    background: string;
-};
+import { Valentine } from "./ValentineType";
+import ValentineDisplay from "./comps/ValentineDisplay";
 
 const RejectionMenu = ({ valentine }: { valentine: Valentine }) => {
     const [reason, setReason] = useState<string>("");
@@ -218,18 +209,7 @@ const Valentines = () => {
             <h2>fetched valentines ({valentines.length})</h2>
             {valentines.map((valentine) => (
                 <>
-                    {[
-                        "id",
-                        "sender",
-                        "receiver",
-                        "show_sender",
-                        "message",
-                        "background",
-                    ].map((key: string) => (
-                        <p>
-                            {key}: {valentine[key]}
-                        </p>
-                    ))}
+                    <ValentineDisplay valentine={valentine} />
                     <AsyncButton
                         onClick={async () => {
                             const { error } = await supabase.functions.invoke(
