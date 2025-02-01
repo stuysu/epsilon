@@ -1,10 +1,10 @@
 import {
     Box,
-    Select,
-    Typography,
-    MenuItem,
     FormControl,
     InputLabel,
+    MenuItem,
+    Select,
+    Typography,
 } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import UserContext from "../../../../comps/context/UserContext";
@@ -129,6 +129,7 @@ const Home = () => {
                                 key={meeting.id}
                                 title={meeting.title}
                                 id={meeting.id}
+                                startTime={meeting.start_time}
                             />
                         ))}
                     </Box>
