@@ -15,6 +15,42 @@ type Valentine = {
     message: string;
     background: string;
 };
+
+const RejectionMenu = ({ valentine }: { valentine: Valentine }) => {
+    const [reason, setReason] = useState<string>("");
+    return (
+        <>
+            <InputBase
+                placeholder="reject reason"
+                value={reason}
+                onChange={(e) => {
+                    setReason(e.target.value);
+                }}
+            />
+            <AsyncButton
+                onClick={async () => {
+                    const { error } = await supabase.functions.invoke(
+                        "valentines_reject",
+                        { body: { message_id: valentine.id, reason } },
+                    );
+                    if (error) {
+                        const errorMessage = await error.context.text();
+                        enqueueSnackbar(`${errorMessage}`, {
+                            variant: "error",
+                        });
+                        return;
+                    }
+                    enqueueSnackbar("Rejected Valentine! Please refetch...", {
+                        variant: "success",
+                    });
+                }}
+            >
+                reject
+            </AsyncButton>
+        </>
+    );
+};
+
 const Valentines = () => {
     const user = useContext(UserContext);
     const [valentines, setValentines] = useState<Valentine[]>([]);
@@ -216,6 +252,7 @@ const Valentines = () => {
                     >
                         approve??
                     </AsyncButton>
+                    <RejectionMenu valentine={valentine} />
                 </>
             ))}
         </>
