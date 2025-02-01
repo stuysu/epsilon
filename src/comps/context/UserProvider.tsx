@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import UserContext from "./UserContext";
 import { useSnackbar } from "notistack";
@@ -87,9 +87,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 }
 
                 if (!Array.isArray(data) || data?.length === 0) {
-                    // user is not in our public.users table. sign out + notify
-                    await supabase.auth.signOut();
-
+                    // user is not in our public.users table. notify
                     enqueueSnackbar(
                         "Unverified account. Please contact it@stuysu.org for support.",
                         { variant: "error" },
