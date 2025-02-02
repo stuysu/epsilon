@@ -2,45 +2,10 @@ import AsyncButton from "../../../comps/ui/AsyncButton";
 import { useContext, useState } from "react";
 import { supabase } from "../../../supabaseClient";
 import { enqueueSnackbar } from "notistack";
-import { Input, InputBase } from "@mui/material";
+import { Box, Input, InputBase } from "@mui/material";
 import UserContext from "../../../comps/context/UserContext";
 import { Valentine } from "./ValentineType";
 import ValentineDisplay from "./comps/ValentineDisplay";
-
-const RejectionMenu = ({ valentine }: { valentine: Valentine }) => {
-    const [reason, setReason] = useState<string>("");
-    return (
-        <>
-            <InputBase
-                placeholder="reject reason"
-                value={reason}
-                onChange={(e) => {
-                    setReason(e.target.value);
-                }}
-            />
-            <AsyncButton
-                onClick={async () => {
-                    const { error } = await supabase.functions.invoke(
-                        "valentines_reject",
-                        { body: { message_id: valentine.id, reason } },
-                    );
-                    if (error) {
-                        const errorMessage = await error.context.text();
-                        enqueueSnackbar(`${errorMessage}`, {
-                            variant: "error",
-                        });
-                        return;
-                    }
-                    enqueueSnackbar("Rejected Valentine! Please refetch...", {
-                        variant: "success",
-                    });
-                }}
-            >
-                reject
-            </AsyncButton>
-        </>
-    );
-};
 
 const Valentines = () => {
     const user = useContext(UserContext);
@@ -208,32 +173,16 @@ const Valentines = () => {
 
             <h2>fetched valentines ({valentines.length})</h2>
             {valentines.map((valentine) => (
-                <>
-                    <ValentineDisplay valentine={valentine} admin />
-                    <AsyncButton
-                        onClick={async () => {
-                            const { error } = await supabase.functions.invoke(
-                                "valentines_approve",
-                                { body: { message_id: valentine.id } },
-                            );
-                            if (error) {
-                                const errorMessage = await error.context.text();
-                                enqueueSnackbar(
-                                    `Failed to approve Valentine! ${errorMessage}`,
-                                    { variant: "error" },
-                                );
-                                return;
-                            }
-                            enqueueSnackbar(
-                                "Approved Valentine! Please refetch...",
-                                { variant: "success" },
-                            );
-                        }}
-                    >
-                        approve??
-                    </AsyncButton>
-                    <RejectionMenu valentine={valentine} />
-                </>
+                <Box
+                    key={valentine.message}
+                    sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        width: "100vw",
+                    }}
+                >
+                    <ValentineDisplay valentine={valentine} mini />
+                </Box>
             ))}
         </>
     );

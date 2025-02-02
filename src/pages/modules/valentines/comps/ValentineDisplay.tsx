@@ -9,13 +9,19 @@ interface ValentineInput {
     valentine: Valentine;
     admin?: boolean;
     refresh?: Function;
+    toggle?: Function;
 }
 interface ValentineAdmin extends ValentineInput {
     mini?: boolean;
 }
 
-const ValentineCard = ({ valentine, admin, refresh }: ValentineInput) => {
-    const [sender, setSender] = useState<string>("");
+const ValentineCard = ({
+    valentine,
+    admin,
+    refresh,
+    toggle,
+}: ValentineInput) => {
+    const [sender, setSender] = useState<string>("\n\n-------\nAnonymous");
     useEffect(() => {
         const f = async () => {
             if (valentine.show_sender) {
@@ -61,21 +67,54 @@ const ValentineCard = ({ valentine, admin, refresh }: ValentineInput) => {
                     <p>{valentine.message + sender}</p>
                 </Box>
             </Box>
-            {admin && <AdminButtons valentine={valentine} refresh={refresh} />}
+            <Buttons
+                valentine={valentine}
+                refresh={refresh}
+                admin={admin}
+                toggle={toggle}
+            />
         </Box>
     );
 };
 
-const ValentineList = ({ valentine }: ValentineInput) => {
+const ValentineList = ({
+    valentine,
+    admin,
+    refresh,
+    toggle,
+}: ValentineInput) => {
     return (
-        <Card>
+        <Card
+            sx={{
+                display: "flex",
+                width: "90vw",
+                height: "4rem",
+                margin: "1rem",
+                padding: "1rem",
+                textOverflow: "ellipsis",
+                overflow: "hidden",
+                justifyContent: "space-between",
+            }}
+        >
             <Typography
                 sx={{
+                    width: "60%",
+                    overflow: "hidden",
+                    whiteSpace: "nowrap",
                     textOverflow: "ellipsis",
+                    alignContent: "center",
                 }}
             >
                 {valentine.message}
             </Typography>
+
+            <Buttons
+                valentine={valentine}
+                refresh={refresh}
+                admin={admin}
+                toggle={toggle}
+                mini
+            />
         </Card>
     );
 };
@@ -113,38 +152,58 @@ const AdminButton = ({
     </AsyncButton>
 );
 
-const AdminButtons = ({ valentine, mini, refresh }: ValentineAdmin) => {
+const Buttons = ({
+    valentine,
+    admin,
+    mini,
+    refresh,
+    toggle,
+}: ValentineAdmin) => {
     const [reason, setReason] = useState<string>("");
+    console.log("meow");
     return (
         <Box
             sx={{
                 display: "flex",
-                paddingTop: mini ? 0 : "2rem",
+                paddingTop: mini ? 0 : "1.25rem",
+                paddingRight: mini && admin ? "1.5rem" : 0,
                 paddingBottom: mini ? 0 : "2rem",
-                width: mini ? undefined : "50vw",
-                justifyContent: "space-between",
+                width: mini ? undefined : "35rem",
+                justifyContent: admin ? "space-between" : "center",
             }}
         >
-            {mini ? (
-                <></>
-            ) : (
-                <TextField
-                    label="Rejection Reason (optional)"
-                    value={reason}
-                    onChange={(e) => setReason(e.target.value)}
-                />
+            {toggle && (
+                <AsyncButton onClick={() => toggle()}>
+                    {mini ? "Open" : "Close"}
+                </AsyncButton>
             )}
-            <AdminButton
-                valentine={valentine}
-                refresh={refresh}
-                mode="approve"
-            />
-            <AdminButton
-                valentine={valentine}
-                refresh={refresh}
-                mode="reject"
-                reason={reason}
-            />
+            {admin && (
+                <>
+                    {mini ? (
+                        <Box sx={{ marginLeft: "5%" }} />
+                    ) : (
+                        <>
+                            <TextField
+                                label="Rejection Reason (optional)"
+                                value={reason}
+                                onChange={(e) => setReason(e.target.value)}
+                            />
+                        </>
+                    )}
+                    <AdminButton
+                        valentine={valentine}
+                        refresh={refresh}
+                        mode="approve"
+                    />
+                    {mini && <Box sx={{ marginLeft: "5%" }} />}
+                    <AdminButton
+                        valentine={valentine}
+                        refresh={refresh}
+                        mode="reject"
+                        reason={reason}
+                    />
+                </>
+            )}
         </Box>
     );
 };
@@ -155,16 +214,23 @@ const ValentineDisplay = ({
     mini,
     refresh,
 }: ValentineAdmin) => {
-    if (mini)
+    const [miniState, setMiniState] = useState<boolean>(mini || false);
+    if (miniState)
         return (
             <ValentineList
                 valentine={valentine}
                 admin={admin}
                 refresh={refresh}
+                toggle={() => setMiniState(false)}
             />
         );
     return (
-        <ValentineCard valentine={valentine} refresh={refresh} admin={admin} />
+        <ValentineCard
+            valentine={valentine}
+            refresh={refresh}
+            admin={admin}
+            toggle={() => setMiniState(true)}
+        />
     );
 };
 
