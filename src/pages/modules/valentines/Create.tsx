@@ -39,21 +39,7 @@ const Create = () => {
     const navigate = useNavigate();
 
     return (
-        <Box
-            sx={{
-                marginTop: "2rem",
-                width: "100%",
-                display: "flex",
-                alignItems: "center",
-                flexDirection: "column",
-            }}
-        >
-            <Typography variant="h2">Valentines</Typography>
-            <Box
-                sx={{ marginTop: "1rem", marginBottom: "2rem", width: "80vw" }}
-            >
-                <Divider />
-            </Box>
+        <>
             <Box
                 sx={{
                     display: "flex",
@@ -211,7 +197,7 @@ const Create = () => {
             >
                 Send to {lastChecked || "Unknown"}
             </AsyncButton>
-        </Box>
+        </>
     );
 };
 
