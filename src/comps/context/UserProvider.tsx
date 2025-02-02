@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import UserContext from "./UserContext";
 import { useSnackbar } from "notistack";
@@ -12,6 +12,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const [value, setValue] = React.useState<UserContextType>({
         signed_in: false,
         admin: false,
+        permission: "",
         id: -1,
         first_name: "",
         last_name: "",
@@ -29,6 +30,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
             setValue({
                 signed_in: false,
                 admin: false,
+                permission: "",
                 id: -1,
                 first_name: "",
                 last_name: "",
@@ -72,6 +74,9 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                       url,
                       picture
                   )
+              ),
+              permissions (
+                permission
               )
           `,
                     )
@@ -122,22 +127,11 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                     is_faculty: data[0].is_faculty,
                     active: data[0].active,
                     memberships: data[0].memberships as Membership[],
+                    permission: data[0].permissions[0]?.permission,
                 }; // user in our own user table
                 let isAdmin = false;
                 /* CHECK PERMISSIONS */
-                ({ data, error } = await supabase
-                    .from("permissions")
-                    .select()
-                    .eq("user_id", user.id));
-
-                if (error) {
-                    enqueueSnackbar(
-                        "Error fetching permissions. Contact it@stuysu.org for support.",
-                        { variant: "error" },
-                    );
-                    setLoading(false);
-                }
-                if (Array.isArray(data) && data?.length > 0) {
+                if (data && data[0].permissions[0]?.permission === "ADMIN") {
                     isAdmin = true;
                 }
 
@@ -181,6 +175,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                     memberships: user.memberships,
                     is_faculty: user.is_faculty,
                     active: user.active,
+                    permission: user.permission,
                 });
             }
             setLoading(false);

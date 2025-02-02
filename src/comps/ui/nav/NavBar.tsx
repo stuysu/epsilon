@@ -434,7 +434,7 @@ const NavBar = () => {
                             </ListItemIcon>
                             <ListItemText>Home</ListItemText>
                         </ListItemButton>
-                        {user.admin && (
+                        {user.permission && (
                             <ListItemButton onClick={() => navigate("/admin")}>
                                 <ListItemIcon>
                                     <AdminPanelSettingsIcon />
