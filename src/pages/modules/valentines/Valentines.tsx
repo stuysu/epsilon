@@ -5,6 +5,7 @@ import { enqueueSnackbar } from "notistack";
 import {
     Box,
     Checkbox,
+    Divider,
     FormControlLabel,
     TextField,
     Typography,
@@ -50,7 +51,11 @@ const Valentines = () => {
             }}
         >
             <Typography variant="h2">Valentines</Typography>
-
+            <Box
+                sx={{ marginTop: "1rem", marginBottom: "2rem", width: "80vw" }}
+            >
+                <Divider />
+            </Box>
             <Box
                 sx={{
                     display: "flex",
@@ -154,6 +159,25 @@ const Valentines = () => {
                 }
                 label="Signature at Bottom"
             />
+            <Box sx={{ margin: "1rem 0", width: "80vw" }}>
+                <Divider />
+            </Box>
+            <Typography variant="h5" sx={{ marginBottom: "1rem" }}>
+                Preview
+            </Typography>
+            <ValentineDisplay
+                valentine={{
+                    id: 0,
+                    sender: user.id,
+                    receiver,
+                    show_sender: showSender,
+                    message,
+                    background,
+                }}
+            />
+            <Box sx={{ margin: "1rem 0", width: "80vw" }}>
+                <Divider />
+            </Box>
             <AsyncButton
                 onClick={async () => {
                     setLoading(true);

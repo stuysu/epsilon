@@ -40,6 +40,8 @@ const ValentineCard = ({
                     setSender(
                         `\n\n-------\n${data.first_name} ${data.last_name}\n${data.email}`,
                     );
+            } else {
+                setSender("");
             }
         };
         f();
@@ -163,14 +165,14 @@ const Buttons = ({
 }: ValentineDisplayInput) => {
     const [reason, setReason] = useState<string>("");
     const user = useContext(UserContext);
-    const isSender = user.id === valentine.sender;
+    const isSender = valentine.id > 0 && user.id === valentine.sender;
     return (
         <Box
             sx={{
                 display: "flex",
                 paddingTop: mini ? 0 : "1.25rem",
                 // paddingRight: mini && admin ? "1rem" : 0,
-                paddingBottom: mini ? 0 : "2rem",
+                // paddingBottom: mini ? 0 : "2rem",
                 width: mini ? undefined : isSender ? "42rem" : "35rem",
                 justifyContent: admin || isSender ? "space-between" : "center",
             }}
