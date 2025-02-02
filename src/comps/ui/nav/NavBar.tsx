@@ -64,6 +64,8 @@ const linkStyle: CSSProperties = {
     textDecoration: "none",
 };
 
+const VALENTINES = true;
+
 // TODO: separate TabLink to independent file in nav folder (good first issue: reformat the other entries in the navigation tabs to use this component)
 interface TabLinkProps {
     name: string;
@@ -314,15 +316,17 @@ const NavBar = () => {
                     >
                         Voting Site
                     </span>
-                    <TabLink
-                        name="Valentines"
-                        iconClass="bx bx-book-heart"
-                        onClick={() => {
-                            navigate("/modules/valentines");
-                            setTimeout(() => setIsHovered(false), 300);
-                        }}
-                        setIsHovered={setIsHovered}
-                    />
+                    {VALENTINES && (
+                        <TabLink
+                            name="Valentines"
+                            iconClass="bx bx-book-heart"
+                            onClick={() => {
+                                navigate("/modules/valentines");
+                                setTimeout(() => setIsHovered(false), 300);
+                            }}
+                            setIsHovered={setIsHovered}
+                        />
+                    )}
                     <i className="bx bx-file"></i>
                     <span
                         className={"transition-colors hover:text-gray-300"}
@@ -487,14 +491,18 @@ const NavBar = () => {
                                 </ListItemIcon>
                                 <ListItemText>Attendance</ListItemText>
                             </ListItemButton>
-                            <ListItemButton
-                                onClick={() => navigate("/modules/valentines")}
-                            >
-                                <ListItemIcon>
-                                    <FavoriteIcon />
-                                </ListItemIcon>
-                                <ListItemText>Valentines</ListItemText>
-                            </ListItemButton>
+                            {VALENTINES && (
+                                <ListItemButton
+                                    onClick={() =>
+                                        navigate("/modules/valentines")
+                                    }
+                                >
+                                    <ListItemIcon>
+                                        <FavoriteIcon />
+                                    </ListItemIcon>
+                                    <ListItemText>Valentines</ListItemText>
+                                </ListItemButton>
+                            )}
                         </List>
                     )}
 
