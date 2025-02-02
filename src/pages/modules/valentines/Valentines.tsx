@@ -209,7 +209,7 @@ const Valentines = () => {
             <h2>fetched valentines ({valentines.length})</h2>
             {valentines.map((valentine) => (
                 <>
-                    <ValentineDisplay valentine={valentine} />
+                    <ValentineDisplay valentine={valentine} admin />
                     <AsyncButton
                         onClick={async () => {
                             const { error } = await supabase.functions.invoke(
