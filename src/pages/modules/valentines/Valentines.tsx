@@ -2,22 +2,104 @@ import AsyncButton from "../../../comps/ui/AsyncButton";
 import { useContext, useState } from "react";
 import { supabase } from "../../../supabaseClient";
 import { enqueueSnackbar } from "notistack";
-import { Box, Input, InputBase } from "@mui/material";
+import {
+    Box,
+    Checkbox,
+    FormControlLabel,
+    InputBase,
+    TextField,
+    Typography,
+} from "@mui/material";
 import UserContext from "../../../comps/context/UserContext";
 import { Valentine } from "./ValentineType";
 import ValentineDisplay from "./comps/ValentineDisplay";
+
+// from https://catppuccin.com/palette
+const colors = [
+    "#ffffff",
+    "#f4b8e4",
+    "#e78284",
+    "#f5a97f",
+    "#e5c890",
+    "#a6d189",
+    "#99d1db",
+    "#7dc4e4",
+    "#ca9ee6",
+];
 
 const Valentines = () => {
     const user = useContext(UserContext);
     const [valentines, setValentines] = useState<Valentine[]>([]);
     const [receiver, setReceiver] = useState(0);
     const [message, setMessage] = useState("");
-    const [background, setBackground] = useState("");
+    const [background, setBackground] = useState("#ffffff");
     const [showSender, setShowSender] = useState(false);
 
     return (
-        <>
-            <h1>Valentines Testing</h1>
+        <Box
+            sx={{
+                marginTop: "2rem",
+                width: "100%",
+                display: "flex",
+                alignItems: "center",
+                flexDirection: "column",
+            }}
+        >
+            <Typography variant="h2">Valentines</Typography>
+
+            <TextField
+                content={message}
+                onChange={(e) => setMessage(e.target.value)}
+                sx={{
+                    width: "80%",
+                }}
+                fullWidth
+                autoFocus
+                multiline
+                label="Message"
+            />
+            <Box
+                sx={{
+                    width: "70%",
+                    display: "flex",
+                    marginTop: "1rem",
+                    justifyContent: "center",
+                }}
+            >
+                {colors.map((color) => (
+                    <Box
+                        key={color}
+                        sx={{
+                            width: "2em",
+                            height: "2em",
+                            margin: ".5em",
+                            borderRadius: "2em",
+                            cursor: "pointer",
+                            backgroundColor: color,
+                            color: "black",
+                            alignContent: "center",
+                            borderColor: "#ffffff",
+                            borderWidth: background === color ? "4px" : 0,
+                        }}
+                        onClick={() => setBackground(color)}
+                    />
+                ))}
+            </Box>
+            <FormControlLabel
+                control={
+                    <Checkbox
+                        checked={showSender}
+                        onChange={(e) => {
+                            setShowSender(e.target.checked);
+                        }}
+                    />
+                }
+                label="Signature at Bottom"
+            />
+            <Typography variant="body2">
+                All messages are monitored for abuse. User identities may be
+                disclosed.
+            </Typography>
             <p>
                 receiver
                 <InputBase
@@ -29,34 +111,6 @@ const Valentines = () => {
                             a = 0;
                         }
                         setReceiver(a);
-                    }}
-                />
-            </p>
-            <p>
-                message
-                <InputBase
-                    value={message}
-                    onChange={(e) => {
-                        setMessage(e.target.value);
-                    }}
-                />
-            </p>
-            <p>
-                background
-                <InputBase
-                    value={background}
-                    onChange={(e) => {
-                        setBackground(e.target.value);
-                    }}
-                />
-            </p>
-            <p>
-                showSender
-                <Input
-                    type="checkbox"
-                    value={showSender}
-                    onChange={(_) => {
-                        setShowSender(!showSender);
                     }}
                 />
             </p>
@@ -86,27 +140,27 @@ const Valentines = () => {
             >
                 upload valentine
             </AsyncButton>
-            <AsyncButton
-                onClick={async () => {
-                    const { data, error } = await supabase
-                        .from("valentinesmessages")
-                        .select(
-                            "id,sender,receiver,show_sender,message,background",
-                        )
-                        .returns<Valentine[]>();
-                    if (error) {
-                        enqueueSnackbar("Failed to load Valentines", {
-                            variant: "error",
-                        });
-                        return;
-                    }
-                    console.log(data);
-                    setValentines(data);
-                }}
-            >
-                fetch all visible valentines
-            </AsyncButton>
-            <AsyncButton
+
+            <h2>fetched valentines ({valentines.length})</h2>
+            {valentines.map((valentine) => (
+                <Box
+                    key={valentine.message}
+                    sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        width: "100vw",
+                    }}
+                >
+                    <ValentineDisplay valentine={valentine} mini />
+                </Box>
+            ))}
+        </Box>
+    );
+};
+
+export default Valentines;
+
+/*            <AsyncButton
                 onClick={async () => {
                     const { data: settings, error: settingError } =
                         await supabase
@@ -144,48 +198,4 @@ const Valentines = () => {
                 }}
             >
                 fetch all RX'd valentines (should only work after the set date)
-            </AsyncButton>
-            <AsyncButton
-                onClick={async () => {
-                    const { data, error } = await supabase
-                        .from("valentinesmessages")
-                        .select(
-                            "id,sender,receiver,show_sender,message,background",
-                        )
-                        .is("verified_by", null)
-                        .is("verified_at", null)
-                        // don't spoil surprises!
-                        .neq("receiver", user.id)
-                        .returns<Valentine[]>();
-                    if (error) {
-                        enqueueSnackbar("Failed to load Valentines", {
-                            variant: "error",
-                        });
-                        return;
-                    }
-                    console.log(data);
-                    setValentines(data);
-                }}
-            >
-                fetch all valentines in moderation queue (need to be admin user
-                or else will only see your own drafts)
-            </AsyncButton>
-
-            <h2>fetched valentines ({valentines.length})</h2>
-            {valentines.map((valentine) => (
-                <Box
-                    key={valentine.message}
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        width: "100vw",
-                    }}
-                >
-                    <ValentineDisplay valentine={valentine} mini />
-                </Box>
-            ))}
-        </>
-    );
-};
-
-export default Valentines;
+            </AsyncButton>*/
