@@ -1,5 +1,5 @@
 import { Valentine } from "../ValentineType";
-import { Box, Card, TextField, Typography } from "@mui/material";
+import { Box, Card, Divider, TextField, Typography } from "@mui/material";
 import AsyncButton from "../../../../comps/ui/AsyncButton";
 import { supabase } from "../../../../supabaseClient";
 import { enqueueSnackbar } from "notistack";
@@ -38,7 +38,7 @@ const ValentineCard = ({
                     });
                 else
                     setSender(
-                        `\n\n-------\n${data.first_name} ${data.last_name}\n${data.email}`,
+                        `${data.first_name} ${data.last_name}\n${data.email}`,
                     );
             } else {
                 setSender("");
@@ -68,7 +68,16 @@ const ValentineCard = ({
                         whiteSpace: "pre-wrap",
                     }}
                 >
-                    <p>{valentine.message + sender}</p>
+                    <p>{valentine.message}</p>
+                    {sender && (
+                        <>
+                            <p>{"\n"}</p>
+                            <Divider
+                                sx={{ color: "black", marginBottom: ".75rem" }}
+                            />
+                            <p style={{ fontStyle: "italic" }}>{sender}</p>
+                        </>
+                    )}
                 </Box>
             </Box>
             <Buttons
