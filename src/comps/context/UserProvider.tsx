@@ -158,9 +158,9 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                     });
                 }
 
-                /* 
+                /*
           This shows every time we log in (even if its saved already). Thus, it is commented out.
-          enqueueSnackbar("Signed In!", { variant: "success" }) 
+          enqueueSnackbar("Signed In!", { variant: "success" })
         */
 
                 setValue({
