@@ -71,7 +71,7 @@ export const getLinks = (user: UserContextType) => {
             permission: "VALENTINES",
         },
     ];
-    if (user.permission != "ADMIN") {
+    if (user.permission !== "ADMIN") {
         navLinks = navLinks.filter(
             (link) => link.permission === user.permission,
         );

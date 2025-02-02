@@ -29,7 +29,7 @@ const Valentines = () => {
             setValentines(data);
         };
         f();
-    }, [loads]);
+    }, [loads, user.id]);
     return (
         <>
             <Typography variant="h2">

@@ -42,7 +42,7 @@ const Valentines = () => {
             setLoading(false);
         };
         f();
-    }, [refresher]);
+    }, [refresher, user.id]);
     if (loading) return <Loading />;
     return (
         <Box
