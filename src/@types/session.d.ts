@@ -1,6 +1,7 @@
 interface UserContextType extends User {
     signed_in: boolean;
-    admin: boolean;
+    admin: boolean; // DEPRECATED
+    permission: string;
     memberships: Partial<Membership>[] | undefined;
 }
 

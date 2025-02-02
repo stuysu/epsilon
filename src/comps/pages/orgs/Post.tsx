@@ -118,11 +118,15 @@ const Post = ({
                 />
             </ListItem>
 
-            <Typography variant="h3" width="100%" sx={{
-                whiteSpace: "nowrap",
-                overflow: "hidden",
-                textOverflow: "ellipsis",
-            }}>
+            <Typography
+                variant="h3"
+                width="100%"
+                sx={{
+                    whiteSpace: "nowrap",
+                    overflow: "hidden",
+                    textOverflow: "ellipsis",
+                }}
+            >
                 {content.title}
             </Typography>
 

@@ -240,7 +240,11 @@ const Overview = () => {
                 }}
             />
 
-            <Stack direction={{ xs: "column", sm: "row" }} marginBottom={{ xs: 0, sm: 3 }} alignItems="center">
+            <Stack
+                direction={{ xs: "column", sm: "row" }}
+                marginBottom={{ xs: 0, sm: 3 }}
+                alignItems="center"
+            >
                 <Box>
                     <Typography variant="h3" align="center" width={100}>
                         {
