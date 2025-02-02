@@ -127,13 +127,13 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                     is_faculty: data[0].is_faculty,
                     active: data[0].active,
                     memberships: data[0].memberships as Membership[],
-                    permission: data[0].permissions[0]?.permission,
                 }; // user in our own user table
                 let isAdmin = false;
                 /* CHECK PERMISSIONS */
                 if (data && data[0].permissions[0]?.permission === "ADMIN") {
                     isAdmin = true;
                 }
+                const permission = data[0].permissions[0]?.permission;
 
                 if (!user.picture) {
                     /* get google pfp and update */
@@ -175,7 +175,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                     memberships: user.memberships,
                     is_faculty: user.is_faculty,
                     active: user.active,
-                    permission: user.permission,
+                    permission,
                 });
             }
             setLoading(false);

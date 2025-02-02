@@ -45,7 +45,7 @@ const ValentineCard = ({
             }
         };
         f();
-    }, [valentine.show_sender]);
+    }, [valentine.show_sender, valentine.sender]);
 
     return (
         <Box

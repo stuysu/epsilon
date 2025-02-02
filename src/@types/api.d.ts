@@ -64,7 +64,6 @@ interface User {
     is_faculty: boolean;
     active: boolean;
     memberships?: Partial<Membership>[];
-    permission: string;
 }
 
 interface Membership {
