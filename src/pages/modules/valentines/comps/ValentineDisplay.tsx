@@ -23,7 +23,7 @@ const ValentineCard = ({
     refresh,
     toggle,
 }: ValentineDisplayInput) => {
-    const [sender, setSender] = useState<string>("\n\n-------\nAnonymous");
+    const [sender, setSender] = useState<string>("\n\n-------");
     useEffect(() => {
         const f = async () => {
             if (valentine.show_sender) {

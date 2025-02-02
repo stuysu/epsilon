@@ -1,4 +1,4 @@
-import { Routes, Route } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 import { useContext } from "react";
 import UserContext from "../../comps/context/UserContext";
@@ -12,6 +12,7 @@ import Strikes from "./Strikes";
 import SendMessage from "./SendMessage";
 import Announcements from "./Announcements";
 import Rooms from "./Rooms";
+import Valentines from "./Valentines";
 
 const AdminRouter = () => {
     const user = useContext(UserContext);
@@ -30,6 +31,7 @@ const AdminRouter = () => {
                 <Route path="/send-message" Component={SendMessage} />
                 <Route path="/announcements" Component={Announcements} />
                 <Route path="/rooms" Component={Rooms} />
+                <Route path="/valentines" Component={Valentines} />
                 <Route path="/*" Component={ApprovePending} />
             </Routes>
         </div>
