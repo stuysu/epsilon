@@ -3,16 +3,18 @@ import { Box, Card, TextField, Typography } from "@mui/material";
 import AsyncButton from "../../../../comps/ui/AsyncButton";
 import { supabase } from "../../../../supabaseClient";
 import { enqueueSnackbar } from "notistack";
-import { useEffect, useState } from "react";
+import { useContext, useEffect, useState } from "react";
+import UserContext from "../../../../comps/context/UserContext";
 
 interface ValentineInput {
     valentine: Valentine;
     admin?: boolean;
     refresh?: Function;
-    toggle?: Function;
-}
-interface ValentineAdmin extends ValentineInput {
     mini?: boolean;
+}
+
+interface ValentineDisplayInput extends ValentineInput {
+    toggle?: Function;
 }
 
 const ValentineCard = ({
@@ -20,7 +22,7 @@ const ValentineCard = ({
     admin,
     refresh,
     toggle,
-}: ValentineInput) => {
+}: ValentineDisplayInput) => {
     const [sender, setSender] = useState<string>("\n\n-------\nAnonymous");
     useEffect(() => {
         const f = async () => {
@@ -82,7 +84,7 @@ const ValentineList = ({
     admin,
     refresh,
     toggle,
-}: ValentineInput) => {
+}: ValentineDisplayInput) => {
     return (
         <Card
             sx={{
@@ -158,18 +160,19 @@ const Buttons = ({
     mini,
     refresh,
     toggle,
-}: ValentineAdmin) => {
+}: ValentineDisplayInput) => {
     const [reason, setReason] = useState<string>("");
-    console.log("meow");
+    const user = useContext(UserContext);
+    const isSender = user.id === valentine.sender;
     return (
         <Box
             sx={{
                 display: "flex",
                 paddingTop: mini ? 0 : "1.25rem",
-                paddingRight: mini && admin ? "1.5rem" : 0,
+                // paddingRight: mini && admin ? "1rem" : 0,
                 paddingBottom: mini ? 0 : "2rem",
-                width: mini ? undefined : "35rem",
-                justifyContent: admin ? "space-between" : "center",
+                width: mini ? undefined : isSender ? "42rem" : "35rem",
+                justifyContent: admin || isSender ? "space-between" : "center",
             }}
         >
             {toggle && (
@@ -177,10 +180,35 @@ const Buttons = ({
                     {mini ? "Open" : "Close"}
                 </AsyncButton>
             )}
+            {isSender && (
+                <>
+                    {mini && <Box sx={{ marginLeft: ".75rem" }} />}
+                    <AsyncButton
+                        onClick={async () => {
+                            const { error } = await supabase
+                                .from("valentinesmessages")
+                                .delete()
+                                .eq("id", valentine.id);
+                            if (error)
+                                enqueueSnackbar("Error deleting valentine.", {
+                                    variant: "error",
+                                });
+                            else {
+                                enqueueSnackbar("Deleted valentine!", {
+                                    variant: "success",
+                                });
+                                if (refresh) refresh();
+                            }
+                        }}
+                    >
+                        Delete
+                    </AsyncButton>
+                </>
+            )}
             {admin && (
                 <>
                     {mini ? (
-                        <Box sx={{ marginLeft: "5%" }} />
+                        <Box sx={{ marginLeft: ".75rem" }} />
                     ) : (
                         <>
                             <TextField
@@ -195,7 +223,7 @@ const Buttons = ({
                         refresh={refresh}
                         mode="approve"
                     />
-                    {mini && <Box sx={{ marginLeft: "5%" }} />}
+                    {mini && <Box sx={{ marginLeft: ".75rem" }} />}
                     <AdminButton
                         valentine={valentine}
                         refresh={refresh}
@@ -213,7 +241,7 @@ const ValentineDisplay = ({
     admin,
     mini,
     refresh,
-}: ValentineAdmin) => {
+}: ValentineInput) => {
     const [miniState, setMiniState] = useState<boolean>(mini || false);
     if (miniState)
         return (
