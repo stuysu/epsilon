@@ -6,7 +6,6 @@ import {
     Box,
     Checkbox,
     FormControlLabel,
-    InputBase,
     TextField,
     Typography,
 } from "@mui/material";
@@ -29,12 +28,17 @@ const colors = [
 
 const Valentines = () => {
     const user = useContext(UserContext);
+    const [loading, setLoading] = useState(false);
+    const [loads, setLoads] = useState(0);
     const [valentines, setValentines] = useState<Valentine[]>([]);
     const [receiver, setReceiver] = useState(0);
+    const [receiverEmail, setReceiverEmail] = useState("");
+    const [lastChecked, setLastChecked] = useState("");
     const [message, setMessage] = useState("");
     const [background, setBackground] = useState("#ffffff");
     const [showSender, setShowSender] = useState(false);
 
+    console.log("message", message);
     return (
         <Box
             sx={{
@@ -47,17 +51,71 @@ const Valentines = () => {
         >
             <Typography variant="h2">Valentines</Typography>
 
+            <Box
+                sx={{
+                    display: "flex",
+                    width: "80%",
+                    justifyContent: "center",
+                }}
+            >
+                <TextField
+                    content={receiverEmail}
+                    onChange={(e) => setReceiverEmail(e.target.value)}
+                    sx={{
+                        marginRight: "2rem",
+                    }}
+                    label="Recipient Email"
+                />
+                <AsyncButton
+                    onClick={() => {
+                        setLoading(true);
+                        const f = async () => {
+                            const { data, error } = await supabase
+                                .from("users")
+                                .select("id")
+                                .eq("email", receiverEmail.trim().toLowerCase())
+                                .maybeSingle();
+                            setLoading(false);
+                            if (error || !data) {
+                                enqueueSnackbar("User not found.", {
+                                    variant: "error",
+                                });
+                                return;
+                            }
+                            setLastChecked(receiverEmail);
+                            setReceiver(data.id);
+                            enqueueSnackbar("Found user!", {
+                                variant: "success",
+                            });
+                        };
+                        f();
+                    }}
+                    disabled={
+                        loading ||
+                        !receiverEmail ||
+                        receiverEmail.indexOf("@") === -1
+                    }
+                >
+                    Select Recipient
+                </AsyncButton>
+            </Box>
             <TextField
                 content={message}
                 onChange={(e) => setMessage(e.target.value)}
                 sx={{
                     width: "80%",
+                    marginTop: "1rem",
+                    marginBottom: ".5rem",
                 }}
                 fullWidth
                 autoFocus
                 multiline
                 label="Message"
             />
+            <Typography variant="body2">
+                All messages are monitored for abuse. User identities may be
+                disclosed.
+            </Typography>
             <Box
                 sx={{
                     width: "70%",
@@ -96,49 +154,42 @@ const Valentines = () => {
                 }
                 label="Signature at Bottom"
             />
-            <Typography variant="body2">
-                All messages are monitored for abuse. User identities may be
-                disclosed.
-            </Typography>
-            <p>
-                receiver
-                <InputBase
-                    placeholder="receiver"
-                    value={receiver}
-                    onChange={(e) => {
-                        let a = parseInt(e.target.value);
-                        if (isNaN(a) || a < 0) {
-                            a = 0;
-                        }
-                        setReceiver(a);
-                    }}
-                />
-            </p>
             <AsyncButton
                 onClick={async () => {
-                    const { error } = await supabase
-                        .from("valentinesmessages")
-                        .insert({
-                            // might be funny to let people send messages to themselves
-                            sender: user.id,
-                            receiver,
-                            message,
-                            background,
-                            show_sender: showSender,
+                    setLoading(true);
+                    const f = async () => {
+                        const { error } = await supabase
+                            .from("valentinesmessages")
+                            .insert({
+                                // might be funny to let people send messages to themselves
+                                sender: user.id,
+                                receiver,
+                                message,
+                                background,
+                                show_sender: showSender,
+                            });
+                        setLoading(false);
+                        if (error) {
+                            enqueueSnackbar(
+                                `Failed to upload! Error: \`${error.message}\``,
+                                {
+                                    variant: "error",
+                                },
+                            );
+                            return;
+                        }
+                        setReceiver(0);
+                        // setMessage(""); // doesn't work on TextField?
+                        setLoads((prev) => ++prev);
+                        enqueueSnackbar("Sent Valentine!", {
+                            variant: "success",
                         });
-                    if (error) {
-                        enqueueSnackbar(
-                            `Failed to upload! Error: \`${error.message}\``,
-                            {
-                                variant: "error",
-                            },
-                        );
-                        return;
-                    }
-                    enqueueSnackbar("Uploaded!", { variant: "success" });
+                    };
+                    await f();
                 }}
+                disabled={loading || !receiver || !message}
             >
-                upload valentine
+                Send to {lastChecked || "Unknown"}
             </AsyncButton>
 
             <h2>fetched valentines ({valentines.length})</h2>
