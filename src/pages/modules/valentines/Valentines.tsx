@@ -101,11 +101,11 @@ console.log("fetching valentines");
             {receivedValentines.length > 0 && (
   <Box sx={{ marginTop: "1rem" }}>
     {receivedValentines.map((valentine) => (
-      <ValentineDisplay 
-         key={valentine.id} 
-         valentine={valentine} 
-         mini 
-         refresh={() => setLoads((load) => ++load)} 
+      <ValentineDisplay
+         key={valentine.id}
+         valentine={valentine}
+         mini
+         refresh={() => setLoads((load) => ++load)}
       />
     ))}
   </Box>
