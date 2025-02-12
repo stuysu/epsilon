@@ -29,7 +29,8 @@ const ApprovedValentines = () => {
                 data.map((entry) => {
                     return {
                         ...entry,
-                        id: 0,
+                        sender: 0,
+                        receiver: 0,
                         show_sender: false,
                     };
                 }),
