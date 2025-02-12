@@ -4,10 +4,11 @@ import { supabase } from "../../supabaseClient";
 import { Valentine } from "../modules/valentines/ValentineType";
 import { enqueueSnackbar } from "notistack";
 import ValentineDisplay from "../modules/valentines/comps/ValentineDisplay";
-import ApprovedValentineDisplay from "../modules/valentines/comps/ApprovedValentineDisplay";
+import Loading from "../../comps/ui/Loading";
 
 const ApprovedValentines = () => {
     const [approvedMessages, setApprovedMessages] = useState<Valentine[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchMessages = async () => {
@@ -17,6 +18,7 @@ const ApprovedValentines = () => {
                 .not("verified_at", "is", null)
                 .not("verified_by", "is", null)
                 .returns<Valentine[]>();
+            setLoading(false);
             if (error || !data) {
                 enqueueSnackbar("Error fetching valentines messages.", {
                     variant: "error",
@@ -36,6 +38,8 @@ const ApprovedValentines = () => {
         fetchMessages();
     }, []);
 
+    if (loading) return <Loading />;
+
     return (
         <Box
             sx={{
@@ -43,16 +47,12 @@ const ApprovedValentines = () => {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
+                paddingBottom: "10vh",
             }}
         >
             {approvedMessages.length > 0 ? (
                 approvedMessages.map((v) => (
-                    <ApprovedValentineDisplay
-                        key={v.id}
-                        valentine={v}
-                        admin
-                        mini
-                    />
+                    <ValentineDisplay key={v.id} valentine={v} admin mini />
                 ))
             ) : (
                 <Typography

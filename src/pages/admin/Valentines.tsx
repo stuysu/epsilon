@@ -51,6 +51,7 @@ const Valentines = () => {
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
+                paddingBottom: "10vh",
             }}
         >
             {valentines.length > 0 ? (
