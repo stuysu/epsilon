@@ -53,7 +53,6 @@ const Create = () => {
                 return;
             }
             const deadline = new Date(data.setting_value * 1000);
-            console.log(deadline, data);
             if (deadline < new Date())
                 enqueueSnackbar("Valentines submissions are past due.", {
                     variant: "error",
