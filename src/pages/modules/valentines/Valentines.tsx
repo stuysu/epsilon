@@ -74,7 +74,7 @@ const Valentines = () => {
     }, []);
     return (
         <>
-            {receivedValentines.length > 0 && (
+            {deadline && deadline < new Date() && (
                 <>
                     <Typography variant="h2">
                         {`${receivedValentines.length} Valentine${receivedValentines.length === 1 ? "" : "s"} Received`}
