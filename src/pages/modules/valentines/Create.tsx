@@ -1,5 +1,5 @@
 import AsyncButton from "../../../comps/ui/AsyncButton";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { supabase } from "../../../supabaseClient";
 import { enqueueSnackbar } from "notistack";
 import {
@@ -13,6 +13,7 @@ import {
 import UserContext from "../../../comps/context/UserContext";
 import ValentineDisplay from "./comps/ValentineDisplay";
 import { useNavigate } from "react-router-dom";
+import Loading from "../../../comps/ui/Loading";
 
 // from https://catppuccin.com/palette
 const colors = [
@@ -30,6 +31,7 @@ const colors = [
 const Create = () => {
     const user = useContext(UserContext);
     const [loading, setLoading] = useState(false);
+    const [deadline, setDeadline] = useState<Date | undefined>(undefined);
     const [receiver, setReceiver] = useState(0);
     const [receiverEmail, setReceiverEmail] = useState("");
     const [lastChecked, setLastChecked] = useState("");
@@ -37,6 +39,32 @@ const Create = () => {
     const [background, setBackground] = useState("#ffffff");
     const [showSender, setShowSender] = useState(false);
     const navigate = useNavigate();
+    useEffect(() => {
+        const f = async () => {
+            const { data, error } = await supabase
+                .from("settings")
+                .select("setting_value")
+                .eq("name", "valentines_deadline")
+                .single();
+            if (error || !data) {
+                enqueueSnackbar("Failed to fetch Valentines date.", {
+                    variant: "error",
+                });
+                return;
+            }
+            const deadline = new Date(data.setting_value * 1000);
+            console.log(deadline, data);
+            if (deadline < new Date())
+                enqueueSnackbar("Valentines submissions are past due.", {
+                    variant: "error",
+                });
+            setDeadline(new Date(data.setting_value * 1000));
+        };
+        f();
+    }, []);
+    if (!deadline) {
+        return <Loading />;
+    }
 
     return (
         <>
@@ -193,7 +221,13 @@ const Create = () => {
                     };
                     await f();
                 }}
-                disabled={loading || !receiver || !message}
+                disabled={
+                    loading ||
+                    !receiver ||
+                    !message ||
+                    !deadline ||
+                    deadline < new Date()
+                }
             >
                 Send to {lastChecked || "Unknown"}
             </AsyncButton>
