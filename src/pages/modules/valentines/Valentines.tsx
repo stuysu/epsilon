@@ -12,7 +12,9 @@ const Valentines = () => {
     const user = useContext(UserContext);
     const [loads, setLoads] = useState(0);
     const [sentValentines, setSentValentines] = useState<Valentine[]>([]);
-    const [receivedValentines, setReceivedValentines] = useState<Valentine[]>([]);
+    const [receivedValentines, setReceivedValentines] = useState<Valentine[]>(
+        [],
+    );
     const navigate = useNavigate();
     useEffect(() => {
         const f = async () => {
@@ -56,7 +58,7 @@ const Valentines = () => {
             <Box sx={{ margin: "1rem 0", width: "80vw" }}>
                 <Divider />
             </Box>
-           <AsyncButton
+            <AsyncButton
                 onClick={async () => {
                     const { data: settings, error: settingError } =
                         await supabase
@@ -70,12 +72,12 @@ const Valentines = () => {
                         });
                         return;
                     }
-                    const testDate = new Date("2025-02-14T00:00:00");
-                    if (testDate < new Date(settings.setting_value * 1000)) {
+                    const currentDate = new Date();
+                    if (currentDate < new Date(settings.setting_value * 1000)) {
                         enqueueSnackbar("Valentines are not released yet.");
                         return;
                     }
-console.log("fetching valentines");
+
                     const { data, error } = await supabase
                         .from("valentinesmessages")
                         .select(
@@ -86,7 +88,10 @@ console.log("fetching valentines");
                         .not("verified_at", "is", null)
                         .returns<Valentine[]>();
                     if (error) {
-                        console.error("Error fetching verified messages:", error);
+                        console.error(
+                            "Error fetching verified messages:",
+                            error,
+                        );
                         enqueueSnackbar("Failed to load Valentines", {
                             variant: "error",
                         });
@@ -99,17 +104,17 @@ console.log("fetching valentines");
             </AsyncButton>
 
             {receivedValentines.length > 0 && (
-  <Box sx={{ marginTop: "1rem" }}>
-    {receivedValentines.map((valentine) => (
-      <ValentineDisplay
-         key={valentine.id}
-         valentine={valentine}
-         mini
-         refresh={() => setLoads((load) => ++load)}
-      />
-    ))}
-  </Box>
-)}
+                <Box sx={{ marginTop: "1rem" }}>
+                    {receivedValentines.map((valentine) => (
+                        <ValentineDisplay
+                            key={valentine.id}
+                            valentine={valentine}
+                            mini
+                            refresh={() => setLoads((load) => ++load)}
+                        />
+                    ))}
+                </Box>
+            )}
         </>
     );
 };
