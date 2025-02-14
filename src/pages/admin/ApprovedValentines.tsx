@@ -1,35 +1,31 @@
-import { useContext, useEffect, useState } from "react";
-import { Valentine } from "../modules/valentines/ValentineType";
-import { supabase } from "../../supabaseClient";
-import { enqueueSnackbar } from "notistack";
-import UserContext from "../../comps/context/UserContext";
-import Loading from "../../comps/ui/Loading";
-import ValentineDisplay from "../modules/valentines/comps/ValentineDisplay";
 import { Box, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
+import { supabase } from "../../supabaseClient";
+import { Valentine } from "../modules/valentines/ValentineType";
+import { enqueueSnackbar } from "notistack";
+import ValentineDisplay from "../modules/valentines/comps/ValentineDisplay";
+import Loading from "../../comps/ui/Loading";
 
-const Valentines = () => {
-    const [valentines, setValentines] = useState<Valentine[]>([]);
+const ApprovedValentines = () => {
+    const [approvedMessages, setApprovedMessages] = useState<Valentine[]>([]);
     const [loading, setLoading] = useState(true);
-    const [refresher, setRefresher] = useState(0);
-    const user = useContext(UserContext);
+
     useEffect(() => {
-        const f = async () => {
+        const fetchMessages = async () => {
             const { data, error } = await supabase
                 .from("valentinesmessages")
-                .select("id,message,background")
-                .is("verified_by", null)
-                .is("verified_at", null)
-                // don't spoil surprises!
-                .neq("receiver", user.id)
+                .select("sender,receiver,message,background")
+                .not("verified_at", "is", null)
+                .not("verified_by", "is", null)
                 .returns<Valentine[]>();
+            setLoading(false);
             if (error || !data) {
                 enqueueSnackbar("Error fetching valentines messages.", {
                     variant: "error",
                 });
-                setLoading(false);
                 return;
             }
-            setValentines(
+            setApprovedMessages(
                 data.map((entry) => {
                     return {
                         ...entry,
@@ -39,11 +35,12 @@ const Valentines = () => {
                     };
                 }),
             );
-            setLoading(false);
         };
-        f();
-    }, [refresher, user.id]);
+        fetchMessages();
+    }, []);
+
     if (loading) return <Loading />;
+
     return (
         <Box
             sx={{
@@ -54,15 +51,9 @@ const Valentines = () => {
                 paddingBottom: "10vh",
             }}
         >
-            {valentines.length > 0 ? (
-                valentines.map((v) => (
-                    <ValentineDisplay
-                        key={v.id}
-                        valentine={v}
-                        refresh={() => setRefresher((prev) => prev + 1)}
-                        admin
-                        mini
-                    />
+            {approvedMessages.length > 0 ? (
+                approvedMessages.map((v) => (
+                    <ValentineDisplay key={v.id} valentine={v} admin mini />
                 ))
             ) : (
                 <Typography
@@ -77,4 +68,5 @@ const Valentines = () => {
         </Box>
     );
 };
-export default Valentines;
+
+export default ApprovedValentines;

@@ -24,6 +24,7 @@ import EmailIcon from "@mui/icons-material/Email";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import ApprovedValentines from "./ApprovedValentines";
 
 export type Link = {
     to: string;
@@ -67,6 +68,12 @@ export const getLinks = (user: UserContextType) => {
         {
             to: "/admin/valentines",
             label: "Valentines",
+            icon: <FavoriteIcon />,
+            permission: "VALENTINES",
+        },
+        {
+            to: "/admin/approved-valentines",
+            label: "Approved Valentines",
             icon: <FavoriteIcon />,
             permission: "VALENTINES",
         },
@@ -114,6 +121,10 @@ const AdminRouter = () => {
                 <Route path="/announcements" Component={Announcements} />
                 <Route path="/rooms" Component={Rooms} />
                 <Route path="/valentines" Component={Valentines} />
+                <Route
+                    path="/approved-valentines"
+                    Component={ApprovedValentines}
+                />
                 <Route path="/*" Component={ApprovePending} />
             </Routes>
         </div>
