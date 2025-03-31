@@ -13,7 +13,7 @@ const Home = () => {
     return (
         <Box sx={{ width: "100%" }}>
             <Helmet>
-                <title>Home | Epsilon</title>
+                <title>Home | Sigma</title>
             </Helmet>
             {user.signed_in ? <UserHome /> : <UnauthenticatedLanding />}
         </Box>

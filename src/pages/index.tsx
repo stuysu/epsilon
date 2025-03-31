@@ -44,7 +44,7 @@ const Pages = () => {
                     property="og:url"
                     content={PUBLIC_URL + location.pathname}
                 />
-                <meta property="og:site_name" content={"Epsilon"} />
+                <meta property="og:site_name" content={"Sigma"} />
                 <meta property="og:type" content={"website"} />
                 <meta
                     property="og:description"
@@ -52,8 +52,8 @@ const Pages = () => {
                         "An app to help students navigate the clubs and organizations at Stuyvesant High School."
                     }
                 />
-                <meta property={"og:title"} content={"Epsilon"} />
-                <title>Epsilon</title>
+                <meta property={"og:title"} content={"Sigma"} />
+                <title>Sigma</title>
             </Helmet>
 
             <Suspense fallback={<Loading />}>
@@ -76,8 +76,8 @@ const Pages = () => {
                         className="fixed flex bottom-0 w-full h-12 border-t border-stone-700 bg-stone-900/85 backdrop-blur-xl items-center justify-center"
                     >
                         <p className="text-center text-gray-200">
-                            We’re redesigning Epsilon! Excuse our appearance
-                            while we build a better experience.
+                            We’re redesigning Sigma! Excuse our appearance while
+                            we build a better experience.
                         </p>
                         <button
                             onClick={handleCloseBanner}

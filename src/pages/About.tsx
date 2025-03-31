@@ -62,7 +62,7 @@ const About = () => {
                     flexWrap: "wrap",
                 }}
             >
-                <h1>Epsilon</h1>
+                <h1>Sigma</h1>
                 <Break />
                 <p>The everything platform for Stuyvesant High School.</p>
                 <Break />
@@ -76,7 +76,7 @@ const About = () => {
                     justifyContent: "center",
                 }}
             >
-                <Credit title="The Original Epsilon Team">
+                <Credit title="The Original Sigma Team">
                     Randy Sim, SU IT Co-Director '23-'24, SU IT '22-'23 <br />
                     <br />
                     David Chen, SU IT Co-Director '23-'25, SU IT '21-'23 <br />
