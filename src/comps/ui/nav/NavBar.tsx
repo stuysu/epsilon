@@ -64,7 +64,7 @@ const linkStyle: CSSProperties = {
     textDecoration: "none",
 };
 
-const VALENTINES = true;
+const VALENTINES = false;
 
 // TODO: separate TabLink to independent file in nav folder (good first issue: reformat the other entries in the navigation tabs to use this component)
 interface TabLinkProps {
