@@ -206,26 +206,6 @@ const Overview = () => {
                         >
                             {interactString}
                         </AsyncButton>
-                        <Box sx={{ marginLeft: 2 }}>
-                            {organization.socials &&
-                                organization.socials
-                                    .split(" ")
-                                    .map((social, i) =>
-                                        social.startsWith("http") ? (
-                                            <Link
-                                                key={i}
-                                                href={social}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                style={{
-                                                    marginRight: "10px",
-                                                }}
-                                            >
-                                                {social}
-                                            </Link>
-                                        ) : null,
-                                    )}
-                        </Box>
                     </Box>
                 </Stack>
             </Stack>
@@ -462,7 +442,7 @@ const Overview = () => {
                             marginLeft={3}
                             marginBottom={3}
                         >
-                            No past or future meetings.
+                            No meetings scheduled for the future.
                         </Typography>
                     ) : (
                         organization.meetings

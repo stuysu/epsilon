@@ -1,17 +1,13 @@
 import {
     Box,
-    Card,
-    Typography,
     ListItem,
-    ListItemText,
     ListItemAvatar,
-    Avatar,
+    Avatar, Chip, Typography,
 } from "@mui/material";
 import { useState } from "react";
 import MeetingPreview from "../../../ui/meetings/MeetingPreview";
 import dayjs from "dayjs";
-import AsyncButton from "../../../ui/AsyncButton";
-import { daysOfWeek, monthNames } from "../../../../utils/TimeStrings";
+import { monthNames } from "../../../../utils/TimeStrings";
 
 const UpcomingMeeting = ({
     id,
@@ -43,71 +39,58 @@ const UpcomingMeeting = ({
 
     return (
         <Box
-            sx={{
-                width: "100%",
-                paddingLeft: "30px",
-                paddingRight: "30px",
-                paddingTop: "10px",
-                paddingBottom: "10px",
-            }}
         >
-            <Card
-                elevation={2}
+            <Box
                 sx={{
                     width: "100%",
-                    height: "300px",
-                    padding: "20px",
                     display: "flex",
+                    backgroundColor: "#36363650",
                     flexDirection: "column",
                     justifyContent: "space-between",
+                    transition: "background-color 0.1s ease-in-out",
+                    "&:hover": {
+                        backgroundColor: "#4d4d4d50"
+                    },
                 }}
             >
-                <ListItem>
+                <ListItem
+                    onClick={() => setOpen(true)}
+                sx={{
+                    padding: "25px",
+                    display: "flex",
+                    flexDirection: "row",
+                    cursor: "pointer",
+                    justifyContent: "space-between",
+                    ...sx,
+                }}>
+                    <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
                     <ListItemAvatar>
                         <Avatar
                             alt={org_name}
                             src={org_picture || ""}
-                            sx={{ objectFit: "cover" }}
+                            sx={{ objectFit: "cover", borderRadius: "5px" }}
                         >
                             {org_name.charAt(0).toUpperCase()}
                         </Avatar>
                     </ListItemAvatar>
 
-                    <ListItemText primary={org_name} />
+                    <div>
+                    <Typography variant={"h4"}>{title}</Typography>
+                    <Typography variant={"body1"}>{org_name}</Typography>
+                    </div>
+
+                    </div>
+                    <div style={{display: "flex", gap: "10px"}}>
+                        {is_public}
+                        <Chip
+                            label={`${monthNames[start.month()]} ${start.date()}, ${start.year()}`}
+                        />
+                        <Chip
+                            label={`${start.format("LT")} to ${end.format("LT")}`}
+                        />
+                    </div>
+
                 </ListItem>
-                <Box sx={{ height: "150px" }}>
-                    <Typography
-                        variant="h3"
-                        sx={{
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                        }}
-                    >
-                        {title}
-                    </Typography>
-                    <Typography
-                        sx={{
-                            whiteSpace: "nowrap",
-                            overflow: "hidden",
-                            textOverflow: "ellipsis",
-                        }}
-                    >
-                        {daysOfWeek[start.day()]}, {monthNames[start.month()]}{" "}
-                        {start.date()} {start.year()}, {start.format("LT")} to{" "}
-                        {end.format("LT")} <br />
-                        Location: {room_name || "Virtual"} <br />
-                        {is_public ? "Public" : "Private"}
-                    </Typography>
-                </Box>
-                <Box sx={{ display: "flex", marginTop: "auto" }}>
-                    <AsyncButton
-                        variant="contained"
-                        onClick={() => setOpen(true)}
-                    >
-                        Show
-                    </AsyncButton>
-                </Box>
                 <MeetingPreview
                     id={id}
                     title={title}
@@ -121,7 +104,7 @@ const UpcomingMeeting = ({
                     roomName={room_name}
                     onClose={() => setOpen(false)}
                 />
-            </Card>
+            </Box>
         </Box>
     );
 };
