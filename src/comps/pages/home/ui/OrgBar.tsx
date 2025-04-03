@@ -1,10 +1,6 @@
-import {
-    ListItemAvatar,
-    Avatar,
-    ListItemText,
-    ListItemButton,
-} from "@mui/material";
+import React from "react";
 import { useNavigate } from "react-router-dom";
+import { Typography } from "@mui/material";
 
 type Props = {
     name?: Organization["name"];
@@ -22,20 +18,50 @@ const OrgBar = ({ name, url, role, role_name, picture }: Props) => {
     const navigate = useNavigate();
 
     return (
-        <ListItemButton
+        <div
             onClick={() => navigate(`/${url}`)}
-            sx={{ height: "75px" }}
+            style={{
+                display: "flex",
+                flexDirection: "column",
+                width: "200px"
+            }}
         >
-            <ListItemAvatar>
-                <Avatar alt={name} src={picture || ""}>
-                    {name?.charAt(0).toUpperCase()}
-                </Avatar>
-            </ListItemAvatar>
-            <ListItemText
-                primary={name}
-                secondary={role_name || formatCapitals(role || "Member")}
-            />
-        </ListItemButton>
+            <div>
+                {picture ? (
+                    <img
+                        src={picture}
+                        alt={name}
+                        style={{
+                            height: "200px",
+                            borderRadius: "10%",
+                            objectFit: "cover",
+                        }}
+                    />
+                ) : (
+                    <div
+                        style={{
+                            width: "50px",
+                            height: "50px",
+                            borderRadius: "50%",
+                            backgroundColor: "#ccc",
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                            fontSize: "24px",
+                            color: "#fff",
+                        }}
+                    >
+                        {name?.charAt(0).toUpperCase()}
+                    </div>
+                )}
+            </div>
+            <div style={{padding: 10}}>
+                <Typography variant="h4">{name}</Typography>
+                <Typography>
+                    {role_name || formatCapitals(role || "Member")}
+                </Typography>
+            </div>
+        </div>
     );
 };
 
