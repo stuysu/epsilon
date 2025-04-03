@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import OrgContext from "../../comps/context/OrgContext";
-import { Box, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import OrgMember from "../../comps/pages/orgs/OrgMember";
 
 import { sortByRole } from "../../utils/DataFormatters";
@@ -16,6 +16,14 @@ const Members = () => {
                         .length
                 } Members`}
             </Typography>
+            <Box
+                height="100%"
+                bgcolor="#1f1f1f80"
+                padding={0.5}
+                borderRadius={3}
+                boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
+            >
+                <Stack direction="column" spacing={0.3} borderRadius={2} overflow="hidden">
             {organization.memberships
                 ?.sort(sortByRole)
                 .map(
@@ -36,6 +44,8 @@ const Members = () => {
                             />
                         ),
                 )}
+                </Stack>
+            </Box>
         </Box>
     );
 };

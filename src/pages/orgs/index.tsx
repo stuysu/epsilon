@@ -16,6 +16,7 @@ import OrgAdminRouter from "./admin";
 import { useSnackbar } from "notistack";
 import { Box, useMediaQuery } from "@mui/material";
 import AsyncButton from "../../comps/ui/AsyncButton";
+import OrgInspector from "../../comps/pages/orgs/OrgInspector";
 
 const OrgRouter = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -177,6 +178,7 @@ const OrgRouter = () => {
                                 />
                             </Routes>
                         </Box>
+                        <OrgInspector/>
                         <Box width={25}></Box>
                     </Box>
                 </>

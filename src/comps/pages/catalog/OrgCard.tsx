@@ -125,9 +125,9 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                     height: "130px",
                                     borderRadius: "20px",
                                     position: "absolute",
-                                    opacity: 0.25,
+                                    opacity: 0.2,
                                     objectFit: "cover",
-                                    filter: "blur(25px)",
+                                    filter: "blur(20px)",
                                 }}
                             ></Avatar>
 
@@ -162,11 +162,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                 maxWidth: "100%",
                                 height: "3rem",
                                 overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                whiteSpace: "normal",
-                                display: "-webkit-box",
-                                WebkitBoxOrient: "vertical",
-                                WebkitLineClamp: 2,
+                                textOverflow: "ellipsis"
                             }}
                         >
                             {organization.name}

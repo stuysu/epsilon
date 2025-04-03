@@ -77,16 +77,19 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                         color: prefersDarkMode ? "#E8E8E8CC" : "#3B3B3B",
                     },
                     h3: {
-                        lineHeight: "1.6rem",
+                        paddingTop: "0.12em",
+                        lineHeight: "1.5rem",
                         fontSize: "1.6rem",
                         fontVariationSettings: `'wght' 700`,
                         margin: "0.5rem 0",
                         color: prefersDarkMode ? "#E8E8E8CC" : "#4B4B4B",
                     },
                     h4: {
-                        fontSize: "1.8rem",
-                        fontVariationSettings: `'wght' 500`,
-                        margin: "0.5rem 0",
+                        lineHeight: "1.3rem",
+                        fontSize: "1.3rem",
+                        fontVariationSettings: `'wght' 600`,
+                        margin: "0.3rem 0",
+                        color: prefersDarkMode ? "#E8E8E8CC" : "#4B4B4B",
                     },
                     h5: {
                         fontSize: "1.4rem",

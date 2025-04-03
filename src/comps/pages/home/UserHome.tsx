@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import UserContext from "../../context/UserContext";
-import { Paper, Box, Typography, useMediaQuery, Grid } from "@mui/material";
+import {Box, Typography, useMediaQuery, Grid, Stack } from "@mui/material";
 import OrgBar from "./ui/OrgBar";
 
-import Carousel from "react-multi-carousel";
 import "react-multi-carousel/lib/styles.css";
 import { useSnackbar } from "notistack";
 import { supabase } from "../../../supabaseClient";
@@ -134,8 +133,8 @@ const UserHome = () => {
     }, [user, enqueueSnackbar]);
 
     return (
-        <Box sx={{ width: "100%" }}>
-            <Typography variant="h1" align="center" margin="50px">
+        <Box>
+            <Typography variant="h1" margin="50px">
                 Welcome back, {user.first_name}!
             </Typography>
 
@@ -144,28 +143,18 @@ const UserHome = () => {
                     item
                     xs={12}
                     sm={6}
-                    md={4}
-                    lg={4}
-                    xl={4}
-                    justifyContent={"center"}
+                    md={5.5}
+                    lg={6}
+                    xl={5.5}
                 >
-                    <Box
-                        sx={{
-                            width: "100%",
+                    <div
+                        style={{
                             display: "flex",
-                            justifyContent: "center",
                             flexWrap: "wrap",
-                            paddingLeft: "10px",
+                            paddingLeft: "50px",
+                            gap: "10px"
                         }}
                     >
-                        <Paper
-                            elevation={2}
-                            sx={{
-                                width: "400px",
-                                height: "310px",
-                                overflowY: "auto",
-                            }}
-                        >
                             {user.memberships?.map((membership) => {
                                 if (membership.active)
                                     return (
@@ -194,34 +183,59 @@ const UserHome = () => {
                                     You are not a member of any organizations
                                 </Typography>
                             )}
-                        </Paper>
-                    </Box>
+                    </div>
                 </Grid>
-                <Grid item xs={12} sm={6} md={8} lg={8} xl={8}>
-                    <Typography variant="h1" width="100%" align="center">
-                        Upcoming Meetings
-                    </Typography>
-                    <Carousel responsive={responsive}>
-                        {upcomingMeetings.map((meeting) => (
-                            <UpcomingMeeting
-                                key={meeting.id}
-                                id={meeting.id}
-                                title={meeting.title}
-                                description={meeting.description}
-                                start_time={meeting.start_time}
-                                end_time={meeting.end_time}
-                                org_name={meeting.organizations.name}
-                                org_picture={meeting.organizations.picture}
-                                room_name={meeting.rooms?.name}
-                                is_public={meeting.is_public}
-                            />
-                        ))}
-                    </Carousel>
-                    {upcomingMeetings.length === 0 && (
-                        <Typography variant="h3" align="center">
-                            No upcoming meetings
-                        </Typography>
-                    )}
+                <Grid item xs={12} sm={6} md={5} lg={5.5} xl={6}>
+                    <Box position="relative" width={"100%"} marginBottom={3}>
+                        <Box
+                            bgcolor="#1f1f1f80"
+                            padding={0.5}
+                            borderRadius={3}
+                            boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
+                        >
+                            <Typography variant="h3" width="100%" margin={3}>
+                                Upcoming Meetings
+                            </Typography>
+
+                            <Stack borderRadius={2} overflow="hidden" spacing={0.5}>
+                                {upcomingMeetings.length === 0 && (
+                                    <Typography variant="body1" sx={{padding: 3}}>
+                                        No upcoming meetings scheduled. Check back later!
+                                    </Typography>
+                                )}
+                                    {upcomingMeetings.map((meeting) => (
+                                        <UpcomingMeeting
+                                            key={meeting.id}
+                                            id={meeting.id}
+                                            title={meeting.title}
+                                            description={meeting.description}
+                                            start_time={meeting.start_time}
+                                            end_time={meeting.end_time}
+                                            org_name={meeting.organizations.name}
+                                            org_picture={meeting.organizations.picture}
+                                            room_name={meeting.rooms?.name}
+                                            is_public={meeting.is_public}
+                                            sx={{flexDirection: isMobile ? "column" : "row"}}
+                                        />
+                                    ))}
+
+                            </Stack>
+                        </Box>
+
+                        <Box
+                            bgcolor="rgba(228, 174, 59, 0.05)"
+                            position="absolute"
+                            top="0"
+                            left="0"
+                            right="0"
+                            bottom="0"
+                            borderRadius={3}
+                            zIndex={-1}
+                            sx={{
+                                filter: "blur(40px)",
+                            }}
+                        />
+                    </Box>
                 </Grid>
                 <Box sx={{ width: "100%", marginTop: "50px" }}>
                     <Typography variant="h1" align="center">
