@@ -71,9 +71,8 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                         color: prefersDarkMode ? "#E8E8E8CC" : "#2B2B2B",
                     },
                     h2: {
-                        fontSize: "2.6rem",
+                        fontSize: "1.6rem",
                         fontVariationSettings: "'wght' 700",
-                        margin: "0.5rem 0",
                         color: prefersDarkMode ? "#E8E8E8CC" : "#3B3B3B",
                     },
                     h3: {
