@@ -28,6 +28,9 @@ const responsive = {
     },
 };
 
+const currentHour = new Date().getHours();
+const timeGreeting = currentHour < 12 ? 'Good morning' : 'Good evening';
+
 type meetingType = {
     id: number;
     title: string;
@@ -134,9 +137,14 @@ const UserHome = () => {
 
     return (
         <Box>
-            <Typography variant="h1" margin="50px">
-                Welcome back, {user.first_name}!
+            <Box margin="50px">
+            <Typography variant="h1">
+                {timeGreeting}, {user.first_name}!
             </Typography>
+            <Typography variant="h2" color="gray">
+                You have some scheduled events.
+            </Typography>
+            </Box>
 
             <Grid container>
                 <Grid
