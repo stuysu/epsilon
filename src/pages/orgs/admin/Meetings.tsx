@@ -2,10 +2,12 @@ import { useContext, useState } from "react";
 import OrgContext from "../../../comps/context/OrgContext";
 import AdminUpsertMeeting from "../../../comps/pages/orgs/admin/AdminUpsertMeeting";
 
-import { Box, Typography, useMediaQuery } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { supabase } from "../../../supabaseClient";
 import { useSnackbar } from "notistack";
 import OrgMeeting from "../../../comps/pages/orgs/OrgMeeting";
+
+import { useMediaQuery } from "@mui/material";
 
 import { sortByDate } from "../../../utils/DataFormatters";
 import AsyncButton from "../../../comps/ui/AsyncButton";
@@ -49,7 +51,7 @@ const Meetings = () => {
             </Typography>
             <Typography variant="h6" align="center" width="100%">
                 Reminder: Meeting attendance records MUST be kept up to date on
-                Sigma in order to secure club funding.
+                Epsilon in order to secure club funding.
             </Typography>
 
             <Box

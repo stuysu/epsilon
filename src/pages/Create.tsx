@@ -19,6 +19,8 @@ import OrgRequirements from "../utils/OrgRequirements";
 
 import { PUBLIC_URL } from "../constants";
 
+import { useNavigate } from "react-router-dom";
+
 import LoginGate from "../comps/ui/LoginGate";
 import UserContext from "../comps/context/UserContext";
 
@@ -277,7 +279,7 @@ const Create = () => {
                         <br />
                         <br />
                         Once you’re confident that your Activity abides by all
-                        the regulations, log in to your Sigma account (You've
+                        the regulations, log in to your Epsilon account (You've
                         already done that!) and fill out the Chartering form
                         below. Keep in mind that your charter will be public, so
                         do your best to provide helpful, substantive responses
@@ -290,7 +292,7 @@ const Create = () => {
                         review your charter. Unless there are any issues with
                         your charter (i.e. lack of compliance with the rules or
                         unclear submissions) the SU Admins will approve it. Once
-                        your activity is approved, it will appear in the Sigma
+                        your activity is approved, it will appear in the Epsilon
                         StuyActivities Catalog, and you can begin adding members
                         and scheduling meetings. If you have any questions or
                         concerns regarding the chartering process, please reach
@@ -316,7 +318,7 @@ const Create = () => {
                             label="Url"
                             field="url"
                             description={
-                                "https://sigma.stuysu.org/<this is the part you are entering>\nExample: https://sigma.stuysu.org/suit"
+                                "https://epsilon.stuysu.org/<this is the part you are entering>\nExample: https://epsilon.stuysu.org/suit"
                             }
                             required={OrgRequirements.url.required}
                             requirements={OrgRequirements.url.requirements}
@@ -436,7 +438,7 @@ const Create = () => {
                         required={OrgRequirements.mission.required}
                         sx={multilineStyle}
                         rows={4}
-                        description="Tell us, in simple words, why you want to create this club OR what motivates you to lead it this year. This information won’t be displayed on Sigma, we will use it to gauge your passion and reasoning in forming this club."
+                        description="Tell us, in simple words, why you want to create this club OR what motivates you to lead it this year. This information won’t be displayed on Epsilon, we will use it to gauge your passion and reasoning in forming this club."
                     />
                     <FormTextField
                         label="Goals"
@@ -456,7 +458,7 @@ const Create = () => {
                         required={OrgRequirements.purpose.required}
                         sx={multilineStyle}
                         rows={4}
-                        description="This is what will be displayed on Sigma: What do you want the Stuyvesant Community to know about your club?"
+                        description="This is what will be displayed on Epsilon: What do you want the Stuyvesant Community to know about your club?"
                     />
                     <FormTextField
                         label="Meeting Description"

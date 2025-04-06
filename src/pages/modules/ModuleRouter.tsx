@@ -20,14 +20,14 @@ const ModuleRouter = () => {
                     property="og:url"
                     content={PUBLIC_URL + location.pathname}
                 />
-                <meta property="og:site_name" content={"Sigma"} />
+                <meta property="og:site_name" content={"Epsilon"} />
                 <meta property="og:type" content={"website"} />
                 <meta
                     property="og:description"
                     content={"The everything part of the everything app."}
                 />
-                <meta property={"og:title"} content={"Sigma"} />
-                <title>Modules | Sigma</title>
+                <meta property={"og:title"} content={"Epsilon"} />
+                <title>Modules | Epsilon</title>
             </Helmet>
             <Suspense fallback={<Loading />}>
                 <Routes>

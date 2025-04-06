@@ -1,5 +1,5 @@
 import { Box, Link, Typography } from "@mui/material";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link as RouterLink } from "react-router-dom";
 import AsyncButton from "../comps/ui/AsyncButton";
 
 const Rules = () => {
@@ -22,8 +22,8 @@ const Rules = () => {
             </Typography>
             <Typography paragraph>
                 If you are experiencing technical issues or difficulties
-                regarding the Sigma website, please contact us at it@stuysu.org,
-                clubpub@stuysu.org, or an SU representative.
+                regarding the Epsilon website, please contact us at
+                it@stuysu.org, clubpub@stuysu.org, or an SU representative.
             </Typography>
             <Typography>
                 <ol>
@@ -31,10 +31,10 @@ const Rules = () => {
                         For an Activity to operate, a charter must be submitted
                         and approved by the Clubs & Pubs administrators.
                         Approval will take place on a set day each week. Once
-                        fully approved, the charter will be visible on the Sigma
-                        website. Activity leaders will be notified by email when
-                        their charter is in the catalog. Charters will be
-                        approved from August 1st to May 31st.
+                        fully approved, the charter will be visible on the
+                        Epsilon website. Activity leaders will be notified by
+                        email when their charter is in the catalog. Charters
+                        will be approved from August 1st to May 31st.
                     </li>
                     <li>
                         All Activities must have at least two leaders (i.e. two
@@ -43,9 +43,9 @@ const Rules = () => {
                     <li>
                         All Activities must meet in person or online at least
                         once a month by registering an Activity meeting on the
-                        Sigma website. Any Activity found inactive for more than
-                        one month may face suspension or revocation of their
-                        charter.
+                        Epsilon website. Any Activity found inactive for more
+                        than one month may face suspension or revocation of
+                        their charter.
                     </li>
                     <li>
                         The Student Union reserves the right to facilitate
@@ -112,11 +112,11 @@ const Rules = () => {
                     <li>Official meetings may be hosted online.</li>
                     <li>
                         Links to all official online Activity meetings must be
-                        accessible on Sigma.
+                        accessible on Epsilon.
                     </li>
                     <li>
                         All official Activity meetings must be scheduled on
-                        Sigma.
+                        Epsilon.
                         <ul>
                             <li>
                                 Official Activity meetings must take place
@@ -133,7 +133,7 @@ const Rules = () => {
                     </li>
                     <li>
                         Please email help@stuyactivities.org for support using
-                        Sigma and IT@stuysu.org for general technical support.
+                        Epsilon and IT@stuysu.org for general technical support.
                     </li>
                 </ol>
             </Typography>
@@ -248,7 +248,7 @@ const Rules = () => {
             <Typography>
                 <ol>
                     <li>
-                        All Activities must reserve a room on Sigma to be able
+                        All Activities must reserve a room on Epsilon to be able
                         to hold a meeting.
                     </li>
                     <li>
@@ -277,7 +277,7 @@ const Rules = () => {
                     </li>
                     <li>
                         All Activities must use the room reserved for their
-                        activity on the Sigma website. Please email
+                        activity on the Epsilon website. Please email
                         clubpub@stuysu.org or contact an SU representative if
                         you are unable to find a room.
                     </li>
