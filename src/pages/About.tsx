@@ -85,7 +85,9 @@ const About = () => {
                     <br />
                     Nathaniel Moy, SU IT Manager '24-'25, SU IT '23-'25 <br />
                     <br />
-                    Adam Choi, SU IT '23-'25
+                    Adam Choi, SU IT '23-'25 <br />
+                    <br />
+                    Designed by Will Zhang, SU IT '24-'25
                     <br />
                 </Credit>
                 <Break />
