@@ -104,7 +104,7 @@ const AdminRouter = () => {
 
     return (
         <div>
-            <AdminNav links={links} />
+            <AdminNav />
             <Routes>
                 <Route path="/" Component={AdminRedirect} />
                 <Route path="/approve-pending" Component={ApprovePending} />
