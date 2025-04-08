@@ -76,8 +76,8 @@ const Pages = () => {
                         className="fixed flex bottom-0 w-full h-12 border-t border-stone-700 bg-stone-900/85 backdrop-blur-xl items-center justify-center"
                     >
                         <p className="text-center text-gray-200">
-                            We’re redesigning Epsilon! Excuse our appearance
-                            while we build a better experience.
+                            We’re redesigning Epsilon! Please pardon our appearance
+                            while we work on a new look.
                         </p>
                         <button
                             onClick={handleCloseBanner}

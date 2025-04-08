@@ -8,7 +8,6 @@ import {
     Stack,
     Chip,
     Divider,
-    Link,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { supabase } from "../../supabaseClient";
@@ -248,7 +247,7 @@ const Overview = () => {
                             organization.state.slice(1).toLowerCase()}
                     </Typography>
                     <Typography variant="body1" align="center">
-                        State
+                        Activity Status
                     </Typography>
                 </Box>
 

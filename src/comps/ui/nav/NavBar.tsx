@@ -1,16 +1,16 @@
 import {
-    Avatar,
+    Typography,
     Box,
-    Divider,
     Drawer,
-    IconButton,
     List,
+    ListItemText,
+    Divider,
+    ListSubheader,
     ListItemButton,
     ListItemIcon,
-    ListItemText,
-    ListSubheader,
+    IconButton,
+    Avatar,
     Stack,
-    Typography,
     useMediaQuery,
 } from "@mui/material";
 import {
@@ -19,27 +19,20 @@ import {
     Menu,
     PersonSearch,
 } from "@mui/icons-material";
-import { CSSProperties, FC, useContext, useEffect, useState } from "react";
+import { CSSProperties, useContext, useEffect, useState, useRef } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../../supabaseClient";
 import UserContext from "../../context/UserContext";
 import { useSnackbar } from "notistack";
-import OrgBar from "../../pages/home/ui/OrgBar";
 import { ThemeContext } from "../../context/ThemeProvider";
 import { PUBLIC_URL } from "../../../constants";
 
 /* Navbar Button Icons */
-import HomeIcon from "@mui/icons-material/Home";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
-import AdminPanelSettingsIcon from "@mui/icons-material/AdminPanelSettings";
 import SettingsIcon from "@mui/icons-material/Settings";
-import FeedIcon from "@mui/icons-material/Feed";
-import CalendarMonthIcon from "@mui/icons-material/CalendarMonth";
 import AddCircleIcon from "@mui/icons-material/AddCircle";
-import InfoIcon from "@mui/icons-material/Info";
 import GavelIcon from "@mui/icons-material/Gavel";
 import ArchiveIcon from "@mui/icons-material/Archive";
-import FavoriteIcon from "@mui/icons-material/Favorite";
 import AsyncButton from "../AsyncButton";
 
 const navStyles: CSSProperties = {
@@ -64,41 +57,39 @@ const linkStyle: CSSProperties = {
     textDecoration: "none",
 };
 
-const VALENTINES = true;
-
-// TODO: separate TabLink to independent file in nav folder (good first issue: reformat the other entries in the navigation tabs to use this component)
-interface TabLinkProps {
-    name: string;
-    iconClass: string;
-    onClick: () => void;
-    setIsHovered: (hovered: boolean) => void;
-}
-
-const TabLink: FC<TabLinkProps> = ({
-    name,
-    iconClass,
-    onClick,
-    setIsHovered,
-}) => {
-    return (
-        <>
-            <i className={iconClass}></i>
-            <span
-                className={"transition-colors hover:text-gray-300"}
-                style={{
-                    marginLeft: "3px",
-                    position: "relative",
-                    top: "2px",
-                    cursor: "pointer",
-                }}
-                onMouseEnter={() => setIsHovered(true)}
-                onClick={onClick}
-            >
-                {name}
-            </span>
-        </>
-    );
-};
+const topNavItems = [
+    {
+        label: "Home",
+        path: "/",
+        icon: "bx bx-home-alt",
+        external: false,
+    },
+    {
+        label: "StuyActivities",
+        path: "/catalog",
+        icon: "bx bx-group",
+        external: false,
+    },
+    {
+        label: "Calendar",
+        path: "/meetings",
+        icon: "bx bx-calendar",
+        external: false,
+    },
+    {
+        label: "Vote",
+        url: "https://vote.stuysu.org",
+        path: "/none",
+        icon: "bx bx-note",
+        external: true,
+    },
+    {
+        label: "About",
+        path: "/about",
+        icon: "bx bx-file",
+        external: false,
+    },
+];
 
 const NavBar = () => {
     const showBigNav = useMediaQuery("(min-width:950px)");
@@ -107,13 +98,19 @@ const NavBar = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [fourDigitId, setFourDigitId] = useState<Number | null>(null);
     const [isHovered, setIsHovered] = useState(false);
-    const location = useLocation(); // disable drawer when location changes
+    const location = useLocation();
     const navigate = useNavigate();
 
     const theme = useContext(ThemeContext);
     const wordmarkSrc = theme.colorMode
         ? `${PUBLIC_URL}/wordmark.svg`
         : `${PUBLIC_URL}/wordmark_light.svg`;
+
+    const itemRefs = useRef<HTMLDivElement[]>([]);
+    const [optionUnderline, setOptionUnderline] = useState({
+        left: 0,
+        width: 0,
+    });
 
     const signOut = async () => {
         const { error } = await supabase.auth.signOut();
@@ -143,6 +140,26 @@ const NavBar = () => {
         };
         fetchID();
     }, [user]);
+
+    const isPageOptnActive = (item: (typeof topNavItems)[number]) =>
+        !item.external && location.pathname === item.path;
+
+    useEffect(() => {
+        const currentIndex = topNavItems.findIndex(
+            (item) => item.path === location.pathname && !item.external,
+        );
+
+        if (currentIndex !== -1 && itemRefs.current[currentIndex]) {
+            const el = itemRefs.current[currentIndex];
+            if (!el) return;
+            setOptionUnderline({
+                left: el.offsetLeft,
+                width: el.offsetWidth,
+            });
+        } else {
+            setOptionUnderline({ left: 0, width: 0 });
+        }
+    }, [location.pathname, showBigNav]);
 
     return (
         <>
@@ -248,105 +265,81 @@ const NavBar = () => {
                         display: showBigNav ? "flex" : "none",
                     }}
                 >
-                    <i className="bx bx-home-alt"></i>
-                    <span
-                        className={"transition-colors hover:text-gray-300"}
-                        style={{
-                            marginLeft: "3px",
-                            position: "relative",
-                            top: "2px",
-                            cursor: "pointer",
-                        }}
-                        onMouseEnter={() => setIsHovered(true)}
-                        onClick={() => {
-                            navigate("/");
-                            setTimeout(() => setIsHovered(false), 300);
-                        }}
-                    >
-                        Home
-                    </span>
-                    <i className="bx bx-group"></i>
-                    <span
-                        className={"transition-colors hover:text-gray-300"}
-                        style={{
-                            marginLeft: "3px",
-                            position: "relative",
-                            top: "2px",
-                            cursor: "pointer",
-                        }}
-                        onMouseEnter={() => setIsHovered(true)}
-                        onClick={() => {
-                            navigate("/catalog");
-                            setTimeout(() => setIsHovered(false), 300);
-                        }}
-                    >
-                        StuyActivities
-                    </span>
-                    <i className="bx bx-calendar"></i>
-                    <span
-                        className={"transition-colors hover:text-gray-300"}
-                        style={{
-                            marginLeft: "3px",
-                            position: "relative",
-                            top: "2px",
-                            cursor: "pointer",
-                        }}
-                        onMouseEnter={() => setIsHovered(true)}
-                        onClick={() => {
-                            navigate("/meetings");
-                            setTimeout(() => setIsHovered(false), 300);
-                        }}
-                    >
-                        Meetings
-                    </span>
-                    <i className="bx bx-note"></i>
-                    <span
-                        className={"transition-colors hover:text-gray-300"}
-                        style={{
-                            marginLeft: "3px",
-                            position: "relative",
-                            top: "2px",
-                            cursor: "pointer",
-                        }}
-                        onMouseEnter={() => setIsHovered(true)}
-                        onClick={() => {
-                            window.location.href = "https://vote.stuysu.org";
-                            setTimeout(() => setIsHovered(false), 300);
-                        }}
-                    >
-                        Voting Site
-                    </span>
-                    {VALENTINES && (
-                        <TabLink
-                            name="Valentines"
-                            iconClass="bx bx-book-heart"
+                    {topNavItems.map((item, index) => (
+                        <div
+                            key={item.path}
+                            ref={(el) => {
+                                if (el) itemRefs.current[index] = el;
+                            }}
+                            className={`transition-colors cursor-pointer ${
+                                isPageOptnActive(item)
+                                    ? "text-gray-300"
+                                    : "hover:text-gray-300"
+                            }`}
+                            onMouseEnter={() => setIsHovered(true)}
                             onClick={() => {
-                                navigate("/modules/valentines");
+                                if (item.external && item.url) {
+                                    window.location.href = item.url;
+                                } else {
+                                    navigate(item.path);
+                                }
                                 setTimeout(() => setIsHovered(false), 300);
                             }}
-                            setIsHovered={setIsHovered}
-                        />
-                    )}
-                    <i className="bx bx-file"></i>
-                    <span
-                        className={"transition-colors hover:text-gray-300"}
+                            style={{ position: "relative" }}
+                        >
+                            <i className={item.icon}></i>
+                            <span
+                                style={{
+                                    marginLeft: "3px",
+                                    position: "relative",
+                                    top: "-1px",
+                                }}
+                            >
+                                {item.label}
+                            </span>
+                        </div>
+                    ))}
+
+                    <div
                         style={{
-                            marginLeft: "3px",
-                            position: "relative",
-                            top: "2px",
-                            cursor: "pointer",
+                            position: "absolute",
+                            bottom: -8,
+                            left: optionUnderline.left - 27,
+                            width: optionUnderline.width,
+                            height: "1px",
+                            backgroundColor: "#FFFFFF80",
+                            transition: "left 0.3s, width 0.3s",
+                            pointerEvents: "none",
                         }}
-                        onMouseEnter={() => setIsHovered(true)}
-                        onClick={() => {
-                            navigate("/about");
-                            setTimeout(() => setIsHovered(false), 300);
-                        }}
-                    >
-                        About
-                    </span>
+                    />
                 </Stack>
             </Box>
-            <Divider></Divider>
+
+            <Divider
+                style={{ position: "relative", zIndex: 1000, bottom: 1 }}
+            ></Divider>
+
+            <Stack marginLeft={7} marginTop={2} direction="row" spacing={3} zIndex={1002} position="relative">
+
+                <Typography
+                    onClick={() => navigate('/catalog')}
+                    sx={{
+                        fontVariationSettings: "'wght' 700",
+                        cursor: 'pointer'
+                    }}
+                    color="rgb(209 213 219 / var(--tw-text-opacity, 1))"
+                >
+                    Back to Catalog
+                </Typography>
+                <Typography sx={{ fontVariationSettings: "'wght' 700" }}>Charter</Typography>
+                <Typography sx={{ fontVariationSettings: "'wght' 700" }}>Regulations</Typography>
+                <div
+                    onClick={() => navigate('/admin')}
+                    className="inline-flex gap-1 text-yellow-500 cursor-pointer">
+                    <i className="bx bx-shield"></i>
+                    <Typography sx={{ fontVariationSettings: "'wght' 700", color: "rgb(234 179 8 / var(--tw-text-opacity, 1))"}}>Admin Panel</Typography>
+                </div>
+            </Stack>
 
             <Drawer
                 anchor="left"
@@ -428,20 +421,6 @@ const NavBar = () => {
                                 <ListItemText>Sign Out</ListItemText>
                             </ListItemButton>
                         )}
-                        <ListItemButton onClick={() => navigate("/")}>
-                            <ListItemIcon>
-                                <HomeIcon />
-                            </ListItemIcon>
-                            <ListItemText>Home</ListItemText>
-                        </ListItemButton>
-                        {user.permission && (
-                            <ListItemButton onClick={() => navigate("/admin")}>
-                                <ListItemIcon>
-                                    <AdminPanelSettingsIcon />
-                                </ListItemIcon>
-                                <ListItemText>Admin</ListItemText>
-                            </ListItemButton>
-                        )}
                         {user.signed_in && (
                             <ListItemButton
                                 onClick={() => navigate("/settings")}
@@ -453,29 +432,6 @@ const NavBar = () => {
                             </ListItemButton>
                         )}
                     </List>
-                    <Divider />
-                    <List
-                        sx={{ width: "100%" }}
-                        subheader={<ListSubheader>Discover</ListSubheader>}
-                    >
-                        <ListItemButton onClick={() => navigate("/catalog")}>
-                            <ListItemIcon>
-                                <FeedIcon />
-                            </ListItemIcon>
-                            <ListItemText>Catalog</ListItemText>
-                        </ListItemButton>
-                        {user.signed_in && (
-                            <ListItemButton
-                                onClick={() => navigate("/meetings")}
-                            >
-                                <ListItemIcon>
-                                    <CalendarMonthIcon />
-                                </ListItemIcon>
-                                <ListItemText>Meetings</ListItemText>
-                            </ListItemButton>
-                        )}
-                    </List>
-
                     <Divider />
 
                     {user.signed_in && (
@@ -491,18 +447,6 @@ const NavBar = () => {
                                 </ListItemIcon>
                                 <ListItemText>Attendance</ListItemText>
                             </ListItemButton>
-                            {VALENTINES && (
-                                <ListItemButton
-                                    onClick={() =>
-                                        navigate("/modules/valentines")
-                                    }
-                                >
-                                    <ListItemIcon>
-                                        <FavoriteIcon />
-                                    </ListItemIcon>
-                                    <ListItemText>Valentines</ListItemText>
-                                </ListItemButton>
-                            )}
                         </List>
                     )}
 
@@ -512,31 +456,9 @@ const NavBar = () => {
                         <List
                             sx={{ width: "100%" }}
                             subheader={
-                                <ListSubheader>My Activities</ListSubheader>
+                                <ListSubheader>StuyActivities</ListSubheader>
                             }
                         >
-                            {user.memberships?.map((membership, i) => {
-                                if (membership.active)
-                                    return (
-                                        <OrgBar
-                                            key={membership.id}
-                                            name={
-                                                membership?.organizations?.name
-                                            }
-                                            role={membership?.role}
-                                            role_name={membership?.role_name}
-                                            url={
-                                                membership?.organizations
-                                                    ?.url || "/"
-                                            }
-                                            picture={
-                                                membership?.organizations
-                                                    ?.picture
-                                            }
-                                        />
-                                    );
-                                return null;
-                            })}
                             <ListItemButton onClick={() => navigate("/create")}>
                                 <ListItemIcon>
                                     <AddCircleIcon />
@@ -551,12 +473,6 @@ const NavBar = () => {
                         sx={{ width: "100%" }}
                         subheader={<ListSubheader>Info</ListSubheader>}
                     >
-                        <ListItemButton onClick={() => navigate("/about")}>
-                            <ListItemIcon>
-                                <InfoIcon />
-                            </ListItemIcon>
-                            <ListItemText>About</ListItemText>
-                        </ListItemButton>
                         <ListItemButton onClick={() => navigate("/rules")}>
                             <ListItemIcon>
                                 <GavelIcon />

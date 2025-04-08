@@ -13,7 +13,7 @@ const Charter = () => {
 
     return (
         <Stack spacing={3}>
-            <Typography variant="h1" align="center" width="100%">
+            <Typography variant="h1" width="100%">
                 Charter
             </Typography>
             <Typography variant="h3">What is this club?</Typography>

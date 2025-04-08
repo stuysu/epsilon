@@ -77,7 +77,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                     },
                     h3: {
                         paddingTop: "0.12em",
-                        lineHeight: "1.5rem",
+                        lineHeight: "1.6rem",
                         fontSize: "1.6rem",
                         fontVariationSettings: `'wght' 700`,
                         margin: "0.5rem 0",

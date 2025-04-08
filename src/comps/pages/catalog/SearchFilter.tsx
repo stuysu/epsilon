@@ -92,6 +92,7 @@ const SearchFilter = ({
                 >
                     {tags.map((tag) => (
                         <Chip
+                            sx={{borderRadius: "10px", paddingTop: "1px"}}
                             label={capitalizeWords(tag)}
                             onClick={() => {
                                 let exists =
@@ -126,6 +127,7 @@ const SearchFilter = ({
                 >
                     {commitmentLevels.map((level) => (
                         <Chip
+                            sx={{borderRadius: "10px", paddingTop: "1px"}}
                             label={capitalizeWords(level)}
                             onClick={() => {
                                 let exists =
@@ -163,6 +165,7 @@ const SearchFilter = ({
                 >
                     {meetingDays.map((day) => (
                         <Chip
+                            sx={{borderRadius: "10px", paddingTop: "1px"}}
                             label={capitalizeWords(day)}
                             onClick={() => {
                                 let exists =

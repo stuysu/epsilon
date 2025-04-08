@@ -19,6 +19,7 @@ const OrgInspector = () => {
             padding={0.5}
             marginLeft={5}
             marginRight={3}
+            marginTop={1}
             borderRadius={3}
             boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
         >
@@ -47,15 +48,20 @@ const OrgInspector = () => {
                                     backgroundColor: "#4d4d4d50"
                                 },
                             }}>
-                            <Typography sx={{ fontVariationSettings: "'wght' 700" }}>{getPlatform(social)}</Typography>
-                        <Link
-                            key={i}
-                            href={social}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                        >
+
+                            <Link
+                                key={i}
+                                href={social}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                sx={{ fontVariationSettings: "'wght' 700" }}
+                            >
+                                {getPlatform(social).charAt(0).toUpperCase() + getPlatform(social).slice(1)}
+                            </Link>
+
+                        <Typography>
                             {social.replace(/^https?:\/\/[^\/]+\/?/, "")}
-                        </Link>
+                        </Typography>
                         </Stack>
                     ) : null)
                 ) : (

@@ -1,21 +1,15 @@
 import { Box, Link, Typography } from "@mui/material";
-import { useNavigate, Link as RouterLink } from "react-router-dom";
-import AsyncButton from "../comps/ui/AsyncButton";
 
 const Rules = () => {
-    const navigate = useNavigate();
 
     return (
         <Box sx={{ padding: "40px" }}>
-            <AsyncButton variant="contained" onClick={() => navigate("/")}>
-                Back to home
-            </AsyncButton>
             <Typography
-                variant={"h4"}
+                variant={"h1"}
                 color="primary"
                 style={{ textAlign: "center" }}
             >
-                Rules
+                Clubs & Pubs Regulations
             </Typography>
             <Typography variant={"h5"} color="primary">
                 Basics

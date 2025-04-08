@@ -1,6 +1,6 @@
 /* ORG ROUTING INFORMATION HERE */
 import { useEffect, useState } from "react";
-import { Routes, Route, useParams, useNavigate } from "react-router-dom";
+import { Routes, Route, useParams } from "react-router-dom";
 import OrgContext from "../../comps/context/OrgContext";
 import Loading from "../../comps/ui/Loading";
 import { supabase } from "../../supabaseClient";
@@ -15,7 +15,6 @@ import Members from "./Members";
 import OrgAdminRouter from "./admin";
 import { useSnackbar } from "notistack";
 import { Box, useMediaQuery } from "@mui/material";
-import AsyncButton from "../../comps/ui/AsyncButton";
 import OrgInspector from "../../comps/pages/orgs/OrgInspector";
 
 const OrgRouter = () => {
@@ -23,7 +22,6 @@ const OrgRouter = () => {
     const { orgUrl } = useParams();
 
     const isMobile = useMediaQuery("(max-width: 1000px)");
-    const navigate = useNavigate();
 
     const [org, setOrg] = useState<OrgContextType>({
         id: -1,
@@ -147,13 +145,6 @@ const OrgRouter = () => {
                             marginTop: "20px",
                         }}
                     >
-                        <AsyncButton
-                            onClick={() => navigate("/catalog")}
-                            variant="contained"
-                            sx={{ width: "200px" }}
-                        >
-                            Back to Catalog
-                        </AsyncButton>
                     </Box>
                     <Box
                         sx={{
