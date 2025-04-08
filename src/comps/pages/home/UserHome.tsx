@@ -1,35 +1,16 @@
 import React, { useEffect, useState } from "react";
 import UserContext from "../../context/UserContext";
-import {Box, Typography, useMediaQuery, Grid, Stack } from "@mui/material";
+import { Box, Typography, useMediaQuery, Grid, Stack, Card } from "@mui/material";
 import OrgBar from "./ui/OrgBar";
-
-import "react-multi-carousel/lib/styles.css";
 import { useSnackbar } from "notistack";
 import { supabase } from "../../../supabaseClient";
 import UpcomingMeeting from "./ui/UpcomingMeeting";
 import Post from "../orgs/Post";
-const responsive = {
-    superLargeDesktop: {
-        // the naming can be any, depends on you.
-        breakpoint: { max: 4000, min: 3000 },
-        items: 3,
-    },
-    desktop: {
-        breakpoint: { max: 3000, min: 1024 },
-        items: 2,
-    },
-    tablet: {
-        breakpoint: { max: 1024, min: 464 },
-        items: 1,
-    },
-    mobile: {
-        breakpoint: { max: 464, min: 0 },
-        items: 1,
-    },
-};
+import DisplayLinks from "../../ui/DisplayLinks";
+import AsyncButton from "../../ui/AsyncButton";
 
 const currentHour = new Date().getHours();
-const timeGreeting = currentHour < 12 ? 'Good morning' : 'Good evening';
+const timeGreeting = currentHour < 12 ? "Good morning" : "Good evening";
 
 type meetingType = {
     id: number;
@@ -50,15 +31,16 @@ type meetingType = {
 const UserHome = () => {
     const user = React.useContext(UserContext);
     const isMobile = useMediaQuery("(max-width: 1024px)");
+    const { enqueueSnackbar } = useSnackbar();
 
     const [upcomingMeetings, setUpcomingMeetings] = useState<meetingType[]>([]);
     const [posts, setPosts] = useState<Post[]>([]);
-
-    const { enqueueSnackbar } = useSnackbar();
+    const [announcements, setAnnouncements] = useState<Announcement[]>([]);
+    const [visibleAnnouncements, setVisibleAnnouncements] = useState(3);
 
     useEffect(() => {
         const fetchMeetings = async () => {
-            let userOrgIds = user.memberships?.map(
+            const userOrgIds = user.memberships?.map(
                 (membership) => membership.organizations?.id,
             );
 
@@ -87,17 +69,18 @@ const UserHome = () => {
                 .returns<meetingType[]>();
 
             if (error || !data) {
-                return enqueueSnackbar(
+                enqueueSnackbar(
                     "Failed to load meetings. Contact it@stuysu.org for support.",
                     { variant: "error" },
                 );
+                return;
             }
 
             setUpcomingMeetings(data);
         };
 
         const fetchPosts = async () => {
-            let userOrgIds = user.memberships?.map(
+            const userOrgIds = user.memberships?.map(
                 (membership) => membership.organizations?.id,
             );
 
@@ -135,6 +118,25 @@ const UserHome = () => {
         fetchPosts();
     }, [user, enqueueSnackbar]);
 
+    useEffect(() => {
+        const fetchAnnouncements = async () => {
+            const { data, error } = await supabase
+                .from("announcements")
+                .select("*")
+                .order("created_at", { ascending: false });
+
+            if (error || !data) {
+                enqueueSnackbar(
+                    "Failed to load announcements. Contact it@stuysu.org for support.",
+                    { variant: "error" },
+                );
+                return;
+            }
+            setAnnouncements(data as Announcement[]);
+        };
+        fetchAnnouncements();
+    }, [enqueueSnackbar]);
+
     return (
         <Box>
             <Box margin="50px">
@@ -147,20 +149,13 @@ const UserHome = () => {
             </Box>
 
             <Grid container>
-                <Grid
-                    item
-                    xs={12}
-                    sm={6}
-                    md={5.5}
-                    lg={6}
-                    xl={5.5}
-                >
+                <Grid item xs={12} sm={6} md={5.5} lg={6} xl={5.5}>
                     <div
                         style={{
                             display: "flex",
                             flexWrap: "wrap",
                             paddingLeft: "50px",
-                            gap: "10px"
+                            gap: "10px",
                         }}
                     >
                             {user.memberships?.map((membership) => {
@@ -204,29 +199,29 @@ const UserHome = () => {
                             <Typography variant="h3" width="100%" margin={3}>
                                 Upcoming Meetings
                             </Typography>
-
                             <Stack borderRadius={2} overflow="hidden" spacing={0.5}>
                                 {upcomingMeetings.length === 0 && (
                                     <Typography variant="body1" sx={{padding: 3}}>
                                         No upcoming meetings scheduled. Check back later!
                                     </Typography>
                                 )}
-                                    {upcomingMeetings.map((meeting) => (
-                                        <UpcomingMeeting
-                                            key={meeting.id}
-                                            id={meeting.id}
-                                            title={meeting.title}
-                                            description={meeting.description}
-                                            start_time={meeting.start_time}
-                                            end_time={meeting.end_time}
-                                            org_name={meeting.organizations.name}
-                                            org_picture={meeting.organizations.picture}
-                                            room_name={meeting.rooms?.name}
-                                            is_public={meeting.is_public}
-                                            sx={{flexDirection: isMobile ? "column" : "row"}}
-                                        />
-                                    ))}
-
+                                {upcomingMeetings.map((meeting) => (
+                                    <UpcomingMeeting
+                                        key={meeting.id}
+                                        id={meeting.id}
+                                        title={meeting.title}
+                                        description={meeting.description}
+                                        start_time={meeting.start_time}
+                                        end_time={meeting.end_time}
+                                        org_name={meeting.organizations.name}
+                                        org_picture={meeting.organizations.picture}
+                                        room_name={meeting.rooms?.name}
+                                        is_public={meeting.is_public}
+                                        sx={{
+                                            flexDirection: isMobile ? "column" : "row",
+                                        }}
+                                    />
+                                ))}
                             </Stack>
                         </Box>
 
@@ -244,6 +239,42 @@ const UserHome = () => {
                             }}
                         />
                     </Box>
+
+                        {announcements
+                            .slice(0, visibleAnnouncements)
+                            .map((announcement, i) => {
+                                return (
+                                    <Card
+                                        key={i}
+                                        sx={{
+                                            display: "flex",
+                                            justifyContent: "center",
+                                            padding: "20px",
+                                        }}
+                                    >
+                                        <DisplayLinks text={announcement.content} />
+                                    </Card>
+                                );
+                            })}
+                        {visibleAnnouncements < announcements.length && (
+                            <Box
+                                sx={{
+                                    width: "100%",
+                                    display: "flex",
+                                    justifyContent: "center",
+                                    marginTop: "10px",
+                                }}
+                            >
+                                <AsyncButton
+                                    variant="contained"
+                                    onClick={() =>
+                                        setVisibleAnnouncements((prev) => prev + 3)
+                                    }
+                                >
+                                    Show More
+                                </AsyncButton>
+                            </Box>
+                        )}
                 </Grid>
                 <Box sx={{ width: "100%", marginTop: "50px" }}>
                     <Typography variant="h1" align="center">

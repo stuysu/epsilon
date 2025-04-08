@@ -5,7 +5,6 @@ import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import EmailIcon from "@mui/icons-material/Email";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
-import { Box } from "@mui/material";
 
 const AdminNav = () => {
     let navLinks = [
@@ -42,9 +41,7 @@ const AdminNav = () => {
     ];
 
     return (
-        <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
             <RouteTabs tabs={navLinks} />
-        </Box>
     );
 };
 

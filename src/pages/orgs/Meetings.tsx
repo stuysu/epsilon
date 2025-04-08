@@ -11,12 +11,12 @@ const Meetings = () => {
 
     return (
         <Box>
-            <Typography variant="h1" align="center" width="100%">
+            <Typography variant="h1" width="100%">
                 Meetings
             </Typography>
 
             <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
-                {organization.meetings.sort(sortByDate).map((meeting, i) => (
+                {organization.meetings.sort(sortByDate).map((meeting) => (
                     <OrgMeeting
                         id={meeting.id || -1}
                         title={meeting.title || "No Title"}

@@ -161,7 +161,6 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                             sx={{
                                 maxWidth: "100%",
                                 height: "3rem",
-                                overflow: "hidden",
                                 textOverflow: "ellipsis"
                             }}
                         >

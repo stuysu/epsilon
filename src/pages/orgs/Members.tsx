@@ -10,7 +10,7 @@ const Members = () => {
 
     return (
         <Box sx={{ width: "100%" }}>
-            <Typography variant="h1" align="center" width="100%">
+            <Typography variant="h1" width="100%">
                 {`${
                     organization.memberships.filter((member) => member.active)
                         .length
