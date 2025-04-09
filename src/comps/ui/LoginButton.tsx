@@ -22,7 +22,7 @@ const LoginButton = () => {
                 alt="Google Icon"
                 className="google-icon"
             />
-            Sign in with Google
+            <span className="button-text">Sign in with Google</span>
         </button>
     );
 };

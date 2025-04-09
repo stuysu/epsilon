@@ -1,17 +1,17 @@
 .button {
+    position: relative;
+    z-index: 1;
     display: flex;
     width: 350px;
     background-color: rgba(31, 31, 31, 0.5);
     color: rgba(232, 232, 232, 0.8);
     box-shadow: 0 0 2px 0 rgba(255, 255, 255, 0.3) inset;
     border: none;
-    padding: 17px;
+    padding: 15px 17px 15px 17px;
     border-radius: 13px;
     font-family: inter-variable, sans-serif;
-    font-size: 1rem;
     font-variation-settings: "wght" 700;
     cursor: pointer;
-    align-items: flex-end;
     justify-content: center;
     transition: background-color 0.2s ease;
 }
@@ -20,9 +20,14 @@
     background-color: rgba(54, 54, 54, 0.4);
 }
 
-.google-icon {
+.button-text {
     position: relative;
-    left: -15px;
+    top: 1px;
+}
+
+.google-icon {
+    position: absolute;
+    left: 20px;
     height: 20px;
     width: 20px;
 }

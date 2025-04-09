@@ -25,7 +25,7 @@ const UnauthenticatedLanding = () => {
                     filter: "blur(100px) brightness(0.9)",
                     mixBlendMode: "color-dodge",
                     pointerEvents: "none",
-                    zIndex: 0,
+                    zIndex: 2,
                 }}
             />
             <Box
@@ -49,10 +49,10 @@ const UnauthenticatedLanding = () => {
                             ? "color-dodge"
                             : "normal",
                         position: "relative",
-                        zIndex: 1,
+                        zIndex: 3,
                         filter: theme.colorMode
-                            ? "brightness(0) saturate(100%) invert(100%) sepia(0%) saturate(500%) hue-rotate(180deg) brightness(100%) contrast(88%)"
-                            : "brightness(0) saturate(100%) invert(0%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(50%) contrast(100%)",
+                            ? ""
+                            : "invert(0%)",
                     }}
                 />
                 <LoginButton />
