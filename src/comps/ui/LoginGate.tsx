@@ -24,7 +24,7 @@ const LoginGate = ({ page, children, sx }: Props): React.JSX.Element => {
                 flexDirection: "column",
             }}
         >
-            <Typography align="center" variant="h1">
+            <Typography align="center" variant="h1" marginBottom={5}>
                 You must be signed in to {page}.
             </Typography>
             <LoginButton />

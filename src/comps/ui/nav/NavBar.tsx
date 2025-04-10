@@ -84,6 +84,20 @@ const topNavItems = [
         external: true,
     },
     {
+        label: "Arista",
+        url: "https://arista.stuysu.org",
+        path: "/none",
+        icon: "bx bxs-hot",
+        external: true,
+    },
+    {
+        label: "Opportunities",
+        url: "https://opportunities.stuysu.org",
+        path: "/none",
+        icon: "bx bx-glasses",
+        external: true,
+    },
+    {
         label: "About",
         path: "/about",
         icon: "bx bx-file",

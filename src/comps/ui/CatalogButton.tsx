@@ -9,7 +9,7 @@ export default function CatalogButton() {
             style={{ textDecoration: "underline", marginTop: 30 }}
             onClick={() => navigate("/catalog")}
         >
-            View Catalog
+            Browse StuyActivities
         </button>
     );
 }

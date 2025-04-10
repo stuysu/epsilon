@@ -2,12 +2,15 @@ import { Box } from "@mui/material";
 import { PUBLIC_URL } from "../../../constants";
 
 import LoginButton from "../../ui/LoginButton";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { ThemeContext } from "../../context/ThemeProvider";
 import CatalogButton from "../../ui/CatalogButton";
 
 const UnauthenticatedLanding = () => {
     const theme = useContext(ThemeContext);
+
+    const [isLoginHovered, setIsLoginHovered] = useState(false);
+
     const wordmarkSrc = theme.colorMode
         ? `${PUBLIC_URL}/wordmark.svg`
         : `${PUBLIC_URL}/wordmark_light.svg`;
@@ -21,7 +24,8 @@ const UnauthenticatedLanding = () => {
                     backgroundImage: `url(${PUBLIC_URL}/textures/login.png)`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
-                    opacity: 0.5,
+                    opacity: isLoginHovered ? 1 : 0.5,
+                    transition: "opacity 0.3s ease",
                     filter: "blur(100px) brightness(0.9)",
                     mixBlendMode: "color-dodge",
                     pointerEvents: "none",
@@ -55,7 +59,10 @@ const UnauthenticatedLanding = () => {
                             : "invert(0%)",
                     }}
                 />
-                <LoginButton />
+                <LoginButton
+                    onMouseEnter={() => setIsLoginHovered(true)}
+                    onMouseLeave={() => setIsLoginHovered(false)}
+                />
                 <CatalogButton />
             </Box>
         </Box>

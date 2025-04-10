@@ -1,7 +1,5 @@
 import { Box } from "@mui/material";
 import { ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
-import AsyncButton from "../comps/ui/AsyncButton";
 
 const Center = ({ children }: { children?: ReactNode }) => {
     return (
@@ -47,13 +45,9 @@ const Credit = ({
 };
 
 const About = () => {
-    const navigate = useNavigate();
 
     return (
         <Box sx={{ width: "100%", padding: "20px" }}>
-            <AsyncButton variant="contained" onClick={() => navigate("/")}>
-                Back to home
-            </AsyncButton>
             <Box
                 sx={{
                     width: "100%",
@@ -67,6 +61,10 @@ const About = () => {
                 <p>The everything platform for Stuyvesant High School.</p>
                 <Break />
                 <i>One Site, One School, For Everyone</i>
+                <Break />
+                <br />
+                The new interface is designed and developed by Will Zhang, SU IT '23-'25
+                <br />
             </Box>
             <Box
                 sx={{
@@ -86,8 +84,6 @@ const About = () => {
                     Nathaniel Moy, SU IT Manager '24-'25, SU IT '23-'25 <br />
                     <br />
                     Adam Choi, SU IT '23-'25 <br />
-                    <br />
-                    Designed by Will Zhang, SU IT '24-'25
                     <br />
                 </Credit>
                 <Break />
