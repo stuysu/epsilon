@@ -175,6 +175,10 @@ const NavBar = () => {
         }
     }, [location.pathname, showBigNav]);
 
+    if (!user?.signed_in && location.pathname === "/") {
+        return <Box height={20}/>;
+    }
+
     return (
         <>
             <div
