@@ -124,14 +124,14 @@ const Overview = () => {
             enqueueSnackbar("Left organization!", { variant: "success" });
         };
 
-        if(userLeave) {
+        if (userLeave) {
             setAttemptingInteract(true);
             leaveOrg().finally(() => {
                 setUserLeave(false);
                 setAttemptingInteract(false);
             });
         }
-    }, [userLeave])
+    }, [userLeave]);
 
     // const handleClickOpen = () => {
     //     setAttemptingInteract(true);
@@ -148,12 +148,12 @@ const Overview = () => {
     const handleUserLeave = () => {
         setLeaveConfirmation(false);
         setUserLeave(true);
-    }
+    };
 
     const handleUserStay = () => {
         setLeaveConfirmation(false);
         setUserLeave(false);
-    }
+    };
 
     return (
         <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
@@ -239,7 +239,7 @@ const Overview = () => {
                             variant="contained"
                             onClick={handleInteract}
                             disabled={disabled || attemptingInteract}
-                            sx={{backgroundColor: "rgba(248, 19, 19, 0.88)"}}
+                            sx={{ backgroundColor: "rgba(248, 19, 19, 0.88)" }}
                         >
                             {interactString}
                         </AsyncButton>
@@ -250,16 +250,29 @@ const Overview = () => {
                             aria-describedby="alert-dialog-description"
                         >
                             <DialogTitle id="alert-dialog-title">
-                                {"Are you sure you want to leave/cancel your join to this organization?"}
+                                {
+                                    "Are you sure you want to leave/cancel your join to this organization?"
+                                }
                             </DialogTitle>
                             <DialogContent>
                                 <DialogContentText id="alert-dialog-description">
-                                    Once you confirm your leave, you will have to request to join again.
+                                    Once you confirm your leave, you will have
+                                    to request to join again.
                                 </DialogContentText>
                             </DialogContent>
                             <DialogActions>
-                                <AsyncButton onClick={handleUserStay}>Return</AsyncButton>
-                                <AsyncButton sx={{backgroundColor: "rgba(248, 19, 19, 0.9)"}} onClick={handleUserLeave}>Leave</AsyncButton>
+                                <AsyncButton onClick={handleUserStay}>
+                                    Return
+                                </AsyncButton>
+                                <AsyncButton
+                                    sx={{
+                                        backgroundColor:
+                                            "rgba(248, 19, 19, 0.9)",
+                                    }}
+                                    onClick={handleUserLeave}
+                                >
+                                    Leave
+                                </AsyncButton>
                             </DialogActions>
                         </Dialog>
 
