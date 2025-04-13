@@ -21,7 +21,7 @@ const AsyncButton: React.FC<AsyncButtonProps> = ({
             if (onClick) {
                 const result = onClick();
                 if (result instanceof Promise) {
-                    await result;   
+                    await result;
                 }
             }
         } finally {
@@ -40,7 +40,7 @@ const AsyncButton: React.FC<AsyncButtonProps> = ({
                 padding: "12px 20px",
                 boxShadow:
                     "0px 0px 1.5px 0px rgba(255, 255, 255, 0.25) inset, 0px 0px 10px 0px rgba(255, 255, 255, 0.10) inset, 0px 4px 17.1px 0px rgba(0, 0, 0, 0.25)",
-                ...sx,    
+                ...sx,
             }}
             disabled={isLoading || props.disabled}
             {...props}
