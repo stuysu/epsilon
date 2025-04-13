@@ -239,7 +239,16 @@ const Overview = () => {
                             variant="contained"
                             onClick={handleInteract}
                             disabled={disabled || attemptingInteract}
-                            sx={{ backgroundColor: "rgba(248, 19, 19, 0.88)" }}
+                            sx={
+                                interactString === "LEAVE" ||
+                                interactString === "CANCEL JOIN"
+                                    ? {
+                                          backgroundColor:
+                                              "rgba(248, 19, 19, 0.88)",
+                                          color: "white",
+                                      }
+                                    : undefined
+                            }
                         >
                             {interactString}
                         </AsyncButton>
