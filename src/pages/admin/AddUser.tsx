@@ -10,11 +10,11 @@ import OrgRequirements from "../../utils/OrgRequirements";
 import FormCheckbox from "../../comps/ui/forms/FormCheckbox";
 
 type User = {
-    first_name: string,
-    last_name: string,
-    email: string,
-    grad_year: number | null,
-    is_faculty: boolean
+    first_name: string;
+    last_name: string;
+    email: string;
+    grad_year: number | null;
+    is_faculty: boolean;
 };
 
 const emptyUser: User = {
@@ -22,7 +22,7 @@ const emptyUser: User = {
     last_name: "",
     email: "",
     grad_year: null,
-    is_faculty: false
+    is_faculty: false,
 };
 
 const AddUser = () => {
@@ -31,18 +31,19 @@ const AddUser = () => {
     const isMobile = useMediaQuery("(max-width: 620px)");
 
     const createUser = async () => {
-            const { data: userCreateData, error: userCreateError } =
-                await supabase.functions.invoke("create-user", { body: userData });
+        const { data: userCreateData, error: userCreateError } =
+            await supabase.functions.invoke("create-user", { body: userData });
 
-                if (userCreateError) {
-                    console.error("Supabase function error:", userCreateError);
-                    const message = userCreateError.message || "Contact it@stuysu.org for support.";
-                    return enqueueSnackbar(message, { variant: "error" });
-                }
-            enqueueSnackbar("User created successfully", { variant: "success" });
-    }
+        if (userCreateError) {
+            console.error("Supabase function error:", userCreateError);
+            const message =
+                userCreateError.message || "Contact it@stuysu.org for support.";
+            return enqueueSnackbar(message, { variant: "error" });
+        }
+        enqueueSnackbar("User created successfully", { variant: "success" });
+    };
 
-    return( 
+    return (
         <MultiPageForm
             title="Create New User"
             value={userData}
@@ -58,11 +59,11 @@ const AddUser = () => {
         >
             <FormPage title="User Info">
                 <FormSection
-                        sx={{
-                            width: "100%",
-                            display: "flex",
-                            flexWrap: isMobile ? "wrap" : "nowrap",
-                        }}
+                    sx={{
+                        width: "100%",
+                        display: "flex",
+                        flexWrap: isMobile ? "wrap" : "nowrap",
+                    }}
                 >
                     <FormTextField
                         label="First Name"
@@ -86,7 +87,9 @@ const AddUser = () => {
                         label="Email"
                         field="email"
                         required={true}
-                        requirements={OrgRequirements.faculty_email.requirements}
+                        requirements={
+                            OrgRequirements.faculty_email.requirements
+                        }
                         sx={{
                             marginLeft: isMobile ? "" : "20px",
                             marginTop: isMobile ? "20px" : "",
@@ -95,11 +98,11 @@ const AddUser = () => {
                     />
                 </FormSection>
                 <FormSection
-                        sx={{
-                            width: "100%",
-                            display: "flex",
-                            flexWrap: isMobile ? "wrap" : "nowrap",                            
-                        }}
+                    sx={{
+                        width: "100%",
+                        display: "flex",
+                        flexWrap: isMobile ? "wrap" : "nowrap",
+                    }}
                 >
                     <FormTextField
                         label="Grad Year"
@@ -111,12 +114,12 @@ const AddUser = () => {
                             width: isMobile ? "50%" : "25%",
                         }}
                     />
-                    <FormSection sx={{ marginTop: "30px", marginLeft: "40px"}}>
-                    <FormCheckbox
+                    <FormSection sx={{ marginTop: "30px", marginLeft: "40px" }}>
+                        <FormCheckbox
                             field="is_faculty"
                             label="Faculty?"
                             description="Check this box if this user is a faculty."
-                    />
+                        />
                     </FormSection>
                 </FormSection>
             </FormPage>

@@ -252,7 +252,7 @@ const Rooms = () => {
 
                                 setStartTime(newStartTime);
 
-                                // also change day of end time    
+                                // also change day of end time
                                 if (!endTime) {
                                     setEndTime(newStartTime);
                                 } else {

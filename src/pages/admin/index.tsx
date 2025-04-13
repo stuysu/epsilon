@@ -22,7 +22,7 @@ import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import EmailIcon from "@mui/icons-material/Email";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
-import AddIcon from '@mui/icons-material/Add';
+import AddIcon from "@mui/icons-material/Add";
 import AddUser from "./AddUser";
 
 export type Link = {
@@ -67,8 +67,8 @@ export const getLinks = (user: UserContextType) => {
         {
             to: "/admin/add-user",
             label: "Add User",
-            icon: <AddIcon />
-        }
+            icon: <AddIcon />,
+        },
     ];
 
     return navLinks;

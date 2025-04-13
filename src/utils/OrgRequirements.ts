@@ -148,9 +148,9 @@ const OrgRequirements: OrgValidator = {
         required: false,
         requirements: {
             minChar: 4,
-            maxChar: 4
-        }
-    }
+            maxChar: 4,
+        },
+    },
 };
 
 export default OrgRequirements;
