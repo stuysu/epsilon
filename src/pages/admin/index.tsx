@@ -22,7 +22,8 @@ import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import EmailIcon from "@mui/icons-material/Email";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
-import { Add } from "@mui/icons-material";
+import AddIcon from '@mui/icons-material/Add';
+import AddUser from "./AddUser";
 
 export type Link = {
     to: string;
@@ -63,6 +64,11 @@ export const getLinks = (user: UserContextType) => {
             label: "Rooms",
             icon: <MeetingRoomIcon />,
         },
+        {
+            to: "/admin/add-user",
+            label: "Add User",
+            icon: <AddIcon />
+        }
     ];
 
     return navLinks;
@@ -102,6 +108,7 @@ const AdminRouter = () => {
                 <Route path="/send-message" Component={SendMessage} />
                 <Route path="/announcements" Component={Announcements} />
                 <Route path="/rooms" Component={Rooms} />
+                <Route path="/add-user" Component={AddUser} />
                 <Route path="/*" Component={ApprovePending} />
             </Routes>
         </div>

@@ -144,6 +144,13 @@ const OrgRequirements: OrgValidator = {
             maxChar: 64,
         },
     },
+    grad_year: {
+        required: false,
+        requirements: {
+            minChar: 4,
+            maxChar: 4
+        }
+    }
 };
 
 export default OrgRequirements;
