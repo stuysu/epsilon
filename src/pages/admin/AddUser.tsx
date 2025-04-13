@@ -13,7 +13,7 @@ type User = {
     first_name: string,
     last_name: string,
     email: string,
-    grad_year: number,
+    grad_year: number | null,
     is_faculty: boolean
 };
 
@@ -21,7 +21,7 @@ const emptyUser: User = {
     first_name: "",
     last_name: "",
     email: "",
-    grad_year: -1,
+    grad_year: null,
     is_faculty: false
 };
 
@@ -31,38 +31,15 @@ const AddUser = () => {
     const isMobile = useMediaQuery("(max-width: 620px)");
 
     const createUser = async () => {
-        let user = { ...userData };
-
-        const { data: allUsersData, error: allUsersError } = await supabase
-            .from("users")
-            .select()
-            .eq("email", userData.email);
-
-        if(allUsersError) {
-            enqueueSnackbar("Failed to fetch all users", { variant: "error" });
-            return;
-        }
-
-        if(!allUsersData || allUsersData.length === 0) {
             const { data: userCreateData, error: userCreateError } =
-                await supabase.functions.invoke("create-user", { body: user });
+                await supabase.functions.invoke("create-user", { body: userData });
 
-            if (userCreateError || !userCreateData) {
-                const error = await userCreateError?.context.text();
-                let message = "Contact it@stuysu.org for support.";
-                if (error) {
-                    message = error;
+                if (userCreateError) {
+                    console.error("Supabase function error:", userCreateError);
+                    const message = userCreateError.message || "Contact it@stuysu.org for support.";
+                    return enqueueSnackbar(message, { variant: "error" });
                 }
-                return enqueueSnackbar("Error creating organization. " + message, {
-                    variant: "error",
-                });
-            }
-
             enqueueSnackbar("User created successfully", { variant: "success" });
-        } else {
-            enqueueSnackbar("User already exists", { variant: "warning" });
-            return;
-        }
     }
 
     return( 
@@ -136,7 +113,7 @@ const AddUser = () => {
                     />
                     <FormSection sx={{ marginTop: "30px", marginLeft: "40px"}}>
                     <FormCheckbox
-                            field="faculty"
+                            field="is_faculty"
                             label="Faculty?"
                             description="Check this box if this user is a faculty."
                     />
