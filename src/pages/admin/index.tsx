@@ -14,7 +14,6 @@ import Strikes from "./Strikes";
 import SendMessage from "./SendMessage";
 import Announcements from "./Announcements";
 import Rooms from "./Rooms";
-import Valentines from "./Valentines";
 
 /* ICONS */
 import PendingActionsIcon from "@mui/icons-material/PendingActions";
@@ -23,8 +22,8 @@ import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import EmailIcon from "@mui/icons-material/Email";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
-import FavoriteIcon from "@mui/icons-material/Favorite";
-import ApprovedValentines from "./ApprovedValentines";
+import AddIcon from "@mui/icons-material/Add";
+import AddUser from "./AddUser";
 
 export type Link = {
     to: string;
@@ -66,23 +65,12 @@ export const getLinks = (user: UserContextType) => {
             icon: <MeetingRoomIcon />,
         },
         {
-            to: "/admin/valentines",
-            label: "Valentines",
-            icon: <FavoriteIcon />,
-            permission: "VALENTINES",
-        },
-        {
-            to: "/admin/approved-valentines",
-            label: "Approved Valentines",
-            icon: <FavoriteIcon />,
-            permission: "VALENTINES",
+            to: "/admin/add-user",
+            label: "Add User",
+            icon: <AddIcon />,
         },
     ];
-    if (user.permission !== "ADMIN") {
-        navLinks = navLinks.filter(
-            (link) => link.permission === user.permission,
-        );
-    }
+
     return navLinks;
 };
 
@@ -120,11 +108,7 @@ const AdminRouter = () => {
                 <Route path="/send-message" Component={SendMessage} />
                 <Route path="/announcements" Component={Announcements} />
                 <Route path="/rooms" Component={Rooms} />
-                <Route path="/valentines" Component={Valentines} />
-                <Route
-                    path="/approved-valentines"
-                    Component={ApprovedValentines}
-                />
+                <Route path="/add-user" Component={AddUser} />
                 <Route path="/*" Component={ApprovePending} />
             </Routes>
         </div>
