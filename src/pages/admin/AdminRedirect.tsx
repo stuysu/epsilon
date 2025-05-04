@@ -6,7 +6,7 @@ import { Navigate } from "react-router-dom";
 const AdminRedirect = () => {
     const user = useContext(UserContext);
     const links = getLinks(user);
-    return <Navigate to={links[0].to} />;
+    return <Navigate to={links[0]?.to || "/"} />;
 };
 
 export default AdminRedirect;
