@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { Box, Typography } from "@mui/material";
 
 import UserContext from "../../comps/context/UserContext";
@@ -91,12 +91,17 @@ const AdminRouter = () => {
                     width: "100vw",
                     height: "80vh",
                     display: "flex",
+                    flexDirection: "column",
                     justifyContent: "center",
                     alignItems: "center",
                 }}
             >
-                <Typography variant="h1">
-                    You do not have access to this page.
+                <i className="bx bx-no-entry bx-lg text-red-500 mb-5"></i>
+                <Typography variant="h1" marginBottom={3}>
+                    Restricted Access
+                </Typography>
+                <Typography variant="body1">
+                    You cannot access the administrator panel. If you think this is a mistake, please contact us.
                 </Typography>
             </Box>
         );

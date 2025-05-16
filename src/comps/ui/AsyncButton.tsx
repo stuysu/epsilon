@@ -33,7 +33,7 @@ const AsyncButton: React.FC<AsyncButtonProps> = ({
             sx={{
                 fontFamily: "inter-variable",
                 fontVariationSettings: "'wght' 700",
-                borderRadius: "10px",
+                borderRadius: "13px",
                 backgroundColor: "rgba(54, 54, 54, 0.4)",
                 padding: "12px 20px",
                 boxShadow:

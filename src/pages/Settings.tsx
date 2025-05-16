@@ -148,9 +148,8 @@ const Settings = () => {
                     }}
                 >
                     <Typography
-                        variant="h2"
+                        variant="body1"
                         sx={{
-                            fontSize: "2rem",
                             textAlign: "left",
                             width: "45%",
                         }}
@@ -158,9 +157,8 @@ const Settings = () => {
                         Organization Name
                     </Typography>
                     <Typography
-                        variant="h2"
+                        variant="body1"
                         sx={{
-                            fontSize: "2rem",
                             textAlign: "right",
                             width: "45%",
                         }}
@@ -205,7 +203,7 @@ const Settings = () => {
                                     display: "flex",
                                     justifyContent: "center",
                                     alignItems: "center",
-                                    paddingRight: "11%",
+                                    paddingRight: "3%",
                                 }}
                             >
                                 <Switch

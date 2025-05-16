@@ -83,7 +83,7 @@ const topNavItems = [
     },
     {
         label: "Arista",
-        url: "https://arista.stuysu.org",
+        url: "https://stuyarista.org/",
         path: "/none",
         icon: "bx bxs-hot",
         external: true,
@@ -399,6 +399,19 @@ const NavBar = () => {
                     >
                         Regulations
                     </Typography>
+
+                    <Typography
+                        className="transition-opacity cursor-pointer"
+                        onClick={() => window.open("https://docs.google.com/spreadsheets/d/1TyFnEPhY3gM-yRJKYDJkQSfHC6OsvC5ftkkoahjVcCU/edit?gid=485693778#gid=485693778", "_blank")}
+                        sx={{
+                            fontVariationSettings: "'wght' 700",
+                            opacity: 0.5,
+                        }}
+                        color="rgb(209 213 219 / var(--tw-text-opacity, 1))"
+                    >
+                        Archive
+                    </Typography>
+
                     <div
                         onClick={() => navigate("/admin")}
                         className="inline-flex gap-1 text-yellow-500 cursor-pointer"
@@ -525,21 +538,6 @@ const NavBar = () => {
                     )}
 
                     <Divider />
-                    <List
-                        sx={{ width: "100%" }}
-                        subheader={<ListSubheader>Info</ListSubheader>}
-                    >
-                        <ListItemButton
-                            component="a"
-                            href="https://docs.google.com/spreadsheets/d/1TyFnEPhY3gM-yRJKYDJkQSfHC6OsvC5ftkkoahjVcCU"
-                            target="_blank"
-                        >
-                            <ListItemIcon>
-                                <ArchiveIcon />
-                            </ListItemIcon>
-                            <ListItemText>Archive</ListItemText>
-                        </ListItemButton>
-                    </List>
                 </Box>
             </Drawer>
         </>
