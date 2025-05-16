@@ -65,6 +65,18 @@ const UnauthenticatedLanding = () => {
                 />
                 <CatalogButton />
             </Box>
+
+            <img
+                src="https://lh4.googleusercontent.com/ke5AkzreYMlnGXw_KMKOdRjM9LQM7h2M-K5QL8JEeuXe7XMWCI2vUYqhnsgAoL-B4SfDImggddAiPIY18sHCxXY=w16383"
+                alt="Centered Image"
+                onClick={() =>
+                    window.open(
+                        "https://stuysu.org",
+                        "_blank",
+                    )
+                }
+                className="cursor-pointer absolute bottom-0 left-1/2 transform -translate-x-1/2 w-14 h-14 object-cover"
+            />
         </Box>
     );
 };
