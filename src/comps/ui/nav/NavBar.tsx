@@ -247,71 +247,76 @@ const NavBar = () => {
                                 : "opacity-0 -translate-y-5 pointer-events-none"
                         }`}
                     >
-                        <p
-                            className={
-                                "cursor-pointer hover:text-white transition-colors"
-                            }
-                            onClick={() => navigate("/profile")}
-                        >
-                            My Profile
-                        </p>
-                        <p
-                            className={
-                                "cursor-pointer hover:text-white transition-colors"
-                            }
-                            onClick={() => navigate("/settings")}
-                        >
-                            Communication Options
-                        </p>
-                        <div
-                            className={
-                                "bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50"
-                            }
-                        />
-                        <p
-                            className={
-                                "cursor-pointer hover:text-white transition-colors"
-                            }
-                            onClick={() => navigate("/modules/attendance")}
-                        >
-                            Attendance Module
-                        </p>
-                        <div
-                            className={
-                                "bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50"
-                            }
-                        />
-                        <p
-                            onClick={() => {
-                                theme.toggleColorMode();
-                                if (theme.colorMode) {
-                                    enqueueSnackbar(
-                                        "Light mode is experimental.",
-                                        {
-                                            variant: "warning",
-                                        },
-                                    );
-                                }
-                            }}
-                            className={
-                                "cursor-pointer hover:text-white transition-colors"
-                            }
-                        >
-                            Light Mode Beta
-                        </p>
-                        <div
-                            className={
-                                "bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50"
-                            }
-                        />
-                        <p
-                            className={
-                                "cursor-pointer text-red-500 hover:text-red-600 transition-colors"
-                            }
-                            onClick={signOut}
-                        >
-                            Sign Out
-                        </p>
+                        {!user?.signed_in ? (
+                            <div className="flex flex-col gap-3">
+                                <p
+                                    className={
+                                        "cursor-pointer hover:text-white transition-colors"
+                                    }
+                                    onClick={() => navigate("/")}
+                                >
+                                    Sign In
+                                </p>
+                            </div>
+                        ) : (
+                            <>
+                                <p
+                                    className={
+                                        "cursor-pointer hover:text-white transition-colors"
+                                    }
+                                    onClick={() => navigate("/profile")}
+                                >
+                                    My Profile
+                                </p>
+                                <p
+                                    className={
+                                        "cursor-pointer hover:text-white transition-colors"
+                                    }
+                                    onClick={() => navigate("/settings")}
+                                >
+                                    Communication Options
+                                </p>
+                                <div className="bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50" />
+                                <p
+                                    className={
+                                        "cursor-pointer hover:text-white transition-colors"
+                                    }
+                                    onClick={() =>
+                                        navigate("/modules/attendance")
+                                    }
+                                >
+                                    Attendance Module
+                                </p>
+                                <div className="bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50" />
+                                <p
+                                    onClick={() => {
+                                        theme.toggleColorMode();
+                                        if (theme.colorMode) {
+                                            enqueueSnackbar(
+                                                "Light mode is experimental.",
+                                                {
+                                                    variant: "warning",
+                                                },
+                                            );
+                                        }
+                                    }}
+                                    className={
+                                        "cursor-pointer hover:text-white transition-colors"
+                                    }
+                                >
+                                    Light Mode Beta
+                                </p>
+                                <div className="bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50" />
+                                <p
+                                    className={
+                                        "cursor-pointer text-red-500 hover:text-red-600 transition-colors"
+                                    }
+                                    onClick={signOut}
+                                >
+                                    Sign Out
+                                </p>
+                            </>
+                        )}
                     </div>
                 </div>
             </Box>

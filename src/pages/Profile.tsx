@@ -1,6 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import UserContext from "../comps/context/UserContext";
+import LoginGate from "../comps/ui/LoginGate";
 import { supabase } from "../supabaseClient";
 
 
@@ -21,6 +22,7 @@ const Profiles = () => {
     }, [user]);
 
     return (
+        <LoginGate sx={{ width: "100%", paddingLeft: "20px" }}>
         <Box sx={{ padding: "40px" }}>
             <Typography variant={"body1"}>My Epsilon Profile</Typography>
 
@@ -56,6 +58,7 @@ const Profiles = () => {
                 Stay tuned for a brand new profile!
             </Typography>
         </Box>
+        </LoginGate>
     );
 };
 
