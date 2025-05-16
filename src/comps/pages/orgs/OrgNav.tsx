@@ -67,10 +67,10 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
         <Box
             sx={{
                 minWidth: "150px",
-                marginTop: "20px",
+                marginTop: "15px",
             }}
         >
-            <Typography>About Me</Typography>
+            <Typography>About</Typography>
             <List sx={{ width: "100%" }}>
                 {navLinks.map((linkData, i) => (
                     <Box
