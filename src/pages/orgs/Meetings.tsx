@@ -4,12 +4,14 @@ import { Box, Typography, useMediaQuery } from "@mui/material";
 
 import OrgMeeting from "../../comps/pages/orgs/OrgMeeting";
 import { sortByDate } from "../../utils/DataFormatters";
+import LoginGate from "../../comps/ui/LoginGate";
 
 const Meetings = () => {
     const organization: OrgContextType = useContext(OrgContext);
     const isMobile = useMediaQuery("(max-width: 1450px)");
 
     return (
+        <LoginGate page="view meetings">
         <Box>
             <Typography variant="h1" width="100%">
                 Meetings
@@ -36,6 +38,7 @@ const Meetings = () => {
                 ))}
             </Box>
         </Box>
+        </LoginGate>
     );
 };
 

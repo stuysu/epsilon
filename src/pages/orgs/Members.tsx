@@ -4,11 +4,13 @@ import { Box, Stack, Typography } from "@mui/material";
 import OrgMember from "../../comps/pages/orgs/OrgMember";
 
 import { sortByRole } from "../../utils/DataFormatters";
+import LoginGate from "../../comps/ui/LoginGate";
 
 const Members = () => {
     const organization: OrgContextType = useContext(OrgContext);
 
     return (
+        <LoginGate page="view members">
         <Box sx={{ width: "100%" }}>
             <Typography variant="h1" width="100%">
                 {`${
@@ -47,6 +49,7 @@ const Members = () => {
                 </Stack>
             </Box>
         </Box>
+        </LoginGate>
     );
 };
 

@@ -16,6 +16,8 @@ import OrgMember from "../../comps/pages/orgs/OrgMember";
 import OrgMeeting from "../../comps/pages/orgs/OrgMeeting";
 import { sortByDate, sortByRole } from "../../utils/DataFormatters";
 import UserContext from "../../comps/context/UserContext";
+import UserHome from "../../comps/pages/home/UserHome";
+import UnauthenticatedLanding from "../../comps/pages/home/UnauthenticatedLanding";
 
 const Overview = () => {
     const organization: OrgContextType = useContext(OrgContext);
@@ -224,22 +226,29 @@ const Overview = () => {
                 marginBottom={{ xs: 0, sm: 3 }}
                 alignItems="center"
             >
-                <Box>
-                    <Typography variant="h3" align="center" width={100}>
-                        {
-                            organization.memberships.filter(
-                                (member) => member.active,
-                            ).length
-                        }
-                    </Typography>
-                    <Typography variant="body1" align="center">
-                        Members
-                    </Typography>
-                </Box>
-
-                <Typography variant="h1" align="center" sx={{ opacity: "25%" }}>
-                    •
-                </Typography>
+                {user.signed_in && (
+                    <>
+                        <Box>
+                            <Typography variant="h3" align="center" width={100}>
+                                {
+                                    organization.memberships.filter(
+                                        (member) => member.active,
+                                    ).length
+                                }
+                            </Typography>
+                            <Typography variant="body1" align="center">
+                                Members
+                            </Typography>
+                        </Box>
+                        <Typography
+                            variant="h1"
+                            align="center"
+                            sx={{ opacity: "25%" }}
+                        >
+                            •
+                        </Typography>
+                    </>
+                )}
 
                 <Box>
                     <Typography variant="h3" align="center" width={150}>
@@ -276,15 +285,16 @@ const Overview = () => {
                     </Typography>
                 </Box>
 
-                <Typography
-                    variant="h1"
-                    align="center"
-                    width="100%"
-                    sx={{ opacity: "25%" }}
-                >
-                    •
-                </Typography>
-
+                {user.signed_in && (
+                    <>
+                    <Typography
+                        variant="h1"
+                        align="center"
+                        width="100%"
+                        sx={{ opacity: "25%" }}
+                    >
+                        •
+                    </Typography>
                 <Box>
                     <Typography variant="h3" align="center" width={200}>
                         {organization.meetings
@@ -295,6 +305,8 @@ const Overview = () => {
                         Last Meeting
                     </Typography>
                 </Box>
+                    </>
+                    )}
             </Stack>
 
             <Box position="relative" width={"100%"} marginBottom={3}>
@@ -375,6 +387,17 @@ const Overview = () => {
                     <Typography variant="h3" width="100%" margin={3}>
                         Activity Leaders
                     </Typography>
+
+                    {!user.signed_in && (
+                        <Typography
+                            variant="body1"
+                            width="100%"
+                            marginLeft={3}
+                            marginBottom={3}
+                        >
+                            Sign in to view the leaders of this organization.
+                        </Typography>
+                    )}
 
                     <Stack borderRadius={2} overflow="hidden" spacing={0.5}>
                         {organization.memberships
