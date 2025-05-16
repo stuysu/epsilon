@@ -43,7 +43,7 @@ const Profiles = () => {
             }></div>
 
             {fourDigitId && (
-                <Typography width="100%">
+                <Typography width="100%" marginBottom={5}>
                     ID:{" "}
                     {String(fourDigitId).padStart(
                         4,
@@ -51,6 +51,10 @@ const Profiles = () => {
                     )}
                 </Typography>
             )}
+
+            <Typography width="100%">
+                Stay tuned for a brand new profile!
+            </Typography>
         </Box>
     );
 };

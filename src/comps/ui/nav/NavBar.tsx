@@ -240,93 +240,83 @@ const NavBar = () => {
                         >{`${user.first_name} ${user.last_name}`}</p>
                         <i className="bx bx-chevron-down bx-sm"></i>
                     </div>
-                    {drawerOpen && (
+                    <div
+                        className={`flex flex-col gap-2 p-5 absolute w-72 top-14 rounded-lg z-50 bg-neutral-800/80 backdrop-blur-xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)] transition-all duration-300 ${
+                            drawerOpen
+                                ? "opacity-100 translate-y-0"
+                                : "opacity-0 -translate-y-5 pointer-events-none"
+                        }`}
+                    >
+                        <p
+                            className={
+                                "cursor-pointer hover:text-white transition-colors"
+                            }
+                            onClick={() => navigate("/profile")}
+                        >
+                            My Profile
+                        </p>
+                        <p
+                            className={
+                                "cursor-pointer hover:text-white transition-colors"
+                            }
+                            onClick={() => navigate("/settings")}
+                        >
+                            Communication Options
+                        </p>
                         <div
                             className={
-                                "flex flex-col gap-2 p-5 absolute w-72 top-14 rounded-lg z-50 bg-neutral-800/80 backdrop-blur-xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)]"
+                                "bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50"
+                            }
+                        />
+                        <p
+                            className={
+                                "cursor-pointer hover:text-white transition-colors"
+                            }
+                            onClick={() => navigate("/modules/attendance")}
+                        >
+                            Attendance Module
+                        </p>
+                        <div
+                            className={
+                                "bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50"
+                            }
+                        />
+                        <p
+                            onClick={() => {
+                                theme.toggleColorMode();
+                                if (theme.colorMode) {
+                                    enqueueSnackbar(
+                                        "Light mode is experimental.",
+                                        {
+                                            variant: "warning",
+                                        },
+                                    );
+                                }
+                            }}
+                            className={
+                                "cursor-pointer hover:text-white transition-colors"
                             }
                         >
-                            <p
-                                className={
-                                    "cursor-pointer hover:text-white transition-colors"
-                                }
-                                onClick={() => navigate("/profile")}
-                            >
-                                My Profile
-                            </p>
-                            <p
-                                className={
-                                    "cursor-pointer hover:text-white transition-colors"
-                                }
-                                onClick={() => navigate("/settings")}
-                            >
-                                Communication Options
-                            </p>
-                            <div
-                                className={
-                                    "bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50"
-                                }
-                            />
-
-                            <p
-                                className={
-                                    "cursor-pointer hover:text-white transition-colors"
-                                }
-                                onClick={() => navigate("/modules/attendance")}
-                            >
-                                Attendance Module
-                            </p>
-
-                            <div
-                                className={
-                                    "bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50"
-                                }
-                            />
-                            <p>Report an Issue</p>
-                            <div
-                                className={
-                                    "bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50"
-                                }
-                            />
-                            <p
-                                onClick={() => {
-                                    theme.toggleColorMode();
-                                    if (theme.colorMode) {
-                                        enqueueSnackbar(
-                                            "Light mode is experimental.",
-                                            {
-                                                variant: "warning",
-                                            },
-                                        );
-                                    }
-                                }}
-                                className={
-                                    "cursor-pointer hover:text-white transition-colors"
-                                }
-                            >
-                                Light Mode Beta
-                            </p>
-                            <div
-                                className={
-                                    "bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50"
-                                }
-                            />
-                            <p
-                                className={
-                                    "cursor-pointer text-red-500 hover:text-red-600 transition-colors"
-                                }
-                                onClick={signOut}
-                            >
-                                Sign Out
-                            </p>
-                        </div>
-                    )}
+                            Light Mode Beta
+                        </p>
+                        <div
+                            className={
+                                "bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50"
+                            }
+                        />
+                        <p
+                            className={
+                                "cursor-pointer text-red-500 hover:text-red-600 transition-colors"
+                            }
+                            onClick={signOut}
+                        >
+                            Sign Out
+                        </p>
+                    </div>
                 </div>
             </Box>
 
-            <Box
-                onMouseLeave={() => setIsHovered(false)}
-            >
+            <Box onMouseLeave={() => setIsHovered(false)}>
                 <Box
                     sx={{
                         position: "absolute",
