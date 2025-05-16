@@ -1,25 +1,18 @@
 import {
     Typography,
     Box,
-    Drawer,
-    List,
-    ListItemText,
     Divider,
-    ListSubheader,
-    ListItemButton,
-    ListItemIcon,
-    IconButton,
     Avatar,
     Stack,
     useMediaQuery,
 } from "@mui/material";
-import {
-    Brightness4Rounded,
-    Brightness7Rounded,
-    Menu,
-    PersonSearch,
-} from "@mui/icons-material";
-import { CSSProperties, useContext, useEffect, useState, useRef } from "react";
+import React, {
+    CSSProperties,
+    useContext,
+    useEffect,
+    useState,
+    useRef,
+} from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../../supabaseClient";
 import UserContext from "../../context/UserContext";
@@ -27,17 +20,15 @@ import { useSnackbar } from "notistack";
 import { ThemeContext } from "../../context/ThemeProvider";
 import { PUBLIC_URL } from "../../../constants";
 
-/* Navbar Button Icons */
-import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
-import SettingsIcon from "@mui/icons-material/Settings";
-import ArchiveIcon from "@mui/icons-material/Archive";
-import AsyncButton from "../AsyncButton";
-
 const navStyles: CSSProperties = {
     width: "100%",
     height: "50px",
+    top: "5px",
     display: "flex",
-    flexWrap: "wrap",
+    justifyContent: "space-between",
+    alignItems: "center",
+    paddingRight: 5.5,
+    paddingLeft: 5.5,
     position: "relative",
     zIndex: 50,
 };
@@ -45,6 +36,8 @@ const navStyles: CSSProperties = {
 const titleStyle: CSSProperties = {
     color: "inherit",
     fontSize: "25px",
+    bottom: "2px",
+    position: "relative",
     height: "100%",
     display: "flex",
     alignItems: "center",
@@ -202,24 +195,12 @@ const NavBar = () => {
     return (
         <>
             <div
-                className={`bg-black/40 z-50 fixed left-0 w-full h-full backdrop-blur-3xl transition-opacity duration-300 ${
+                className={`bg-black/40 z-40 fixed left-0 w-full h-full backdrop-blur-3xl transition-opacity duration-300 ${
                     isHovered ? "opacity-100" : "opacity-0 pointer-events-none"
                 }`}
             ></div>
 
             <Box sx={navStyles}>
-                <AsyncButton
-                    onClick={() => setDrawerOpen(!drawerOpen)}
-                    style={{
-                        maxWidth: "50px",
-                        maxHeight: "50px",
-                        minWidth: "50px",
-                        minHeight: "50px",
-                    }}
-                    sx={{ borderRadius: 50 }}
-                >
-                    <Menu />
-                </AsyncButton>
                 <Box sx={titleStyle}>
                     <span
                         style={{ ...linkStyle, cursor: "pointer" }}
@@ -238,39 +219,112 @@ const NavBar = () => {
                         />
                     </span>
                 </Box>
-                <Box
-                    sx={{
-                        width: "100px",
-                        height: "100%",
-                        position: "absolute",
-                        right: 0,
-                        display: "flex",
-                        justifyContent: "space-around",
-                        alignItems: "center",
-                    }}
-                >
-                    <IconButton
-                        onClick={() => {
-                            theme.toggleColorMode();
-                            if (theme.colorMode) {
-                                enqueueSnackbar("Light mode is experimental.", {
-                                    variant: "warning",
-                                });
-                            }
-                        }}
-                        color="inherit"
+
+                <div className={"relative flex flex-row justify-end"}>
+                    <div
+                        className={
+                            "flex flex-row items-center justify-center gap-2 bg-neutral-800 rounded-lg pl-1.5 pr-2.5 h-10 shadow-[inset_0px_0px_2px_0px_rgba(255,255,255,0.3)] cursor-pointer"
+                        }
+                        onClick={() => setDrawerOpen(!drawerOpen)}
                     >
-                        {theme.colorMode ? (
-                            <Brightness4Rounded />
-                        ) : (
-                            <Brightness7Rounded />
-                        )}
-                    </IconButton>
-                </Box>
+                        <Avatar
+                            style={{
+                                width: "30px",
+                                height: "30px",
+                                borderRadius: "5px",
+                            }}
+                            src={user.picture}
+                        />
+                        <p
+                            className={"top-0.5 relative pr-2"}
+                        >{`${user.first_name} ${user.last_name}`}</p>
+                        <i className="bx bx-chevron-down bx-sm"></i>
+                    </div>
+                    {drawerOpen && (
+                        <div
+                            className={
+                                "flex flex-col gap-2 p-5 absolute w-72 top-14 rounded-lg z-50 bg-neutral-800/80 backdrop-blur-xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)]"
+                            }
+                        >
+                            <p
+                                className={
+                                    "cursor-pointer hover:text-white transition-colors"
+                                }
+                                onClick={() => navigate("/profile")}
+                            >
+                                My Profile
+                            </p>
+                            <p
+                                className={
+                                    "cursor-pointer hover:text-white transition-colors"
+                                }
+                                onClick={() => navigate("/settings")}
+                            >
+                                Communication Options
+                            </p>
+                            <div
+                                className={
+                                    "bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50"
+                                }
+                            />
+
+                            <p
+                                className={
+                                    "cursor-pointer hover:text-white transition-colors"
+                                }
+                                onClick={() => navigate("/modules/attendance")}
+                            >
+                                Attendance Module
+                            </p>
+
+                            <div
+                                className={
+                                    "bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50"
+                                }
+                            />
+                            <p>Report an Issue</p>
+                            <div
+                                className={
+                                    "bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50"
+                                }
+                            />
+                            <p
+                                onClick={() => {
+                                    theme.toggleColorMode();
+                                    if (theme.colorMode) {
+                                        enqueueSnackbar(
+                                            "Light mode is experimental.",
+                                            {
+                                                variant: "warning",
+                                            },
+                                        );
+                                    }
+                                }}
+                                className={
+                                    "cursor-pointer hover:text-white transition-colors"
+                                }
+                            >
+                                Light Mode Beta
+                            </p>
+                            <div
+                                className={
+                                    "bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50"
+                                }
+                            />
+                            <p
+                                className={
+                                    "cursor-pointer text-red-500 hover:text-red-600 transition-colors"
+                                }
+                                onClick={signOut}
+                            >
+                                Sign Out
+                            </p>
+                        </div>
+                    )}
+                </div>
             </Box>
 
             <Box
-                onMouseEnter={() => setIsHovered(true)}
                 onMouseLeave={() => setIsHovered(false)}
             >
                 <Box
@@ -293,7 +347,7 @@ const NavBar = () => {
                     direction="row"
                     spacing={3.5}
                     sx={{
-                        zIndex: 50,
+                        zIndex: 40,
                         fontSize: "20px",
                         fontVariationSettings: "'wght' 700",
                         position: "relative",
@@ -353,9 +407,7 @@ const NavBar = () => {
                 </Stack>
             </Box>
 
-            <Divider
-                style={{ position: "relative", zIndex: 1000, bottom: 1 }}
-            />
+            <Divider style={{ position: "relative", zIndex: 45, bottom: 1 }} />
 
             {isOnStuyActivitiesPage && (
                 <Stack
@@ -402,7 +454,12 @@ const NavBar = () => {
 
                     <Typography
                         className="transition-opacity cursor-pointer"
-                        onClick={() => window.open("https://docs.google.com/spreadsheets/d/1TyFnEPhY3gM-yRJKYDJkQSfHC6OsvC5ftkkoahjVcCU/edit?gid=485693778#gid=485693778", "_blank")}
+                        onClick={() =>
+                            window.open(
+                                "https://docs.google.com/spreadsheets/d/1TyFnEPhY3gM-yRJKYDJkQSfHC6OsvC5ftkkoahjVcCU/edit?gid=485693778#gid=485693778",
+                                "_blank",
+                            )
+                        }
                         sx={{
                             fontVariationSettings: "'wght' 700",
                             opacity: 0.5,
@@ -428,118 +485,6 @@ const NavBar = () => {
                     </div>
                 </Stack>
             )}
-            <Drawer
-                anchor="left"
-                open={drawerOpen}
-                onClose={() => setDrawerOpen(false)}
-            >
-                <Box
-                    sx={{
-                        width: "260px",
-                        height: "100%",
-                        backgroundColor: "inherit",
-                        overflowY: "auto",
-                    }}
-                >
-                    <Box sx={{ width: "100%", height: "250px" }}>
-                        <Box
-                            sx={{
-                                width: "100%",
-                                height: "110px",
-                                padding: "20px",
-                            }}
-                        >
-                            <Avatar
-                                alt={`${user.first_name} ${user.last_name}`}
-                                style={{
-                                    width: "110px",
-                                    height: "110px",
-                                    borderRadius: "100%",
-                                    boxShadow:
-                                        "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-                                    fontSize: "50px",
-                                }}
-                                src={user.picture}
-                            >
-                                {user.first_name?.charAt(0).toUpperCase()}
-                            </Avatar>
-                        </Box>
-                        <Box
-                            sx={{
-                                width: "100%",
-                                height: "140px",
-                                display: "flex",
-                                flexWrap: "wrap",
-                                padding: "20px",
-                                alignContent: "flex-end",
-                            }}
-                        >
-                            {user.signed_in ? (
-                                <>
-                                    <Typography width="100%">
-                                        {user.email || "No Email"}
-                                    </Typography>
-                                    {fourDigitId && (
-                                        <Typography width="100%">
-                                            ID:{" "}
-                                            {String(fourDigitId).padStart(
-                                                4,
-                                                "0",
-                                            )}
-                                        </Typography>
-                                    )}
-                                    <Typography width="100%">
-                                        Grade: {user.grade || "No Grade"}
-                                    </Typography>
-                                </>
-                            ) : (
-                                <Typography width="100%">Signed Out</Typography>
-                            )}
-                        </Box>
-                    </Box>
-
-                    <Divider />
-                    <List sx={{ width: "100%" }}>
-                        {user.signed_in && (
-                            <ListItemButton onClick={signOut}>
-                                <ListItemIcon>
-                                    <PowerSettingsNewIcon />
-                                </ListItemIcon>
-                                <ListItemText>Sign Out</ListItemText>
-                            </ListItemButton>
-                        )}
-                        {user.signed_in && (
-                            <ListItemButton
-                                onClick={() => navigate("/settings")}
-                            >
-                                <ListItemIcon>
-                                    <SettingsIcon />
-                                </ListItemIcon>
-                                <ListItemText>Settings</ListItemText>
-                            </ListItemButton>
-                        )}
-                    </List>
-                    <Divider />
-
-                    {user.signed_in && (
-                        <List
-                            sx={{ width: "100%" }}
-                            subheader={<ListSubheader>Modules</ListSubheader>}
-                        >
-                            <ListItemButton
-                                onClick={() => navigate("/modules/attendance")}
-                            >
-                                <ListItemIcon>
-                                    <PersonSearch />
-                                </ListItemIcon>
-                                <ListItemText>Attendance</ListItemText>
-                            </ListItemButton>
-                        </List>
-                    )}
-
-                    <Divider />
-                </Box>
-            </Drawer>
         </>
     );
 };
