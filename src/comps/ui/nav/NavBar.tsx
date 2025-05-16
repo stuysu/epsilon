@@ -30,8 +30,6 @@ import { PUBLIC_URL } from "../../../constants";
 /* Navbar Button Icons */
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import SettingsIcon from "@mui/icons-material/Settings";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import GavelIcon from "@mui/icons-material/Gavel";
 import ArchiveIcon from "@mui/icons-material/Archive";
 import AsyncButton from "../AsyncButton";
 
@@ -128,14 +126,12 @@ const NavBar = () => {
 
     const signOut = async () => {
         const { error } = await supabase.auth.signOut();
-
         if (error) {
             return enqueueSnackbar(
                 "Error signing out. Contact it@stuysu.org for support.",
                 { variant: "error" },
             );
         }
-
         setDrawerOpen(false);
         navigate("/");
     };
@@ -143,6 +139,7 @@ const NavBar = () => {
     useEffect(() => {
         setDrawerOpen(false);
     }, [location]);
+
     useEffect(() => {
         const fetchID = async () => {
             const { data, error } = await supabase
@@ -155,17 +152,40 @@ const NavBar = () => {
         fetchID();
     }, [user]);
 
-    const isPageOptnActive = (item: (typeof topNavItems)[number]) =>
-        !item.external && location.pathname === item.path;
+    const getActivePaths = (item: (typeof topNavItems)[0]) => {
+        if (!item.external && item.path === "/catalog") {
+            return [
+                "/catalog",
+                "/create",
+                "/rules",
+                "/admin/approve-edit",
+                "/admin/approve-pending",
+                "/admin/strikes",
+                "/admin/send-message",
+                "/admin/announcements",
+                "/admin/rooms",
+            ];
+        }
+        return [item.path];
+    };
+
+    const isPageOptnActive = (item: (typeof topNavItems)[0]) =>
+        getActivePaths(item).includes(location.pathname);
+
+    const isOnStuyActivitiesPage =
+        ["/catalog", "/create", "/rules"].some((p) =>
+            location.pathname.startsWith(p),
+        ) || location.pathname.startsWith("/admin");
 
     useEffect(() => {
         const currentIndex = topNavItems.findIndex(
-            (item) => item.path === location.pathname && !item.external,
+            (item) =>
+                !item.external &&
+                getActivePaths(item).includes(location.pathname),
         );
 
         if (currentIndex !== -1 && itemRefs.current[currentIndex]) {
             const el = itemRefs.current[currentIndex];
-            if (!el) return;
             setOptionUnderline({
                 left: el.offsetLeft,
                 width: el.offsetWidth,
@@ -176,7 +196,7 @@ const NavBar = () => {
     }, [location.pathname, showBigNav]);
 
     if (!user?.signed_in && location.pathname === "/") {
-        return <Box height={20}/>;
+        return <Box height={20} />;
     }
 
     return (
@@ -285,7 +305,7 @@ const NavBar = () => {
                 >
                     {topNavItems.map((item, index) => (
                         <div
-                            key={item.path}
+                            key={item.path + index}
                             ref={(el) => {
                                 if (el) itemRefs.current[index] = el;
                             }}
@@ -335,30 +355,66 @@ const NavBar = () => {
 
             <Divider
                 style={{ position: "relative", zIndex: 1000, bottom: 1 }}
-            ></Divider>
+            />
 
-            <Stack marginLeft={7} marginTop={2} direction="row" spacing={3} zIndex={1002} position="relative">
-
-                <Typography
-                    onClick={() => navigate('/catalog')}
-                    sx={{
-                        fontVariationSettings: "'wght' 700",
-                        cursor: 'pointer'
-                    }}
-                    color="rgb(209 213 219 / var(--tw-text-opacity, 1))"
+            {isOnStuyActivitiesPage && (
+                <Stack
+                    marginLeft={7}
+                    marginTop={2}
+                    direction="row"
+                    spacing={3}
+                    zIndex={1002}
+                    position="relative"
                 >
-                    Back to Catalog
-                </Typography>
-                <Typography sx={{ fontVariationSettings: "'wght' 700" }}>Charter</Typography>
-                <Typography sx={{ fontVariationSettings: "'wght' 700" }}>Regulations</Typography>
-                <div
-                    onClick={() => navigate('/admin')}
-                    className="inline-flex gap-1 text-yellow-500 cursor-pointer">
-                    <i className="bx bx-shield"></i>
-                    <Typography sx={{ fontVariationSettings: "'wght' 700", color: "rgb(234 179 8 / var(--tw-text-opacity, 1))"}}>Admin Panel</Typography>
-                </div>
-            </Stack>
-
+                    <Typography
+                        className="transition-opacity cursor-pointer"
+                        onClick={() => navigate("/catalog")}
+                        sx={{
+                            fontVariationSettings: "'wght' 700",
+                            opacity: location.pathname === "/catalog" ? 1 : 0.5,
+                        }}
+                        color="rgb(209 213 219 / var(--tw-text-opacity, 1))"
+                    >
+                        Catalog
+                    </Typography>
+                    <Typography
+                        className="transition-opacity cursor-pointer"
+                        onClick={() => navigate("/create")}
+                        sx={{
+                            fontVariationSettings: "'wght' 700",
+                            opacity: location.pathname === "/create" ? 1 : 0.5,
+                        }}
+                        color="rgb(209 213 219 / var(--tw-text-opacity, 1))"
+                    >
+                        Charter
+                    </Typography>
+                    <Typography
+                        className="transition-opacity cursor-pointer"
+                        onClick={() => navigate("/rules")}
+                        sx={{
+                            fontVariationSettings: "'wght' 700",
+                            opacity: location.pathname === "/rules" ? 1 : 0.5,
+                        }}
+                        color="rgb(209 213 219 / var(--tw-text-opacity, 1))"
+                    >
+                        Regulations
+                    </Typography>
+                    <div
+                        onClick={() => navigate("/admin")}
+                        className="inline-flex gap-1 text-yellow-500 cursor-pointer"
+                    >
+                        <i className="bx bx-shield"></i>
+                        <Typography
+                            sx={{
+                                fontVariationSettings: "'wght' 700",
+                                color: "rgb(234 179 8 / var(--tw-text-opacity, 1))",
+                            }}
+                        >
+                            Admin Panel
+                        </Typography>
+                    </div>
+                </Stack>
+            )}
             <Drawer
                 anchor="left"
                 open={drawerOpen}
@@ -469,34 +525,10 @@ const NavBar = () => {
                     )}
 
                     <Divider />
-
-                    {user.signed_in && (
-                        <List
-                            sx={{ width: "100%" }}
-                            subheader={
-                                <ListSubheader>StuyActivities</ListSubheader>
-                            }
-                        >
-                            <ListItemButton onClick={() => navigate("/create")}>
-                                <ListItemIcon>
-                                    <AddCircleIcon />
-                                </ListItemIcon>
-                                <ListItemText>Create Activity</ListItemText>
-                            </ListItemButton>
-                        </List>
-                    )}
-
-                    <Divider />
                     <List
                         sx={{ width: "100%" }}
                         subheader={<ListSubheader>Info</ListSubheader>}
                     >
-                        <ListItemButton onClick={() => navigate("/rules")}>
-                            <ListItemIcon>
-                                <GavelIcon />
-                            </ListItemIcon>
-                            <ListItemText>Rules</ListItemText>
-                        </ListItemButton>
                         <ListItemButton
                             component="a"
                             href="https://docs.google.com/spreadsheets/d/1TyFnEPhY3gM-yRJKYDJkQSfHC6OsvC5ftkkoahjVcCU"

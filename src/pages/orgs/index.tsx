@@ -148,7 +148,7 @@ const OrgRouter = () => {
                     </Box>
                     <Box
                         sx={{
-                            width: "100%",
+                            marginLeft: "56px",
                             display: "flex",
                             flexWrap: isMobile ? "wrap" : "nowrap",
                         }}

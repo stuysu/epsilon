@@ -66,12 +66,11 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     return (
         <Box
             sx={{
-                minWidth: "200px",
-                width: isMobile ? "100%" : "",
-                padding: isMobile ? "0px" : "20px",
+                minWidth: "150px",
+                marginTop: "20px",
             }}
         >
-            <Typography>About this Activity</Typography>
+            <Typography>About Me</Typography>
             <List sx={{ width: "100%" }}>
                 {navLinks.map((linkData, i) => (
                     <Box
@@ -81,7 +80,6 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                             display: "flex",
                             alignItems: "center",
                             cursor: "pointer",
-                            padding: "0 10px",
                         }}
                         onClick={() => {
                             navigate(linkData.to);
