@@ -68,7 +68,7 @@ const UnauthenticatedLanding = () => {
 
             <img
                 src="https://lh4.googleusercontent.com/ke5AkzreYMlnGXw_KMKOdRjM9LQM7h2M-K5QL8JEeuXe7XMWCI2vUYqhnsgAoL-B4SfDImggddAiPIY18sHCxXY=w16383"
-                alt="Centered Image"
+                alt="Stuyvesant Student Union"
                 onClick={() =>
                     window.open(
                         "https://stuysu.org",
