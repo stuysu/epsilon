@@ -1,5 +1,5 @@
 import AsyncButton from "../../../comps/ui/AsyncButton";
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { supabase } from "../../../supabaseClient";
 import { enqueueSnackbar } from "notistack";
 import {
@@ -13,6 +13,7 @@ import {
 import UserContext from "../../../comps/context/UserContext";
 import ValentineDisplay from "./comps/ValentineDisplay";
 import { useNavigate } from "react-router-dom";
+import Loading from "../../../comps/ui/Loading";
 
 // from https://catppuccin.com/palette
 const colors = [
@@ -30,6 +31,7 @@ const colors = [
 const Create = () => {
     const user = useContext(UserContext);
     const [loading, setLoading] = useState(false);
+    const [deadline, setDeadline] = useState<Date | undefined>(undefined);
     const [receiver, setReceiver] = useState(0);
     const [receiverEmail, setReceiverEmail] = useState("");
     const [lastChecked, setLastChecked] = useState("");
@@ -37,6 +39,31 @@ const Create = () => {
     const [background, setBackground] = useState("#ffffff");
     const [showSender, setShowSender] = useState(false);
     const navigate = useNavigate();
+    useEffect(() => {
+        const f = async () => {
+            const { data, error } = await supabase
+                .from("settings")
+                .select("setting_value")
+                .eq("name", "valentines_deadline")
+                .single();
+            if (error || !data) {
+                enqueueSnackbar("Failed to fetch Valentines date.", {
+                    variant: "error",
+                });
+                return;
+            }
+            const deadline = new Date(data.setting_value * 1000);
+            if (deadline < new Date())
+                enqueueSnackbar("Valentines submissions are past due.", {
+                    variant: "error",
+                });
+            setDeadline(new Date(data.setting_value * 1000));
+        };
+        f();
+    }, []);
+    if (!deadline) {
+        return <Loading />;
+    }
 
     return (
         <>
@@ -193,7 +220,13 @@ const Create = () => {
                     };
                     await f();
                 }}
-                disabled={loading || !receiver || !message}
+                disabled={
+                    loading ||
+                    !receiver ||
+                    !message ||
+                    !deadline ||
+                    deadline < new Date()
+                }
             >
                 Send to {lastChecked || "Unknown"}
             </AsyncButton>
@@ -202,43 +235,3 @@ const Create = () => {
 };
 
 export default Create;
-
-/*            <AsyncButton
-                onClick={async () => {
-                    const { data: settings, error: settingError } =
-                        await supabase
-                            .from("settings")
-                            .select("setting_value")
-                            .eq("name", "valentines_deadline")
-                            .maybeSingle();
-                    if (settingError || !settings) {
-                        enqueueSnackbar("Failed to fetch Valentines times!", {
-                            variant: "error",
-                        });
-                        return;
-                    }
-                    if (new Date() < new Date(settings.setting_value * 1000)) {
-                        enqueueSnackbar("Valentines are not released yet.");
-                        return;
-                    }
-
-                    const { data, error } = await supabase
-                        .from("valentinesmessages")
-                        .select(
-                            "id,sender,receiver,show_sender,message,background",
-                        )
-                        .eq("receiver", user.id)
-                        .not("verified_by", "is", null)
-                        .not("verified_at", "is", null)
-                        .returns<Valentine[]>();
-                    if (error) {
-                        enqueueSnackbar("Failed to load Valentines", {
-                            variant: "error",
-                        });
-                        return;
-                    }
-                    setValentines(data);
-                }}
-            >
-                fetch all RX'd valentines (should only work after the set date)
-            </AsyncButton>*/

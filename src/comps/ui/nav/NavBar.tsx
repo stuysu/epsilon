@@ -17,6 +17,7 @@ import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../../supabaseClient";
 import UserContext from "../../context/UserContext";
 import { useSnackbar } from "notistack";
+import OrgBar from "../../pages/home/ui/OrgBar";
 import { ThemeContext } from "../../context/ThemeProvider";
 import { PUBLIC_URL } from "../../../constants";
 
@@ -96,6 +97,42 @@ const topNavItems = [
     },
 ];
 
+const VALENTINES = false;
+
+// TODO: separate TabLink to independent file in nav folder (good first issue: reformat the other entries in the navigation tabs to use this component)
+interface TabLinkProps {
+    name: string;
+    iconClass: string;
+    onClick: () => void;
+    setIsHovered: (hovered: boolean) => void;
+}
+
+const TabLink: FC<TabLinkProps> = ({
+    name,
+    iconClass,
+    onClick,
+    setIsHovered,
+}) => {
+    return (
+        <>
+            <i className={iconClass}></i>
+            <span
+                className={"transition-colors hover:text-gray-300"}
+                style={{
+                    marginLeft: "3px",
+                    position: "relative",
+                    top: "2px",
+                    cursor: "pointer",
+                }}
+                onMouseEnter={() => setIsHovered(true)}
+                onClick={onClick}
+            >
+                {name}
+            </span>
+        </>
+    );
+};
+
 const NavBar = () => {
     const showBigNav = useMediaQuery("(min-width:950px)");
     const user = useContext(UserContext);
@@ -103,7 +140,7 @@ const NavBar = () => {
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [fourDigitId, setFourDigitId] = useState<Number | null>(null);
     const [isHovered, setIsHovered] = useState(false);
-    const location = useLocation();
+    const location = useLocation(); // disable drawer when location changes
     const navigate = useNavigate();
 
     const theme = useContext(ThemeContext);

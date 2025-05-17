@@ -23,7 +23,12 @@ import ReportProblemIcon from "@mui/icons-material/ReportProblem";
 import EmailIcon from "@mui/icons-material/Email";
 import CampaignIcon from "@mui/icons-material/Campaign";
 import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
+import AddIcon from "@mui/icons-material/Add";
+import AddUser from "./AddUser";
 import FavoriteIcon from "@mui/icons-material/Favorite";
+import ApprovedValentines from "./ApprovedValentines";
+
+const VALENTINES = false;
 
 export type Link = {
     to: string;
@@ -33,7 +38,7 @@ export type Link = {
 };
 
 export const getLinks = (user: UserContextType) => {
-    let navLinks = [
+    let navLinks: Link[] = [
         {
             to: "/admin/approve-pending",
             label: "Pending Orgs",
@@ -65,13 +70,30 @@ export const getLinks = (user: UserContextType) => {
             icon: <MeetingRoomIcon />,
         },
         {
-            to: "/admin/valentines",
-            label: "Valentines",
-            icon: <FavoriteIcon />,
-            permission: "VALENTINES",
+            to: "/admin/add-user",
+            label: "Add User",
+            icon: <AddIcon />,
         },
     ];
-    if (user.permission != "ADMIN") {
+    if (VALENTINES) {
+        navLinks.push(
+            ...[
+                {
+                    to: "/admin/valentines",
+                    label: "Valentines",
+                    icon: <FavoriteIcon />,
+                    permission: "VALENTINES",
+                },
+                {
+                    to: "/admin/approved-valentines",
+                    label: "Approved Valentines",
+                    icon: <FavoriteIcon />,
+                    permission: "VALENTINES",
+                },
+            ],
+        );
+    }
+    if (user.permission !== "ADMIN") {
         navLinks = navLinks.filter(
             (link) => link.permission === user.permission,
         );
@@ -82,8 +104,9 @@ export const getLinks = (user: UserContextType) => {
 const AdminRouter = () => {
     const user = useContext(UserContext);
     const links = getLinks(user);
+    console.log(links, "neow");
 
-    if (!user.permission) {
+    if (!user.permission || !links.length) {
         return (
             <Box
                 sx={{
@@ -101,7 +124,7 @@ const AdminRouter = () => {
                     Restricted Access
                 </Typography>
                 <Typography variant="body1">
-                    You cannot access the administrator panel. If you think this is a mistake, please contact us.
+                    {`You do not have access to this page${user.permission ? " at this time" : ""}.`}
                 </Typography>
             </Box>
         );
@@ -109,7 +132,7 @@ const AdminRouter = () => {
 
     return (
         <div>
-            <AdminNav />
+            <AdminNav links={links} />
             <Routes>
                 <Route path="/" Component={AdminRedirect} />
                 <Route path="/approve-pending" Component={ApprovePending} />
@@ -118,7 +141,16 @@ const AdminRouter = () => {
                 <Route path="/send-message" Component={SendMessage} />
                 <Route path="/announcements" Component={Announcements} />
                 <Route path="/rooms" Component={Rooms} />
-                <Route path="/valentines" Component={Valentines} />
+                <Route path="/add-user" Component={AddUser} />
+                {VALENTINES && (
+                    <>
+                        <Route path="/valentines" Component={Valentines} />
+                        <Route
+                            path="/approved-valentines"
+                            Component={ApprovedValentines}
+                        />
+                    </>
+                )}
                 <Route path="/*" Component={ApprovePending} />
             </Routes>
         </div>

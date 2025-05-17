@@ -1,4 +1,4 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import OrgContext from "../../comps/context/OrgContext";
 import {
     Avatar,
@@ -8,6 +8,12 @@ import {
     Stack,
     Chip,
     Divider,
+    Link,
+    Dialog,
+    DialogTitle,
+    DialogContent,
+    DialogContentText,
+    DialogActions,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { supabase } from "../../supabaseClient";
@@ -26,6 +32,9 @@ const Overview = () => {
     const isMeetingMobile = useMediaQuery("(max-width: 1450px)");
 
     const [attemptingInteract, setAttemptingInteract] = useState(false);
+
+    const [leaveConfirmation, setLeaveConfirmation] = useState(false);
+    const [userLeave, setUserLeave] = useState(false);
 
     const isInOrg = !!organization.memberships?.find(
         (m) => m.users?.id === user.id,
@@ -83,34 +92,52 @@ const Overview = () => {
                 interactString === "LEAVE" ||
                 interactString === "CANCEL JOIN"
             ) {
-                const membership = organization.memberships?.find(
-                    (m) => m.users?.id === user.id,
-                );
-                const { error } = await supabase
-                    .from("memberships")
-                    .delete()
-                    .eq("id", membership?.id);
-
-                if (error) {
-                    enqueueSnackbar("Unable to leave organization.", {
-                        variant: "error",
-                    });
-                    return;
-                }
-                if (organization.setOrg) {
-                    organization.setOrg({
-                        ...organization,
-                        memberships: organization.memberships.filter(
-                            (m) => m.users?.id !== user.id,
-                        ),
-                    });
-                }
-                enqueueSnackbar("Left organization!", { variant: "success" });
+                setLeaveConfirmation(true);
             }
         } finally {
             setAttemptingInteract(false);
         }
     };
+
+    useEffect(() => {
+        const leaveOrg = async () => {
+            const membership = organization.memberships?.find(
+                (m) => m.users?.id === user.id,
+            );
+            const { error } = await supabase
+                .from("memberships")
+                .delete()
+                .eq("id", membership?.id);
+
+            if (error) {
+                enqueueSnackbar("Unable to leave organization.", {
+                    variant: "error",
+                });
+                return;
+            }
+            if (organization.setOrg) {
+                organization.setOrg({
+                    ...organization,
+                    memberships: organization.memberships.filter(
+                        (m) => m.users?.id !== user.id,
+                    ),
+                });
+            }
+            enqueueSnackbar("Left organization!", { variant: "success" });
+        };
+
+        if (userLeave) {
+            setAttemptingInteract(true);
+            leaveOrg().finally(() => {
+                setUserLeave(false);
+                setAttemptingInteract(false);
+            });
+        }
+    }, [userLeave]);
+
+    // const handleClickOpen = () => {
+    //     setAttemptingInteract(true);
+    // }
 
     if (organization.id === -1) {
         return (
@@ -119,6 +146,16 @@ const Overview = () => {
             </Box>
         );
     }
+
+    const handleUserLeave = () => {
+        setLeaveConfirmation(false);
+        setUserLeave(true);
+    };
+
+    const handleUserStay = () => {
+        setLeaveConfirmation(false);
+        setUserLeave(false);
+    };
 
     return (
         <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
@@ -204,9 +241,51 @@ const Overview = () => {
                             variant="contained"
                             onClick={handleInteract}
                             disabled={disabled || attemptingInteract}
+                            sx={
+                                interactString === "LEAVE" ||
+                                interactString === "CANCEL JOIN"
+                                    ? {
+                                          backgroundColor:
+                                              "rgba(248, 19, 19, 0.88)",
+                                          color: "white",
+                                      }
+                                    : undefined
+                            }
                         >
                             {interactString}
                         </AsyncButton>
+                        <Dialog
+                            open={leaveConfirmation}
+                            onClose={handleUserStay}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                        >
+                            <DialogTitle id="alert-dialog-title">
+                                {
+                                    "Are you sure you want to leave/cancel your join to this organization?"
+                                }
+                            </DialogTitle>
+                            <DialogContent>
+                                <DialogContentText id="alert-dialog-description">
+                                    Once you confirm your leave, you will have
+                                    to request to join again.
+                                </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                                <AsyncButton onClick={handleUserStay}>
+                                    Return
+                                </AsyncButton>
+                                <AsyncButton
+                                    sx={{
+                                        backgroundColor:
+                                            "rgba(248, 19, 19, 0.9)",
+                                    }}
+                                    onClick={handleUserLeave}
+                                >
+                                    Leave
+                                </AsyncButton>
+                            </DialogActions>
+                        </Dialog>
                     </Box>
                 </Stack>
             </Stack>

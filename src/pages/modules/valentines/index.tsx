@@ -15,6 +15,7 @@ const ValentinesRouter = () => {
                     display: "flex",
                     alignItems: "center",
                     flexDirection: "column",
+                    paddingBottom: "10vh",
                 }}
             >
                 <Typography variant="h2">Valentines</Typography>

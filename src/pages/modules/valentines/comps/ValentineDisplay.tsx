@@ -23,9 +23,24 @@ const ValentineCard = ({
     refresh,
     toggle,
 }: ValentineDisplayInput) => {
+    const user = useContext(UserContext);
+    const isSender = valentine.id > 0 && user.id === valentine.sender;
     const [sender, setSender] = useState<string>("");
+    const [receiver, setReceiver] = useState<string>("");
     useEffect(() => {
         const f = async () => {
+            if (isSender) {
+                const { data, error } = await supabase
+                    .from("users")
+                    .select("email")
+                    .eq("id", valentine.receiver)
+                    .single();
+                if (error || !data.email)
+                    enqueueSnackbar("Failed to fetch recipient email.", {
+                        variant: "error",
+                    });
+                else setReceiver(data.email);
+            }
             if (valentine.show_sender) {
                 const { data, error } = await supabase
                     .from("users")
@@ -45,7 +60,7 @@ const ValentineCard = ({
             }
         };
         f();
-    }, [valentine.show_sender, valentine.sender]);
+    }, [isSender, valentine.show_sender, valentine.sender, valentine.receiver]);
 
     return (
         <Box
@@ -55,6 +70,9 @@ const ValentineCard = ({
                 flexDirection: "column",
             }}
         >
+            {receiver && (
+                <p style={{ paddingBottom: ".5rem" }}> To {receiver} </p>
+            )}
             {/* backup background */}
             <Box sx={{ backgroundColor: "white" }}>
                 <Box
@@ -183,7 +201,8 @@ const Buttons = ({
                 // paddingRight: mini && admin ? "1rem" : 0,
                 // paddingBottom: mini ? 0 : "2rem",
                 width: mini ? undefined : isSender ? "42rem" : "35rem",
-                justifyContent: admin || isSender ? "space-between" : "center",
+                justifyContent:
+                    refresh && (admin || isSender) ? "space-between" : "center",
             }}
         >
             {toggle && (
@@ -191,7 +210,7 @@ const Buttons = ({
                     {mini ? "Open" : "Close"}
                 </AsyncButton>
             )}
-            {isSender && (
+            {refresh && isSender && (
                 <>
                     {mini && <Box sx={{ marginLeft: ".75rem" }} />}
                     <AsyncButton
@@ -216,7 +235,7 @@ const Buttons = ({
                     </AsyncButton>
                 </>
             )}
-            {admin && (
+            {refresh && admin && (
                 <>
                     {mini ? (
                         <Box sx={{ marginLeft: ".75rem" }} />
