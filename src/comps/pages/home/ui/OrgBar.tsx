@@ -33,15 +33,15 @@ const OrgBar = ({ name, url, role, role_name, picture }: Props) => {
                         alt={name}
                         style={{
                             height: "200px",
-                            borderRadius: "10%",
+                            borderRadius: "15px",
                             objectFit: "cover",
                         }}
                     />
                 ) : (
                     <div
                         style={{
-                            width: "50px",
-                            height: "50px",
+                            width: "200px",
+                            height: "200px",
                             borderRadius: "50%",
                             backgroundColor: "#ccc",
                             display: "flex",
@@ -56,8 +56,8 @@ const OrgBar = ({ name, url, role, role_name, picture }: Props) => {
                 )}
             </div>
             <div style={{padding: 10}}>
-                <Typography variant="h4">{name}</Typography>
-                <Typography>
+                <Typography variant="h4" height={45}>{name}</Typography>
+                <Typography sx={{ fontVariationSettings: "'wght' 700" }}>
                     {role_name || formatCapitals(role || "Member")}
                 </Typography>
             </div>

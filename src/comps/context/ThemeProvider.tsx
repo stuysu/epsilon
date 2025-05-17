@@ -85,7 +85,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                     },
                     h4: {
                         lineHeight: "1.3rem",
-                        fontSize: "1.3rem",
+                        fontSize: "1.2rem",
                         fontVariationSettings: `'wght' 600`,
                         margin: "0.3rem 0",
                         color: prefersDarkMode ? "#E8E8E8CC" : "#4B4B4B",

@@ -251,7 +251,7 @@ const NavBar = () => {
                             <div className="flex flex-col gap-3">
                                 <p
                                     className={
-                                        "cursor-pointer hover:text-white transition-colors"
+                                        "cursor-pointer hover:text-neutral-300 transition-colors"
                                     }
                                     onClick={() => navigate("/")}
                                 >
@@ -261,16 +261,18 @@ const NavBar = () => {
                         ) : (
                             <>
                                 <p
+                                    style={{fontVariationSettings: "'wght' 700"}}
                                     className={
-                                        "cursor-pointer hover:text-white transition-colors"
+                                        "cursor-pointer hover:text-neutral-300 transition-colors"
                                     }
                                     onClick={() => navigate("/profile")}
                                 >
                                     My Profile
                                 </p>
                                 <p
+                                    style={{fontVariationSettings: "'wght' 700"}}
                                     className={
-                                        "cursor-pointer hover:text-white transition-colors"
+                                        "cursor-pointer hover:text-neutral-300 transition-colors"
                                     }
                                     onClick={() => navigate("/settings")}
                                 >
@@ -278,8 +280,9 @@ const NavBar = () => {
                                 </p>
                                 <div className="bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50" />
                                 <p
+                                    style={{fontVariationSettings: "'wght' 700"}}
                                     className={
-                                        "cursor-pointer hover:text-white transition-colors"
+                                        "cursor-pointer hover:text-neutral-300 transition-colors"
                                     }
                                     onClick={() =>
                                         navigate("/modules/attendance")
@@ -300,14 +303,16 @@ const NavBar = () => {
                                             );
                                         }
                                     }}
+                                    style={{fontVariationSettings: "'wght' 700"}}
                                     className={
-                                        "cursor-pointer hover:text-white transition-colors"
+                                        "cursor-pointer hover:text-neutral-300 transition-colors"
                                     }
                                 >
                                     Light Mode Beta
                                 </p>
                                 <div className="bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50" />
                                 <p
+                                    style={{fontVariationSettings: "'wght' 700"}}
                                     className={
                                         "cursor-pointer text-red-500 hover:text-red-600 transition-colors"
                                     }

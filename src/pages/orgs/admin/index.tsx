@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import React, { useContext } from "react";
 
 import { Routes, Route } from "react-router-dom";
 
@@ -14,6 +14,7 @@ import Organization from "./Organization";
 
 import OrgAdminNav from "../../../comps/pages/orgs/admin/OrgAdminNav";
 import Messages from "./Messages";
+import { Box, Typography } from "@mui/material";
 
 const OrgAdminRouter = () => {
     const user = useContext<UserContextType>(UserContext);
@@ -51,10 +52,23 @@ const OrgAdminRouter = () => {
                     </Routes>
                 </>
             ) : (
-                <div>
-                    You don't have access to this page. If you believe this is
-                    an error, please contact IT@stuysu.org
-                </div>
+                <Box
+                    sx={{
+                        marginTop: "2rem",
+                        display: "flex",
+                        flexDirection: "column",
+                        justifyContent: "center",
+                        alignItems: "center",
+                    }}
+                >
+                    <i className="bx bx-no-entry bx-lg text-red-500 mb-5"></i>
+                    <Typography variant="h1" marginBottom={3}>
+                        Restricted Access
+                    </Typography>
+                    <Typography variant="body1">
+                        You are not an administrator for this activity. Please contact the activity owner for more details.
+                    </Typography>
+                </Box>
             )}
         </>
     );

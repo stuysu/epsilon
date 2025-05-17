@@ -152,6 +152,7 @@ const UserHome = () => {
                 <Grid item xs={12} sm={6} md={5.5} lg={6} xl={5.5}>
                     <div
                         style={{
+                            marginRight: "20px",
                             display: "flex",
                             flexWrap: "wrap",
                             paddingLeft: "50px",
@@ -188,7 +189,7 @@ const UserHome = () => {
                             )}
                     </div>
                 </Grid>
-                <Grid item xs={12} sm={6} md={5} lg={5.5} xl={6}>
+                <Grid item xs={12} sm={6} md={6} lg={5.6} xl={6}>
                     <Box position="relative" width={"100%"} marginBottom={3}>
                         <Box
                             bgcolor="#1f1f1f80"
@@ -196,7 +197,8 @@ const UserHome = () => {
                             borderRadius={3}
                             boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
                         >
-                            <Typography variant="h3" width="100%" margin={3}>
+                            <Typography variant="h4" width="100%" marginTop={2} marginBottom={3} marginLeft={3}>
+                                <i className="bx bx-calendar-week mr-3 bx-sm top-1 relative"></i>
                                 Upcoming Meetings
                             </Typography>
                             <Stack borderRadius={2} overflow="hidden" spacing={0.5}>
@@ -276,23 +278,11 @@ const UserHome = () => {
                             </Box>
                         )}
                 </Grid>
-                <Box sx={{ width: "100%", marginTop: "50px" }}>
-                    <Typography variant="h1" align="center">
-                        Posts
-                    </Typography>
-                </Box>
+                <div className={"m-10 w-full grid-cols-2 grid"}>
                 {posts.map((post) => (
-                    <Grid item xs={12} sm={12} md={6} lg={4} key={post.id}>
-                        <Box
-                            width="100%"
-                            display="flex"
-                            justifyContent="center"
-                            padding="10px"
-                        >
-                            <Post content={post} />
-                        </Box>
-                    </Grid>
+                    <Post content={post} />
                 ))}
+                </div>
             </Grid>
         </Box>
     );
