@@ -9,6 +9,7 @@ import {
 import React, {
     CSSProperties,
     useContext,
+    FC,
     useEffect,
     useState,
     useRef,
@@ -192,6 +193,7 @@ const NavBar = () => {
                 "/admin/approve-pending",
                 "/admin/strikes",
                 "/admin/send-message",
+                "/admin/add-user",
                 "/admin/announcements",
                 "/admin/rooms",
             ];
