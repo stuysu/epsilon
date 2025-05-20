@@ -17,6 +17,7 @@ const Catalog = lazy(() => import("./Catalog"));
 const Settings = lazy(() => import("./Settings"));
 const Profile = lazy(() => import("./Profile"));
 const Create = lazy(() => import("./Create"));
+const Charter = lazy(() => import("./Charter"));
 const OrgRouter = lazy(() => import("./orgs"));
 const AdminRouter = lazy(() => import("./admin"));
 
@@ -65,6 +66,7 @@ const Pages = () => {
                     <Route path={"/settings"} Component={Settings} />
                     <Route path={"/profile"} Component={Profile} />
                     <Route path={"/create"} Component={Create} />
+                    <Route path={"/charter"} Component={Charter} />
                     <Route path={"/about"} Component={About} />
                     <Route path={"/meetings"} Component={AllMeetings} />
                     <Route path={"/rules"} Component={Rules} />

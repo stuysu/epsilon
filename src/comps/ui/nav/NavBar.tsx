@@ -187,7 +187,7 @@ const NavBar = () => {
         if (!item.external && item.path === "/catalog") {
             return [
                 "/catalog",
-                "/create",
+                "/charter",
                 "/rules",
                 "/admin/approve-edit",
                 "/admin/approve-pending",
@@ -205,7 +205,7 @@ const NavBar = () => {
         getActivePaths(item).includes(location.pathname);
 
     const isOnStuyActivitiesPage =
-        ["/catalog", "/create", "/rules"].some((p) =>
+        ["/catalog", "/charter", "/rules"].some((p) =>
             location.pathname.startsWith(p),
         ) || location.pathname.startsWith("/admin");
 
@@ -470,10 +470,10 @@ const NavBar = () => {
                     </Typography>
                     <Typography
                         className="transition-opacity cursor-pointer"
-                        onClick={() => navigate("/create")}
+                        onClick={() => navigate("/charter")}
                         sx={{
                             fontVariationSettings: "'wght' 700",
-                            opacity: location.pathname === "/create" ? 1 : 0.5,
+                            opacity: location.pathname === "/charter" ? 1 : 0.5,
                         }}
                         color="rgb(209 213 219 / var(--tw-text-opacity, 1))"
                     >

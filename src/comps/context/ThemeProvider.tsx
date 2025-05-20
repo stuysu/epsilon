@@ -64,15 +64,17 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                     fontFamily: `'inter-variable', sans-serif`,
                     htmlFontSize: 16,
                     h1: {
-                        fontVariationSettings: "'wght' 800",
+                        fontFamily: `'neue-haas-grotesk-display', sans-serif`,
+                        fontWeight: 700,
                         fontSize: "2.2rem",
                         lineHeight: "2.2rem",
                         margin: "0.5rem 0",
                         color: prefersDarkMode ? "#E8E8E8CC" : "#2B2B2B",
                     },
                     h2: {
+                        fontFamily: `'neue-haas-grotesk-display', sans-serif`,
+                        fontWeight: 600,
                         fontSize: "1.6rem",
-                        fontVariationSettings: "'wght' 700",
                         color: prefersDarkMode ? "#E8E8E8CC" : "#3B3B3B",
                     },
                     h3: {

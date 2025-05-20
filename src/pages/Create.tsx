@@ -271,7 +271,7 @@ const Create = () => {
                     flexWrap: "wrap",
                 }}
             >
-                <FormPage title="Before you start">
+                <FormPage title="Before You Start">
                     <Typography variant="body1">
                         Before you begin the chartering process, make sure to
                         read through the Clubs & Pubs Rules, which all
