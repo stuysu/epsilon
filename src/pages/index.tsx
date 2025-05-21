@@ -18,6 +18,7 @@ const Settings = lazy(() => import("./Settings"));
 const Profile = lazy(() => import("./Profile"));
 const Create = lazy(() => import("./Create"));
 const Charter = lazy(() => import("./Charter"));
+const Archives = lazy(() => import("./Archives"));
 const OrgRouter = lazy(() => import("./orgs"));
 const AdminRouter = lazy(() => import("./admin"));
 
@@ -70,6 +71,7 @@ const Pages = () => {
                     <Route path={"/about"} Component={About} />
                     <Route path={"/meetings"} Component={AllMeetings} />
                     <Route path={"/rules"} Component={Rules} />
+                    <Route path={"/archives"} Component={Archives} />
                     <Route path={"/modules/*"} Component={ModuleRouter} />
                     <Route path={"/admin/*"} Component={AdminRouter} />
                     <Route path={"/:orgUrl/*"} Component={OrgRouter} />
@@ -80,8 +82,8 @@ const Pages = () => {
                         className="fixed flex bottom-0 w-full h-12 border-t border-stone-700 bg-stone-900/85 backdrop-blur-xl items-center justify-center"
                     >
                         <p className="text-center text-gray-200">
-                            We’re redesigning Epsilon! Please pardon our appearance
-                            while we work on a new look.
+                            We’re redesigning Epsilon! Please pardon our
+                            appearance while we work on a new look.
                         </p>
                         <button
                             onClick={handleCloseBanner}

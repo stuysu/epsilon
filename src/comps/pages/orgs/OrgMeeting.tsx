@@ -1,4 +1,4 @@
-import { Box, Paper, Chip, Stack, Typography } from "@mui/material";
+import { Box, Chip, Stack, Typography } from "@mui/material";
 
 import { useState } from "react";
 import dayjs from "dayjs";
@@ -55,7 +55,6 @@ const OrgMeeting = ({
                 alignItems={"center"}
                 sx={{
                     background: "#36363680",
-                    borderRadius: 2,
                     transition: "background-color 0.1s ease-in-out",
                     "&:hover": {
                     backgroundColor: "#4d4d4d80"

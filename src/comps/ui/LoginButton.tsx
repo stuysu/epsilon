@@ -26,6 +26,7 @@ const LoginButton = ({ onMouseEnter, onMouseLeave }: LoginButtonProps) => {
             className="button"
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
+            title="You must sign in with a stuy.edu address"
         >
             <img
                 src={`${PUBLIC_URL}/Google.svg`}

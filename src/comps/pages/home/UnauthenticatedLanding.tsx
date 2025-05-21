@@ -54,9 +54,7 @@ const UnauthenticatedLanding = () => {
                             : "normal",
                         position: "relative",
                         zIndex: 3,
-                        filter: theme.colorMode
-                            ? ""
-                            : "invert(0%)",
+                        filter: theme.colorMode ? "" : "invert(0%)",
                     }}
                 />
                 <LoginButton
@@ -67,14 +65,9 @@ const UnauthenticatedLanding = () => {
             </Box>
 
             <img
-                src="https://lh4.googleusercontent.com/ke5AkzreYMlnGXw_KMKOdRjM9LQM7h2M-K5QL8JEeuXe7XMWCI2vUYqhnsgAoL-B4SfDImggddAiPIY18sHCxXY=w16383"
+                src="https://ugc.production.linktr.ee/a09ecb69-bd20-410d-96bf-9c86e2a9ad9a_STUY-SU-FAVICON--1-.png"
                 alt="Stuyvesant Student Union"
-                onClick={() =>
-                    window.open(
-                        "https://stuysu.org",
-                        "_blank",
-                    )
-                }
+                onClick={() => window.open("https://stuysu.org", "_blank")}
                 className="cursor-pointer absolute bottom-0 left-1/2 transform -translate-x-1/2 w-14 h-14 object-cover"
             />
         </Box>

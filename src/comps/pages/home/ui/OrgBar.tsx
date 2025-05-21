@@ -21,42 +21,73 @@ const OrgBar = ({ name, url, role, role_name, picture }: Props) => {
         <div
             onClick={() => navigate(`/${url}`)}
             style={{
+                cursor: "pointer",
                 display: "flex",
                 flexDirection: "column",
-                width: "200px"
+                width: "200px",
             }}
         >
             <div>
                 {picture ? (
-                    <img
-                        src={picture}
-                        alt={name}
-                        style={{
-                            height: "200px",
-                            borderRadius: "15px",
-                            objectFit: "cover",
+                    <div
+                        className={"relative"}
+                        onMouseEnter={(e) => {
+                            const img = e.currentTarget.querySelector("img");
+                            if (img) img.style.filter = "blur(30px)";
                         }}
-                    />
+                        onMouseLeave={(e) => {
+                            const img = e.currentTarget.querySelector("img");
+                            if (img) img.style.filter = "blur(10px)";
+                        }}
+                    >
+                        <img
+                            src={picture}
+                            alt={name}
+                            style={{
+                                height: "200px",
+                                borderRadius: "15px",
+                                objectFit: "cover",
+                                opacity: "0.2",
+                                filter: "blur(10px)",
+                                transition: "filter 0.2s ease",
+                            }}
+                        />
+                        <img
+                            src={picture}
+                            alt={name}
+                            style={{
+                                position: "absolute",
+                                bottom: "0px",
+                                zIndex: 10,
+                                height: "200px",
+                                borderRadius: "15px",
+                                objectFit: "cover",
+                                transition: "filter 0.3s ease",
+                            }}
+                        />
+                    </div>
                 ) : (
                     <div
                         style={{
                             width: "200px",
                             height: "200px",
-                            borderRadius: "50%",
-                            backgroundColor: "#ccc",
+                            borderRadius: "15px",
+                            backgroundColor: "#232323",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            fontSize: "24px",
+                            fontSize: "100px",
                             color: "#fff",
                         }}
                     >
-                        {name?.charAt(0).toUpperCase()}
+                        <h1>{name?.charAt(0).toUpperCase()}</h1>
                     </div>
                 )}
             </div>
-            <div style={{padding: 10}}>
-                <Typography variant="h4" height={45}>{name}</Typography>
+            <div style={{ padding: 10 }}>
+                <Typography variant="h4" height={45}>
+                    {name}
+                </Typography>
                 <Typography sx={{ fontVariationSettings: "'wght' 700" }}>
                     {role_name || formatCapitals(role || "Member")}
                 </Typography>

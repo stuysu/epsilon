@@ -19,8 +19,6 @@ import OrgRequirements from "../utils/OrgRequirements";
 
 import { PUBLIC_URL } from "../constants";
 
-import { useNavigate } from "react-router-dom";
-
 import LoginGate from "../comps/ui/LoginGate";
 import UserContext from "../comps/context/UserContext";
 
@@ -259,7 +257,7 @@ const Create = () => {
     return (
         <LoginGate>
             <MultiPageForm
-                title="Create New Organization"
+                title=""
                 value={formData}
                 onFormChange={setFormData}
                 onSubmit={createActivity}

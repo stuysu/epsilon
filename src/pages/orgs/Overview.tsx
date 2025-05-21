@@ -3,29 +3,28 @@ import OrgContext from "../../comps/context/OrgContext";
 import {
     Avatar,
     Box,
-    Typography,
-    useMediaQuery,
-    Stack,
     Chip,
-    Divider,
-    Link,
     Dialog,
-    DialogTitle,
+    DialogActions,
     DialogContent,
     DialogContentText,
-    DialogActions,
+    DialogTitle,
+    Divider,
+    Stack,
+    Typography,
+    useMediaQuery,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import AsyncButton from "../../comps/ui/AsyncButton";
 import OrgMember from "../../comps/pages/orgs/OrgMember";
 import OrgMeeting from "../../comps/pages/orgs/OrgMeeting";
 import { sortByDate, sortByRole } from "../../utils/DataFormatters";
 import UserContext from "../../comps/context/UserContext";
-import UserHome from "../../comps/pages/home/UserHome";
-import UnauthenticatedLanding from "../../comps/pages/home/UnauthenticatedLanding";
 
 const Overview = () => {
+    const navigate = useNavigate();
     const organization: OrgContextType = useContext(OrgContext);
     const user: UserContextType = useContext(UserContext);
     const { enqueueSnackbar } = useSnackbar();
@@ -158,7 +157,10 @@ const Overview = () => {
     };
 
     return (
-        <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
+        <Box
+            marginTop={1}
+            sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}
+        >
             <Stack direction={{ xs: "column", sm: "row" }} spacing={5}>
                 <Box>
                     <Avatar
@@ -182,52 +184,58 @@ const Overview = () => {
                             borderRadius: "25px",
                             objectFit: "cover",
                             position: "relative",
+                            fontSize: "120px",
                             zIndex: 1,
                         }}
                         alt={`organization ${organization.name}`}
                     >
-                        {organization.name.charAt(0).toUpperCase()}
+                        <h1>{organization.name.charAt(0).toUpperCase()}</h1>
                     </Avatar>
                 </Box>
 
-                <Stack>
-                    <Typography variant="h1" width="100%">
-                        {organization.name}
-                    </Typography>
+                <Stack direction={"column"} justifyContent={"space-between"}>
+                    <div>
+                        <Typography variant="h1" width="100%">
+                            {organization.name}
+                        </Typography>
 
-                    <Stack
-                        direction="row"
-                        flexWrap="wrap"
-                        marginBottom={3}
-                        spacing={1}
-                    >
-                        {organization.tags?.map((tag, index) => (
-                            <Chip
-                                key={index}
-                                label={tag}
-                                variant="filled"
-                                sx={{
-                                    borderRadius: 2,
-                                    boxShadow:
-                                        "inset 0 0 1px 1px rgba(255, 255, 255, 0.15)",
-                                }}
-                            />
-                        )) || <p>Uncategorized</p>}
-                    </Stack>
+                        <Stack
+                            direction="row"
+                            marginBottom={2}
+                            gap={0.5}
+                            rowGap={0.5}
+                            flexWrap={"wrap"}
+                        >
+                            {organization.tags?.map((tag, index) => (
+                                <Chip
+                                    key={index}
+                                    label={tag}
+                                    variant="filled"
+                                    sx={{
+                                        borderRadius: 2,
+                                        boxShadow:
+                                            "inset 0 0 1px 1px rgba(255, 255, 255, 0.15)",
+                                    }}
+                                />
+                            )) || <p>Uncategorized</p>}
+                        </Stack>
 
-                    <Typography
-                        variant="body1"
-                        width="100%"
-                        sx={{
-                            display: "-webkit-box",
-                            WebkitBoxOrient: "vertical",
-                            overflow: "hidden",
-                            WebkitLineClamp: 4,
-                            textOverflow: "ellipsis",
-                        }}
-                    >
-                        {organization.purpose || "None"}
-                    </Typography>
+                        <Typography
+                            onClick={() => navigate("./charter")}
+                            variant="body1"
+                            width="100%"
+                            sx={{
+                                cursor: "pointer",
+                                display: "-webkit-box",
+                                WebkitBoxOrient: "vertical",
+                                overflow: "hidden",
+                                WebkitLineClamp: 4,
+                                textOverflow: "ellipsis",
+                            }}
+                        >
+                            {organization.purpose || "None"}
+                        </Typography>
+                    </div>
 
                     <Box
                         sx={{
@@ -252,7 +260,9 @@ const Overview = () => {
                                     : undefined
                             }
                         >
-                            {interactString}
+                            {interactString
+                                .toLowerCase()
+                                .replace(/\b\w/g, (c) => c.toUpperCase())}
                         </AsyncButton>
                         <Dialog
                             open={leaveConfirmation}
@@ -330,7 +340,7 @@ const Overview = () => {
                 )}
 
                 <Box>
-                    <Typography variant="h3" align="center" width={150}>
+                    <Typography variant="h3" align="center" width={160}>
                         {organization.state.charAt(0) +
                             organization.state.slice(1).toLowerCase()}
                     </Typography>
@@ -349,7 +359,7 @@ const Overview = () => {
                 </Typography>
 
                 <Box>
-                    <Typography variant="h3" align="center" width={150}>
+                    <Typography variant="h3" align="center" width={140}>
                         {organization.commitment_level
                             ? organization.commitment_level
                                   .charAt(0)
@@ -366,26 +376,27 @@ const Overview = () => {
 
                 {user.signed_in && (
                     <>
-                    <Typography
-                        variant="h1"
-                        align="center"
-                        width="100%"
-                        sx={{ opacity: "25%" }}
-                    >
-                        •
-                    </Typography>
-                <Box>
-                    <Typography variant="h3" align="center" width={200}>
-                        {organization.meetings
-                            ?.at(-1)
-                            ?.start_time?.split("T")[0] ?? "No Meetings"}
-                    </Typography>
-                    <Typography variant="body1" align="center">
-                        Last Meeting
-                    </Typography>
-                </Box>
+                        <Typography
+                            variant="h1"
+                            align="center"
+                            width="100%"
+                            sx={{ opacity: "25%" }}
+                        >
+                            •
+                        </Typography>
+                        <Box>
+                            <Typography variant="h3" align="center" width={200}>
+                                {organization.meetings
+                                    ?.at(-1)
+                                    ?.start_time?.split("T")[0]
+                                    .replaceAll("-", "/") ?? "No Meetings"}
+                            </Typography>
+                            <Typography variant="body1" align="center">
+                                Last Meeting
+                            </Typography>
+                        </Box>
                     </>
-                    )}
+                )}
             </Stack>
 
             <Box position="relative" width={"100%"} marginBottom={3}>
@@ -529,7 +540,7 @@ const Overview = () => {
                 />
             </Box>
 
-            <Box position="relative" width={"100%"} marginBottom={3}>
+            <Box position="relative" width={"100%"} marginBottom={10}>
                 <Box
                     bgcolor="#1f1f1f80"
                     padding={0.5}
@@ -540,35 +551,37 @@ const Overview = () => {
                         Upcoming Meetings
                     </Typography>
 
-                    {organization.meetings.length === 0 ? (
-                        <Typography
-                            variant="body1"
-                            width="100%"
-                            marginLeft={3}
-                            marginBottom={3}
-                        >
-                            No meetings scheduled for the future.
-                        </Typography>
-                    ) : (
-                        organization.meetings
-                            .sort(sortByDate)
-                            .map((meeting) => (
-                                <OrgMeeting
-                                    key={meeting.id}
-                                    id={meeting.id}
-                                    title={meeting.title}
-                                    description={meeting.description}
-                                    start_time={meeting.start_time}
-                                    end_time={meeting.end_time}
-                                    is_public={meeting.is_public}
-                                    room_name={meeting.rooms?.name}
-                                    org_name={organization.name}
-                                    org_picture={organization.picture || ""}
-                                    isMobile={isMeetingMobile}
-                                    onlyUpcoming
-                                />
-                            ))
-                    )}
+                    <Stack borderRadius={2} overflow="hidden" spacing={0.5}>
+                        {organization.meetings.length === 0 ? (
+                            <Typography
+                                variant="body1"
+                                width="100%"
+                                marginLeft={3}
+                                marginBottom={3}
+                            >
+                                No meetings scheduled for the future.
+                            </Typography>
+                        ) : (
+                            organization.meetings
+                                .sort(sortByDate)
+                                .map((meeting) => (
+                                    <OrgMeeting
+                                        key={meeting.id}
+                                        id={meeting.id}
+                                        title={meeting.title}
+                                        description={meeting.description}
+                                        start_time={meeting.start_time}
+                                        end_time={meeting.end_time}
+                                        is_public={meeting.is_public}
+                                        room_name={meeting.rooms?.name}
+                                        org_name={organization.name}
+                                        org_picture={organization.picture || ""}
+                                        isMobile={isMeetingMobile}
+                                        onlyUpcoming
+                                    />
+                                ))
+                        )}
+                    </Stack>
                 </Box>
 
                 <Box

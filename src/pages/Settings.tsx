@@ -126,8 +126,12 @@ const Settings = () => {
                     marginBottom: "30px",
                 }}
             >
-                <Typography variant="h1" align="center" marginBottom="50px">
-                    Email Settings
+                <Typography variant="h1" align="center" marginTop="50px">
+                    Communication Options
+                </Typography>
+                <Typography variant="body1" align="center" marginBottom="50px">
+                    Choose your preferred email communication options for each
+                    organization you are a member of.
                 </Typography>
             </Box>
 

@@ -1,4 +1,4 @@
-import { Box, Typography, Card, Avatar, Stack } from "@mui/material";
+import { Avatar, Box, Card, Stack, Typography } from "@mui/material";
 import { PUBLIC_URL } from "../../../constants";
 import { useContext } from "react";
 import { useNavigate } from "react-router-dom";
@@ -152,7 +152,9 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                 }}
                                 alt={`${organization.name}`}
                             >
-                                {organization.name?.charAt(0).toUpperCase()}
+                                <h1>
+                                    {organization.name?.charAt(0).toUpperCase()}
+                                </h1>
                             </Avatar>
                         </Box>
 
@@ -161,7 +163,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                             sx={{
                                 maxWidth: "100%",
                                 height: "3rem",
-                                textOverflow: "ellipsis"
+                                textOverflow: "ellipsis",
                             }}
                         >
                             {organization.name}

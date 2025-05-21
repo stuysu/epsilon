@@ -1,10 +1,11 @@
 /* ORG ROUTING INFORMATION HERE */
 import { useEffect, useState } from "react";
-import { Routes, Route, useParams } from "react-router-dom";
+import { Route, Routes, useLocation, useParams } from "react-router-dom";
 import OrgContext from "../../comps/context/OrgContext";
 import Loading from "../../comps/ui/Loading";
 import { supabase } from "../../supabaseClient";
-
+import { CSSTransition, TransitionGroup } from "react-transition-group";
+import "../../orgTransitions.css"; // Create this CSS file for animations
 import OrgNav from "../../comps/pages/orgs/OrgNav";
 
 import NotFound from "./NotFound";
@@ -20,6 +21,7 @@ import OrgInspector from "../../comps/pages/orgs/OrgInspector";
 const OrgRouter = () => {
     const { enqueueSnackbar } = useSnackbar();
     const { orgUrl } = useParams();
+    const location = useLocation();
 
     const isMobile = useMediaQuery("(max-width: 1000px)");
 
@@ -142,10 +144,9 @@ const OrgRouter = () => {
                     <Box
                         sx={{
                             width: "100%",
-                            marginTop: "20px",
+                            marginTop: "30px",
                         }}
-                    >
-                    </Box>
+                    ></Box>
                     <Box
                         sx={{
                             marginLeft: "56px",
@@ -154,22 +155,39 @@ const OrgRouter = () => {
                         }}
                     >
                         <OrgNav isMobile={isMobile} />
-                        <Box sx={{ width: "100%", padding: "10px" }}>
-                            <Routes>
-                                <Route path={`/`} Component={Overview} />
-                                <Route path={`/charter`} Component={Charter} />
-                                <Route
-                                    path={`/meetings`}
-                                    Component={Meetings}
-                                />
-                                <Route path={`/members`} Component={Members} />
-                                <Route
-                                    path={`/admin/*`}
-                                    Component={OrgAdminRouter}
-                                />
-                            </Routes>
+                        <Box sx={{ width: "100%" }}>
+                            <TransitionGroup component={null}>
+                                <CSSTransition
+                                    key={location.pathname}
+                                    classNames="fadeup"
+                                    timeout={300}
+                                >
+                                    <Routes location={location}>
+                                        <Route
+                                            path={`/`}
+                                            Component={Overview}
+                                        />
+                                        <Route
+                                            path={`/charter`}
+                                            Component={Charter}
+                                        />
+                                        <Route
+                                            path={`/meetings`}
+                                            Component={Meetings}
+                                        />
+                                        <Route
+                                            path={`/members`}
+                                            Component={Members}
+                                        />
+                                        <Route
+                                            path={`/admin/*`}
+                                            Component={OrgAdminRouter}
+                                        />
+                                    </Routes>
+                                </CSSTransition>
+                            </TransitionGroup>
                         </Box>
-                        <OrgInspector/>
+                        <OrgInspector />
                         <Box width={25}></Box>
                     </Box>
                 </>

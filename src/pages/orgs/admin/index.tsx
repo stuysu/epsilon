@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 
-import { Routes, Route } from "react-router-dom";
+import { Route, Routes } from "react-router-dom";
 
 import UserContext from "../../../comps/context/UserContext";
 import OrgContext from "../../../comps/context/OrgContext";
@@ -65,8 +65,10 @@ const OrgAdminRouter = () => {
                     <Typography variant="h1" marginBottom={3}>
                         Restricted Access
                     </Typography>
-                    <Typography variant="body1">
-                        You are not an administrator for this activity. Please contact the activity owner for more details.
+                    <Typography variant="body1" align={"center"}>
+                        You are not an administrator for this activity.
+                        <br />
+                        Please contact the activity owner for more details.
                     </Typography>
                 </Box>
             )}

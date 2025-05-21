@@ -1,26 +1,31 @@
-import {
-    Typography,
-    Box,
-    Divider,
-    Avatar,
-    Stack,
-    useMediaQuery,
-} from "@mui/material";
-import React, {
-    CSSProperties,
-    useContext,
-    FC,
-    useEffect,
-    useState,
-    useRef,
-} from "react";
+import { Avatar, Box, Divider, Stack, Typography, useMediaQuery } from "@mui/material";
+import React, { CSSProperties, FC, useContext, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../../supabaseClient";
 import UserContext from "../../context/UserContext";
 import { useSnackbar } from "notistack";
-import OrgBar from "../../pages/home/ui/OrgBar";
 import { ThemeContext } from "../../context/ThemeProvider";
 import { PUBLIC_URL } from "../../../constants";
+
+/**
+ * Consolidated list of routes that belong to StuyActivities.
+ * Keeping them in one place avoids duplicating arrays across helper utilities.
+ */
+const STUY_ACTIVITIES_PATHS = [
+    "/catalog",
+    "/charter",
+    "/create",
+    "/archives",
+    "/rules",
+    "/admin",
+    "/admin/approve-edit",
+    "/admin/approve-pending",
+    "/admin/strikes",
+    "/admin/send-message",
+    "/admin/add-user",
+    "/admin/announcements",
+    "/admin/rooms",
+];
 
 const navStyles: CSSProperties = {
     width: "100%",
@@ -51,12 +56,7 @@ const linkStyle: CSSProperties = {
 };
 
 const topNavItems = [
-    {
-        label: "Home",
-        path: "/",
-        icon: "bx bx-home-alt",
-        external: false,
-    },
+    { label: "Home", path: "/", icon: "bx bx-home-alt", external: false },
     {
         label: "StuyActivities",
         path: "/catalog",
@@ -90,17 +90,11 @@ const topNavItems = [
         icon: "bx bx-glasses",
         external: true,
     },
-    {
-        label: "About",
-        path: "/about",
-        icon: "bx bx-file",
-        external: false,
-    },
-];
+    { label: "About", path: "/about", icon: "bx bx-file", external: false },
+] as const;
 
-const VALENTINES = false;
+type TopNavItem = typeof topNavItems[number];
 
-// TODO: separate TabLink to independent file in nav folder (good first issue: reformat the other entries in the navigation tabs to use this component)
 interface TabLinkProps {
     name: string;
     iconClass: string;
@@ -113,38 +107,36 @@ const TabLink: FC<TabLinkProps> = ({
     iconClass,
     onClick,
     setIsHovered,
-}) => {
-    return (
-        <>
-            <i className={iconClass}></i>
-            <span
-                className={"transition-colors hover:text-gray-300"}
-                style={{
-                    marginLeft: "3px",
-                    position: "relative",
-                    top: "2px",
-                    cursor: "pointer",
-                }}
-                onMouseEnter={() => setIsHovered(true)}
-                onClick={onClick}
-            >
-                {name}
-            </span>
-        </>
-    );
-};
+}) => (
+    <>
+        <i className={iconClass}></i>
+        <span
+            className="transition-colors hover:text-gray-300"
+            style={{
+                marginLeft: 3,
+                position: "relative",
+                top: 2,
+                cursor: "pointer",
+            }}
+            onMouseEnter={() => setIsHovered(true)}
+            onClick={onClick}
+        >
+            {name}
+        </span>
+    </>
+);
 
-const NavBar = () => {
-    const showBigNav = useMediaQuery("(min-width:950px)");
+const NavBar: FC = () => {
     const user = useContext(UserContext);
     const { enqueueSnackbar } = useSnackbar();
     const [drawerOpen, setDrawerOpen] = useState(false);
-    const [fourDigitId, setFourDigitId] = useState<Number | null>(null);
+    const [fourDigitId, setFourDigitId] = useState<number | null>(null);
     const [isHovered, setIsHovered] = useState(false);
-    const location = useLocation(); // disable drawer when location changes
+    const location = useLocation();
     const navigate = useNavigate();
 
     const theme = useContext(ThemeContext);
+    const isMobile = useMediaQuery("(max-width: 620px)");
     const wordmarkSrc = theme.colorMode
         ? `${PUBLIC_URL}/wordmark.svg`
         : `${PUBLIC_URL}/wordmark_light.svg`;
@@ -155,21 +147,36 @@ const NavBar = () => {
         width: 0,
     });
 
+    /**
+     * Consolidated route‑matching helpers — the three functions below previously duplicated logic.
+     */
+    const getActivePaths = (item: TopNavItem): string[] =>
+        !item.external && item.path === "/catalog"
+            ? STUY_ACTIVITIES_PATHS
+            : [item.path];
+
+    const isPageOptnActive = (item: TopNavItem): boolean =>
+        getActivePaths(item).includes(location.pathname);
+
+    const isOnStuyActivitiesPage = STUY_ACTIVITIES_PATHS.some((p) =>
+        location.pathname.startsWith(p),
+    );
+
     const signOut = async () => {
         const { error } = await supabase.auth.signOut();
         if (error) {
-            return enqueueSnackbar(
+            enqueueSnackbar(
                 "Error signing out. Contact it@stuysu.org for support.",
                 { variant: "error" },
             );
+            return;
         }
         setDrawerOpen(false);
         navigate("/");
     };
 
-    useEffect(() => {
-        setDrawerOpen(false);
-    }, [location]);
+    // Close drawer on route change
+    useEffect(() => setDrawerOpen(false), [location]);
 
     useEffect(() => {
         const fetchID = async () => {
@@ -177,69 +184,43 @@ const NavBar = () => {
                 .from("fourdigitids")
                 .select("value")
                 .maybeSingle();
-            if (error) console.log(error);
-            else if (data) setFourDigitId(data.value as Number);
+            if (error) console.error(error);
+            else if (data) setFourDigitId(data.value as number);
         };
         fetchID();
     }, [user]);
 
-    const getActivePaths = (item: (typeof topNavItems)[0]) => {
-        if (!item.external && item.path === "/catalog") {
-            return [
-                "/catalog",
-                "/charter",
-                "/rules",
-                "/admin/approve-edit",
-                "/admin/approve-pending",
-                "/admin/strikes",
-                "/admin/send-message",
-                "/admin/add-user",
-                "/admin/announcements",
-                "/admin/rooms",
-            ];
-        }
-        return [item.path];
-    };
-
-    const isPageOptnActive = (item: (typeof topNavItems)[0]) =>
-        getActivePaths(item).includes(location.pathname);
-
-    const isOnStuyActivitiesPage =
-        ["/catalog", "/charter", "/rules"].some((p) =>
-            location.pathname.startsWith(p),
-        ) || location.pathname.startsWith("/admin");
-
+    // Animate active‑tab underline
     useEffect(() => {
         const currentIndex = topNavItems.findIndex(
             (item) =>
                 !item.external &&
                 getActivePaths(item).includes(location.pathname),
         );
-
         if (currentIndex !== -1 && itemRefs.current[currentIndex]) {
             const el = itemRefs.current[currentIndex];
-            setOptionUnderline({
-                left: el.offsetLeft,
-                width: el.offsetWidth,
-            });
+            setOptionUnderline({ left: el.offsetLeft, width: el.offsetWidth });
         } else {
             setOptionUnderline({ left: 0, width: 0 });
         }
-    }, [location.pathname, showBigNav]);
+    }, [location.pathname]);
 
-    if (!user?.signed_in && location.pathname === "/") {
+    // Hide navbar on public landing page when signed‑out
+    if (!user?.signed_in && location.pathname === "/")
         return <Box height={20} />;
-    }
 
     return (
-        <>
+        <div>
+            {/* Backdrop when hovering over nav items */}
             <div
-                className={`bg-black/40 z-40 fixed left-0 w-full h-full backdrop-blur-3xl transition-opacity duration-300 ${
-                    isHovered ? "opacity-100" : "opacity-0 pointer-events-none"
+                className={`bg-black/40 fixed left-0 top-0 z-40 h-full w-full backdrop-blur-3xl transition-opacity duration-300 ${
+                    isHovered ? "opacity-100" : "pointer-events-none opacity-0"
                 }`}
-            ></div>
+            />
 
+            {/* Top nav bar — logo & user menu */}
             <Box sx={navStyles}>
+                {/* Logo / Wordmark */}
                 <Box sx={titleStyle}>
                     <span
                         style={{ ...linkStyle, cursor: "pointer" }}
@@ -249,8 +230,8 @@ const NavBar = () => {
                             src={wordmarkSrc}
                             alt="Epsilon"
                             style={{
-                                marginTop: "10px",
-                                maxWidth: "100px",
+                                marginTop: 10,
+                                maxWidth: 100,
                                 height: "auto",
                                 position: "relative",
                                 zIndex: 1,
@@ -259,102 +240,94 @@ const NavBar = () => {
                     </span>
                 </Box>
 
-                <div className={"relative flex flex-row justify-end"}>
+                {/* User dropdown */}
+                <div className="relative flex flex-row justify-end">
                     <div
-                        className={
-                            "flex flex-row items-center justify-center gap-2 bg-neutral-800 rounded-lg pl-1.5 pr-2.5 h-10 shadow-[inset_0px_0px_2px_0px_rgba(255,255,255,0.3)] cursor-pointer"
-                        }
+                        className="flex cursor-pointer flex-row items-center justify-center gap-2 rounded-lg bg-neutral-800 pl-1.5 pr-2.5 shadow-[inset_0px_0px_2px_0px_rgba(255,255,255,0.3)] h-10"
                         onClick={() => setDrawerOpen(!drawerOpen)}
                     >
                         <Avatar
-                            style={{
-                                width: "30px",
-                                height: "30px",
-                                borderRadius: "5px",
-                            }}
+                            style={{ width: 30, height: 30, borderRadius: 5 }}
                             src={user.picture}
                         />
-                        <p
-                            className={"top-0.5 relative pr-2"}
-                        >{`${user.first_name} ${user.last_name}`}</p>
-                        <i className="bx bx-chevron-down bx-sm"></i>
+                        <p className="relative top-0.5 pr-2">{`${user.first_name} ${user.last_name}`}</p>
+                        <i className="bx bx-chevron-down bx-sm" />
                     </div>
+
+                    {/* Drawer */}
                     <div
-                        className={`flex flex-col gap-2 p-5 absolute w-72 top-14 rounded-lg z-50 bg-neutral-800/80 backdrop-blur-xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)] transition-all duration-300 ${
+                        className={`absolute top-14 z-50 flex w-72 flex-col gap-2 rounded-lg bg-neutral-800/80 p-5 backdrop-blur-xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)] transition-all duration-300 ${
                             drawerOpen
-                                ? "opacity-100 translate-y-0"
-                                : "opacity-0 -translate-y-5 pointer-events-none"
+                                ? "translate-y-0 opacity-100"
+                                : "pointer-events-none -translate-y-5 opacity-0"
                         }`}
                     >
                         {!user?.signed_in ? (
-                            <div className="flex flex-col gap-3">
-                                <p
-                                    className={
-                                        "cursor-pointer hover:text-neutral-300 transition-colors"
-                                    }
-                                    onClick={() => navigate("/")}
-                                >
-                                    Sign In
-                                </p>
-                            </div>
+                            <p
+                                style={{ fontVariationSettings: "'wght' 700" }}
+                                className="cursor-pointer transition-colors hover:text-neutral-300"
+                                onClick={() => navigate("/")}
+                            >
+                                Sign In
+                            </p>
                         ) : (
                             <>
                                 <p
-                                    style={{fontVariationSettings: "'wght' 700"}}
-                                    className={
-                                        "cursor-pointer hover:text-neutral-300 transition-colors"
-                                    }
+                                    style={{
+                                        fontVariationSettings: "'wght' 700",
+                                    }}
+                                    className="cursor-pointer transition-colors hover:text-neutral-300"
                                     onClick={() => navigate("/profile")}
                                 >
                                     My Profile
                                 </p>
                                 <p
-                                    style={{fontVariationSettings: "'wght' 700"}}
-                                    className={
-                                        "cursor-pointer hover:text-neutral-300 transition-colors"
-                                    }
+                                    style={{
+                                        fontVariationSettings: "'wght' 700",
+                                    }}
+                                    className="cursor-pointer transition-colors hover:text-neutral-300"
                                     onClick={() => navigate("/settings")}
                                 >
                                     Communication Options
                                 </p>
-                                <div className="bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50" />
+                                <div className="bg-neutral-600 mt-1 mb-2 h-px w-full opacity-50" />
                                 <p
-                                    style={{fontVariationSettings: "'wght' 700"}}
-                                    className={
-                                        "cursor-pointer hover:text-neutral-300 transition-colors"
-                                    }
+                                    style={{
+                                        fontVariationSettings: "'wght' 700",
+                                    }}
+                                    className="cursor-pointer transition-colors hover:text-neutral-300"
                                     onClick={() =>
                                         navigate("/modules/attendance")
                                     }
                                 >
                                     Attendance Module
                                 </p>
-                                <div className="bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50" />
+                                <div className="bg-neutral-600 mt-1 mb-2 h-px w-full opacity-50" />
                                 <p
+                                    style={{
+                                        fontVariationSettings: "'wght' 700",
+                                    }}
+                                    className="cursor-pointer transition-colors hover:text-neutral-300"
                                     onClick={() => {
                                         theme.toggleColorMode();
                                         if (theme.colorMode) {
                                             enqueueSnackbar(
                                                 "Light mode is experimental.",
-                                                {
-                                                    variant: "warning",
-                                                },
+                                                { variant: "warning" },
                                             );
                                         }
                                     }}
-                                    style={{fontVariationSettings: "'wght' 700"}}
-                                    className={
-                                        "cursor-pointer hover:text-neutral-300 transition-colors"
-                                    }
                                 >
-                                    Light Mode Beta
+                                    {theme.colorMode
+                                        ? "Light Mode Beta"
+                                        : "Dark Mode"}
                                 </p>
-                                <div className="bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50" />
+                                <div className="bg-neutral-600 mt-1 mb-2 h-px w-full opacity-50" />
                                 <p
-                                    style={{fontVariationSettings: "'wght' 700"}}
-                                    className={
-                                        "cursor-pointer text-red-500 hover:text-red-600 transition-colors"
-                                    }
+                                    style={{
+                                        fontVariationSettings: "'wght' 700",
+                                    }}
+                                    className="cursor-pointer transition-colors text-red-500 hover:text-red-600"
                                     onClick={signOut}
                                 >
                                     Sign Out
@@ -365,13 +338,22 @@ const NavBar = () => {
                 </div>
             </Box>
 
-            <Box onMouseLeave={() => setIsHovered(false)}>
+            {/* Secondary nav — top‑level tabs */}
+            <Box
+                onMouseLeave={() => setIsHovered(false)}
+                overflow={"scroll"}
+                sx={{
+                    scrollbarWidth: "none",
+                    "&::-webkit-scrollbar": { display: "none" },
+                }}
+            >
+                {/* Frosted backdrop */}
                 <Box
                     sx={{
                         position: "absolute",
+                        top: 0,
                         width: "100%",
-                        height: "100px",
-                        top: "0px",
+                        height: 100,
                         backgroundImage: `url(${PUBLIC_URL}/textures/menubar.png)`,
                         backgroundSize: "cover",
                         backgroundPosition: "center",
@@ -379,30 +361,30 @@ const NavBar = () => {
                         opacity: 0.5,
                         filter: "blur(10px)",
                         zIndex: 1,
-                        display: showBigNav ? "block" : "none",
                     }}
                 />
+
                 <Stack
                     direction="row"
                     spacing={3.5}
                     sx={{
                         zIndex: 40,
-                        fontSize: "20px",
+                        fontSize: 20,
                         fontVariationSettings: "'wght' 700",
                         position: "relative",
-                        marginLeft: 7,
-                        marginTop: 3,
-                        marginBottom: 1,
-                        display: showBigNav ? "flex" : "none",
+                        ml: 7,
+                        mt: 3,
+                        mb: 1,
+                        minWidth: "1000px",
                     }}
                 >
                     {topNavItems.map((item, index) => (
                         <div
-                            key={item.path + index}
+                            key={`${item.path}${index}`}
                             ref={(el) => {
                                 if (el) itemRefs.current[index] = el;
                             }}
-                            className={`transition-colors cursor-pointer ${
+                            className={`cursor-pointer transition-colors ${
                                 isPageOptnActive(item)
                                     ? "text-gray-300"
                                     : "hover:text-gray-300"
@@ -419,100 +401,79 @@ const NavBar = () => {
                             style={{ position: "relative" }}
                         >
                             <i className={item.icon}></i>
-                            <span
-                                style={{
-                                    marginLeft: "3px",
-                                    position: "relative",
-                                    top: "-1px",
-                                }}
-                            >
-                                {item.label}
-                            </span>
+                            {!isMobile && (
+                                <span
+                                    style={{
+                                        marginLeft: 3,
+                                        position: "relative",
+                                        top: -1,
+                                    }}
+                                >
+                                    {item.label}
+                                </span>
+                            )}
                         </div>
                     ))}
 
-                    <div
-                        style={{
-                            position: "absolute",
-                            bottom: -8,
-                            left: optionUnderline.left - 27,
-                            width: optionUnderline.width,
-                            height: "1px",
-                            backgroundColor: "#FFFFFF80",
-                            transition: "left 0.3s, width 0.3s",
-                            pointerEvents: "none",
-                        }}
-                    />
+                    {/* Animated underline */}
+                    {!isMobile && (
+                        <div
+                            style={{
+                                position: "absolute",
+                                bottom: -8,
+                                left: optionUnderline.left - 27,
+                                width: optionUnderline.width,
+                                height: 1,
+                                backgroundColor: "#FFFFFF80",
+                                transition: "left 0.3s,width 0.3s",
+                                pointerEvents: "none",
+                            }}
+                        />
+                    )}
                 </Stack>
             </Box>
 
-            <Divider style={{ position: "relative", zIndex: 45, bottom: 1 }} />
+            {/* Divider under main nav */}
+            <Divider sx={{ position: "relative", zIndex: 45, bottom: 1 }} />
 
+            {/* Contextual sub‑nav for StuyActivities pages */}
             {isOnStuyActivitiesPage && (
                 <Stack
-                    marginLeft={7}
-                    marginTop={2}
                     direction="row"
                     spacing={3}
-                    zIndex={1002}
+                    ml={7}
+                    mt={2}
                     position="relative"
+                    zIndex={1002}
                 >
-                    <Typography
-                        className="transition-opacity cursor-pointer"
-                        onClick={() => navigate("/catalog")}
-                        sx={{
-                            fontVariationSettings: "'wght' 700",
-                            opacity: location.pathname === "/catalog" ? 1 : 0.5,
-                        }}
-                        color="rgb(209 213 219 / var(--tw-text-opacity, 1))"
-                    >
-                        Catalog
-                    </Typography>
-                    <Typography
-                        className="transition-opacity cursor-pointer"
-                        onClick={() => navigate("/charter")}
-                        sx={{
-                            fontVariationSettings: "'wght' 700",
-                            opacity: location.pathname === "/charter" ? 1 : 0.5,
-                        }}
-                        color="rgb(209 213 219 / var(--tw-text-opacity, 1))"
-                    >
-                        Charter
-                    </Typography>
-                    <Typography
-                        className="transition-opacity cursor-pointer"
-                        onClick={() => navigate("/rules")}
-                        sx={{
-                            fontVariationSettings: "'wght' 700",
-                            opacity: location.pathname === "/rules" ? 1 : 0.5,
-                        }}
-                        color="rgb(209 213 219 / var(--tw-text-opacity, 1))"
-                    >
-                        Regulations
-                    </Typography>
+                    {(
+                        [
+                            { label: "Catalog", path: "/catalog" },
+                            { label: "Charter", path: "/charter" },
+                            { label: "Regulations", path: "/rules" },
+                            { label: "Archives", path: "/archives" },
+                        ] as const
+                    ).map(({ label, path }) => (
+                        <Typography
+                            key={path}
+                            className="cursor-pointer transition-opacity"
+                            onClick={() => navigate(path)}
+                            sx={{
+                                fontVariationSettings: "'wght' 700",
+                                opacity: location.pathname === path ? 1 : 0.5,
+                                color: "rgb(209 213 219 / var(--tw-text-opacity, 1))",
+                            }}
+                        >
+                            {label}
+                        </Typography>
+                    ))}
 
-                    <Typography
-                        className="transition-opacity cursor-pointer"
-                        onClick={() =>
-                            window.open(
-                                "https://docs.google.com/spreadsheets/d/1TyFnEPhY3gM-yRJKYDJkQSfHC6OsvC5ftkkoahjVcCU/edit?gid=485693778#gid=485693778",
-                                "_blank",
-                            )
-                        }
-                        sx={{
-                            fontVariationSettings: "'wght' 700",
-                            opacity: 0.5,
-                        }}
-                        color="rgb(209 213 219 / var(--tw-text-opacity, 1))"
-                    >
-                        Archive
-                    </Typography>
-
+                    {/* Admin panel shortcut */}
                     <div
                         onClick={() => navigate("/admin")}
-                        className="inline-flex gap-1 text-yellow-500 cursor-pointer"
+                        className="inline-flex cursor-pointer gap-1 text-yellow-500"
                     >
-                        <i className="bx bx-shield"></i>
+                        <i className="bx bx-shield" />
                         <Typography
                             sx={{
                                 fontVariationSettings: "'wght' 700",
@@ -524,7 +485,7 @@ const NavBar = () => {
                     </div>
                 </Stack>
             )}
-        </>
+        </div>
     );
 };
 

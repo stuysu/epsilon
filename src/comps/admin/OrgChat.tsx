@@ -1,15 +1,15 @@
 import {
-    Box,
-    TextField,
-    Card,
-    ListItem,
-    ListItemText,
-    ListItemAvatar,
     Avatar,
-    Typography,
+    Box,
+    Card,
     IconButton,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
+    TextField,
+    Typography,
 } from "@mui/material";
-import { useContext, useEffect, useState, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useSnackbar } from "notistack";
 import UserContext from "../context/UserContext";
@@ -146,12 +146,12 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
         <Card
             variant="outlined"
             sx={{
-                width: "100%",
+                width: "1000px",
                 padding: "15px",
             }}
         >
-            <Typography variant="h2">Messages</Typography>
-            <Box sx={{ height: "400px", overflow: "auto" }} ref={chatBoxRef}>
+            <Typography variant="h2">Messaging</Typography>
+            <Box sx={{ height: "500px", overflow: "auto" }} ref={chatBoxRef}>
                 {messages.map((message) => {
                     let messageTime = dayjs(message.created_at);
                     let timeStr = `${messageTime.month() + 1}/${messageTime.date()}/${messageTime.year()}`;

@@ -94,7 +94,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 if (!Array.isArray(data) || data?.length === 0) {
                     // user is not in our public.users table. notify
                     enqueueSnackbar(
-                        "Unverified account. Please contact it@stuysu.org for support.",
+                        "Please sign in with your stuy.edu account. For more assistance, contact it@stuysu.org",
                         { variant: "error" },
                     );
                     setLoading(false);

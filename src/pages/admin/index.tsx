@@ -74,6 +74,11 @@ export const getLinks = (user: UserContextType) => {
             label: "Add User",
             icon: <AddIcon />,
         },
+        {
+            to: "/admin/add-action",
+            label: "Call to Action",
+            icon: <i className="bx bx-bell bx-sm"></i>,
+        },
     ];
     if (VALENTINES) {
         navLinks.push(
