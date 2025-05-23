@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "../supabaseClient";
-import { Box, useMediaQuery, Typography } from "@mui/material";
+import { Box, Typography, useMediaQuery } from "@mui/material";
 import { Masonry } from "@mui/lab";
 
 import OrgCard from "../comps/pages/catalog/OrgCard";
@@ -201,7 +201,6 @@ const Catalog = () => {
                     position: "relative",
                 }}
             >
-
                 <Box>
                     <Masonry
                         columns={columns}
@@ -217,7 +216,10 @@ const Catalog = () => {
                         })}
                     </Masonry>
                     {searchState.more ? (
-                        <div ref={loadingObserver}>
+                        <div
+                            ref={loadingObserver}
+                            className={"bottom-16 relative right-52"}
+                        >
                             <Loading />
                         </div>
                     ) : (

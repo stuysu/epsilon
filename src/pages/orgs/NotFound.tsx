@@ -46,7 +46,7 @@ const NotFound = () => {
             <Typography variant="body1">
                 {FlavorText[Math.floor(Math.random() * FlavorText.length)]}{" "}
                 <a className={"underline"} href={"/"}>
-                    Take me home!
+                    Take me home.
                 </a>
             </Typography>
         </Box>

@@ -90,6 +90,13 @@ const topNavItems = [
         icon: "bx bx-glasses",
         external: true,
     },
+    {
+        label: "Apply",
+        url: "https://applications.stuysu.org/",
+        path: "/none",
+        icon: "bx bx-check-circle",
+        external: true,
+    },
     { label: "About", path: "/about", icon: "bx bx-file", external: false },
 ] as const;
 
@@ -438,52 +445,69 @@ const NavBar: FC = () => {
 
             {/* Contextual sub‑nav for StuyActivities pages */}
             {isOnStuyActivitiesPage && (
-                <Stack
-                    direction="row"
-                    spacing={3}
-                    ml={7}
-                    mt={2}
-                    position="relative"
-                    zIndex={1002}
+                <div
+                    style={{
+                        overflowX: "scroll",
+                        scrollbarWidth: "none",
+                    }}
                 >
-                    {(
-                        [
-                            { label: "Catalog", path: "/catalog" },
-                            { label: "Charter", path: "/charter" },
-                            { label: "Regulations", path: "/rules" },
-                            { label: "Archives", path: "/archives" },
-                        ] as const
-                    ).map(({ label, path }) => (
-                        <Typography
-                            key={path}
-                            className="cursor-pointer transition-opacity"
-                            onClick={() => navigate(path)}
-                            sx={{
-                                fontVariationSettings: "'wght' 700",
-                                opacity: location.pathname === path ? 1 : 0.5,
-                                color: "rgb(209 213 219 / var(--tw-text-opacity, 1))",
-                            }}
-                        >
-                            {label}
-                        </Typography>
-                    ))}
-
-                    {/* Admin panel shortcut */}
-                    <div
-                        onClick={() => navigate("/admin")}
-                        className="inline-flex cursor-pointer gap-1 text-yellow-500"
+                    <Stack
+                        direction="row"
+                        spacing={3}
+                        ml={7}
+                        mt={2}
+                        position="relative"
+                        zIndex={1002}
+                        minWidth={"1000px"}
                     >
-                        <i className="bx bx-shield" />
-                        <Typography
-                            sx={{
-                                fontVariationSettings: "'wght' 700",
-                                color: "rgb(234 179 8 / var(--tw-text-opacity, 1))",
-                            }}
+                        {(
+                            [
+                                { label: "Catalog", path: "/catalog" },
+                                { label: "Charter", path: "/charter" },
+                                { label: "Regulations", path: "/rules" },
+                                { label: "Archives", path: "/archives" },
+                                {
+                                    label: "Support",
+                                    path: "/activities-support",
+                                },
+                                {
+                                    label: "Unaffiliated Rooms",
+                                    path: "/unaffiliated",
+                                },
+                            ] as const
+                        ).map(({ label, path }) => (
+                            <Typography
+                                key={path}
+                                className="cursor-pointer transition-opacity"
+                                onClick={() => navigate(path)}
+                                sx={{
+                                    fontVariationSettings: "'wght' 700",
+                                    opacity:
+                                        location.pathname === path ? 1 : 0.5,
+                                    color: "rgb(209 213 219 / var(--tw-text-opacity, 1))",
+                                }}
+                            >
+                                {label}
+                            </Typography>
+                        ))}
+
+                        {/* Admin panel shortcut */}
+                        <div
+                            onClick={() => navigate("/admin")}
+                            className="inline-flex cursor-pointer gap-1 text-yellow-500"
                         >
-                            Admin Panel
-                        </Typography>
-                    </div>
-                </Stack>
+                            <i className="bx bx-shield" />
+                            <Typography
+                                sx={{
+                                    fontVariationSettings: "'wght' 700",
+                                    color: "rgb(234 179 8 / var(--tw-text-opacity, 1))",
+                                }}
+                            >
+                                Admin Panel
+                            </Typography>
+                        </div>
+                    </Stack>
+                </div>
             )}
         </div>
     );

@@ -54,14 +54,48 @@ const UnauthenticatedLanding = () => {
                             : "normal",
                         position: "relative",
                         zIndex: 3,
-                        filter: theme.colorMode ? "" : "invert(0%)",
+                        opacity: 0,
+                        transform: "scale(1.5)",
+                        filter: theme.colorMode
+                            ? "blur(20px)"
+                            : "blur(20px) invert(0%)",
+                        animation:
+                            "fadeIn 1.5s cubic-bezier(0, 0, 0, 1) forwards",
+                        animationDelay: "0.3s",
                     }}
                 />
-                <LoginButton
-                    onMouseEnter={() => setIsLoginHovered(true)}
-                    onMouseLeave={() => setIsLoginHovered(false)}
-                />
-                <CatalogButton />
+                <style>
+                    {`
+                        @keyframes fadeIn {
+                            to {
+                                opacity: 1;
+                                transform: scale(1);
+                                filter: blur(0);
+                            }
+                        }
+                    `}
+                </style>
+                <div
+                    style={{
+                        opacity: 0,
+                        animation: "fadeIn 0.5s ease forwards",
+                        animationDelay: "0.8s",
+                    }}
+                >
+                    <LoginButton
+                        onMouseEnter={() => setIsLoginHovered(true)}
+                        onMouseLeave={() => setIsLoginHovered(false)}
+                    />
+                </div>
+                <div
+                    style={{
+                        opacity: 0,
+                        animation: "fadeIn 0.5s ease forwards",
+                        animationDelay: "1.3s",
+                    }}
+                >
+                    <CatalogButton />
+                </div>
             </Box>
 
             <img

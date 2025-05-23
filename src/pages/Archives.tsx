@@ -1,29 +1,38 @@
-import { Typography } from "@mui/material";
 import React from "react";
 
 const Archives = () => {
     return (
-        <div
-            className={
-                "w-full h-full flex justify-center items-center flex-col"
-            }
-        >
-            <Typography
-                variant="h1"
-                color="textSecondary"
-                marginTop={"40px"}
-                marginBottom={3}
-            >
-                Archives
-            </Typography>
-            <a
-                className={"underline"}
-                href={
-                    "https://docs.google.com/spreadsheets/d/1TyFnEPhY3gM-yRJKYDJkQSfHC6OsvC5ftkkoahjVcCU/edit?gid=485693778#gid=485693778"
+        <div>
+            <div
+                className={
+                    "flex justify-center flex-col items-center w-full h-96 pt-[80px]"
                 }
             >
-                StuyActivities Archive [2023-2024]
-            </a>
+                <h1
+                    className={
+                        "w-2/3 bg-blend-color-dodge text-white/75 text-8xl text-center"
+                    }
+                >
+                    StuyActivities
+                    <br />
+                    Archives
+                </h1>
+            </div>
+            <div
+                className={
+                    "flex justify-center flex-col items-center w-full h-20"
+                }
+            >
+                <a
+                    className={"underline mt-10"}
+                    href={
+                        "https://docs.google.com/spreadsheets/d/1TyFnEPhY3gM-yRJKYDJkQSfHC6OsvC5ftkkoahjVcCU/edit?gid=485693778#gid=485693778"
+                    }
+                >
+                    <i className={"bx bx-box mr-1 relative top-0.5"}></i>SY
+                    2023-2024
+                </a>
+            </div>
         </div>
     );
 };

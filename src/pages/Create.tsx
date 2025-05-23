@@ -255,7 +255,7 @@ const Create = () => {
             </Box>
         );
     return (
-        <LoginGate>
+        <LoginGate page={"charter an activity"}>
             <MultiPageForm
                 title=""
                 value={formData}

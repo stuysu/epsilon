@@ -163,6 +163,17 @@ const Overview = () => {
         >
             <Stack direction={{ xs: "column", sm: "row" }} spacing={5}>
                 <Box>
+                    <Box
+                        sx={{
+                            width: "250px",
+                            height: "250px",
+                            borderRadius: "25px",
+                            position: "absolute",
+                            boxShadow:
+                                "inset 0 0 10px 1px rgba(255, 255, 255, 0.3)",
+                            zIndex: 10,
+                        }}
+                    ></Box>
                     <Avatar
                         src={organization.picture || ""}
                         sx={{
@@ -553,13 +564,11 @@ const Overview = () => {
 
                     <Stack borderRadius={2} overflow="hidden" spacing={0.5}>
                         {organization.meetings.length === 0 ? (
-                            <Typography
-                                variant="body1"
-                                width="100%"
-                                marginLeft={3}
-                                marginBottom={3}
-                            >
-                                No meetings scheduled for the future.
+                            <Typography variant="body1" width="100%" margin={3}>
+                                Sign in to view meetings. In this case you are
+                                either not signed in or there has not EVER been
+                                a meeting. Add a state for when there are no
+                                FUTURE meetings merely.
                             </Typography>
                         ) : (
                             organization.meetings

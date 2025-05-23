@@ -1,11 +1,11 @@
 /* ORG ROUTING INFORMATION HERE */
-import { useEffect, useState } from "react";
-import { Route, Routes, useLocation, useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
 import OrgContext from "../../comps/context/OrgContext";
 import Loading from "../../comps/ui/Loading";
 import { supabase } from "../../supabaseClient";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import "../../orgTransitions.css"; // Create this CSS file for animations
+import "../../orgTransitions.css";
 import OrgNav from "../../comps/pages/orgs/OrgNav";
 
 import NotFound from "./NotFound";
@@ -21,6 +21,7 @@ import OrgInspector from "../../comps/pages/orgs/OrgInspector";
 const OrgRouter = () => {
     const { enqueueSnackbar } = useSnackbar();
     const { orgUrl } = useParams();
+    const navigate = useNavigate();
     const location = useLocation();
 
     const isMobile = useMediaQuery("(max-width: 1000px)");
@@ -141,10 +142,27 @@ const OrgRouter = () => {
                 <NotFound />
             ) : (
                 <>
+                    <div
+                        className={`cursor-pointer transition-colors text-gray-300 hover:text-gray-400 ml-10 mt-4`}
+                        onClick={() => navigate("/catalog")}
+                    >
+                        <i className={"bx bx-chevron-left"}></i>
+                        <span
+                            style={{
+                                fontVariationSettings: "'wght' 700",
+                                marginLeft: 3,
+                                position: "relative",
+                                top: -1,
+                            }}
+                        >
+                            Back
+                        </span>
+                    </div>
+
                     <Box
                         sx={{
                             width: "100%",
-                            marginTop: "30px",
+                            marginTop: "10px",
                         }}
                     ></Box>
                     <Box

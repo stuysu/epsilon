@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import OrgContext from "../../comps/context/OrgContext";
-import { Box, Stack } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import OrgMember from "../../comps/pages/orgs/OrgMember";
 
 import { sortByRole } from "../../utils/DataFormatters";
@@ -17,8 +17,12 @@ const Members = () => {
                     bgcolor="#1f1f1f80"
                     padding={0.5}
                     borderRadius={3}
+                    marginBottom={10}
                     boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
                 >
+                    <Typography variant="body1" align={"center"}>
+                        Search
+                    </Typography>
                     <Stack
                         direction="column"
                         spacing={0.3}
