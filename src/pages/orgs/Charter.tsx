@@ -12,15 +12,12 @@ const Charter = () => {
     const organization: OrgContextType = useContext(OrgContext);
 
     return (
-        <Stack spacing={3}>
-            <Typography variant="h1" align="center" width="100%">
-                Charter
-            </Typography>
-            <Typography variant="h3">What is this club?</Typography>
+        <Stack spacing={3} marginTop={2} marginBottom={10}>
+            <Typography variant="h3">What is this activity?</Typography>
             <Typography>{organization.purpose || "None"}</Typography>
             <Divider></Divider>
             <Typography variant="h3">
-                What days does this organization meet?
+                On what days does this activity meet?
             </Typography>
             <Typography>
                 {formatDays(organization.meeting_days || []) || "None"}
@@ -30,7 +27,7 @@ const Charter = () => {
             <Typography>{organization.meeting_schedule || "None"}</Typography>
             <Divider></Divider>
             <Typography variant="h3">
-                What would a typical meeting look like?
+                What does a typical meeting look like?
             </Typography>
             <Typography>
                 {organization.meeting_description || "None"}

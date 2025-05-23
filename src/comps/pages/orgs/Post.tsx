@@ -95,7 +95,6 @@ const Post = ({
         <Card
             variant="outlined"
             sx={{
-                width: "550px",
                 margin: "10px",
                 padding: "15px",
                 height: "400px",
@@ -130,7 +129,7 @@ const Post = ({
                 {content.title}
             </Typography>
 
-            <Box sx={{ width: "100%", height: "170px", overflowY: "auto" }}>
+            <Box sx={{ width: "100%", maxHeight: "250px", overflowY: "auto" }}>
                 <Typography
                     variant="body1"
                     width="100%"

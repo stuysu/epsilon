@@ -1,4 +1,4 @@
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Chip, Stack, Typography } from "@mui/material";
 
 import { useState } from "react";
 import dayjs from "dayjs";
@@ -47,56 +47,56 @@ const OrgMeeting = ({
     }
 
     return (
-        <Paper
-            elevation={1}
-            sx={{
-                maxWidth: isMobile ? "100vw" : "450px",
-                width: isMobile ? "100%" : "50%",
-                height: "225px",
-                borderRadius: "7px",
-                marginBottom: "15px",
-                padding: "10px",
-                paddingLeft: "20px",
-                display: "flex",
-                flexWrap: "wrap",
-                margin: "10px",
-            }}
-        >
-            <Box sx={{ width: "100%", height: "165px" }}>
-                <Typography variant="h5">{title}</Typography>
-                <Typography>
-                    {startTime} to {endTime}
-                </Typography>
-                <Typography>Location: {room_name || "Virtual"}</Typography>
-                {is_public ? (
-                    <Typography>Public</Typography>
-                ) : (
-                    <Typography>Private</Typography>
-                )}
-            </Box>
-            <Box sx={{ height: "60px", width: "100%" }}>
-                <AsyncButton variant="contained" onClick={() => setOpen(true)}>
-                    View More
-                </AsyncButton>
-                {onEdit && (
-                    <AsyncButton
-                        variant="contained"
-                        onClick={onEdit}
-                        sx={{ marginLeft: "10px" }}
-                    >
-                        Edit
-                    </AsyncButton>
-                )}
-                {onDelete && (
-                    <AsyncButton
-                        variant="contained"
-                        onClick={onDelete}
-                        sx={{ marginLeft: "10px" }}
-                    >
-                        Delete
-                    </AsyncButton>
-                )}
-            </Box>
+        <div style={{ width: "100%" }}>
+            <Stack
+                onClick={() => setOpen(true)}
+                direction={"row"}
+                justifyContent={"space-between"}
+                alignItems={"center"}
+                sx={{
+                    background: "#36363680",
+                    transition: "background-color 0.1s ease-in-out",
+                    "&:hover": {
+                    backgroundColor: "#4d4d4d80"
+                },
+                    }}
+                padding={3}
+            >
+                <Box sx={{ width: "100%" }}>
+                    <Typography variant="h4">{title}</Typography>
+                    <Typography>
+                        {startTime} to {endTime}
+                    </Typography>
+                </Box>
+                <Stack direction={"row"} gap={1}>
+                    <Chip label={"Room " + room_name || "Virtual"}></Chip>
+                    {is_public ? (
+                        <Chip label="Public"></Chip>
+                    ) : (
+                        <Chip label="Private"></Chip>
+                    )}
+                </Stack>
+                <Box>
+                    {onEdit && (
+                        <AsyncButton
+                            variant="contained"
+                            onClick={onEdit}
+                            sx={{ marginLeft: "10px" }}
+                        >
+                            Edit
+                        </AsyncButton>
+                    )}
+                    {onDelete && (
+                        <AsyncButton
+                            variant="contained"
+                            onClick={onDelete}
+                            sx={{ marginLeft: "10px" }}
+                        >
+                            Delete
+                        </AsyncButton>
+                    )}
+                </Box>
+            </Stack>
             <MeetingPreview
                 id={id}
                 title={title}
@@ -110,7 +110,7 @@ const OrgMeeting = ({
                 roomName={room_name}
                 onClose={() => setOpen(false)}
             />
-        </Paper>
+        </div>
     );
 };
 

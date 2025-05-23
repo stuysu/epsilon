@@ -14,7 +14,7 @@ const ModuleRouter = () => {
     const location = useLocation();
 
     return (
-        <LoginGate page="use modules">
+        <LoginGate page="access modules">
             <Helmet>
                 <meta
                     property="og:url"

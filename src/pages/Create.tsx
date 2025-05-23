@@ -19,8 +19,6 @@ import OrgRequirements from "../utils/OrgRequirements";
 
 import { PUBLIC_URL } from "../constants";
 
-import { useNavigate } from "react-router-dom";
-
 import LoginGate from "../comps/ui/LoginGate";
 import UserContext from "../comps/context/UserContext";
 
@@ -257,9 +255,9 @@ const Create = () => {
             </Box>
         );
     return (
-        <LoginGate>
+        <LoginGate page={"charter an activity"}>
             <MultiPageForm
-                title="Create New Organization"
+                title=""
                 value={formData}
                 onFormChange={setFormData}
                 onSubmit={createActivity}
@@ -271,7 +269,7 @@ const Create = () => {
                     flexWrap: "wrap",
                 }}
             >
-                <FormPage title="Before you start">
+                <FormPage title="Before You Start">
                     <Typography variant="body1">
                         Before you begin the chartering process, make sure to
                         read through the Clubs & Pubs Rules, which all

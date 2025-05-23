@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
-import { ReactNode } from "react";
-import { useNavigate } from "react-router-dom";
-import AsyncButton from "../comps/ui/AsyncButton";
+import { ReactNode, useContext } from "react";
+import { PUBLIC_URL } from "../constants";
+import { ThemeContext } from "../comps/context/ThemeProvider";
 
 const Center = ({ children }: { children?: ReactNode }) => {
     return (
@@ -36,6 +36,8 @@ const Credit = ({
                 padding: "20px",
                 display: "flex",
                 justifyContent: "center",
+                alignItems: "start",
+                textAlign: "center",
                 flexWrap: "wrap",
             }}
         >
@@ -47,13 +49,14 @@ const Credit = ({
 };
 
 const About = () => {
-    const navigate = useNavigate();
+    const theme = useContext(ThemeContext);
+
+    const wordmarkSrc = theme.colorMode
+        ? `${PUBLIC_URL}/wordmark.svg`
+        : `${PUBLIC_URL}/wordmark_light.svg`;
 
     return (
         <Box sx={{ width: "100%", padding: "20px" }}>
-            <AsyncButton variant="contained" onClick={() => navigate("/")}>
-                Back to home
-            </AsyncButton>
             <Box
                 sx={{
                     width: "100%",
@@ -62,11 +65,30 @@ const About = () => {
                     flexWrap: "wrap",
                 }}
             >
-                <h1>Epsilon</h1>
+                <img
+                    src={wordmarkSrc}
+                    alt="Epsilon"
+                    style={{
+                        marginBottom: "40px",
+                        maxWidth: "300px",
+                        height: "auto",
+                        mixBlendMode: theme.colorMode
+                            ? "color-dodge"
+                            : "normal",
+                        position: "relative",
+                        zIndex: 3,
+                        filter: theme.colorMode ? "" : "invert(0%)",
+                    }}
+                />
                 <Break />
                 <p>The everything platform for Stuyvesant High School.</p>
                 <Break />
-                <i>One Site, One School, For Everyone</i>
+                <p>One Site, One School, For Everyone</p>
+                <Break />
+                <br />
+                The new interface is designed and developed by Will Zhang, SU IT
+                '23-'25
+                <br />
             </Box>
             <Box
                 sx={{
@@ -78,44 +100,28 @@ const About = () => {
             >
                 <Credit title="The Original Epsilon Team">
                     Randy Sim, SU IT Co-Director '23-'24, SU IT '22-'23 <br />
-                    <br />
                     David Chen, SU IT Co-Director '23-'25, SU IT '21-'23 <br />
-                    <br />
                     Rahul Deb, SU IT Co-Director '24-'25, SU IT '23-'24 <br />
-                    <br />
                     Nathaniel Moy, SU IT Manager '24-'25, SU IT '23-'25 <br />
-                    <br />
-                    Adam Choi, SU IT '23-'25
-                    <br />
+                    Adam Choi, SU IT '23-'25 <br />
                 </Credit>
                 <Break />
                 <Credit title="SU IT 23-24">
                     Randy Sim, SU IT Co-Director '23-'24, SU IT '22-'23 <br />
-                    <br />
                     David Chen, SU IT Co-Director '23-'24, SU IT '21-'23 <br />
-                    <br />
                     Tony Chen, SU IT ’23-’24 <br />
-                    <br />
                     Adam Choi, SU IT ’23-’24 <br />
-                    <br />
                     Rahul Deb, SU IT ’23-’24 <br />
-                    <br />
                     Richard Wan, SU IT ’23-’24 <br />
-                    <br />
                 </Credit>
                 <Credit title="SU IT 22-23">
                     Yuhao “Ben” Pan, SU IT Co-Director ’22-’23, SU IT ’21-’22{" "}
                     <br />
-                    <br />
                     Chun Yeung “Frank” Wong, SU IT Co-Director ’22-’23, SU IT
                     ’21-’22 <br />
-                    <br />
                     William Vongphanith, SU IT Assistant Director ’22-’23 <br />
-                    <br />
                     David Chen, SU IT ’21-’23 <br />
-                    <br />
-                    Randy Sim, SU IT ’22-’23 <br />
-                    <br />
+                    Randy Sim, SU IT ’22-’23
                 </Credit>
                 <Break />
                 <Center>

@@ -55,7 +55,7 @@ const OrgMember = ({
                     secondary={<>{email}</>}
                 />
             </ListItem>
-            <Chip label={l1} sx={{ marginRight: "20px" }} />
+            <Chip label={l1} sx={{ marginRight: "20px", maxWidth: "600px"}} />
         </Stack>
     );
 };

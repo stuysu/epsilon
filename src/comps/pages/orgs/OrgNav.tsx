@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Box, List, Typography } from "@mui/material";
 import OrgContext from "../../context/OrgContext";
 
@@ -66,12 +66,11 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     return (
         <Box
             sx={{
-                minWidth: "200px",
-                width: isMobile ? "100%" : "",
-                padding: isMobile ? "0px" : "20px",
+                minWidth: "150px",
+                marginTop: "15px",
             }}
         >
-            <Typography>About this Activity</Typography>
+            <Typography>About</Typography>
             <List sx={{ width: "100%" }}>
                 {navLinks.map((linkData, i) => (
                     <Box
@@ -81,7 +80,38 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                             display: "flex",
                             alignItems: "center",
                             cursor: "pointer",
-                            padding: "0 10px",
+                        }}
+                        onClick={() => {
+                            navigate(linkData.to);
+                            setCurrentIndex(i);
+                        }}
+                    >
+                        <Typography
+                            sx={{
+                                fontVariationSettings: `'wght' 600`,
+                                color:
+                                    currentIndex === i
+                                        ? "rgba(232,232,232,80)"
+                                        : "#rgba(174,174,174,80)",
+                            }}
+                        >
+                            {linkData.display}
+                        </Typography>
+                    </Box>
+                ))}
+            </List>
+
+            <div className={"h-px w-4/5 bg-neutral-600 my-2"}></div>
+            <Typography marginTop={2}>Admin Tools</Typography>
+            <List sx={{ width: "100%" }}>
+                {navLinks.map((linkData, i) => (
+                    <Box
+                        key={i}
+                        sx={{
+                            height: `30px`,
+                            display: "flex",
+                            alignItems: "center",
+                            cursor: "pointer",
                         }}
                         onClick={() => {
                             navigate(linkData.to);

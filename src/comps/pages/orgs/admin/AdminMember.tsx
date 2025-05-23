@@ -1,17 +1,17 @@
-import { useContext, useState, ChangeEvent } from "react";
+import { ChangeEvent, useContext, useState } from "react";
 import UserContext from "../../../context/UserContext";
 
 import {
-    Dialog,
-    DialogContent,
-    DialogTitle,
-    DialogContentText,
-    TextField,
-    Select,
-    MenuItem,
-    SelectChangeEvent,
-    DialogActions,
     Box,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    MenuItem,
+    Select,
+    SelectChangeEvent,
+    TextField,
 } from "@mui/material";
 import { supabase } from "../../../../supabaseClient";
 import { useSnackbar } from "notistack";
@@ -194,7 +194,7 @@ const AdminMember = ({
                         variant="contained"
                         sx={{ height: "40px" }}
                     >
-                        Edit
+                        Edit Role
                     </AsyncButton>
                 )}
 

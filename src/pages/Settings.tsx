@@ -126,8 +126,12 @@ const Settings = () => {
                     marginBottom: "30px",
                 }}
             >
-                <Typography variant="h1" align="center" marginBottom="50px">
-                    Email Settings
+                <Typography variant="h1" align="center" marginTop="50px">
+                    Communication Options
+                </Typography>
+                <Typography variant="body1" align="center" marginBottom="50px">
+                    Choose your preferred email communication options for each
+                    organization you are a member of.
                 </Typography>
             </Box>
 
@@ -148,9 +152,8 @@ const Settings = () => {
                     }}
                 >
                     <Typography
-                        variant="h2"
+                        variant="body1"
                         sx={{
-                            fontSize: "2rem",
                             textAlign: "left",
                             width: "45%",
                         }}
@@ -158,9 +161,8 @@ const Settings = () => {
                         Organization Name
                     </Typography>
                     <Typography
-                        variant="h2"
+                        variant="body1"
                         sx={{
-                            fontSize: "2rem",
                             textAlign: "right",
                             width: "45%",
                         }}
@@ -205,7 +207,7 @@ const Settings = () => {
                                     display: "flex",
                                     justifyContent: "center",
                                     alignItems: "center",
-                                    paddingRight: "11%",
+                                    paddingRight: "3%",
                                 }}
                             >
                                 <Switch

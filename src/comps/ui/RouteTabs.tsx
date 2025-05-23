@@ -1,4 +1,4 @@
-import { Box, Tab, Tabs } from "@mui/material";
+import { Tab, Tabs } from "@mui/material";
 import { useEffect, useState, ReactNode } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -29,7 +29,6 @@ const RouteTabs = ({ tabs }: Props) => {
     }, [location.pathname, currentTab, tabs]);
 
     return (
-        <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
             <Tabs
                 indicatorColor="secondary"
                 textColor="inherit"
@@ -52,7 +51,6 @@ const RouteTabs = ({ tabs }: Props) => {
                     );
                 })}
             </Tabs>
-        </Box>
     );
 };
 

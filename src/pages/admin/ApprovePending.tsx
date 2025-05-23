@@ -89,7 +89,7 @@ const ApprovePending = () => {
     return (
         <Box>
             <Typography variant="h1" align="center">
-                Org Approvals
+                Organization Approvals
             </Typography>
             <Box
                 sx={{

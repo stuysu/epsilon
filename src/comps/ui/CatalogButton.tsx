@@ -6,11 +6,10 @@ export default function CatalogButton() {
 
     return (
         <button
-            className="button"
-            style={{ textDecoration: "none", marginTop: 20, paddingTop: 20 }}
+            style={{ textDecoration: "underline", marginTop: 30 }}
             onClick={() => navigate("/catalog")}
         >
-            View Catalog
+            Browse StuyActivities
         </button>
     );
 }

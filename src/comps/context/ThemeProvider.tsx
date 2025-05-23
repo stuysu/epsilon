@@ -1,10 +1,6 @@
 import React from "react";
 
-import {
-    createTheme,
-    ThemeProvider as Provider,
-    useMediaQuery,
-} from "@mui/material";
+import { createTheme, ThemeProvider as Provider } from "@mui/material";
 
 const ThemeContext = React.createContext({
     toggleColorMode: () => {},
@@ -12,17 +8,12 @@ const ThemeContext = React.createContext({
 });
 
 const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
-    // dark mode detection/toggles/context may become obsolete in a new version of MUI with the <CssVarsProvider> component
-    // using a home-made solution for now since it's still marked experimental
-    const browserPreference = useMediaQuery("(prefers-color-scheme: dark)");
     const [storedPreference, setStoredPreference] = React.useState(
         window.localStorage.getItem("mode"),
     );
 
     const prefersDarkMode =
-        storedPreference !== null
-            ? storedPreference === "dark"
-            : browserPreference;
+        storedPreference !== null ? storedPreference === "dark" : true;
     const toggle = React.useMemo(
         () => () =>
             setStoredPreference(() => {
@@ -64,19 +55,21 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                     fontFamily: `'inter-variable', sans-serif`,
                     htmlFontSize: 16,
                     h1: {
-                        fontVariationSettings: "'wght' 800",
+                        fontFamily: `'neue-haas-grotesk-display', sans-serif`,
+                        fontWeight: 700,
                         fontSize: "2.2rem",
                         lineHeight: "2.2rem",
                         margin: "0.5rem 0",
                         color: prefersDarkMode ? "#E8E8E8CC" : "#2B2B2B",
                     },
                     h2: {
-                        fontSize: "2.6rem",
-                        fontVariationSettings: "'wght' 700",
-                        margin: "0.5rem 0",
+                        fontFamily: `'neue-haas-grotesk-display', sans-serif`,
+                        fontWeight: 600,
+                        fontSize: "1.6rem",
                         color: prefersDarkMode ? "#E8E8E8CC" : "#3B3B3B",
                     },
                     h3: {
+                        paddingTop: "0.12em",
                         lineHeight: "1.6rem",
                         fontSize: "1.6rem",
                         fontVariationSettings: `'wght' 700`,
@@ -84,9 +77,11 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                         color: prefersDarkMode ? "#E8E8E8CC" : "#4B4B4B",
                     },
                     h4: {
-                        fontSize: "1.8rem",
-                        fontVariationSettings: `'wght' 500`,
-                        margin: "0.5rem 0",
+                        lineHeight: "1.3rem",
+                        fontSize: "1.2rem",
+                        fontVariationSettings: `'wght' 600`,
+                        margin: "0.3rem 0",
+                        color: prefersDarkMode ? "#E8E8E8CC" : "#4B4B4B",
                     },
                     h5: {
                         fontSize: "1.4rem",
