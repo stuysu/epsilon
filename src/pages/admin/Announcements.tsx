@@ -1,4 +1,4 @@
-import { Box, TextField, Typography, Card } from "@mui/material";
+import { Box, Card, TextField, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
@@ -90,8 +90,14 @@ const Announcements = () => {
                     flexWrap: "wrap",
                 }}
             >
-                <Typography variant="h4" width="100%" align="center">
-                    Create Announcement
+                <Typography
+                    variant="h2"
+                    width="100%"
+                    align="center"
+                    mb={5}
+                    color="secondary"
+                >
+                    Create an Announcement to be broadcasted on Epsilon.
                 </Typography>
                 <Box sx={{ width: "500px" }}>
                     <TextField

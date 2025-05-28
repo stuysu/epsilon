@@ -146,7 +146,6 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
         <Card
             variant="outlined"
             sx={{
-                width: "1000px",
                 padding: "15px",
             }}
         >

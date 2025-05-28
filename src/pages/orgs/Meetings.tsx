@@ -18,7 +18,15 @@ const Meetings = () => {
     return (
         <LoginGate page="view meetings">
             {hasUpcomingMeetings ? (
-                <Box marginTop={1}>
+                <Box
+                    height="100%"
+                    bgcolor="#1f1f1f80"
+                    padding={0.5}
+                    borderRadius={3}
+                    marginBottom={10}
+                    marginTop={1}
+                    boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
+                >
                     <Stack borderRadius={2} overflow="hidden" spacing={0.5}>
                         {upcomingMeetings.sort(sortByDate).map((meeting) => (
                             <OrgMeeting

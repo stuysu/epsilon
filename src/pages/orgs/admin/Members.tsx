@@ -65,6 +65,7 @@ const Members = () => {
                 </Box>
                 <Box sx={{ paddingLeft: "16px", width: "100px" }}>
                     <Button
+                        variant="outlined"
                         onClick={async () => {
                             try {
                                 await navigator.clipboard.writeText(
@@ -80,7 +81,6 @@ const Members = () => {
                                 );
                             }
                         }}
-                        variant="contained"
                     >
                         Copy
                     </Button>

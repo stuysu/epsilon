@@ -127,7 +127,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                                         : "#rgba(174,174,174,80)",
                             }}
                         >
-                            {linkData.display}
+                            Members
                         </Typography>
                     </Box>
                 ))}

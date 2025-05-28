@@ -17,6 +17,7 @@ const STUY_ACTIVITIES_PATHS = [
     "/create",
     "/archives",
     "/rules",
+    "/activities-support",
     "/admin",
     "/admin/approve-edit",
     "/admin/approve-pending",
@@ -34,8 +35,8 @@ const navStyles: CSSProperties = {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    paddingRight: 5.5,
-    paddingLeft: 5.5,
+    paddingRight: "4.5vw",
+    paddingLeft: "4.5vw",
     position: "relative",
     zIndex: 50,
 };
@@ -44,6 +45,7 @@ const titleStyle: CSSProperties = {
     color: "inherit",
     fontSize: "25px",
     bottom: "2px",
+    right: "10px",
     position: "relative",
     height: "100%",
     display: "flex",
@@ -248,7 +250,7 @@ const NavBar: FC = () => {
                 </Box>
 
                 {/* User dropdown */}
-                <div className="relative flex flex-row justify-end">
+                <div className="relative flex flex-row justify-end top-1">
                     <div
                         className="flex cursor-pointer flex-row items-center justify-center gap-2 rounded-lg bg-neutral-800 pl-1.5 pr-2.5 shadow-[inset_0px_0px_2px_0px_rgba(255,255,255,0.3)] h-10"
                         onClick={() => setDrawerOpen(!drawerOpen)}
@@ -275,6 +277,11 @@ const NavBar: FC = () => {
                                 className="cursor-pointer transition-colors hover:text-neutral-300"
                                 onClick={() => navigate("/")}
                             >
+                                <i
+                                    className={
+                                        "bx bx-user-circle relative top-px mr-1"
+                                    }
+                                ></i>
                                 Sign In
                             </p>
                         ) : (
@@ -297,7 +304,7 @@ const NavBar: FC = () => {
                                 >
                                     Communication Options
                                 </p>
-                                <div className="bg-neutral-600 mt-1 mb-2 h-px w-full opacity-50" />
+                                <div className="bg-neutral-400 mt-1 mb-2 h-px w-full opacity-30" />
                                 <p
                                     style={{
                                         fontVariationSettings: "'wght' 700",
@@ -309,7 +316,7 @@ const NavBar: FC = () => {
                                 >
                                     Attendance Module
                                 </p>
-                                <div className="bg-neutral-600 mt-1 mb-2 h-px w-full opacity-50" />
+                                <div className="bg-neutral-400 mt-1 mb-2 h-px w-full opacity-30" />
                                 <p
                                     style={{
                                         fontVariationSettings: "'wght' 700",
@@ -329,7 +336,7 @@ const NavBar: FC = () => {
                                         ? "Light Mode Beta"
                                         : "Dark Mode"}
                                 </p>
-                                <div className="bg-neutral-600 mt-1 mb-2 h-px w-full opacity-50" />
+                                <div className="bg-neutral-400 mt-1 mb-2 h-px w-full opacity-30" />
                                 <p
                                     style={{
                                         fontVariationSettings: "'wght' 700",
@@ -345,7 +352,7 @@ const NavBar: FC = () => {
                 </div>
             </Box>
 
-            {/* Secondary nav — top‑level tabs */}
+            {/* Top‑level tabs */}
             <Box
                 onMouseLeave={() => setIsHovered(false)}
                 overflow={"scroll"}
@@ -379,10 +386,9 @@ const NavBar: FC = () => {
                         fontSize: 20,
                         fontVariationSettings: "'wght' 700",
                         position: "relative",
-                        ml: 7,
+                        marginLeft: "4.5vw",
                         mt: 3,
-                        mb: 1,
-                        minWidth: "1000px",
+                        mb: 1.5,
                     }}
                 >
                     {topNavItems.map((item, index) => (
@@ -391,7 +397,7 @@ const NavBar: FC = () => {
                             ref={(el) => {
                                 if (el) itemRefs.current[index] = el;
                             }}
-                            className={`cursor-pointer transition-colors ${
+                            className={`flex items-start flex-nowrap cursor-pointer transition-colors ${
                                 isPageOptnActive(item)
                                     ? "text-gray-300"
                                     : "hover:text-gray-300"
@@ -413,7 +419,7 @@ const NavBar: FC = () => {
                                     style={{
                                         marginLeft: 3,
                                         position: "relative",
-                                        top: -1,
+                                        top: 3,
                                     }}
                                 >
                                     {item.label}
@@ -427,7 +433,7 @@ const NavBar: FC = () => {
                         <div
                             style={{
                                 position: "absolute",
-                                bottom: -8,
+                                bottom: -12,
                                 left: optionUnderline.left - 27,
                                 width: optionUnderline.width,
                                 height: 1,
@@ -437,6 +443,7 @@ const NavBar: FC = () => {
                             }}
                         />
                     )}
+                    <div className={"min-w-3"}></div>
                 </Stack>
             </Box>
 
@@ -454,11 +461,10 @@ const NavBar: FC = () => {
                     <Stack
                         direction="row"
                         spacing={3}
-                        ml={7}
+                        ml="4.5vw"
                         mt={2}
                         position="relative"
                         zIndex={1002}
-                        minWidth={"1000px"}
                     >
                         {(
                             [
@@ -478,7 +484,7 @@ const NavBar: FC = () => {
                         ).map(({ label, path }) => (
                             <Typography
                                 key={path}
-                                className="cursor-pointer transition-opacity"
+                                className="cursor-pointer transition-opacity whitespace-nowrap"
                                 onClick={() => navigate(path)}
                                 sx={{
                                     fontVariationSettings: "'wght' 700",
@@ -494,7 +500,7 @@ const NavBar: FC = () => {
                         {/* Admin panel shortcut */}
                         <div
                             onClick={() => navigate("/admin")}
-                            className="inline-flex cursor-pointer gap-1 text-yellow-500"
+                            className="inline-flex cursor-pointer whitespace-nowrap gap-1 text-yellow-500"
                         >
                             <i className="bx bx-shield" />
                             <Typography
@@ -506,6 +512,7 @@ const NavBar: FC = () => {
                                 Admin Panel
                             </Typography>
                         </div>
+                        <div className={"min-w-4"}></div>
                     </Stack>
                 </div>
             )}

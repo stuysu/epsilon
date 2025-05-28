@@ -35,6 +35,32 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                             },
                         },
                     },
+                    MuiDialogActions: {
+                        styleOverrides: {
+                            root: {
+                                padding: "1rem",
+                                display: "flex",
+                                gap: "5px",
+                            },
+                        },
+                    },
+                    MuiDialog: {
+                        defaultProps: {
+                            TransitionComponent: React.Fragment,
+                        },
+                        styleOverrides: {
+                            paper: {
+                                maxWidth: "600px",
+                                width: "75vw",
+                                borderRadius: "15px",
+                                backgroundColor: "rgba(34, 34, 34, 0.60)",
+                                backdropFilter: "blur(50px)",
+                                backgroundImage: "none",
+                                boxShadow:
+                                    "0px 0px 1.5px 0px color(display-p3 1 1 1 / 0.25) inset",
+                            },
+                        },
+                    },
                 },
                 palette: {
                     mode: prefersDarkMode ? "dark" : "light",
@@ -43,7 +69,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                         contrastText: "#d8d8d8",
                     },
                     secondary: {
-                        main: "#e74c3c",
+                        main: "#8a8a8a",
                         contrastText: "#b8b8b8",
                     },
                     background: {
@@ -80,7 +106,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                         lineHeight: "1.3rem",
                         fontSize: "1.2rem",
                         fontVariationSettings: `'wght' 600`,
-                        margin: "0.3rem 0",
+                        margin: "0.2rem 0",
                         color: prefersDarkMode ? "#E8E8E8CC" : "#4B4B4B",
                     },
                     h5: {

@@ -1,8 +1,10 @@
 import {
+    Avatar,
     Box,
+    Chip,
     ListItem,
     ListItemAvatar,
-    Avatar, Chip, Typography,
+    Typography,
 } from "@mui/material";
 import { useState } from "react";
 import MeetingPreview from "../../../ui/meetings/MeetingPreview";
@@ -38,8 +40,7 @@ const UpcomingMeeting = ({
     let end = dayjs(end_time);
 
     return (
-        <Box
-        >
+        <Box>
             <Box
                 sx={{
                     width: "100%",
@@ -49,38 +50,48 @@ const UpcomingMeeting = ({
                     justifyContent: "space-between",
                     transition: "background-color 0.1s ease-in-out",
                     "&:hover": {
-                        backgroundColor: "#4d4d4d50"
+                        backgroundColor: "#4d4d4d50",
                     },
                 }}
             >
                 <ListItem
                     onClick={() => setOpen(true)}
-                sx={{
-                    padding: "25px",
-                    display: "flex",
-                    flexDirection: "row",
-                    cursor: "pointer",
-                    justifyContent: "space-between",
-                    ...sx,
-                }}>
-                    <div style={{display: "flex", flexDirection: "row", alignItems: "center"}}>
-                    <ListItemAvatar>
-                        <Avatar
-                            alt={org_name}
-                            src={org_picture || ""}
-                            sx={{ objectFit: "cover", borderRadius: "5px" }}
-                        >
-                            {org_name.charAt(0).toUpperCase()}
-                        </Avatar>
-                    </ListItemAvatar>
+                    sx={{
+                        padding: "20px 25px",
+                        display: "flex",
+                        flexDirection: "row",
+                        cursor: "pointer",
+                        justifyContent: "space-between",
+                        ...sx,
+                    }}
+                >
+                    <div
+                        style={{
+                            display: "flex",
+                            flexDirection: "row",
+                            alignItems: "center",
+                        }}
+                    >
+                        <ListItemAvatar>
+                            <Avatar
+                                alt={org_name}
+                                src={org_picture || ""}
+                                sx={{ objectFit: "cover", borderRadius: "5px" }}
+                            >
+                                {org_name.charAt(0).toUpperCase()}
+                            </Avatar>
+                        </ListItemAvatar>
 
-                    <div>
-                    <Typography variant={"h4"}>{title}</Typography>
-                    <Typography variant={"body1"}>{org_name}</Typography>
+                        <div>
+                            <div className={"relative top-0.5"}>
+                                <Typography variant={"h4"}>{title}</Typography>
+                                <Typography variant={"body1"}>
+                                    {org_name}
+                                </Typography>
+                            </div>
+                        </div>
                     </div>
-
-                    </div>
-                    <div style={{display: "flex", gap: "10px"}}>
+                    <div style={{ display: "flex", gap: "10px" }}>
                         {is_public}
                         <Chip
                             label={`${monthNames[start.month()]} ${start.date()}, ${start.year()}`}
@@ -89,7 +100,6 @@ const UpcomingMeeting = ({
                             label={`${start.format("LT")} to ${end.format("LT")}`}
                         />
                     </div>
-
                 </ListItem>
                 <MeetingPreview
                     id={id}

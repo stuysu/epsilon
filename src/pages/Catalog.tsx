@@ -228,14 +228,20 @@ const Catalog = () => {
                                 <Typography
                                     align="center"
                                     variant="h3"
-                                    sx={{ paddingTop: "1em" }}
+                                    sx={{ paddingTop: "10em", opacity: 0.7 }}
                                 >
-                                    No Organizations Found.
+                                    <i className={"bx bx-search bx-md m-5"}></i>
+                                    <br />
+                                    No Results
                                 </Typography>
                             ) : (
-                                <Typography align="center" variant="h3">
-                                    Total of {approvedOrgs.length}{" "}
-                                    {`Organization${approvedOrgs.length > 1 ? "s" : ""}`}
+                                <Typography
+                                    align="center"
+                                    variant="h3"
+                                    sx={{ paddingTop: "2em", opacity: 0.7 }}
+                                >
+                                    {approvedOrgs.length}{" "}
+                                    {`Organization${approvedOrgs.length > 1 ? "s" : ""} Found`}
                                 </Typography>
                             )}
                         </Box>

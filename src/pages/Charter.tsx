@@ -2,9 +2,11 @@ import { Typography } from "@mui/material";
 import React from "react";
 import { PUBLIC_URL } from "../constants";
 import { useNavigate } from "react-router-dom";
+import { motion } from "framer-motion";
 
 const Charter = () => {
     const navigate = useNavigate();
+    const title = "Apply for a StuyActivities Charter";
 
     return (
         <div>
@@ -12,22 +14,39 @@ const Charter = () => {
                 <img src={`${PUBLIC_URL}/textures/charter.png`}></img>
                 <div
                     className={
-                        "flex justify-center items-center w-full h-full absolute top-0 left-0 mix-blend-color-dodge"
+                        "flex justify-center items-center w-full h-full absolute top-0 left-0"
                     }
                 >
-                    <h1
-                        className={
-                            "w-2/3 relative bottom-12 text-white/75 text-8xl text-center"
-                        }
-                    >
-                        Apply for a<br />
-                        StuyActivities Charter
+                    <h1 className="w-2/3 relative bottom-12 text-white/75 text-8xl text-center">
+                        {title.split(" ").map((word, i) => (
+                            <motion.span
+                                key={i}
+                                className="inline-block mx-2"
+                                initial={{
+                                    opacity: 0,
+                                    filter: "blur(20px)",
+                                    y: 20,
+                                }}
+                                animate={{
+                                    opacity: 1,
+                                    filter: "blur(0px)",
+                                    y: 0,
+                                }}
+                                transition={{
+                                    duration: 1,
+                                    delay: i * 0.1,
+                                    ease: [0, 0, 0, 1],
+                                }}
+                            >
+                                {word}
+                            </motion.span>
+                        ))}
                     </h1>
                 </div>
             </div>
             <div
                 className={
-                    "flex justify-center items-start w-full h-[32rem] gap-20 px-64 relative bottom-72"
+                    "lg:flex-row flex-col flex justify-center items-start w-full h-[32rem] gap-20 xl:px-64 px-16 relative bottom-72"
                 }
             >
                 <div
@@ -105,7 +124,7 @@ const Charter = () => {
                         style={{
                             background:
                                 "linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0) 0%, rgba(143, 143, 143, 0.67) 50%, rgba(0, 0, 0, 0) 100%)",
-                            width: "300px",
+                            width: "8vw",
                             height: "1px",
                             position: "absolute",
                             bottom: "0px",
@@ -118,7 +137,7 @@ const Charter = () => {
                         style={{
                             background:
                                 "linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0) 0%, rgba(143, 143, 143, 0.67) 50%, rgba(0, 0, 0, 0) 100%)",
-                            width: "400px",
+                            width: "10vw",
                             height: "1px",
                             position: "absolute",
                             top: "0px",

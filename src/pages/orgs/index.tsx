@@ -172,7 +172,9 @@ const OrgRouter = () => {
                             flexWrap: isMobile ? "wrap" : "nowrap",
                         }}
                     >
-                        <OrgNav isMobile={isMobile} />
+                        <div className={"sticky top-10 h-fit"}>
+                            <OrgNav isMobile={isMobile} />
+                        </div>
                         <Box sx={{ width: "100%" }}>
                             <TransitionGroup component={null}>
                                 <CSSTransition

@@ -11,6 +11,7 @@ import AllMeetings from "./AllMeetings";
 import NavBar from "../comps/ui/nav/NavBar";
 import About from "./About";
 import Rules from "./Rules";
+import ActivitiesSupport from "./ActivitiesSupport";
 
 const ModuleRouter = lazy(() => import("./modules/ModuleRouter"));
 const Catalog = lazy(() => import("./Catalog"));
@@ -72,6 +73,10 @@ const Pages = () => {
                     <Route path={"/meetings"} Component={AllMeetings} />
                     <Route path={"/rules"} Component={Rules} />
                     <Route path={"/archives"} Component={Archives} />
+                    <Route
+                        path={"/activities-support"}
+                        Component={ActivitiesSupport}
+                    />
                     <Route path={"/modules/*"} Component={ModuleRouter} />
                     <Route path={"/admin/*"} Component={AdminRouter} />
                     <Route path={"/:orgUrl/*"} Component={OrgRouter} />

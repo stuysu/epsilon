@@ -6,7 +6,6 @@ import {
     Dialog,
     DialogActions,
     DialogContent,
-    DialogContentText,
     DialogTitle,
     MenuItem,
     Select,
@@ -219,7 +218,6 @@ const AdminMember = ({
             <Dialog open={editState.editing} onClose={handleClose}>
                 <DialogTitle>Edit User</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>Role Name</DialogContentText>
                     <TextField
                         value={editState.role_name}
                         onChange={handleType}

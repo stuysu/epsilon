@@ -63,7 +63,7 @@ const SearchFilter = ({
                 }}
             >
                 <InputBase
-                    placeholder="Search Activities"
+                    placeholder="Find Activities..."
                     sx={{
                         borderRadius: "10px",
                         width: "100%",

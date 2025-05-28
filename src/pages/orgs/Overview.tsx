@@ -281,20 +281,20 @@ const Overview = () => {
                             aria-labelledby="alert-dialog-title"
                             aria-describedby="alert-dialog-description"
                         >
-                            <DialogTitle id="alert-dialog-title">
-                                {
-                                    "Are you sure you want to leave/cancel your join to this organization?"
-                                }
+                            <DialogTitle variant="h2" id="alert-dialog-title">
+                                Confirm Leave?
                             </DialogTitle>
-                            <DialogContent>
+                            <DialogContent dividers>
                                 <DialogContentText id="alert-dialog-description">
-                                    Once you confirm your leave, you will have
-                                    to request to join again.
+                                    Are you sure you want to leave/cancel your
+                                    join to this organization? Once you confirm
+                                    your leave, you will have to request to join
+                                    again.
                                 </DialogContentText>
                             </DialogContent>
                             <DialogActions>
                                 <AsyncButton onClick={handleUserStay}>
-                                    Return
+                                    Cancel
                                 </AsyncButton>
                                 <AsyncButton
                                     sx={{
@@ -564,31 +564,65 @@ const Overview = () => {
 
                     <Stack borderRadius={2} overflow="hidden" spacing={0.5}>
                         {organization.meetings.length === 0 ? (
-                            <Typography variant="body1" width="100%" margin={3}>
-                                Sign in to view meetings. In this case you are
-                                either not signed in or there has not EVER been
-                                a meeting. Add a state for when there are no
-                                FUTURE meetings merely.
-                            </Typography>
+                            !user.signed_in ? (
+                                <Typography
+                                    variant="body1"
+                                    paddingLeft={3}
+                                    paddingBottom={3}
+                                >
+                                    Sign in to view meetings.
+                                </Typography>
+                            ) : (
+                                <Typography
+                                    variant="body1"
+                                    paddingLeft={3}
+                                    paddingBottom={3}
+                                >
+                                    No meetings have ever been held.
+                                </Typography>
+                            )
                         ) : (
-                            organization.meetings
-                                .sort(sortByDate)
-                                .map((meeting) => (
-                                    <OrgMeeting
-                                        key={meeting.id}
-                                        id={meeting.id}
-                                        title={meeting.title}
-                                        description={meeting.description}
-                                        start_time={meeting.start_time}
-                                        end_time={meeting.end_time}
-                                        is_public={meeting.is_public}
-                                        room_name={meeting.rooms?.name}
-                                        org_name={organization.name}
-                                        org_picture={organization.picture || ""}
-                                        isMobile={isMeetingMobile}
-                                        onlyUpcoming
-                                    />
-                                ))
+                            (() => {
+                                const now = new Date();
+                                const upcomingMeetings =
+                                    organization.meetings.filter(
+                                        (meeting) =>
+                                            meeting.end_time &&
+                                            new Date(meeting.end_time) > now,
+                                    );
+                                if (upcomingMeetings.length === 0) {
+                                    return (
+                                        <Typography
+                                            variant="body1"
+                                            paddingLeft={3}
+                                            paddingBottom={3}
+                                        >
+                                            No meetings scheduled for the
+                                            future.
+                                        </Typography>
+                                    );
+                                }
+                                return upcomingMeetings
+                                    .sort(sortByDate)
+                                    .map((meeting) => (
+                                        <OrgMeeting
+                                            key={meeting.id}
+                                            id={meeting.id}
+                                            title={meeting.title}
+                                            description={meeting.description}
+                                            start_time={meeting.start_time}
+                                            end_time={meeting.end_time}
+                                            is_public={meeting.is_public}
+                                            room_name={meeting.rooms?.name}
+                                            org_name={organization.name}
+                                            org_picture={
+                                                organization.picture || ""
+                                            }
+                                            isMobile={isMeetingMobile}
+                                            onlyUpcoming
+                                        />
+                                    ));
+                            })()
                         )}
                     </Stack>
                 </Box>

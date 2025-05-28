@@ -75,8 +75,8 @@ export const getLinks = (user: UserContextType) => {
             icon: <AddIcon />,
         },
         {
-            to: "/admin/add-action",
-            label: "Call to Action",
+            to: "/",
+            label: "CTA (Coming Soon)",
             icon: <i className="bx bx-bell bx-sm"></i>,
         },
     ];
