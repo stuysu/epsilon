@@ -12,7 +12,6 @@ import Posts from "./Posts";
 import Strikes from "./Strikes";
 import Organization from "./Organization";
 
-import OrgAdminNav from "../../../comps/pages/orgs/admin/OrgAdminNav";
 import Messages from "./Messages";
 import { Box, Typography } from "@mui/material";
 
@@ -36,7 +35,6 @@ const OrgAdminRouter = () => {
         <>
             {isOrgAdmin ? (
                 <>
-                    <OrgAdminNav />
                     <Routes>
                         <Route path={"/members"} Component={Members} />
                         <Route

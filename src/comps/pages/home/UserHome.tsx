@@ -7,7 +7,6 @@ import { supabase } from "../../../supabaseClient";
 import UpcomingMeeting from "./ui/UpcomingMeeting";
 import Post from "../orgs/Post";
 import DisplayLinks from "../../ui/DisplayLinks";
-import AsyncButton from "../../ui/AsyncButton";
 import { useNavigate } from "react-router-dom";
 
 const currentHour = new Date().getHours();
@@ -300,7 +299,8 @@ const UserHome = () => {
                                     marginTop={3}
                                     marginBottom={0.5}
                                 >
-                                    View Schedule · 3 Meetings This Week
+                                    <a href={"/meetings"}>View Calendar</a> ·{" "}
+                                    {upcomingMeetings.length} Upcoming
                                 </Typography>
                             </Box>
                         </div>
@@ -393,38 +393,24 @@ const UserHome = () => {
                                     variant="body1"
                                     marginTop={3}
                                     marginBottom={0.5}
+                                    onClick={() =>
+                                        setVisibleAnnouncements(
+                                            (prev) => prev + 3,
+                                        )
+                                    }
                                 >
-                                    View All Announcements · 1 Total
+                                    <div className={"cursor-pointer"}>
+                                        View All Announcements
+                                    </div>
                                 </Typography>
                             </Box>
-                            {visibleAnnouncements < announcements.length && (
-                                <Box
-                                    sx={{
-                                        width: "100%",
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        marginTop: "10px",
-                                    }}
-                                >
-                                    <AsyncButton
-                                        variant="contained"
-                                        onClick={() =>
-                                            setVisibleAnnouncements(
-                                                (prev) => prev + 3,
-                                            )
-                                        }
-                                    >
-                                        Show More
-                                    </AsyncButton>
-                                </Box>
-                            )}
                         </div>
                     </Box>
                 </Grid>
 
                 <div className={"w-full h-px fill-zinc-700"}></div>
 
-                <div className={"m-10 w-full grid-cols-2 grid"}>
+                <div className={"m-10 w-full grid-cols-2 grid gap-4"}>
                     {posts.map((post) => (
                         <Post content={post} />
                     ))}

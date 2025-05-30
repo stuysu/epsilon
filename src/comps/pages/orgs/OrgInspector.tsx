@@ -24,15 +24,7 @@ const OrgInspector = () => {
                 boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
             >
                 <Typography variant="h4" margin={3}>
-                    Statistics: 234 Total Members Charter Created Date Charter
-                    Last Updated Total Meetings Held Required Meetings
-                    Attendance Rate Administrators Audit (ratio bt admin and
-                    member) <br />
-                    {`${
-                        organization.memberships.filter(
-                            (member) => member.active,
-                        ).length
-                    } Members`}
+                    Links
                 </Typography>
 
                 <Stack

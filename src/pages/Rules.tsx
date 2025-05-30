@@ -21,7 +21,7 @@ const Rules = () => {
                     </Typography>
                     <ul>
                         <li>
-                            <Link href="#a">General Guidance</Link>
+                            <Link href="#general">General Guidance</Link>
                         </li>
                         <li>
                             <Link href="#a">Charter Submission & Approval</Link>
@@ -52,7 +52,12 @@ const Rules = () => {
                     </ul>
                 </div>
                 <div className={"w-3/4 max-w-3xl pl-7 md:pl-14"}>
-                    <Typography variant={"h4"} color="primary" marginBottom={2}>
+                    <Typography
+                        variant={"h4"}
+                        color="primary"
+                        marginBottom={2}
+                        id={"general"}
+                    >
                         General Guidance
                     </Typography>
                     <Typography paragraph marginBottom={5}>

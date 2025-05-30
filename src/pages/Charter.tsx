@@ -17,7 +17,7 @@ const Charter = () => {
                         "flex justify-center items-center w-full h-full absolute top-0 left-0"
                     }
                 >
-                    <h1 className="w-2/3 relative bottom-12 text-white/75 text-8xl text-center">
+                    <h1 className="w-2/3 relative bottom-12 text-white/75 text-8xl text-center max-w-4xl">
                         {title.split(" ").map((word, i) => (
                             <motion.span
                                 key={i}

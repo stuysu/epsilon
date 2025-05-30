@@ -143,7 +143,7 @@ const OrgRouter = () => {
             ) : (
                 <>
                     <div
-                        className={`cursor-pointer transition-colors text-gray-300 hover:text-gray-400 ml-10 mt-4`}
+                        className={`sticky cursor-pointer transition-colors text-gray-300 hover:text-gray-400 ml-10 mt-4 top-5`}
                         onClick={() => navigate("/catalog")}
                     >
                         <i className={"bx bx-chevron-left"}></i>

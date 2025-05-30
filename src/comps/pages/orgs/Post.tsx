@@ -97,7 +97,7 @@ const Post = ({
             sx={{
                 borderRadius: "12px",
                 position: "relative",
-                margin: "10px",
+                marginBottom: "10px",
                 padding: "15px",
                 border: "none",
                 height: "400px",

@@ -35,7 +35,7 @@ const Members = () => {
 
     return (
         <LoginGate page="view members">
-            <Box sx={{ width: "100%" }} marginTop={1}>
+            <Box sx={{ width: "100%", minHeight: "90vh" }} marginTop={1}>
                 <InputBase
                     fullWidth
                     placeholder="Search members by name or email..."
@@ -57,7 +57,6 @@ const Members = () => {
                     animate={{ height: boxHeight }}
                     initial={false}
                     transition={{ duration: 0.3 }}
-                    style={{ width: "100%", overflow: "hidden" }}
                 >
                     <Box
                         bgcolor="#1f1f1f80"
