@@ -92,7 +92,7 @@ const UpcomingMeeting = ({
                         </div>
                     </div>
                     <div style={{ display: "flex", gap: "10px" }}>
-                        {is_public}
+                        {is_public ? "Public" : "Private"}
                         <Chip
                             label={`${monthNames[start.month()]} ${start.date()}, ${start.year()}`}
                         />
