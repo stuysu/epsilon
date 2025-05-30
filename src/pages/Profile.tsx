@@ -43,7 +43,8 @@ const Profiles = () => {
                         onMouseEnter={() => setShowPointsPopup(true)}
                         onMouseLeave={() => setShowPointsPopup(false)}
                     >
-                        <div classN"underline"ive bottom"pointer"                         <Typography variant={"h1"} color={"#4486ff"}>
+                        <div className={"relative bottom-1"}>
+                            <Typography variant={"h1"} color={"#4486ff"}>
                                 <span
                                     style={{
                                         textDecoration: "underline",
@@ -140,33 +141,35 @@ const Profiles = () => {
 
                 <Typography width="100%">
                     Grade: {user.grade + "th" || "No Grade"}
-                </Typography>;
+                </Typography>
 
                 <div
                     className={
                         "bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50"
                     }
-                ></div>;
+                ></div>
 
-                <Typography width="100%">{user.email || "No Email"}</Typography>;
+                <Typography width="100%">
+                    Email: {user.email || "No Email"}
+                </Typography>
 
                 <div
                     className={
                         "bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50"
                     }
-                ></div>;
+                ></div>
 
                 {fourDigitId && (
                     <Typography width="100%" marginBottom={5}>
-                        ID: {String(fourDigitId).padStart(4, "0")}
+                        EpsilonID: {String(fourDigitId).padStart(4, "0")}
                     </Typography>
-                );}
+                )}
 
                 <img
                     src={`${PUBLIC_URL}/achievements/medalstitle.svg`}
                     className={"w-64"}
                     alt={"Medals of Honor"}
-                ></img>;
+                ></img>
 
                 <div className="flex flex-col -ml-7">
                     <div className={"flex flex-row items-center -mb-6"}>
@@ -272,10 +275,10 @@ const Profiles = () => {
                             </Typography>
                         </div>
                     </div>
-                </div>;
+                </div>
             </Box>
         </LoginGate>
-    )
+    );
 };
 
 export default Profiles;
