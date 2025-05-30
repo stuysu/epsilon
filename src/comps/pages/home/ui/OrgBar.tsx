@@ -24,7 +24,7 @@ const OrgBar = ({ name, url, role, role_name, picture }: Props) => {
                 cursor: "pointer",
                 display: "flex",
                 flexDirection: "column",
-                width: "200px",
+                width: "180px",
             }}
         >
             <div>
@@ -44,7 +44,7 @@ const OrgBar = ({ name, url, role, role_name, picture }: Props) => {
                             src={picture}
                             alt={name}
                             style={{
-                                height: "200px",
+                                height: "180px",
                                 borderRadius: "15px",
                                 objectFit: "cover",
                                 opacity: "0.2",
@@ -59,7 +59,7 @@ const OrgBar = ({ name, url, role, role_name, picture }: Props) => {
                                 position: "absolute",
                                 bottom: "0px",
                                 zIndex: 10,
-                                height: "200px",
+                                height: "180px",
                                 borderRadius: "15px",
                                 objectFit: "cover",
                                 transition: "filter 0.3s ease",
@@ -69,8 +69,8 @@ const OrgBar = ({ name, url, role, role_name, picture }: Props) => {
                 ) : (
                     <div
                         style={{
-                            width: "200px",
-                            height: "200px",
+                            width: "180px",
+                            height: "180px",
                             borderRadius: "15px",
                             backgroundColor: "#232323",
                             display: "flex",
@@ -84,8 +84,8 @@ const OrgBar = ({ name, url, role, role_name, picture }: Props) => {
                     </div>
                 )}
             </div>
-            <div style={{ padding: 10 }}>
-                <Typography variant="h4" height={45}>
+            <div style={{ padding: 10, paddingTop: 15 }}>
+                <Typography variant="h4" height={60}>
                     {name}
                 </Typography>
                 <Typography sx={{ fontVariationSettings: "'wght' 700" }}>

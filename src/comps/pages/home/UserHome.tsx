@@ -140,23 +140,23 @@ const UserHome = () => {
 
     return (
         <Box>
-            <Box margin="50px">
+            <div className={"m-8 sm:m-12"}>
                 <Typography variant="h1">
                     {timeGreeting}, {user.first_name}!
                 </Typography>
                 <Typography variant="h2" color="gray">
                     You have some scheduled events.
                 </Typography>
-            </Box>
+            </div>
 
             <Grid container>
                 <Grid item xs={12} sm={6} md={5.5} lg={6} xl={5.5}>
                     <div
                         style={{
-                            marginRight: "20px",
+                            marginRight: isMobile ? "0px" : "20px",
                             display: "flex",
                             flexWrap: "wrap",
-                            paddingLeft: "50px",
+                            paddingLeft: isMobile ? "10px" : "50px",
                             gap: "10px",
                         }}
                     >
@@ -191,8 +191,8 @@ const UserHome = () => {
                                 alignItems: "center",
                                 justifyContent: "center",
                                 flexDirection: "column",
-                                width: "200px",
-                                height: "200px",
+                                width: "180px",
+                                height: "180px",
                             }}
                         >
                             <i
@@ -211,7 +211,12 @@ const UserHome = () => {
                     </div>
                 </Grid>
                 <Grid item xs={12} sm={6} md={6} lg={5.6} xl={6}>
-                    <Box position="relative" width={"100%"} marginBottom={8}>
+                    <Box
+                        position="relative"
+                        width={"100%"}
+                        marginBottom={8}
+                        paddingX={isMobile ? 1 : 0}
+                    >
                         <div className={"relative"}>
                             <Box
                                 bgcolor="#1f1f1f80"
@@ -227,7 +232,6 @@ const UserHome = () => {
                             >
                                 <Typography
                                     variant="h4"
-                                    width="100%"
                                     marginTop={2}
                                     marginBottom={3}
                                     marginLeft={3}
@@ -244,7 +248,7 @@ const UserHome = () => {
                                         <Typography
                                             variant="body1"
                                             sx={{
-                                                paddingLeft: 3,
+                                                paddingX: 3,
                                                 paddingBottom: 3,
                                             }}
                                         >
@@ -319,7 +323,12 @@ const UserHome = () => {
                         />
                     </Box>
 
-                    <Box position="relative" width={"100%"} marginBottom={8}>
+                    <Box
+                        position="relative"
+                        width={"100%"}
+                        marginBottom={8}
+                        paddingX={isMobile ? 1 : 0}
+                    >
                         <div className={"relative"}>
                             <Box
                                 bgcolor="#1f1f1f80"
@@ -335,7 +344,6 @@ const UserHome = () => {
                             >
                                 <Typography
                                     variant="h4"
-                                    width="100%"
                                     marginTop={2}
                                     marginBottom={3}
                                     marginLeft={3}
@@ -410,7 +418,11 @@ const UserHome = () => {
 
                 <div className={"w-full h-px fill-zinc-700"}></div>
 
-                <div className={"m-10 w-full grid-cols-2 grid gap-4"}>
+                <div
+                    className={
+                        "m-2 sm:m-10 w-full grid-cols-1 sm:grid-cols-2 grid gap-4"
+                    }
+                >
                     {posts.map((post) => (
                         <Post content={post} />
                     ))}

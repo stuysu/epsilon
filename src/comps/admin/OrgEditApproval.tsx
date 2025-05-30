@@ -177,7 +177,7 @@ const OrgEditApproval = ({
                 </div>
             </div>
             <Stack direction="row" gap={3}>
-                <Card sx={{ width: "70%", padding: "10px" }}>
+                <Card sx={{ padding: "10px" }}>
                     {fields.map((field, i) => {
                         let f2: EditKey = field as EditKey;
 
@@ -219,7 +219,8 @@ const OrgEditApproval = ({
                         );
                     })}
                 </Card>
-                <div className="max-h-[70vh] sticky top-32">
+
+                <div className="max-h-[70vh] sticky top-32 min-w-[40vw]">
                     <OrgChat organization_id={edit.organization_id} />
                 </div>
             </Stack>

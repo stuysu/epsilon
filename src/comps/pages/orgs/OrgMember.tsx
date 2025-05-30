@@ -38,9 +38,11 @@ const OrgMember = ({
         <Stack
             direction={"row"}
             alignItems={"center"}
+            justifyContent={"space-between"}
+            flexWrap={"wrap"}
             sx={{ background: "#36363680" }}
         >
-            <ListItem sx={{ height: "75px" }}>
+            <ListItem sx={{ height: "75px", width: "fit-content" }}>
                 <ListItemAvatar>
                     <Avatar
                         alt={`${first_name} ${last_name}`}
@@ -60,7 +62,15 @@ const OrgMember = ({
                     <Typography variant="body1">{<>{email}</>}</Typography>
                 </div>
             </ListItem>
-            <Chip label={l1} sx={{ marginRight: "20px", maxWidth: "600px" }} />
+            <Chip
+                label={l1}
+                sx={{
+                    marginRight: "20px",
+                    marginLeft: "10px",
+                    marginY: "10px",
+                    maxWidth: "600px",
+                }}
+            />
         </Stack>
     );
 };

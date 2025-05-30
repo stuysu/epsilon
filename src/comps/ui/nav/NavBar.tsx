@@ -28,30 +28,6 @@ const STUY_ACTIVITIES_PATHS = [
     "/admin/rooms",
 ];
 
-const navStyles: CSSProperties = {
-    width: "100%",
-    height: "50px",
-    top: "5px",
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
-    paddingRight: "4.5vw",
-    paddingLeft: "4.5vw",
-    position: "relative",
-    zIndex: 50,
-};
-
-const titleStyle: CSSProperties = {
-    color: "inherit",
-    fontSize: "25px",
-    bottom: "2px",
-    right: "10px",
-    position: "relative",
-    height: "100%",
-    display: "flex",
-    alignItems: "center",
-};
-
 const linkStyle: CSSProperties = {
     color: "inherit",
     textDecoration: "none",
@@ -145,10 +121,36 @@ const NavBar: FC = () => {
     const navigate = useNavigate();
 
     const theme = useContext(ThemeContext);
-    const isMobile = useMediaQuery("(max-width: 620px)");
+    const isMobile = useMediaQuery("(max-width: 640px)");
     const wordmarkSrc = theme.colorMode
         ? `${PUBLIC_URL}/wordmark.svg`
         : `${PUBLIC_URL}/wordmark_light.svg`;
+
+    const titleStyle: CSSProperties = {
+        color: "inherit",
+        fontSize: "25px",
+        bottom: "2px",
+        right: "10px",
+        position: "relative",
+        height: "100%",
+        display: isMobile ? "none" : "flex",
+        alignItems: "center",
+        justifyContent: "center",
+    };
+
+    const topStyle: CSSProperties = {
+        width: "100%",
+        height: "50px",
+        top: "5px",
+        pointerEvents: "none",
+        position: isMobile ? "absolute" : "relative",
+        justifyContent: "space-between",
+        display: "flex",
+        alignItems: "center",
+        paddingRight: "4.5vw",
+        paddingLeft: "4.5vw",
+        zIndex: 50,
+    };
 
     const itemRefs = useRef<HTMLDivElement[]>([]);
     const [optionUnderline, setOptionUnderline] = useState({
@@ -227,8 +229,8 @@ const NavBar: FC = () => {
                 }`}
             />
 
-            {/* Top nav bar — logo & user menu */}
-            <Box sx={navStyles}>
+            {/* Top items — logo & user menu */}
+            <Box sx={topStyle}>
                 {/* Logo / Wordmark */}
                 <Box sx={titleStyle}>
                     <span
@@ -250,22 +252,22 @@ const NavBar: FC = () => {
                 </Box>
 
                 {/* User dropdown */}
-                <div className="relative flex flex-row justify-end top-1">
+                <div className="pointer-events-auto absolute sm:relative flex flex-row justify-end sm:top-1 -top-8 sm:right-0 right-8">
                     <div
-                        className="flex cursor-pointer flex-row items-center justify-center gap-2 rounded-lg bg-neutral-800 pl-1.5 pr-2.5 shadow-[inset_0px_0px_2px_0px_rgba(255,255,255,0.3)] h-10"
+                        className="flex cursor-pointer flex-row items-center justify-center gap-2 rounded-lg bg-neutral-800 pl-1.5 pr-1.5 shadow-[inset_0px_0px_2px_0px_rgba(255,255,255,0.3)] h-10"
                         onClick={() => setDrawerOpen(!drawerOpen)}
                     >
                         <Avatar
                             style={{ width: 30, height: 30, borderRadius: 5 }}
                             src={user.picture}
                         />
-                        <p className="relative top-0.5 pr-2">{`${user.first_name} ${user.last_name}`}</p>
-                        <i className="bx bx-chevron-down bx-sm" />
+                        <p className="relative top-0.5 pr-2 sm:block hidden">{`${user.first_name} ${user.last_name}`}</p>
+                        <i className="bx bx-chevron-down bx-sm hidden sm:inline-block pr-1" />
                     </div>
 
                     {/* Drawer */}
                     <div
-                        className={`absolute top-14 z-50 flex w-72 flex-col gap-2 rounded-lg bg-neutral-800/80 p-5 backdrop-blur-xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)] transition-all duration-300 ${
+                        className={`absolute sm:top-14 top-auto sm:bottom-auto bottom-14 z-50 flex w-72 flex-col gap-2 rounded-lg bg-neutral-800/80 p-5 backdrop-blur-xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)] transition-all duration-300 ${
                             drawerOpen
                                 ? "translate-y-0 opacity-100"
                                 : "pointer-events-none -translate-y-5 opacity-0"

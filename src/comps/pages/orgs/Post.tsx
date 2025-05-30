@@ -138,7 +138,6 @@ const Post = ({
                 variant="h3"
                 width="100%"
                 sx={{
-                    whiteSpace: "nowrap",
                     overflow: "hidden",
                     paddingLeft: "15px",
                     paddingRight: "15px",
@@ -152,7 +151,7 @@ const Post = ({
             <div className={"relative"}>
                 <div
                     className={
-                        "absolute bg-gradient-to-b from-[#111111] to-transparent z-50 h-5 w-full"
+                        "absolute bg-gradient-to-b from-[#111111] to-transparent z-50 h-5 w-full -top-1"
                     }
                 ></div>
                 <Box

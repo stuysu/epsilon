@@ -165,14 +165,8 @@ const OrgRouter = () => {
                             marginTop: "10px",
                         }}
                     ></Box>
-                    <Box
-                        sx={{
-                            marginLeft: "56px",
-                            display: "flex",
-                            flexWrap: isMobile ? "wrap" : "nowrap",
-                        }}
-                    >
-                        <div className={"sticky top-10 h-fit"}>
+                    <div className={"ml-3 sm:ml-14 sm:mr-0 mr-3 flex"}>
+                        <div className={"sticky top-10 h-fit z-[4000]"}>
                             <OrgNav isMobile={isMobile} />
                         </div>
                         <Box sx={{ width: "100%" }}>
@@ -208,8 +202,9 @@ const OrgRouter = () => {
                             </TransitionGroup>
                         </Box>
                         <OrgInspector />
-                        <Box width={25}></Box>
-                    </Box>
+
+                        {!isMobile && <Box width={25}></Box>}
+                    </div>
                 </>
             )}
         </OrgContext.Provider>

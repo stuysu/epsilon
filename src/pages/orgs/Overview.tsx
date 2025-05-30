@@ -417,7 +417,7 @@ const Overview = () => {
                     borderRadius={3}
                     boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
                 >
-                    <Typography variant="h3" width="100%" margin={3}>
+                    <Typography variant="h3" margin={3}>
                         Meeting Schedule
                     </Typography>
 
@@ -428,7 +428,12 @@ const Overview = () => {
                             </Typography>
                         </Box>
 
-                        <Stack marginTop={0.5} direction="row" spacing={0.5}>
+                        <Stack
+                            marginTop={0.5}
+                            direction="row"
+                            spacing={0.5}
+                            overflow={"scroll"}
+                        >
                             {[
                                 "Monday",
                                 "Tuesday",
@@ -485,7 +490,7 @@ const Overview = () => {
                     borderRadius={3}
                     boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
                 >
-                    <Typography variant="h3" width="100%" margin={3}>
+                    <Typography variant="h3" margin={3}>
                         Activity Leaders
                     </Typography>
 
@@ -558,7 +563,7 @@ const Overview = () => {
                     borderRadius={3}
                     boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
                 >
-                    <Typography variant="h3" width="100%" margin={3}>
+                    <Typography variant="h3" margin={3}>
                         Upcoming Meetings
                     </Typography>
 

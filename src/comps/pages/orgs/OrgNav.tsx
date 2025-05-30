@@ -19,9 +19,11 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
             display: "Meetings",
         },
         { to: `${main}/members`, display: "Members" },
+        { to: `${main}/members`, display: "Stream" },
     ];
 
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [menuOpen, setMenuOpen] = useState(false);
 
     useEffect(() => {
         let isCorrectIndex = false;
@@ -51,6 +53,100 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
             setCurrentIndex(~correctIndex ? correctIndex : 0);
         }
     }, [navLinks, location.pathname, currentIndex, main]);
+
+    if (isMobile) {
+        return (
+            <>
+                <button
+                    className="text-white shadow hover:bg-neutral-700 transition fixed right-5 top-28"
+                    onClick={() => setMenuOpen(true)}
+                >
+                    Menu
+                </button>
+                {menuOpen && (
+                    <div className="-mx-5 fixed inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-lg">
+                        <button
+                            className="absolute top-6 right-6 text-3xl text-white font-bold"
+                            onClick={() => setMenuOpen(false)}
+                            aria-label="Close menu"
+                        >
+                            ×
+                        </button>
+                        <div className="flex flex-col gap-3 w-3/4">
+                            <div className=" text-xl font-semibold text-white">
+                                About
+                            </div>
+                            {navLinks.map((linkData, i) => (
+                                <button
+                                    key={i}
+                                    className={`w-full text-left py-2 px-3 rounded-lg text-lg font-semibold transition-colors ${currentIndex === i ? "bg-blue-700 text-white" : "bg-neutral-800 text-gray-200 hover:bg-neutral-700"}`}
+                                    onClick={() => {
+                                        navigate(linkData.to);
+                                        setCurrentIndex(i);
+                                        setMenuOpen(false);
+                                    }}
+                                >
+                                    {linkData.display}
+                                </button>
+                            ))}
+                            {organization.memberships?.some(
+                                (m) =>
+                                    m.role === "ADMIN" || m.role === "CREATOR",
+                            ) && (
+                                <>
+                                    <div className="h-px w-full bg-neutral-600"></div>
+                                    <div className=" text-xl font-semibold text-white">
+                                        Admin Tools
+                                    </div>
+                                    {[
+                                        {
+                                            to: `${main}/admin/members`,
+                                            display: "Members",
+                                        },
+                                        {
+                                            to: `${main}/admin/member-requests`,
+                                            display: "Join Requests",
+                                        },
+                                        {
+                                            to: `${main}/admin/meetings`,
+                                            display: "Meetings",
+                                        },
+                                        {
+                                            to: `${main}/admin/posts`,
+                                            display: "Posts",
+                                        },
+                                        {
+                                            to: `${main}/admin/strikes`,
+                                            display: "Strikes",
+                                        },
+                                        {
+                                            to: `${main}/admin/messages`,
+                                            display: "Messages",
+                                        },
+                                        {
+                                            to: `${main}/admin/org-edits`,
+                                            display: "Amend Charter",
+                                        },
+                                    ].map((linkData, i) => (
+                                        <button
+                                            key={i}
+                                            className={`w-full text-left py-2 px-3 rounded-lg text-lg font-semibold transition-colors ${location.pathname === linkData.to ? "bg-blue-700 text-white" : "bg-neutral-800 text-gray-200 hover:bg-neutral-700"}`}
+                                            onClick={() => {
+                                                navigate(linkData.to);
+                                                setMenuOpen(false);
+                                            }}
+                                        >
+                                            {linkData.display}
+                                        </button>
+                                    ))}
+                                </>
+                            )}
+                        </div>
+                    </div>
+                )}
+            </>
+        );
+    }
 
     return (
         <Box
@@ -102,7 +198,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                         {[
                             {
                                 to: `${main}/admin/members`,
-                                display: "Memberships",
+                                display: "Members",
                             },
                             {
                                 to: `${main}/admin/member-requests`,
@@ -115,12 +211,12 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                             { to: `${main}/admin/posts`, display: "Posts" },
                             { to: `${main}/admin/strikes`, display: "Strikes" },
                             {
-                                to: `${main}/admin/org-edits`,
-                                display: "Amend Charter",
-                            },
-                            {
                                 to: `${main}/admin/messages`,
                                 display: "Messages",
+                            },
+                            {
+                                to: `${main}/admin/org-edits`,
+                                display: "Amend Charter",
                             },
                         ].map((linkData, i) => (
                             <Box

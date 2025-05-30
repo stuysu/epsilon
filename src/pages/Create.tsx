@@ -83,7 +83,7 @@ const Create = () => {
     const { enqueueSnackbar } = useSnackbar();
 
     const [formData, setFormData] = useState<FormType>(emptyForm);
-    const isMobile = useMediaQuery("(max-width: 620px)");
+    const isMobile = useMediaQuery("(max-width: 640px)");
     const checkFormFields = () => {
         const fields = [
             "name",
