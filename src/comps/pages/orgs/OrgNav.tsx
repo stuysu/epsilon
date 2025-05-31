@@ -3,23 +3,27 @@ import { Box, List, Typography } from "@mui/material";
 import OrgContext from "../../context/OrgContext";
 
 import { useLocation, useNavigate } from "react-router-dom";
+import UserContext from "../../context/UserContext";
 
 const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const organization = useContext<OrgContextType>(OrgContext);
+    const user = useContext<UserContextType>(UserContext);
+
     const navigate = useNavigate();
     const main = `/${organization.url}`;
+
+    const membership = organization.memberships?.find(
+        (m) => m.users?.id === user.id,
+    );
 
     const location = useLocation();
 
     const navLinks = [
         { to: main, display: "Overview" },
         { to: `${main}/charter`, display: "Charter" },
-        {
-            to: `${main}/meetings`,
-            display: "Meetings",
-        },
+        { to: `${main}/meetings`, display: "Meetings" },
         { to: `${main}/members`, display: "Members" },
-        { to: `${main}/stream`, display: "Stream" },
+        ...(membership ? [{ to: `${main}/stream`, display: "Stream" }] : []),
     ];
 
     const [currentIndex, setCurrentIndex] = useState(0);
