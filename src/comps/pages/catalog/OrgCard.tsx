@@ -19,14 +19,6 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                 },
             }}
         >
-            {/*IMPLEMENT THIS BACKGROUND FOR CLUBS LESS THAN 1 MONTH OLD*/}
-            <img
-                src={`${PUBLIC_URL}/textures/orgcard_new.png`}
-                className={
-                    "hidden pt-10 pb-2 absolute w-full h-full scale-[118%] z-0 blur-sm"
-                }
-            ></img>
-
             <div className="mt-10"></div>
             <div className="relative rounded-2xl overflow-visible">
                 <Box
