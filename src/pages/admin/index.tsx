@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { Box, Typography } from "@mui/material";
 
 import UserContext from "../../comps/context/UserContext";
@@ -74,6 +74,11 @@ export const getLinks = (user: UserContextType) => {
             label: "Add User",
             icon: <AddIcon />,
         },
+        {
+            to: "/",
+            label: "CTA (Coming Soon)",
+            icon: <i className="bx bx-bell bx-sm"></i>,
+        },
     ];
     if (VALENTINES) {
         navLinks.push(
@@ -114,11 +119,16 @@ const AdminRouter = () => {
                     width: "100vw",
                     height: "80vh",
                     display: "flex",
+                    flexDirection: "column",
                     justifyContent: "center",
                     alignItems: "center",
                 }}
             >
-                <Typography variant="h1">
+                <i className="bx bx-no-entry bx-lg text-red-500 mb-5"></i>
+                <Typography variant="h1" marginBottom={3}>
+                    Restricted Access
+                </Typography>
+                <Typography variant="body1">
                     {`You do not have access to this page${user.permission ? " at this time" : ""}.`}
                 </Typography>
             </Box>

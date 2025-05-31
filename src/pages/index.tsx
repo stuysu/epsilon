@@ -11,11 +11,15 @@ import AllMeetings from "./AllMeetings";
 import NavBar from "../comps/ui/nav/NavBar";
 import About from "./About";
 import Rules from "./Rules";
+import ActivitiesSupport from "./ActivitiesSupport";
 
 const ModuleRouter = lazy(() => import("./modules/ModuleRouter"));
 const Catalog = lazy(() => import("./Catalog"));
 const Settings = lazy(() => import("./Settings"));
+const Profile = lazy(() => import("./Profile"));
 const Create = lazy(() => import("./Create"));
+const Charter = lazy(() => import("./Charter"));
+const Archives = lazy(() => import("./Archives"));
 const OrgRouter = lazy(() => import("./orgs"));
 const AdminRouter = lazy(() => import("./admin"));
 
@@ -57,15 +61,28 @@ const Pages = () => {
             </Helmet>
 
             <Suspense fallback={<Loading />}>
-                <NavBar />
+                <div
+                    className={
+                        "sm:relative bg-neutral-800 fixed z-50 bottom-0 sm:bg-opacity-0 bg-opacity-80 max-sm:backdrop-blur-2xl max-sm:border-t border-neutral-700"
+                    }
+                >
+                    <NavBar />
+                </div>
                 <Routes>
                     <Route path={"/"} Component={Home} />
                     <Route path={"/catalog"} Component={Catalog} />
                     <Route path={"/settings"} Component={Settings} />
+                    <Route path={"/profile"} Component={Profile} />
                     <Route path={"/create"} Component={Create} />
+                    <Route path={"/charter"} Component={Charter} />
                     <Route path={"/about"} Component={About} />
                     <Route path={"/meetings"} Component={AllMeetings} />
                     <Route path={"/rules"} Component={Rules} />
+                    <Route path={"/archives"} Component={Archives} />
+                    <Route
+                        path={"/activities-support"}
+                        Component={ActivitiesSupport}
+                    />
                     <Route path={"/modules/*"} Component={ModuleRouter} />
                     <Route path={"/admin/*"} Component={AdminRouter} />
                     <Route path={"/:orgUrl/*"} Component={OrgRouter} />
@@ -75,13 +92,13 @@ const Pages = () => {
                         style={{ zIndex: 51 }}
                         className="fixed flex bottom-0 w-full h-12 border-t border-stone-700 bg-stone-900/85 backdrop-blur-xl items-center justify-center"
                     >
-                        <p className="text-center text-gray-200">
-                            We’re redesigning Epsilon! Excuse our appearance
-                            while we build a better experience.
+                        <p className="text-center text-gray-200 p-14">
+                            We’re redesigning Epsilon! Please pardon our
+                            appearance.
                         </p>
                         <button
                             onClick={handleCloseBanner}
-                            className="absolute right-5"
+                            className="absolute right-3"
                         >
                             <i className="bx bx-x bx-md text-gray-200"></i>
                         </button>

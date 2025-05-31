@@ -1,4 +1,4 @@
-import { Box, Typography, Stack, Chip, InputBase } from "@mui/material";
+import { Box, Chip, InputBase, Stack, Typography } from "@mui/material";
 
 import { capitalizeWords } from "../../../utils/DataFormatters";
 
@@ -63,7 +63,7 @@ const SearchFilter = ({
                 }}
             >
                 <InputBase
-                    placeholder="Search Activities"
+                    placeholder="Find Activities..."
                     sx={{
                         borderRadius: "10px",
                         width: "100%",
@@ -92,6 +92,12 @@ const SearchFilter = ({
                 >
                     {tags.map((tag) => (
                         <Chip
+                            sx={{
+                                borderRadius: "10px",
+                                paddingTop: "1px",
+                                fontVariationSettings: "'wght' 700",
+                                color: "rgba(218,218,218,0.8)",
+                            }}
                             label={capitalizeWords(tag)}
                             onClick={() => {
                                 let exists =
@@ -126,6 +132,12 @@ const SearchFilter = ({
                 >
                     {commitmentLevels.map((level) => (
                         <Chip
+                            sx={{
+                                borderRadius: "10px",
+                                paddingTop: "1px",
+                                fontVariationSettings: "'wght' 700",
+                                color: "rgba(218,218,218,0.8)",
+                            }}
                             label={capitalizeWords(level)}
                             onClick={() => {
                                 let exists =
@@ -163,6 +175,12 @@ const SearchFilter = ({
                 >
                     {meetingDays.map((day) => (
                         <Chip
+                            sx={{
+                                borderRadius: "10px",
+                                paddingTop: "1px",
+                                fontVariationSettings: "'wght' 700",
+                                color: "rgba(218,218,218,0.8)",
+                            }}
                             label={capitalizeWords(day)}
                             onClick={() => {
                                 let exists =

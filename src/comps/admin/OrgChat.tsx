@@ -1,15 +1,15 @@
 import {
-    Box,
-    TextField,
-    Card,
-    ListItem,
-    ListItemText,
-    ListItemAvatar,
     Avatar,
-    Typography,
+    Box,
+    Card,
     IconButton,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
+    TextField,
+    Typography,
 } from "@mui/material";
-import { useContext, useEffect, useState, useRef } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useSnackbar } from "notistack";
 import UserContext from "../context/UserContext";
@@ -146,12 +146,23 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
         <Card
             variant="outlined"
             sx={{
-                width: "100%",
                 padding: "15px",
+                position: "relative",
             }}
         >
-            <Typography variant="h2">Messages</Typography>
-            <Box sx={{ height: "400px", overflow: "auto" }} ref={chatBoxRef}>
+            <div
+                className={
+                    "absolute bg-gradient-to-b from-[#111111] to-transparent z-50 h-5 w-full top-12"
+                }
+            ></div>
+
+            <Typography variant="h2" mb={1}>
+                Messaging
+            </Typography>
+            <Box
+                sx={{ height: "500px", overflow: "auto", position: "relative" }}
+                ref={chatBoxRef}
+            >
                 {messages.map((message) => {
                     let messageTime = dayjs(message.created_at);
                     let timeStr = `${messageTime.month() + 1}/${messageTime.date()}/${messageTime.year()}`;
@@ -208,8 +219,9 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                 }}
             >
                 <TextField
+                    variant="filled"
                     label="Type message here."
-                    sx={{ width: "80%", marginRight: "15px" }}
+                    sx={{ width: "90%", marginRight: "15px" }}
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     onKeyDown={(e) => {
@@ -224,7 +236,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                 />
                 <AsyncButton
                     variant="contained"
-                    sx={{ width: "20%" }}
+                    sx={{ width: "10%" }}
                     onClick={sendMessage}
                 >
                     Send

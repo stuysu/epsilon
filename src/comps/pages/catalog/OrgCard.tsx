@@ -1,6 +1,6 @@
-import { Box, Typography, Card, Avatar, Stack } from "@mui/material";
+import { Avatar, Box, Card, Stack, Typography } from "@mui/material";
 import { PUBLIC_URL } from "../../../constants";
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { ThemeContext } from "../../context/ThemeProvider";
@@ -113,7 +113,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                     borderRadius: "20px",
                                     position: "absolute",
                                     boxShadow:
-                                        "inset 0 0 1px 1px rgba(255, 255, 255, 0.15)",
+                                        "inset 0 0 5px 1px rgba(255, 255, 255, 0.3)",
                                     zIndex: 10,
                                 }}
                             ></Box>
@@ -125,9 +125,9 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                     height: "130px",
                                     borderRadius: "20px",
                                     position: "absolute",
-                                    opacity: 0.25,
+                                    opacity: 0.2,
                                     objectFit: "cover",
-                                    filter: "blur(25px)",
+                                    filter: "blur(20px)",
                                 }}
                             ></Avatar>
 
@@ -152,7 +152,9 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                 }}
                                 alt={`${organization.name}`}
                             >
-                                {organization.name?.charAt(0).toUpperCase()}
+                                <h1>
+                                    {organization.name?.charAt(0).toUpperCase()}
+                                </h1>
                             </Avatar>
                         </Box>
 
@@ -161,12 +163,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                             sx={{
                                 maxWidth: "100%",
                                 height: "3rem",
-                                overflow: "hidden",
                                 textOverflow: "ellipsis",
-                                whiteSpace: "normal",
-                                display: "-webkit-box",
-                                WebkitBoxOrient: "vertical",
-                                WebkitLineClamp: 2,
                             }}
                         >
                             {organization.name}

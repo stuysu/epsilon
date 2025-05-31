@@ -1,5 +1,5 @@
-import { Box, Typography, TextField, MenuItem } from "@mui/material";
-import { TimePicker, DatePicker } from "@mui/x-date-pickers";
+import { Box, Divider, MenuItem, TextField, Typography } from "@mui/material";
+import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useSnackbar } from "notistack";
@@ -175,12 +175,14 @@ const Rooms = () => {
 
     return (
         <Box>
-            <Typography variant="h1" width="100%" align="center">
+            <Typography variant="h1" width="100%" align="center" mb={5}>
                 Rooms
             </Typography>
 
+            <Divider />
             <Box
                 sx={{
+                    marginY: "20px",
                     width: "100%",
                     display: "flex",
                     flexWrap: "wrap",
@@ -192,6 +194,9 @@ const Rooms = () => {
             >
                 <Typography variant="h2" width="100%" align="center">
                     Force Reservation
+                </Typography>
+                <Typography variant="body1" width="100%" align="center" mb={3}>
+                    Reserve a room for an organization manually.
                 </Typography>
                 <Box
                     sx={{
@@ -241,8 +246,13 @@ const Rooms = () => {
                             marginTop: "10px",
                         }}
                     >
-                        <Typography variant="h4" width="100%">
-                            Force Reserve for {forceOrgName}:
+                        <Typography
+                            variant="h4"
+                            width="100%"
+                            align={"center"}
+                            mt={3}
+                        >
+                            Force-reserving a meeting for {forceOrgName}
                         </Typography>
                         <DatePicker
                             label="Meeting Day"
@@ -325,17 +335,31 @@ const Rooms = () => {
                     </Box>
                 )}
             </Box>
-
+            <Divider />
             <Typography
                 variant="h2"
                 width="100%"
                 align="center"
-                sx={{ marginTop: "20px" }}
+                sx={{ marginY: "30px" }}
             >
                 Manage Rooms
             </Typography>
-            <AdminRoom create onCreate={() => fetchRooms(0)} />
-            <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
+            <Box
+                sx={{
+                    width: "100%",
+                    display: "flex",
+                    flexWrap: "wrap",
+                    justifyContent: "center",
+                }}
+            >
+                <div
+                    className={
+                        "border-zinc-800 border-solid border-2 rounded-lg"
+                    }
+                >
+                    <AdminRoom create onCreate={() => fetchRooms(0)} />
+                </div>
+
                 {rooms.map((room) => (
                     <AdminRoom
                         key={room.id}

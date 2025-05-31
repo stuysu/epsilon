@@ -24,8 +24,9 @@ const LoginGate = ({ page, children, sx }: Props): React.JSX.Element => {
                 flexDirection: "column",
             }}
         >
-            <Typography align="center" variant="h1">
-                You must be signed in to {page}.
+            <i className="bx bx-lock bx-lg text-blue-500 mb-5"></i>
+            <Typography align="center" variant="h1" marginBottom={5}>
+                Sign in to Epsilon to {page}.
             </Typography>
             <LoginButton />
         </Box>

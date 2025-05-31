@@ -77,11 +77,16 @@ const Home = () => {
     console.log(memberships?.length);
     return (
         <LoginGate>
-            <Typography variant="h1" width="100%" align="center">
-                Attendance
+            <Typography
+                variant="h1"
+                width="100%"
+                align="center"
+                marginTop="50px"
+            >
+                Take Attendance
             </Typography>
             <Box sx={{ width: "100%" }}>
-                <Box sx={{ width: "250px", padding: "20px", height: "250px" }}>
+                <Box sx={{ width: "250px", padding: "20px", height: "100px" }}>
                     <FormControl fullWidth>
                         <InputLabel>
                             {memberships.length

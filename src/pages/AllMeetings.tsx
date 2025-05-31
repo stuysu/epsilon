@@ -4,7 +4,7 @@ import { supabase } from "../supabaseClient";
 
 import { useSnackbar } from "notistack";
 
-import { Box, useMediaQuery, Typography, Badge } from "@mui/material";
+import { Badge, Box, useMediaQuery } from "@mui/material";
 
 import {
     DateCalendar,
@@ -138,13 +138,15 @@ const AllMeetings = () => {
     }, [time, enqueueSnackbar, cachedMeetings]);
 
     return (
-        <LoginGate sx={{ width: "100%", paddingLeft: "20px" }}>
-            <Typography variant="h1">All Meetings</Typography>
+        <LoginGate
+            sx={{ width: "100%", paddingLeft: "20px" }}
+            page={"view the calendar"}
+        >
             <Box
                 sx={{
                     width: "100%",
                     display: "flex",
-                    marginBottom: "20px",
+                    padding: "40px",
                     flexWrap: isMobile ? "wrap" : "nowrap",
                     justifyContent: "center",
                 }}

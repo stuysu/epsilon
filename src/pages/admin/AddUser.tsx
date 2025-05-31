@@ -4,7 +4,7 @@ import { enqueueSnackbar } from "notistack";
 import FormPage from "../../comps/ui/forms/FormPage";
 import MultiPageForm from "../../comps/ui/forms/MultiPageForm";
 import FormSection from "../../comps/ui/forms/FormSection";
-import { useMediaQuery } from "@mui/material";
+import { Typography, useMediaQuery } from "@mui/material";
 import FormTextField from "../../comps/ui/forms/FormTextField";
 import OrgRequirements from "../../utils/OrgRequirements";
 import FormCheckbox from "../../comps/ui/forms/FormCheckbox";
@@ -28,7 +28,7 @@ const emptyUser: User = {
 const AddUser = () => {
     const [userData, setUserData] = useState<User>(emptyUser);
 
-    const isMobile = useMediaQuery("(max-width: 620px)");
+    const isMobile = useMediaQuery("(max-width: 640px)");
 
     const createUser = async () => {
         const { data: userCreateData, error: userCreateError } =
@@ -44,86 +44,95 @@ const AddUser = () => {
     };
 
     return (
-        <MultiPageForm
-            title="Create New User"
-            value={userData}
-            onFormChange={setUserData}
-            onSubmit={createUser}
-            submitText="Create User"
-            sx={{
-                width: "100%",
-                display: "flex",
-                justifyContent: "center",
-                flexWrap: "wrap",
-            }}
-        >
-            <FormPage title="User Info">
-                <FormSection
-                    sx={{
-                        width: "100%",
-                        display: "flex",
-                        flexWrap: isMobile ? "wrap" : "nowrap",
-                    }}
-                >
-                    <FormTextField
-                        label="First Name"
-                        field="first_name"
-                        required={OrgRequirements.name.required}
-                        requirements={OrgRequirements.name.requirements}
-                        sx={{ width: isMobile ? "50%" : "25%" }}
-                    />
-                    <FormTextField
-                        label="Last Name"
-                        field="last_name"
-                        required={OrgRequirements.name.required}
-                        requirements={OrgRequirements.name.requirements}
+        <div>
+            <Typography variant="h1" width="100%" align="center">
+                Add New User
+            </Typography>
+            <MultiPageForm
+                title=""
+                value={userData}
+                onFormChange={setUserData}
+                onSubmit={createUser}
+                submitText="Create User"
+                sx={{
+                    width: "100%",
+                    display: "flex",
+                    justifyContent: "center",
+                    flexWrap: "wrap",
+                }}
+            >
+                <FormPage title=" ">
+                    <FormSection
                         sx={{
-                            marginLeft: isMobile ? "" : "20px",
-                            marginTop: isMobile ? "20px" : "",
-                            width: isMobile ? "50%" : "25%",
+                            width: "100%",
+                            display: "flex",
+                            flexWrap: isMobile ? "wrap" : "nowrap",
                         }}
-                    />
-                    <FormTextField
-                        label="Email"
-                        field="email"
-                        required={true}
-                        requirements={
-                            OrgRequirements.faculty_email.requirements
-                        }
-                        sx={{
-                            marginLeft: isMobile ? "" : "20px",
-                            marginTop: isMobile ? "20px" : "",
-                            width: isMobile ? "100%" : "50%",
-                        }}
-                    />
-                </FormSection>
-                <FormSection
-                    sx={{
-                        width: "100%",
-                        display: "flex",
-                        flexWrap: isMobile ? "wrap" : "nowrap",
-                    }}
-                >
-                    <FormTextField
-                        label="Grad Year"
-                        field="grad_year"
-                        required={OrgRequirements.grad_year.required}
-                        requirements={OrgRequirements.grad_year.requirements}
-                        sx={{
-                            marginTop: isMobile ? "20px" : "40px",
-                            width: isMobile ? "50%" : "25%",
-                        }}
-                    />
-                    <FormSection sx={{ marginTop: "30px", marginLeft: "40px" }}>
-                        <FormCheckbox
-                            field="is_faculty"
-                            label="Faculty?"
-                            description="Check this box if this user is a faculty."
+                    >
+                        <FormTextField
+                            label="First Name"
+                            field="first_name"
+                            required={OrgRequirements.name.required}
+                            requirements={OrgRequirements.name.requirements}
+                            sx={{ width: isMobile ? "50%" : "25%" }}
+                        />
+                        <FormTextField
+                            label="Last Name"
+                            field="last_name"
+                            required={OrgRequirements.name.required}
+                            requirements={OrgRequirements.name.requirements}
+                            sx={{
+                                marginLeft: isMobile ? "" : "20px",
+                                marginTop: isMobile ? "20px" : "",
+                                width: isMobile ? "50%" : "25%",
+                            }}
+                        />
+                        <FormTextField
+                            label="Email"
+                            field="email"
+                            required={true}
+                            requirements={
+                                OrgRequirements.faculty_email.requirements
+                            }
+                            sx={{
+                                marginLeft: isMobile ? "" : "20px",
+                                marginTop: isMobile ? "20px" : "",
+                                width: isMobile ? "100%" : "50%",
+                            }}
                         />
                     </FormSection>
-                </FormSection>
-            </FormPage>
-        </MultiPageForm>
+                    <FormSection
+                        sx={{
+                            width: "100%",
+                            display: "flex",
+                            flexWrap: isMobile ? "wrap" : "nowrap",
+                        }}
+                    >
+                        <FormTextField
+                            label="Grad Year"
+                            field="grad_year"
+                            required={OrgRequirements.grad_year.required}
+                            requirements={
+                                OrgRequirements.grad_year.requirements
+                            }
+                            sx={{
+                                marginTop: isMobile ? "20px" : "40px",
+                                width: isMobile ? "50%" : "25%",
+                            }}
+                        />
+                        <FormSection
+                            sx={{ marginTop: "30px", marginLeft: "40px" }}
+                        >
+                            <FormCheckbox
+                                field="is_faculty"
+                                label="Faculty?"
+                                description="Check this box if this user is a faculty."
+                            />
+                        </FormSection>
+                    </FormSection>
+                </FormPage>
+            </MultiPageForm>
+        </div>
     );
 };
 
