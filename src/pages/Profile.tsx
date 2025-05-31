@@ -26,7 +26,6 @@ const Profiles = () => {
         <LoginGate sx={{ width: "100%", paddingLeft: "20px" }}>
             <Box sx={{ padding: "40px" }}>
                 <Typography variant={"body1"}>My Epsilon Profile</Typography>
-
                 <div
                     className={
                         "flex flex-row justify-between relative items-start"
@@ -51,7 +50,7 @@ const Profiles = () => {
                                         cursor: "pointer",
                                     }}
                                 >
-                                    12,500
+                                    Stay tuned for points!
                                 </span>{" "}
                                 <i
                                     className={
@@ -138,39 +137,33 @@ const Profiles = () => {
                         )}
                     </div>
                 </div>
-
                 <Typography width="100%">
                     Grade: {user.grade + "th" || "No Grade"}
                 </Typography>
-
                 <div
                     className={
                         "bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50"
                     }
                 ></div>
-
                 <Typography width="100%">
                     Email: {user.email || "No Email"}
                 </Typography>
-
                 <div
                     className={
                         "bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50"
                     }
                 ></div>
-
                 {fourDigitId && (
                     <Typography width="100%" marginBottom={5}>
                         EpsilonID: {String(fourDigitId).padStart(4, "0")}
                     </Typography>
                 )}
-
                 <img
                     src={`${PUBLIC_URL}/achievements/medalstitle.svg`}
-                    className={"w-64"}
+                    className={"w-64 mb-3"}
                     alt={"Medals of Honor"}
                 ></img>
-
+                Medals are coming soon to Epsilon. Preview them below!
                 <div className="flex flex-col -ml-7">
                     <div className={"flex flex-row items-center -mb-6"}>
                         <img

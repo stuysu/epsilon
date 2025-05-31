@@ -303,8 +303,15 @@ const UserHome = () => {
                                     marginTop={3}
                                     marginBottom={0.5}
                                 >
-                                    <a href={"/meetings"}>View Calendar</a> ·{" "}
-                                    {upcomingMeetings.length} Upcoming
+                                    <a
+                                        href={"/meetings"}
+                                        className={
+                                            "hover:text-neutral-300 transition-colors"
+                                        }
+                                    >
+                                        View Calendar
+                                    </a>{" "}
+                                    · {upcomingMeetings.length} Upcoming
                                 </Typography>
                             </Box>
                         </div>
@@ -407,8 +414,15 @@ const UserHome = () => {
                                         )
                                     }
                                 >
-                                    <div className={"cursor-pointer"}>
-                                        View All Announcements
+                                    <div
+                                        className={
+                                            announcements.length <=
+                                            visibleAnnouncements
+                                                ? "cursor-pointer opacity-50"
+                                                : "cursor-pointer hover:text-neutral-300 transition-colors"
+                                        }
+                                    >
+                                        View More Announcements
                                     </div>
                                 </Typography>
                             </Box>

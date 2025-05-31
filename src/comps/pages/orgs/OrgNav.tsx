@@ -19,7 +19,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
             display: "Meetings",
         },
         { to: `${main}/members`, display: "Members" },
-        { to: `${main}/members`, display: "Stream" },
+        { to: `${main}/stream`, display: "Stream" },
     ];
 
     const [currentIndex, setCurrentIndex] = useState(0);

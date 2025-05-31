@@ -13,6 +13,7 @@ import Overview from "./Overview";
 import Charter from "./Charter";
 import Meetings from "./Meetings";
 import Members from "./Members";
+import Stream from "./Stream";
 import OrgAdminRouter from "./admin";
 import { useSnackbar } from "notistack";
 import { Box, useMediaQuery } from "@mui/material";
@@ -192,6 +193,10 @@ const OrgRouter = () => {
                                         <Route
                                             path={`/members`}
                                             Component={Members}
+                                        />
+                                        <Route
+                                            path={`/stream`}
+                                            Component={Stream}
                                         />
                                         <Route
                                             path={`/admin/*`}
