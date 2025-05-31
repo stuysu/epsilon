@@ -88,7 +88,7 @@ const OrgInspector = () => {
                             ) : null,
                         )
                     ) : (
-                        <Typography paddingLeft={3} paddingBottom={2}>
+                        <Typography paddingLeft={3} paddingBottom={3}>
                             No Links Provided
                         </Typography>
                     )}

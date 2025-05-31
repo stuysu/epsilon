@@ -75,16 +75,7 @@ const Profiles = () => {
                                         1,000
                                     </Typography>
                                 </div>
-                                <div
-                                    className={
-                                        "flex flex-row justify-between relative items-end"
-                                    }
-                                >
-                                    <Typography>
-                                        Get accepted for an SU role
-                                    </Typography>
-                                    <Typography variant={"h2"}>500</Typography>
-                                </div>
+
                                 <div
                                     className={
                                         "flex flex-row justify-between relative items-end"
@@ -106,7 +97,7 @@ const Profiles = () => {
                                         "flex flex-row justify-between relative items-end"
                                     }
                                 >
-                                    <Typography>Cast a vote</Typography>
+                                    <Typography>Gain a member</Typography>
                                     <Typography variant={"h2"}>50</Typography>
                                 </div>
                                 <div
@@ -114,24 +105,8 @@ const Profiles = () => {
                                         "flex flex-row justify-between relative items-end"
                                     }
                                 >
-                                    <Typography>Gain a member</Typography>
-                                    <Typography variant={"h2"}>25</Typography>
-                                </div>
-                                <div
-                                    className={
-                                        "flex flex-row justify-between relative items-end"
-                                    }
-                                >
-                                    <Typography>Log in daily</Typography>
-                                    <Typography variant={"h2"}>5</Typography>
-                                </div>
-                                <div
-                                    className={
-                                        "flex flex-row justify-between relative items-end"
-                                    }
-                                >
                                     <Typography>Mark an attendance</Typography>
-                                    <Typography variant={"h2"}>1</Typography>
+                                    <Typography variant={"h2"}>10</Typography>
                                 </div>
                             </div>
                         )}
