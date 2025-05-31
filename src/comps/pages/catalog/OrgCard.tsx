@@ -1,6 +1,6 @@
 import { Avatar, Box, Card, Stack, Typography } from "@mui/material";
 import { PUBLIC_URL } from "../../../constants";
-import { useContext } from "react";
+import React, { useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { ThemeContext } from "../../context/ThemeProvider";
@@ -19,6 +19,14 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                 },
             }}
         >
+            {/*IMPLEMENT THIS BACKGROUND FOR CLUBS LESS THAN 1 MONTH OLD*/}
+            <img
+                src={`${PUBLIC_URL}/textures/orgcard_new.png`}
+                className={
+                    "hidden pt-10 pb-2 absolute w-full h-full scale-[118%] z-0 blur-sm"
+                }
+            ></img>
+
             <div className="mt-10"></div>
             <div className="relative rounded-2xl overflow-visible">
                 <Box
