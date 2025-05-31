@@ -252,7 +252,7 @@ const NavBar: FC = () => {
                 </Box>
 
                 {/* User dropdown */}
-                <div className="pointer-events-auto absolute sm:relative flex flex-row justify-end sm:top-1 -top-8 sm:right-0 right-8">
+                <div className="pointer-events-auto absolute sm:relative flex flex-row justify-end sm:top-1 -top-16 sm:right-0 right-8">
                     <div
                         className="flex cursor-pointer flex-row items-center justify-center gap-2 rounded-lg bg-neutral-800 pl-1.5 pr-1.5 shadow-[inset_0px_0px_2px_0px_rgba(255,255,255,0.3)] h-10"
                         onClick={() => setDrawerOpen(!drawerOpen)}
