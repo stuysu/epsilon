@@ -21,7 +21,7 @@ const MemberRequests = () => {
     return (
         <Box sx={{ width: "100%" }}>
             <Typography variant="h1" align="center" width="100%">
-                Member Requests
+                Join Requests
             </Typography>
             {pendingMembers?.map((member, i) => (
                 <PendingMember

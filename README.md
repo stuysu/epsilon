@@ -17,7 +17,7 @@
 -   Opportunities [planned]
 -   Schedule/Schedules [planned]
 -   Votes [planned]
--   Valentines [planned]
+-   Valentines [Work in Progress]
 -   Mobile App [planned]
 -   StuyArista [planned]
 

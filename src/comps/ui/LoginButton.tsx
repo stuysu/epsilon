@@ -2,7 +2,12 @@ import { supabase } from "../../supabaseClient";
 import { PUBLIC_URL } from "../../constants";
 import "./UnauthenticatedButtons.css";
 
-const LoginButton = () => {
+type LoginButtonProps = {
+    onMouseEnter?: () => void;
+    onMouseLeave?: () => void;
+};
+
+const LoginButton = ({ onMouseEnter, onMouseLeave }: LoginButtonProps) => {
     const signInWithGoogle = async () => {
         const { error } = await supabase.auth.signInWithOAuth({
             provider: "google",
@@ -16,13 +21,19 @@ const LoginButton = () => {
     };
 
     return (
-        <button onClick={signInWithGoogle} className="button">
+        <button
+            onClick={signInWithGoogle}
+            className="button"
+            onMouseEnter={onMouseEnter}
+            onMouseLeave={onMouseLeave}
+            title="You must sign in with a stuy.edu address"
+        >
             <img
                 src={`${PUBLIC_URL}/Google.svg`}
                 alt="Google Icon"
                 className="google-icon"
             />
-            Sign in with Google
+            <span className="button-text">Sign in with Google</span>
         </button>
     );
 };

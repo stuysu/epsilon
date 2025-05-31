@@ -1,4 +1,4 @@
-import { useState, useEffect, useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 
 import { supabase } from "../../../supabaseClient";
 
@@ -64,7 +64,7 @@ const Organization = () => {
     return (
         <Box sx={{ width: "100%" }}>
             <Typography variant="h1" align="center" width="100%">
-                Edit Charter
+                Request to Amend Charter
             </Typography>
             <OrgEditor
                 organization={organization}

@@ -1,10 +1,10 @@
 import {
     Box,
-    Select,
-    Typography,
-    MenuItem,
     FormControl,
     InputLabel,
+    MenuItem,
+    Select,
+    Typography,
 } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import UserContext from "../../../../comps/context/UserContext";
@@ -23,6 +23,10 @@ const Home = () => {
 
     const [selectedOrgId, setSelectedOrgId] = useState(-1);
     const [meetings, setMeetings] = useState<Meeting[]>([]);
+    const memberships =
+        user.memberships?.filter((membership) =>
+            ["ADMIN", "CREATOR"].includes(membership?.role || ""),
+        ) || [];
 
     useEffect(() => {
         const updateOrgId = () => {
@@ -34,7 +38,7 @@ const Home = () => {
                     return;
                 }
             } else {
-                let oid = user.memberships?.[0]?.organizations?.id;
+                let oid = memberships[0]?.organizations?.id;
                 if (oid) {
                     setSelectedOrgId(oid);
                     setSearchParams({ org: oid.toString() });
@@ -70,45 +74,46 @@ const Home = () => {
         fetchOrgMeetings();
     }, [selectedOrgId, enqueueSnackbar]);
 
+    console.log(memberships?.length);
     return (
         <LoginGate>
-            <Typography variant="h1" width="100%" align="center">
-                Attendance
+            <Typography
+                variant="h1"
+                width="100%"
+                align="center"
+                marginTop="50px"
+            >
+                Take Attendance
             </Typography>
             <Box sx={{ width: "100%" }}>
-                <Box sx={{ width: "250px", padding: "20px", height: "250px" }}>
+                <Box sx={{ width: "250px", padding: "20px", height: "100px" }}>
                     <FormControl fullWidth>
-                        <InputLabel>Select Organization</InputLabel>
+                        <InputLabel>
+                            {memberships.length
+                                ? "Select Organization"
+                                : "No Organizations"}
+                        </InputLabel>
                         <Select
                             label="Select Organization"
-                            value={selectedOrgId}
+                            value={
+                                selectedOrgId <= 0 ? undefined : selectedOrgId
+                            }
                             onChange={(event) => {
                                 setSelectedOrgId(event.target.value as number);
                                 setSearchParams({
                                     org: event.target.value.toString(),
                                 });
                             }}
+                            disabled={!memberships?.length}
                         >
-                            {!user.memberships?.length && (
-                                <MenuItem value={-1}>No Organizations</MenuItem>
-                            )}
-                            {user.memberships?.map((membership) => {
-                                if (
-                                    !["ADMIN", "CREATOR"].includes(
-                                        membership.role || "",
-                                    )
-                                )
-                                    return null;
-
-                                return (
-                                    <MenuItem
-                                        key={membership.id}
-                                        value={membership.organizations?.id}
-                                    >
-                                        {membership.organizations?.name}
-                                    </MenuItem>
-                                );
-                            })}
+                            {memberships.map((membership) => (
+                                <MenuItem
+                                    key={membership.id}
+                                    value={membership.organizations?.id}
+                                >
+                                    {membership.organizations?.name}
+                                </MenuItem>
+                            ))}
                         </Select>
                     </FormControl>
                 </Box>
@@ -129,6 +134,7 @@ const Home = () => {
                                 key={meeting.id}
                                 title={meeting.title}
                                 id={meeting.id}
+                                startTime={meeting.start_time}
                             />
                         ))}
                     </Box>

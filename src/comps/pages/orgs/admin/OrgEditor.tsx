@@ -713,7 +713,7 @@ const OrgEditor = ({
                     onClick={saveChanges}
                     sx={{ marginLeft: "10px" }}
                 >
-                    Save Changes
+                    Submit Changes for Review
                 </AsyncButton>
                 <AsyncButton
                     color="error"

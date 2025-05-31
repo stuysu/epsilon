@@ -1,6 +1,6 @@
-import { Box, Typography, TextField, MenuItem } from "@mui/material";
-import { TimePicker, DatePicker } from "@mui/x-date-pickers";
-import { useEffect, useState } from "react";
+import { Box, Divider, MenuItem, TextField, Typography } from "@mui/material";
+import { DatePicker, TimePicker } from "@mui/x-date-pickers";
+import { useEffect, useRef, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useSnackbar } from "notistack";
 import AdminRoom from "../../comps/admin/AdminRoom";
@@ -45,28 +45,49 @@ const Rooms = () => {
     const [startTime, setStartTime] = useState<Dayjs | null>(getDefaultTime());
     const [endTime, setEndTime] = useState<Dayjs | null>(getDefaultTime());
 
-    const fetchRooms = async () => {
+    const [page, setPage] = useState<number>(0);
+    const [hasMore, setHasMore] = useState(true);
+    const observerRef = useRef<IntersectionObserver | null>(null);
+    const loadMoreRef = useRef<HTMLDivElement | null>(null);
+
+    const fetchRooms = async (pageToFetch = 0) => {
         setLoading(true);
+        const pageSize = 10;
+        const from = pageToFetch * pageSize;
+        const to = from + pageSize - 1;
+
         const { data: roomData, error: roomFetchError } = await supabase
             .from("rooms")
             .select("*")
+            .range(from, to)
             .returns<ApiRoom[]>();
 
         if (roomFetchError || !roomData) {
             enqueueSnackbar("Failed to fetch rooms", { variant: "error" });
+            setLoading(false);
             return;
         }
 
-        setRooms([...roomData]);
-        setAllRooms(() => {
-            setLoading(false);
+        if (pageToFetch === 0) {
+            setRooms(roomData);
+        } else {
+            setRooms((prev) => [...prev, ...roomData]);
+        }
 
-            if (roomData.length) {
-                setForceRoomId(roomData[0].id);
-            }
+        if (roomData.length < pageSize) {
+            setHasMore(false);
+        }
 
-            return [...roomData];
-        });
+        if (pageToFetch === 0 && roomData.length) {
+            setForceRoomId(roomData[0].id);
+        }
+
+        setAllRooms((prev) =>
+            pageToFetch === 0 ? roomData : [...prev, ...roomData],
+        );
+
+        setPage(pageToFetch);
+        setLoading(false);
     };
 
     useEffect(() => {
@@ -103,6 +124,26 @@ const Rooms = () => {
         }
     }, [searchInput, allOrgs]);
 
+    useEffect(() => {
+        if (loading || !hasMore) return;
+
+        if (observerRef.current) observerRef.current.disconnect();
+
+        observerRef.current = new IntersectionObserver((entries) => {
+            if (entries[0].isIntersecting) {
+                fetchRooms(page + 1);
+            }
+        });
+
+        if (loadMoreRef.current) {
+            observerRef.current.observe(loadMoreRef.current);
+        }
+
+        return () => {
+            if (observerRef.current) observerRef.current.disconnect();
+        };
+    }, [loading, hasMore, page]);
+
     const forceReserve = async () => {
         const { error: reserveError } = await supabase.functions.invoke(
             "force-reserve",
@@ -134,12 +175,14 @@ const Rooms = () => {
 
     return (
         <Box>
-            <Typography variant="h1" width="100%" align="center">
+            <Typography variant="h1" width="100%" align="center" mb={5}>
                 Rooms
             </Typography>
 
+            <Divider />
             <Box
                 sx={{
+                    marginY: "20px",
                     width: "100%",
                     display: "flex",
                     flexWrap: "wrap",
@@ -151,6 +194,9 @@ const Rooms = () => {
             >
                 <Typography variant="h2" width="100%" align="center">
                     Force Reservation
+                </Typography>
+                <Typography variant="body1" width="100%" align="center" mb={3}>
+                    Reserve a room for an organization manually.
                 </Typography>
                 <Box
                     sx={{
@@ -200,8 +246,13 @@ const Rooms = () => {
                             marginTop: "10px",
                         }}
                     >
-                        <Typography variant="h4" width="100%">
-                            Force Reserve for {forceOrgName}:
+                        <Typography
+                            variant="h4"
+                            width="100%"
+                            align={"center"}
+                            mt={3}
+                        >
+                            Force-reserving a meeting for {forceOrgName}
                         </Typography>
                         <DatePicker
                             label="Meeting Day"
@@ -284,17 +335,31 @@ const Rooms = () => {
                     </Box>
                 )}
             </Box>
-
+            <Divider />
             <Typography
                 variant="h2"
                 width="100%"
                 align="center"
-                sx={{ marginTop: "20px" }}
+                sx={{ marginY: "30px" }}
             >
                 Manage Rooms
             </Typography>
-            <AdminRoom create onCreate={() => fetchRooms()} />
-            <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
+            <Box
+                sx={{
+                    width: "100%",
+                    display: "flex",
+                    flexWrap: "wrap",
+                    justifyContent: "center",
+                }}
+            >
+                <div
+                    className={
+                        "border-zinc-800 border-solid border-2 rounded-lg"
+                    }
+                >
+                    <AdminRoom create onCreate={() => fetchRooms(0)} />
+                </div>
+
                 {rooms.map((room) => (
                     <AdminRoom
                         key={room.id}
@@ -313,6 +378,7 @@ const Rooms = () => {
                         }
                     />
                 ))}
+                <div ref={loadMoreRef} style={{ height: "1px" }} />
             </Box>
         </Box>
     );

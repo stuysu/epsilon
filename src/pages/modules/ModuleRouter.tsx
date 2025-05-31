@@ -2,10 +2,11 @@ import { PUBLIC_URL } from "../../constants";
 import { Helmet } from "react-helmet";
 import Loading from "../../comps/ui/Loading";
 
-import { Routes, Route, useLocation } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 import { Suspense } from "react";
 
 import AttendanceRouter from "./attendance";
+import ValentinesRouter from "./valentines";
 import InvalidModule from "./InvalidModule";
 import LoginGate from "../../comps/ui/LoginGate";
 
@@ -13,7 +14,7 @@ const ModuleRouter = () => {
     const location = useLocation();
 
     return (
-        <LoginGate page="use modules">
+        <LoginGate page="access modules">
             <Helmet>
                 <meta
                     property="og:url"
@@ -31,6 +32,7 @@ const ModuleRouter = () => {
             <Suspense fallback={<Loading />}>
                 <Routes>
                     <Route path="/attendance/*" Component={AttendanceRouter} />
+                    <Route path="/valentines/*" Component={ValentinesRouter} />
                     <Route path="/*" Component={InvalidModule} />
                 </Routes>
             </Suspense>

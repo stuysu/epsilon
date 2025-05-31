@@ -1,16 +1,21 @@
-import { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import OrgContext from "../../comps/context/OrgContext";
 import {
     Avatar,
     Box,
+    Chip,
+    Dialog,
+    DialogActions,
+    DialogContent,
+    DialogContentText,
+    DialogTitle,
+    Divider,
+    Stack,
     Typography,
     useMediaQuery,
-    Stack,
-    Chip,
-    Divider,
-    Link,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../../supabaseClient";
 import AsyncButton from "../../comps/ui/AsyncButton";
 import OrgMember from "../../comps/pages/orgs/OrgMember";
@@ -19,12 +24,16 @@ import { sortByDate, sortByRole } from "../../utils/DataFormatters";
 import UserContext from "../../comps/context/UserContext";
 
 const Overview = () => {
+    const navigate = useNavigate();
     const organization: OrgContextType = useContext(OrgContext);
     const user: UserContextType = useContext(UserContext);
     const { enqueueSnackbar } = useSnackbar();
     const isMeetingMobile = useMediaQuery("(max-width: 1450px)");
 
     const [attemptingInteract, setAttemptingInteract] = useState(false);
+
+    const [leaveConfirmation, setLeaveConfirmation] = useState(false);
+    const [userLeave, setUserLeave] = useState(false);
 
     const isInOrg = !!organization.memberships?.find(
         (m) => m.users?.id === user.id,
@@ -82,34 +91,52 @@ const Overview = () => {
                 interactString === "LEAVE" ||
                 interactString === "CANCEL JOIN"
             ) {
-                const membership = organization.memberships?.find(
-                    (m) => m.users?.id === user.id,
-                );
-                const { error } = await supabase
-                    .from("memberships")
-                    .delete()
-                    .eq("id", membership?.id);
-
-                if (error) {
-                    enqueueSnackbar("Unable to leave organization.", {
-                        variant: "error",
-                    });
-                    return;
-                }
-                if (organization.setOrg) {
-                    organization.setOrg({
-                        ...organization,
-                        memberships: organization.memberships.filter(
-                            (m) => m.users?.id !== user.id,
-                        ),
-                    });
-                }
-                enqueueSnackbar("Left organization!", { variant: "success" });
+                setLeaveConfirmation(true);
             }
         } finally {
             setAttemptingInteract(false);
         }
     };
+
+    useEffect(() => {
+        const leaveOrg = async () => {
+            const membership = organization.memberships?.find(
+                (m) => m.users?.id === user.id,
+            );
+            const { error } = await supabase
+                .from("memberships")
+                .delete()
+                .eq("id", membership?.id);
+
+            if (error) {
+                enqueueSnackbar("Unable to leave organization.", {
+                    variant: "error",
+                });
+                return;
+            }
+            if (organization.setOrg) {
+                organization.setOrg({
+                    ...organization,
+                    memberships: organization.memberships.filter(
+                        (m) => m.users?.id !== user.id,
+                    ),
+                });
+            }
+            enqueueSnackbar("Left organization!", { variant: "success" });
+        };
+
+        if (userLeave) {
+            setAttemptingInteract(true);
+            leaveOrg().finally(() => {
+                setUserLeave(false);
+                setAttemptingInteract(false);
+            });
+        }
+    }, [userLeave]);
+
+    // const handleClickOpen = () => {
+    //     setAttemptingInteract(true);
+    // }
 
     if (organization.id === -1) {
         return (
@@ -119,10 +146,34 @@ const Overview = () => {
         );
     }
 
+    const handleUserLeave = () => {
+        setLeaveConfirmation(false);
+        setUserLeave(true);
+    };
+
+    const handleUserStay = () => {
+        setLeaveConfirmation(false);
+        setUserLeave(false);
+    };
+
     return (
-        <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
+        <Box
+            marginTop={1}
+            sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}
+        >
             <Stack direction={{ xs: "column", sm: "row" }} spacing={5}>
                 <Box>
+                    <Box
+                        sx={{
+                            width: "250px",
+                            height: "250px",
+                            borderRadius: "25px",
+                            position: "absolute",
+                            boxShadow:
+                                "inset 0 0 10px 1px rgba(255, 255, 255, 0.3)",
+                            zIndex: 10,
+                        }}
+                    ></Box>
                     <Avatar
                         src={organization.picture || ""}
                         sx={{
@@ -144,86 +195,119 @@ const Overview = () => {
                             borderRadius: "25px",
                             objectFit: "cover",
                             position: "relative",
+                            fontSize: "120px",
                             zIndex: 1,
                         }}
                         alt={`organization ${organization.name}`}
                     >
-                        {organization.name.charAt(0).toUpperCase()}
+                        <h1>{organization.name.charAt(0).toUpperCase()}</h1>
                     </Avatar>
                 </Box>
 
-                <Stack>
-                    <Typography variant="h1" width="100%">
-                        {organization.name}
-                    </Typography>
+                <Stack direction={"column"} justifyContent={"space-between"}>
+                    <div>
+                        <Typography variant="h1" width="100%">
+                            {organization.name}
+                        </Typography>
 
-                    <Stack
-                        direction="row"
-                        flexWrap="wrap"
-                        marginBottom={3}
-                        spacing={1}
-                    >
-                        {organization.tags?.map((tag, index) => (
-                            <Chip
-                                key={index}
-                                label={tag}
-                                variant="filled"
-                                sx={{
-                                    borderRadius: 2,
-                                    boxShadow:
-                                        "inset 0 0 1px 1px rgba(255, 255, 255, 0.15)",
-                                }}
-                            />
-                        )) || <p>Uncategorized</p>}
-                    </Stack>
+                        <Stack
+                            direction="row"
+                            marginBottom={2}
+                            gap={0.5}
+                            rowGap={0.5}
+                            flexWrap={"wrap"}
+                        >
+                            {organization.tags?.map((tag, index) => (
+                                <Chip
+                                    key={index}
+                                    label={tag}
+                                    variant="filled"
+                                    sx={{
+                                        borderRadius: 2,
+                                        boxShadow:
+                                            "inset 0 0 1px 1px rgba(255, 255, 255, 0.15)",
+                                    }}
+                                />
+                            )) || <p>Uncategorized</p>}
+                        </Stack>
 
-                    <Typography
-                        variant="body1"
-                        width="100%"
+                        <Typography
+                            onClick={() => navigate("./charter")}
+                            variant="body1"
+                            width="100%"
+                            sx={{
+                                cursor: "pointer",
+                                display: "-webkit-box",
+                                WebkitBoxOrient: "vertical",
+                                overflow: "hidden",
+                                WebkitLineClamp: 4,
+                                textOverflow: "ellipsis",
+                            }}
+                        >
+                            {organization.purpose || "None"}
+                        </Typography>
+                    </div>
+
+                    <Box
                         sx={{
-                            display: "-webkit-box",
-                            WebkitBoxOrient: "vertical",
-                            overflow: "hidden",
-                            WebkitLineClamp: 4,
-                            textOverflow: "ellipsis",
+                            display: "flex",
+                            width: "100%",
+                            marginTop: 2,
+                            alignItems: "center",
                         }}
-                    >
-                        {organization.purpose || "None"}
-                    </Typography>
-
-                    <Stack
-                        direction={{ xs: "column", sm: "row" }}
-                        alignItems="center"
-                        marginTop={1}
                     >
                         <AsyncButton
                             variant="contained"
                             onClick={handleInteract}
                             disabled={disabled || attemptingInteract}
+                            sx={
+                                interactString === "LEAVE" ||
+                                interactString === "CANCEL JOIN"
+                                    ? {
+                                          backgroundColor:
+                                              "rgba(248, 19, 19, 0.88)",
+                                          color: "white",
+                                      }
+                                    : undefined
+                            }
                         >
-                            {interactString}
+                            {interactString
+                                .toLowerCase()
+                                .replace(/\b\w/g, (c) => c.toUpperCase())}
                         </AsyncButton>
-                        <Box sx={{ marginLeft: 2 }}>
-                            {organization.socials &&
-                                organization.socials
-                                    .split(" ")
-                                    .map((social, i) =>
-                                        social.startsWith("http") ? (
-                                            <Link
-                                                key={i}
-                                                href={social}
-                                                target="_blank"
-                                                rel="noopener noreferrer"
-                                                style={{
-                                                    marginRight: "10px",
-                                                }}
-                                            >
-                                                {social}
-                                            </Link>
-                                        ) : null,
-                                    )}
-                        </Box>
-                    </Stack>
+                        <Dialog
+                            open={leaveConfirmation}
+                            onClose={handleUserStay}
+                            aria-labelledby="alert-dialog-title"
+                            aria-describedby="alert-dialog-description"
+                        >
+                            <DialogTitle variant="h2" id="alert-dialog-title">
+                                Confirm Leave?
+                            </DialogTitle>
+                            <DialogContent dividers>
+                                <DialogContentText id="alert-dialog-description">
+                                    Are you sure you want to leave/cancel your
+                                    join to this organization? Once you confirm
+                                    your leave, you will have to request to join
+                                    again.
+                                </DialogContentText>
+                            </DialogContent>
+                            <DialogActions>
+                                <AsyncButton onClick={handleUserStay}>
+                                    Cancel
+                                </AsyncButton>
+                                <AsyncButton
+                                    sx={{
+                                        backgroundColor:
+                                            "rgba(248, 19, 19, 0.9)",
+                                    }}
+                                    onClick={handleUserLeave}
+                                >
+                                    Leave
+                                </AsyncButton>
+                            </DialogActions>
+                        </Dialog>
+                    </Box>
                 </Stack>
             </Stack>
 
@@ -237,31 +321,42 @@ const Overview = () => {
                 }}
             />
 
-            <Stack direction={{ xs: "column", sm: "row" }} marginBottom={{ xs: 0, sm: 3 }} alignItems="center">
-                <Box>
-                    <Typography variant="h3" align="center" width={100}>
-                        {
-                            organization.memberships.filter(
-                                (member) => member.active,
-                            ).length
-                        }
-                    </Typography>
-                    <Typography variant="body1" align="center">
-                        Members
-                    </Typography>
-                </Box>
+            <Stack
+                direction={{ xs: "column", sm: "row" }}
+                marginBottom={{ xs: 0, sm: 3 }}
+                alignItems="center"
+            >
+                {user.signed_in && (
+                    <>
+                        <Box>
+                            <Typography variant="h3" align="center" width={100}>
+                                {
+                                    organization.memberships.filter(
+                                        (member) => member.active,
+                                    ).length
+                                }
+                            </Typography>
+                            <Typography variant="body1" align="center">
+                                Members
+                            </Typography>
+                        </Box>
+                        <Typography
+                            variant="h1"
+                            align="center"
+                            sx={{ opacity: "25%" }}
+                        >
+                            •
+                        </Typography>
+                    </>
+                )}
 
-                <Typography variant="h1" align="center" sx={{ opacity: "25%" }}>
-                    •
-                </Typography>
-
                 <Box>
-                    <Typography variant="h3" align="center" width={150}>
+                    <Typography variant="h3" align="center" width={160}>
                         {organization.state.charAt(0) +
                             organization.state.slice(1).toLowerCase()}
                     </Typography>
                     <Typography variant="body1" align="center">
-                        State
+                        Activity Status
                     </Typography>
                 </Box>
 
@@ -275,7 +370,7 @@ const Overview = () => {
                 </Typography>
 
                 <Box>
-                    <Typography variant="h3" align="center" width={150}>
+                    <Typography variant="h3" align="center" width={140}>
                         {organization.commitment_level
                             ? organization.commitment_level
                                   .charAt(0)
@@ -290,25 +385,29 @@ const Overview = () => {
                     </Typography>
                 </Box>
 
-                <Typography
-                    variant="h1"
-                    align="center"
-                    width="100%"
-                    sx={{ opacity: "25%" }}
-                >
-                    •
-                </Typography>
-
-                <Box>
-                    <Typography variant="h3" align="center" width={200}>
-                        {organization.meetings
-                            ?.at(-1)
-                            ?.start_time?.split("T")[0] ?? "No Meetings"}
-                    </Typography>
-                    <Typography variant="body1" align="center">
-                        Last Meeting
-                    </Typography>
-                </Box>
+                {user.signed_in && (
+                    <>
+                        <Typography
+                            variant="h1"
+                            align="center"
+                            width="100%"
+                            sx={{ opacity: "25%" }}
+                        >
+                            •
+                        </Typography>
+                        <Box>
+                            <Typography variant="h3" align="center" width={200}>
+                                {organization.meetings
+                                    ?.at(-1)
+                                    ?.start_time?.split("T")[0]
+                                    .replaceAll("-", "/") ?? "No Meetings"}
+                            </Typography>
+                            <Typography variant="body1" align="center">
+                                Last Meeting
+                            </Typography>
+                        </Box>
+                    </>
+                )}
             </Stack>
 
             <Box position="relative" width={"100%"} marginBottom={3}>
@@ -318,7 +417,7 @@ const Overview = () => {
                     borderRadius={3}
                     boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
                 >
-                    <Typography variant="h3" width="100%" margin={3}>
+                    <Typography variant="h3" margin={3}>
                         Meeting Schedule
                     </Typography>
 
@@ -329,7 +428,12 @@ const Overview = () => {
                             </Typography>
                         </Box>
 
-                        <Stack marginTop={0.5} direction="row" spacing={0.5}>
+                        <Stack
+                            marginTop={0.5}
+                            direction="row"
+                            spacing={0.5}
+                            overflow={"scroll"}
+                        >
                             {[
                                 "Monday",
                                 "Tuesday",
@@ -386,9 +490,20 @@ const Overview = () => {
                     borderRadius={3}
                     boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
                 >
-                    <Typography variant="h3" width="100%" margin={3}>
+                    <Typography variant="h3" margin={3}>
                         Activity Leaders
                     </Typography>
+
+                    {!user.signed_in && (
+                        <Typography
+                            variant="body1"
+                            width="100%"
+                            marginLeft={3}
+                            marginBottom={3}
+                        >
+                            Sign in to view the leaders of this organization.
+                        </Typography>
+                    )}
 
                     <Stack borderRadius={2} overflow="hidden" spacing={0.5}>
                         {organization.memberships
@@ -441,46 +556,80 @@ const Overview = () => {
                 />
             </Box>
 
-            <Box position="relative" width={"100%"} marginBottom={3}>
+            <Box position="relative" width={"100%"} marginBottom={10}>
                 <Box
                     bgcolor="#1f1f1f80"
                     padding={0.5}
                     borderRadius={3}
                     boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
                 >
-                    <Typography variant="h3" width="100%" margin={3}>
+                    <Typography variant="h3" margin={3}>
                         Upcoming Meetings
                     </Typography>
 
-                    {organization.meetings.length === 0 ? (
-                        <Typography
-                            variant="body1"
-                            width="100%"
-                            marginLeft={3}
-                            marginBottom={3}
-                        >
-                            No past or future meetings.
-                        </Typography>
-                    ) : (
-                        organization.meetings
-                            .sort(sortByDate)
-                            .map((meeting) => (
-                                <OrgMeeting
-                                    key={meeting.id}
-                                    id={meeting.id}
-                                    title={meeting.title}
-                                    description={meeting.description}
-                                    start_time={meeting.start_time}
-                                    end_time={meeting.end_time}
-                                    is_public={meeting.is_public}
-                                    room_name={meeting.rooms?.name}
-                                    org_name={organization.name}
-                                    org_picture={organization.picture || ""}
-                                    isMobile={isMeetingMobile}
-                                    onlyUpcoming
-                                />
-                            ))
-                    )}
+                    <Stack borderRadius={2} overflow="hidden" spacing={0.5}>
+                        {organization.meetings.length === 0 ? (
+                            !user.signed_in ? (
+                                <Typography
+                                    variant="body1"
+                                    paddingLeft={3}
+                                    paddingBottom={3}
+                                >
+                                    Sign in to view meetings.
+                                </Typography>
+                            ) : (
+                                <Typography
+                                    variant="body1"
+                                    paddingLeft={3}
+                                    paddingBottom={3}
+                                >
+                                    No meetings have ever been held.
+                                </Typography>
+                            )
+                        ) : (
+                            (() => {
+                                const now = new Date();
+                                const upcomingMeetings =
+                                    organization.meetings.filter(
+                                        (meeting) =>
+                                            meeting.end_time &&
+                                            new Date(meeting.end_time) > now,
+                                    );
+                                if (upcomingMeetings.length === 0) {
+                                    return (
+                                        <Typography
+                                            variant="body1"
+                                            paddingLeft={3}
+                                            paddingBottom={3}
+                                        >
+                                            No meetings scheduled for the
+                                            future.
+                                        </Typography>
+                                    );
+                                }
+                                return upcomingMeetings
+                                    .sort(sortByDate)
+                                    .map((meeting) => (
+                                        <OrgMeeting
+                                            key={meeting.id}
+                                            id={meeting.id}
+                                            title={meeting.title}
+                                            description={meeting.description}
+                                            start_time={meeting.start_time}
+                                            end_time={meeting.end_time}
+                                            is_public={meeting.is_public}
+                                            room_name={meeting.rooms?.name}
+                                            org_name={organization.name}
+                                            org_picture={
+                                                organization.picture || ""
+                                            }
+                                            isMobile={isMeetingMobile}
+                                            onlyUpcoming
+                                        />
+                                    ));
+                            })()
+                        )}
+                    </Stack>
                 </Box>
 
                 <Box

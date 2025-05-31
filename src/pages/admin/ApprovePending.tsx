@@ -89,12 +89,13 @@ const ApprovePending = () => {
     return (
         <Box>
             <Typography variant="h1" align="center">
-                Org Approvals
+                Pending Organizations
             </Typography>
             <Box
                 sx={{
                     width: "100%",
                     display: "flex",
+                    gap: "20px",
                     justifyContent: "center",
                     flexWrap: "wrap",
                     padding: "10px",
@@ -104,7 +105,7 @@ const ApprovePending = () => {
                     <Box
                         key={i}
                         sx={{
-                            width: "100%",
+                            width: "350px",
                             display: "flex",
                             justifyContent: "center",
                             marginTop: "10px",

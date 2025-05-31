@@ -1,17 +1,16 @@
-import { useContext, useState, ChangeEvent } from "react";
+import { ChangeEvent, useContext, useState } from "react";
 import UserContext from "../../../context/UserContext";
 
 import {
+    Box,
     Dialog,
+    DialogActions,
     DialogContent,
     DialogTitle,
-    DialogContentText,
-    TextField,
-    Select,
     MenuItem,
+    Select,
     SelectChangeEvent,
-    DialogActions,
-    Box,
+    TextField,
 } from "@mui/material";
 import { supabase } from "../../../../supabaseClient";
 import { useSnackbar } from "notistack";
@@ -184,18 +183,21 @@ const AdminMember = ({
                     is_faculty={is_faculty}
                 />
             </Box>
-            <Box sx={{ width: "200px" }}>
+            <Box
+                sx={{
+                    width: "200px",
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                }}
+            >
                 {(isCreator ||
                     role === "MEMBER" ||
                     role === "ADVISOR" ||
                     userId === user.id) && (
-                    <AsyncButton
-                        onClick={handleEdit}
-                        variant="contained"
-                        sx={{ height: "40px" }}
-                    >
-                        Edit
-                    </AsyncButton>
+                    <div onClick={handleEdit}>
+                        <i className={"bx bx-pencil bx-md"}></i>
+                    </div>
                 )}
 
                 {userId !== user.id &&
@@ -203,7 +205,12 @@ const AdminMember = ({
                         <AsyncButton
                             onClick={() => setKickConfirmOpen(true)}
                             variant="contained"
-                            sx={{ height: "40px", marginLeft: "10px" }}
+                            sx={{
+                                height: "40px",
+                                marginLeft: "10px",
+                                position: "relative",
+                                bottom: "2px",
+                            }}
                         >
                             Kick
                         </AsyncButton>
@@ -219,7 +226,6 @@ const AdminMember = ({
             <Dialog open={editState.editing} onClose={handleClose}>
                 <DialogTitle>Edit User</DialogTitle>
                 <DialogContent>
-                    <DialogContentText>Role Name</DialogContentText>
                     <TextField
                         value={editState.role_name}
                         onChange={handleType}

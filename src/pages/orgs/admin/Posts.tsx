@@ -28,9 +28,6 @@ const Posts = () => {
 
     return (
         <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
-            <Typography variant="h1" width="100%">
-                Manage Posts
-            </Typography>
             <PostEditor
                 orgId={organization.id}
                 orgName={organization.name}
@@ -44,9 +41,6 @@ const Posts = () => {
                     }
                 }}
             />
-            <Typography variant="h1" align="center" width="100%">
-                Manage Posts
-            </Typography>
             {organization.posts
                 .sort(sortPostByDate)
                 .reverse()

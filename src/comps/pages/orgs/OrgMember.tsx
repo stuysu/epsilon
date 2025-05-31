@@ -1,10 +1,10 @@
 import {
+    Avatar,
+    Chip,
     ListItem,
     ListItemAvatar,
-    Avatar,
-    ListItemText,
     Stack,
-    Chip,
+    Typography,
 } from "@mui/material";
 
 type Props = {
@@ -38,9 +38,11 @@ const OrgMember = ({
         <Stack
             direction={"row"}
             alignItems={"center"}
+            justifyContent={"space-between"}
+            flexWrap={"wrap"}
             sx={{ background: "#36363680" }}
         >
-            <ListItem sx={{ height: "75px" }}>
+            <ListItem sx={{ height: "75px", width: "fit-content" }}>
                 <ListItemAvatar>
                     <Avatar
                         alt={`${first_name} ${last_name}`}
@@ -50,12 +52,25 @@ const OrgMember = ({
                         {(first_name || "O").charAt(0).toUpperCase()}
                     </Avatar>
                 </ListItemAvatar>
-                <ListItemText
-                    primary={`${first_name} ${last_name}`}
-                    secondary={<>{email}</>}
-                />
+                <div>
+                    <Typography
+                        variant="h4"
+                        sx={{ position: "relative", top: "3px" }}
+                    >
+                        {`${first_name} ${last_name}`}
+                    </Typography>
+                    <Typography variant="body1">{<>{email}</>}</Typography>
+                </div>
             </ListItem>
-            <Chip label={l1} sx={{ marginRight: "20px" }} />
+            <Chip
+                label={l1}
+                sx={{
+                    marginRight: "20px",
+                    marginLeft: "10px",
+                    marginY: "10px",
+                    maxWidth: "600px",
+                }}
+            />
         </Stack>
     );
 };

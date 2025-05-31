@@ -1,5 +1,5 @@
-import { Box, Typography, Card, Button } from "@mui/material";
-import { useContext, useState, useEffect } from "react";
+import { Box, Card, Typography } from "@mui/material";
+import { useContext, useEffect, useState } from "react";
 import { supabase } from "../../../supabaseClient";
 import { useSnackbar } from "notistack";
 import OrgContext from "../../../comps/context/OrgContext";
@@ -61,11 +61,14 @@ const Strikes = () => {
                         marginTop: "10px",
                     }}
                 >
-                    <Card sx={{ width: "500px", padding: "20px" }}>
-                        <Typography variant="h2">{strike.reason}</Typography>
+                    <Card sx={{ width: "100%", padding: "20px" }}>
+                        <Typography variant="h3">Strike {index + 1}</Typography>
                         <Typography variant="body1">
                             Issued by {strike.users?.first_name}{" "}
-                            {strike.users?.last_name}
+                            {strike.users?.last_name} on {strike.created_at}
+                        </Typography>
+                        <Typography variant="body1" marginTop={3}>
+                            {strike.reason}
                         </Typography>
                     </Card>
                 </Box>

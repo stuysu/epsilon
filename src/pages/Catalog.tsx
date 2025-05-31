@@ -1,16 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "../supabaseClient";
-
-import { Box, useMediaQuery, Typography, Card } from "@mui/material";
+import { Box, Typography, useMediaQuery } from "@mui/material";
 import { Masonry } from "@mui/lab";
-import DisplayLinks from "../comps/ui/DisplayLinks";
 
 import OrgCard from "../comps/pages/catalog/OrgCard";
 import { useSnackbar } from "notistack";
 
 import Loading from "../comps/ui/Loading";
 import SearchFilter from "../comps/pages/catalog/SearchFilter";
-import AsyncButton from "../comps/ui/AsyncButton";
 
 /*
 function getUnique(arr : Partial<Organization>[]) {
@@ -53,14 +50,11 @@ const Catalog = () => {
         tags: [],
     });
 
-    const [seed, setSeed] = useState(
+    const [seed] = useState(
         sessionStorage.getItem("seed")
             ? parseFloat(sessionStorage.getItem("seed") as string)
             : Math.random(),
     );
-
-    const [announcements, setAnnouncements] = useState<Announcement[]>([]);
-    const [visibleAnnouncements, setVisibleAnnouncements] = useState(3);
 
     const isTwo = useMediaQuery("(max-width: 1525px)");
     const isTwoWrap = useMediaQuery("(max-width: 1100px)");
@@ -116,7 +110,7 @@ const Catalog = () => {
                 orgReqsQuery = `,and(${orgReqs.join(",")})`;
             }
 
-            var catalogQuery = `and(or(name.ilike.%${searchParams.name}%,keywords.ilike.%${searchParams.name}%)${orgReqsQuery})`;
+            const catalogQuery = `and(or(name.ilike.%${searchParams.name}%,keywords.ilike.%${searchParams.name}%)${orgReqsQuery})`;
 
             ({ data: orgData, error: orgError } = await supabase
                 .from("organizations")
@@ -168,27 +162,6 @@ const Catalog = () => {
     }, [seed]);
 
     useEffect(() => {
-        const fetchAnnouncements = async () => {
-            const { data, error } = await supabase
-                .from("announcements")
-                .select("*")
-                .order("created_at", { ascending: false });
-
-            if (error || !data) {
-                enqueueSnackbar(
-                    "Failed to load announcements. Contact it@stuysu.org for support.",
-                    { variant: "error" },
-                );
-                return;
-            }
-
-            setAnnouncements(data as Announcement[]);
-        };
-
-        fetchAnnouncements();
-    }, [enqueueSnackbar, setAnnouncements]);
-
-    useEffect(() => {
         const observer = new IntersectionObserver(
             (entries) => {
                 if (entries[0].isIntersecting) {
@@ -223,60 +196,11 @@ const Catalog = () => {
             <Box
                 sx={{
                     width: isOne || isTwoWrap ? "100%" : isTwo ? "70%" : "75%",
-                    padding: "20px",
+                    paddingRight: "20px",
+                    paddingLeft: "20px",
                     position: "relative",
                 }}
             >
-                <Box
-                    sx={{
-                        width: "100%",
-                        display: "flex",
-                        flexWrap: "wrap",
-                        paddingTop: "10px",
-                        marginBottom: "20px",
-                    }}
-                >
-                    <Typography variant="h3">Announcements</Typography>
-                    {announcements
-                        .slice(0, visibleAnnouncements)
-                        .map((announcement, i) => {
-                            return (
-                                <Card
-                                    key={i}
-                                    sx={{
-                                        width: "100%",
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        marginTop: "10px",
-                                        padding: "20px",
-                                    }}
-                                >
-                                    <DisplayLinks text={announcement.content} />
-                                </Card>
-                            );
-                        })}
-                    {visibleAnnouncements < announcements.length && (
-                        <Box
-                            sx={{
-                                width: "100%",
-                                display: "flex",
-                                justifyContent: "center",
-                                marginTop: "10px",
-                            }}
-                        >
-                            <AsyncButton
-                                variant="contained"
-                                onClick={() =>
-                                    setVisibleAnnouncements((prev) => prev + 3)
-                                }
-                            >
-                                Show More
-                            </AsyncButton>
-                        </Box>
-                    )}
-                </Box>
-                <Typography variant="h3">Catalog</Typography>
-
                 <Box>
                     <Masonry
                         columns={columns}
@@ -292,7 +216,10 @@ const Catalog = () => {
                         })}
                     </Masonry>
                     {searchState.more ? (
-                        <div ref={loadingObserver}>
+                        <div
+                            ref={loadingObserver}
+                            className={"bottom-16 relative right-52"}
+                        >
                             <Loading />
                         </div>
                     ) : (
@@ -301,14 +228,20 @@ const Catalog = () => {
                                 <Typography
                                     align="center"
                                     variant="h3"
-                                    sx={{ paddingTop: "1em" }}
+                                    sx={{ paddingTop: "10em", opacity: 0.7 }}
                                 >
-                                    No Organizations Found.
+                                    <i className={"bx bx-search bx-md m-5"}></i>
+                                    <br />
+                                    No Results
                                 </Typography>
                             ) : (
-                                <Typography align="center" variant="h3">
-                                    Total of {approvedOrgs.length}{" "}
-                                    {`Organization${approvedOrgs.length > 1 ? "s" : ""}`}
+                                <Typography
+                                    align="center"
+                                    variant="h3"
+                                    sx={{ paddingTop: "2em", opacity: 0.7 }}
+                                >
+                                    {approvedOrgs.length}{" "}
+                                    {`Organization${approvedOrgs.length > 1 ? "s" : ""} Found`}
                                 </Typography>
                             )}
                         </Box>

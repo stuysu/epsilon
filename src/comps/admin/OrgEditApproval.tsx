@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Avatar, Box, Card, Divider, Typography } from "@mui/material";
+import { Avatar, Card, Divider, Stack, Typography } from "@mui/material";
 
 import { supabase } from "../../supabaseClient";
 import { useSnackbar } from "notistack";
@@ -142,90 +142,89 @@ const OrgEditApproval = ({
     };
 
     return (
-        <Box sx={{ padding: "30px", display: "flex", flexWrap: "wrap" }}>
-            <Box sx={{ width: "100%", marginBottom: "20px" }}>
-                <AsyncButton
-                    variant="contained"
-                    onClick={onBack}
-                    sx={{ marginRight: "10px" }}
-                >
-                    Back
-                </AsyncButton>
-                <AsyncButton
-                    variant="contained"
-                    onClick={approve}
-                    color="success"
-                    sx={{ marginRight: "10px" }}
-                    disabled={buttonsDisabled}
-                >
-                    Approve
-                </AsyncButton>
-                <AsyncButton
-                    variant="contained"
-                    onClick={reject}
-                    color="secondary"
-                    sx={{ marginRight: "10px" }}
-                    disabled={buttonsDisabled}
-                >
-                    Reject
-                </AsyncButton>
-            </Box>
-            <Typography variant="h1" width="100%">
-                {edit.organization_name}: changes
-            </Typography>
-            <Card
-                sx={{
-                    width: "100%",
-                    maxWidth: "1000px",
-                    margin: "10px",
-                    padding: "10px",
-                }}
-            >
-                {fields.map((field, i) => {
-                    let f2: EditKey = field as EditKey;
+        <div className="m-10">
+            <div className="mb-10 flex flex-row justify-between items-center">
+                <Typography variant="h1" width="100%">
+                    <span className={"text-green-600"}>Changes to</span>{" "}
+                    {edit.organization_name}
+                </Typography>
+                <div className={"flex flex-row w-min"}>
+                    <AsyncButton
+                        variant="contained"
+                        onClick={onBack}
+                        sx={{ marginRight: "10px" }}
+                    >
+                        Back
+                    </AsyncButton>
+                    <AsyncButton
+                        variant="contained"
+                        onClick={approve}
+                        color="success"
+                        sx={{ marginRight: "10px" }}
+                        disabled={buttonsDisabled}
+                    >
+                        Approve
+                    </AsyncButton>
+                    <AsyncButton
+                        variant="contained"
+                        onClick={reject}
+                        color="secondary"
+                        sx={{ marginRight: "10px" }}
+                        disabled={buttonsDisabled}
+                    >
+                        Reject
+                    </AsyncButton>
+                </div>
+            </div>
+            <Stack direction="row" gap={3}>
+                <Card sx={{ padding: "10px" }}>
+                    {fields.map((field, i) => {
+                        let f2: EditKey = field as EditKey;
 
-                    if (f2 === "picture") {
+                        if (f2 === "picture") {
+                            return (
+                                <>
+                                    <Typography variant="h5" fontWeight={600}>
+                                        {field}
+                                    </Typography>
+                                    <Avatar
+                                        src={edit[f2] as string}
+                                        alt={edit.organization_name}
+                                        style={{
+                                            width: "150px",
+                                            height: "150px",
+                                            fontSize: "60px",
+                                            objectFit: "cover",
+                                        }}
+                                    >
+                                        {edit.organization_name
+                                            .charAt(0)
+                                            .toUpperCase()}
+                                    </Avatar>
+                                    <Divider sx={{ margin: "10px" }} />
+                                </>
+                            );
+                        }
+
                         return (
                             <>
                                 <Typography variant="h5" fontWeight={600}>
-                                    {field}
+                                    {orgFieldMap(field)}
                                 </Typography>
-                                <Avatar
-                                    src={edit[f2] as string}
-                                    alt={edit.organization_name}
-                                    style={{
-                                        width: "150px",
-                                        height: "150px",
-                                        fontSize: "60px",
-                                        objectFit: "cover",
-                                    }}
-                                >
-                                    {edit.organization_name
-                                        .charAt(0)
-                                        .toUpperCase()}
-                                </Avatar>
+                                <Typography variant="body2">
+                                    {`"${edit[f2]}"`}
+                                </Typography>
                                 <Divider sx={{ margin: "10px" }} />
                             </>
                         );
-                    }
+                    })}
+                </Card>
 
-                    return (
-                        <>
-                            <Typography variant="h5" fontWeight={600}>
-                                {orgFieldMap(field)}
-                            </Typography>
-                            <Typography variant="body2">
-                                {`"${edit[f2]}"`}
-                            </Typography>
-                            <Divider sx={{ margin: "10px" }} />
-                        </>
-                    );
-                })}
-            </Card>
-            <Box sx={{ maxWidth: "700px", width: "100%", margin: "10px" }}>
-                <OrgChat organization_id={edit.organization_id} />
-            </Box>
-        </Box>
+                <div className="max-h-[70vh] sticky top-32 min-w-[40vw]">
+                    <OrgChat organization_id={edit.organization_id} />
+                </div>
+            </Stack>
+        </div>
     );
 };
 

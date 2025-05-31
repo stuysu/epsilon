@@ -109,6 +109,7 @@ const ApproveEdit = () => {
                     justifyContent: "center",
                     flexWrap: "wrap",
                     padding: "10px",
+                    gap: "20px",
                 }}
             >
                 {pendingEdits.map((edit, i) => {
@@ -116,7 +117,7 @@ const ApproveEdit = () => {
                         <Box
                             key={i}
                             sx={{
-                                width: "100%",
+                                width: "350px",
                                 display: "flex",
                                 justifyContent: "center",
                                 marginTop: "10px",

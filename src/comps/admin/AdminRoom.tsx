@@ -1,12 +1,10 @@
 import {
-    Box,
-    TextField,
-    FormGroup,
-    FormControlLabel,
     Checkbox,
     FormControl,
+    FormControlLabel,
+    FormGroup,
     FormLabel,
-    Card,
+    TextField,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useState } from "react";
@@ -138,16 +136,10 @@ const AdminRoom = ({
     };
 
     return (
-        <Card
-            sx={{
-                width: "600px",
-                display: "flex",
-                flexWrap: "wrap",
-                padding: "25px",
-                margin: "15px",
-            }}
+        <div
+            className={"w-96 flex flex-wrap p-7 m-4 bg-neutral-800 rounded-md"}
         >
-            <Box sx={{ width: "100%", display: "flex" }}>
+            <div className={"w-full flex"}>
                 <TextField
                     sx={{ width: "50%", marginRight: "10px" }}
                     label="Room Name"
@@ -167,7 +159,7 @@ const AdminRoom = ({
                         setIsChanged(true);
                     }}
                 />
-            </Box>
+            </div>
 
             <FormGroup>
                 <FormControlLabel
@@ -225,7 +217,7 @@ const AdminRoom = ({
                 </FormGroup>
             </FormControl>
 
-            <Box sx={{ width: "100%", paddingLeft: "10px" }}>
+            <div className={"w-full pl-2.5"}>
                 {create ? (
                     <AsyncButton onClick={createRoom} variant="contained">
                         Create
@@ -249,7 +241,7 @@ const AdminRoom = ({
                         </AsyncButton>
                     </>
                 )}
-            </Box>
+            </div>
 
             <ConfirmationDialog
                 title="Delete Room?"
@@ -258,7 +250,7 @@ const AdminRoom = ({
                 onClose={() => setConfirm(false)}
                 open={confirm}
             />
-        </Card>
+        </div>
     );
 };
 

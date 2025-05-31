@@ -1,5 +1,5 @@
-import { Paper, Box, TextField, Typography } from "@mui/material";
-import { useEffect, useState, ChangeEvent } from "react";
+import { Box, Paper, TextField, Typography } from "@mui/material";
+import { ChangeEvent, useEffect, useState } from "react";
 
 import { supabase } from "../../../../supabaseClient";
 import { useSnackbar } from "notistack";
@@ -137,10 +137,12 @@ const PostEditor = ({
         <Paper
             elevation={1}
             sx={{
-                width: "550px",
+                width: "100%",
                 padding: "15px",
+                borderRadius: "10px",
                 height: "400px",
-                margin: "10px",
+                marginTop: "0.5rem",
+                marginBottom: "2rem",
             }}
         >
             <Typography variant="h3" width="100%">

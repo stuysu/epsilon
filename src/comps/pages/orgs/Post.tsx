@@ -1,15 +1,15 @@
 import {
-    Box,
-    ListItem,
-    ListItemText,
-    ListItemAvatar,
-    Typography,
     Avatar,
+    Box,
     Card,
+    ListItem,
+    ListItemAvatar,
+    ListItemText,
+    Typography,
 } from "@mui/material";
 import { supabase } from "../../../supabaseClient";
 
-import { useState, useContext } from "react";
+import React, { useContext, useState } from "react";
 
 import PostEditor from "./admin/PostEditor";
 import { useSnackbar } from "notistack";
@@ -95,12 +95,28 @@ const Post = ({
         <Card
             variant="outlined"
             sx={{
-                width: "550px",
-                margin: "10px",
+                borderRadius: "12px",
+                position: "relative",
+                marginBottom: "10px",
                 padding: "15px",
+                border: "none",
                 height: "400px",
+                boxShadow: "inset rgba(255, 255, 255, 0.5) 0px 0px 1px",
             }}
         >
+            <div
+                style={{
+                    background:
+                        "linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0) 0%, rgba(143, 143, 143, 0.67) 50%, rgba(0, 0, 0, 0) 100%)",
+                    width: "25vw",
+                    height: "1px",
+                    position: "absolute",
+                    top: "0px",
+                    opacity: 0.3,
+                    zIndex: 40,
+                }}
+            ></div>
+
             <ListItem>
                 <ListItemAvatar>
                     <Avatar
@@ -118,19 +134,56 @@ const Post = ({
                 />
             </ListItem>
 
-            <Typography variant="h3" width="100%">
+            <Typography
+                variant="h3"
+                width="100%"
+                sx={{
+                    overflow: "hidden",
+                    paddingLeft: "15px",
+                    paddingRight: "15px",
+                    paddingBottom: "10px",
+                    textOverflow: "ellipsis",
+                }}
+            >
                 {content.title}
             </Typography>
 
-            <Box sx={{ width: "100%", height: "170px", overflowY: "auto" }}>
-                <Typography
-                    variant="body1"
-                    width="100%"
-                    sx={{ whiteSpace: "pre-line" }}
+            <div className={"relative"}>
+                <div
+                    className={
+                        "absolute bg-gradient-to-b from-[#111111] to-transparent z-50 h-5 w-full -top-1"
+                    }
+                ></div>
+                <Box
+                    sx={{
+                        width: "100%",
+                        maxHeight: "260px",
+                        overflowY: "auto",
+                    }}
                 >
-                    {content.description}
-                </Typography>
-            </Box>
+                    <br />
+                    <Typography
+                        variant="body1"
+                        width="100%"
+                        sx={{
+                            whiteSpace: "pre-line",
+                            paddingLeft: "15px",
+                            paddingRight: "15px",
+                        }}
+                    >
+                        {content.description}
+                        <br />
+                        <br />
+                        <br />
+                    </Typography>
+                </Box>
+                <div
+                    className={
+                        "bottom-0 absolute bg-gradient-to-b to-[#111111] from-transparent z-50 h-10 w-full"
+                    }
+                ></div>
+            </div>
+
             <Box sx={{ marginTop: "20px" }}>
                 {editable && (
                     <>

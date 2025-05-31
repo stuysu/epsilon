@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useContext } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import UserContext from "./UserContext";
 import { useSnackbar } from "notistack";
@@ -12,6 +12,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const [value, setValue] = React.useState<UserContextType>({
         signed_in: false,
         admin: false,
+        permission: "",
         id: -1,
         first_name: "",
         last_name: "",
@@ -29,6 +30,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
             setValue({
                 signed_in: false,
                 admin: false,
+                permission: "",
                 id: -1,
                 first_name: "",
                 last_name: "",
@@ -72,6 +74,9 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                       url,
                       picture
                   )
+              ),
+              permissions (
+                permission
               )
           `,
                     )
@@ -87,11 +92,9 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 }
 
                 if (!Array.isArray(data) || data?.length === 0) {
-                    // user is not in our public.users table. sign out + notify
-                    await supabase.auth.signOut();
-
+                    // user is not in our public.users table. notify
                     enqueueSnackbar(
-                        "Unverified account. Please contact it@stuysu.org for support.",
+                        "Please sign in with your stuy.edu account. For more assistance, contact it@stuysu.org",
                         { variant: "error" },
                     );
                     setLoading(false);
@@ -125,21 +128,10 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 }; // user in our own user table
                 let isAdmin = false;
                 /* CHECK PERMISSIONS */
-                ({ data, error } = await supabase
-                    .from("permissions")
-                    .select()
-                    .eq("user_id", user.id));
-
-                if (error) {
-                    enqueueSnackbar(
-                        "Error fetching permissions. Contact it@stuysu.org for support.",
-                        { variant: "error" },
-                    );
-                    setLoading(false);
-                }
-                if (Array.isArray(data) && data?.length > 0) {
+                if (data && data[0].permissions[0]?.permission === "ADMIN") {
                     isAdmin = true;
                 }
+                const permission = data[0].permissions[0]?.permission;
 
                 if (!user.picture) {
                     /* get google pfp and update */
@@ -164,9 +156,9 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                     });
                 }
 
-                /* 
+                /*
           This shows every time we log in (even if its saved already). Thus, it is commented out.
-          enqueueSnackbar("Signed In!", { variant: "success" }) 
+          enqueueSnackbar("Signed In!", { variant: "success" })
         */
 
                 setValue({
@@ -181,6 +173,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                     memberships: user.memberships,
                     is_faculty: user.is_faculty,
                     active: user.active,
+                    permission,
                 });
             }
             setLoading(false);
