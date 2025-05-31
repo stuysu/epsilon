@@ -130,8 +130,8 @@ const Settings = () => {
                     Communication Options
                 </Typography>
                 <Typography variant="body1" align="center" marginBottom="50px">
-                    Choose your preferred email communication options for each
-                    organization you are a member of.
+                    Choose if you'd like to receive email communications for
+                    each organization you are a member of.
                 </Typography>
             </Box>
 
@@ -146,37 +146,9 @@ const Settings = () => {
                 <Box
                     sx={{
                         display: "flex",
-                        justifyContent: "space-between",
-                        width: "43%",
-                        mb: 2,
-                    }}
-                >
-                    <Typography
-                        variant="body1"
-                        sx={{
-                            textAlign: "left",
-                            width: "45%",
-                        }}
-                    >
-                        Organization Name
-                    </Typography>
-                    <Typography
-                        variant="body1"
-                        sx={{
-                            textAlign: "right",
-                            width: "45%",
-                        }}
-                    >
-                        Allow Notifications
-                    </Typography>
-                </Box>
-
-                <Box
-                    sx={{
-                        display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
-                        width: "45%",
+                        width: "65%",
                     }}
                 >
                     {memberships.map((membership) => (
@@ -189,17 +161,12 @@ const Settings = () => {
                                 marginBottom: "15px",
                                 padding: "10px",
                                 display: "flex",
+                                flexWrap: "wrap",
                                 justifyContent: "space-between",
                                 alignItems: "center",
                             }}
                         >
-                            <Typography
-                                sx={{
-                                    fontSize: "1.5rem",
-                                    flex: 1,
-                                    paddingLeft: "3%",
-                                }}
-                            >
+                            <Typography variant={"h3"}>
                                 {membership.organization_name}
                             </Typography>
                             <Box
@@ -207,7 +174,6 @@ const Settings = () => {
                                     display: "flex",
                                     justifyContent: "center",
                                     alignItems: "center",
-                                    paddingRight: "3%",
                                 }}
                             >
                                 <Switch
