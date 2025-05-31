@@ -478,10 +478,6 @@ const NavBar: FC = () => {
                                     label: "Support",
                                     path: "/activities-support",
                                 },
-                                {
-                                    label: "Unaffiliated Rooms",
-                                    path: "/unaffiliated",
-                                },
                             ] as const
                         ).map(({ label, path }) => (
                             <Typography
