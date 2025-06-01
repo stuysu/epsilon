@@ -19,6 +19,7 @@ const Settings = lazy(() => import("./Settings"));
 const Profile = lazy(() => import("./Profile"));
 const Create = lazy(() => import("./Create"));
 const Charter = lazy(() => import("./Charter"));
+const ConfirmJoin = lazy(() => import("./ConfirmJoin"));
 const Archives = lazy(() => import("./Archives"));
 const OrgRouter = lazy(() => import("./orgs"));
 const AdminRouter = lazy(() => import("./admin"));
@@ -71,6 +72,7 @@ const Pages = () => {
                 <Routes>
                     <Route path={"/"} Component={Home} />
                     <Route path={"/catalog"} Component={Catalog} />
+                    <Route path={"/confirm-join"} Component={ConfirmJoin} />
                     <Route path={"/settings"} Component={Settings} />
                     <Route path={"/profile"} Component={Profile} />
                     <Route path={"/create"} Component={Create} />
