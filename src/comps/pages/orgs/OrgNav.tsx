@@ -72,26 +72,30 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                             position: "relative",
                         }}
                     >
-                        Menu
+                        <i className={"bx bx-menu bx-sm relative bottom-1"}></i>
                     </span>
                 </button>
                 {menuOpen && (
-                    <div className="-mx-5 fixed inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-lg">
+                    <div className="-mx-5 fixed inset-0 flex flex-col items-center justify-start bg-black/60 backdrop-blur-3xl">
                         <button
-                            className="absolute top-6 right-6 text-3xl text-white font-bold"
+                            className="absolute top-4 right-14 text-3xl text-white font-bold"
                             onClick={() => setMenuOpen(false)}
                             aria-label="Close menu"
                         >
-                            ×
+                            <i
+                                className={
+                                    "bx bx-x bx-sm relative right-1 bottom-0.5"
+                                }
+                            ></i>
                         </button>
-                        <div className="flex flex-col gap-3 w-3/4">
-                            <div className=" text-xl font-semibold text-white">
+                        <div className="flex flex-col gap-3 w-3/4 mt-20">
+                            <div className=" text-xl font-semibold text-white ml-3">
                                 About
                             </div>
                             {navLinks.map((linkData, i) => (
                                 <button
                                     key={i}
-                                    className={`w-full text-left py-2 px-3 rounded-lg text-lg font-semibold transition-colors ${currentIndex === i ? "bg-blue-700 text-white" : "bg-neutral-800 text-gray-200 hover:bg-neutral-700"}`}
+                                    className={`w-full text-left py-2 px-3 rounded-lg text-lg font-semibold transition-colors ${currentIndex === i ? "bg-neutral-400 text-white bg-opacity-50" : "bg-neutral-600 text-gray-200 bg-opacity-20"}`}
                                     onClick={() => {
                                         navigate(linkData.to);
                                         setCurrentIndex(i);

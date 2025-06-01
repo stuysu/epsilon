@@ -64,7 +64,7 @@ const Pages = () => {
             <Suspense fallback={<Loading />}>
                 <div
                     className={
-                        "sm:relative bg-neutral-800 fixed z-50 bottom-0 sm:bg-opacity-0 bg-opacity-80 max-sm:backdrop-blur-2xl max-sm:border-t border-neutral-700"
+                        "max-sm:w-full sm:relative bg-neutral-800 fixed z-50 bottom-0 sm:bg-opacity-0 bg-opacity-80 max-sm:backdrop-blur-2xl max-sm:border-t border-neutral-700"
                     }
                 >
                     <NavBar />

@@ -206,10 +206,11 @@ const Overview = () => {
 
                 <Stack direction={"column"} justifyContent={"space-between"}>
                     <div>
-                        <Typography variant="h1" width="100%">
-                            {organization.name}
-                        </Typography>
-
+                        <div className={"text-center sm:text-left"}>
+                            <Typography variant="h1" width="100%">
+                                {organization.name}
+                            </Typography>
+                        </div>
                         <Stack
                             direction="row"
                             marginBottom={2}
