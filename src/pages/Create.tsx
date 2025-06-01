@@ -84,6 +84,36 @@ const Create = () => {
 
     const [formData, setFormData] = useState<FormType>(emptyForm);
     const isMobile = useMediaQuery("(max-width: 640px)");
+
+    const [urlError, setUrlError] = useState<string>("");
+    const [checkingUrl, setCheckingUrl] = useState<boolean>(false);
+    const urlPattern = /^[a-zA-Z0-9_-]+$/;
+
+    const validateUrl = async (url: string) => {
+        if (!urlPattern.test(url)) {
+            setUrlError(
+                "URL can only contain letters, numbers, dashes, and underscores.",
+            );
+            return;
+        }
+        setUrlError("");
+        setCheckingUrl(true);
+        const { data, error } = await supabase
+            .from("organizations")
+            .select("id")
+            .eq("url", url.toLowerCase());
+        setCheckingUrl(false);
+        if (error) {
+            setUrlError("Error checking URL.");
+            return;
+        }
+        if (data && data.length > 0) {
+            setUrlError("This URL is already in use.");
+        } else {
+            setUrlError("");
+        }
+    };
+
     const checkFormFields = () => {
         const fields = [
             "name",
@@ -325,6 +355,32 @@ const Create = () => {
                                 marginTop: isMobile ? "20px" : "",
                                 width: isMobile ? "100%" : "50%",
                             }}
+                            error={!!urlError}
+                            helperText={
+                                urlError
+                                    ? urlError
+                                    : checkingUrl
+                                      ? "Checking URL..."
+                                      : formData.url && !urlError
+                                        ? "URL is valid."
+                                        : undefined
+                            }
+                            onBlur={async (e: any) => {
+                                const url = e.target.value;
+                                if (url) await validateUrl(url);
+                            }}
+                            onChange={(e: any) => {
+                                const url = e.target.value;
+                                if (url === "" || urlPattern.test(url)) {
+                                    setFormData((prev) => ({ ...prev, url }));
+                                    setUrlError("");
+                                } else {
+                                    setUrlError(
+                                        "URL can only contain letters, numbers, dashes, and underscores.",
+                                    );
+                                }
+                            }}
+                            inputProps={{ pattern: urlPattern.source }}
                         />
                     </FormSection>
                     <FormSection
