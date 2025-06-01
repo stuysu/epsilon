@@ -62,10 +62,18 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
         return (
             <>
                 <button
-                    className="text-white shadow hover:bg-neutral-700 transition fixed right-5 top-28"
+                    className={`fixed cursor-pointer transition-colors text-gray-300 hover:text-gray-400 mr-10 top-5 right-0`}
                     onClick={() => setMenuOpen(true)}
                 >
-                    Menu
+                    <span
+                        style={{
+                            fontVariationSettings: "'wght' 700",
+                            marginLeft: 3,
+                            position: "relative",
+                        }}
+                    >
+                        Menu
+                    </span>
                 </button>
                 {menuOpen && (
                     <div className="-mx-5 fixed inset-0 flex flex-col items-center justify-center bg-black/60 backdrop-blur-lg">
