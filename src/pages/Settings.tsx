@@ -166,7 +166,7 @@ const Settings = () => {
                                 alignItems: "center",
                             }}
                         >
-                            <Typography variant={"h3"}>
+                            <Typography variant={"body1"}>
                                 {membership.organization_name}
                             </Typography>
                             <Box
