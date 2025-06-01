@@ -61,7 +61,7 @@ const Meetings = () => {
                     }}
                 >
                     <i className="bx bx-calendar-x bx-lg text-blue-500 mb-5"></i>
-                    <Typography variant="h1" marginBottom={3}>
+                    <Typography variant="h1" marginBottom={3} align={"center"}>
                         No Meetings Scheduled
                     </Typography>
                     <Typography variant="body1" align={"center"}>

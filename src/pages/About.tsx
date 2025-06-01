@@ -32,7 +32,7 @@ const Credit = ({
     return (
         <Box
             sx={{
-                width: "600px",
+                maxWidth: "600px",
                 padding: "20px",
                 display: "flex",
                 flexDirection: "column",
@@ -59,10 +59,11 @@ const About = () => {
     return (
         <Box
             sx={{
-                margin: "2rem",
+                marginTop: "2rem",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
+                justifyContent: "center",
                 flexWrap: "wrap",
             }}
         >
