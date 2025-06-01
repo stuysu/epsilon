@@ -215,7 +215,7 @@ const Overview = () => {
                         <div
                             className={"text-center sm:text-left max-sm:mb-10"}
                         >
-                            <Typography variant="h1" width="100%">
+                            <Typography variant="h1">
                                 {organization.name}
                             </Typography>
                         </div>
@@ -243,7 +243,6 @@ const Overview = () => {
                         <Typography
                             onClick={() => navigate("./charter")}
                             variant="body1"
-                            width="100%"
                             sx={{
                                 cursor: "pointer",
                                 display: "-webkit-box",
@@ -438,7 +437,7 @@ const Overview = () => {
 
                     <Box borderRadius={2} overflow="hidden">
                         <Box bgcolor="#36363666" padding={3}>
-                            <Typography variant="body1" width="100%">
+                            <Typography variant="body1">
                                 {organization.meeting_schedule || "None"}
                             </Typography>
                         </Box>
@@ -457,7 +456,7 @@ const Overview = () => {
                                 "Friday",
                             ].map((day) => (
                                 <Typography
-                                    flexGrow="1"
+                                    width={"20%"}
                                     key={day}
                                     textAlign="center"
                                     sx={{

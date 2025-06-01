@@ -27,7 +27,7 @@ const OrgInspector = () => {
         return (
             <div className="md:block hidden">
                 <Box
-                    width={350}
+                    width={300}
                     bgcolor="#1f1f1f80"
                     padding={0.5}
                     marginLeft={5}
@@ -102,7 +102,7 @@ const OrgInspector = () => {
     return (
         <div className="md:block hidden">
             <Box
-                width={350}
+                width={300}
                 bgcolor="#1f1f1f80"
                 padding={0.5}
                 marginLeft={5}
