@@ -1,8 +1,7 @@
 import { useState } from "react";
-import { Paper, Box, Typography } from "@mui/material";
+import { Chip, Typography } from "@mui/material";
 import dayjs from "dayjs";
 import MeetingPreview from "../../ui/meetings/MeetingPreview";
-import AsyncButton from "../../ui/AsyncButton";
 
 type Props = {
     meeting: CalendarMeeting;
@@ -14,55 +13,25 @@ const ScheduleMeeting = ({ meeting }: Props) => {
     let endTime = dayjs(meeting.end_time).format("LT");
 
     return (
-        <Paper
-            elevation={1}
-            sx={{
-                width: "95%",
-                height: "80px",
-                borderRadius: "7px",
-                marginBottom: "15px",
-                padding: "10px",
-                display: "flex",
-                flexWrap: "nowrap",
-            }}
-        >
-            <Box
-                sx={{
-                    width: "90%",
-                    display: "flex",
-                    flexWrap: "wrap",
-                }}
+        <>
+            <div
+                className={
+                    "flex-wrap w-full h-fit bg-neutral-700 py-3 px-5 flex flex-row justify-between items-center mb-1 bg-opacity-30 hover:bg-opacity-60 transition-colors cursor-pointer"
+                }
+                onClick={() => setOpen(true)}
             >
-                <Box sx={{ width: "100%", height: "50%" }}>
-                    <b>{meeting.organizations.name}</b> {startTime} – {endTime}
-                </Box>
-                <Box sx={{ width: "100%", height: "50%" }}>
-                    <Box sx={{ width: "100%", height: "100%" }}>
-                        {meeting.title}{" "}
-                        {meeting.rooms?.name ? (
-                            <Typography variant="body2" component="em">
-                                {"in " + meeting.rooms.name}
-                            </Typography>
-                        ) : (
-                            ""
-                        )}
-                    </Box>
-                </Box>
-            </Box>
-            <Box
-                sx={{
-                    width: "10%",
-                    height: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    marginRight: "10px",
-                }}
-            >
-                <AsyncButton variant="contained" onClick={() => setOpen(true)}>
-                    View
-                </AsyncButton>
-            </Box>
+                <div>
+                    <Typography variant={"h4"}>
+                        {meeting.organizations.name}
+                    </Typography>
+                    <Typography variant={"body1"}>{meeting.title}</Typography>
+                </div>
+
+                <div className={"flex flex-row flex-wrap gap-2"}>
+                    <Chip label={`${startTime} to ${endTime}`} />
+                    <Chip label={`${meeting.rooms?.name || "Virtual"}`} />
+                </div>
+            </div>
             <MeetingPreview
                 id={meeting.id}
                 title={meeting.title}
@@ -76,7 +45,7 @@ const ScheduleMeeting = ({ meeting }: Props) => {
                 roomName={meeting.rooms?.name}
                 onClose={() => setOpen(false)}
             />
-        </Paper>
+        </>
     );
 };
 

@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 import ScheduleMeeting from "./ScheduleMeeting";
 import { Dayjs } from "dayjs";
 import { monthNames } from "../../../utils/TimeStrings";
@@ -22,25 +22,32 @@ function compareTimes(a: CalendarMeeting, b: CalendarMeeting) {
 const DaySchedule = ({ day, meetings }: Props) => {
     return (
         <Box
-            sx={{
-                width: "100%",
-                display: "flex",
-                flexWrap: "wrap",
-                paddingLeft: "10px",
-            }}
+            bgcolor="#1f1f1f80"
+            padding={0.5}
+            borderRadius={3}
+            marginBottom={10}
+            boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
+            sx={{ position: "relative" }}
         >
-            <Box sx={{ width: "100%" }}>
-                <h1>{`${monthNames[day.month()]} ${day.date()}`}</h1>
-            </Box>
-            {meetings.length ? (
-                meetings
-                    .sort(compareTimes)
-                    .map((meeting, i) => (
-                        <ScheduleMeeting meeting={meeting} key={i} />
-                    ))
-            ) : (
-                <h1>No Meetings</h1>
-            )}
+            <Stack
+                direction="column"
+                spacing={0.3}
+                borderRadius={2}
+                overflow="hidden"
+            >
+                <div className={"pl-5 py-3"}>
+                    <Typography>{`${monthNames[day.month()]} ${day.date()}`}</Typography>
+                </div>
+                {meetings.length ? (
+                    meetings
+                        .sort(compareTimes)
+                        .map((meeting, i) => (
+                            <ScheduleMeeting meeting={meeting} key={i} />
+                        ))
+                ) : (
+                    <h1>No Meetings</h1>
+                )}
+            </Stack>
         </Box>
     );
 };

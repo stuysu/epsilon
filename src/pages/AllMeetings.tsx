@@ -158,6 +158,7 @@ const AllMeetings = () => {
                         minWidth: "250px",
                         boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
                         borderRadius: "7px",
+                        backgroundColor: "#232323",
                         marginRight: "10px",
                         height: "320px",
                     }}

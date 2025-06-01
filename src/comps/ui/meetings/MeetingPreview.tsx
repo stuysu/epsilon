@@ -1,9 +1,9 @@
 import {
     Dialog,
-    DialogTitle,
     DialogContent,
-    Typography,
+    DialogTitle,
     IconButton,
+    Typography,
 } from "@mui/material";
 
 import { Close } from "@mui/icons-material";
@@ -50,24 +50,30 @@ const MeetingPreview = ({
                 sx={{
                     position: "absolute",
                     right: 8,
-                    top: 8,
+                    top: 10,
                 }}
                 onClick={onClose}
             >
                 <Close />
             </IconButton>
             <DialogContent dividers>
-                <Typography variant="h1" align="center">
+                <Typography variant="h1">
                     {title || "Untitled Meeting"}
                 </Typography>
-                <Typography color="secondary.main" align="center">
-                    {daysOfWeek[start.day()]}, {monthNames[start.month()]}{" "}
-                    {start.date()} {start.year()}, {start.format("LT")} to{" "}
-                    {end.format("LT")} <br />
-                    Location: {roomName || "Virtual"} <br />
-                    {isPublic ? "Public" : "Private"}
-                </Typography>
-                <Typography align="center" sx={{ marginTop: "20px" }}>
+                <div
+                    className={
+                        "bg-neutral-600 bg-opacity-30 rounded-xl p-3 mt-5"
+                    }
+                >
+                    <Typography>
+                        {daysOfWeek[start.day()]}, {monthNames[start.month()]}{" "}
+                        {start.date()} {start.year()}, {start.format("LT")} to{" "}
+                        {end.format("LT")} <br />
+                        Location: {roomName || "Virtual"} <br />
+                        {isPublic ? "Public Meeting" : "Private Meeting"}
+                    </Typography>
+                </div>
+                <Typography sx={{ marginTop: "20px" }}>
                     {description || "No Description"}
                 </Typography>
             </DialogContent>
