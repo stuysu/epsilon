@@ -23,6 +23,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
         { to: `${main}/charter`, display: "Charter" },
         { to: `${main}/meetings`, display: "Meetings" },
         { to: `${main}/members`, display: "Members" },
+        { to: `${main}/audit`, display: "Audit" },
         ...(membership ? [{ to: `${main}/stream`, display: "Stream" }] : []),
     ];
 

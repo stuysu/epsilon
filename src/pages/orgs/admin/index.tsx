@@ -9,7 +9,6 @@ import Members from "./Members";
 import MemberRequests from "./MemberRequests";
 import Meetings from "./Meetings";
 import Posts from "./Posts";
-import Strikes from "./Strikes";
 import Organization from "./Organization";
 
 import Messages from "./Messages";
@@ -43,7 +42,6 @@ const OrgAdminRouter = () => {
                         />
                         <Route path={"/meetings"} Component={Meetings} />
                         <Route path={"/posts"} Component={Posts} />
-                        <Route path={"/strikes"} Component={Strikes} />
                         <Route path={"/org-edits"} Component={Organization} />
                         <Route path={"/messages"} Component={Messages} />
                         <Route path={"/*"} Component={Members} />

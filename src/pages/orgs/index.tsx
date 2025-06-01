@@ -12,6 +12,7 @@ import NotFound from "./NotFound";
 import Overview from "./Overview";
 import Charter from "./Charter";
 import Meetings from "./Meetings";
+import Audit from "./Audit";
 import Members from "./Members";
 import Stream from "./Stream";
 import OrgAdminRouter from "./admin";
@@ -202,6 +203,10 @@ const OrgRouter = () => {
                                             <Route
                                                 path={`/members`}
                                                 Component={Members}
+                                            />
+                                            <Route
+                                                path={`/audit`}
+                                                Component={Audit}
                                             />
                                             <Route
                                                 path={`/stream`}
