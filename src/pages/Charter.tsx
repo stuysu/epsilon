@@ -11,13 +11,16 @@ const Charter = () => {
     return (
         <div>
             <div className={"relative bottom-32"}>
-                <img src={`${PUBLIC_URL}/textures/charter.png`}></img>
+                <img
+                    src={`${PUBLIC_URL}/textures/charter.png`}
+                    className={"w-full"}
+                ></img>
                 <div
                     className={
                         "flex justify-center items-center w-full h-full absolute top-0 left-0"
                     }
                 >
-                    <h1 className="w-2/3 relative bottom-12 text-white/75 text-8xl text-center max-w-4xl">
+                    <h1 className="w-2/3 relative bottom-12 text-white/75 md:text-8xl text-4xl text-center max-w-4xl">
                         {title.split(" ").map((word, i) => (
                             <motion.span
                                 key={i}

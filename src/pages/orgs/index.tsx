@@ -136,83 +136,90 @@ const OrgRouter = () => {
         getOrgData().then(() => setLoading(false));
     }, [orgUrl, enqueueSnackbar]);
 
-    if (loading) return <Loading />;
+    if (loading)
+        return (
+            <div id="activity-page">
+                <Loading />
+            </div>
+        );
     return (
-        <OrgContext.Provider value={{ ...org, setOrg }}>
-            {org.id === -1 ? (
-                <NotFound />
-            ) : (
-                <>
-                    <div
-                        className={`sticky cursor-pointer transition-colors text-gray-300 hover:text-gray-400 ml-10 mt-4 top-5`}
-                        onClick={() => navigate("/catalog")}
-                    >
-                        <i className={"bx bx-chevron-left"}></i>
-                        <span
-                            style={{
-                                fontVariationSettings: "'wght' 700",
-                                marginLeft: 3,
-                                position: "relative",
-                                top: -1,
-                            }}
+        <div id="activity-page">
+            <OrgContext.Provider value={{ ...org, setOrg }}>
+                {org.id === -1 ? (
+                    <NotFound />
+                ) : (
+                    <>
+                        <div
+                            className={`sticky cursor-pointer transition-colors text-gray-300 hover:text-gray-400 ml-10 mt-4 top-5`}
+                            onClick={() => navigate("/catalog")}
                         >
-                            Back
-                        </span>
-                    </div>
-
-                    <Box
-                        sx={{
-                            width: "100%",
-                            marginTop: "10px",
-                        }}
-                    ></Box>
-                    <div className={"ml-3 sm:ml-14 sm:mr-0 mr-3 flex"}>
-                        <div className={"sticky top-10 h-fit z-[40]"}>
-                            <OrgNav isMobile={isMobile} />
+                            <i className={"bx bx-chevron-left"}></i>
+                            <span
+                                style={{
+                                    fontVariationSettings: "'wght' 700",
+                                    marginLeft: 3,
+                                    position: "relative",
+                                    top: -1,
+                                }}
+                            >
+                                Back to Catalog
+                            </span>
                         </div>
-                        <Box sx={{ width: "100%" }}>
-                            <TransitionGroup component={null}>
-                                <CSSTransition
-                                    key={location.pathname}
-                                    classNames="fadeup"
-                                    timeout={300}
-                                >
-                                    <Routes location={location}>
-                                        <Route
-                                            path={`/`}
-                                            Component={Overview}
-                                        />
-                                        <Route
-                                            path={`/charter`}
-                                            Component={Charter}
-                                        />
-                                        <Route
-                                            path={`/meetings`}
-                                            Component={Meetings}
-                                        />
-                                        <Route
-                                            path={`/members`}
-                                            Component={Members}
-                                        />
-                                        <Route
-                                            path={`/stream`}
-                                            Component={Stream}
-                                        />
-                                        <Route
-                                            path={`/admin/*`}
-                                            Component={OrgAdminRouter}
-                                        />
-                                    </Routes>
-                                </CSSTransition>
-                            </TransitionGroup>
-                        </Box>
-                        <OrgInspector />
 
-                        {!isMobile && <Box width={25}></Box>}
-                    </div>
-                </>
-            )}
-        </OrgContext.Provider>
+                        <Box
+                            sx={{
+                                width: "100%",
+                                marginTop: "10px",
+                            }}
+                        ></Box>
+                        <div className={"ml-3 sm:ml-14 sm:mr-0 mr-3 flex"}>
+                            <div className={"sticky top-10 h-fit z-[40]"}>
+                                <OrgNav isMobile={isMobile} />
+                            </div>
+                            <Box sx={{ width: "100%" }}>
+                                <TransitionGroup component={null}>
+                                    <CSSTransition
+                                        key={location.pathname}
+                                        classNames="fadeup"
+                                        timeout={300}
+                                    >
+                                        <Routes location={location}>
+                                            <Route
+                                                path={`/`}
+                                                Component={Overview}
+                                            />
+                                            <Route
+                                                path={`/charter`}
+                                                Component={Charter}
+                                            />
+                                            <Route
+                                                path={`/meetings`}
+                                                Component={Meetings}
+                                            />
+                                            <Route
+                                                path={`/members`}
+                                                Component={Members}
+                                            />
+                                            <Route
+                                                path={`/stream`}
+                                                Component={Stream}
+                                            />
+                                            <Route
+                                                path={`/admin/*`}
+                                                Component={OrgAdminRouter}
+                                            />
+                                        </Routes>
+                                    </CSSTransition>
+                                </TransitionGroup>
+                            </Box>
+                            <OrgInspector />
+
+                            {!isMobile && <Box width={25}></Box>}
+                        </div>
+                    </>
+                )}
+            </OrgContext.Provider>
+        </div>
     );
 };
 

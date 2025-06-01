@@ -35,7 +35,11 @@ const Members = () => {
 
     return (
         <LoginGate page="view members">
-            <Box sx={{ width: "100%", minHeight: "90vh" }} marginTop={1}>
+            <Box
+                sx={{ width: "100%", minHeight: "90vh" }}
+                marginTop={1}
+                marginBottom={10}
+            >
                 <InputBase
                     fullWidth
                     placeholder="Search members by name or email..."

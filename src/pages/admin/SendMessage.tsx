@@ -1,5 +1,5 @@
-import { Box, Typography, TextField } from "@mui/material";
-import { useState, useEffect } from "react";
+import { Box, TextField, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useSnackbar } from "notistack";
 import OrgChat from "../../comps/admin/OrgChat";
@@ -93,7 +93,6 @@ const SendMessage = () => {
                 sx={{
                     marginTop: "20px",
                     width: "100%",
-                    display: "flex",
                     justifyContent: "center",
                     padding: "20px",
                 }}

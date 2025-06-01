@@ -7,10 +7,7 @@ import { useSnackbar } from "notistack";
 import { ThemeContext } from "../../context/ThemeProvider";
 import { PUBLIC_URL } from "../../../constants";
 
-/**
- * Consolidated list of routes that belong to StuyActivities.
- * Keeping them in one place avoids duplicating arrays across helper utilities.
- */
+/** Consolidated list of routes that belong to StuyActivities. */
 const STUY_ACTIVITIES_PATHS = [
     "/catalog",
     "/charter",
@@ -158,16 +155,23 @@ const NavBar: FC = () => {
         width: 0,
     });
 
-    /**
-     * Consolidated route‑matching helpers — the three functions below previously duplicated logic.
-     */
+    const [isOrgPage, setIsOrgPage] = useState(false);
+    useEffect(() => {
+        setIsOrgPage(!!document.querySelector("#activity-page"));
+    }, [location.pathname]);
+
     const getActivePaths = (item: TopNavItem): string[] =>
         !item.external && item.path === "/catalog"
             ? STUY_ACTIVITIES_PATHS
             : [item.path];
 
-    const isPageOptnActive = (item: TopNavItem): boolean =>
-        getActivePaths(item).includes(location.pathname);
+    const isPageOptnActive = (item: TopNavItem): boolean => {
+        if (!item.external && item.path === "/catalog") {
+            if (isOrgPage) return true;
+            return getActivePaths(item).includes(location.pathname);
+        }
+        return getActivePaths(item).includes(location.pathname);
+    };
 
     const isOnStuyActivitiesPage = STUY_ACTIVITIES_PATHS.some((p) =>
         location.pathname.startsWith(p),
@@ -203,18 +207,22 @@ const NavBar: FC = () => {
 
     // Animate active‑tab underline
     useEffect(() => {
-        const currentIndex = topNavItems.findIndex(
-            (item) =>
-                !item.external &&
-                getActivePaths(item).includes(location.pathname),
-        );
+        let currentIndex = topNavItems.findIndex((item) => {
+            if (!item.external && item.path === "/catalog") {
+                return (
+                    getActivePaths(item).includes(location.pathname) ||
+                    isOrgPage
+                );
+            }
+            return getActivePaths(item).includes(location.pathname);
+        });
         if (currentIndex !== -1 && itemRefs.current[currentIndex]) {
             const el = itemRefs.current[currentIndex];
             setOptionUnderline({ left: el.offsetLeft, width: el.offsetWidth });
         } else {
             setOptionUnderline({ left: 0, width: 0 });
         }
-    }, [location.pathname]);
+    }, [location.pathname, isOrgPage]);
 
     // Hide navbar on public landing page when signed‑out
     if (!user?.signed_in && location.pathname === "/")

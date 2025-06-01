@@ -183,6 +183,7 @@ const UserHome = () => {
                             return null;
                         })}
                         <div
+                            className={"hover:scale-105 transition-transform"}
                             onClick={() => navigate(`/catalog`)}
                             style={{
                                 paddingLeft: "13px",
@@ -418,7 +419,7 @@ const UserHome = () => {
                                         className={
                                             announcements.length <=
                                             visibleAnnouncements
-                                                ? "cursor-pointer opacity-50"
+                                                ? "opacity-50"
                                                 : "cursor-pointer hover:text-neutral-300 transition-colors"
                                         }
                                     >

@@ -351,12 +351,21 @@ const Overview = () => {
                 )}
 
                 <Box>
-                    <Typography variant="h3" align="center" width={160}>
+                    <Typography variant="h3" align="center" width={170}>
                         {organization.state.charAt(0) +
                             organization.state.slice(1).toLowerCase()}
                     </Typography>
                     <Typography variant="body1" align="center">
                         Activity Status
+                        <i
+                            className={
+                                "bx bx-info-circle relative top-px ml-1 cursor-help"
+                            }
+                            title={
+                                "Activities with less than 10 members, or otherwise" +
+                                " specified by the SU, are locked and have limited privileges."
+                            }
+                        ></i>
                     </Typography>
                 </Box>
 
