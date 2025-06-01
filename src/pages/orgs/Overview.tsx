@@ -163,50 +163,58 @@ const Overview = () => {
         >
             <Stack direction={{ xs: "column", sm: "row" }} spacing={5}>
                 <Box>
-                    <Box
-                        sx={{
-                            width: "250px",
-                            height: "250px",
-                            borderRadius: "25px",
-                            position: "absolute",
-                            boxShadow:
-                                "inset 0 0 10px 1px rgba(255, 255, 255, 0.3)",
-                            zIndex: 10,
-                        }}
-                    ></Box>
-                    <Avatar
-                        src={organization.picture || ""}
-                        sx={{
-                            width: "250px",
-                            height: "250px",
-                            borderRadius: "25px",
-                            objectFit: "cover",
-                            position: "absolute",
-                            zIndex: 0,
-                            filter: "blur(30px)",
-                            opacity: 0.3,
-                        }}
-                    />
-                    <Avatar
-                        src={organization.picture || ""}
-                        sx={{
-                            width: "250px",
-                            height: "250px",
-                            borderRadius: "25px",
-                            objectFit: "cover",
-                            position: "relative",
-                            fontSize: "120px",
-                            zIndex: 1,
-                        }}
-                        alt={`organization ${organization.name}`}
+                    <div
+                        className={
+                            "max-sm:w-full max-sm:flex max-sm:justify-center max-sm:mt-5"
+                        }
                     >
-                        <h1>{organization.name.charAt(0).toUpperCase()}</h1>
-                    </Avatar>
+                        <Box
+                            sx={{
+                                width: "250px",
+                                height: "250px",
+                                borderRadius: "25px",
+                                position: "absolute",
+                                boxShadow:
+                                    "inset 0 0 10px 1px rgba(255, 255, 255, 0.3)",
+                                zIndex: 10,
+                            }}
+                        ></Box>
+                        <Avatar
+                            src={organization.picture || ""}
+                            sx={{
+                                width: "250px",
+                                height: "250px",
+                                borderRadius: "25px",
+                                objectFit: "cover",
+                                position: "absolute",
+                                zIndex: 0,
+                                filter: "blur(30px)",
+                                opacity: 0.3,
+                            }}
+                        />
+                        <Avatar
+                            src={organization.picture || ""}
+                            sx={{
+                                width: "250px",
+                                height: "250px",
+                                borderRadius: "25px",
+                                objectFit: "cover",
+                                position: "relative",
+                                fontSize: "120px",
+                                zIndex: 1,
+                            }}
+                            alt={`organization ${organization.name}`}
+                        >
+                            <h1>{organization.name.charAt(0).toUpperCase()}</h1>
+                        </Avatar>
+                    </div>
                 </Box>
 
                 <Stack direction={"column"} justifyContent={"space-between"}>
                     <div>
-                        <div className={"text-center sm:text-left"}>
+                        <div
+                            className={"text-center sm:text-left max-sm:mb-10"}
+                        >
                             <Typography variant="h1" width="100%">
                                 {organization.name}
                             </Typography>
@@ -249,13 +257,10 @@ const Overview = () => {
                         </Typography>
                     </div>
 
-                    <Box
-                        sx={{
-                            display: "flex",
-                            width: "100%",
-                            marginTop: 2,
-                            alignItems: "center",
-                        }}
+                    <div
+                        className={
+                            "max-sm:flex max-sm:justify-center max-sm:w-full mt-2"
+                        }
                     >
                         <AsyncButton
                             variant="contained"
@@ -308,7 +313,7 @@ const Overview = () => {
                                 </AsyncButton>
                             </DialogActions>
                         </Dialog>
-                    </Box>
+                    </div>
                 </Stack>
             </Stack>
 
@@ -507,8 +512,7 @@ const Overview = () => {
                     {!user.signed_in && (
                         <Typography
                             variant="body1"
-                            width="100%"
-                            marginLeft={3}
+                            marginX={3}
                             marginBottom={3}
                         >
                             Sign in to view the leaders of this organization.

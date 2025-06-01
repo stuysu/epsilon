@@ -12,7 +12,7 @@ const OrgInspector = () => {
     };
 
     return (
-        <div className="sm:block hidden">
+        <div className="md:block hidden">
             <Box
                 width={350}
                 bgcolor="#1f1f1f80"
