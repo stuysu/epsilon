@@ -63,7 +63,15 @@ const SendMessage = () => {
                     onChange={(e) => setSearchInput(e.target.value)}
                 />
             </Box>
-            {filteredOrgs.length > 0 && (
+            {searchInput.length < 3 ? (
+                <Typography align="center" sx={{ mt: 2 }}>
+                    Keep typing to find an Activity.
+                </Typography>
+            ) : filteredOrgs.length > 20 ? (
+                <Typography align="center" sx={{ mt: 2 }}>
+                    Too many activities, try specifying your query.
+                </Typography>
+            ) : filteredOrgs.length > 0 ? (
                 <Box
                     sx={{
                         width: "100%",
@@ -88,7 +96,7 @@ const SendMessage = () => {
                         </AsyncButton>
                     ))}
                 </Box>
-            )}
+            ) : null}
             <Box
                 sx={{
                     marginTop: "20px",
