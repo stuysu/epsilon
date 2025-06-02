@@ -71,13 +71,14 @@ const OrgBar = ({ name, url, role, role_name, picture }: Props) => {
                         style={{
                             width: "180px",
                             height: "180px",
+                            overflow: "hidden",
                             borderRadius: "15px",
                             backgroundColor: "#232323",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
                             fontSize: "100px",
-                            color: "#fff",
+                            color: "#cdcdcd",
                         }}
                     >
                         <h1>{name?.charAt(0).toUpperCase()}</h1>

@@ -197,11 +197,13 @@ const Overview = () => {
                             sx={{
                                 width: "250px",
                                 height: "250px",
+                                backgroundColor: "#232323",
                                 borderRadius: "25px",
                                 objectFit: "cover",
                                 position: "relative",
-                                fontSize: "120px",
+                                fontSize: "140px",
                                 zIndex: 1,
+                                color: "#cdcdcd",
                             }}
                             alt={`organization ${organization.name}`}
                         >

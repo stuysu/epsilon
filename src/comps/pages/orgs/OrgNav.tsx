@@ -226,7 +226,6 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                                 display: "Meetings",
                             },
                             { to: `${main}/admin/posts`, display: "Posts" },
-                            { to: `${main}/admin/strikes`, display: "Strikes" },
                             {
                                 to: `${main}/admin/messages`,
                                 display: "Messages",
