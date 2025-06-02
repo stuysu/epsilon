@@ -68,7 +68,11 @@ const Meetings = () => {
                         This activity has not yet scheduled any meetings for the
                         future.
                         <br />
-                        To view past meetings, visit the audit page.
+                        To view past meetings, visit the{" "}
+                        <a href={"./audit"} className={"underline"}>
+                            audit
+                        </a>{" "}
+                        page.
                     </Typography>
                 </Box>
             )}

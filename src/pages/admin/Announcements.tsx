@@ -78,7 +78,7 @@ const Announcements = () => {
     };
 
     return (
-        <Box>
+        <Box minHeight={"60vh"}>
             <Typography variant="h1" width="100%" align="center">
                 Announcements
             </Typography>

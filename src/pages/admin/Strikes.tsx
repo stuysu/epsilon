@@ -1,4 +1,4 @@
-import { Box, Card, TextField, Typography } from "@mui/material";
+import { Box, Card, Divider, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useSnackbar } from "notistack";
@@ -100,7 +100,7 @@ const Strikes = () => {
     };
 
     return (
-        <Box>
+        <Box minHeight={"70vh"}>
             <Typography variant="h1" align="center">
                 Strikes
             </Typography>
@@ -155,6 +155,9 @@ const Strikes = () => {
             ) : null}
             {orgId && (
                 <>
+                    <div className={"my-10"}>
+                        <Divider />
+                    </div>
                     <Box
                         sx={{
                             width: "100%",
@@ -163,9 +166,6 @@ const Strikes = () => {
                             flexWrap: "wrap",
                         }}
                     >
-                        <Typography variant="h2" width="100%" align="center">
-                            Org: {orgName}
-                        </Typography>
                         <Box
                             sx={{
                                 width: "500px",
@@ -174,8 +174,8 @@ const Strikes = () => {
                                 flexWrap: "wrap",
                             }}
                         >
-                            <Typography variant="h3" width="100%">
-                                Give Strike
+                            <Typography variant="h3" width="100%" mb={3}>
+                                Give Strike to {orgName}
                             </Typography>
                             <TextField
                                 sx={{ width: "100%" }}

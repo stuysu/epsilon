@@ -65,13 +65,15 @@ const Pages = () => {
             </Helmet>
 
             <Suspense fallback={<Loading />}>
-                <div
-                    className={
-                        "max-sm:w-full sm:relative bg-neutral-800 fixed z-50 bottom-0 sm:bg-opacity-0 bg-opacity-80 max-sm:backdrop-blur-2xl max-sm:border-t border-neutral-700"
-                    }
-                >
-                    <NavBar />
-                </div>
+                {!(!user.signed_in && location.pathname === "/") && (
+                    <div
+                        className={
+                            "max-sm:w-full sm:relative bg-neutral-800 fixed z-50 bottom-0 sm:bg-opacity-0 bg-opacity-80 max-sm:backdrop-blur-2xl max-sm:border-t border-neutral-700"
+                        }
+                    >
+                        <NavBar />
+                    </div>
+                )}
                 <Routes>
                     <Route path={"/"} Component={Home} />
                     <Route path={"/catalog"} Component={Catalog} />

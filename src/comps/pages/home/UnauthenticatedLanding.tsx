@@ -16,22 +16,24 @@ const UnauthenticatedLanding = () => {
         : `${PUBLIC_URL}/wordmark_light.svg`;
     return (
         <Box>
-            <Box
-                sx={{
-                    position: "fixed",
-                    width: "100vw",
-                    height: "100vh",
-                    backgroundImage: `url(${PUBLIC_URL}/textures/login.png)`,
-                    backgroundSize: "cover",
-                    backgroundPosition: "center",
-                    opacity: isLoginHovered ? 1 : 0.5,
-                    transition: "opacity 0.3s ease",
-                    filter: "blur(100px) brightness(0.9)",
-                    mixBlendMode: "color-dodge",
-                    pointerEvents: "none",
-                    zIndex: 2,
-                }}
-            />
+            <div className={"max-sm:hidden"}>
+                <Box
+                    sx={{
+                        position: "fixed",
+                        width: "100vw",
+                        height: "100vh",
+                        backgroundImage: `url(${PUBLIC_URL}/textures/login.png)`,
+                        backgroundSize: "cover",
+                        backgroundPosition: "center",
+                        opacity: isLoginHovered ? 1 : 0.5,
+                        transition: "opacity 0.3s ease",
+                        filter: "blur(100px) brightness(0.9)",
+                        mixBlendMode: "color-dodge",
+                        pointerEvents: "none",
+                        zIndex: 2,
+                    }}
+                />
+            </div>
             <Box
                 sx={{
                     width: "100%",
@@ -102,7 +104,7 @@ const UnauthenticatedLanding = () => {
                 src="https://ugc.production.linktr.ee/a09ecb69-bd20-410d-96bf-9c86e2a9ad9a_STUY-SU-FAVICON--1-.png"
                 alt="Stuyvesant Student Union"
                 onClick={() => window.open("https://stuysu.org", "_blank")}
-                className="cursor-pointer absolute bottom-0 left-1/2 transform -translate-x-1/2 w-14 h-14 object-cover"
+                className="cursor-pointer absolute bottom-0 left-1/2 transform -translate-x-1/2 w-14 h-14 object-cover max-sm:bottom-10"
             />
         </Box>
     );

@@ -44,7 +44,7 @@ const AddUser = () => {
     };
 
     return (
-        <div>
+        <div className={"h-screen"}>
             <Typography variant="h1" width="100%" align="center">
                 Add New User
             </Typography>

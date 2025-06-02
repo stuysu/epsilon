@@ -87,7 +87,7 @@ const ApprovePending = () => {
     }
 
     return (
-        <Box>
+        <Box minHeight={"70vh"}>
             <Typography variant="h1" align="center">
                 Pending Organizations
             </Typography>

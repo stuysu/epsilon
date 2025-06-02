@@ -10,7 +10,7 @@ const Charter = () => {
 
     return (
         <div>
-            <div className={"relative bottom-32"}>
+            <div className={"relative lg:bottom-32"}>
                 <img
                     src={`${PUBLIC_URL}/textures/charter.png`}
                     className={"w-full"}
@@ -20,11 +20,11 @@ const Charter = () => {
                         "flex justify-center items-center w-full h-full absolute top-0 left-0"
                     }
                 >
-                    <h1 className="w-2/3 relative bottom-12 text-white/75 md:text-8xl text-4xl text-center max-w-4xl">
+                    <h1 className="max-lg:mt-14 w-2/3 relative bottom-12 text-white/75 md:text-8xl text-4xl text-center max-w-4xl max-sm:leading-9">
                         {title.split(" ").map((word, i) => (
                             <motion.span
                                 key={i}
-                                className="inline-block mx-2"
+                                className="inline-block lg:mx-2 mx-1"
                                 initial={{
                                     opacity: 0,
                                     filter: "blur(20px)",
@@ -49,12 +49,12 @@ const Charter = () => {
             </div>
             <div
                 className={
-                    "lg:flex-row flex-col flex justify-center items-start w-full h-[32rem] gap-20 xl:px-64 px-16 relative bottom-72"
+                    "lg:flex-row flex-col flex lg:justify-center items-start w-full h-[32rem] gap-20 xl:px-64 lg:px-16 px-4 relative lg:bottom-72"
                 }
             >
                 <div
                     className={
-                        "relative p-10 w-full h-full flex flex-col items-start justify-start bg-neutral-900 rounded-2xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.075)]"
+                        "relative p-10 max-lg:h-fit w-full h-full flex flex-col items-start justify-start bg-neutral-900 rounded-2xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.075)]"
                     }
                 >
                     <div
@@ -120,7 +120,7 @@ const Charter = () => {
                 </div>
                 <div
                     className={
-                        "relative p-10 w-full h-full flex flex-col items-start justify-start bg-neutral-900 rounded-2xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.075)]"
+                        "relative p-10 max-lg:h-fit w-full h-full flex flex-col items-start justify-start bg-neutral-900 rounded-2xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.075)]"
                     }
                 >
                     <div

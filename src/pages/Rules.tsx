@@ -1,12 +1,16 @@
-import { Box, Link, Typography } from "@mui/material";
+import { Link, Typography } from "@mui/material";
 
 const Rules = () => {
     return (
-        <Box sx={{ padding: "40px" }}>
-            <div className={"flex justify-center items-center w-full h-96"}>
+        <div className={"p-10 max-sm:mb-32"}>
+            <div
+                className={
+                    "flex sm:justify-center items-center w-full h-48 sm:h-96"
+                }
+            >
                 <h1
                     className={
-                        "w-2/3 bg-blend-color-dodge text-white/75 sm:text-8xl text-4xl text-center"
+                        "w-2/3 bg-blend-color-dodge text-white/75 sm:text-8xl text-4xl sm:text-center"
                     }
                 >
                     Clubs & Pubs
@@ -311,7 +315,7 @@ const Rules = () => {
                     </Typography>
                 </div>
             </div>
-        </Box>
+        </div>
     );
 };
 

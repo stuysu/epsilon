@@ -424,7 +424,7 @@ const Overview = () => {
                 )}
             </Stack>
 
-            <Box position="relative" width={"100%"} marginBottom={3}>
+            <div className={"relative w-full mb-6 max-sm:mt-6"}>
                 <Box
                     bgcolor="#1f1f1f80"
                     padding={0.5}
@@ -495,7 +495,7 @@ const Overview = () => {
                         filter: "blur(40px)",
                     }}
                 />
-            </Box>
+            </div>
 
             <Box position="relative" width={"100%"} marginBottom={3}>
                 <Box

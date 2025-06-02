@@ -44,7 +44,7 @@ const SendMessage = () => {
     }, [searchInput, allOrgs]);
 
     return (
-        <Box>
+        <Box minHeight={"70vh"}>
             <Typography variant="h1" align="center">
                 Send Message
             </Typography>

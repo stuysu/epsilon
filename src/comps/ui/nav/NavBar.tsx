@@ -260,7 +260,7 @@ const NavBar: FC = () => {
                 </Box>
 
                 {/* User dropdown */}
-                <div className="pointer-events-auto absolute sm:relative flex flex-row justify-end sm:top-1 -top-16 sm:right-0 right-8">
+                <div className="pointer-events-auto absolute sm:relative flex flex-row justify-end sm:top-1 -top-20 sm:right-0 right-8">
                     <div
                         className="flex cursor-pointer flex-row items-center justify-center gap-2 rounded-lg bg-neutral-800 pl-1.5 pr-1.5 shadow-[inset_0px_0px_2px_0px_rgba(255,255,255,0.3)] h-10"
                         onClick={() => setDrawerOpen(!drawerOpen)}
@@ -407,7 +407,7 @@ const NavBar: FC = () => {
                         fontVariationSettings: "'wght' 700",
                         position: "relative",
                         marginLeft: "4.5vw",
-                        mt: 3,
+                        mt: isMobile ? 2 : 3,
                         mb: 1.5,
                     }}
                 >
@@ -473,7 +473,7 @@ const NavBar: FC = () => {
             {/* Contextual sub‑nav for StuyActivities pages */}
             {isOnStuyActivitiesPage && (
                 <div
-                    className={"max-sm:pb-3"}
+                    className={"max-sm:pb-4"}
                     style={{
                         overflowX: "scroll",
                         scrollbarWidth: "none",

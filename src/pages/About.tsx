@@ -59,7 +59,7 @@ const About = () => {
     return (
         <Box
             sx={{
-                marginTop: "2rem",
+                marginTop: "33vh",
                 display: "flex",
                 flexDirection: "column",
                 alignItems: "center",
@@ -72,7 +72,7 @@ const About = () => {
                 alt="Epsilon"
                 style={{
                     marginBottom: "40px",
-                    maxWidth: "300px",
+                    maxWidth: "350px",
                     height: "auto",
                     mixBlendMode: theme.colorMode ? "color-dodge" : "normal",
                     position: "relative",
