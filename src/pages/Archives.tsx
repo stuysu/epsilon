@@ -5,12 +5,12 @@ const Archives = () => {
         <div>
             <div
                 className={
-                    "flex justify-center flex-col items-center w-full h-96 pt-[80px]"
+                    "flex justify-center flex-col items-center w-full pt-32"
                 }
             >
                 <h1
                     className={
-                        "w-2/3 bg-blend-color-dodge text-white/75 text-8xl text-center"
+                        "w-2/3 bg-blend-color-dodge text-white/75 sm:text-8xl text-4xl text-center"
                     }
                 >
                     StuyActivities
@@ -20,7 +20,7 @@ const Archives = () => {
             </div>
             <div
                 className={
-                    "flex justify-center flex-col items-center w-full h-20"
+                    "flex justify-center flex-col items-center w-full h-32 mb-96"
                 }
             >
                 <a

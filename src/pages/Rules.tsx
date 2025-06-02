@@ -6,7 +6,7 @@ const Rules = () => {
             <div className={"flex justify-center items-center w-full h-96"}>
                 <h1
                     className={
-                        "w-2/3 bg-blend-color-dodge text-white/75 text-8xl text-center"
+                        "w-2/3 bg-blend-color-dodge text-white/75 sm:text-8xl text-4xl text-center"
                     }
                 >
                     Clubs & Pubs
@@ -14,8 +14,8 @@ const Rules = () => {
                     Regulations
                 </h1>
             </div>
-            <div className={"flex flex-row mx-5 justify-center"}>
-                <div className={"w-1/4 sticky top-20 h-96"}>
+            <div className={"flex flex-row sm:mx-5 justify-center"}>
+                <div className={"w-1/4 sticky top-20 h-96 sm:block hidden"}>
                     <Typography variant={"h4"} color="primary" marginBottom={2}>
                         Table of Contents
                     </Typography>
@@ -42,7 +42,11 @@ const Rules = () => {
                         </li>
                     </ul>
                 </div>
-                <div className={"w-3/4 max-w-3xl pl-7 md:pl-14"}>
+                <div
+                    className={
+                        "w-full sm:w-3/4 max-w-3xl pl-0 sm:pl-7 md:pl-14"
+                    }
+                >
                     <Typography
                         variant={"h4"}
                         color="primary"
