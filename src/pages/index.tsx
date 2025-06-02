@@ -95,7 +95,7 @@ const Pages = () => {
                 {user.signed_in && (
                     <div
                         className={
-                            "w-full h-36 bg-neutral-900 p-10 max-sm:p-6 pr-12 flex justify-between items-center mt-4 max-sm:mb-14 max-sm:flex-col"
+                            "w-full h-36 bg-neutral-900 p-10 max-sm:p-6 pr-12 flex justify-between items-center mt-4 max-sm:pb-56 max-sm:flex-col gap-2"
                         }
                     >
                         <div className="w-48 flex max-sm:justify-center">

@@ -232,7 +232,7 @@ const NavBar: FC = () => {
         <div>
             {/* Backdrop when hovering over nav items */}
             <div
-                className={`bg-black/40 fixed left-0 top-0 z-40 h-full w-full backdrop-blur-3xl transition-opacity duration-300 ${
+                className={`max-sm:hidden bg-black/40 fixed left-0 top-0 z-40 h-full w-full backdrop-blur-3xl transition-opacity duration-300 ${
                     isHovered ? "opacity-100" : "pointer-events-none opacity-0"
                 }`}
             />
@@ -471,6 +471,7 @@ const NavBar: FC = () => {
             {/* Contextual sub‑nav for StuyActivities pages */}
             {isOnStuyActivitiesPage && (
                 <div
+                    className={"max-sm:pb-3"}
                     style={{
                         overflowX: "scroll",
                         scrollbarWidth: "none",
