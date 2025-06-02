@@ -34,6 +34,7 @@ const ScheduleMeeting = ({ meeting }: Props) => {
             </div>
             <MeetingPreview
                 id={meeting.id}
+                url={meeting.organizations?.url}
                 title={meeting.title}
                 open={open}
                 isPublic={meeting.is_public}

@@ -221,12 +221,10 @@ const Overview = () => {
                                 {organization.name}
                             </Typography>
                         </div>
-                        <Stack
-                            direction="row"
-                            marginBottom={2}
-                            gap={0.5}
-                            rowGap={0.5}
-                            flexWrap={"wrap"}
+                        <div
+                            className={
+                                "flex mb-5 gap-1 flex-wrap max-sm:justify-center"
+                            }
                         >
                             {organization.tags?.map((tag, index) => (
                                 <Chip
@@ -240,7 +238,7 @@ const Overview = () => {
                                     }}
                                 />
                             )) || <p>Uncategorized</p>}
-                        </Stack>
+                        </div>
 
                         <Typography
                             onClick={() => navigate("./charter")}

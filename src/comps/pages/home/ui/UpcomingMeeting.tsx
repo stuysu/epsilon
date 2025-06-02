@@ -13,6 +13,7 @@ import { monthNames } from "../../../../utils/TimeStrings";
 
 const UpcomingMeeting = ({
     id,
+    url,
     title,
     description,
     start_time,
@@ -24,6 +25,7 @@ const UpcomingMeeting = ({
     sx,
 }: {
     id: number;
+    url: string;
     title: string;
     description: string;
     start_time: string;
@@ -103,6 +105,7 @@ const UpcomingMeeting = ({
                 </ListItem>
                 <MeetingPreview
                     id={id}
+                    url={url}
                     title={title}
                     open={open}
                     isPublic={is_public}

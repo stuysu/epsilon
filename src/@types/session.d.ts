@@ -25,6 +25,7 @@ type CalendarMeeting = {
     };
     organizations: {
         id: number;
+        url: string;
         name: string;
         picture: string;
     };

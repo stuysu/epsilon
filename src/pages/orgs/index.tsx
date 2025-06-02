@@ -177,7 +177,7 @@ const OrgRouter = () => {
                             }}
                         ></Box>
                         <div className={"ml-3 sm:ml-14 sm:mr-0 mr-3 flex"}>
-                            <div className={"sticky top-10 h-fit z-[40]"}>
+                            <div className={"sticky top-10 h-fit z-[40] mb-48"}>
                                 <OrgNav isMobile={isMobile} />
                             </div>
                             <Box sx={{ width: "100%" }}>

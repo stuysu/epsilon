@@ -266,7 +266,7 @@ const NavBar: FC = () => {
                         onClick={() => setDrawerOpen(!drawerOpen)}
                     >
                         <Avatar
-                            style={{ width: 30, height: 30, borderRadius: 5 }}
+                            style={{ width: 30, height: 30, borderRadius: 4 }}
                             src={user.picture}
                         />
                         <p className="relative top-0.5 pr-2 sm:block hidden">{`${user.first_name} ${user.last_name}`}</p>
@@ -380,21 +380,23 @@ const NavBar: FC = () => {
                 }}
             >
                 {/* Frosted backdrop */}
-                <Box
-                    sx={{
-                        position: "absolute",
-                        top: 0,
-                        width: "100%",
-                        height: 100,
-                        backgroundImage: `url(${PUBLIC_URL}/textures/menubar.png)`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        pointerEvents: "none",
-                        opacity: 0.5,
-                        filter: "blur(10px)",
-                        zIndex: 1,
-                    }}
-                />
+                {theme.colorMode && (
+                    <Box
+                        sx={{
+                            position: "absolute",
+                            top: 0,
+                            width: "100%",
+                            height: 100,
+                            backgroundImage: `url(${PUBLIC_URL}/textures/menubar.png)`,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                            pointerEvents: "none",
+                            opacity: 0.5,
+                            filter: "blur(10px)",
+                            zIndex: 1,
+                        }}
+                    />
+                )}
 
                 <Stack
                     direction="row"

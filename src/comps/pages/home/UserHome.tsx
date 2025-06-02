@@ -21,6 +21,7 @@ type meetingType = {
     organizations: {
         name: string;
         picture: string;
+        url: string;
     };
     rooms: {
         name: string;
@@ -56,7 +57,8 @@ const UserHome = () => {
                     end_time,
                     organizations (
                         name,
-                        picture
+                        picture,
+                        url
                     ),
                     rooms (
                         name
@@ -259,6 +261,7 @@ const UserHome = () => {
                                     )}
                                     {upcomingMeetings.map((meeting) => (
                                         <UpcomingMeeting
+                                            url={meeting.organizations.url}
                                             key={meeting.id}
                                             id={meeting.id}
                                             title={meeting.title}

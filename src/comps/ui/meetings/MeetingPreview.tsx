@@ -13,6 +13,7 @@ import { daysOfWeek, monthNames } from "../../../utils/TimeStrings";
 
 type Props = {
     id?: number;
+    url?: string;
     title?: string;
     open: boolean;
     isPublic?: boolean;
@@ -27,6 +28,7 @@ type Props = {
 
 const MeetingPreview = ({
     id,
+    url,
     title,
     open,
     isPublic,
@@ -43,8 +45,15 @@ const MeetingPreview = ({
 
     return (
         <Dialog open={open}>
-            <DialogTitle variant="h2">
-                {organizationName || "Untitled Organization"}
+            <DialogTitle variant="h2" color={"secondary"}>
+                <a
+                    href={url}
+                    className={
+                        "hover:opacity-75 transition-opacity cursor-alias"
+                    }
+                >
+                    {organizationName || "Untitled Organization"}
+                </a>
             </DialogTitle>
             <IconButton
                 sx={{
@@ -62,10 +71,10 @@ const MeetingPreview = ({
                 </Typography>
                 <div
                     className={
-                        "bg-neutral-600 bg-opacity-30 rounded-xl p-3 mt-5"
+                        "bg-neutral-600 bg-opacity-30 rounded-xl py-3 px-5 mt-5 -mx-5"
                     }
                 >
-                    <Typography>
+                    <Typography className={"relative top-0.5"}>
                         {daysOfWeek[start.day()]}, {monthNames[start.month()]}{" "}
                         {start.date()} {start.year()}, {start.format("LT")} to{" "}
                         {end.format("LT")} <br />
@@ -73,7 +82,7 @@ const MeetingPreview = ({
                         {isPublic ? "Public Meeting" : "Private Meeting"}
                     </Typography>
                 </div>
-                <Typography sx={{ marginTop: "20px" }}>
+                <Typography sx={{ marginTop: "20px", marginBottom: "10px" }}>
                     {description || "No Description"}
                 </Typography>
             </DialogContent>

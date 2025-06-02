@@ -98,7 +98,7 @@ const Pages = () => {
                             "w-full h-36 bg-neutral-900 p-10 max-sm:p-6 pr-12 flex justify-between items-center mt-4 max-sm:pb-56 max-sm:flex-col gap-2"
                         }
                     >
-                        <div className="w-48 flex max-sm:justify-center">
+                        <div className="w-72 flex max-sm:justify-center">
                             <img
                                 src={`${PUBLIC_URL}/wordmark.svg`}
                                 className={
@@ -108,7 +108,7 @@ const Pages = () => {
                         </div>
                         <div
                             className={
-                                "flex items-center justify-center gap-4 w-48"
+                                "flex items-center justify-center gap-4 w-72"
                             }
                         >
                             <Typography>
@@ -128,10 +128,19 @@ const Pages = () => {
                                     Design
                                 </a>
                             </Typography>
+                            <Typography>
+                                <a
+                                    href={
+                                        "https://github.com/willpill/Epsilon-Press-Kit/archive/refs/heads/main.zip"
+                                    }
+                                >
+                                    Press Kit
+                                </a>
+                            </Typography>
                         </div>
                         <Typography
                             className={
-                                "opacity-50 w-48 text-right max-sm:text-center"
+                                "opacity-50 w-72 text-right max-sm:text-center"
                             }
                         >
                             MMXXIV

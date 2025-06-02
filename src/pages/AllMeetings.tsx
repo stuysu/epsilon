@@ -115,6 +115,7 @@ const AllMeetings = () => {
           ),
           organizations (
             id,
+            url,
             name,
             picture
           )
@@ -147,6 +148,7 @@ const AllMeetings = () => {
                     width: "100%",
                     display: "flex",
                     padding: "40px",
+                    marginBottom: "250px",
                     flexWrap: isMobile ? "wrap" : "nowrap",
                     justifyContent: "center",
                 }}
