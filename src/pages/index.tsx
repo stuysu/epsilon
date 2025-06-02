@@ -1,9 +1,10 @@
 import { PUBLIC_URL } from "../constants";
 import { Helmet } from "react-helmet";
 import Loading from "../comps/ui/Loading";
+import UserContext from "../comps/context/UserContext";
 
 import { Route, Routes, useLocation } from "react-router-dom";
-import { lazy, Suspense, useEffect, useState } from "react";
+import { lazy, Suspense, useContext, useEffect, useState } from "react";
 
 // Pages
 import Home from "./Home";
@@ -12,6 +13,7 @@ import NavBar from "../comps/ui/nav/NavBar";
 import About from "./About";
 import Rules from "./Rules";
 import ActivitiesSupport from "./ActivitiesSupport";
+import { Typography } from "@mui/material";
 
 const ModuleRouter = lazy(() => import("./modules/ModuleRouter"));
 const Catalog = lazy(() => import("./Catalog"));
@@ -26,6 +28,7 @@ const AdminRouter = lazy(() => import("./admin"));
 
 const Pages = () => {
     const location = useLocation();
+    const user: UserContextType = useContext(UserContext);
     const [showDesignBanner, setDesignBanner] = useState(
         localStorage.getItem("bannerClosed") !== "true",
     ); // State for banner visibility
@@ -89,6 +92,52 @@ const Pages = () => {
                     <Route path={"/admin/*"} Component={AdminRouter} />
                     <Route path={"/:orgUrl/*"} Component={OrgRouter} />
                 </Routes>
+                {user.signed_in && (
+                    <div
+                        className={
+                            "w-full h-36 bg-neutral-900 p-10 max-sm:p-6 pr-12 flex justify-between items-center mt-4 max-sm:mb-14 max-sm:flex-col"
+                        }
+                    >
+                        <div className="w-48 flex max-sm:justify-center">
+                            <img
+                                src={`${PUBLIC_URL}/wordmark.svg`}
+                                className={
+                                    "w-36 max-sm:w-28 relative bottom-0.5"
+                                }
+                            ></img>
+                        </div>
+                        <div
+                            className={
+                                "flex items-center justify-center gap-4 w-48"
+                            }
+                        >
+                            <Typography>
+                                <a href={"https://github.com/stuysu/epsilon/"}>
+                                    Source
+                                </a>
+                            </Typography>
+                            <Typography>
+                                <a href={"https://stuysu.org/"}>StuySU</a>
+                            </Typography>
+                            <Typography>
+                                <a
+                                    href={
+                                        "https://www.figma.com/design/WfaOkjsU63VjVD1sdmSTXu/Epsilon-Design-File-Revision-1?node-id=0-1&t=xuEKneeUJMZXyrt1-1"
+                                    }
+                                >
+                                    Design
+                                </a>
+                            </Typography>
+                        </div>
+                        <Typography
+                            className={
+                                "opacity-50 w-48 text-right max-sm:text-center"
+                            }
+                        >
+                            MMXXIV
+                        </Typography>
+                    </div>
+                )}
                 {showDesignBanner && (
                     <div
                         style={{ zIndex: 51 }}

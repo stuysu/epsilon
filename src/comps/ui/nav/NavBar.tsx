@@ -309,6 +309,14 @@ const NavBar: FC = () => {
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
+                                    className="cursor-not-allowed opacity-30"
+                                >
+                                    My Documents
+                                </p>
+                                <p
+                                    style={{
+                                        fontVariationSettings: "'wght' 700",
+                                    }}
                                     className="cursor-pointer transition-colors hover:text-neutral-300"
                                     onClick={() => navigate("/settings")}
                                 >
