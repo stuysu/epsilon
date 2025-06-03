@@ -275,7 +275,7 @@ const NavBar: FC = () => {
 
                     {/* Drawer */}
                     <div
-                        className={`absolute sm:top-14 top-auto sm:bottom-auto bottom-14 z-50 flex w-72 flex-col gap-2 rounded-lg bg-neutral-800/80 p-5 backdrop-blur-xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)] transition-all duration-300 ${
+                        className={`absolute sm:top-14 top-auto sm:bottom-auto bottom-14 z-50 flex w-72 flex-col gap-2 rounded-lg bg-neutral-800 sm:bg-opacity-80 p-5 backdrop-blur-xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)] transition-all duration-300 ${
                             drawerOpen
                                 ? "translate-y-0 opacity-100"
                                 : "pointer-events-none -translate-y-5 opacity-0"
