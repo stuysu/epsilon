@@ -67,7 +67,7 @@ const Charter = () => {
                             bottom: "0px",
                             right: "65px",
                             opacity: 0.5,
-                            zIndex: 40,
+                            zIndex: 35,
                         }}
                     ></div>
                     <div
@@ -79,7 +79,7 @@ const Charter = () => {
                             position: "absolute",
                             top: "0px",
                             opacity: 0.75,
-                            zIndex: 40,
+                            zIndex: 35,
                         }}
                     ></div>
 
@@ -108,7 +108,7 @@ const Charter = () => {
 
                     <div
                         className={
-                            "z-50 relative top-10 bg-blue-700 p-4 rounded-xl text-white w-full shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.075)] flex cursor-pointer justify-between items-center"
+                            "z-40 relative top-3 sm:top-6 bg-blue-700 p-4 rounded-xl text-white w-full shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.075)] flex cursor-pointer justify-between items-center"
                         }
                         onClick={() => navigate("/create")}
                     >
@@ -171,6 +171,7 @@ const Charter = () => {
                         meetings.
                     </p>
                 </div>
+                <div className={"sm:hidden relative p-6 w-full h-full"}></div>
             </div>
         </div>
     );

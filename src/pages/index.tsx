@@ -152,7 +152,7 @@ const Pages = () => {
                 {showDesignBanner && (
                     <div
                         style={{ zIndex: 51 }}
-                        className="fixed flex bottom-0 w-full h-12 border-t border-stone-700 bg-stone-900/85 backdrop-blur-xl items-center justify-center"
+                        className="fixed flex bottom-0 w-full h-14 border-t border-stone-700 bg-stone-900/85 backdrop-blur-xl items-center justify-center"
                     >
                         <p className="text-center text-gray-200 p-14">
                             We’re redesigning Epsilon! Please pardon our
