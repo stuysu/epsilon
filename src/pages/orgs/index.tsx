@@ -181,7 +181,7 @@ const OrgRouter = () => {
                             <div className={"sticky top-10 h-fit z-[40] mb-48"}>
                                 <OrgNav isMobile={isMobile} />
                             </div>
-                            <Box sx={{ width: "100%" }}>
+                            <div className={"w-full md:pr-14 lg:pr-0 pr-0"}>
                                 <TransitionGroup component={null}>
                                     <CSSTransition
                                         key={location.pathname}
@@ -220,10 +220,8 @@ const OrgRouter = () => {
                                         </Routes>
                                     </CSSTransition>
                                 </TransitionGroup>
-                            </Box>
+                            </div>
                             <OrgInspector />
-
-                            {!isMobile && <Box width={25}></Box>}
                         </div>
                     </>
                 )}

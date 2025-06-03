@@ -25,7 +25,7 @@ const OrgInspector = () => {
 
     if (isAuditPage) {
         return (
-            <div className="md:block hidden">
+            <div className="lg:block hidden">
                 <Box
                     width={300}
                     bgcolor="#1f1f1f80"
@@ -100,7 +100,7 @@ const OrgInspector = () => {
     };
 
     return (
-        <div className="md:block hidden">
+        <div className="lg:block hidden">
             <Box
                 width={300}
                 bgcolor="#1f1f1f80"

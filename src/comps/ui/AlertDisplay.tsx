@@ -40,18 +40,19 @@ const AlertDisplay = () => {
     )
         return <></>;
     return (
-        <Alert
-            severity={data.severity}
-            variant="filled"
-            sx={{
-                borderRadius: "0",
-            }}
-            onClose={
-                data.severity === "error" ? undefined : () => setOpen(false)
-            }
-        >
-            <DisplayLinks text={data.message} />
-        </Alert>
+        <div className={"fixed w-full p-4"}>
+            <Alert
+                severity={data.severity}
+                variant="filled"
+                onClose={
+                    data.severity === "error" ? undefined : () => setOpen(false)
+                }
+            >
+                <div className={"relative top-0.5 invert brightness-200"}>
+                    <DisplayLinks text={data.message} />
+                </div>
+            </Alert>
+        </div>
     );
 };
 

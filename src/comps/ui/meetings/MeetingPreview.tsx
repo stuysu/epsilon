@@ -52,7 +52,7 @@ const MeetingPreview = ({
                         "hover:opacity-75 transition-opacity cursor-alias"
                     }
                 >
-                    {organizationName || "Untitled Organization"}
+                    {organizationName || "Untitled Organization"}...
                 </a>
             </DialogTitle>
             <IconButton

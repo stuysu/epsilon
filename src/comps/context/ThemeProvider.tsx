@@ -69,7 +69,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                         contrastText: "#d8d8d8",
                     },
                     secondary: {
-                        main: "#8a8a8a",
+                        main: "#979797",
                         contrastText: "#b8b8b8",
                     },
                     background: {
