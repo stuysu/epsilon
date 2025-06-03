@@ -12,7 +12,11 @@ const Charter = () => {
     const organization: OrgContextType = useContext(OrgContext);
 
     return (
-        <div className={"flex flex-col mt-2 gap-4 mb-10 max-sm:mt-10"}>
+        <div
+            className={
+                "flex flex-col mt-2 gap-4 mb-10 max-sm:mt-10 max-sm:mx-4"
+            }
+        >
             <Typography variant="h3">What is this activity?</Typography>
             <Typography>{organization.purpose || "None"}</Typography>
             <Divider></Divider>

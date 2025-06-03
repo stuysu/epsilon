@@ -151,7 +151,7 @@ const OrgRouter = () => {
                 ) : (
                     <>
                         <div
-                            className={`sm:hidden block w-full h-14 bg-neutral-800 bg-opacity-50 fixed top-0 backdrop-blur-lg z-40 border-b-gray-100 border-opacity-10 border-b`}
+                            className={`sm:hidden block w-full h-14 bg-[#111111] bg-opacity-75 fixed top-0 backdrop-blur-lg z-40 border-b-gray-100 border-opacity-10 border-b`}
                         ></div>
                         <div
                             className={`sticky cursor-pointer transition-colors text-gray-300 hover:text-gray-400 ml-10 mt-4 top-5 z-40`}

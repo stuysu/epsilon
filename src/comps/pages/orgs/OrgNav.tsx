@@ -89,14 +89,14 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                                 }
                             ></i>
                         </button>
-                        <div className="flex flex-col gap-3 w-3/4 mt-20">
-                            <div className=" text-xl font-semibold text-white ml-3">
+                        <div className="flex flex-col gap-1 w-full p-20">
+                            <div className=" text-xl text-white ml-3">
                                 About
                             </div>
                             {navLinks.map((linkData, i) => (
                                 <button
                                     key={i}
-                                    className={`w-full text-left py-2 px-3 rounded-lg text-lg font-semibold transition-colors ${currentIndex === i ? "bg-neutral-400 text-white bg-opacity-50" : "bg-neutral-600 text-gray-200 bg-opacity-20"}`}
+                                    className={`w-full text-left py-2 px-3 rounded-lg text-lg transition-colors ${currentIndex === i ? "bg-neutral-400 text-white bg-opacity-40" : "bg-neutral-600 text-gray-200 bg-opacity-20"}`}
                                     onClick={() => {
                                         navigate(linkData.to);
                                         setCurrentIndex(i);
@@ -111,8 +111,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                                     m.role === "ADMIN" || m.role === "CREATOR",
                             ) && (
                                 <>
-                                    <div className="h-px w-full bg-neutral-600"></div>
-                                    <div className=" text-xl font-semibold text-white">
+                                    <div className="mt-5 text-xl text-white ml-3">
                                         Admin Tools
                                     </div>
                                     {[
@@ -147,7 +146,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                                     ].map((linkData, i) => (
                                         <button
                                             key={i}
-                                            className={`w-full text-left py-2 px-3 rounded-lg text-lg font-semibold transition-colors ${location.pathname === linkData.to ? "bg-blue-700 text-white" : "bg-neutral-800 text-gray-200 hover:bg-neutral-700"}`}
+                                            className={`w-full text-left py-2 px-3 rounded-lg text-lg transition-colors ${currentIndex === i ? "bg-neutral-400 text-white bg-opacity-40" : "bg-neutral-600 text-gray-200 bg-opacity-20"}`}
                                             onClick={() => {
                                                 navigate(linkData.to);
                                                 setMenuOpen(false);

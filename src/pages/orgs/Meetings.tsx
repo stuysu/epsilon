@@ -55,6 +55,8 @@ const Meetings = () => {
                     sx={{
                         marginTop: "2rem",
                         display: "flex",
+                        minHeight: "55vh",
+                        marginBottom: "5rem",
                         flexDirection: "column",
                         justifyContent: "center",
                         alignItems: "center",
