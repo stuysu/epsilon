@@ -49,7 +49,7 @@ const Charter = () => {
             </div>
             <div
                 className={
-                    "lg:flex-row flex-col flex lg:justify-center items-start w-full h-[32rem] gap-20 xl:px-64 lg:px-16 px-4 relative lg:bottom-72"
+                    "lg:flex-row flex-col flex lg:justify-center items-start w-full h-[32rem] gap-20 xl:px-64 lg:px-16 px-4 relative lg:bottom-72 max-sm:mb-[800px]"
                 }
             >
                 <div
@@ -171,7 +171,7 @@ const Charter = () => {
                         meetings.
                     </p>
                 </div>
-                <div className={"sm:hidden relative p-6 w-full h-full"}></div>
+                <div className={"sm:hidden relative p-20"}></div>
             </div>
         </div>
     );

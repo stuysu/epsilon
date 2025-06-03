@@ -347,7 +347,7 @@ const NavBar: FC = () => {
                                         theme.toggleColorMode();
                                         if (theme.colorMode) {
                                             enqueueSnackbar(
-                                                "Light mode is experimental.",
+                                                "Light mode is in development. It is not recommended for use at this time.",
                                                 { variant: "warning" },
                                             );
                                         }
