@@ -4,6 +4,7 @@ import { Route, Routes, useLocation, useNavigate, useParams } from "react-router
 import OrgContext from "../../comps/context/OrgContext";
 import Loading from "../../comps/ui/Loading";
 import { supabase } from "../../supabaseClient";
+import { Helmet } from "react-helmet";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import "../../orgTransitions.css";
 import OrgNav from "../../comps/pages/orgs/OrgNav";
@@ -145,6 +146,20 @@ const OrgRouter = () => {
         );
     return (
         <div id="activity-page">
+            <Helmet>
+                <meta
+                    property="og:image"
+                    content={org.picture || "https://placehold.co/400"}
+                />
+                <meta
+                    property="og:title"
+                    content={org.name || "Unnamed Organization"}
+                />
+                <meta
+                    property="og:description"
+                    content={org.purpose || "No Description"}
+                />
+            </Helmet>
             <OrgContext.Provider value={{ ...org, setOrg }}>
                 {org.id === -1 ? (
                     <NotFound />
