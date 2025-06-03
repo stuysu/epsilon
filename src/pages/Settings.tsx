@@ -118,10 +118,9 @@ const Settings = () => {
     };
 
     return (
-        <LoginGate sx={{ width: "100%", paddingLeft: "20px" }}>
+        <LoginGate sx={{ width: "100%", padding: "20px" }}>
             <Box
                 sx={{
-                    width: "100%",
                     textAlign: "center",
                     marginBottom: "30px",
                 }}
@@ -139,16 +138,18 @@ const Settings = () => {
                 sx={{
                     width: "100%",
                     display: "flex",
+                    marginBottom: "10vh",
                     flexDirection: "column",
                     alignItems: "center",
                 }}
             >
                 <Box
                     sx={{
+                        width: "100%",
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
-                        width: "65%",
+                        maxWidth: "800px",
                     }}
                 >
                     {memberships.map((membership) => (
