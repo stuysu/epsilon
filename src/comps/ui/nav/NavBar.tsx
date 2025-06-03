@@ -275,10 +275,13 @@ const NavBar: FC = () => {
 
                     {/* Drawer */}
                     <div
-                        className={`absolute sm:top-14 top-auto sm:bottom-auto bottom-14 z-50 flex w-72 flex-col gap-2 rounded-lg bg-neutral-800 sm:bg-opacity-80 p-5 backdrop-blur-xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)] transition-all duration-300 ${
+                        className={`absolute sm:top-14 top-auto sm:bottom-auto bottom-0 sm:right-auto right-16
+                        z-50 flex w-72 flex-col gap-2 rounded-lg bg-neutral-800 sm:bg-opacity-80 p-5
+                        backdrop-blur-xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)]
+                        transition-all duration-300 ${
                             drawerOpen
                                 ? "translate-y-0 opacity-100"
-                                : "pointer-events-none -translate-y-5 opacity-0"
+                                : "pointer-events-none sm:-translate-y-3 max-sm:translate-x-5 opacity-0"
                         }`}
                     >
                         {!user?.signed_in ? (
@@ -408,7 +411,7 @@ const NavBar: FC = () => {
                         position: "relative",
                         marginLeft: "4.5vw",
                         mt: isMobile ? 2 : 3,
-                        mb: 1.5,
+                        mb: isMobile ? 2 : 1.5,
                     }}
                 >
                     {topNavItems.map((item, index) => (
@@ -420,7 +423,7 @@ const NavBar: FC = () => {
                             className={`flex items-start flex-nowrap cursor-pointer transition-colors ${
                                 isPageOptnActive(item)
                                     ? "text-gray-300"
-                                    : "hover:text-gray-300"
+                                    : "sm:hover:text-gray-300"
                             }`}
                             onMouseEnter={() => setIsHovered(true)}
                             onClick={() => {

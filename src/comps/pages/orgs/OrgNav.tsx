@@ -77,7 +77,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     </span>
                 </button>
                 {menuOpen && (
-                    <div className="-mx-5 fixed inset-0 flex flex-col items-center justify-start bg-black/60 backdrop-blur-3xl">
+                    <div className="-mx-5 fixed inset-0 flex flex-col items-center justify-start bg-black/70 backdrop-blur-3xl">
                         <button
                             className="absolute top-4 right-14 text-3xl text-white font-bold"
                             onClick={() => setMenuOpen(false)}
@@ -89,14 +89,17 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                                 }
                             ></i>
                         </button>
-                        <div className="flex flex-col gap-1 w-full p-20">
-                            <div className=" text-xl text-white ml-3">
+                        <div className="flex flex-col gap-1 w-full p-16">
+                            <div
+                                className=" text-xl text-white/50 ml-3"
+                                style={{ fontVariationSettings: "'wgh' 700" }}
+                            >
                                 About
                             </div>
                             {navLinks.map((linkData, i) => (
                                 <button
                                     key={i}
-                                    className={`w-full text-left py-2 px-3 rounded-lg text-lg transition-colors ${currentIndex === i ? "bg-neutral-400 text-white bg-opacity-40" : "bg-neutral-600 text-gray-200 bg-opacity-20"}`}
+                                    className={`border border-zinc-600/20 w-full text-left py-2 px-3 rounded-lg text-lg transition-colors ${currentIndex === i ? "bg-neutral-400 text-white bg-opacity-40" : "bg-neutral-600 text-gray-200 bg-opacity-20"}`}
                                     onClick={() => {
                                         navigate(linkData.to);
                                         setCurrentIndex(i);
@@ -111,7 +114,12 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                                     m.role === "ADMIN" || m.role === "CREATOR",
                             ) && (
                                 <>
-                                    <div className="mt-5 text-xl text-white ml-3">
+                                    <div
+                                        className="mt-5 text-xl text-white/50 ml-3"
+                                        style={{
+                                            fontVariationSettings: "'wght' 700",
+                                        }}
+                                    >
                                         Admin Tools
                                     </div>
                                     {[
@@ -146,7 +154,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                                     ].map((linkData, i) => (
                                         <button
                                             key={i}
-                                            className={`w-full text-left py-2 px-3 rounded-lg text-lg transition-colors ${currentIndex === i ? "bg-neutral-400 text-white bg-opacity-40" : "bg-neutral-600 text-gray-200 bg-opacity-20"}`}
+                                            className={`border border-zinc-600/20 w-full text-left py-2 px-3 rounded-lg text-lg transition-colors ${currentIndex === i ? "bg-neutral-400 text-white bg-opacity-40" : "bg-neutral-600 text-gray-200 bg-opacity-20"}`}
                                             onClick={() => {
                                                 navigate(linkData.to);
                                                 setMenuOpen(false);

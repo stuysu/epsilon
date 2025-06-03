@@ -18,6 +18,7 @@ const LoginGate = ({ page, children, sx }: Props): React.JSX.Element => {
             sx={{
                 width: "100%",
                 height: "80vh",
+                paddingX: "2rem",
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
