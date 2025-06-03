@@ -82,7 +82,7 @@ const About = () => {
                     ]}
                 ></MemberGroup>
                 <MemberGroup
-                    role={"MANAGement"}
+                    role={"management"}
                     names={["Nathaniel Moy"]}
                 ></MemberGroup>
             </Credit>
@@ -128,15 +128,44 @@ const About = () => {
                     names={["Shivali Korgaonkar"]}
                 ></MemberGroup>
                 <MemberGroup
-                    role={"Programming"}
-                    names={["David Chen", "Randy Sim"]}
-                ></MemberGroup>
-                <MemberGroup
                     role={"STUDENT UNION executives"}
                     names={[
                         "Aaron Wang",
                         "Theo Kubovy-Weiss",
                         "Neve Diaz-Carr",
+                    ]}
+                ></MemberGroup>
+                <MemberGroup
+                    role={"Programming"}
+                    names={["Abir Taheer", "Victor Veytsman", "Ethan Shan"]}
+                ></MemberGroup>
+            </Credit>
+
+            <Credit title={"THE ORIGINAL STUYACTIVITIES TEAM, 2018-2019"}>
+                <MemberGroup
+                    role={"STUDENT UNION PRESIDENT"}
+                    names={["William Wang"]}
+                ></MemberGroup>
+                <MemberGroup
+                    role={"STUDENT UNION VICE PRESIDENT"}
+                    names={["Vishwaa Sofat"]}
+                ></MemberGroup>
+                <MemberGroup
+                    role={"STUDENT UNION executives"}
+                    names={[
+                        "Elizabeth Avakov",
+                        "Gordon Ebanks",
+                        "Joshua Weiner, SLT",
+                    ]}
+                ></MemberGroup>
+                <MemberGroup
+                    role={"Programming"}
+                    names={[
+                        "Gilvir Gill",
+                        "Ivan Galakhov",
+                        "Alwin Peng",
+                        "Jesse Hall",
+                        "Abir Taheer",
                     ]}
                 ></MemberGroup>
             </Credit>
