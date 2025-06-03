@@ -35,14 +35,9 @@ const UnauthenticatedLanding = () => {
                 />
             </div>
             <Box
-                sx={{
-                    width: "100%",
-                    height: "90vh",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    flexDirection: "column",
-                }}
+                className={
+                    "w-full max-sm:h-[80vh] h-[90vh] flex justify-center items-center flex-col"
+                }
             >
                 <img
                     src={wordmarkSrc}
@@ -103,7 +98,7 @@ const UnauthenticatedLanding = () => {
                 src="https://ugc.production.linktr.ee/a09ecb69-bd20-410d-96bf-9c86e2a9ad9a_STUY-SU-FAVICON--1-.png"
                 alt="Stuyvesant Student Union"
                 onClick={() => window.open("https://stuysu.org", "_blank")}
-                className="cursor-pointer absolute bottom-5 left-1/2 transform -translate-x-1/2 w-14 h-14 object-cover max-sm:bottom-10"
+                className="cursor-pointer relative bottom-12 left-1/2 transform -translate-x-1/2 w-14 h-14 object-cover"
             />
         </Box>
     );
