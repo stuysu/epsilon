@@ -170,8 +170,8 @@ const Overview = () => {
                     >
                         <Box
                             sx={{
-                                width: "250px",
-                                height: "250px",
+                                width: "230px",
+                                height: "230px",
                                 borderRadius: "25px",
                                 position: "absolute",
                                 boxShadow:
@@ -182,8 +182,8 @@ const Overview = () => {
                         <Avatar
                             src={organization.picture || ""}
                             sx={{
-                                width: "250px",
-                                height: "250px",
+                                width: "230px",
+                                height: "230px",
                                 borderRadius: "25px",
                                 objectFit: "cover",
                                 position: "absolute",
@@ -195,8 +195,8 @@ const Overview = () => {
                         <Avatar
                             src={organization.picture || ""}
                             sx={{
-                                width: "250px",
-                                height: "250px",
+                                width: "230px",
+                                height: "230px",
                                 backgroundColor: "#232323",
                                 borderRadius: "25px",
                                 objectFit: "cover",
@@ -240,7 +240,7 @@ const Overview = () => {
                             )) || <p>Uncategorized</p>}
                         </div>
 
-                        <div className={"max-sm:m-4 max-sm:mt-7"}>
+                        <div className={"max-sm:m-4 max-sm:mt-7 mb-2"}>
                             <Typography
                                 onClick={() => navigate("./charter")}
                                 variant="body1"

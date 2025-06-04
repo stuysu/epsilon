@@ -36,7 +36,7 @@ const OrgInspector = () => {
                     borderRadius={3}
                     boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
                 >
-                    <Typography variant="h4" margin={3}>
+                    <Typography variant="h4" marginX={3} marginY={2}>
                         Strikes
                     </Typography>
                     <Stack
@@ -46,7 +46,7 @@ const OrgInspector = () => {
                         overflow="hidden"
                     >
                         {strikes.length === 0 ? (
-                            <Typography paddingLeft={3} paddingBottom={3}>
+                            <Typography paddingLeft={3} paddingBottom={2}>
                                 No Strikes
                             </Typography>
                         ) : (
@@ -55,7 +55,8 @@ const OrgInspector = () => {
                                     sx={{
                                         marginRight: "10px",
                                         width: "100%",
-                                        padding: 3,
+                                        paddingX: 3,
+                                        paddingY: 2,
                                         backgroundColor: "#36363650",
                                     }}
                                 >
@@ -111,7 +112,7 @@ const OrgInspector = () => {
                 borderRadius={3}
                 boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
             >
-                <Typography variant="h4" margin={3}>
+                <Typography variant="h4" marginX={3} marginY={2}>
                     Links
                 </Typography>
 
@@ -138,7 +139,8 @@ const OrgInspector = () => {
                                         sx={{
                                             marginRight: "10px",
                                             width: "100%",
-                                            padding: 3,
+                                            paddingX: 3,
+                                            paddingY: 2,
                                             backgroundColor: "#36363650",
                                             transition:
                                                 "background-color 0.1s ease-in-out",
@@ -176,7 +178,7 @@ const OrgInspector = () => {
                             ) : null,
                         )
                     ) : (
-                        <Typography paddingLeft={3} paddingBottom={3}>
+                        <Typography paddingLeft={3} paddingBottom={2}>
                             No Links Provided
                         </Typography>
                     )}
