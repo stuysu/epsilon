@@ -80,11 +80,39 @@ const Rules = () => {
                         substantially similar missions, may suspend any Activity
                         that violates its charter, and requires that all charter
                         changes receive prior approval from the Clubs & Pubs
-                        department. Every Activity must comply with NYCDOE
-                        Chancellor’s Regulation A‑601, all other Chancellor’s
-                        Regulations, the Stuyvesant Code of Conduct, and school
-                        policies. Violations result in immediate suspension and
-                        charter revocation. <br />
+                        department. Every Activity must comply with{" "}
+                        <Link
+                            color="primary"
+                            href="https://www.schools.nyc.gov/docs/default-source/default-document-library/a-601-english"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            Chancellor’s Regulation A‑601
+                        </Link>
+                        {", "}
+                        all other{" "}
+                        <Link
+                            color="primary"
+                            href="https://www.schools.nyc.gov/about-us/policies/chancellors-regulations"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            Chancellor’s Regulations
+                        </Link>
+                        {", "}
+                        the{" "}
+                        <Link
+                            color="primary"
+                            href="https://stuy.enschool.org/apps/pages/index.jsp?uREC_ID=126635&type=d"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            Stuyvesant Code of Conduct
+                        </Link>
+                        {", "}
+                        and school policies. Violations result in immediate
+                        suspension and charter revocation.
+                        <br />
                         <br />
                         Finally, each club must maintain at least ten official
                         members, not counting faculty advisors.
@@ -260,8 +288,25 @@ const Rules = () => {
                         Fundraising & Finances
                     </Typography>
                     <Typography paragraph marginBottom={5}>
-                        Before undertaking any fundraising, consult the complete
-                        fundraising guidelines and Staff Treasury Memo.
+                        Before undertaking any fundraising, consult the complete{" "}
+                        <Link
+                            color="primary"
+                            href="https://docs.google.com/document/d/10RD4PIHYYiHTLBMGyKlfOlHU60kzJ8l7PTl4jHjFOmQ/edit?usp=sharing"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            StuySU Fundraising Guidelines
+                        </Link>{" "}
+                        and{" "}
+                        <Link
+                            color="primary"
+                            href="https://docs.google.com/document/d/1iXmJKKf6PvroDvOQSekMJFwnokJHgCApGqKx4uNYfM0/edit?usp=sharing"
+                            target="_blank"
+                            rel="noreferrer"
+                        >
+                            Staff Treasury Memo
+                        </Link>
+                        {". "}
                         Equipment, supplies, and services must be purchased
                         through FAMIS and ShopDOE in accordance with NYC DOE
                         Standard Operating Procedures; certain items may be

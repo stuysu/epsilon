@@ -335,7 +335,7 @@ const NavBar: FC = () => {
                                     }}
                                 >
                                     {theme.colorMode
-                                        ? "Light Mode Beta"
+                                        ? "Light Mode (Experimental)"
                                         : "Dark Mode"}
                                 </p>
                                 <div className="bg-neutral-400 mt-1 mb-2 h-px w-full opacity-30" />
