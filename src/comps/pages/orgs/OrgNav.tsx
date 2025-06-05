@@ -77,7 +77,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     </span>
                 </button>
                 {menuOpen && (
-                    <div className="-mx-5 fixed inset-0 flex flex-col items-center justify-start bg-black/70 backdrop-blur-3xl">
+                    <div className="overflow-scroll pb-10 -mx-5 fixed inset-0 flex flex-col items-center justify-start bg-black/70 backdrop-blur-3xl">
                         <button
                             className="absolute top-4 right-14 text-3xl text-white font-bold"
                             onClick={() => setMenuOpen(false)}
@@ -91,8 +91,8 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                         </button>
                         <div className="flex flex-col gap-1 w-full p-16">
                             <div
-                                className=" text-xl text-white/50 ml-3"
-                                style={{ fontVariationSettings: "'wgh' 700" }}
+                                className=" text-l text-white/50 ml-3"
+                                style={{ fontVariationSettings: "'wght' 700" }}
                             >
                                 About
                             </div>
@@ -117,7 +117,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                             ) && (
                                 <>
                                     <div
-                                        className="mt-5 text-xl text-white/50 ml-3"
+                                        className="mt-5 text-l text-white/50 ml-3"
                                         style={{
                                             fontVariationSettings: "'wght' 700",
                                         }}
