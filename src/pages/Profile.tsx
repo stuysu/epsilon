@@ -112,7 +112,7 @@ const Profiles = () => {
                         )}
                     </div>
                 </div>
-                <Typography width="100%">
+                <Typography width="100%" sx={{ fontFamily: "monospace" }}>
                     Grade: {user.grade + "th" || "No Grade"}
                 </Typography>
                 <div
@@ -120,7 +120,7 @@ const Profiles = () => {
                         "bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50"
                     }
                 ></div>
-                <Typography width="100%">
+                <Typography width="100%" sx={{ fontFamily: "monospace" }}>
                     Email: {user.email || "No Email"}
                 </Typography>
                 <div
@@ -129,7 +129,11 @@ const Profiles = () => {
                     }
                 ></div>
                 {fourDigitId && (
-                    <Typography width="100%" marginBottom={5}>
+                    <Typography
+                        width="100%"
+                        marginBottom={5}
+                        sx={{ fontFamily: "monospace" }}
+                    >
                         EpsilonID: {String(fourDigitId).padStart(4, "0")}
                     </Typography>
                 )}

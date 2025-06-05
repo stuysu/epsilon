@@ -1,5 +1,19 @@
-import { Avatar, Box, Divider, Stack, Typography, useMediaQuery } from "@mui/material";
-import React, { CSSProperties, FC, useContext, useEffect, useRef, useState } from "react";
+import {
+    Avatar,
+    Box,
+    Divider,
+    Stack,
+    Typography,
+    useMediaQuery,
+} from "@mui/material";
+import React, {
+    CSSProperties,
+    FC,
+    useContext,
+    useEffect,
+    useRef,
+    useState,
+} from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../../supabaseClient";
 import UserContext from "../../context/UserContext";
@@ -7,10 +21,7 @@ import { useSnackbar } from "notistack";
 import { ThemeContext } from "../../context/ThemeProvider";
 import { PUBLIC_URL } from "../../../constants";
 
-/**
- * Consolidated list of routes that belong to StuyActivities.
- * Keeping them in one place avoids duplicating arrays across helper utilities.
- */
+/** Consolidated list of routes that belong to StuyActivities. */
 const STUY_ACTIVITIES_PATHS = [
     "/catalog",
     "/charter",
@@ -78,7 +89,7 @@ const topNavItems = [
     { label: "About", path: "/about", icon: "bx bx-file", external: false },
 ] as const;
 
-type TopNavItem = typeof topNavItems[number];
+type TopNavItem = (typeof topNavItems)[number];
 
 interface TabLinkProps {
     name: string;
@@ -158,16 +169,23 @@ const NavBar: FC = () => {
         width: 0,
     });
 
-    /**
-     * Consolidated route‑matching helpers — the three functions below previously duplicated logic.
-     */
+    const [isOrgPage, setIsOrgPage] = useState(false);
+    useEffect(() => {
+        setIsOrgPage(!!document.querySelector("#activity-page"));
+    }, [location.pathname]);
+
     const getActivePaths = (item: TopNavItem): string[] =>
         !item.external && item.path === "/catalog"
             ? STUY_ACTIVITIES_PATHS
             : [item.path];
 
-    const isPageOptnActive = (item: TopNavItem): boolean =>
-        getActivePaths(item).includes(location.pathname);
+    const isPageOptnActive = (item: TopNavItem): boolean => {
+        if (!item.external && item.path === "/catalog") {
+            if (isOrgPage) return true;
+            return getActivePaths(item).includes(location.pathname);
+        }
+        return getActivePaths(item).includes(location.pathname);
+    };
 
     const isOnStuyActivitiesPage = STUY_ACTIVITIES_PATHS.some((p) =>
         location.pathname.startsWith(p),
@@ -203,18 +221,22 @@ const NavBar: FC = () => {
 
     // Animate active‑tab underline
     useEffect(() => {
-        const currentIndex = topNavItems.findIndex(
-            (item) =>
-                !item.external &&
-                getActivePaths(item).includes(location.pathname),
-        );
+        let currentIndex = topNavItems.findIndex((item) => {
+            if (!item.external && item.path === "/catalog") {
+                return (
+                    getActivePaths(item).includes(location.pathname) ||
+                    isOrgPage
+                );
+            }
+            return getActivePaths(item).includes(location.pathname);
+        });
         if (currentIndex !== -1 && itemRefs.current[currentIndex]) {
             const el = itemRefs.current[currentIndex];
             setOptionUnderline({ left: el.offsetLeft, width: el.offsetWidth });
         } else {
             setOptionUnderline({ left: 0, width: 0 });
         }
-    }, [location.pathname]);
+    }, [location.pathname, isOrgPage]);
 
     // Hide navbar on public landing page when signed‑out
     if (!user?.signed_in && location.pathname === "/")
@@ -224,7 +246,7 @@ const NavBar: FC = () => {
         <div>
             {/* Backdrop when hovering over nav items */}
             <div
-                className={`bg-black/40 fixed left-0 top-0 z-40 h-full w-full backdrop-blur-3xl transition-opacity duration-300 ${
+                className={`max-sm:hidden bg-black/40 fixed left-0 top-0 z-40 h-full w-full backdrop-blur-3xl transition-opacity duration-300 ${
                     isHovered ? "opacity-100" : "pointer-events-none opacity-0"
                 }`}
             />
@@ -252,13 +274,13 @@ const NavBar: FC = () => {
                 </Box>
 
                 {/* User dropdown */}
-                <div className="pointer-events-auto absolute sm:relative flex flex-row justify-end sm:top-1 -top-16 sm:right-0 right-8">
+                <div className="pointer-events-auto absolute sm:relative flex flex-row justify-end sm:top-1 -top-20 sm:right-0 right-8">
                     <div
                         className="flex cursor-pointer flex-row items-center justify-center gap-2 rounded-lg bg-neutral-800 pl-1.5 pr-1.5 shadow-[inset_0px_0px_2px_0px_rgba(255,255,255,0.3)] h-10"
                         onClick={() => setDrawerOpen(!drawerOpen)}
                     >
                         <Avatar
-                            style={{ width: 30, height: 30, borderRadius: 5 }}
+                            style={{ width: 30, height: 30, borderRadius: 4 }}
                             src={user.picture}
                         />
                         <p className="relative top-0.5 pr-2 sm:block hidden">{`${user.first_name} ${user.last_name}`}</p>
@@ -267,10 +289,13 @@ const NavBar: FC = () => {
 
                     {/* Drawer */}
                     <div
-                        className={`absolute sm:top-14 top-auto sm:bottom-auto bottom-14 z-50 flex w-72 flex-col gap-2 rounded-lg bg-neutral-800/80 p-5 backdrop-blur-xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)] transition-all duration-300 ${
+                        className={`absolute sm:top-14 top-auto sm:bottom-auto bottom-0 sm:right-auto right-16
+                        z-50 flex w-72 flex-col gap-2 rounded-lg bg-neutral-800 sm:bg-opacity-80 p-5
+                        backdrop-blur-xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)]
+                        transition-all duration-300 ${
                             drawerOpen
                                 ? "translate-y-0 opacity-100"
-                                : "pointer-events-none -translate-y-5 opacity-0"
+                                : "pointer-events-none sm:-translate-y-3 max-sm:translate-x-5 opacity-0"
                         }`}
                     >
                         {!user?.signed_in ? (
@@ -296,6 +321,14 @@ const NavBar: FC = () => {
                                     onClick={() => navigate("/profile")}
                                 >
                                     My Profile
+                                </p>
+                                <p
+                                    style={{
+                                        fontVariationSettings: "'wght' 700",
+                                    }}
+                                    className="cursor-not-allowed opacity-30"
+                                >
+                                    My Documents
                                 </p>
                                 <p
                                     style={{
@@ -328,7 +361,7 @@ const NavBar: FC = () => {
                                         theme.toggleColorMode();
                                         if (theme.colorMode) {
                                             enqueueSnackbar(
-                                                "Light mode is experimental.",
+                                                "Light mode is in development. It is not recommended for use at this time.",
                                                 { variant: "warning" },
                                             );
                                         }
@@ -364,21 +397,23 @@ const NavBar: FC = () => {
                 }}
             >
                 {/* Frosted backdrop */}
-                <Box
-                    sx={{
-                        position: "absolute",
-                        top: 0,
-                        width: "100%",
-                        height: 100,
-                        backgroundImage: `url(${PUBLIC_URL}/textures/menubar.png)`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        pointerEvents: "none",
-                        opacity: 0.5,
-                        filter: "blur(10px)",
-                        zIndex: 1,
-                    }}
-                />
+                {theme.colorMode && (
+                    <Box
+                        sx={{
+                            position: "absolute",
+                            top: 0,
+                            width: "100%",
+                            height: 100,
+                            backgroundImage: `url(${PUBLIC_URL}/textures/menubar.png)`,
+                            backgroundSize: "cover",
+                            backgroundPosition: "center",
+                            pointerEvents: "none",
+                            opacity: 0.5,
+                            filter: "blur(10px)",
+                            zIndex: 1,
+                        }}
+                    />
+                )}
 
                 <Stack
                     direction="row"
@@ -389,8 +424,8 @@ const NavBar: FC = () => {
                         fontVariationSettings: "'wght' 700",
                         position: "relative",
                         marginLeft: "4.5vw",
-                        mt: 3,
-                        mb: 1.5,
+                        mt: isMobile ? 2 : 3,
+                        mb: isMobile ? 2 : 1.5,
                     }}
                 >
                     {topNavItems.map((item, index) => (
@@ -402,7 +437,7 @@ const NavBar: FC = () => {
                             className={`flex items-start flex-nowrap cursor-pointer transition-colors ${
                                 isPageOptnActive(item)
                                     ? "text-gray-300"
-                                    : "hover:text-gray-300"
+                                    : "sm:hover:text-gray-300"
                             }`}
                             onMouseEnter={() => setIsHovered(true)}
                             onClick={() => {
@@ -455,6 +490,7 @@ const NavBar: FC = () => {
             {/* Contextual sub‑nav for StuyActivities pages */}
             {isOnStuyActivitiesPage && (
                 <div
+                    className={"max-sm:pb-4"}
                     style={{
                         overflowX: "scroll",
                         scrollbarWidth: "none",
@@ -496,20 +532,22 @@ const NavBar: FC = () => {
                         ))}
 
                         {/* Admin panel shortcut */}
-                        <div
-                            onClick={() => navigate("/admin")}
-                            className="inline-flex cursor-pointer whitespace-nowrap gap-1 text-yellow-500"
-                        >
-                            <i className="bx bx-shield" />
-                            <Typography
-                                sx={{
-                                    fontVariationSettings: "'wght' 700",
-                                    color: "rgb(234 179 8 / var(--tw-text-opacity, 1))",
-                                }}
+                        {user.permission && (
+                            <div
+                                onClick={() => navigate("/admin")}
+                                className="inline-flex cursor-pointer whitespace-nowrap gap-1 text-yellow-500"
                             >
-                                Admin Panel
-                            </Typography>
-                        </div>
+                                <i className="bx bx-shield" />
+                                <Typography
+                                    sx={{
+                                        fontVariationSettings: "'wght' 700",
+                                        color: "rgb(234 179 8 / var(--tw-text-opacity, 1))",
+                                    }}
+                                >
+                                    Admin Panel
+                                </Typography>
+                            </div>
+                        )}
                         <div className={"min-w-4"}></div>
                     </Stack>
                 </div>

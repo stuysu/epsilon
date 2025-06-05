@@ -54,33 +54,38 @@ const SearchFilter = ({
                 overflowY: "auto",
             }}
         >
-            <Box
-                sx={{
-                    width: "100%",
-                    height: "50px",
-                    display: "flex",
-                    justifyContent: "center",
-                }}
-            >
-                <InputBase
-                    placeholder="Find Activities..."
+            <div className={"max-sm:-mt-5"}>
+                <Box
                     sx={{
-                        borderRadius: "10px",
                         width: "100%",
-                        padding: "20px",
-                        paddingBottom: "17px",
-                        fontVariationSettings: `'wght' 700`,
-                        backgroundColor: "#1F1F1F80",
-                        boxShadow:
-                            "0px 0px 2px 0px rgba(255, 255, 255, 0.30) inset",
+                        height: "50px",
+                        display: "flex",
+                        justifyContent: "center",
                     }}
-                    value={value.name}
-                    onChange={(e) => {
-                        e.target.value = e.target.value.replace(onlyAlpha, "");
-                        onChange({ ...value, name: e.target.value });
-                    }}
-                />
-            </Box>
+                >
+                    <InputBase
+                        placeholder="Find Activities..."
+                        sx={{
+                            borderRadius: "10px",
+                            width: "100%",
+                            padding: "20px",
+                            paddingBottom: "17px",
+                            fontVariationSettings: `'wght' 700`,
+                            backgroundColor: "#1F1F1F80",
+                            boxShadow:
+                                "0px 0px 2px 0px rgba(255, 255, 255, 0.30) inset",
+                        }}
+                        value={value.name}
+                        onChange={(e) => {
+                            e.target.value = e.target.value.replace(
+                                onlyAlpha,
+                                "",
+                            );
+                            onChange({ ...value, name: e.target.value });
+                        }}
+                    />
+                </Box>
+            </div>
             <Box sx={{ width: "100%", marginTop: "20px" }}>
                 <Typography sx={{ width: "100%" }}>Tags</Typography>
                 <Stack

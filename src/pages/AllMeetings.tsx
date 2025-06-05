@@ -115,6 +115,7 @@ const AllMeetings = () => {
           ),
           organizations (
             id,
+            url,
             name,
             picture
           )
@@ -138,15 +139,13 @@ const AllMeetings = () => {
     }, [time, enqueueSnackbar, cachedMeetings]);
 
     return (
-        <LoginGate
-            sx={{ width: "100%", paddingLeft: "20px" }}
-            page={"view the calendar"}
-        >
+        <LoginGate sx={{ width: "100%" }} page={"view the calendar"}>
             <Box
                 sx={{
                     width: "100%",
                     display: "flex",
-                    padding: "40px",
+                    padding: isMobile ? "20px" : "40px",
+                    marginBottom: "250px",
                     flexWrap: isMobile ? "wrap" : "nowrap",
                     justifyContent: "center",
                 }}
@@ -158,6 +157,7 @@ const AllMeetings = () => {
                         minWidth: "250px",
                         boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
                         borderRadius: "7px",
+                        backgroundColor: "#232323",
                         marginRight: "10px",
                         height: "320px",
                     }}
@@ -185,7 +185,9 @@ const AllMeetings = () => {
                         sx={{ width: "100%" }}
                     />
                 </Box>
-                <Box sx={{ width: "100%" }}>
+                <Box
+                    sx={{ width: "100%", marginTop: isMobile ? "40px" : "0px" }}
+                >
                     <DaySchedule day={time} meetings={meetings} />
                 </Box>
             </Box>

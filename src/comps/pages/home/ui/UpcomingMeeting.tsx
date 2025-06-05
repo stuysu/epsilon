@@ -13,6 +13,7 @@ import { monthNames } from "../../../../utils/TimeStrings";
 
 const UpcomingMeeting = ({
     id,
+    url,
     title,
     description,
     start_time,
@@ -24,6 +25,7 @@ const UpcomingMeeting = ({
     sx,
 }: {
     id: number;
+    url: string;
     title: string;
     description: string;
     start_time: string;
@@ -92,7 +94,7 @@ const UpcomingMeeting = ({
                         </div>
                     </div>
                     <div style={{ display: "flex", gap: "10px" }}>
-                        {is_public ? "Public" : "Private"}
+                        <Chip label={is_public ? "Public" : "Private"} />
                         <Chip
                             label={`${monthNames[start.month()]} ${start.date()}, ${start.year()}`}
                         />
@@ -103,6 +105,7 @@ const UpcomingMeeting = ({
                 </ListItem>
                 <MeetingPreview
                     id={id}
+                    url={url}
                     title={title}
                     open={open}
                     isPublic={is_public}

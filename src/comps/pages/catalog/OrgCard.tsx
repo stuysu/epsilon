@@ -118,6 +118,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                 }}
                             ></Box>
 
+                            {/* Background avatar with blur effect */}
                             <Avatar
                                 src={organization.picture || ""}
                                 sx={{
@@ -131,6 +132,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                 }}
                             ></Avatar>
 
+                            {/* Main avatar with text fallback */}
                             <Box
                                 sx={{
                                     width: "130px",
@@ -149,6 +151,8 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                     borderRadius: "20px",
                                     fontSize: "60px",
                                     objectFit: "cover",
+                                    backgroundColor: "#232323",
+                                    color: "#cdcdcd",
                                 }}
                                 alt={`${organization.name}`}
                             >

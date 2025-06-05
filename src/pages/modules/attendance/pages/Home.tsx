@@ -58,7 +58,7 @@ const Home = () => {
             const { data: meetingsData, error: meetingFetchError } =
                 await supabase
                     .from("meetings")
-                    .select(`*`)
+                    .select(`*, rooms(name)`)
                     .eq("organization_id", selectedOrgId);
 
             if (meetingFetchError || !meetingsData) {
@@ -68,7 +68,13 @@ const Home = () => {
                 return;
             }
 
-            setMeetings(meetingsData as Meeting[]);
+            const sortedMeetings = (meetingsData as Meeting[]).sort((a, b) => {
+                return (
+                    new Date(b.start_time).getTime() -
+                    new Date(a.start_time).getTime()
+                );
+            });
+            setMeetings(sortedMeetings);
         };
 
         fetchOrgMeetings();
@@ -134,6 +140,7 @@ const Home = () => {
                                 key={meeting.id}
                                 title={meeting.title}
                                 id={meeting.id}
+                                room={meeting.rooms?.name}
                                 startTime={meeting.start_time}
                             />
                         ))}

@@ -21,6 +21,7 @@ type meetingType = {
     organizations: {
         name: string;
         picture: string;
+        url: string;
     };
     rooms: {
         name: string;
@@ -56,7 +57,8 @@ const UserHome = () => {
                     end_time,
                     organizations (
                         name,
-                        picture
+                        picture,
+                        url
                     ),
                     rooms (
                         name
@@ -183,6 +185,7 @@ const UserHome = () => {
                             return null;
                         })}
                         <div
+                            className={"hover:scale-105 transition-transform"}
                             onClick={() => navigate(`/catalog`)}
                             style={{
                                 paddingLeft: "13px",
@@ -258,6 +261,7 @@ const UserHome = () => {
                                     )}
                                     {upcomingMeetings.map((meeting) => (
                                         <UpcomingMeeting
+                                            url={meeting.organizations.url}
                                             key={meeting.id}
                                             id={meeting.id}
                                             title={meeting.title}
@@ -418,7 +422,7 @@ const UserHome = () => {
                                         className={
                                             announcements.length <=
                                             visibleAnnouncements
-                                                ? "cursor-pointer opacity-50"
+                                                ? "opacity-50"
                                                 : "cursor-pointer hover:text-neutral-300 transition-colors"
                                         }
                                     >

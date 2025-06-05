@@ -163,59 +163,68 @@ const Overview = () => {
         >
             <Stack direction={{ xs: "column", sm: "row" }} spacing={5}>
                 <Box>
-                    <Box
-                        sx={{
-                            width: "250px",
-                            height: "250px",
-                            borderRadius: "25px",
-                            position: "absolute",
-                            boxShadow:
-                                "inset 0 0 10px 1px rgba(255, 255, 255, 0.3)",
-                            zIndex: 10,
-                        }}
-                    ></Box>
-                    <Avatar
-                        src={organization.picture || ""}
-                        sx={{
-                            width: "250px",
-                            height: "250px",
-                            borderRadius: "25px",
-                            objectFit: "cover",
-                            position: "absolute",
-                            zIndex: 0,
-                            filter: "blur(30px)",
-                            opacity: 0.3,
-                        }}
-                    />
-                    <Avatar
-                        src={organization.picture || ""}
-                        sx={{
-                            width: "250px",
-                            height: "250px",
-                            borderRadius: "25px",
-                            objectFit: "cover",
-                            position: "relative",
-                            fontSize: "120px",
-                            zIndex: 1,
-                        }}
-                        alt={`organization ${organization.name}`}
+                    <div
+                        className={
+                            "max-sm:w-full max-sm:flex max-sm:justify-center max-sm:mt-5"
+                        }
                     >
-                        <h1>{organization.name.charAt(0).toUpperCase()}</h1>
-                    </Avatar>
+                        <Box
+                            sx={{
+                                width: "230px",
+                                height: "230px",
+                                borderRadius: "25px",
+                                position: "absolute",
+                                boxShadow:
+                                    "inset 0 0 10px 1px rgba(255, 255, 255, 0.3)",
+                                zIndex: 10,
+                            }}
+                        ></Box>
+                        <Avatar
+                            src={organization.picture || ""}
+                            sx={{
+                                width: "230px",
+                                height: "230px",
+                                borderRadius: "25px",
+                                objectFit: "cover",
+                                position: "absolute",
+                                zIndex: 0,
+                                filter: "blur(30px)",
+                                opacity: 0.3,
+                            }}
+                        />
+                        <Avatar
+                            src={organization.picture || ""}
+                            sx={{
+                                width: "230px",
+                                height: "230px",
+                                backgroundColor: "#232323",
+                                borderRadius: "25px",
+                                objectFit: "cover",
+                                position: "relative",
+                                fontSize: "140px",
+                                zIndex: 1,
+                                color: "#cdcdcd",
+                            }}
+                            alt={`organization ${organization.name}`}
+                        >
+                            <h1>{organization.name.charAt(0).toUpperCase()}</h1>
+                        </Avatar>
+                    </div>
                 </Box>
 
                 <Stack direction={"column"} justifyContent={"space-between"}>
                     <div>
-                        <Typography variant="h1" width="100%">
-                            {organization.name}
-                        </Typography>
-
-                        <Stack
-                            direction="row"
-                            marginBottom={2}
-                            gap={0.5}
-                            rowGap={0.5}
-                            flexWrap={"wrap"}
+                        <div
+                            className={"text-center sm:text-left max-sm:mb-10"}
+                        >
+                            <Typography variant="h1">
+                                {organization.name}
+                            </Typography>
+                        </div>
+                        <div
+                            className={
+                                "flex mb-5 gap-1 flex-wrap max-sm:justify-center"
+                            }
                         >
                             {organization.tags?.map((tag, index) => (
                                 <Chip
@@ -229,32 +238,30 @@ const Overview = () => {
                                     }}
                                 />
                             )) || <p>Uncategorized</p>}
-                        </Stack>
+                        </div>
 
-                        <Typography
-                            onClick={() => navigate("./charter")}
-                            variant="body1"
-                            width="100%"
-                            sx={{
-                                cursor: "pointer",
-                                display: "-webkit-box",
-                                WebkitBoxOrient: "vertical",
-                                overflow: "hidden",
-                                WebkitLineClamp: 4,
-                                textOverflow: "ellipsis",
-                            }}
-                        >
-                            {organization.purpose || "None"}
-                        </Typography>
+                        <div className={"max-sm:m-4 max-sm:mt-7 mb-2"}>
+                            <Typography
+                                onClick={() => navigate("./charter")}
+                                variant="body1"
+                                sx={{
+                                    cursor: "pointer",
+                                    display: "-webkit-box",
+                                    WebkitBoxOrient: "vertical",
+                                    overflow: "hidden",
+                                    WebkitLineClamp: 4,
+                                    textOverflow: "ellipsis",
+                                }}
+                            >
+                                {organization.purpose || "None"}
+                            </Typography>
+                        </div>
                     </div>
 
-                    <Box
-                        sx={{
-                            display: "flex",
-                            width: "100%",
-                            marginTop: 2,
-                            alignItems: "center",
-                        }}
+                    <div
+                        className={
+                            "max-sm:flex max-sm:justify-center max-sm:w-full mt-2"
+                        }
                     >
                         <AsyncButton
                             variant="contained"
@@ -307,7 +314,7 @@ const Overview = () => {
                                 </AsyncButton>
                             </DialogActions>
                         </Dialog>
-                    </Box>
+                    </div>
                 </Stack>
             </Stack>
 
@@ -320,97 +327,115 @@ const Overview = () => {
                     marginBottom: "20px",
                 }}
             />
-
-            <Stack
-                direction={{ xs: "column", sm: "row" }}
-                marginBottom={{ xs: 0, sm: 3 }}
-                alignItems="center"
-            >
-                {user.signed_in && (
-                    <>
-                        <Box>
-                            <Typography variant="h3" align="center" width={100}>
-                                {
-                                    organization.memberships.filter(
-                                        (member) => member.active,
-                                    ).length
-                                }
-                            </Typography>
-                            <Typography variant="body1" align="center">
-                                Members
-                            </Typography>
-                        </Box>
-                        <Typography
-                            variant="h1"
-                            align="center"
-                            sx={{ opacity: "25%" }}
-                        >
-                            •
-                        </Typography>
-                    </>
-                )}
-
-                <Box>
-                    <Typography variant="h3" align="center" width={160}>
-                        {organization.state.charAt(0) +
-                            organization.state.slice(1).toLowerCase()}
-                    </Typography>
-                    <Typography variant="body1" align="center">
-                        Activity Status
-                    </Typography>
-                </Box>
-
-                <Typography
-                    variant="h1"
-                    align="center"
-                    width="100%"
-                    sx={{ opacity: "25%" }}
+            <div className={"max-w-full overflow-scroll"}>
+                <Stack
+                    direction="row"
+                    marginBottom={{ xs: 0, sm: 3 }}
+                    alignItems="center"
                 >
-                    •
-                </Typography>
+                    {user.signed_in && (
+                        <>
+                            <Box>
+                                <Typography
+                                    variant="h3"
+                                    align="center"
+                                    width={100}
+                                >
+                                    {
+                                        organization.memberships.filter(
+                                            (member) => member.active,
+                                        ).length
+                                    }
+                                </Typography>
+                                <Typography variant="body1" align="center">
+                                    Members
+                                </Typography>
+                            </Box>
+                            <Typography
+                                variant="h1"
+                                align="center"
+                                sx={{ opacity: "25%" }}
+                            >
+                                •
+                            </Typography>
+                        </>
+                    )}
 
-                <Box>
-                    <Typography variant="h3" align="center" width={140}>
-                        {organization.commitment_level
-                            ? organization.commitment_level
-                                  .charAt(0)
-                                  .toUpperCase() +
-                              organization.commitment_level
-                                  .slice(1)
-                                  .toLowerCase()
-                            : "None"}
-                    </Typography>
-                    <Typography variant="body1" align="center">
-                        Commitment
-                    </Typography>
-                </Box>
-
-                {user.signed_in && (
-                    <>
-                        <Typography
-                            variant="h1"
-                            align="center"
-                            width="100%"
-                            sx={{ opacity: "25%" }}
-                        >
-                            •
+                    <Box>
+                        <Typography variant="h3" align="center" width={170}>
+                            {organization.state.charAt(0) +
+                                organization.state.slice(1).toLowerCase()}
                         </Typography>
-                        <Box>
-                            <Typography variant="h3" align="center" width={200}>
-                                {organization.meetings
-                                    ?.at(-1)
-                                    ?.start_time?.split("T")[0]
-                                    .replaceAll("-", "/") ?? "No Meetings"}
-                            </Typography>
-                            <Typography variant="body1" align="center">
-                                Last Meeting
-                            </Typography>
-                        </Box>
-                    </>
-                )}
-            </Stack>
+                        <Typography variant="body1" align="center">
+                            Activity Status
+                            <i
+                                className={
+                                    "bx bx-info-circle relative top-px ml-1 cursor-help"
+                                }
+                                title={
+                                    "Activities with less than 10 members, or otherwise" +
+                                    " specified by the SU, are locked and have limited privileges."
+                                }
+                            ></i>
+                        </Typography>
+                    </Box>
 
-            <Box position="relative" width={"100%"} marginBottom={3}>
+                    <Typography
+                        variant="h1"
+                        align="center"
+                        width="100%"
+                        sx={{ opacity: "25%" }}
+                    >
+                        •
+                    </Typography>
+
+                    <Box>
+                        <Typography variant="h3" align="center" width={140}>
+                            {organization.commitment_level
+                                ? organization.commitment_level
+                                      .charAt(0)
+                                      .toUpperCase() +
+                                  organization.commitment_level
+                                      .slice(1)
+                                      .toLowerCase()
+                                : "None"}
+                        </Typography>
+                        <Typography variant="body1" align="center">
+                            Commitment
+                        </Typography>
+                    </Box>
+
+                    {user.signed_in && (
+                        <>
+                            <Typography
+                                variant="h1"
+                                align="center"
+                                width="100%"
+                                sx={{ opacity: "25%" }}
+                            >
+                                •
+                            </Typography>
+                            <Box>
+                                <Typography
+                                    variant="h3"
+                                    align="center"
+                                    width={200}
+                                >
+                                    {organization.meetings
+                                        ?.at(-1)
+                                        ?.start_time?.split("T")[0]
+                                        .replaceAll("-", "/") ?? "No Meetings"}
+                                </Typography>
+                                <Typography variant="body1" align="center">
+                                    Last Meeting
+                                </Typography>
+                            </Box>
+                        </>
+                    )}
+                </Stack>
+            </div>
+
+            <div className={"relative w-full mb-6 max-sm:mt-6"}>
                 <Box
                     bgcolor="#1f1f1f80"
                     padding={0.5}
@@ -423,7 +448,7 @@ const Overview = () => {
 
                     <Box borderRadius={2} overflow="hidden">
                         <Box bgcolor="#36363666" padding={3}>
-                            <Typography variant="body1" width="100%">
+                            <Typography variant="body1">
                                 {organization.meeting_schedule || "None"}
                             </Typography>
                         </Box>
@@ -442,7 +467,8 @@ const Overview = () => {
                                 "Friday",
                             ].map((day) => (
                                 <Typography
-                                    flexGrow="1"
+                                    minWidth={"120px"}
+                                    width={"20%"}
                                     key={day}
                                     textAlign="center"
                                     sx={{
@@ -481,7 +507,7 @@ const Overview = () => {
                         filter: "blur(40px)",
                     }}
                 />
-            </Box>
+            </div>
 
             <Box position="relative" width={"100%"} marginBottom={3}>
                 <Box
@@ -497,8 +523,7 @@ const Overview = () => {
                     {!user.signed_in && (
                         <Typography
                             variant="body1"
-                            width="100%"
-                            marginLeft={3}
+                            marginX={3}
                             marginBottom={3}
                         >
                             Sign in to view the leaders of this organization.

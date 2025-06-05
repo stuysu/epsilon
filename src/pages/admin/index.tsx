@@ -115,9 +115,9 @@ const AdminRouter = () => {
         return (
             <Box
                 sx={{
-                    position: "fixed",
                     width: "100vw",
-                    height: "80vh",
+                    minHeight: "55vh",
+                    marginBottom: "5rem",
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "center",

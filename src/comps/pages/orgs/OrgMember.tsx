@@ -47,9 +47,15 @@ const OrgMember = ({
                     <Avatar
                         alt={`${first_name} ${last_name}`}
                         src={picture}
-                        sx={{ borderRadius: "5px" }}
+                        sx={{
+                            borderRadius: "5px",
+                            backgroundColor: "rgba(255,255,255,0.2)",
+                            color: "white",
+                        }}
                     >
-                        {(first_name || "O").charAt(0).toUpperCase()}
+                        <Typography variant={"h2"}>
+                            {(first_name || "O").charAt(0).toUpperCase()}
+                        </Typography>
                     </Avatar>
                 </ListItemAvatar>
                 <div>

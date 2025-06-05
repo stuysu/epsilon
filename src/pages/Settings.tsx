@@ -118,10 +118,9 @@ const Settings = () => {
     };
 
     return (
-        <LoginGate sx={{ width: "100%", paddingLeft: "20px" }}>
+        <LoginGate sx={{ width: "100%", padding: "20px" }}>
             <Box
                 sx={{
-                    width: "100%",
                     textAlign: "center",
                     marginBottom: "30px",
                 }}
@@ -130,8 +129,8 @@ const Settings = () => {
                     Communication Options
                 </Typography>
                 <Typography variant="body1" align="center" marginBottom="50px">
-                    Choose your preferred email communication options for each
-                    organization you are a member of.
+                    Choose if you'd like to receive email communications for
+                    each organization you are a member of.
                 </Typography>
             </Box>
 
@@ -139,44 +138,18 @@ const Settings = () => {
                 sx={{
                     width: "100%",
                     display: "flex",
+                    marginBottom: "10vh",
                     flexDirection: "column",
                     alignItems: "center",
                 }}
             >
                 <Box
                     sx={{
-                        display: "flex",
-                        justifyContent: "space-between",
-                        width: "43%",
-                        mb: 2,
-                    }}
-                >
-                    <Typography
-                        variant="body1"
-                        sx={{
-                            textAlign: "left",
-                            width: "45%",
-                        }}
-                    >
-                        Organization Name
-                    </Typography>
-                    <Typography
-                        variant="body1"
-                        sx={{
-                            textAlign: "right",
-                            width: "45%",
-                        }}
-                    >
-                        Allow Notifications
-                    </Typography>
-                </Box>
-
-                <Box
-                    sx={{
+                        width: "100%",
                         display: "flex",
                         flexDirection: "column",
                         alignItems: "center",
-                        width: "45%",
+                        maxWidth: "800px",
                     }}
                 >
                     {memberships.map((membership) => (
@@ -189,17 +162,12 @@ const Settings = () => {
                                 marginBottom: "15px",
                                 padding: "10px",
                                 display: "flex",
+                                flexWrap: "wrap",
                                 justifyContent: "space-between",
                                 alignItems: "center",
                             }}
                         >
-                            <Typography
-                                sx={{
-                                    fontSize: "1.5rem",
-                                    flex: 1,
-                                    paddingLeft: "3%",
-                                }}
-                            >
+                            <Typography variant={"body1"}>
                                 {membership.organization_name}
                             </Typography>
                             <Box
@@ -207,7 +175,6 @@ const Settings = () => {
                                     display: "flex",
                                     justifyContent: "center",
                                     alignItems: "center",
-                                    paddingRight: "3%",
                                 }}
                             >
                                 <Switch

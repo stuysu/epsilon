@@ -31,7 +31,6 @@ const NotFound = () => {
     return (
         <Box
             sx={{
-                position: "fixed",
                 width: "100vw",
                 height: "80vh",
                 display: "flex",

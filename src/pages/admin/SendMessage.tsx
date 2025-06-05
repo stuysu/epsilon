@@ -1,5 +1,5 @@
-import { Box, Typography, TextField } from "@mui/material";
-import { useState, useEffect } from "react";
+import { Box, TextField, Typography } from "@mui/material";
+import { useEffect, useState } from "react";
 import { supabase } from "../../supabaseClient";
 import { useSnackbar } from "notistack";
 import OrgChat from "../../comps/admin/OrgChat";
@@ -44,7 +44,7 @@ const SendMessage = () => {
     }, [searchInput, allOrgs]);
 
     return (
-        <Box>
+        <Box minHeight={"70vh"}>
             <Typography variant="h1" align="center">
                 Send Message
             </Typography>
@@ -63,7 +63,15 @@ const SendMessage = () => {
                     onChange={(e) => setSearchInput(e.target.value)}
                 />
             </Box>
-            {filteredOrgs.length > 0 && (
+            {searchInput.length < 3 ? (
+                <Typography align="center" sx={{ mt: 2 }}>
+                    Keep typing to find an Activity.
+                </Typography>
+            ) : filteredOrgs.length > 20 ? (
+                <Typography align="center" sx={{ mt: 2 }}>
+                    Too many activities, try a more specific query.
+                </Typography>
+            ) : filteredOrgs.length > 0 ? (
                 <Box
                     sx={{
                         width: "100%",
@@ -88,12 +96,11 @@ const SendMessage = () => {
                         </AsyncButton>
                     ))}
                 </Box>
-            )}
+            ) : null}
             <Box
                 sx={{
                     marginTop: "20px",
                     width: "100%",
-                    display: "flex",
                     justifyContent: "center",
                     padding: "20px",
                 }}

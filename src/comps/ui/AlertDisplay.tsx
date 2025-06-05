@@ -16,8 +16,12 @@ const AlertDisplay = () => {
             const res = await fetch("https://alert.stuysu.org");
             if (res.status === 404) return;
             try {
-                setData((await res.json()) as AlertInfo);
-                setOpen(true);
+                const alertData = (await res.json()) as AlertInfo;
+                setData(alertData);
+                if (
+                    localStorage.getItem("dismissedAlert") !== alertData.message
+                )
+                    setOpen(true);
             } catch (e) {
                 // log error for debugging
                 console.error(e);
@@ -31,6 +35,12 @@ const AlertDisplay = () => {
         };
     }, []);
 
+    const handleClose = () => {
+        if (data && data.message)
+            localStorage.setItem("dismissedAlert", data.message);
+        setOpen(false);
+    };
+
     if (
         !open ||
         !data ||
@@ -40,18 +50,18 @@ const AlertDisplay = () => {
     )
         return <></>;
     return (
-        <Alert
-            severity={data.severity}
-            variant="filled"
-            sx={{
-                borderRadius: "0",
-            }}
-            onClose={
-                data.severity === "error" ? undefined : () => setOpen(false)
-            }
-        >
-            <DisplayLinks text={data.message} />
-        </Alert>
+        <div className={"z-[9999] relative w-full p-4"}>
+            <Alert
+                sx={{ borderRadius: "10px" }}
+                severity={data.severity}
+                variant="filled"
+                onClose={data.severity === "error" ? undefined : handleClose}
+            >
+                <div className={"relative top-0.5 invert brightness-200"}>
+                    <DisplayLinks text={data.message} />
+                </div>
+            </Alert>
+        </div>
     );
 };
 

@@ -1,6 +1,6 @@
 import { useContext } from "react";
 import OrgContext from "../../comps/context/OrgContext";
-import { Divider, Stack, Typography } from "@mui/material";
+import { Divider, Typography } from "@mui/material";
 
 const formatDays = (meeting_days: string[]) => {
     return meeting_days
@@ -12,7 +12,11 @@ const Charter = () => {
     const organization: OrgContextType = useContext(OrgContext);
 
     return (
-        <Stack spacing={3} marginTop={2} marginBottom={10}>
+        <div
+            className={
+                "flex flex-col mt-2 gap-4 mb-10 max-sm:mt-10 max-sm:mx-4"
+            }
+        >
             <Typography variant="h3">What is this activity?</Typography>
             <Typography>{organization.purpose || "None"}</Typography>
             <Divider></Divider>
@@ -44,7 +48,7 @@ const Charter = () => {
                 What makes this activity unique?
             </Typography>
             <Typography>{organization.uniqueness || "None"}</Typography>
-        </Stack>
+        </div>
     );
 };
 

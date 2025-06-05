@@ -71,21 +71,32 @@ const OrgBar = ({ name, url, role, role_name, picture }: Props) => {
                         style={{
                             width: "180px",
                             height: "180px",
+                            overflow: "hidden",
                             borderRadius: "15px",
                             backgroundColor: "#232323",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
                             fontSize: "100px",
-                            color: "#fff",
+                            color: "#cdcdcd",
                         }}
                     >
                         <h1>{name?.charAt(0).toUpperCase()}</h1>
                     </div>
                 )}
             </div>
-            <div style={{ padding: 10, paddingTop: 15 }}>
-                <Typography variant="h4" height={60}>
+            <div style={{ padding: 10, paddingTop: 10 }}>
+                <Typography
+                    variant="h4"
+                    height={63}
+                    sx={{
+                        textOverflow: "ellipsis",
+                        overflow: "hidden",
+                        display: "-webkit-box",
+                        WebkitBoxOrient: "vertical",
+                        WebkitLineClamp: 3,
+                    }}
+                >
                     {name}
                 </Typography>
                 <Typography sx={{ fontVariationSettings: "'wght' 700" }}>

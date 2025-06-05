@@ -2,15 +2,15 @@ import React from "react";
 
 const Archives = () => {
     return (
-        <div>
+        <div className={"p-10 max-sm:mb-32"}>
             <div
                 className={
-                    "flex justify-center flex-col items-center w-full h-96 pt-[80px]"
+                    "flex sm:justify-center items-center w-full h-48 sm:h-96"
                 }
             >
                 <h1
                     className={
-                        "w-2/3 bg-blend-color-dodge text-white/75 text-8xl text-center"
+                        "w-2/3 bg-blend-color-dodge text-white/75 sm:text-8xl text-4xl sm:text-center"
                     }
                 >
                     StuyActivities
@@ -18,11 +18,7 @@ const Archives = () => {
                     Archives
                 </h1>
             </div>
-            <div
-                className={
-                    "flex justify-center flex-col items-center w-full h-20"
-                }
-            >
+            <div className={"flex flex-col sm:items-center w-full h-32 mb-96"}>
                 <a
                     className={"underline mt-10"}
                     href={

@@ -98,7 +98,7 @@ const ApproveEdit = () => {
     }
 
     return (
-        <Box>
+        <Box minHeight={"70vh"}>
             <Typography variant="h1" align="center">
                 Approve Edits
             </Typography>

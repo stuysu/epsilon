@@ -6,9 +6,8 @@ const Loading = ({ fullscreen = false }: { fullscreen?: boolean }) => {
         <Box
             sx={{
                 width: "100%",
-                height: "85%",
+                height: "85vh",
                 display: "flex",
-                position: "fixed",
                 alignItems: "center",
                 justifyContent: "center",
                 zIndex: 1000,

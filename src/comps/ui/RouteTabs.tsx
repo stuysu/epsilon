@@ -29,28 +29,26 @@ const RouteTabs = ({ tabs }: Props) => {
     }, [location.pathname, currentTab, tabs]);
 
     return (
-            <Tabs
-                indicatorColor="secondary"
-                textColor="inherit"
-                value={currentTab}
-                scrollButtons
-                variant={"scrollable"}
-                allowScrollButtonsMobile
-            >
-                {tabs.map((tab, i) => {
-                    let tabProps: any = {
-                        key: i,
-                        label: tab.label,
-                        value: i,
-                    };
+        <Tabs
+            indicatorColor="secondary"
+            textColor="inherit"
+            value={currentTab}
+            scrollButtons
+            variant={"scrollable"}
+            allowScrollButtonsMobile
+        >
+            {tabs.map((tab, i) => {
+                let tabProps: any = {
+                    key: i,
+                    label: tab.label,
+                    value: i,
+                };
 
-                    if (tab.icon) tabProps.icon = tab.icon;
+                if (tab.icon) tabProps.icon = tab.icon;
 
-                    return (
-                        <Tab {...tabProps} onClick={() => navigate(tab.to)} />
-                    );
-                })}
-            </Tabs>
+                return <Tab {...tabProps} onClick={() => navigate(tab.to)} />;
+            })}
+        </Tabs>
     );
 };
 
