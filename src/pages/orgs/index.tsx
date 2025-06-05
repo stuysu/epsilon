@@ -236,7 +236,7 @@ const OrgRouter = () => {
                                     </CSSTransition>
                                 </TransitionGroup>
                             </div>
-                            <div className="lg:block hidden">
+                            <div className="lg:block hidden mr-3">
                                 <OrgInspector />
                             </div>
                         </div>

@@ -240,12 +240,15 @@ const Overview = () => {
                             )) || <p>Uncategorized</p>}
                         </div>
 
-                        <div className={"max-sm:m-4 max-sm:mt-7 mb-2"}>
+                        <div
+                            className={
+                                "max-sm:m-4 max-sm:mt-7 mb-2 cursor-help hover:brightness-125"
+                            }
+                        >
                             <Typography
                                 onClick={() => navigate("./charter")}
                                 variant="body1"
                                 sx={{
-                                    cursor: "pointer",
                                     display: "-webkit-box",
                                     WebkitBoxOrient: "vertical",
                                     overflow: "hidden",
