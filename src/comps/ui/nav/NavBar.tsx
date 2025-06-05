@@ -1,5 +1,19 @@
-import { Avatar, Box, Divider, Stack, Typography, useMediaQuery } from "@mui/material";
-import React, { CSSProperties, FC, useContext, useEffect, useRef, useState } from "react";
+import {
+    Avatar,
+    Box,
+    Divider,
+    Stack,
+    Typography,
+    useMediaQuery,
+} from "@mui/material";
+import React, {
+    CSSProperties,
+    FC,
+    useContext,
+    useEffect,
+    useRef,
+    useState,
+} from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../../supabaseClient";
 import UserContext from "../../context/UserContext";
@@ -75,7 +89,7 @@ const topNavItems = [
     { label: "About", path: "/about", icon: "bx bx-file", external: false },
 ] as const;
 
-type TopNavItem = typeof topNavItems[number];
+type TopNavItem = (typeof topNavItems)[number];
 
 interface TabLinkProps {
     name: string;
@@ -518,20 +532,22 @@ const NavBar: FC = () => {
                         ))}
 
                         {/* Admin panel shortcut */}
-                        <div
-                            onClick={() => navigate("/admin")}
-                            className="inline-flex cursor-pointer whitespace-nowrap gap-1 text-yellow-500"
-                        >
-                            <i className="bx bx-shield" />
-                            <Typography
-                                sx={{
-                                    fontVariationSettings: "'wght' 700",
-                                    color: "rgb(234 179 8 / var(--tw-text-opacity, 1))",
-                                }}
+                        {user.permission && (
+                            <div
+                                onClick={() => navigate("/admin")}
+                                className="inline-flex cursor-pointer whitespace-nowrap gap-1 text-yellow-500"
                             >
-                                Admin Panel
-                            </Typography>
-                        </div>
+                                <i className="bx bx-shield" />
+                                <Typography
+                                    sx={{
+                                        fontVariationSettings: "'wght' 700",
+                                        color: "rgb(234 179 8 / var(--tw-text-opacity, 1))",
+                                    }}
+                                >
+                                    Admin Panel
+                                </Typography>
+                            </div>
+                        )}
                         <div className={"min-w-4"}></div>
                     </Stack>
                 </div>

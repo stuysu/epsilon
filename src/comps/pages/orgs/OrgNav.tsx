@@ -111,7 +111,9 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                             ))}
                             {organization.memberships?.some(
                                 (m) =>
-                                    m.role === "ADMIN" || m.role === "CREATOR",
+                                    m.users?.id === user.id &&
+                                    (m.role === "ADMIN" ||
+                                        m.role === "CREATOR"),
                             ) && (
                                 <>
                                     <div
@@ -212,7 +214,9 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
 
             {/* OrgAdminNav if user is admin or creator */}
             {organization.memberships?.some(
-                (m) => m.role === "ADMIN" || m.role === "CREATOR",
+                (m) =>
+                    m.users?.id === user.id &&
+                    (m.role === "ADMIN" || m.role === "CREATOR"),
             ) && (
                 <div>
                     <div className={"h-px w-5/6 bg-neutral-600 my-2"}></div>
