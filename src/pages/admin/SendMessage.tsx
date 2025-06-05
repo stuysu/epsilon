@@ -69,7 +69,7 @@ const SendMessage = () => {
                 </Typography>
             ) : filteredOrgs.length > 20 ? (
                 <Typography align="center" sx={{ mt: 2 }}>
-                    Too many activities, try specifying your query.
+                    Too many activities, try a more specific query.
                 </Typography>
             ) : filteredOrgs.length > 0 ? (
                 <Box

@@ -57,9 +57,9 @@ const OrgMeeting = ({
                     background: "#36363680",
                     transition: "background-color 0.1s ease-in-out",
                     "&:hover": {
-                    backgroundColor: "#4d4d4d80"
-                },
-                    }}
+                        backgroundColor: "#4d4d4d80",
+                    },
+                }}
                 padding={3}
             >
                 <Box sx={{ width: "100%" }}>
@@ -68,7 +68,7 @@ const OrgMeeting = ({
                         {startTime} to {endTime}
                     </Typography>
                 </Box>
-                <Stack direction={"row"} gap={1}>
+                <Stack direction="row" gap={1}>
                     <Chip label={"Room " + room_name || "Virtual"}></Chip>
                     {is_public ? (
                         <Chip label="Public"></Chip>
@@ -76,7 +76,7 @@ const OrgMeeting = ({
                         <Chip label="Private"></Chip>
                     )}
                 </Stack>
-                <Box>
+                <Stack direction="row">
                     {onEdit && (
                         <AsyncButton
                             variant="contained"
@@ -95,7 +95,7 @@ const OrgMeeting = ({
                             Delete
                         </AsyncButton>
                     )}
-                </Box>
+                </Stack>
             </Stack>
             <MeetingPreview
                 id={id}
