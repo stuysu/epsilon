@@ -4,6 +4,7 @@ import OrgContext from "../../context/OrgContext";
 
 import { useLocation, useNavigate } from "react-router-dom";
 import UserContext from "../../context/UserContext";
+import OrgInspector from "./OrgInspector";
 
 const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const organization = useContext<OrgContextType>(OrgContext);
@@ -167,6 +168,9 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                                     ))}
                                 </>
                             )}
+                        </div>
+                        <div className="relative bottom-10 pr-3">
+                            <OrgInspector />
                         </div>
                     </div>
                 )}
