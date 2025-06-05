@@ -1,19 +1,5 @@
-import {
-    Avatar,
-    Box,
-    Divider,
-    Stack,
-    Typography,
-    useMediaQuery,
-} from "@mui/material";
-import React, {
-    CSSProperties,
-    FC,
-    useContext,
-    useEffect,
-    useRef,
-    useState,
-} from "react";
+import { Avatar, Box, Divider, Stack, Typography, useMediaQuery } from "@mui/material";
+import React, { CSSProperties, FC, useContext, useEffect, useRef, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../../supabaseClient";
 import UserContext from "../../context/UserContext";
@@ -496,6 +482,11 @@ const NavBar: FC = () => {
                         scrollbarWidth: "none",
                     }}
                 >
+                    <div
+                        className={
+                            "fixed bg-gradient-to-r to-[#252523] from-transparent z-[5000] h-[55px] w-14 bottom-0 right-0"
+                        }
+                    ></div>
                     <Stack
                         direction="row"
                         spacing={3}

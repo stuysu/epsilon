@@ -1,12 +1,6 @@
 /* ORG ROUTING INFORMATION HERE */
 import React, { useEffect, useState } from "react";
-import {
-    Route,
-    Routes,
-    useLocation,
-    useNavigate,
-    useParams,
-} from "react-router-dom";
+import { Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
 import OrgContext from "../../comps/context/OrgContext";
 import Loading from "../../comps/ui/Loading";
 import { supabase } from "../../supabaseClient";
@@ -242,7 +236,9 @@ const OrgRouter = () => {
                                     </CSSTransition>
                                 </TransitionGroup>
                             </div>
-                            <OrgInspector />
+                            <div className="lg:block hidden mr-3">
+                                <OrgInspector />
+                            </div>
                         </div>
                     </>
                 )}

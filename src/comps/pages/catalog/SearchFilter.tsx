@@ -71,7 +71,14 @@ const SearchFilter = ({
                             padding: "20px",
                             paddingBottom: "17px",
                             fontVariationSettings: `'wght' 700`,
+                            transition: "background-color 0.1s ease",
                             backgroundColor: "#1F1F1F80",
+                            "&:hover": {
+                                backgroundColor: "#2A2A2A80",
+                            },
+                            "&:focus-within": {
+                                backgroundColor: "#3A3A3A80",
+                            },
                             boxShadow:
                                 "0px 0px 2px 0px rgba(255, 255, 255, 0.30) inset",
                         }}

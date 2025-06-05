@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Avatar, Card, Divider, Stack, Typography } from "@mui/material";
+import { Avatar, Card, Divider, Typography } from "@mui/material";
 
 import { supabase } from "../../supabaseClient";
 import { useSnackbar } from "notistack";
@@ -143,7 +143,7 @@ const OrgEditApproval = ({
 
     return (
         <div className="m-10">
-            <div className="mb-10 flex flex-row justify-between items-center">
+            <div className="mb-10 flex flex-col sm:flex-row justify-between items-center">
                 <Typography variant="h1" width="100%">
                     <span className={"text-green-600"}>Changes to</span>{" "}
                     {edit.organization_name}
@@ -176,8 +176,8 @@ const OrgEditApproval = ({
                     </AsyncButton>
                 </div>
             </div>
-            <Stack direction="row" gap={3}>
-                <Card sx={{ padding: "10px" }}>
+            <div className={"flex flex-col sm:flex-row gap-1"}>
+                <Card sx={{ padding: "10px", minWidth: "40vw" }}>
                     {fields.map((field, i) => {
                         let f2: EditKey = field as EditKey;
 
@@ -223,7 +223,7 @@ const OrgEditApproval = ({
                 <div className="max-h-[70vh] sticky top-32 min-w-[40vw]">
                     <OrgChat organization_id={edit.organization_id} />
                 </div>
-            </Stack>
+            </div>
         </div>
     );
 };
