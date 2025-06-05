@@ -5,9 +5,10 @@
 <div align="center">
   The all-in-one platform for Stuyvesant High School's needs.
 
-  https://epsilon.stuysu.org/
+https://epsilon.stuysu.org/
 
-  [**Contributing Guide**](https://github.com/stuysu/epsilon/wiki)
+[**Contributing Guide**](https://github.com/stuysu/epsilon/wiki)
+
 </div>
 
 ---
