@@ -59,7 +59,7 @@ const OrgApproval = ({
 
     return (
         <div className="m-10">
-            <div className="mb-10 flex flex-row justify-between items-center">
+            <div className="mb-10 flex flex-col sm:flex-row justify-between items-center">
                 <Typography variant="h1">{org.name}</Typography>
                 <div>
                     <AsyncButton
@@ -90,7 +90,7 @@ const OrgApproval = ({
                 </div>
             </div>
 
-            <div className={"flex flex-row gap-10"}>
+            <div className={"flex flex-col sm:flex-row gap-10"}>
                 <div className={"w-full"}>
                     <Typography variant="h5" fontWeight={600}>
                         Activity Name
