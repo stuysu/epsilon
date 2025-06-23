@@ -138,6 +138,10 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                                             display: "Meetings",
                                         },
                                         {
+                                            to: `/modules/attendance`,
+                                            display: "Attendance",
+                                        },
+                                        {
                                             to: `${main}/admin/posts`,
                                             display: "Posts",
                                         },
@@ -235,6 +239,10 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                             {
                                 to: `${main}/admin/meetings`,
                                 display: "Meetings",
+                            },
+                            {
+                                to: `/modules/attendance`,
+                                display: "Attendance",
                             },
                             { to: `${main}/admin/posts`, display: "Posts" },
                             {
