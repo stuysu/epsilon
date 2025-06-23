@@ -18,6 +18,7 @@ type Props = {
     org_picture?: string;
     isMobile?: boolean;
     onlyUpcoming?: boolean;
+    openAttendance?: () => void;
     onEdit?: () => void;
     onDelete?: () => void;
 };
@@ -34,6 +35,7 @@ const OrgMeeting = ({
     org_picture,
     isMobile,
     onlyUpcoming,
+    openAttendance,
     onEdit,
     onDelete,
 }: Props) => {
@@ -77,6 +79,15 @@ const OrgMeeting = ({
                     )}
                 </Stack>
                 <Stack direction="row">
+                    {openAttendance && (
+                        <AsyncButton
+                            variant="contained"
+                            onClick={openAttendance}
+                            sx={{ marginLeft: "10px" }}
+                        >
+                            Attendance
+                        </AsyncButton>
+                    )}
                     {onEdit && (
                         <AsyncButton
                             variant="contained"
