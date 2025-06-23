@@ -121,7 +121,9 @@ const Meetings = () => {
                                 is_public={meeting.is_public}
                                 isMobile={isMeetingMobile}
                                 openAttendance={() => {
-                                    navigate(`/modules/attendance/meeting-admin/${meeting.id}`);
+                                    navigate(
+                                        `/modules/attendance/meeting-admin/${meeting.id}`,
+                                    );
                                 }}
                                 onEdit={() => {
                                     setEditState({
