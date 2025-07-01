@@ -27,6 +27,7 @@ import AddIcon from "@mui/icons-material/Add";
 import AddUser from "./AddUser";
 import FavoriteIcon from "@mui/icons-material/Favorite";
 import ApprovedValentines from "./ApprovedValentines";
+import Debug from "./Debug";
 
 const VALENTINES = false;
 
@@ -147,6 +148,7 @@ const AdminRouter = () => {
                 <Route path="/announcements" Component={Announcements} />
                 <Route path="/rooms" Component={Rooms} />
                 <Route path="/add-user" Component={AddUser} />
+                <Route path="/debug" Component={Debug} />
                 {VALENTINES && (
                     <>
                         <Route path="/valentines" Component={Valentines} />
