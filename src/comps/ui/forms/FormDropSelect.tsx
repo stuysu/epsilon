@@ -63,16 +63,8 @@ const FormDropSelect = ({
         onChange(event.target.value as string);
     };
 
-    let helperText = "";
-
-    if (required) {
-        helperText = "*Required";
-    } else {
-        helperText = "*Optional";
-    }
-
     return (
-        <FormControl fullWidth>
+        <FormControl fullWidth required={required}>
             <InputLabel>{selectProps.label}</InputLabel>
             <Select
                 onChange={(e) => selectionChanged(e)}
@@ -86,12 +78,11 @@ const FormDropSelect = ({
                 ))}
             </Select>
             <FormHelperText>
-                {helperText}
-                {description?.split("\n").map((line) => (
-                    <>
-                        <br />
+                {description?.split("\n").map((line, i) => (
+                    <div key={i}>
+                        {i > 0 && <br />}
                         {line}
-                    </>
+                    </div>
                 ))}
             </FormHelperText>
         </FormControl>

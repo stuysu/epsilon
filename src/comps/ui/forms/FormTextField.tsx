@@ -122,7 +122,7 @@ const FormTextField = ({
     if (!required) {
         helperText = "Optional";
     } else {
-        helperText = "*Required";
+        helperText = "Required";
     }
 
     if (requirements) {
@@ -175,6 +175,7 @@ const FormTextField = ({
 
     return (
         <TextField
+            required={required}
             onChange={textChanged}
             value={value}
             helperText={
