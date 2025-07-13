@@ -90,6 +90,16 @@ const Create = () => {
     const urlPattern = /^[a-zA-Z0-9_-]+$/;
 
     const validateUrl = async (url: string) => {
+        if (
+            OrgRequirements.url.requirements &&
+            (url.length < OrgRequirements.url.requirements.minChar ||
+                url.length > OrgRequirements.url.requirements.maxChar)
+        ) {
+            setUrlError(
+                `URL ending must be between ${OrgRequirements.url.requirements.minChar} and ${OrgRequirements.url.requirements.maxChar} characters long`,
+            );
+            return;
+        }
         if (!urlPattern.test(url)) {
             setUrlError(
                 "URL can only contain letters, numbers, dashes, and underscores.",
@@ -395,7 +405,7 @@ const Create = () => {
                             label="Commitment Level"
                             field="commitment_level"
                             description={
-                                "None: Any amount\nLow: <= 3 meetings a month\nMedium: 4-8 meetings a month\nHigh: 9+ Meetings a month"
+                                "None: Any amount\nLow: 0–3 meetings a month\nMedium: 4–8 meetings a month\nHigh: 9+ Meetings a month"
                             }
                             required={OrgRequirements.commitment_level.required}
                             selections={[

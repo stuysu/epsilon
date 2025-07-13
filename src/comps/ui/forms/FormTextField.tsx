@@ -176,6 +176,7 @@ const FormTextField = ({
     return (
         <TextField
             required={required}
+            error={required && status && !!value && !status.value}
             onChange={textChanged}
             value={value}
             helperText={

@@ -1,12 +1,12 @@
 import { useEffect } from "react";
 import {
-    Select,
-    MenuItem,
-    SelectProps,
-    SelectChangeEvent,
     FormControl,
-    InputLabel,
     FormHelperText,
+    InputLabel,
+    MenuItem,
+    Select,
+    SelectChangeEvent,
+    SelectProps,
 } from "@mui/material";
 
 type SelectType = {
@@ -78,12 +78,9 @@ const FormDropSelect = ({
                 ))}
             </Select>
             <FormHelperText>
-                {description?.split("\n").map((line, i) => (
-                    <div key={i}>
-                        {i > 0 && <br />}
-                        {line}
-                    </div>
-                ))}
+                {description
+                    ?.split("\n")
+                    .map((line, i) => <div key={i}>{line}</div>)}
             </FormHelperText>
         </FormControl>
     );
