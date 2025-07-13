@@ -10,7 +10,11 @@ import OrgMeeting from "../../../comps/pages/orgs/OrgMeeting";
 import { sortByDate } from "../../../utils/DataFormatters";
 import AsyncButton from "../../../comps/ui/AsyncButton";
 
+import { useNavigate } from "react-router-dom";
+
 const Meetings = () => {
+    const navigate = useNavigate();
+
     const organization = useContext(OrgContext);
     const { enqueueSnackbar } = useSnackbar();
     const isMeetingMobile = useMediaQuery("(max-width: 1450px)");
@@ -116,6 +120,11 @@ const Meetings = () => {
                                 org_picture={organization.picture || ""}
                                 is_public={meeting.is_public}
                                 isMobile={isMeetingMobile}
+                                openAttendance={() => {
+                                    navigate(
+                                        `/modules/attendance/meeting-admin/${meeting.id}`,
+                                    );
+                                }}
                                 onEdit={() => {
                                     setEditState({
                                         id: meeting.id,
