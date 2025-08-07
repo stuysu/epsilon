@@ -122,9 +122,9 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                         color: prefersDarkMode ? "#E8E8E8CC" : "#5B5B5B",
                     },
                     body1: {
-                        fontSize: "1rem",
+                        fontSize: "0.95rem",
                         fontVariationSettings: `'wght' 500`,
-                        lineHeight: "1.3rem",
+                        lineHeight: "1.25rem",
                         color: prefersDarkMode ? "#AEAEAECC" : "#2C2C2C",
                     },
                 },

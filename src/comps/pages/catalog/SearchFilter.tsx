@@ -47,14 +47,14 @@ const SearchFilter = ({
                           ? "30%"
                           : "25%",
                 height: isOneColumn || isTwoWrap ? " " : "100vh",
-                padding: "20px",
+                paddingLeft: "3rem",
                 position: isOneColumn || isTwoWrap ? "relative" : "sticky",
                 top: 0,
                 paddingTop: "40px",
                 overflowY: "auto",
             }}
         >
-            <div className={"max-sm:-mt-5"}>
+            <div className={"max-sm:-mt-5 max-sm:mr-10"}>
                 <Box
                     sx={{
                         width: "100%",

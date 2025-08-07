@@ -30,12 +30,12 @@ const OrgInspector = () => {
                 bgcolor="#1f1f1f80"
                 padding={0.5}
                 marginLeft={5}
-                marginRight={3}
+                marginRight="3rem"
                 marginTop={1}
                 borderRadius={3}
                 boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
             >
-                <Typography variant="h4" marginX={3} marginY={2}>
+                <Typography variant="h4" marginX={3} marginY={2.5}>
                     Strikes
                 </Typography>
                 <Stack
@@ -102,12 +102,12 @@ const OrgInspector = () => {
             bgcolor="#1f1f1f80"
             padding={0.5}
             marginLeft={5}
-            marginRight={3}
+            marginRight="3rem"
             marginTop={1}
             borderRadius={3}
             boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
         >
-            <Typography variant="h4" marginX={3} marginY={2}>
+            <Typography variant="h4" marginX={3} marginY={2.5}>
                 Links
             </Typography>
 

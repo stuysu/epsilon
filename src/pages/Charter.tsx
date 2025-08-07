@@ -1,5 +1,5 @@
 import { Typography } from "@mui/material";
-import React from "react";
+import React, { useState } from "react";
 import { PUBLIC_URL } from "../constants";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -7,14 +7,19 @@ import { motion } from "framer-motion";
 const Charter = () => {
     const navigate = useNavigate();
     const title = "Apply for a StuyActivities Charter";
+    const [isImgLoaded, isIsImgLoaded] = useState(false);
 
     return (
         <div>
             <div className={"relative lg:bottom-32"}>
                 <img
                     src={`${PUBLIC_URL}/textures/charter.png`}
-                    className={"w-full"}
-                ></img>
+                    className="w-full"
+                    onLoad={() => isIsImgLoaded(true)}
+                    style={{ display: isImgLoaded ? "block" : "none" }}
+                />
+                {isImgLoaded && (
+                    <>
                 <div
                     className={
                         "flex justify-center items-center w-full h-full absolute top-0 left-0"
@@ -46,6 +51,8 @@ const Charter = () => {
                         ))}
                     </h1>
                 </div>
+                    </>
+                )}
             </div>
             <div
                 className={

@@ -144,8 +144,8 @@ const NavBar: FC = () => {
         justifyContent: "space-between",
         display: "flex",
         alignItems: "center",
-        paddingRight: "4.5vw",
-        paddingLeft: "4.5vw",
+        paddingRight: "3rem",
+        paddingLeft: "3rem",
         zIndex: 50,
     };
 
@@ -237,7 +237,7 @@ const NavBar: FC = () => {
                 }`}
             />
 
-            {/* Top items — logo & user menu */}
+            {/* Top items — logo & user dropdown menu */}
             <Box sx={topStyle}>
                 {/* Logo / Wordmark */}
                 <Box sx={titleStyle}>
@@ -409,7 +409,7 @@ const NavBar: FC = () => {
                         fontSize: 20,
                         fontVariationSettings: "'wght' 700",
                         position: "relative",
-                        marginLeft: "4.5vw",
+                        marginLeft: "3rem",
                         mt: isMobile ? 2 : 3,
                         mb: isMobile ? 2 : 1.5,
                     }}
@@ -484,13 +484,13 @@ const NavBar: FC = () => {
                 >
                     <div
                         className={
-                            "fixed bg-gradient-to-r to-[#252523] from-transparent z-[5000] h-[55px] w-14 bottom-0 right-0"
+                            "sm:hidden fixed bg-gradient-to-r to-[#252523] from-transparent z-[5000] h-[55px] w-14 bottom-0 right-0"
                         }
                     ></div>
                     <Stack
                         direction="row"
                         spacing={3}
-                        ml="4.5vw"
+                        ml="3rem"
                         mt={2}
                         position="relative"
                         zIndex={1002}

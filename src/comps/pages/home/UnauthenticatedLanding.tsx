@@ -95,7 +95,7 @@ const UnauthenticatedLanding = () => {
                 </div>
             </Box>
             <img
-                src="https://ugc.production.linktr.ee/a09ecb69-bd20-410d-96bf-9c86e2a9ad9a_STUY-SU-FAVICON--1-.png"
+                src="https://lh4.googleusercontent.com/MocBT-lsE_2edgLBY_5yG1lKB6VA0UysQZnteXEXugKwl7naAFFc-qyUWNQQYT3DhPkDWtUwIvQxCsCmMXVVKTKCQEeDei22SaSno3UxHf_0y4AYi6zKU5BX3uKxQoI-iJkY4BFaSIM=w16383"
                 alt="Stuyvesant Student Union"
                 onClick={() => window.open("https://stuysu.org", "_blank")}
                 className="cursor-pointer relative bottom-12 left-1/2 transform -translate-x-1/2 w-14 h-14 object-cover"

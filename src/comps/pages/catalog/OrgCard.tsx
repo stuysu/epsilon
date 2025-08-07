@@ -52,7 +52,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                             boxShadow:
                                 "inset 0 0 1px 1px rgba(255, 255, 255, 0.075), 0px 5px 15px rgba(0, 0, 0, 0.3)",
                         },
-                        height: "450px",
+                        height: "445px",
                         display: "flex",
                         flexDirection: "column",
                         overflow: "visible",
@@ -84,7 +84,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                         style={{
                             background:
                                 "linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0) 0%, rgba(143, 143, 143, 0.67) 50%, rgba(0, 0, 0, 0) 100%)",
-                            width: "300px",
+                            width: "250px",
                             height: "1px",
                             position: "absolute",
                             top: "0px",

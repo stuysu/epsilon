@@ -170,19 +170,18 @@ const OrgRouter = () => {
                         ></div>
                         <div className={`sm:hidden block mt-14`}></div>
                         <div
-                            className={`sm:sticky fixed cursor-pointer transition-colors text-gray-300 hover:text-gray-400 ml-10 mt-4 sm:top-5 top-1 z-40`}
+                            className={`sm:sticky fixed cursor-pointer transition-colors text-gray-300 hover:text-gray-400 ml-10 mt-4 sm:top-5 top-0 z-40`}
                             onClick={() => navigate("/catalog")}
                         >
-                            <i className={"bx bx-chevron-left"}></i>
+                            <i className={"bx bx-chevron-left bx-sm"}></i>
                             <span
                                 style={{
                                     fontVariationSettings: "'wght' 700",
-                                    marginLeft: 3,
                                     position: "relative",
-                                    top: -1,
+                                    top: -5,
                                 }}
                             >
-                                Back to Catalog
+                                Back
                             </span>
                         </div>
 
@@ -192,7 +191,7 @@ const OrgRouter = () => {
                                 marginTop: "10px",
                             }}
                         ></Box>
-                        <div className={"ml-3 sm:ml-14 sm:mr-0 mr-3 flex"}>
+                        <div className={"ml-3 sm:ml-12 sm:mr-0 mr-3 flex"}>
                             <div className={"sticky top-10 h-fit z-[40] mb-48"}>
                                 <OrgNav isMobile={isMobile} />
                             </div>
@@ -236,7 +235,7 @@ const OrgRouter = () => {
                                     </CSSTransition>
                                 </TransitionGroup>
                             </div>
-                            <div className="lg:block hidden mr-3">
+                            <div className="lg:block hidden">
                                 <OrgInspector />
                             </div>
                         </div>

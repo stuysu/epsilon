@@ -161,7 +161,7 @@ const Overview = () => {
             marginTop={1}
             sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}
         >
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={5}>
+            <Stack direction={{ xs: "column", sm: "row" }} spacing={3}>
                 <Box>
                     <div
                         className={
@@ -170,8 +170,8 @@ const Overview = () => {
                     >
                         <Box
                             sx={{
-                                width: "230px",
-                                height: "230px",
+                                width: "240px",
+                                height: "240px",
                                 borderRadius: "25px",
                                 position: "absolute",
                                 boxShadow:
@@ -182,21 +182,21 @@ const Overview = () => {
                         <Avatar
                             src={organization.picture || ""}
                             sx={{
-                                width: "230px",
-                                height: "230px",
+                                width: "240px",
+                                height: "240px",
                                 borderRadius: "25px",
                                 objectFit: "cover",
                                 position: "absolute",
                                 zIndex: 0,
                                 filter: "blur(30px)",
-                                opacity: 0.3,
+                                opacity: 0.25,
                             }}
                         />
                         <Avatar
                             src={organization.picture || ""}
                             sx={{
-                                width: "230px",
-                                height: "230px",
+                                width: "240px",
+                                height: "240px",
                                 backgroundColor: "#232323",
                                 borderRadius: "25px",
                                 objectFit: "cover",
@@ -212,7 +212,7 @@ const Overview = () => {
                     </div>
                 </Box>
 
-                <Stack direction={"column"} justifyContent={"space-between"}>
+                <Stack direction={"column"} position={"relative"} bottom={5}>
                     <div>
                         <div
                             className={"text-center sm:text-left max-sm:mb-10"}

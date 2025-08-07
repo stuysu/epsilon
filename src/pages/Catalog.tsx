@@ -56,8 +56,8 @@ const Catalog = () => {
             : Math.random(),
     );
 
-    const isTwo = useMediaQuery("(max-width: 1525px)");
-    const isTwoWrap = useMediaQuery("(max-width: 1100px)");
+    const isTwo = useMediaQuery("(max-width: 1350px)");
+    const isTwoWrap = useMediaQuery("(max-width: 1000px)");
     const isOne = useMediaQuery("(max-width: 700px)");
 
     let columns = 3;
@@ -196,8 +196,8 @@ const Catalog = () => {
             <Box
                 sx={{
                     width: isOne || isTwoWrap ? "100%" : isTwo ? "70%" : "75%",
-                    paddingRight: "20px",
-                    paddingLeft: "20px",
+                    paddingLeft: "2rem",
+                    paddingRight: "2rem",
                     position: "relative",
                 }}
             >
