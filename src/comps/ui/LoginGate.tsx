@@ -17,7 +17,7 @@ const LoginGate = ({ page, children, sx }: Props): React.JSX.Element => {
         <Box
             sx={{
                 width: "100%",
-                height: "80vh",
+                height: "70vh",
                 paddingX: "2rem",
                 display: "flex",
                 justifyContent: "center",

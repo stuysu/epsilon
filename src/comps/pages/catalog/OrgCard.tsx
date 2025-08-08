@@ -56,7 +56,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                         display: "flex",
                         flexDirection: "column",
                         overflow: "visible",
-                        padding: "30px",
+                        padding: "25px",
                         background: theme.colorMode
                             ? "rgba(31, 31, 31, 0.5)"
                             : "rgba(100, 100, 100, 0.2)",
@@ -216,25 +216,25 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                         </Typography>
 
                         <Stack
-                            direction="row"
+                            direction="column"
                             spacing={0}
                             sx={{
                                 boxShadow:
                                     "inset 0 0 1px 1px rgba(255, 255, 255, 0.1)",
                                 borderRadius: "10px",
-                                padding: "15px",
+                                paddingY: "10px",
+                                paddingX: "15px",
                                 background: "#36363680",
                                 marginTop: "20px",
-                                justifyContent: "space-between",
-                                alignItems: "flex-start",
                                 textTransform: "capitalize",
                             }}
                         >
+                            <div className={"flex justify-between"}>
                             <Typography
                                 noWrap
                                 sx={{ fontVariationSettings: "'wght' 500" }}
                             >
-                                Commitment Level
+                                Commitment
                             </Typography>
                             <Typography
                                 noWrap
@@ -242,6 +242,31 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                             >
                                 {organization.commitment_level?.toLowerCase()}
                             </Typography>
+                            </div>
+                            <div className={"flex justify-between relative top-0.5"}>
+                                <Typography
+                                    noWrap
+                                    sx={{ fontVariationSettings: "'wght' 500" }}
+                                >
+                                    Days
+                                </Typography>
+                                <Typography
+                                    noWrap
+                                    sx={{ fontVariationSettings: "'wght' 700" }}
+                                >
+                                    {organization.meeting_days?.length
+                                        ? organization.meeting_days
+                                            .map((day: string) => ({
+                                                MONDAY: "Mon",
+                                                TUESDAY: "Tue",
+                                                WEDNESDAY: "Wed",
+                                                THURSDAY: "Thu",
+                                                FRIDAY: "Fri",
+                                            }[day]))
+                                            .join(" · ")
+                                        : "None"}
+                                </Typography>
+                            </div>
                         </Stack>
                     </Box>
                 </Card>

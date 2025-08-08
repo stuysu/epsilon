@@ -170,7 +170,7 @@ const OrgRouter = () => {
                         ></div>
                         <div className={`sm:hidden block mt-14`}></div>
                         <div
-                            className={`sm:sticky fixed cursor-pointer transition-colors text-gray-300 hover:text-gray-400 ml-10 mt-4 sm:top-5 top-0 z-40`}
+                            className={`sm:sticky fixed cursor-pointer transition-colors text-gray-300 hover:text-gray-400 ml-6 mt-3 sm:top-5 top-0 z-40`}
                             onClick={() => navigate("/catalog")}
                         >
                             <i className={"bx bx-chevron-left bx-sm"}></i>
@@ -192,7 +192,7 @@ const OrgRouter = () => {
                             }}
                         ></Box>
                         <div className={"ml-3 sm:ml-12 sm:mr-0 mr-3 flex"}>
-                            <div className={"sticky top-10 h-fit z-[40] mb-48"}>
+                            <div className={"sticky top-14 h-fit z-[40] mb-48"}>
                                 <OrgNav isMobile={isMobile} />
                             </div>
                             <div className={"w-full md:pr-14 lg:pr-0 pr-0"}>

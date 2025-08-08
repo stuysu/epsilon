@@ -54,7 +54,8 @@ const SearchFilter = ({
                 overflowY: "auto",
             }}
         >
-            <div className={"max-sm:-mt-5 max-sm:mr-10"}>
+            <div className={"max-sm:-mt-5 max-sm:mr-10 relative"}>
+                <i className={"absolute bx bx-search bx-sm z-10 top-[0.8rem] left-3"}></i>
                 <Box
                     sx={{
                         width: "100%",
@@ -69,6 +70,7 @@ const SearchFilter = ({
                             borderRadius: "10px",
                             width: "100%",
                             padding: "20px",
+                            paddingLeft: "45px",
                             paddingBottom: "17px",
                             fontVariationSettings: `'wght' 700`,
                             transition: "background-color 0.1s ease",

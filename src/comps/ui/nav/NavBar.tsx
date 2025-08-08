@@ -270,7 +270,11 @@ const NavBar: FC = () => {
                             src={user.picture}
                         />
                         <p className="relative top-0.5 pr-2 sm:block hidden">{`${user.first_name} ${user.last_name}`}</p>
-                        <i className="bx bx-chevron-down bx-sm hidden sm:inline-block pr-1" />
+                        <i
+                            className={`bx bx-chevron-down bx-sm hidden sm:inline-block pr-1 transition-transform duration-200 ${
+                                drawerOpen ? "bx-flip-vertical" : ""
+                            }`}
+                        />
                     </div>
 
                     {/* Drawer */}
