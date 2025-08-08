@@ -134,7 +134,7 @@ const Profiles = () => {
                         marginBottom={5}
                         sx={{ fontFamily: "monospace" }}
                     >
-                        EpsilonID: {String(fourDigitId).padStart(4, "0")}
+                        Epsilon ID: {String(fourDigitId).padStart(4, "0")}
                     </Typography>
                 )}
                 <img

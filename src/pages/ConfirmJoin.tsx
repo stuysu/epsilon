@@ -16,10 +16,10 @@ const ConfirmJoin = () => {
                 className="w-64"
             ></img>
             <Typography variant="body1" align="center" mb={2}>
-                Congratulations, Name!
+                You have been invited to join
             </Typography>
-            <Typography variant="h1" align="center" mb={5} maxWidth={"500px"}>
-                You have been invited to join Stuyvesant Placeholder Association
+            <Typography variant="h1" align="center" mb={5} mx={3} maxWidth={"500px"}>
+                Stuyvesant Placeholder Association
             </Typography>
             <AsyncButton>Join Now</AsyncButton>
         </div>
