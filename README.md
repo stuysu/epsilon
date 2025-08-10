@@ -19,7 +19,7 @@ https://epsilon.stuysu.org/
 
 - StuyActivities [finished]
 - Calendar [finished]
-- Attendance [finished]
+- MyMeetingAttendance [finished]
 - Opportunities [planned]
 - Daily Schedule [planned]
 - Votes [planned]
