@@ -8,7 +8,7 @@ import React, { lazy, Suspense, useContext, useEffect, useState } from "react";
 
 // Pages
 import Index from "./home";
-import AllMeetings from "./calendar/AllMeetings";
+import CalendarIndex from "./calendar";
 import NavBar from "../components/ui/NavBar";
 import AboutIndex from "./about";
 import Regulations from "./stuyactivities/Regulations";
@@ -92,7 +92,7 @@ const Pages = () => {
                         Component={UnaffiliatedRoomReservation}
                     />
                     <Route path={"/about"} Component={AboutIndex} />
-                    <Route path={"/meetings"} Component={AllMeetings} />
+                    <Route path={"/meetings"} Component={CalendarIndex} />
                     <Route path={"/rules"} Component={Regulations} />
                     <Route path={"/archives"} Component={Archives} />
                     <Route path={"/activities-support"} Component={Support} />

@@ -45,7 +45,7 @@ function ServerDay(
     );
 }
 
-const AllMeetings = () => {
+const Index = () => {
     const { enqueueSnackbar } = useSnackbar();
     const isMobile = useMediaQuery("(max-width: 800px)");
 
@@ -195,4 +195,4 @@ const AllMeetings = () => {
     );
 };
 
-export default AllMeetings;
+export default Index;
