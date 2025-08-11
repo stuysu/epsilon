@@ -58,7 +58,7 @@ const Overview = () => {
 
     if (isCreator) disabled = true;
     if (!isInOrg && !organization.joinable) {
-        interactString = "JOINING DISABLED";
+        interactString = "🔒 Private Activity";
         disabled = true;
     } else if (!user.signed_in) {
         interactString = "Sign In To Join";
@@ -252,6 +252,7 @@ const Overview = () => {
                                 onClick={() => navigate("./charter")}
                                 variant="body1"
                                 sx={{
+                                    height: "4lh",
                                     display: "-webkit-box",
                                     WebkitBoxOrient: "vertical",
                                     overflow: "hidden",

@@ -7,7 +7,7 @@ import OrgContext from "../../../../contexts/OrgContext";
 
 import Members from "./pages/Members";
 import MemberRequests from "./pages/MemberRequests";
-import Meetings from "./pages/Meetings";
+import Roster from "./pages/Roster";
 import Posts from "./pages/Posts";
 import Organization from "./pages/Organization";
 
@@ -42,7 +42,7 @@ const OrgAdminRouter = () => {
                             path={"/member-requests"}
                             Component={MemberRequests}
                         />
-                        <Route path={"/meetings"} Component={Meetings} />
+                        <Route path={"/meetings"} Component={Roster} />
                         <Route path={"/posts"} Component={Posts} />
 
                         <Route

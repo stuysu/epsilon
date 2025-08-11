@@ -10,7 +10,7 @@ import OrgMeeting from "../../components/OrgMeeting";
 import { sortByDate } from "../../../../../utils/DataFormatters";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
 
-const Meetings = () => {
+const Roster = () => {
     const organization = useContext(OrgContext);
     const { enqueueSnackbar } = useSnackbar();
     const isMeetingMobile = useMediaQuery("(max-width: 1450px)");
@@ -239,4 +239,4 @@ const Meetings = () => {
     );
 };
 
-export default Meetings;
+export default Roster;
