@@ -6,7 +6,7 @@ import Loading from "../../../components/ui/Loading";
 import { supabase } from "../../../lib/supabaseClient";
 import { Helmet } from "react-helmet";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
-import "../../../styles/org_transitions.css";
+import "../../../styles/transitions.css";
 import OrgNav from "./components/OrgNav";
 
 import NotFound from "./pages/NotFound";

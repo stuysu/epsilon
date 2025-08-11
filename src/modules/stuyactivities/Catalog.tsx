@@ -3,36 +3,17 @@ import { supabase } from "../../lib/supabaseClient";
 import { Box, Skeleton, Typography, useMediaQuery } from "@mui/material";
 import { Masonry } from "@mui/lab";
 import { motion } from "framer-motion";
+import { useSnackbar } from "notistack";
+import { Helmet } from "react-helmet";
 
 import OrgCard from "./components/OrgCard";
-import { useSnackbar } from "notistack";
-
-import { Helmet } from "react-helmet";
 import SearchFilter from "./components/SearchFilter";
-
-/*
-function getUnique(arr : Partial<Organization>[]) {
-  let obj : {[k: number] : any} = {};
-  for (let thing of arr) {
-    obj[thing.id || 0] = true;
-  }
-
-  return obj;
-}
-*/
 
 type SearchState = {
     orgs: Partial<Organization>[];
     offset: number;
     more: boolean;
 };
-
-/*
-If there are search params
-- reset orgs to empty
-- new function that doesn't order by random, but gets by search params
-- should work with infinite scroll
-*/
 
 const Catalog = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -46,6 +27,9 @@ const Catalog = () => {
         more: true,
     });
 
+    const [loadingInitial, setLoadingInitial] = useState(true);
+    const [loadingNext, setLoadingNext] = useState(false);
+
     const [searchParams, setSearchParams] = useState<SearchParams>({
         name: "",
         meetingDays: [],
@@ -56,10 +40,7 @@ const Catalog = () => {
     const [debouncedSearchParams, setDebouncedSearchParams] =
         useState(searchParams);
     useEffect(() => {
-        const t = setTimeout(
-            () => setDebouncedSearchParams(searchParams),
-            1000,
-        );
+        const t = setTimeout(() => setDebouncedSearchParams(searchParams), 500);
         return () => clearTimeout(t);
     }, [searchParams]);
 
@@ -169,6 +150,8 @@ const Catalog = () => {
         async (isReset = false) => {
             if (isFetchingRef.current) return;
             isFetchingRef.current = true;
+            if (isReset) setLoadingInitial(true);
+            else setLoadingNext(true);
 
             try {
                 const res = await fetchPage(isReset);
@@ -178,19 +161,22 @@ const Catalog = () => {
                     .map((o) => o.id)
                     .filter(Boolean) as number[];
 
-                const { data: mems } = await supabase
-                    .from("memberships")
-                    .select("organization_id")
-                    .in("organization_id", pageIds)
-                    .eq("active", true);
+                let counts = new Map<number, number>();
+                if (pageIds.length) {
+                    const { data: mems } = await supabase
+                        .from("memberships")
+                        .select("organization_id")
+                        .in("organization_id", pageIds)
+                        .eq("active", true);
 
-                const counts = new Map<number, number>();
-                (mems ?? []).forEach((m: any) => {
-                    counts.set(
-                        m.organization_id,
-                        (counts.get(m.organization_id) ?? 0) + 1,
-                    );
-                });
+                    counts = new Map<number, number>();
+                    (mems ?? []).forEach((m: any) => {
+                        counts.set(
+                            m.organization_id,
+                            (counts.get(m.organization_id) ?? 0) + 1,
+                        );
+                    });
+                }
 
                 const pageWithMems = res.data.map((o) => {
                     const count = counts.get(o.id as number) ?? 0;
@@ -209,24 +195,28 @@ const Catalog = () => {
                     more: res.more,
                 }));
 
-                if (isReset) {
-                    window.scrollTo({ top: 0 });
-                }
+                if (isReset) window.scrollTo({ top: 0 });
             } finally {
+                if (isReset) setLoadingInitial(false);
+                else setLoadingNext(false);
                 isFetchingRef.current = false;
             }
         },
         [fetchPage, querySize],
     );
 
+    // reset and fetch first page on param change
     useEffect(() => {
         setSearchState({ orgs: [], offset: 0, more: true });
+        setLoadingInitial(true);
+        setLoadingNext(false);
         getOrgs(true);
     }, [getOrgs, seed, debouncedSearchParams]);
 
+    // infinite scroll only after initial load is done and we still have more
     useEffect(() => {
         const node = sentinelRef.current;
-        if (!node || !searchState.more) return;
+        if (!node || loadingInitial || !searchState.more) return;
 
         const observer = new IntersectionObserver(
             (entries) => {
@@ -242,9 +232,24 @@ const Catalog = () => {
 
         observer.observe(node);
         return () => observer.disconnect();
-    }, [getOrgs, searchState.more]);
+    }, [getOrgs, searchState.more, loadingInitial]);
 
     const approvedOrgs = searchState.orgs.filter((o) => o.state !== "PENDING");
+
+    const SkeletonGrid = ({ count }: { count: number }) => (
+        <div className="flex gap-4 flex-wrap">
+            {Array.from({ length: count }).map((_, i) => (
+                <Skeleton
+                    key={i}
+                    animation="wave"
+                    height={445}
+                    sx={{ borderRadius: "20px" }}
+                    className="flex-1"
+                    variant="rounded"
+                />
+            ))}
+        </div>
+    );
 
     return (
         <Box sx={{ display: "flex", position: "relative", flexWrap: "wrap" }}>
@@ -273,68 +278,69 @@ const Catalog = () => {
                 }}
             >
                 <Box sx={{ overflowAnchor: "none" as any }}>
-                    <Masonry columns={columns} spacing={isOne ? 0 : 2}>
-                        {searchState.orgs.map((org, i) => (
-                            <div key={(org as any).id ?? `ghost-${i}`}>
-                                <motion.div
-                                    initial={{
-                                        opacity: 0,
-                                        y: 10,
-                                        scale: 0.98,
-                                        filter: "blur(10px)",
-                                    }}
-                                    animate={{
-                                        opacity: 1,
-                                        y: 0,
-                                        scale: 1,
-                                        filter: "blur(0px)",
-                                    }}
-                                    transition={{
-                                        duration: 0.4,
-                                        ease: [0.33, 1, 0.68, 1],
-                                        delay: (i % (columns * 3)) * 0.08,
-                                    }}
-                                    viewport={{
-                                        once: true,
-                                        amount: 0.2,
-                                        margin: "200px",
-                                    }}
-                                    style={{
-                                        willChange:
-                                            "transform, opacity, filter",
-                                        backfaceVisibility: "hidden",
-                                    }}
-                                >
-                                    <OrgCard organization={org} />
-                                </motion.div>
-                            </div>
-                        ))}
-                    </Masonry>
+                    {/* When new search -show top skeletons */}
+                    {loadingInitial ? (
+                        <div className={"relative top-10"}>
+                            <SkeletonGrid count={columns} />
+                        </div>
+                    ) : (
+                        <Masonry columns={columns} spacing={isOne ? 0 : 2}>
+                            {searchState.orgs.map((org, i) => (
+                                <div key={(org as any).id ?? `ghost-${i}`}>
+                                    <motion.div
+                                        initial={{
+                                            opacity: 0,
+                                            y: 10,
+                                            scale: 0.98,
+                                            filter: "blur(10px)",
+                                        }}
+                                        animate={{
+                                            opacity: 1,
+                                            y: 0,
+                                            scale: 1,
+                                            filter: "blur(0px)",
+                                        }}
+                                        transition={{
+                                            duration: 0.4,
+                                            ease: [0.33, 1, 0.68, 1],
+                                            delay: (i % (columns * 3)) * 0.08,
+                                        }}
+                                        viewport={{
+                                            once: true,
+                                            amount: 0.2,
+                                            margin: "200px",
+                                        }}
+                                        style={{
+                                            willChange:
+                                                "transform, opacity, filter",
+                                            backfaceVisibility: "hidden",
+                                        }}
+                                    >
+                                        <OrgCard organization={org} />
+                                    </motion.div>
+                                </div>
+                            ))}
+                        </Masonry>
+                    )}
 
+                    {/* Paging sentinel, not for initial load*/}
                     <div
                         ref={sentinelRef}
                         className="w-full flex flex-col gap-16 my-10 pr-4 pt-4"
                         style={{ overflowAnchor: "none" }}
                     >
-                        {searchState.more ? (
-                            <div className="flex gap-4 flex-wrap">
-                                {Array.from({ length: columns }).map((_, i) => (
-                                    <Skeleton
-                                        key={i}
-                                        animation="wave"
-                                        height={445}
-                                        sx={{ borderRadius: "20px" }}
-                                        className="flex-1"
-                                        variant="rounded"
-                                    />
-                                ))}
-                            </div>
+                        {searchState.more && !loadingInitial ? (
+                            loadingNext ? (
+                                <SkeletonGrid count={columns} />
+                            ) : (
+                                <div style={{ height: 1, width: "100%" }} />
+                            )
                         ) : (
                             <div style={{ height: 1, width: "100%" }} />
                         )}
                     </div>
 
-                    {!searchState.more && (
+                    {!loadingInitial && !searchState.more && (
                         <Box>
                             {approvedOrgs.length === 0 ? (
                                 <Typography

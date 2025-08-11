@@ -277,8 +277,8 @@ const NavBar: FC = () => {
                             backgroundSize: "cover",
                             backgroundPosition: "center",
                             pointerEvents: "none",
-                            opacity: 0.5,
-                            filter: "blur(10px)",
+                            opacity: 0.6,
+                            filter: "blur(15px)",
                             zIndex: 1,
                         }}
                     />

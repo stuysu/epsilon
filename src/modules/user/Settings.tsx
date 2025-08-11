@@ -4,6 +4,7 @@ import UserContext from "../../contexts/UserContext";
 import { supabase } from "../../lib/supabaseClient";
 import { enqueueSnackbar } from "notistack";
 import LoginGate from "../../components/ui/LoginGate";
+import Loading from "../../components/ui/Loading";
 
 type Memberships = {
     id: number;
@@ -15,9 +16,11 @@ type Memberships = {
 const Settings = () => {
     const user = useContext(UserContext);
     const [memberships, setMemberships] = useState<Memberships[]>([]);
+    const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchMemberships = async () => {
+            setLoading(true);
             const { data: membershipsData, error: membershipsError } =
                 await supabase
                     .from("memberships")
@@ -28,6 +31,7 @@ const Settings = () => {
                 enqueueSnackbar("Failed to fetch memberships", {
                     variant: "error",
                 });
+                setLoading(false);
                 return;
             }
 
@@ -47,6 +51,7 @@ const Settings = () => {
                     enqueueSnackbar("Failed to fetch notification settings", {
                         variant: "error",
                     });
+                    setLoading(false);
                     return;
                 }
 
@@ -60,6 +65,7 @@ const Settings = () => {
                     enqueueSnackbar("Failed to fetch organization names", {
                         variant: "error",
                     });
+                    setLoading(false);
                     return;
                 }
 
@@ -84,10 +90,19 @@ const Settings = () => {
 
                 setMemberships(mergedData);
             }
+            setLoading(false);
         };
 
         fetchMemberships();
     }, [user.id]);
+
+    if (loading) {
+        return (
+            <LoginGate sx={{ width: "100%", padding: "20px" }}>
+                <Loading />
+            </LoginGate>
+        );
+    }
 
     const handleToggle = async (
         membership_id: number,
@@ -133,7 +148,6 @@ const Settings = () => {
                     each organization you are a member of.
                 </Typography>
             </Box>
-
             <Box
                 sx={{
                     width: "100%",
