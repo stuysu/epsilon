@@ -4,7 +4,6 @@ import OrgContext from "../../../../contexts/OrgContext";
 
 import { useLocation, useNavigate } from "react-router-dom";
 import UserContext from "../../../../contexts/UserContext";
-import OrgInspector from "./OrgInspector";
 
 const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const organization = useContext<OrgContextType>(OrgContext);
@@ -33,8 +32,9 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     if (isMobile) {
         return (
             <>
+                {/* Need to fix this later */}
                 <button
-                    className={`fixed cursor-pointer transition-colors text-gray-300 hover:text-gray-400 mr-10 top-5 right-0`}
+                    className={`z-[100000] fixed cursor-pointer transition-colors text-gray-300 hover:text-gray-400 mr-4 top-5 right-0`}
                     onClick={() => setMenuOpen(true)}
                 >
                     <span
@@ -138,9 +138,6 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                                 </>
                             )}
                         </div>
-                        <div className="relative bottom-10 pr-3">
-                            <OrgInspector />
-                        </div>
                     </div>
                 )}
             </>
@@ -148,12 +145,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     }
 
     return (
-        <Box
-            sx={{
-                minWidth: "160px",
-                marginTop: "15px",
-            }}
-        >
+        <div className={"w-[160px] mt-4"}>
             <Typography>About</Typography>
             <List sx={{ width: "100%" }}>
                 {navLinks.map((linkData, i) => (
@@ -250,7 +242,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     </List>
                 </div>
             )}
-        </Box>
+        </div>
     );
 };
 

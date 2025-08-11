@@ -24,147 +24,156 @@ const OrgInspector = () => {
     }, [isAuditPage, organization.id]);
 
     return (
-        <Box
-            width={300}
-            bgcolor="#1f1f1f80"
-            padding={0.5}
-            marginLeft={5}
-            marginRight="3rem"
-            marginTop={1}
-            borderRadius={3}
-            boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
+        <div
+            className={
+                "relative xl:w-[300px] xl:ml-10 xl:mr-[3rem] max-xl:bottom-6"
+            }
         >
-            {isAuditPage ? (
-                <>
-                    <Typography variant="h4" marginX={3} marginY={2.5}>
-                        Strikes
-                    </Typography>
-                    <Stack
-                        direction="column"
-                        borderRadius={2}
-                        spacing={0.3}
-                        overflow="hidden"
-                    >
-                        {strikes.length === 0 ? (
-                            <Typography paddingLeft={3} paddingBottom={2}>
-                                No Strikes
-                            </Typography>
-                        ) : (
-                            strikes.map((strike, i) => (
-                                <Stack
-                                    key={strike.id}
-                                    sx={{
-                                        marginRight: "10px",
-                                        width: "100%",
-                                        paddingX: 3,
-                                        paddingY: 2,
-                                        backgroundColor: "#36363650",
-                                    }}
-                                >
-                                    <div className="flex w-full justify-between mb-1">
-                                        <Typography
-                                            sx={{
-                                                fontVariationSettings:
-                                                    "'wght' 700",
-                                            }}
-                                        >
-                                            Strike {i + 1}
-                                        </Typography>
-                                        <Typography
-                                            sx={{
-                                                fontVariationSettings:
-                                                    "'wght' 700",
-                                            }}
-                                        >
-                                            {new Date(
-                                                strike.created_at,
-                                            ).toLocaleDateString()}
-                                        </Typography>
-                                    </div>
-                                    <Typography>{strike.reason}</Typography>
-                                </Stack>
-                            ))
-                        )}
-                    </Stack>
-                </>
-            ) : (
-                <>
-                    <Typography variant="h4" marginX={3} marginY={2.5}>
-                        Links
-                    </Typography>
-                    <Stack
-                        direction="column"
-                        borderRadius={2}
-                        spacing={0.3}
-                        overflow="hidden"
-                    >
-                        {organization.socials &&
-                        organization.socials
-                            .split(" ")
-                            .some((social) => social.startsWith("http")) ? (
-                            organization.socials.split(" ").map((social, i) =>
-                                social.startsWith("http") ? (
-                                    <Link
-                                        key={i}
-                                        href={social}
-                                        target="_blank"
-                                        rel="noopener noreferrer"
-                                        underline="none"
+            <Box
+                width={"100%"}
+                bgcolor="#1f1f1f80"
+                padding={0.5}
+                marginTop={1}
+                borderRadius={3}
+                boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
+            >
+                {isAuditPage ? (
+                    <>
+                        <Typography variant="h4" marginX={3} marginY={2.5}>
+                            Strikes
+                        </Typography>
+                        <Stack
+                            direction="column"
+                            borderRadius={2}
+                            spacing={0.3}
+                            overflow="hidden"
+                        >
+                            {strikes.length === 0 ? (
+                                <Typography paddingLeft={3} paddingBottom={2}>
+                                    No Strikes
+                                </Typography>
+                            ) : (
+                                strikes.map((strike, i) => (
+                                    <Stack
+                                        key={strike.id}
+                                        sx={{
+                                            marginRight: "10px",
+                                            width: "100%",
+                                            paddingX: 3,
+                                            paddingY: 2,
+                                            backgroundColor: "#36363650",
+                                        }}
                                     >
-                                        <Stack
-                                            sx={{
-                                                marginRight: "10px",
-                                                width: "100%",
-                                                paddingX: 3,
-                                                paddingY: 2,
-                                                backgroundColor: "#36363650",
-                                                transition:
-                                                    "background-color 0.1s ease-in-out",
-                                                "&:hover": {
-                                                    backgroundColor:
-                                                        "#4d4d4d50",
-                                                },
-                                            }}
-                                        >
+                                        <div className="flex w-full justify-between mb-1">
                                             <Typography
                                                 sx={{
                                                     fontVariationSettings:
                                                         "'wght' 700",
                                                 }}
                                             >
-                                                {getPlatform(social)
-                                                    .charAt(0)
-                                                    .toUpperCase() +
-                                                    getPlatform(social).slice(
-                                                        1,
-                                                    )}
+                                                Strike {i + 1}
                                             </Typography>
                                             <Typography
-                                                noWrap
                                                 sx={{
-                                                    overflow: "hidden",
-                                                    textOverflow: "ellipsis",
-                                                    whiteSpace: "nowrap",
+                                                    fontVariationSettings:
+                                                        "'wght' 700",
                                                 }}
                                             >
-                                                {social.replace(
-                                                    /^https?:\/\/[^\/]+\/?/,
-                                                    "",
-                                                )}
+                                                {new Date(
+                                                    strike.created_at,
+                                                ).toLocaleDateString()}
                                             </Typography>
-                                        </Stack>
-                                    </Link>
-                                ) : null,
-                            )
-                        ) : (
-                            <Typography paddingLeft={3} paddingBottom={2}>
-                                No Links Provided
-                            </Typography>
-                        )}
-                    </Stack>
-                </>
-            )}
-        </Box>
+                                        </div>
+                                        <Typography>{strike.reason}</Typography>
+                                    </Stack>
+                                ))
+                            )}
+                        </Stack>
+                    </>
+                ) : (
+                    <>
+                        <Typography variant="h4" marginX={3} marginY={2.5}>
+                            Links
+                        </Typography>
+                        <Stack
+                            direction="column"
+                            borderRadius={2}
+                            spacing={0.3}
+                            overflow="hidden"
+                        >
+                            {organization.socials &&
+                            organization.socials
+                                .split(" ")
+                                .some((social) => social.startsWith("http")) ? (
+                                organization.socials
+                                    .split(" ")
+                                    .map((social, i) =>
+                                        social.startsWith("http") ? (
+                                            <Link
+                                                key={i}
+                                                href={social}
+                                                target="_blank"
+                                                rel="noopener noreferrer"
+                                                underline="none"
+                                            >
+                                                <Stack
+                                                    sx={{
+                                                        marginRight: "10px",
+                                                        width: "100%",
+                                                        paddingX: 3,
+                                                        paddingY: 2,
+                                                        backgroundColor:
+                                                            "#36363650",
+                                                        transition:
+                                                            "background-color 0.1s ease-in-out",
+                                                        "&:hover": {
+                                                            backgroundColor:
+                                                                "#4d4d4d50",
+                                                        },
+                                                    }}
+                                                >
+                                                    <Typography
+                                                        sx={{
+                                                            fontVariationSettings:
+                                                                "'wght' 700",
+                                                        }}
+                                                    >
+                                                        {getPlatform(social)
+                                                            .charAt(0)
+                                                            .toUpperCase() +
+                                                            getPlatform(
+                                                                social,
+                                                            ).slice(1)}
+                                                    </Typography>
+                                                    <Typography
+                                                        noWrap
+                                                        sx={{
+                                                            overflow: "hidden",
+                                                            textOverflow:
+                                                                "ellipsis",
+                                                            whiteSpace:
+                                                                "nowrap",
+                                                        }}
+                                                    >
+                                                        {social.replace(
+                                                            /^https?:\/\/[^\/]+\/?/,
+                                                            "",
+                                                        )}
+                                                    </Typography>
+                                                </Stack>
+                                            </Link>
+                                        ) : null,
+                                    )
+                            ) : (
+                                <Typography paddingLeft={3} paddingBottom={2}>
+                                    No Links Provided
+                                </Typography>
+                            )}
+                        </Stack>
+                    </>
+                )}
+            </Box>
+        </div>
     );
 };
 

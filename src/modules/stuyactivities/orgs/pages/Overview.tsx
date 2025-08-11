@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import OrgContext from "../../../../contexts/OrgContext";
 import {
     Avatar,
@@ -23,6 +23,7 @@ import OrgMeeting from "../components/OrgMeeting";
 import { sortByDate, sortByRole } from "../../../../utils/DataFormatters";
 import UserContext from "../../../../contexts/UserContext";
 import RelatedActivities from "./RelatedActivities";
+import OrgInspector from "../components/OrgInspector";
 
 const Overview = () => {
     const navigate = useNavigate();
@@ -159,10 +160,7 @@ const Overview = () => {
     };
 
     return (
-        <Box
-            marginTop={1}
-            sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}
-        >
+        <div className={"mt-3 w-full flex flex-wrap max-w-4xl"}>
             <Stack direction={{ xs: "column", sm: "row" }} spacing={3}>
                 <Box>
                     <div
@@ -715,6 +713,10 @@ const Overview = () => {
                 />
             </Box>
 
+            <div className={"xl:hidden mb-10 w-full"}>
+                <OrgInspector />
+            </div>
+
             <Box width={"100%"}>
                 <Typography variant="h2" marginBottom={0.5}>
                     Activities Like This
@@ -732,7 +734,7 @@ const Overview = () => {
                 )}
                 <RelatedActivities currentOrg={organization} />
             </Box>
-        </Box>
+        </div>
     );
 };
 

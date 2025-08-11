@@ -181,17 +181,21 @@ const OrgRouter = () => {
                         <div
                             className={`sm:hidden block w-full h-14 bg-[#111111] bg-opacity-75 fixed top-0 backdrop-blur-lg z-40 border-b-gray-100 border-opacity-10 border-b`}
                         ></div>
-                        <div className={`sm:hidden block mt-14`}></div>
+                        <div className={`sm:hidden block mt-10`}></div>
                         <div
-                            className={`sm:sticky fixed cursor-pointer transition-colors text-gray-300 hover:text-gray-400 ml-6 mt-4 sm:top-5 top-0 z-40`}
+                            className={`sm:sticky fixed cursor-pointer transition-colors text-gray-300 hover:text-gray-400 ml-6 mt-3 sm:top-5 top-0 z-40`}
                             onClick={() => navigate("/stuyactivities")}
                         >
-                            <i className={"bx bx-chevron-left bx-sm"}></i>
+                            <i
+                                className={
+                                    "bx bx-chevron-left bx-sm relative top-1"
+                                }
+                            ></i>
                             <span
                                 style={{
                                     fontVariationSettings: "'wght' 700",
                                     position: "relative",
-                                    top: -5,
+                                    top: -0.9,
                                 }}
                             >
                                 Back
@@ -205,10 +209,13 @@ const OrgRouter = () => {
                             }}
                         ></Box>
                         <div className={"ml-3 sm:ml-12 sm:mr-0 mr-3 flex"}>
-                            <div className={"sticky top-14 h-fit z-[40] mb-48"}>
+                            <div
+                                className={"sticky top-14 max-h-1 z-[40] mb-48"}
+                            >
+                                {/*1 max height to not break sticky layout*/}
                                 <OrgNav isMobile={isMobile} />
                             </div>
-                            <div className={"w-full md:pr-14 lg:pr-0 pr-0"}>
+                            <div className={"w-full lg:pr-0 pr-0"}>
                                 <TransitionGroup component={null}>
                                     <CSSTransition
                                         key={location.pathname}
@@ -252,9 +259,10 @@ const OrgRouter = () => {
                                     </CSSTransition>
                                 </TransitionGroup>
                             </div>
-                            <div className="lg:block hidden">
+                            <div className="max-xl:hidden">
                                 <OrgInspector />
                             </div>
+                            <div className="xl:hidden w-12"></div>
                         </div>
                     </>
                 )}
