@@ -185,7 +185,7 @@ const AdminMember = ({
             </Box>
             <Box
                 sx={{
-                    width: "200px",
+                    width: "120px",
                     display: "flex",
                     alignItems: "center",
                     justifyContent: "center",
@@ -196,24 +196,19 @@ const AdminMember = ({
                     role === "ADVISOR" ||
                     userId === user.id) && (
                     <div onClick={handleEdit}>
-                        <i className={"bx bx-pencil bx-md"}></i>
+                        <i className={"bx bx-pencil bx-sm"}></i>
                     </div>
                 )}
 
                 {userId !== user.id &&
                     (isCreator || role === "MEMBER" || role === "ADVISOR") && (
-                        <AsyncButton
-                            onClick={() => setKickConfirmOpen(true)}
-                            variant="contained"
-                            sx={{
-                                height: "40px",
-                                marginLeft: "10px",
-                                position: "relative",
-                                bottom: "2px",
-                            }}
-                        >
-                            Kick
-                        </AsyncButton>
+                        <div onClick={() => setKickConfirmOpen(true)}>
+                            <i
+                                className={
+                                    "bx bx-user-x bx-sm ml-3 text-red-500"
+                                }
+                            ></i>
+                        </div>
                     )}
             </Box>
             <ConfirmationDialog

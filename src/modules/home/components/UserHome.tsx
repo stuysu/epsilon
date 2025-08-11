@@ -32,7 +32,7 @@ type meetingType = {
 const UserHome = () => {
     const navigate = useNavigate();
     const user = React.useContext(UserContext);
-    const isMobile = useMediaQuery("(max-width: 1024px)");
+    const isMobile = useMediaQuery("(max-width: 1280px)");
     const { enqueueSnackbar } = useSnackbar();
 
     const [upcomingMeetings, setUpcomingMeetings] = useState<meetingType[]>([]);
@@ -184,7 +184,7 @@ const UserHome = () => {
                         })}
                         <div
                             className={"hover:scale-105 transition-transform"}
-                            onClick={() => navigate(`/catalog`)}
+                            onClick={() => navigate(`/stuyactivities`)}
                             style={{
                                 paddingLeft: "13px",
                                 cursor: "pointer",
@@ -271,11 +271,6 @@ const UserHome = () => {
                                                 }
                                                 room_name={meeting.rooms?.name}
                                                 is_public={meeting.is_public}
-                                                sx={{
-                                                    flexDirection: isMobile
-                                                        ? "column"
-                                                        : "row",
-                                                }}
                                             />
                                         ))}
                                     </Stack>

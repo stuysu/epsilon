@@ -1,0 +1,87 @@
+import { Stack, Typography, useMediaQuery } from "@mui/material";
+import React, { FC, useContext } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+import UserContext from "../../contexts/UserContext";
+import { isStuyActivitiesPath } from "../../config/routes";
+
+const ContextualNavBar: FC = () => {
+    const user = useContext(UserContext);
+    const isMobile = useMediaQuery("(max-width: 640px)");
+    const navigate = useNavigate();
+    const location = useLocation();
+
+    const isOnStuyActivitiesPage = isStuyActivitiesPath(location.pathname);
+    if (!isOnStuyActivitiesPage) return null;
+
+    return (
+        <div
+            className="max-sm:pb-4"
+            style={{
+                overflowX: "scroll",
+                scrollbarWidth: "none",
+                position: isMobile ? "fixed" : "relative",
+                top: isMobile ? 0 : undefined,
+                left: isMobile ? 0 : undefined,
+                width: isMobile ? "100%" : undefined,
+                zIndex: isMobile ? 1000 : undefined,
+                borderBottom: isMobile
+                    ? "1px solid rgba(255,255,255,0.1)"
+                    : undefined,
+                backdropFilter: isMobile ? "blur(30px)" : undefined,
+                backgroundColor: isMobile ? "rgba(17,17,17,0.8)" : undefined,
+            }}
+        >
+            <Stack
+                direction="row"
+                spacing={3}
+                ml={isMobile ? "1rem" : "3rem"}
+                mt={2}
+                position="relative"
+                zIndex={2}
+            >
+                {(
+                    [
+                        { label: "Catalog", path: "/stuyactivities" },
+                        { label: "Charter", path: "/charter" },
+                        { label: "Regulations", path: "/rules" },
+                        { label: "Archives", path: "/archives" },
+                        { label: "Support", path: "/activities-support" },
+                    ] as const
+                ).map(({ label, path }) => (
+                    <Typography
+                        key={path}
+                        className="cursor-pointer transition-opacity whitespace-nowrap"
+                        onClick={() => navigate(path)}
+                        sx={{
+                            fontVariationSettings: "'wght' 700",
+                            opacity: location.pathname === path ? 1 : 0.5,
+                            color: "rgb(209 213 219 / var(--tw-text-opacity, 1))",
+                        }}
+                    >
+                        {label}
+                    </Typography>
+                ))}
+
+                {user.permission && (
+                    <div
+                        onClick={() => navigate("/admin")}
+                        className="inline-flex cursor-pointer whitespace-nowrap gap-1 text-yellow-500"
+                    >
+                        <i className="bx bx-shield" />
+                        <Typography
+                            sx={{
+                                fontVariationSettings: "'wght' 700",
+                                color: "rgb(234 179 8 / var(--tw-text-opacity, 1))",
+                            }}
+                        >
+                            Admin Panel
+                        </Typography>
+                    </div>
+                )}
+                <div className="min-w-4" />
+            </Stack>
+        </div>
+    );
+};
+
+export default ContextualNavBar;

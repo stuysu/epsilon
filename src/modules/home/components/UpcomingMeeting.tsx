@@ -93,7 +93,7 @@ const UpcomingMeeting = ({
                             </div>
                         </div>
                     </div>
-                    <div style={{ display: "flex", gap: "10px" }}>
+                    <div className={"flex gap-2 max-sm:hidden"}>
                         <Chip label={is_public ? "Public" : "Private"} />
                         <Chip
                             label={`${monthNames[start.month()]} ${start.date()}, ${start.year()}`}

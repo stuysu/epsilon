@@ -2,7 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { Box, Skeleton, Typography, useMediaQuery } from "@mui/material";
 import { Masonry } from "@mui/lab";
-import { AnimatePresence, motion } from "framer-motion";
+import { motion } from "framer-motion";
 
 import OrgCard from "./components/OrgCard";
 import { useSnackbar } from "notistack";
@@ -267,26 +267,16 @@ const Catalog = () => {
             <Box
                 sx={{
                     width: isOne || isTwoWrap ? "100%" : isTwo ? "70%" : "75%",
-                    paddingLeft: "2rem",
-                    paddingRight: "2rem",
+                    paddingX: isOne ? "1rem" : "2rem",
                     position: "relative",
                     paddingBottom: "20vh",
                 }}
             >
                 <Box sx={{ overflowAnchor: "none" as any }}>
-                    <Masonry
-                        columns={columns}
-                        spacing={isOne ? 0 : 2}
-                        sx={
-                            searchState.orgs.length
-                                ? undefined
-                                : { display: "none" }
-                        }
-                    >
-                        <AnimatePresence initial={false}>
-                            {searchState.orgs.map((org, i) => (
+                    <Masonry columns={columns} spacing={isOne ? 0 : 2}>
+                        {searchState.orgs.map((org, i) => (
+                            <div key={(org as any).id ?? `ghost-${i}`}>
                                 <motion.div
-                                    key={(org as any).id ?? `ghost-${i}`}
                                     initial={{
                                         opacity: 0,
                                         y: 10,
@@ -317,13 +307,13 @@ const Catalog = () => {
                                 >
                                     <OrgCard organization={org} />
                                 </motion.div>
-                            ))}
-                        </AnimatePresence>
+                            </div>
+                        ))}
                     </Masonry>
 
                     <div
                         ref={sentinelRef}
-                        className="w-full flex flex-col gap-16 my-10 pr-4"
+                        className="w-full flex flex-col gap-16 my-10 pr-4 pt-4"
                         style={{ overflowAnchor: "none" }}
                     >
                         {searchState.more ? (

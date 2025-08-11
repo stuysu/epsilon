@@ -4,7 +4,7 @@ import Loading from "../components/ui/Loading";
 import UserContext from "../contexts/UserContext";
 
 import { Route, Routes, useLocation } from "react-router-dom";
-import React, { lazy, Suspense, useContext, useEffect, useState } from "react";
+import React, { lazy, Suspense, useContext } from "react";
 
 // Pages
 import Index from "./home";
@@ -15,6 +15,7 @@ import Regulations from "./stuyactivities/Regulations";
 import Support from "./stuyactivities/Support";
 import { Typography } from "@mui/material";
 import UnaffiliatedRoomReservation from "./stuyactivities/UnaffiliatedRoomReservation";
+import ContextualNavBar from "../components/ui/ContextualNavBar";
 
 const Catalog = lazy(() => import("./stuyactivities/Catalog"));
 const Settings = lazy(() => import("./user/Settings"));
@@ -29,21 +30,6 @@ const AdminRouter = lazy(() => import("./stuyactivities/admin"));
 const Pages = () => {
     const location = useLocation();
     const user: UserContextType = useContext(UserContext);
-    const [showDesignBanner, setDesignBanner] = useState(
-        localStorage.getItem("bannerClosed") !== "true",
-    ); // State for banner visibility
-
-    useEffect(() => {
-        const bannerClosed = localStorage.getItem("bannerClosed");
-        if (bannerClosed === "true") {
-            setDesignBanner(false);
-        }
-    }, []);
-
-    const handleCloseBanner = () => {
-        setDesignBanner(false);
-        localStorage.setItem("bannerClosed", "true");
-    };
 
     return (
         <div>
@@ -71,12 +57,18 @@ const Pages = () => {
                     }
                 ></div>
                 {!(!user.signed_in && location.pathname === "/") && (
-                    <div
-                        className={
-                            "max-sm:w-full sm:relative bg-neutral-800 fixed z-50 bottom-0 sm:bg-opacity-0 bg-opacity-80 max-sm:backdrop-blur-2xl max-sm:border-t border-neutral-700"
-                        }
-                    >
-                        <NavBar />
+                    <div>
+                        <div
+                            className={
+                                "max-sm:w-full sm:relative bg-neutral-800 fixed z-50 bottom-0 sm:bg-opacity-0 bg-opacity-80 max-sm:backdrop-blur-2xl max-sm:border-t border-neutral-700"
+                            }
+                        >
+                            <NavBar />
+                        </div>
+                        <div className="sm:hidden fixed bg-gradient-to-r to-[#111111] from-transparent z-[1500] h-[50px] w-14 top-0 right-0 pointer-events-none" />
+                        <div className={"max-sm:h-8"}>
+                            <ContextualNavBar />
+                        </div>
                     </div>
                 )}
                 <Routes>
@@ -102,7 +94,7 @@ const Pages = () => {
                 {user.signed_in && (
                     <div
                         className={
-                            "w-full h-36 bg-neutral-900 p-10 max-sm:p-6 pr-12 flex justify-between items-center mt-4 max-sm:pb-56 max-sm:flex-col gap-2"
+                            "w-full h-36 bg-neutral-900 p-10 max-sm:p-6 pr-12 flex justify-between items-center mt-20 max-sm:pb-56 max-sm:flex-col gap-2"
                         }
                     >
                         <div className="w-72 flex max-sm:justify-center">
@@ -153,22 +145,6 @@ const Pages = () => {
                         >
                             MMXXIV
                         </Typography>
-                    </div>
-                )}
-                {showDesignBanner && (
-                    <div
-                        style={{ zIndex: 51 }}
-                        className="fixed flex bottom-0 w-full h-14 border-t border-stone-700 bg-stone-900/85 backdrop-blur-xl items-center justify-center"
-                    >
-                        <p className="text-center text-gray-200 p-14">
-                            Epsilon is getting a new look!
-                        </p>
-                        <button
-                            onClick={handleCloseBanner}
-                            className="absolute right-3"
-                        >
-                            <i className="bx bx-x bx-md text-gray-200"></i>
-                        </button>
                     </div>
                 )}
             </Suspense>

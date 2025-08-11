@@ -39,6 +39,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
 
     // fetch messages from the database
     useEffect(() => {
+        let isMounted = true;
         const fetchMessages = async () => {
             const { data: messageData, error: messageError } = await supabase
                 .from("orgmessages")
@@ -58,6 +59,8 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                 .eq("organization_id", organization_id)
                 .returns<OrgMessage[]>();
 
+            if (!isMounted) return;
+
             if (messageError) {
                 enqueueSnackbar("Failed to fetch messages", {
                     variant: "error",
@@ -75,6 +78,11 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
         };
 
         fetchMessages();
+        const interval = setInterval(fetchMessages, 1000);
+        return () => {
+            isMounted = false;
+            clearInterval(interval);
+        };
     }, [organization_id, enqueueSnackbar]);
 
     useEffect(() => {

@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { supabase } from "../../../../../lib/supabaseClient";
 
@@ -63,9 +63,38 @@ const Organization = () => {
 
     return (
         <Box sx={{ width: "100%" }}>
-            <Typography variant="h1" align="center" width="100%">
-                Request to Amend Charter
-            </Typography>
+            <Box
+                height="100%"
+                bgcolor="#1f1f1f80"
+                padding={5}
+                borderRadius={3}
+                marginBottom={3}
+                marginTop={1}
+                boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
+            >
+                <Typography variant="h1" align="center" width="100%">
+                    Amend Charter
+                </Typography>
+                <Typography
+                    variant="body1"
+                    align="center"
+                    width="100%"
+                    paddingX={"2vw"}
+                >
+                    You may update your organization's charter here. Please note
+                    that edits are requests to amend, which will be reviewed by
+                    the Student Union.
+                </Typography>
+
+                <Box
+                    sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        width: "100%",
+                        marginTop: "20px",
+                    }}
+                ></Box>
+            </Box>
             <OrgEditor
                 organization={organization}
                 existingEdit={pendingEdit}

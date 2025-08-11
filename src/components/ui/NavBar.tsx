@@ -1,79 +1,24 @@
-import { Avatar, Box, Divider, Stack, Typography, useMediaQuery } from "@mui/material";
-import React, { CSSProperties, FC, useContext, useEffect, useRef, useState } from "react";
+import { Avatar, Box, Divider, Stack, useMediaQuery } from "@mui/material";
+import React, {
+    CSSProperties,
+    FC,
+    useContext,
+    useEffect,
+    useRef,
+    useState,
+} from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../lib/supabaseClient";
 import UserContext from "../../contexts/UserContext";
 import { useSnackbar } from "notistack";
 import { ThemeContext } from "../../contexts/ThemeProvider";
 import { PUBLIC_URL } from "../../config/constants";
-
-/** Consolidated list of routes that belong to StuyActivities. */
-const STUY_ACTIVITIES_PATHS = [
-    "/stuyactivities",
-    "/charter",
-    "/create",
-    "/archives",
-    "/rules",
-    "/activities-support",
-    "/admin",
-    "/admin/approve-edit",
-    "/admin/approve-pending",
-    "/admin/strikes",
-    "/admin/send-message",
-    "/admin/add-user",
-    "/admin/announcements",
-    "/admin/rooms",
-];
+import { isStuyActivitiesPath, topNavItems } from "../../config/routes";
 
 const linkStyle: CSSProperties = {
     color: "inherit",
     textDecoration: "none",
 };
-
-const topNavItems = [
-    { label: "Index", path: "/", icon: "bx bx-home-alt", external: false },
-    {
-        label: "StuyActivities",
-        path: "/stuyactivities",
-        icon: "bx bx-group",
-        external: false,
-    },
-    {
-        label: "Calendar",
-        path: "/meetings",
-        icon: "bx bx-calendar",
-        external: false,
-    },
-    {
-        label: "Vote",
-        url: "https://vote.stuysu.org",
-        path: "/none",
-        icon: "bx bx-note",
-        external: true,
-    },
-    {
-        label: "Arista",
-        url: "https://stuyarista.org/",
-        path: "/none",
-        icon: "bx bxs-hot",
-        external: true,
-    },
-    {
-        label: "Opportunities",
-        url: "https://opportunities.stuysu.org",
-        path: "/none",
-        icon: "bx bx-glasses",
-        external: true,
-    },
-    {
-        label: "Apply",
-        url: "https://applications.stuysu.org/",
-        path: "/none",
-        icon: "bx bx-check-circle",
-        external: true,
-    },
-    { label: "Index", path: "/about", icon: "bx bx-file", external: false },
-] as const;
 
 type TopNavItem = (typeof topNavItems)[number];
 
@@ -81,7 +26,6 @@ const NavBar: FC = () => {
     const user = useContext(UserContext);
     const { enqueueSnackbar } = useSnackbar();
     const [drawerOpen, setDrawerOpen] = useState(false);
-    const [fourDigitId, setFourDigitId] = useState<number | null>(null);
     const [isHovered, setIsHovered] = useState(false);
     const location = useLocation();
     const navigate = useNavigate();
@@ -128,23 +72,15 @@ const NavBar: FC = () => {
     useEffect(() => {
         setIsOrgPage(!!document.querySelector("#activity-page"));
     }, [location.pathname]);
-
-    const getActivePaths = (item: TopNavItem): string[] =>
-        !item.external && item.path === "/stuyactivities"
-            ? STUY_ACTIVITIES_PATHS
-            : [item.path];
+    const getActivePaths = (item: TopNavItem): string[] => [item.path];
 
     const isPageOptnActive = (item: TopNavItem): boolean => {
         if (!item.external && item.path === "/stuyactivities") {
             if (isOrgPage) return true;
-            return getActivePaths(item).includes(location.pathname);
+            return isStuyActivitiesPath(location.pathname);
         }
         return getActivePaths(item).includes(location.pathname);
     };
-
-    const isOnStuyActivitiesPage = STUY_ACTIVITIES_PATHS.some((p) =>
-        location.pathname.startsWith(p),
-    );
 
     const signOut = async () => {
         const { error } = await supabase.auth.signOut();
@@ -163,25 +99,9 @@ const NavBar: FC = () => {
     useEffect(() => setDrawerOpen(false), [location]);
 
     useEffect(() => {
-        const fetchID = async () => {
-            const { data, error } = await supabase
-                .from("fourdigitids")
-                .select("value")
-                .maybeSingle();
-            if (error) console.error(error);
-            else if (data) setFourDigitId(data.value as number);
-        };
-        fetchID();
-    }, [user]);
-
-    // Animate active‑tab underline
-    useEffect(() => {
         let currentIndex = topNavItems.findIndex((item) => {
             if (!item.external && item.path === "/stuyactivities") {
-                return (
-                    getActivePaths(item).includes(location.pathname) ||
-                    isOrgPage
-                );
+                return isStuyActivitiesPath(location.pathname) || isOrgPage;
             }
             return getActivePaths(item).includes(location.pathname);
         });
@@ -244,9 +164,7 @@ const NavBar: FC = () => {
                                 : "Guest"}
                         </p>
                         <i
-                            className={`bx bx-chevron-down bx-sm hidden sm:inline-block pr-1 transition-transform duration-200 ${
-                                drawerOpen ? "bx-flip-vertical" : ""
-                            }`}
+                            className={`bx bx-chevron-down bx-sm hidden sm:inline-block pr-1 transition-transform duration-200 ${drawerOpen ? "bx-flip-vertical" : ""}`}
                         />
                     </div>
 
@@ -338,7 +256,7 @@ const NavBar: FC = () => {
                 </div>
             </Box>
 
-            {/* Top‑level tabs */}
+            {/* Top-level tabs */}
             <Box
                 onMouseLeave={() => setIsHovered(false)}
                 overflow={"scroll"}
@@ -392,8 +310,8 @@ const NavBar: FC = () => {
                             }`}
                             onMouseEnter={() => setIsHovered(true)}
                             onClick={() => {
-                                if (item.external && item.url) {
-                                    window.location.href = item.url;
+                                if (item.external && (item as any).url) {
+                                    window.location.href = (item as any).url!;
                                 } else {
                                     navigate(item.path);
                                 }
@@ -436,78 +354,9 @@ const NavBar: FC = () => {
             </Box>
 
             {/* Divider under main nav */}
-            <Divider sx={{ position: "relative", zIndex: 45, bottom: 1 }} />
-
-            {/* Contextual sub‑nav for StuyActivities modules */}
-            {isOnStuyActivitiesPage && (
-                <div
-                    className={"max-sm:pb-4"}
-                    style={{
-                        overflowX: "scroll",
-                        scrollbarWidth: "none",
-                    }}
-                >
-                    <div
-                        className={
-                            "sm:hidden fixed bg-gradient-to-r to-[#252523] from-transparent z-[5000] h-[55px] w-14 bottom-0 right-0"
-                        }
-                    ></div>
-                    <Stack
-                        direction="row"
-                        spacing={3}
-                        ml={isMobile ? "1rem" : "3rem"}
-                        mt={2}
-                        position="relative"
-                        zIndex={1002}
-                    >
-                        {(
-                            [
-                                { label: "Catalog", path: "/stuyactivities" },
-                                { label: "Charter", path: "/charter" },
-                                { label: "Regulations", path: "/rules" },
-                                { label: "Archives", path: "/archives" },
-                                {
-                                    label: "Support",
-                                    path: "/activities-support",
-                                },
-                            ] as const
-                        ).map(({ label, path }) => (
-                            <Typography
-                                key={path}
-                                className="cursor-pointer transition-opacity whitespace-nowrap"
-                                onClick={() => navigate(path)}
-                                sx={{
-                                    fontVariationSettings: "'wght' 700",
-                                    opacity:
-                                        location.pathname === path ? 1 : 0.5,
-                                    color: "rgb(209 213 219 / var(--tw-text-opacity, 1))",
-                                }}
-                            >
-                                {label}
-                            </Typography>
-                        ))}
-
-                        {/* Admin panel shortcut */}
-                        {user.permission && (
-                            <div
-                                onClick={() => navigate("/admin")}
-                                className="inline-flex cursor-pointer whitespace-nowrap gap-1 text-yellow-500"
-                            >
-                                <i className="bx bx-shield" />
-                                <Typography
-                                    sx={{
-                                        fontVariationSettings: "'wght' 700",
-                                        color: "rgb(234 179 8 / var(--tw-text-opacity, 1))",
-                                    }}
-                                >
-                                    Admin Panel
-                                </Typography>
-                            </div>
-                        )}
-                        <div className={"min-w-4"}></div>
-                    </Stack>
-                </div>
-            )}
+            <div className={"max-sm:hidden"}>
+                <Divider sx={{ position: "relative", zIndex: 45, bottom: 1 }} />
+            </div>
         </div>
     );
 };

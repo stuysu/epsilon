@@ -47,14 +47,15 @@ const SearchFilter = ({
                           ? "30%"
                           : "25%",
                 height: isOneColumn || isTwoWrap ? " " : "100vh",
-                paddingLeft: "3rem",
+                paddingLeft: isOneColumn ? "1rem" : "3rem",
+                paddingRight: isOneColumn ? "1rem" : "0rem",
                 position: isOneColumn || isTwoWrap ? "relative" : "sticky",
                 top: 0,
                 paddingTop: "40px",
                 overflowY: "auto",
             }}
         >
-            <div className={"max-sm:-mt-5 max-sm:mr-10 relative"}>
+            <div className={"relative"}>
                 <i
                     className={
                         "absolute bx bx-search bx-sm z-10 top-[0.8rem] left-3"

@@ -16,7 +16,7 @@ export default function CatalogButton() {
             }}
             onMouseEnter={() => setHover(true)}
             onMouseLeave={() => setHover(false)}
-            onClick={() => navigate("/catalog")}
+            onClick={() => navigate("/stuyactivities")}
         >
             Browse StuyActivities
         </button>

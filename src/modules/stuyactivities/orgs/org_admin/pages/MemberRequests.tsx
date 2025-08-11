@@ -1,8 +1,8 @@
-import { useContext } from "react";
+import React, { useContext } from "react";
 import OrgContext from "../../../../../contexts/OrgContext";
 
 import PendingMember from "../components/PendingMember";
-import { Box, Typography } from "@mui/material";
+import { Box, Stack, Typography } from "@mui/material";
 
 const MemberRequests = () => {
     const organization = useContext<OrgContextType>(OrgContext);
@@ -20,19 +20,62 @@ const MemberRequests = () => {
 
     return (
         <Box sx={{ width: "100%" }}>
-            <Typography variant="h1" align="center" width="100%">
-                Join Requests
-            </Typography>
-            {pendingMembers?.map((member, i) => (
-                <PendingMember
-                    id={member.membershipId || -1}
-                    first_name={member.first_name}
-                    last_name={member.last_name}
-                    email={member.email || "Undefined"}
-                    picture={member.picture}
-                    key={i}
-                />
-            ))}
+            <Box
+                height="100%"
+                bgcolor="#1f1f1f80"
+                padding={5}
+                borderRadius={3}
+                marginBottom={3}
+                marginTop={1}
+                boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
+            >
+                <Typography variant="h1" align="center" width="100%">
+                    Join Requests
+                </Typography>
+                <Typography
+                    variant="body1"
+                    align="center"
+                    width="100%"
+                    paddingX={"2vw"}
+                >
+                    When people request to join your Activity, you'll see them
+                    here.
+                </Typography>
+
+                <Box
+                    sx={{
+                        display: "flex",
+                        justifyContent: "center",
+                        width: "100%",
+                        marginTop: "20px",
+                    }}
+                ></Box>
+            </Box>
+
+            {pendingMembers?.length > 0 && (
+                <Box
+                    height="100%"
+                    bgcolor="#1f1f1f80"
+                    padding={0.5}
+                    borderRadius={3}
+                    marginBottom={10}
+                    marginTop={1}
+                    boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
+                >
+                    <Stack borderRadius={2} overflow="hidden" spacing={0.5}>
+                        {pendingMembers?.map((member, i) => (
+                            <PendingMember
+                                id={member.membershipId || -1}
+                                first_name={member.first_name}
+                                last_name={member.last_name}
+                                email={member.email || "Undefined"}
+                                picture={member.picture}
+                                key={i}
+                            />
+                        ))}
+                    </Stack>
+                </Box>
+            )}
         </Box>
     );
 };

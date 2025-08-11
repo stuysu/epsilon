@@ -94,13 +94,21 @@ const PendingMember = ({
         >
             <Box sx={{ width: "100%" }}>
                 <OrgMember
+                    role_name={"Pending"}
                     email={email}
                     picture={picture}
                     first_name={first_name}
                     last_name={last_name}
                 />
             </Box>
-            <Box sx={{ width: "200px", display: "flex", flexWrap: "nowrap" }}>
+            <Box
+                sx={{
+                    width: "200px",
+                    display: "flex",
+                    flexWrap: "nowrap",
+                    marginX: "20px",
+                }}
+            >
                 <AsyncButton
                     onClick={handleApprove}
                     variant="contained"

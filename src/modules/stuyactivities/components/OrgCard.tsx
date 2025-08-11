@@ -1,6 +1,7 @@
 import { Avatar, Box, Card, Skeleton, Stack, Typography } from "@mui/material";
 import { PUBLIC_URL } from "../../../config/constants";
 import React, { useContext, useState } from "react";
+import UserContext from "../../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 
 import { ThemeContext } from "../../../contexts/ThemeProvider";
@@ -9,6 +10,8 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
     const navigate = useNavigate();
     const theme = useContext(ThemeContext);
     const [imgLoaded, setImgLoaded] = useState(false);
+
+    const user: UserContextType = useContext(UserContext);
 
     return (
         <Box
@@ -119,28 +122,26 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                 }}
                             ></Box>
 
-                            <Typography
-                                variant={"body1"}
-                                sx={{
-                                    position: "absolute",
-                                    top: 45,
-                                    right: 0,
-                                    color: "#cdcdcd",
-                                    background: "#36363680",
-                                    padding: "3px 7px",
-                                    borderRadius: "7px",
-                                    fontVariationSettings: "'wght' 700",
-                                    boxShadow:
-                                        "inset 0 0 1px 1px rgba(255, 255, 255, 0.1)",
-                                }}
-                            >
-                                <i
-                                    className={
-                                        "bx bx-group bx-xs relative top-0.5 mr-1"
-                                    }
-                                ></i>
-                                {organization.memberships?.length ?? 0}
-                            </Typography>
+                            {user.signed_in && (
+                                <Typography
+                                    variant="body1"
+                                    sx={{
+                                        position: "absolute",
+                                        top: 45,
+                                        right: 0,
+                                        color: "#cdcdcd",
+                                        background: "#36363680",
+                                        padding: "3px 7px",
+                                        borderRadius: "7px",
+                                        fontVariationSettings: "'wght' 700",
+                                        boxShadow:
+                                            "inset 0 0 1px 1px rgba(255, 255, 255, 0.1)",
+                                    }}
+                                >
+                                    <i className="bx bx-group bx-xs relative top-0.5 mr-1"></i>
+                                    {organization.memberships?.length ?? 0}
+                                </Typography>
+                            )}
 
                             {/* Background avatar with blur effect */}
                             <Avatar

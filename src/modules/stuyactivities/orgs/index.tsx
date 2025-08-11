@@ -183,7 +183,7 @@ const OrgRouter = () => {
                         ></div>
                         <div className={`sm:hidden block mt-14`}></div>
                         <div
-                            className={`sm:sticky fixed cursor-pointer transition-colors text-gray-300 hover:text-gray-400 ml-6 mt-3 sm:top-5 top-0 z-40`}
+                            className={`sm:sticky fixed cursor-pointer transition-colors text-gray-300 hover:text-gray-400 ml-6 mt-4 sm:top-5 top-0 z-40`}
                             onClick={() => navigate("/stuyactivities")}
                         >
                             <i className={"bx bx-chevron-left bx-sm"}></i>

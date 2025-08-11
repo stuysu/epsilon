@@ -35,6 +35,32 @@ const Meetings = () => {
         editing: false,
     });
 
+    if (
+        organization.state === "LOCKED" ||
+        organization.state === "PENDING" ||
+        organization.state === "PUNISHED"
+    )
+        return (
+            <Box
+                sx={{
+                    minHeight: "55vh",
+                    marginBottom: "5rem",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                }}
+            >
+                <i className="bx bx-no-entry bx-lg text-red-500 mb-5"></i>
+                <Typography variant="h1" marginBottom={3}>
+                    Cannot Schedule Meetings
+                </Typography>
+                <Typography variant="body1">
+                    {`This Activity does not meet the requirements to hold meetings.`}
+                </Typography>
+            </Box>
+        );
+
     return (
         <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
             <Box
