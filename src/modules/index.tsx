@@ -51,11 +51,6 @@ const Pages = () => {
             </Helmet>
 
             <Suspense fallback={<Loading />}>
-                <div
-                    className={
-                        "fixed bg-gradient-to-b from-[#111111] to-transparent z-[5000] h-5 sm:h-2.5 w-full top-0"
-                    }
-                ></div>
                 {!(!user.signed_in && location.pathname === "/") && (
                     <div>
                         <div

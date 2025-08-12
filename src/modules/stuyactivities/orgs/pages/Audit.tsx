@@ -5,6 +5,7 @@ import { Box, Stack, Typography, useMediaQuery } from "@mui/material";
 import OrgMeeting from "../components/OrgMeeting";
 import { sortByDate } from "../../../../utils/DataFormatters";
 import LoginGate from "../../../../components/ui/LoginGate";
+import OrgInspector from "../components/OrgInspector";
 
 const Audit = () => {
     const organization: OrgContextType = useContext(OrgContext);
@@ -12,6 +13,9 @@ const Audit = () => {
 
     return (
         <LoginGate page="audit this activity">
+            <div className={"xl:hidden mb-10 w-full"}>
+                <OrgInspector />
+            </div>
             {organization.meetings.length > 0 ? (
                 <Box
                     height="100%"

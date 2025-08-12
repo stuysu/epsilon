@@ -209,7 +209,7 @@ const UserHome = () => {
                         <Box
                             position="relative"
                             width={"100%"}
-                            marginBottom={8}
+                            marginBottom={10}
                         >
                             <div className={"relative"}>
                                 <Box
@@ -327,7 +327,7 @@ const UserHome = () => {
                         <Box
                             position="relative"
                             width={"100%"}
-                            marginBottom={8}
+                            marginBottom={10}
                         >
                             <div className={"relative"}>
                                 <Box

@@ -1,4 +1,4 @@
-# Contributing Guide -- Epsilon Client
+# Contributing Guide - Epsilon Client
 
 At this time, StuySU IT is **not** accepting external contributions.
 The following documentation is meant for Directors and Members.

@@ -106,19 +106,19 @@ const AdminUpsertMeeting = ({
       get ids of rooms that are booked.
       there is a special case when we fetch an existing booked room from save
       */
-            type roomMeta = {
+            type RoomMeta = {
                 room_id: number;
                 meeting_id: number;
             };
 
-            let { data, error } = await supabase
+            const { data: bookedRoomsRaw, error } = await supabase
                 .rpc("get_booked_rooms", {
                     meeting_start: startTime.toISOString(),
                     meeting_end: endTime.toISOString(),
                 })
-                .returns<roomMeta[]>();
+                .returns<RoomMeta[]>();
 
-            if (error || !data) {
+            if (error) {
                 enqueueSnackbar(
                     "Error fetching booked rooms. Contact it@stuysu.org for support.",
                     { variant: "error" },
@@ -126,7 +126,13 @@ const AdminUpsertMeeting = ({
                 return;
             }
 
-            data = data.filter((meta) => meta.meeting_id !== id); // remove this current meeting's booking from time slot
+            const bookedRooms: RoomMeta[] = Array.isArray(bookedRoomsRaw)
+                ? bookedRoomsRaw
+                : [];
+
+            const filteredBookedRooms = id
+                ? bookedRooms.filter((meta) => meta.meeting_id !== id)
+                : bookedRooms;
 
             /*
             room is available if:
@@ -145,8 +151,9 @@ const AdminUpsertMeeting = ({
 
             let availRooms = allRooms.filter(
                 (room) =>
-                    !~data!.findIndex((meta) => meta.room_id === room.id) &&
-                    room.available_days.includes(days[startTime!.day()]),
+                    !~filteredBookedRooms.findIndex(
+                        (meta) => meta.room_id === room.id,
+                    ) && room.available_days.includes(days[startTime!.day()]),
             );
 
             // check if the currently selected room id is no longer valid
