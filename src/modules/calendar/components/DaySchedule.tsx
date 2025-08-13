@@ -59,7 +59,7 @@ const DaySchedule = ({ day, meetings }: Props) => {
                                 alignItems: "center",
                             }}
                         >
-                            <i className="bx bx-dots-horizontal-rounded bx-lg text-blue-500 mb-5"></i>
+                            <i className="bx bx-dots-horizontal-rounded bx-lg text-blue mb-5"></i>
                             <Typography
                                 variant="h1"
                                 marginBottom={3}

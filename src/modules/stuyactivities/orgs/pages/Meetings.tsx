@@ -1,10 +1,11 @@
 import React, { useContext } from "react";
 import OrgContext from "../../../../contexts/OrgContext";
-import { Box, Stack, Typography, useMediaQuery } from "@mui/material";
+import { Box, Stack, useMediaQuery } from "@mui/material";
 
 import OrgMeeting from "../components/OrgMeeting";
 import { sortByDate } from "../../../../utils/DataFormatters";
 import LoginGate from "../../../../components/ui/LoginGate";
+import ContentUnavailable from "../../../../components/ui/ContentUnavailable";
 
 const Meetings = () => {
     const organization: OrgContextType = useContext(OrgContext);
@@ -51,32 +52,12 @@ const Meetings = () => {
                     </Stack>
                 </Box>
             ) : (
-                <Box
-                    sx={{
-                        marginTop: "2rem",
-                        display: "flex",
-                        minHeight: "55vh",
-                        marginBottom: "5rem",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "center",
-                    }}
-                >
-                    <i className="bx bx-calendar-x bx-lg text-blue-500 mb-5"></i>
-                    <Typography variant="h1" marginBottom={3} align={"center"}>
-                        No Meetings Scheduled
-                    </Typography>
-                    <Typography variant="body1" align={"center"}>
-                        This Activity has not yet scheduled any meetings for the
-                        future.
-                        <br />
-                        To view past meetings, visit the{" "}
-                        <a href={"./audit"} className={"underline"}>
-                            audit
-                        </a>{" "}
-                        page.
-                    </Typography>
-                </Box>
+                <ContentUnavailable
+                    icon="bx-calendar-x"
+                    iconColor="text-blue"
+                    title="No Meetings Scheduled"
+                    description="This Activity has not yet scheduled any meetings for the future. To view past meetings, visit the audit page."
+                />
             )}
         </LoginGate>
     );

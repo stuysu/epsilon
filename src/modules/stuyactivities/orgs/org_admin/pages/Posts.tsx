@@ -4,9 +4,10 @@ import OrgStreamPost from "../../components/OrgStreamPost";
 import PostEditor from "../components/PostEditor";
 
 import OrgContext from "../../../../../contexts/OrgContext";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 
 import { sortPostByDate } from "../../../../../utils/DataFormatters";
+import ContentUnavailable from "../../../../../components/ui/ContentUnavailable";
 
 /* create new posts */
 /* fetch existing posts to update or delete */
@@ -19,24 +20,12 @@ const Posts = () => {
         organization.state === "PUNISHED"
     )
         return (
-            <Box
-                sx={{
-                    minHeight: "55vh",
-                    marginBottom: "5rem",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                }}
-            >
-                <i className="bx bx-no-entry bx-lg text-red-500 mb-5"></i>
-                <Typography variant="h1" marginBottom={3}>
-                    Cannot Create Posts
-                </Typography>
-                <Typography variant="body1">
-                    {`This Activity does not meet the requirements to share posts.`}
-                </Typography>
-            </Box>
+            <ContentUnavailable
+                icon="bx-message-alt-x"
+                iconColor="text-red"
+                title="Cannot Create Posts"
+                description="This Activity does not yet meet the requirements to post updates. Please check back later."
+            />
         );
 
     return (

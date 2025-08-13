@@ -73,7 +73,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                         contrastText: "#b8b8b8",
                     },
                     background: {
-                        default: prefersDarkMode ? "#111111" : "#cdcdcd",
+                        default: prefersDarkMode ? "#111111" : "#e9e9e9",
                         paper: prefersDarkMode ? "#111111" : "#bfbfbf",
                     },
                 },

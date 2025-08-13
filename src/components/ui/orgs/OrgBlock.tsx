@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { Skeleton, Typography } from "@mui/material";
+import { Skeleton } from "@mui/material";
 
 type Props = {
     name?: Organization["name"];
@@ -116,22 +116,16 @@ const OrgBlock = ({
                 )}
             </div>
             <div style={{ padding: 10, paddingTop: 10 }}>
-                <Typography
-                    variant="h4"
-                    height={63}
-                    sx={{
-                        textOverflow: "ellipsis",
-                        overflow: "hidden",
-                        display: "-webkit-box",
-                        WebkitBoxOrient: "vertical",
-                        WebkitLineClamp: 3,
-                    }}
+                <h4
+                    className={
+                        "h-[3lh] overflow-hidden text-ellipsis [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:3]"
+                    }
                 >
                     {name}
-                </Typography>
-                <Typography sx={{ fontVariationSettings: "'wght' 700" }}>
+                </h4>
+                <p className={"important"}>
                     {role_name || formatCapitals(role || "")}
-                </Typography>
+                </p>
             </div>
         </div>
     );

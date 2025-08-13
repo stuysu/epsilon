@@ -31,7 +31,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                         top: 0,
                         left: 0,
                         width: "100%",
-                        opacity: 0.15,
+                        opacity: 0.2,
                         height: "100%",
                         backgroundImage: `url(${PUBLIC_URL}/textures/org_card.png)`,
                         backgroundSize: "cover",
@@ -212,6 +212,13 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                 variant="h3"
                                 sx={{
                                     maxWidth: "90%",
+                                    height: "3lh",
+                                    overflow: "hidden",
+                                    textOverflow: "ellipsis",
+                                    whiteSpace: "normal",
+                                    display: "-webkit-box",
+                                    WebkitBoxOrient: "vertical",
+                                    WebkitLineClamp: 3,
                                 }}
                             >
                                 {organization.name}

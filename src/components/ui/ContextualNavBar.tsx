@@ -65,7 +65,7 @@ const ContextualNavBar: FC = () => {
                 {user.permission && (
                     <div
                         onClick={() => navigate("/admin")}
-                        className="inline-flex cursor-pointer whitespace-nowrap gap-1 text-yellow-500"
+                        className="inline-flex cursor-pointer whitespace-nowrap gap-1 text-yellow"
                     >
                         <i className="bx bx-shield" />
                         <Typography

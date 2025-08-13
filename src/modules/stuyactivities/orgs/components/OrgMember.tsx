@@ -3,7 +3,6 @@ import {
     Chip,
     ListItem,
     ListItemAvatar,
-    Stack,
     Typography,
 } from "@mui/material";
 
@@ -35,12 +34,10 @@ const OrgMember = ({
         role_name || formatCapitals(role) + (is_faculty ? " - Faculty" : "");
 
     return (
-        <Stack
-            direction={"row"}
-            alignItems={"center"}
-            justifyContent={"space-between"}
-            flexWrap={"wrap"}
-            sx={{ background: "#36363680" }}
+        <div
+            className={
+                "flex flex-row items-center justify-between flex-wrap bg-layer-2"
+            }
         >
             <ListItem sx={{ height: "75px", width: "fit-content" }}>
                 <ListItemAvatar>
@@ -77,7 +74,7 @@ const OrgMember = ({
                     maxWidth: "600px",
                 }}
             />
-        </Stack>
+        </div>
     );
 };
 

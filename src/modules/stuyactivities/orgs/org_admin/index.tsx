@@ -5,16 +5,15 @@ import { Route, Routes } from "react-router-dom";
 import UserContext from "../../../../contexts/UserContext";
 import OrgContext from "../../../../contexts/OrgContext";
 
-import Members from "./pages/Members";
-import MemberRequests from "./pages/MemberRequests";
 import Roster from "./pages/Roster";
+import JoinRequests from "./pages/JoinRequests";
+import Scheduler from "./pages/Scheduler";
 import Posts from "./pages/Posts";
 import Organization from "./pages/Organization";
-
 import Messages from "./pages/Messages";
-import { Box, Typography } from "@mui/material";
 import AttendanceOverview from "./pages/AttendanceOverview";
 import MeetingAttendance from "./pages/MeetingAttendance";
+import ContentUnavailable from "../../../../components/ui/ContentUnavailable";
 
 const OrgAdminRouter = () => {
     const user = useContext<UserContextType>(UserContext);
@@ -37,14 +36,13 @@ const OrgAdminRouter = () => {
             {isOrgAdmin ? (
                 <>
                     <Routes>
-                        <Route path={"/members"} Component={Members} />
+                        <Route path={"/roster"} Component={Roster} />
                         <Route
-                            path={"/member-requests"}
-                            Component={MemberRequests}
+                            path={"/join-requests"}
+                            Component={JoinRequests}
                         />
-                        <Route path={"/meetings"} Component={Roster} />
+                        <Route path={"/scheduler"} Component={Scheduler} />
                         <Route path={"/posts"} Component={Posts} />
-
                         <Route
                             path={"/attendance"}
                             Component={AttendanceOverview}
@@ -53,34 +51,18 @@ const OrgAdminRouter = () => {
                             path="/attendance/:meetingId"
                             Component={MeetingAttendance}
                         />
-
                         <Route path={"/org-edits"} Component={Organization} />
                         <Route path={"/messages"} Component={Messages} />
-                        <Route path={"/*"} Component={Members} />
+                        <Route path={"/*"} Component={Roster} />
                     </Routes>
                 </>
             ) : (
-                <Box
-                    sx={{
-                        marginTop: "2rem",
-                        display: "flex",
-                        minHeight: "55vh",
-                        marginBottom: "5rem",
-                        flexDirection: "column",
-                        justifyContent: "center",
-                        alignItems: "center",
-                    }}
-                >
-                    <i className="bx bx-no-entry bx-lg text-red-500 mb-5"></i>
-                    <Typography variant="h1" marginBottom={3}>
-                        Restricted Access
-                    </Typography>
-                    <Typography variant="body1" align={"center"}>
-                        You are not an administrator for this Activity.
-                        <br />
-                        Please contact the Activity owner for more details.
-                    </Typography>
-                </Box>
+                <ContentUnavailable
+                    icon="bx-no-entry"
+                    iconColor="text-red"
+                    title="Restricted Access"
+                    description="You are not an administrator for this Activity. Please contact the Activity owner for more details."
+                />
             )}
         </>
     );

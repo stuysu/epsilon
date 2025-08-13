@@ -1,8 +1,5 @@
 import {
     Avatar,
-    Box,
-    Card,
-    IconButton,
     ListItem,
     ListItemAvatar,
     ListItemText,
@@ -14,7 +11,6 @@ import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import UserContext from "../../../../contexts/UserContext";
 import dayjs from "dayjs";
-import { Delete } from "@mui/icons-material";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 
 type OrgMessage = {
@@ -151,19 +147,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
     };
 
     return (
-        <Card
-            variant="outlined"
-            sx={{
-                padding: "15px",
-                position: "relative",
-            }}
-        >
-            <div
-                className={
-                    "absolute bg-gradient-to-b from-[#111111] to-transparent z-50 h-5 w-full top-20"
-                }
-            ></div>
-
+        <section className="p-4 relative rounded-xl border border-neutral-800">
             <Typography variant="h2" mb={1}>
                 Messaging
             </Typography>
@@ -171,8 +155,8 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                 Only visible to admins, faculty, and the Clubs & Pubs
                 Department.
             </Typography>
-            <Box
-                sx={{ height: "500px", overflow: "auto", position: "relative" }}
+            <div
+                className={"h-[500px] overflow-auto relative"}
                 ref={chatBoxRef}
             >
                 {messages.map((message) => {
@@ -205,31 +189,24 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                                         >
                                             {timeStr}
                                         </Typography>
-                                        {/* Add a break or any other separator as needed */}
                                         <br />
                                         {message.content}
                                     </>
                                 }
                             />
                             {message.users.id === user.id && (
-                                <IconButton
+                                <div
+                                    className={
+                                        "bx bx-trash bx-sm text-red cursor-pointer hover:opacity-75 transition-opacity"
+                                    }
                                     onClick={() => deleteMessage(message.id)}
-                                >
-                                    <Delete />
-                                </IconButton>
+                                ></div>
                             )}
                         </ListItem>
                     );
                 })}
-            </Box>
-            <Box
-                sx={{
-                    width: "100%",
-                    display: "flex",
-                    flexWrap: "nowrap",
-                    alignItems: "center",
-                }}
-            >
+            </div>
+            <div className={"w-full flex items-center mt-2"}>
                 <TextField
                     variant="filled"
                     label="Type message here."
@@ -253,8 +230,8 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                 >
                     Send
                 </AsyncButton>
-            </Box>
-        </Card>
+            </div>
+        </section>
     );
 };
 

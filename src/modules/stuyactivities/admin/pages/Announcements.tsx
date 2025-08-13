@@ -80,7 +80,7 @@ const Announcements = () => {
     return (
         <Box minHeight={"60vh"}>
             <Typography variant="h1" width="100%" align="center">
-                Announcements
+                StuyActivities Announcements
             </Typography>
             <Box
                 sx={{
@@ -97,7 +97,7 @@ const Announcements = () => {
                     mb={5}
                     color="secondary"
                 >
-                    Create an Announcement to be broadcasted on Epsilon.
+                    Create an announcement to be broadcasted to everyone.
                 </Typography>
                 <Box sx={{ width: "500px" }}>
                     <TextField

@@ -99,7 +99,7 @@ const Support = () => {
                 <Divider />
                 <HelpItem
                     icon="bx-time"
-                    iconColor="text-blue-500"
+                    iconColor="text-blue"
                     title="My Charter has not been approved yet."
                     description="I submitted my charter over a week ago, yet it still hasn’t been approved."
                     content="Charters are reviewed and approved once a week by the Clubs & Pubs administrators.
@@ -111,7 +111,7 @@ const Support = () => {
                 <Divider />
                 <HelpItem
                     icon="bx-message-square-error"
-                    iconColor="text-red-500"
+                    iconColor="text-red"
                     title="My Charter was denied."
                     description="My Charter submission was denied and I don’t know what went wrong."
                     content="We may have shared specific details regarding why the submission was denied with you
@@ -145,7 +145,7 @@ const Support = () => {
                 <Divider />
                 <HelpItem
                     icon="bx-user-plus"
-                    iconColor="text-yellow-300"
+                    iconColor="text-yellow"
                     title="How do I invite new members?"
                     description="I can’t figure out how to invite new members."
                     content="To invite new members to your Activity, you can share the activity link. This link allows anyone with it to join your Activity.

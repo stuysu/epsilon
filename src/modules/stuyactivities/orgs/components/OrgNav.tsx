@@ -96,15 +96,15 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                                     </div>
                                     {[
                                         {
-                                            to: `${main}/admin/members`,
+                                            to: `${main}/admin/roster`,
                                             display: "Roster",
                                         },
                                         {
-                                            to: `${main}/admin/member-requests`,
+                                            to: `${main}/admin/join-requests`,
                                             display: "Join Requests",
                                         },
                                         {
-                                            to: `${main}/admin/meetings`,
+                                            to: `${main}/admin/scheduler`,
                                             display: "Scheduler",
                                         },
                                         {
@@ -189,15 +189,15 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     <List sx={{ width: "100%" }}>
                         {[
                             {
-                                to: `${main}/admin/members`,
+                                to: `${main}/admin/roster`,
                                 display: "Roster",
                             },
                             {
-                                to: `${main}/admin/member-requests`,
+                                to: `${main}/admin/join-requests`,
                                 display: "Join Requests",
                             },
                             {
-                                to: `${main}/admin/meetings`,
+                                to: `${main}/admin/scheduler`,
                                 display: "Scheduler",
                             },
                             {

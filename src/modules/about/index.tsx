@@ -132,7 +132,6 @@ const Index = () => {
                             "David Chen",
                             "Rahul Deb",
                             "Randy Sim",
-                            "Adam Choi",
                         ],
                     },
                     { role: "management", names: ["Nathaniel Moy"] },
@@ -229,7 +228,7 @@ const Index = () => {
         const t = setTimeout(() => {
             setStage("credit");
             setCreditIdx(0);
-        }, DISPLAY - FADE);
+        }, DISPLAY);
         return () => clearTimeout(t);
     }, [stage]);
 
@@ -339,8 +338,18 @@ const Index = () => {
                             <img
                                 alt="One Site, One School, For Everyone."
                                 src={`${PUBLIC_URL}/taglines/about.png`}
-                                className="w-full object-contain mx-auto"
+                                className="w-full object-contain mx-auto mb-6"
                             />
+                            <Typography variant={"body1"} align={"center"}>
+                                Epsilon is a project carried through each
+                                generation of Stuyvesant students. It's based on
+                                the philosophy that "we honor those who walked
+                                so we could run, and we run so our children{" "}
+                                <span className="[text-shadow:_0_-1px_4px_#fff,_0_-2px_10px_#ff0,_0_-10px_20px_#ff8000,_0_-18px_40px_#f00] text-amber-50">
+                                    soar
+                                </span>
+                                ."
+                            </Typography>
                         </motion.div>
                     )}
 

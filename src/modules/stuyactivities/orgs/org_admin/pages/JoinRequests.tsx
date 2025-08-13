@@ -4,7 +4,7 @@ import OrgContext from "../../../../../contexts/OrgContext";
 import PendingMember from "../components/PendingMember";
 import { Box, Stack, Typography } from "@mui/material";
 
-const MemberRequests = () => {
+const JoinRequests = () => {
     const organization = useContext<OrgContextType>(OrgContext);
     const pendingMembers = organization.memberships
         ?.filter((member) => !member.active)
@@ -19,7 +19,7 @@ const MemberRequests = () => {
         });
 
     return (
-        <Box sx={{ width: "100%" }}>
+        <Box sx={{ width: "100%", minHeight: "70vh" }}>
             <Box
                 height="100%"
                 bgcolor="#1f1f1f80"
@@ -80,4 +80,4 @@ const MemberRequests = () => {
     );
 };
 
-export default MemberRequests;
+export default JoinRequests;

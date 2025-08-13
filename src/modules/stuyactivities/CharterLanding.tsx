@@ -1,4 +1,3 @@
-import { Typography } from "@mui/material";
 import React, { useState } from "react";
 import { PUBLIC_URL } from "../../config/constants";
 import { useNavigate } from "react-router-dom";
@@ -34,7 +33,7 @@ const CharterLanding = () => {
                                 "flex justify-center items-center w-full h-full absolute top-0 left-0"
                             }
                         >
-                            <h1 className="max-lg:mt-14 w-5/6 sm:w-2/3 relative bottom-12 text-white/75 md:text-8xl text-4xl text-center max-w-4xl max-sm:leading-9">
+                            <h1 className="max-lg:mt-14 w-5/6 sm:w-2/3 relative bottom-12 text-white/75 md:text-8xl text-4xl text-center max-w-4xl max-sm:leading-9 font-light">
                                 {title.split(" ").map((word, i) => (
                                     <motion.span
                                         key={i}
@@ -109,11 +108,9 @@ const CharterLanding = () => {
                                 >
                                     1
                                 </h1>
-                                <Typography variant="h1" color="textSecondary">
-                                    Submit Your Application
-                                </Typography>
+                                <h1>Submit Your Application</h1>
                             </div>
-                            <Typography variant={"body1"}>
+                            <p>
                                 Prior to initiating the chartering process, it
                                 is imperative that you thoroughly review the
                                 Clubs & Pubs Regulations. These regulations are
@@ -127,10 +124,10 @@ const CharterLanding = () => {
                                 well-considered responses. Submissions should be
                                 clear, precise, and devoid of any misleading,
                                 inappropriate, or erroneous information.
-                            </Typography>
+                            </p>
                             <p
                                 onClick={() => navigate("/create")}
-                                className={"pt-5 text-blue-500 cursor-pointer"}
+                                className={"pt-5 text-blue cursor-pointer"}
                             >
                                 Start Application{" "}
                                 <i
@@ -170,9 +167,7 @@ const CharterLanding = () => {
                                 }}
                             ></div>
                             <div className={"relative min-h-28 max-w-72"}>
-                                <Typography variant="h1" color="textSecondary">
-                                    Get Approved & Listed on Epsilon
-                                </Typography>
+                                <h1>Get Approved & Listed on Epsilon</h1>
                                 <h1
                                     className={
                                         "absolute bottom-32 font-bold text-6xl"
@@ -181,7 +176,7 @@ const CharterLanding = () => {
                                     2
                                 </h1>
                             </div>
-                            <Typography variant={"body1"}>
+                            <p>
                                 Upon the successful submission of your charter,
                                 please be advised that the SU Clubs & Pubs
                                 Administration requires a review period of up to
@@ -196,7 +191,7 @@ const CharterLanding = () => {
                                 listed in the Epsilon StuyActivities Catalog, at
                                 which point you may begin the process of
                                 enrolling members and scheduling meetings.
-                            </Typography>
+                            </p>
                         </div>
                         <div className={"sm:hidden relative p-20"}></div>
                     </div>

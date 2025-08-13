@@ -1,7 +1,108 @@
+@import url("https://use.typekit.net/trt3qfc.css");
+@import url("https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css");
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-.MuiStepLabel-iconContainer {
-    display: none !important;
+@layer base {
+    html {
+        font-size: 16px;
+    }
+
+    body {
+        @apply font-sans text-[0.9rem] leading-[1.2rem] text-[color:var(--text-secondary)];
+    }
+
+    h1 {
+        @apply font-display text-[2.2rem] leading-[2.2rem] my-2 text-[color:var(--text-primary)];
+        font-weight: 700;
+    }
+
+    h2 {
+        @apply font-display text-[1.6rem] my-1 text-[color:var(--text-secondary)];
+        font-weight: 600;
+    }
+
+    h3 {
+        @apply text-[1.5rem] leading-[1.5rem] my-1 text-[color:var(--text-primary)];
+        font-variation-settings: 'wght' 700;
+        padding-top: 0.12em;
+    }
+
+    h4 {
+        @apply text-[1rem] leading-[1.1rem] my-1 text-[color:var(--text-primary)];
+        font-variation-settings: 'wght' 600;
+    }
+
+    h5 {
+        @apply text-[1rem] my-1 text-[color:var(--text-primary)];
+        font-variation-settings: 'wght' 500;
+    }
+
+    p {
+        @apply text-[0.9rem] leading-[1.2rem] text-[color:var(--text-secondary)];
+        font-variation-settings: 'wght' 500;
+    }
+
+    .important {
+        font-variation-settings: 'wght' 700;
+    }
+
+    @layer base {
+        /* Light defaults */
+        :root {
+            --bg-main: #E9E9E9;
+
+            --layer-primary: #FFFFFFB3;
+            --layer-secondary: #D6D6D680;
+            --layer-tertiary: #C4C4C466;
+
+            --accent: #0068FFCC;
+
+            --text-primary: #000000CC;
+            --text-secondary: #4B4B4BCC;
+            --text-tertiary: #595959CC;
+
+            --blue: #395BE9;
+            --green: #33762FCC;
+            --yellow: #DD9700CC;
+            --red: #C61300B3;
+            --beige: #D9D9A2CC;
+            --divider: #A9A9A94D;
+
+            --blur-dark: #F2F2F280;
+            --blur-light: #B2B2B280;
+
+            /* Hint to the browser for built‑in widgets */
+            color-scheme: light dark;
+        }
+
+        /* System dark mode overrides */
+        @media (prefers-color-scheme: dark) {
+            :root {
+                --bg-main: #111111;
+
+                --layer-primary: #1F1F1F80;
+                --layer-secondary: #36363666;
+                --layer-tertiary: #6161614D;
+
+                --accent: #2D6AE2CC;
+
+                --text-primary: #E8E8E8CC;
+                --text-secondary: #AEAEAECC;
+                --text-tertiary: #878787CC;
+
+                --blue: #395BE9;
+                --green: #6DEB68CC;
+                --yellow: #EEFE53CC;
+                --red: #E45647B3;
+                --beige: #B6B684CC;
+                --divider: #7D7D7D4D;
+
+                --blur-dark: #111111CC;
+                --blur-light: #22222299;
+            }
+        }
+    }
 }

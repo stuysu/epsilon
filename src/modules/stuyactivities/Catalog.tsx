@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
-import { Box, Skeleton, Typography, useMediaQuery } from "@mui/material";
+import { Box, Skeleton, useMediaQuery } from "@mui/material";
 import { Masonry } from "@mui/lab";
 import { motion } from "framer-motion";
 import { useSnackbar } from "notistack";
@@ -143,7 +143,14 @@ const Catalog = () => {
             const safe = orgData ?? [];
             return { data: safe, more: safe.length >= querySize };
         },
-        [enqueueSnackbar, querySize, debouncedSearchParams, seed],
+        [
+            enqueueSnackbar,
+            seed,
+            debouncedSearchParams.tags,
+            debouncedSearchParams.meetingDays,
+            debouncedSearchParams.commitmentLevels,
+            debouncedSearchParams.name,
+        ],
     );
 
     const getOrgs = useCallback(
@@ -202,7 +209,7 @@ const Catalog = () => {
                 isFetchingRef.current = false;
             }
         },
-        [fetchPage, querySize],
+        [fetchPage],
     );
 
     // reset and fetch first page on param change
@@ -252,7 +259,7 @@ const Catalog = () => {
     );
 
     return (
-        <Box sx={{ display: "flex", position: "relative", flexWrap: "wrap" }}>
+        <section className={"flex relative flex-wrap"}>
             <Helmet>
                 <title>StuyActivities - Epsilon</title>
                 <meta
@@ -277,7 +284,7 @@ const Catalog = () => {
                     paddingBottom: "20vh",
                 }}
             >
-                <Box sx={{ overflowAnchor: "none" as any }}>
+                <div className="[overflow-anchor:none]">
                     {/* When new search -show top skeletons */}
                     {loadingInitial ? (
                         <div className={"relative top-10"}>
@@ -341,32 +348,24 @@ const Catalog = () => {
                     </div>
 
                     {!loadingInitial && !searchState.more && (
-                        <Box>
+                        <div>
                             {approvedOrgs.length === 0 ? (
-                                <Typography
-                                    align="center"
-                                    variant="h3"
-                                    sx={{ paddingTop: "10em", opacity: 0.7 }}
-                                >
+                                <h3 className={"text-center pt-40 opacity-70"}>
                                     <i className={"bx bx-search bx-md m-5"}></i>
                                     <br />
                                     No Results
-                                </Typography>
+                                </h3>
                             ) : (
-                                <Typography
-                                    align="center"
-                                    variant="h3"
-                                    sx={{ paddingTop: "2em", opacity: 0.7 }}
-                                >
+                                <h3 className={"text-center pt-8 opacity-70"}>
                                     {approvedOrgs.length}{" "}
                                     {`Organization${approvedOrgs.length > 1 ? "s" : ""} Found`}
-                                </Typography>
+                                </h3>
                             )}
-                        </Box>
+                        </div>
                     )}
-                </Box>
+                </div>
             </Box>
-        </Box>
+        </section>
     );
 };
 

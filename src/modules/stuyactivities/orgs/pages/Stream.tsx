@@ -1,8 +1,8 @@
 import React, { useContext } from "react";
 import OrgContext from "../../../../contexts/OrgContext";
-import { Box, Stack, Typography } from "@mui/material";
 import { sortPostByDate } from "../../../../utils/DataFormatters";
 import OrgStreamPost from "../components/OrgStreamPost";
+import ContentUnavailable from "../../../../components/ui/ContentUnavailable";
 
 const Stream = () => {
     const organization: OrgContextType = useContext(OrgContext);
@@ -13,28 +13,16 @@ const Stream = () => {
         organization.state === "PUNISHED"
     )
         return (
-            <Box
-                sx={{
-                    minHeight: "55vh",
-                    marginBottom: "5rem",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                }}
-            >
-                <i className="bx bx-no-entry bx-lg text-red-500 mb-5"></i>
-                <Typography variant="h1" marginBottom={3}>
-                    Stream Unavailable
-                </Typography>
-                <Typography variant="body1">
-                    {`This Activity does not meet the requirements to post updates.`}
-                </Typography>
-            </Box>
+            <ContentUnavailable
+                icon="bx-message-alt-x"
+                iconColor="text-red"
+                title="Stream Unavailable"
+                description="This Activity does not yet meet the requirements to post updates. Please check back later."
+            />
         );
 
     return (
-        <Stack spacing={3} marginTop={1} marginBottom={10}>
+        <section className="flex flex-col mt-2 gap-2">
             {organization.posts
                 .sort(sortPostByDate)
                 .reverse()
@@ -56,7 +44,7 @@ const Stream = () => {
                         />
                     );
                 })}
-        </Stack>
+        </section>
     );
 };
 

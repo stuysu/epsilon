@@ -39,7 +39,7 @@ const NotFound = () => {
                 alignItems: "center",
             }}
         >
-            <i className="bx bx-question-mark bx-lg text-yellow-500 mb-5"></i>
+            <i className="bx bx-question-mark bx-lg text-yellow mb-5"></i>
             <Typography variant="h1" marginBottom={3}>
                 Page Not Found
             </Typography>

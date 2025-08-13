@@ -3,7 +3,6 @@ import OrgContext from "../../../../contexts/OrgContext";
 import {
     Avatar,
     Box,
-    Chip,
     Dialog,
     DialogActions,
     DialogContent,
@@ -24,6 +23,7 @@ import { sortByDate, sortByRole } from "../../../../utils/DataFormatters";
 import UserContext from "../../../../contexts/UserContext";
 import RelatedActivities from "./RelatedActivities";
 import OrgInspector from "../components/OrgInspector";
+import ToggleChip from "../../../../components/ui/ToggleChip";
 
 const Overview = () => {
     const navigate = useNavigate();
@@ -207,7 +207,11 @@ const Overview = () => {
                             }}
                             alt={`organization ${organization.name}`}
                         >
-                            <h1>{organization.name.charAt(0).toUpperCase()}</h1>
+                            <h1
+                                className={"text-[200px] font-light opacity-70"}
+                            >
+                                {organization.name.charAt(0).toUpperCase()}
+                            </h1>
                         </Avatar>
                     </div>
                 </Box>
@@ -217,9 +221,7 @@ const Overview = () => {
                         <div
                             className={"text-center sm:text-left max-sm:mb-10"}
                         >
-                            <Typography variant="h1">
-                                {organization.name}
-                            </Typography>
+                            <h1>{organization.name}</h1>
                         </div>
                         <div
                             className={
@@ -227,20 +229,13 @@ const Overview = () => {
                             }
                         >
                             {organization.tags?.map((tag, index) => (
-                                <Chip
-                                    key={index}
-                                    label={tag}
-                                    variant="filled"
-                                    sx={{
-                                        color: "#E8E8E8CC",
-                                        height: "24px",
-                                        paddingTop: "3px",
-                                        borderRadius: 2,
-                                        boxShadow:
-                                            "inset 0 0 1px 1px rgba(255, 255, 255, 0.15)",
-                                    }}
+                                <ToggleChip title={tag} selectable={false} />
+                            )) || (
+                                <ToggleChip
+                                    title={"Uncategorized"}
+                                    selectable={false}
                                 />
-                            )) || <p>Uncategorized</p>}
+                            )}
                         </div>
 
                         <div
@@ -248,20 +243,12 @@ const Overview = () => {
                                 "max-sm:m-1 max-sm:mt-6 mb-2 cursor-help hover:brightness-125 transition"
                             }
                         >
-                            <Typography
+                            <p
+                                className="h-[4lh] overflow-hidden text-ellipsis [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:4]"
                                 onClick={() => navigate("./charter")}
-                                variant="body1"
-                                sx={{
-                                    height: "4lh",
-                                    display: "-webkit-box",
-                                    WebkitBoxOrient: "vertical",
-                                    overflow: "hidden",
-                                    WebkitLineClamp: 4,
-                                    textOverflow: "ellipsis",
-                                }}
                             >
                                 {organization.purpose || "None"}
-                            </Typography>
+                            </p>
                         </div>
                     </div>
 

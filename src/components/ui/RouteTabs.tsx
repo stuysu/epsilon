@@ -1,5 +1,5 @@
-import { Tab, Tabs } from "@mui/material";
-import { ReactNode, useEffect, useState } from "react";
+import { Tabs } from "radix-ui";
+import { ReactNode, useMemo } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 type TabProps = {
@@ -13,42 +13,43 @@ type Props = {
 };
 
 const RouteTabs = ({ tabs }: Props) => {
-    const [currentTab, setCurrentTab] = useState(0);
     const location = useLocation();
     const navigate = useNavigate();
 
-    useEffect(() => {
-        const isCorrectIndex = location.pathname === tabs[currentTab]?.to;
-
-        if (!isCorrectIndex) {
-            const correctIndex = tabs.findIndex(
-                (tab) => location.pathname === tab.to,
-            );
-            setCurrentTab(~correctIndex ? correctIndex : 0);
-        }
-    }, [location.pathname, currentTab, tabs]);
+    const activeValue = useMemo(() => {
+        const found = tabs.find((t) => t.to === location.pathname);
+        return found ? found.to : tabs[0]?.to ?? "";
+    }, [location.pathname, tabs]);
 
     return (
-        <Tabs
-            indicatorColor="secondary"
-            textColor="inherit"
-            value={currentTab}
-            scrollButtons
-            variant={"scrollable"}
-            allowScrollButtonsMobile
+        <Tabs.Root
+            value={activeValue}
+            onValueChange={(v) => {
+                if (v && v !== activeValue) navigate(v);
+            }}
         >
-            {tabs.map((tab, i) => {
-                let tabProps: any = {
-                    key: i,
-                    label: tab.label,
-                    value: i,
-                };
+            <Tabs.List aria-label="Routes">
+                {tabs.map((tab) => (
+                    <Tabs.Trigger
+                        key={tab.to}
+                        value={tab.to}
+                        className={"px-2 py-3 data-[state=active]:text-white"}
+                    >
+                        {tab.icon && (
+                            <i
+                                className={`bx ${tab.icon} relative top-px p-1`}
+                                aria-hidden="true"
+                            />
+                        )}
+                        <span>{tab.label}</span>
+                    </Tabs.Trigger>
+                ))}
+            </Tabs.List>
 
-                if (tab.icon) tabProps.icon = tab.icon;
-
-                return <Tab {...tabProps} onClick={() => navigate(tab.to)} />;
-            })}
-        </Tabs>
+            {tabs.map((tab) => (
+                <Tabs.Content key={tab.to} value={tab.to} />
+            ))}
+        </Tabs.Root>
     );
 };
 

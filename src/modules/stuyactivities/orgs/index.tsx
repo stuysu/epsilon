@@ -1,6 +1,6 @@
 /* ORG ROUTING INFORMATION HERE */
 import React, { useEffect, useState } from "react";
-import { Route, Routes, useLocation, useNavigate, useParams } from "react-router-dom";
+import { Navigate, Route, Routes, useLocation, useNavigate, useParams, } from "react-router-dom";
 import OrgContext from "../../../contexts/OrgContext";
 import Loading from "../../../components/ui/Loading";
 import { supabase } from "../../../lib/supabaseClient";
@@ -215,7 +215,7 @@ const OrgRouter = () => {
                                 {/*1 max height to not break sticky layout*/}
                                 <OrgNav isMobile={isMobile} />
                             </div>
-                            <div className={"w-full lg:pr-0 pr-0"}>
+                            <div className={"w-full lg:pr-0 pr-0 min-h-[80vh]"}>
                                 <TransitionGroup component={null}>
                                     <CSSTransition
                                         key={location.pathname}
@@ -255,6 +255,12 @@ const OrgRouter = () => {
                                                 path={`/admin/*`}
                                                 Component={OrgAdminRouter}
                                             />
+                                            <Route
+                                                path="*"
+                                                element={
+                                                    <Navigate to=".." replace />
+                                                }
+                                            />
                                         </Routes>
                                     </CSSTransition>
                                 </TransitionGroup>
@@ -262,7 +268,7 @@ const OrgRouter = () => {
                             <div className="max-xl:hidden">
                                 <OrgInspector />
                             </div>
-                            <div className="xl:hidden w-12"></div>
+                            <div className="max-sm:hidden xl:hidden w-12"></div>
                         </div>
                     </>
                 )}

@@ -204,9 +204,7 @@ const AdminMember = ({
                     (isCreator || role === "MEMBER" || role === "ADVISOR") && (
                         <div onClick={() => setKickConfirmOpen(true)}>
                             <i
-                                className={
-                                    "bx bx-user-x bx-sm ml-3 text-red-500"
-                                }
+                                className={"bx bx-user-x bx-sm ml-3 text-red"}
                             ></i>
                         </div>
                     )}

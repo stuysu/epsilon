@@ -118,7 +118,7 @@ const NavBar: FC = () => {
         return <Box height={20} />;
 
     return (
-        <div>
+        <nav>
             {/* Backdrop when hovering over nav items */}
             <div
                 className={`max-sm:hidden bg-black/40 fixed left-0 top-0 z-40 h-full w-full backdrop-blur-3xl transition-opacity duration-300 ${
@@ -228,12 +228,6 @@ const NavBar: FC = () => {
                                     className="cursor-pointer transition-colors hover:text-neutral-300"
                                     onClick={() => {
                                         theme.toggleColorMode();
-                                        if (theme.colorMode) {
-                                            enqueueSnackbar(
-                                                "Light mode is in development. It is not recommended for use at this time.",
-                                                { variant: "warning" },
-                                            );
-                                        }
                                     }}
                                 >
                                     {theme.colorMode
@@ -245,7 +239,7 @@ const NavBar: FC = () => {
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
-                                    className="cursor-pointer transition-colors text-red-500 hover:text-red-600"
+                                    className="cursor-pointer transition-colors text-red hover:text-red-600"
                                     onClick={signOut}
                                 >
                                     Sign Out
@@ -357,7 +351,7 @@ const NavBar: FC = () => {
             <div className={"max-sm:hidden"}>
                 <Divider sx={{ position: "relative", zIndex: 45, bottom: 1 }} />
             </div>
-        </div>
+        </nav>
     );
 };
 

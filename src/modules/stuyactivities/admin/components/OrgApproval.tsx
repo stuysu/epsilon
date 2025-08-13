@@ -1,4 +1,4 @@
-import { Avatar, Divider, Typography } from "@mui/material";
+import { Avatar, Typography } from "@mui/material";
 import { supabase } from "../../../../lib/supabaseClient";
 
 import { useSnackbar } from "notistack";
@@ -6,6 +6,7 @@ import OrgChat from "./OrgChat";
 
 import { useState } from "react";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
+import Divider from "../../../../components/ui/Divider";
 
 const OrgApproval = ({
     onBack,
@@ -96,13 +97,13 @@ const OrgApproval = ({
                         Activity Name
                     </Typography>
                     <Typography variant="body2">{org.name}</Typography>
-                    <Divider sx={{ marginY: "10px" }} />
+                    <Divider />
 
                     <Typography variant="h5" fontWeight={600}>
                         URL
                     </Typography>
                     <Typography variant="body2">{org.url}</Typography>
-                    <Divider sx={{ marginY: "10px" }} />
+                    <Divider />
 
                     <Typography variant="h5" fontWeight={600}>
                         Picture
@@ -116,25 +117,25 @@ const OrgApproval = ({
                     ) : (
                         "No picture provided"
                     )}
-                    <Divider sx={{ marginY: "10px" }} />
+                    <Divider />
 
                     <Typography variant="h5" fontWeight={600}>
                         Origin Story
                     </Typography>
                     <Typography variant="body2">{org.mission}</Typography>
-                    <Divider sx={{ marginY: "10px" }} />
+                    <Divider />
 
                     <Typography variant="h5" fontWeight={600}>
                         Goals
                     </Typography>
                     <Typography variant="body2">{org.goals}</Typography>
-                    <Divider sx={{ marginY: "10px" }} />
+                    <Divider />
 
                     <Typography variant="h5" fontWeight={600}>
                         Activity Description
                     </Typography>
                     <Typography variant="body2">{org.purpose}</Typography>
-                    <Divider sx={{ marginY: "10px" }} />
+                    <Divider />
 
                     <Typography variant="h5" fontWeight={600}>
                         Appointment Procedures
@@ -142,13 +143,13 @@ const OrgApproval = ({
                     <Typography variant="body2">
                         {org.appointment_procedures}
                     </Typography>
-                    <Divider sx={{ marginY: "10px" }} />
+                    <Divider />
 
                     <Typography variant="h5" fontWeight={600}>
                         Uniqueness
                     </Typography>
                     <Typography variant="body2">{org.uniqueness}</Typography>
-                    <Divider sx={{ marginY: "10px" }} />
+                    <Divider />
 
                     <Typography variant="h5" fontWeight={600}>
                         Returning Info
@@ -158,7 +159,7 @@ const OrgApproval = ({
                             ? org?.returning_info || "NO INFO SUBMITTED"
                             : "Claims to not be a returning club."}
                     </Typography>
-                    <Divider sx={{ marginY: "10px" }} />
+                    <Divider />
 
                     <Typography variant="h5" fontWeight={600}>
                         Meeting Description
@@ -166,7 +167,7 @@ const OrgApproval = ({
                     <Typography variant="body2">
                         {org.meeting_description}
                     </Typography>
-                    <Divider sx={{ marginY: "10px" }} />
+                    <Divider />
 
                     <Typography variant="h5" fontWeight={600}>
                         Meeting Schedule
@@ -174,7 +175,7 @@ const OrgApproval = ({
                     <Typography variant="body2">
                         {org.meeting_schedule}
                     </Typography>
-                    <Divider sx={{ marginY: "10px" }} />
+                    <Divider />
 
                     <Typography variant="h5" fontWeight={600}>
                         Meeting Days
@@ -182,7 +183,7 @@ const OrgApproval = ({
                     <Typography variant="body2">
                         {org.meeting_days?.join(", ")}
                     </Typography>
-                    <Divider sx={{ marginY: "10px" }} />
+                    <Divider />
 
                     <Typography variant="h5" fontWeight={600}>
                         Commitment Level
@@ -190,7 +191,7 @@ const OrgApproval = ({
                     <Typography variant="body2">
                         {org.commitment_level}
                     </Typography>
-                    <Divider sx={{ marginY: "10px" }} />
+                    <Divider />
 
                     <Typography variant="h5" fontWeight={600}>
                         Keywords
@@ -198,7 +199,7 @@ const OrgApproval = ({
                     <Typography variant="body2">
                         {org.keywords || "none"}
                     </Typography>
-                    <Divider sx={{ marginY: "10px" }} />
+                    <Divider />
 
                     <Typography variant="h5" fontWeight={600}>
                         Tags
@@ -206,7 +207,7 @@ const OrgApproval = ({
                     <Typography variant="body2">
                         {org.tags?.join(", ") || "none"}
                     </Typography>
-                    <Divider sx={{ marginY: "10px" }} />
+                    <Divider />
 
                     <Typography variant="h5" fontWeight={600}>
                         Clubs/Pubs Fair Interest
@@ -214,7 +215,7 @@ const OrgApproval = ({
                     <Typography variant="body2">
                         {org.fair ? "YES" : "NO"}
                     </Typography>
-                    <Divider sx={{ marginY: "10px" }} />
+                    <Divider />
 
                     <Typography variant="h5" fontWeight={600}>
                         Creator:
@@ -225,7 +226,7 @@ const OrgApproval = ({
                                 ?.users?.email
                         }
                     </Typography>
-                    <Divider sx={{ marginY: "10px" }} />
+                    <Divider />
 
                     <Typography variant="h5" fontWeight={600}>
                         Faculty Advisor
@@ -233,7 +234,7 @@ const OrgApproval = ({
                     <Typography variant="body2">
                         {org?.faculty_email || "N/A"}
                     </Typography>
-                    <Divider sx={{ marginY: "10px" }} />
+                    <Divider />
                 </div>
 
                 <div className="max-h-[70vh] sticky top-32 w-full">

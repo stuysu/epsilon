@@ -1,121 +1,88 @@
-import React, { useContext, useState } from "react";
+import { useContext } from "react";
 import OrgContext from "../../../../../contexts/OrgContext";
-import AdminUpsertMeeting from "../components/AdminUpsertMeeting";
+import UserContext from "../../../../../contexts/UserContext";
 
-import { Box, Stack, Typography, useMediaQuery } from "@mui/material";
-import { supabase } from "../../../../../lib/supabaseClient";
+import AdminMember from "../components/AdminMember";
+import { Box, Button, Stack, TextField } from "@mui/material";
+
+import { sortByRole } from "../../../../../utils/DataFormatters";
 import { useSnackbar } from "notistack";
-import OrgMeeting from "../../components/OrgMeeting";
-
-import { sortByDate } from "../../../../../utils/DataFormatters";
-import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
 
 const Roster = () => {
-    const organization = useContext(OrgContext);
     const { enqueueSnackbar } = useSnackbar();
-    const isMeetingMobile = useMediaQuery("(max-width: 1450px)");
 
-    const [editState, setEditState] = useState<{
-        id: number | undefined;
-        title: string | undefined;
-        description: string | undefined;
-        start: string | undefined;
-        end: string | undefined;
-        room: number | undefined;
-        isPublic: boolean | undefined;
-        editing: boolean;
-    }>({
-        id: undefined,
-        title: undefined,
-        description: undefined,
-        start: undefined,
-        end: undefined,
-        room: undefined,
-        isPublic: undefined,
-        editing: false,
-    });
+    const user = useContext(UserContext);
+    const organization = useContext<OrgContextType>(OrgContext);
+    const members = organization.memberships
+        .filter((member) => member.active)
+        .map((member) => {
+            return {
+                first_name: member.users?.first_name,
+                last_name: member.users?.last_name,
+                email: member.users?.email,
+                membershipId: member.id,
+                userId: member.users?.id,
+                picture: member.users?.picture,
+                role_name: member.role_name,
+                role: member.role,
+                is_faculty: member.users?.is_faculty,
+            };
+        });
+    const member_emails = members.map((member) => member.email).join(", ");
 
-    if (
-        organization.state === "LOCKED" ||
-        organization.state === "PENDING" ||
-        organization.state === "PUNISHED"
-    )
-        return (
+    const userMember = organization.memberships.find(
+        (member) => member.users?.id === user.id,
+    );
+
+    return (
+        <Box sx={{ width: "100%" }}>
             <Box
                 sx={{
-                    minHeight: "55vh",
-                    marginBottom: "5rem",
+                    width: "100%",
                     display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
+                    flexWrap: "nowrap",
                     alignItems: "center",
                 }}
             >
-                <i className="bx bx-no-entry bx-lg text-red-500 mb-5"></i>
-                <Typography variant="h1" marginBottom={3}>
-                    Cannot Schedule Meetings
-                </Typography>
-                <Typography variant="body1">
-                    {`This Activity does not meet the requirements to hold meetings.`}
-                </Typography>
-            </Box>
-        );
-
-    return (
-        <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
-            <Box
-                height="100%"
-                bgcolor="#1f1f1f80"
-                padding={5}
-                borderRadius={3}
-                marginBottom={3}
-                marginTop={1}
-                boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
-            >
-                <Typography variant="h1" align="center" width="100%">
-                    Activity Meetings Scheduler
-                </Typography>
-                <Typography
-                    variant="body1"
-                    align="center"
-                    width="100%"
-                    paddingX={"2vw"}
-                >
-                    Meeting records must be kept up to date on Epsilon in order
-                    to secure funding and avoid receiving strikes.
-                </Typography>
-
                 <Box
                     sx={{
-                        display: "flex",
-                        justifyContent: "center",
+                        paddingTop: "8px",
+                        paddingBottom: "8px",
                         width: "100%",
-                        marginTop: "20px",
                     }}
                 >
-                    <AsyncButton
-                        onClick={() =>
-                            setEditState({
-                                id: undefined,
-                                title: undefined,
-                                description: undefined,
-                                start: undefined,
-                                end: undefined,
-                                room: undefined,
-                                isPublic: undefined,
-                                editing: true,
-                            })
-                        }
-                        variant="contained"
+                    <TextField
+                        disabled
+                        fullWidth
+                        value={member_emails}
+                        variant="outlined"
+                    />
+                </Box>
+                <Box sx={{ paddingLeft: "16px", width: "100px" }}>
+                    <Button
+                        variant="outlined"
+                        onClick={async () => {
+                            try {
+                                await navigator.clipboard.writeText(
+                                    member_emails,
+                                );
+                                enqueueSnackbar("Copied emails to clipboard!", {
+                                    variant: "success",
+                                });
+                            } catch (error) {
+                                enqueueSnackbar(
+                                    "Failed to copy emails to clipboard. :( Try manually copying from the page.",
+                                    { variant: "error" },
+                                );
+                            }
+                        }}
                     >
-                        Create Meeting
-                    </AsyncButton>
+                        Copy
+                    </Button>
                 </Box>
             </Box>
-
             <Box
                 height="100%"
-                width="100%"
                 bgcolor="#1f1f1f80"
                 padding={0.5}
                 borderRadius={3}
@@ -124,117 +91,26 @@ const Roster = () => {
                 boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
             >
                 <Stack borderRadius={2} overflow="hidden" spacing={0.5}>
-                    {organization.meetings
-                        .sort(sortByDate)
-                        .reverse()
-                        .map((meeting) => (
-                            <OrgMeeting
-                                key={meeting.id}
-                                id={meeting.id}
-                                title={meeting.title}
-                                description={meeting.description}
-                                start_time={meeting.start_time}
-                                end_time={meeting.end_time}
-                                room_name={meeting.rooms?.name}
-                                org_name={organization.name}
-                                org_picture={organization.picture || ""}
-                                is_public={meeting.is_public}
-                                isMobile={isMeetingMobile}
-                                onEdit={() => {
-                                    setEditState({
-                                        id: meeting.id,
-                                        title: meeting.title,
-                                        description: meeting.description,
-                                        start: meeting.start_time,
-                                        end: meeting.end_time,
-                                        room: meeting.rooms?.id,
-                                        isPublic: meeting.is_public,
-                                        editing: true,
-                                    });
-                                }}
-                                onDelete={async () => {
-                                    let { error } =
-                                        await supabase.functions.invoke(
-                                            "delete-meeting",
-                                            {
-                                                body: {
-                                                    id: meeting.id,
-                                                },
-                                            },
-                                        );
-
-                                    if (error) {
-                                        return enqueueSnackbar(
-                                            "Error deleting meeting. Contact it@stuysu.org for support.",
-                                            { variant: "error" },
-                                        );
-                                    }
-
-                                    if (organization.setOrg) {
-                                        // update org
-                                        organization.setOrg({
-                                            ...organization,
-                                            meetings:
-                                                organization.meetings.filter(
-                                                    (m) => m.id !== meeting.id,
-                                                ),
-                                        });
-                                    }
-
-                                    enqueueSnackbar("Deleted Meeting!", {
-                                        variant: "success",
-                                    });
-                                }}
+                    {members
+                        ?.sort(sortByRole)
+                        .map((member, i) => (
+                            <AdminMember
+                                id={member.membershipId || -1}
+                                userId={member.userId || -1}
+                                first_name={member.first_name || "First"}
+                                last_name={member.last_name || "Last"}
+                                email={member.email || ""}
+                                picture={member.picture}
+                                role={member.role || "MEMBER"}
+                                role_name={member.role_name}
+                                isCreator={userMember?.role === "CREATOR"}
+                                isAdmin={userMember?.role === "ADMIN"}
+                                is_faculty={member.is_faculty}
+                                key={i}
                             />
                         ))}
                 </Stack>
             </Box>
-
-            {editState.editing && (
-                <AdminUpsertMeeting
-                    id={editState.id}
-                    title={editState.title}
-                    description={editState.description}
-                    room_id={editState.room}
-                    start={editState.start}
-                    end={editState.end}
-                    isPublic={editState.isPublic}
-                    open={editState.editing}
-                    onClose={() => {
-                        setEditState({
-                            id: undefined,
-                            title: undefined,
-                            description: undefined,
-                            start: undefined,
-                            end: undefined,
-                            room: undefined,
-                            isPublic: undefined,
-                            editing: false,
-                        });
-                    }}
-                    onSave={(
-                        saveState: Partial<Meeting>,
-                        isInsert: boolean,
-                    ) => {
-                        if (isInsert) {
-                            organization.setOrg?.({
-                                ...organization,
-                                meetings: [...organization.meetings, saveState],
-                            });
-                        } else {
-                            organization.setOrg?.({
-                                ...organization,
-                                meetings: [
-                                    ...organization.meetings.filter(
-                                        (m) => m.id !== saveState.id,
-                                    ),
-                                    saveState,
-                                ],
-                            });
-                        }
-                    }}
-                />
-            )}
         </Box>
     );
 };

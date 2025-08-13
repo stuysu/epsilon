@@ -1,7 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 
 import React, { useContext } from "react";
-import { Box, Typography } from "@mui/material";
 
 import UserContext from "../../../contexts/UserContext";
 
@@ -14,25 +13,16 @@ import SendMessage from "./pages/SendMessage";
 import Announcements from "./pages/Announcements";
 import Rooms from "./pages/Rooms";
 import Valentines from "./pages/Valentines";
-
-/* ICONS */
-import PendingActionsIcon from "@mui/icons-material/PendingActions";
-import EditIcon from "@mui/icons-material/Edit";
-import ReportProblemIcon from "@mui/icons-material/ReportProblem";
-import EmailIcon from "@mui/icons-material/Email";
-import CampaignIcon from "@mui/icons-material/Campaign";
-import MeetingRoomIcon from "@mui/icons-material/MeetingRoom";
-import AddIcon from "@mui/icons-material/Add";
-import AddUser from "./pages/AddUser";
-import FavoriteIcon from "@mui/icons-material/Favorite";
 import ApprovedValentines from "./pages/ApprovedValentines";
+import ContentUnavailable from "../../../components/ui/ContentUnavailable";
+import AddUser from "./pages/AddUser";
 
 const VALENTINES = false;
 
 export type Link = {
     to: string;
     label: string;
-    icon: React.ReactNode;
+    icon: string;
     permission?: string;
 };
 
@@ -41,42 +31,42 @@ export const getLinks = (user: UserContextType) => {
         {
             to: "/admin/approve-pending",
             label: "Pending Orgs",
-            icon: <PendingActionsIcon />,
+            icon: "bx-carousel",
         },
         {
             to: "/admin/approve-edit",
             label: "Approve Edits",
-            icon: <EditIcon />,
+            icon: "bx-edit",
         },
         {
             to: "/admin/strikes",
             label: "Strikes",
-            icon: <ReportProblemIcon />,
+            icon: "bx-error",
         },
         {
             to: "/admin/send-message",
             label: "Send Message",
-            icon: <EmailIcon />,
+            icon: "bx-message-dots",
         },
         {
             to: "/admin/announcements",
             label: "Announcements",
-            icon: <CampaignIcon />,
+            icon: "bxs-megaphone",
         },
         {
             to: "/admin/rooms",
             label: "Rooms",
-            icon: <MeetingRoomIcon />,
+            icon: "bx-door-open",
         },
         {
             to: "/admin/add-user",
             label: "Add User",
-            icon: <AddIcon />,
+            icon: "bx-user-plus",
         },
         {
             to: "/",
             label: "CTA (Coming Soon)",
-            icon: <i className="bx bx-bell bx-sm"></i>,
+            icon: "bx-bell",
         },
     ];
     if (VALENTINES) {
@@ -85,13 +75,13 @@ export const getLinks = (user: UserContextType) => {
                 {
                     to: "/admin/valentines",
                     label: "Valentines",
-                    icon: <FavoriteIcon />,
+                    icon: "bx-heart",
                     permission: "VALENTINES",
                 },
                 {
                     to: "/admin/approved-valentines",
                     label: "Approved Valentines",
-                    icon: <FavoriteIcon />,
+                    icon: "bx-book-heart",
                     permission: "VALENTINES",
                 },
             ],
@@ -112,25 +102,12 @@ const AdminRouter = () => {
 
     if (!user.permission || !links.length) {
         return (
-            <Box
-                sx={{
-                    width: "100vw",
-                    minHeight: "55vh",
-                    marginBottom: "5rem",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "center",
-                    alignItems: "center",
-                }}
-            >
-                <i className="bx bx-no-entry bx-lg text-red-500 mb-5"></i>
-                <Typography variant="h1" marginBottom={3}>
-                    Restricted Access
-                </Typography>
-                <Typography variant="body1">
-                    {`You do not have access to this page${user.permission ? " at this time" : ""}.`}
-                </Typography>
-            </Box>
+            <ContentUnavailable
+                icon="bx-no-entry"
+                iconColor="text-red"
+                title="Restricted Access"
+                description="You do not have access to this page at this time."
+            />
         );
     }
 

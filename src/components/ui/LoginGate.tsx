@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import LoginButton from "./buttons/LoginButton";
 import React, { useContext } from "react";
 import UserContext from "../../contexts/UserContext";
@@ -19,10 +19,8 @@ const LoginGate = ({ page, children, sx }: Props): React.JSX.Element => {
                 "w-full h-[70vh] px-14 flex flex-col justify-center items-center"
             }
         >
-            <i className="bx bx-lock bx-lg text-blue-500 mb-5"></i>
-            <Typography align="center" variant="h1" marginBottom={5}>
-                Sign in to {page}.
-            </Typography>
+            <i className="bx bx-lock bx-lg text-blue mb-5"></i>
+            <h1 className={"text-center mb-5"}>Sign in to {page}.</h1>
             <LoginButton />
         </div>
     );

@@ -87,7 +87,7 @@ const Pages = () => {
                     <Route path={"/:orgUrl/*"} Component={OrgRouter} />
                 </Routes>
                 {user.signed_in && (
-                    <div
+                    <footer
                         className={
                             "w-full h-36 bg-neutral-900 p-10 max-sm:p-6 pr-12 flex justify-between items-center mt-20 max-sm:pb-56 max-sm:flex-col gap-2"
                         }
@@ -140,7 +140,7 @@ const Pages = () => {
                         >
                             MMXXIV
                         </Typography>
-                    </div>
+                    </footer>
                 )}
             </Suspense>
         </div>
