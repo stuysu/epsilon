@@ -71,7 +71,7 @@ const CharterLanding = () => {
                     >
                         <div
                             className={
-                                "relative p-10 max-lg:h-fit w-full h-full flex flex-col items-start justify-start bg-neutral-900 rounded-2xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.075)]"
+                                "relative p-10 max-lg:h-fit w-full h-full flex flex-col items-start justify-start bg-layer-1 rounded-2xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.075)]"
                             }
                         >
                             <div
@@ -139,7 +139,7 @@ const CharterLanding = () => {
                         </div>
                         <div
                             className={
-                                "relative p-10 max-lg:h-fit w-full h-full flex flex-col items-start justify-start bg-neutral-900 rounded-2xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.075)]"
+                                "relative p-10 max-lg:h-fit w-full h-full flex flex-col items-start justify-start bg-layer-1 rounded-2xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.075)]"
                             }
                         >
                             <div

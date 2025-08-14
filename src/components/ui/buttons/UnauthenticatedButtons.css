@@ -2,7 +2,7 @@
     position: relative;
     z-index: 1;
     display: flex;
-    width: 350px;
+    width: 330px;
     background-color: rgba(31, 31, 31, 0.5);
     color: rgba(232, 232, 232, 0.8);
     box-shadow: 0 0 2px 0 rgba(255, 255, 255, 0.3) inset;

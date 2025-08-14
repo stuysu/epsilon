@@ -24,10 +24,11 @@ export default function SearchInput({
                     onChange(e.target.value)
                 }
                 className=" w-full rounded-xl px-12 pt-1 transition-colors
-              bg-[#1F1F1F80]
-              focus:bg-[#3A3A3A80]
+                text-typography-1
+              bg-layer-1
+              hover:bg-layer-2
+              focus:bg-layer-3
               outline-0
-              hover:bg-[#2A2A2A80]
               [box-shadow:inset_0_0_2px_rgba(255,255,255,0.3)]
         "
                 style={{

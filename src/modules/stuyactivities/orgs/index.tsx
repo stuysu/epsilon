@@ -198,7 +198,7 @@ const OrgRouter = () => {
                                     top: -0.9,
                                 }}
                             >
-                                Back
+                                Catalog
                             </span>
                         </div>
 

@@ -16,24 +16,22 @@ const UnauthenticatedLanding = () => {
         : `${PUBLIC_URL}/wordmark_light.svg`;
     return (
         <Box>
-            <div className={"max-sm:hidden"}>
-                <Box
-                    sx={{
-                        position: "fixed",
-                        width: "100vw",
-                        height: "100vh",
-                        backgroundImage: `url(${PUBLIC_URL}/textures/login.png)`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        opacity: isLoginHovered ? 1 : 0.5,
-                        transition: "opacity 0.3s ease",
-                        filter: "blur(100px) brightness(0.9)",
-                        mixBlendMode: "color-dodge",
-                        pointerEvents: "none",
-                        zIndex: 2,
-                    }}
-                />
-            </div>
+            <Box
+                sx={{
+                    position: "fixed",
+                    width: "100vw",
+                    height: "100vh",
+                    backgroundImage: `url(${PUBLIC_URL}/textures/login.png)`,
+                    backgroundSize: "cover",
+                    backgroundPosition: "center",
+                    opacity: isLoginHovered ? 0.5 : 0.3,
+                    transition: "opacity 0.3s ease",
+                    filter: "blur(50px)",
+                    mixBlendMode: "color-dodge",
+                    pointerEvents: "none",
+                    zIndex: 2,
+                }}
+            />
             <Box
                 className={
                     "w-full max-sm:h-[80vh] h-[90vh] flex justify-center items-center flex-col"
@@ -43,7 +41,7 @@ const UnauthenticatedLanding = () => {
                     src={wordmarkSrc}
                     alt="Epsilon"
                     style={{
-                        marginBottom: "40px",
+                        marginBottom: "50px",
                         maxWidth: "300px",
                         height: "auto",
                         mixBlendMode: theme.colorMode

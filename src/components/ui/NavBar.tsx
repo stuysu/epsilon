@@ -1,4 +1,4 @@
-import { Avatar, Box, Divider, Stack, useMediaQuery } from "@mui/material";
+import { Avatar, Box, Stack, useMediaQuery } from "@mui/material";
 import React, {
     CSSProperties,
     FC,
@@ -151,7 +151,7 @@ const NavBar: FC = () => {
                 {/* User dropdown */}
                 <div className="pointer-events-auto absolute sm:relative flex flex-row justify-end sm:top-1 -top-20 sm:right-0 right-8">
                     <div
-                        className="flex cursor-pointer flex-row items-center justify-center gap-2 rounded-lg bg-neutral-800 pl-1.5 pr-1.5 shadow-[inset_0px_0px_2px_0px_rgba(255,255,255,0.3)] h-10"
+                        className="flex cursor-pointer flex-row items-center justify-center gap-2 rounded-lg bg-layer-1 pl-1.5 pr-1.5 shadow-[inset_0px_0px_2px_0px_rgba(255,255,255,0.3)] h-10"
                         onClick={() => setDrawerOpen(!drawerOpen)}
                     >
                         <Avatar
@@ -171,7 +171,7 @@ const NavBar: FC = () => {
                     {/* Drawer */}
                     <div
                         className={`absolute sm:top-14 top-auto sm:bottom-auto bottom-0 sm:right-auto right-16
-                        z-50 flex w-72 flex-col gap-2 rounded-lg bg-neutral-800 sm:bg-opacity-80 p-5
+                        z-50 flex w-72 flex-col gap-2 rounded-lg bg-blurLight sm:bg-opacity-80 p-5
                         backdrop-blur-xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)]
                         transition-all duration-300 ${
                             drawerOpen
@@ -220,7 +220,6 @@ const NavBar: FC = () => {
                                 >
                                     Communication Options
                                 </p>
-                                <div className="bg-neutral-400 mt-1 mb-2 h-px w-full opacity-30" />
                                 <p
                                     style={{
                                         fontVariationSettings: "'wght' 700",
@@ -234,7 +233,6 @@ const NavBar: FC = () => {
                                         ? "Light Mode (Experimental)"
                                         : "Dark Mode"}
                                 </p>
-                                <div className="bg-neutral-400 mt-1 mb-2 h-px w-full opacity-30" />
                                 <p
                                     style={{
                                         fontVariationSettings: "'wght' 700",
@@ -348,9 +346,11 @@ const NavBar: FC = () => {
             </Box>
 
             {/* Divider under main nav */}
-            <div className={"max-sm:hidden"}>
-                <Divider sx={{ position: "relative", zIndex: 45, bottom: 1 }} />
-            </div>
+            <div
+                className={
+                    "max-sm:hidden relative z-[45] bottom-px w-full h-px bg-divider"
+                }
+            />
         </nav>
     );
 };

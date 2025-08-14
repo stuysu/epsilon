@@ -32,7 +32,7 @@ const Pages = () => {
     const user: UserContextType = useContext(UserContext);
 
     return (
-        <div>
+        <div className="bg-bg">
             <Helmet>
                 <meta
                     property="og:url"

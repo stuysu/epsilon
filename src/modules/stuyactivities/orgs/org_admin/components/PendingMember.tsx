@@ -42,7 +42,6 @@ const PendingMember = ({
 
         memberData.active = true;
 
-        // update contexts
         if (organization.setOrg) {
             organization.setOrg({
                 ...organization,
@@ -94,21 +93,13 @@ const PendingMember = ({
         >
             <Box sx={{ width: "100%" }}>
                 <OrgMember
-                    role_name={"Pending"}
                     email={email}
                     picture={picture}
                     first_name={first_name}
                     last_name={last_name}
                 />
             </Box>
-            <Box
-                sx={{
-                    width: "200px",
-                    display: "flex",
-                    flexWrap: "nowrap",
-                    marginX: "20px",
-                }}
-            >
+            <Box>
                 <AsyncButton
                     onClick={handleApprove}
                     variant="contained"

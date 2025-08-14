@@ -344,11 +344,8 @@ const Index = () => {
                                 Epsilon is a project carried through each
                                 generation of Stuyvesant students. It's based on
                                 the philosophy that "we honor those who walked
-                                so we could run, and we run so our children{" "}
-                                <span className="[text-shadow:_0_-1px_4px_#fff,_0_-2px_10px_#ff0,_0_-10px_20px_#ff8000,_0_-18px_40px_#f00] text-amber-50">
-                                    soar
-                                </span>
-                                ."
+                                so we could run, and we run so our children
+                                soar."
                             </Typography>
                         </motion.div>
                     )}

@@ -208,9 +208,8 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                         </Box>
 
                         <div className={"flex h-20 items-start"}>
-                            <Typography
-                                variant="h3"
-                                sx={{
+                            <h3
+                                style={{
                                     maxWidth: "90%",
                                     height: "3lh",
                                     overflow: "hidden",
@@ -222,7 +221,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                 }}
                             >
                                 {organization.name}
-                            </Typography>
+                            </h3>
                         </div>
                     </Box>
                     <Box
