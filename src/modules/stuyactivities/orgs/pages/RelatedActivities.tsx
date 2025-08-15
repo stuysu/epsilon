@@ -66,7 +66,7 @@ const RelatedActivities = ({ currentOrg }: { currentOrg: Organization }) => {
 
         const sorted = scoredWithExtra
             .sort((a, b) => b.score - a.score)
-            .slice(0, 6)
+            .slice(0, 10)
             .map(({ score, ...org }) => ({
                 ...org,
                 score,
@@ -83,31 +83,37 @@ const RelatedActivities = ({ currentOrg }: { currentOrg: Organization }) => {
     if (!localLoading && relatedOrgs.length === 0) return null;
 
     return (
-        <div className={"max-w-[calc(100vw-160px)] overflow-x-scroll"}>
+        <div
+            className={
+                "scrollbar-none max-w-[calc(100vw+2rem)] sm:max-w-[100vw] lg:max-w-[calc(100vw-160px)] overflow-x-scroll snap-x snap-mandatory"
+            }
+        >
             <div
                 className={
                     "absolute bg-gradient-to-r from-bg to-transparent z-20 h-full w-6 left-0"
                 }
             ></div>
-            <div className={"w-fit flex gap-2 my-6"}>
+            <div className={"w-fit flex gap-2 my-4"}>
                 <div className={"w-10"}></div>
                 {localLoading
-                    ? Array.from({ length: 6 }).map((_, i) => (
+                    ? Array.from({ length: 10 }).map((_, i) => (
                           <div
                               key={i}
                               className="w-[180px] h-[180px] rounded-xl bg-neutral-800/50 animate-pulse mb-20"
                           />
                       ))
                     : relatedOrgs.map((org) => (
-                          <OrgBlock
-                              key={org.id}
-                              name={org.name || "No Name"}
-                              role={undefined}
-                              role_name={`${Math.min(org.score * 17.5, 95).toPrecision(2)}% Similar`}
-                              url={org.url}
-                              picture={org.picture}
-                              force
-                          />
+                          <div className={"snap-start scroll-ml-12"}>
+                              <OrgBlock
+                                  key={org.id}
+                                  name={org.name || "No Name"}
+                                  role={undefined}
+                                  role_name={`${Math.min(org.score * 17.5, 95).toPrecision(2)}% Similar`}
+                                  url={org.url}
+                                  picture={org.picture}
+                                  force
+                              />
+                          </div>
                       ))}
                 <div className={"w-12"}></div>
             </div>
