@@ -1,5 +1,4 @@
 import React from "react";
-import { Typography } from "@mui/material";
 
 type ContentUnavailableProps = {
     icon?: string;
@@ -17,12 +16,8 @@ const ContentUnavailable: React.FC<ContentUnavailableProps> = ({
     return (
         <div className="flex flex-col justify-center items-center h-[65vh] px-8">
             <i className={`bx ${icon} bx-lg ${iconColor} mb-5`}></i>
-            <Typography variant="h1" align="center" marginBottom={3}>
-                {title}
-            </Typography>
-            <Typography variant="body1" align="center" sx={{ maxWidth: 400 }}>
-                {description}
-            </Typography>
+            <h1 className={"text-center mb-5"}>{title}</h1>
+            <p className="text-center max-w-lg">{description}</p>
         </div>
     );
 };

@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import { Box } from "@mui/material";
 import OrgBlock from "../../../../components/ui/orgs/OrgBlock";
 import { useOrgList } from "../../../../contexts/OrgListContext";
 
@@ -84,8 +83,14 @@ const RelatedActivities = ({ currentOrg }: { currentOrg: Organization }) => {
     if (!localLoading && relatedOrgs.length === 0) return null;
 
     return (
-        <Box width={"100%"}>
-            <div className={"w-fit flex gap-2 my-6 flex-wrap"}>
+        <div className={"max-w-[calc(100vw-160px)] overflow-x-scroll"}>
+            <div
+                className={
+                    "absolute bg-gradient-to-r from-bg to-transparent z-20 h-full w-6 left-0"
+                }
+            ></div>
+            <div className={"w-fit flex gap-2 my-6"}>
+                <div className={"w-10"}></div>
                 {localLoading
                     ? Array.from({ length: 6 }).map((_, i) => (
                           <div
@@ -104,8 +109,9 @@ const RelatedActivities = ({ currentOrg }: { currentOrg: Organization }) => {
                               force
                           />
                       ))}
+                <div className={"w-12"}></div>
             </div>
-        </Box>
+        </div>
     );
 };
 

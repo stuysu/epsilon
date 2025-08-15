@@ -265,7 +265,7 @@ const OrgRouter = () => {
                                     </CSSTransition>
                                 </TransitionGroup>
                             </div>
-                            <div className="max-xl:hidden">
+                            <div className="max-xl:hidden mt-2 max-xl:bottom-6">
                                 <OrgInspector />
                             </div>
                             <div className="max-sm:hidden xl:hidden w-12"></div>

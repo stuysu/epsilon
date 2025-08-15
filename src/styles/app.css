@@ -25,7 +25,7 @@
     }
 
     h3 {
-        @apply text-[1.5rem] leading-[1.5rem] my-1 text-[color:var(--text-primary)];
+        @apply text-[1.4rem] leading-[1.4rem] my-1 text-[color:var(--text-primary)];
         font-variation-settings: 'wght' 700;
         padding-top: 0.12em;
     }
@@ -65,10 +65,11 @@
             --text-tertiary: #595959CC;
 
             --blue: #395BE9;
-            --green: #33762FCC;
-            --yellow: #DD9700CC;
-            --red: #C61300B3;
-            --beige: #D9D9A2CC;
+            --green: #33762F;
+            --yellow: #DD9700;
+            --red: #d31300;
+            --beige: #D9D9A2;
+
             --divider: #A9A9A94D;
 
             --blur-dark: #F2F2F280;
@@ -98,6 +99,7 @@
                 --yellow: #EEFE53CC;
                 --red: #E45647B3;
                 --beige: #B6B684CC;
+
                 --divider: #7D7D7D4D;
 
                 --blur-dark: #111111CC;

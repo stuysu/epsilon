@@ -2,15 +2,11 @@ import React, { useContext, useEffect, useState } from "react";
 import OrgContext from "../../../../contexts/OrgContext";
 import {
     Avatar,
-    Box,
     Dialog,
     DialogActions,
     DialogContent,
     DialogContentText,
     DialogTitle,
-    Divider,
-    Stack,
-    Typography,
     useMediaQuery,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
@@ -24,6 +20,8 @@ import UserContext from "../../../../contexts/UserContext";
 import RelatedActivities from "./RelatedActivities";
 import OrgInspector from "../components/OrgInspector";
 import ToggleChip from "../../../../components/ui/ToggleChip";
+import Divider from "../../../../components/ui/Divider";
+import OverviewList from "../../../../components/ui/OverviewList";
 
 const Overview = () => {
     const navigate = useNavigate();
@@ -143,9 +141,9 @@ const Overview = () => {
 
     if (organization.id === -1) {
         return (
-            <Box>
-                <Typography>That organization doesn't exist!</Typography>
-            </Box>
+            <div>
+                <h1>That organization doesn't exist!</h1>
+            </div>
         );
     }
 
@@ -161,62 +159,58 @@ const Overview = () => {
 
     return (
         <div className={"mt-3 w-full flex flex-wrap max-w-4xl"}>
-            <Stack direction={{ xs: "column", sm: "row" }} spacing={3}>
-                <Box>
+            <div className={"flex max-sm:flex-col gap-6 mb-7"}>
+                <div
+                    className={
+                        "max-sm:w-full max-sm:flex max-sm:justify-center max-sm:mt-5"
+                    }
+                >
                     <div
-                        className={
-                            "max-sm:w-full max-sm:flex max-sm:justify-center max-sm:mt-5"
-                        }
+                        style={{
+                            width: "240px",
+                            height: "240px",
+                            borderRadius: "25px",
+                            position: "absolute",
+                            boxShadow:
+                                "inset 0 0 10px 1px rgba(255, 255, 255, 0.3)",
+                            zIndex: 10,
+                        }}
+                    ></div>
+                    <Avatar
+                        src={organization.picture || ""}
+                        sx={{
+                            width: "240px",
+                            height: "240px",
+                            borderRadius: "25px",
+                            objectFit: "cover",
+                            position: "absolute",
+                            zIndex: 0,
+                            filter: "blur(30px)",
+                            opacity: 0.25,
+                        }}
+                    />
+                    <Avatar
+                        src={organization.picture || ""}
+                        sx={{
+                            width: "240px",
+                            height: "240px",
+                            backgroundColor: "#232323",
+                            borderRadius: "25px",
+                            objectFit: "cover",
+                            position: "relative",
+                            fontSize: "140px",
+                            zIndex: 1,
+                            color: "#cdcdcd",
+                        }}
+                        alt={`organization ${organization.name}`}
                     >
-                        <Box
-                            sx={{
-                                width: "240px",
-                                height: "240px",
-                                borderRadius: "25px",
-                                position: "absolute",
-                                boxShadow:
-                                    "inset 0 0 10px 1px rgba(255, 255, 255, 0.3)",
-                                zIndex: 10,
-                            }}
-                        ></Box>
-                        <Avatar
-                            src={organization.picture || ""}
-                            sx={{
-                                width: "240px",
-                                height: "240px",
-                                borderRadius: "25px",
-                                objectFit: "cover",
-                                position: "absolute",
-                                zIndex: 0,
-                                filter: "blur(30px)",
-                                opacity: 0.25,
-                            }}
-                        />
-                        <Avatar
-                            src={organization.picture || ""}
-                            sx={{
-                                width: "240px",
-                                height: "240px",
-                                backgroundColor: "#232323",
-                                borderRadius: "25px",
-                                objectFit: "cover",
-                                position: "relative",
-                                fontSize: "140px",
-                                zIndex: 1,
-                                color: "#cdcdcd",
-                            }}
-                            alt={`organization ${organization.name}`}
-                        >
-                            <h1
-                                className={"text-[200px] font-light opacity-70"}
-                            >
-                                {organization.name.charAt(0).toUpperCase()}
-                            </h1>
-                        </Avatar>
-                    </div>
-                </Box>
+                        <h1 className={"text-[200px] font-light opacity-70"}>
+                            {organization.name.charAt(0).toUpperCase()}
+                        </h1>
+                    </Avatar>
+                </div>
 
-                <Stack direction={"column"} position={"relative"} bottom={5}>
+                <div className={"flex flex-col relative bottom-0.5"}>
                     <div>
                         <div
                             className={"text-center sm:text-left max-sm:mb-10"}
@@ -310,58 +304,34 @@ const Overview = () => {
                             </DialogActions>
                         </Dialog>
                     </div>
-                </Stack>
-            </Stack>
+                </div>
+            </div>
 
-            <Divider
-                sx={{
-                    background: "#7d7d7d",
-                    opacity: "30%",
-                    width: "100%",
-                    marginTop: "40px",
-                    marginBottom: "20px",
-                }}
-            />
+            <Divider />
             <div className={"max-w-full overflow-scroll"}>
-                <Stack
-                    direction="row"
-                    marginBottom={{ xs: 0, sm: 3 }}
-                    alignItems="center"
-                >
+                <div className={"flex flex-row mt-2 mb-6 items-center"}>
                     {user.signed_in && (
                         <>
-                            <Box>
-                                <Typography
-                                    variant="h3"
-                                    align="center"
-                                    width={100}
-                                >
+                            <div>
+                                <h3 className={"w-24 text-center"}>
                                     {
                                         organization.memberships.filter(
                                             (member) => member.active,
                                         ).length
                                     }
-                                </Typography>
-                                <Typography variant="body1" align="center">
-                                    Members
-                                </Typography>
-                            </Box>
-                            <Typography
-                                variant="h1"
-                                align="center"
-                                sx={{ opacity: "25%" }}
-                            >
-                                •
-                            </Typography>
+                                </h3>
+                                <p className={"text-center"}>Members</p>
+                            </div>
+                            <h1 className={"opacity-25"}>•</h1>
                         </>
                     )}
 
-                    <Box>
-                        <Typography variant="h3" align="center" width={170}>
+                    <div>
+                        <h3 className={"w-40 text-center"}>
                             {organization.state.charAt(0) +
                                 organization.state.slice(1).toLowerCase()}
-                        </Typography>
-                        <Typography variant="body1" align="center">
+                        </h3>
+                        <p className={"text-center"}>
                             Activity Status
                             <i
                                 className={
@@ -369,20 +339,13 @@ const Overview = () => {
                                 }
                                 onClick={() => navigate(`/activities-support`)}
                             ></i>
-                        </Typography>
-                    </Box>
+                        </p>
+                    </div>
 
-                    <Typography
-                        variant="h1"
-                        align="center"
-                        width="100%"
-                        sx={{ opacity: "25%" }}
-                    >
-                        •
-                    </Typography>
+                    <h1 className={"opacity-25"}>•</h1>
 
-                    <Box>
-                        <Typography variant="h3" align="center" width={140}>
+                    <div>
+                        <h3 className={"w-32 text-center"}>
                             {organization.commitment_level
                                 ? organization.commitment_level
                                       .charAt(0)
@@ -391,148 +354,80 @@ const Overview = () => {
                                       .slice(1)
                                       .toLowerCase()
                                 : "None"}
-                        </Typography>
-                        <Typography variant="body1" align="center">
-                            Commitment
-                        </Typography>
-                    </Box>
+                        </h3>
+                        <p className={"text-center"}>Commitment</p>
+                    </div>
 
                     {user.signed_in && (
                         <>
-                            <Typography
-                                variant="h1"
-                                align="center"
-                                width="100%"
-                                sx={{ opacity: "25%" }}
-                            >
-                                •
-                            </Typography>
-                            <Box>
-                                <Typography
-                                    variant="h3"
-                                    align="center"
-                                    width={200}
-                                >
+                            <h1 className={"opacity-25"}>•</h1>
+                            <div>
+                                <h3 className={"w-48 text-center"}>
                                     {organization.meetings
                                         ?.at(-1)
                                         ?.start_time?.split("T")[0]
                                         .replaceAll("-", "/") ?? "No Meetings"}
-                                </Typography>
-                                <Typography variant="body1" align="center">
-                                    Last Meeting
-                                </Typography>
-                            </Box>
+                                </h3>
+                                <p className={"text-center"}>Last Meeting</p>
+                            </div>
                         </>
                     )}
-                </Stack>
+                </div>
             </div>
 
-            <div className={"relative w-full mb-6 max-sm:mt-6"}>
-                <Box
-                    bgcolor="#1f1f1f80"
-                    padding={0.5}
-                    borderRadius={3}
-                    boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
+            <div className={"flex flex-col gap-6"}>
+                <OverviewList
+                    height={"auto"}
+                    title={"Meeting Schedule"}
+                    glow={"bg-blue"}
                 >
-                    <Typography variant="h3" margin={3}>
-                        Meeting Schedule
-                    </Typography>
+                    <p className={"bg-layer-2 p-4 mb-0.5"}>
+                        {organization.meeting_schedule || "None"}
+                    </p>
+                    <div className="flex gap-1">
+                        {[
+                            ["Mon", "Monday"],
+                            ["Tue", "Tuesday"],
+                            ["Wed", "Wednesday"],
+                            ["Thu", "Thursday"],
+                            ["Fri", "Friday"],
+                        ].map(([abbr, full]) => (
+                            <p
+                                key={abbr}
+                                className={`flex-1 text-center py-2 ${
+                                    organization.meeting_days?.includes(
+                                        full.toUpperCase(),
+                                    )
+                                        ? "bg-accent text-typography-1 important"
+                                        : "bg-layer-2"
+                                }`}
+                            >
+                                {abbr}
+                            </p>
+                        ))}
+                    </div>
+                </OverviewList>
 
-                    <Box borderRadius={2} overflow="hidden">
-                        <Box bgcolor="#36363666" padding={3}>
-                            <Typography variant="body1">
-                                {organization.meeting_schedule || "None"}
-                            </Typography>
-                        </Box>
-
-                        <Stack
-                            marginTop={0.5}
-                            direction="row"
-                            spacing={0.5}
-                            overflow={"scroll"}
-                        >
-                            {[
-                                "Monday",
-                                "Tuesday",
-                                "Wednesday",
-                                "Thursday",
-                                "Friday",
-                            ].map((day) => (
-                                <Typography
-                                    minWidth={"120px"}
-                                    width={"20%"}
-                                    key={day}
-                                    textAlign="center"
-                                    sx={{
-                                        fontVariationSettings: "'wght' 700",
-                                        padding: "0.5rem",
-                                        backgroundColor:
-                                            organization.meeting_days?.includes(
-                                                day.toUpperCase(),
-                                            )
-                                                ? "#2D6AE2CC"
-                                                : "#36363666",
-                                        color: organization.meeting_days?.includes(
-                                            day.toUpperCase(),
-                                        )
-                                            ? "#E8E8E8CC"
-                                            : "inherit",
-                                    }}
-                                >
-                                    {day}
-                                </Typography>
-                            ))}
-                        </Stack>
-                    </Box>
-                </Box>
-
-                <Box
-                    bgcolor="rgba(85, 98, 246, 0.05)"
-                    position="absolute"
-                    top="0"
-                    left="0"
-                    right="0"
-                    bottom="0"
-                    borderRadius={3}
-                    zIndex={-1}
-                    sx={{
-                        filter: "blur(40px)",
-                    }}
-                />
-            </div>
-
-            <Box position="relative" width={"100%"} marginBottom={3}>
-                <Box
-                    bgcolor="#1f1f1f80"
-                    padding={0.5}
-                    borderRadius={3}
-                    boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
+                <OverviewList
+                    height={"auto"}
+                    title={"Activity Leaders"}
+                    glow={"bg-yellow"}
                 >
-                    <Typography variant="h3" margin={3}>
-                        Activity Leaders
-                    </Typography>
-
                     {!user.signed_in && (
-                        <Typography
-                            variant="body1"
-                            borderRadius={2}
-                            paddingY={2}
-                            paddingX={3}
-                            sx={{ backgroundColor: "#36363666" }}
-                        >
+                        <p className={"bg-layer-2 p-4"}>
                             <i
                                 className={
                                     "bx bx-user mr-2 bx-sm relative top-0.5"
                                 }
                             ></i>
                             <span className={"relative -top-1"}>
+                                {" "}
                                 Sign in to view the leaders of this
                                 organization.
                             </span>
-                        </Typography>
+                        </p>
                     )}
-
-                    <Stack borderRadius={2} overflow="hidden" spacing={0.5}>
+                    <div className={"flex flex-col gap-1"}>
                         {organization.memberships
                             ?.sort(sortByRole)
                             .map(
@@ -565,163 +460,113 @@ const Overview = () => {
                                         />
                                     ),
                             )}
-                    </Stack>
-                </Box>
+                    </div>
+                </OverviewList>
 
-                <Box
-                    bgcolor="rgba(228, 174, 59, 0.05)"
-                    position="absolute"
-                    top="0"
-                    left="0"
-                    right="0"
-                    bottom="0"
-                    borderRadius={3}
-                    zIndex={-1}
-                    sx={{
-                        filter: "blur(40px)",
-                    }}
-                />
-            </Box>
-
-            <Box position="relative" width={"100%"} marginBottom={5}>
-                <Box
-                    bgcolor="#1f1f1f80"
-                    padding={0.5}
-                    borderRadius={3}
-                    boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
+                <OverviewList
+                    height={"auto"}
+                    title={"Upcoming Meetings"}
+                    glow={"bg-green"}
                 >
-                    <Typography variant="h3" margin={3}>
-                        Upcoming Meetings
-                    </Typography>
-
-                    <Stack borderRadius={2} overflow="hidden" spacing={0.5}>
-                        {organization.meetings.length === 0 ? (
-                            !user.signed_in ? (
-                                <Typography
-                                    variant="body1"
-                                    paddingY={2}
-                                    paddingX={3}
-                                    sx={{ backgroundColor: "#36363666" }}
-                                >
-                                    <i
-                                        className={
-                                            "bx bx-calendar-week mr-2 bx-sm"
-                                        }
-                                    ></i>
-                                    <span className={"relative -top-1"}>
-                                        Sign in to view meetings.
-                                    </span>
-                                </Typography>
-                            ) : (
-                                <Typography
-                                    variant="body1"
-                                    paddingY={2}
-                                    paddingX={3}
-                                    sx={{ backgroundColor: "#36363666" }}
-                                >
-                                    <i
-                                        className={
-                                            "bx bx-calendar-exclamation mr-2 bx-sm"
-                                        }
-                                    ></i>
-                                    <span className={"relative -top-1"}>
-                                        No meetings have ever been held.
-                                    </span>
-                                </Typography>
-                            )
+                    {organization.meetings.length === 0 ? (
+                        !user.signed_in ? (
+                            <p className={"bg-layer-2 p-4"}>
+                                <i
+                                    className={
+                                        "bx bx-calendar-week mr-2 bx-sm relative top-0.5"
+                                    }
+                                ></i>
+                                <span className={"relative -top-1"}>
+                                    {" "}
+                                    Sign in to view meetings in this
+                                    organization.
+                                </span>
+                            </p>
                         ) : (
-                            (() => {
-                                const now = new Date();
-                                const upcomingMeetings =
-                                    organization.meetings.filter(
-                                        (meeting) =>
-                                            meeting.end_time &&
-                                            new Date(meeting.end_time) > now,
-                                    );
-                                if (upcomingMeetings.length === 0) {
-                                    return (
-                                        <Typography
-                                            variant="body1"
-                                            paddingY={2}
-                                            paddingX={3}
-                                            sx={{
-                                                backgroundColor: "#36363666",
-                                            }}
-                                        >
-                                            <i
-                                                className={
-                                                    "bx bx-calendar-x mr-2 bx-sm"
-                                                }
-                                            ></i>
-                                            <span className={"relative -top-1"}>
-                                                No meetings scheduled for the
-                                                future.
-                                            </span>
-                                        </Typography>
-                                    );
-                                }
-                                return upcomingMeetings
-                                    .sort(sortByDate)
-                                    .map((meeting) => (
-                                        <OrgMeeting
-                                            key={meeting.id}
-                                            id={meeting.id}
-                                            title={meeting.title}
-                                            description={meeting.description}
-                                            start_time={meeting.start_time}
-                                            end_time={meeting.end_time}
-                                            is_public={meeting.is_public}
-                                            room_name={meeting.rooms?.name}
-                                            org_name={organization.name}
-                                            org_picture={
-                                                organization.picture || ""
+                            <p className={"bg-layer-2 p-4"}>
+                                <i
+                                    className={
+                                        "bx bx-calendar-exclamation mr-2 bx-sm relative top-0.5"
+                                    }
+                                ></i>
+                                <span className={"relative -top-1"}>
+                                    {" "}
+                                    No meetings records.
+                                </span>
+                            </p>
+                        )
+                    ) : (
+                        (() => {
+                            const now = new Date();
+                            const upcomingMeetings =
+                                organization.meetings.filter(
+                                    (meeting) =>
+                                        meeting.end_time &&
+                                        new Date(meeting.end_time) > now,
+                                );
+                            if (upcomingMeetings.length === 0) {
+                                return (
+                                    <p className={"bg-layer-2 p-4"}>
+                                        <i
+                                            className={
+                                                "bx bx-calendar-x mr-2 bx-sm relative top-0.5"
                                             }
-                                            isMobile={isMeetingMobile}
-                                            onlyUpcoming
-                                        />
-                                    ));
-                            })()
-                        )}
-                    </Stack>
-                </Box>
+                                        ></i>
+                                        <span className={"relative -top-1"}>
+                                            {" "}
+                                            No future meetings scheduled at this
+                                            time.
+                                        </span>
+                                    </p>
+                                );
+                            }
+                            return upcomingMeetings
+                                .sort(sortByDate)
+                                .map((meeting) => (
+                                    <OrgMeeting
+                                        key={meeting.id}
+                                        id={meeting.id}
+                                        title={meeting.title}
+                                        description={meeting.description}
+                                        start_time={meeting.start_time}
+                                        end_time={meeting.end_time}
+                                        is_public={meeting.is_public}
+                                        room_name={meeting.rooms?.name}
+                                        org_name={organization.name}
+                                        org_picture={organization.picture || ""}
+                                        isMobile={isMeetingMobile}
+                                        onlyUpcoming
+                                    />
+                                ));
+                        })()
+                    )}
+                </OverviewList>
 
-                <Box
-                    bgcolor="#75FB7A"
-                    position="absolute"
-                    top="0"
-                    left="0"
-                    right="0"
-                    bottom="0"
-                    borderRadius={3}
-                    zIndex={-1}
-                    sx={{
-                        opacity: "0.05",
-                        filter: "blur(40px)",
-                    }}
-                />
-            </Box>
-
-            <div className={"xl:hidden mb-10 w-full"}>
-                <OrgInspector />
+                <div className={"xl:hidden mb-10 w-full"}>
+                    <OrgInspector />
+                </div>
             </div>
 
-            <Box width={"100%"}>
-                <Typography variant="h2" marginBottom={0.5}>
+            <div className={"w-full mt-10"}>
+                <h2 className={"mb-2 text-typography-1"}>
                     Activities Like This
                     <span className={"opacity-75"}> (Beta)</span>
-                </Typography>
+                </h2>
                 {isMobile ? (
                     <Divider />
                 ) : (
-                    <Divider
-                        sx={{
-                            width: "calc(100vw - 160px - 3rem)",
-                            position: "absolute",
-                        }}
-                    ></Divider>
+                    <div
+                        className={
+                            "absolute w-[calc(100vw-160px-3rem)] h-px bg-divider"
+                        }
+                    ></div>
                 )}
-                <RelatedActivities currentOrg={organization} />
-            </Box>
+                <div className={"h-80 relative right-12"}>
+                    <div className={"absolute"}>
+                        <RelatedActivities currentOrg={organization} />
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };

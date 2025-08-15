@@ -121,7 +121,7 @@ const NavBar: FC = () => {
         <nav>
             {/* Backdrop when hovering over nav items */}
             <div
-                className={`max-sm:hidden bg-black/40 fixed left-0 top-0 z-40 h-full w-full backdrop-blur-3xl transition-opacity duration-300 ${
+                className={`max-sm:hidden bg-blurDark fixed left-0 top-0 z-40 h-full w-full backdrop-blur-2xl transition-opacity duration-300 ${
                     isHovered ? "opacity-100" : "pointer-events-none opacity-0"
                 }`}
             />
@@ -257,21 +257,12 @@ const NavBar: FC = () => {
                     "&::-webkit-scrollbar": { display: "none" },
                 }}
             >
-                {/* Frosted backdrop */}
+                {/* colorful backdrop */}
                 {theme.colorMode && (
-                    <Box
-                        sx={{
-                            position: "absolute",
-                            top: 0,
-                            width: "100%",
-                            height: 100,
+                    <div
+                        className="absolute top-0 w-full h-[100px] bg-cover bg-center pointer-events-none opacity-60 blur-[15px] z-[1]"
+                        style={{
                             backgroundImage: `url(${PUBLIC_URL}/textures/navigation.png)`,
-                            backgroundSize: "cover",
-                            backgroundPosition: "center",
-                            pointerEvents: "none",
-                            opacity: 0.6,
-                            filter: "blur(15px)",
-                            zIndex: 1,
                         }}
                     />
                 )}
@@ -297,8 +288,8 @@ const NavBar: FC = () => {
                             }}
                             className={`flex items-start flex-nowrap cursor-pointer transition-colors ${
                                 isPageOptnActive(item)
-                                    ? "text-gray-300"
-                                    : "sm:hover:text-gray-300"
+                                    ? "text-typography-1"
+                                    : "sm:hover:text-typography-1 text-typography-2"
                             }`}
                             onMouseEnter={() => setIsHovered(true)}
                             onClick={() => {
@@ -329,15 +320,10 @@ const NavBar: FC = () => {
                     {/* Animated underline */}
                     {!isMobile && (
                         <div
+                            className="absolute -bottom-3 h-px bg-typography-1 pointer-events-none transition-[left,width] duration-300"
                             style={{
-                                position: "absolute",
-                                bottom: -12,
                                 left: optionUnderline.left - 27,
                                 width: optionUnderline.width,
-                                height: 1,
-                                backgroundColor: "#FFFFFF80",
-                                transition: "left 0.3s,width 0.3s",
-                                pointerEvents: "none",
                             }}
                         />
                     )}
