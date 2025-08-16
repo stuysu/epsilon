@@ -1,10 +1,5 @@
-import {
-    Avatar,
-    Chip,
-    ListItem,
-    ListItemAvatar,
-    Typography,
-} from "@mui/material";
+import { Avatar } from "radix-ui";
+import ToggleChip from "../../../../components/ui/ToggleChip";
 
 type Props = {
     role?: Membership["role"];
@@ -36,44 +31,31 @@ const OrgMember = ({
     return (
         <div
             className={
-                "flex flex-row items-center justify-between flex-wrap bg-layer-2"
+                "flex flex-row items-center justify-between flex-wrap bg-layer-2 px-4"
             }
         >
-            <ListItem sx={{ height: "75px", width: "fit-content" }}>
-                <ListItemAvatar>
-                    <Avatar
-                        alt={`${first_name} ${last_name}`}
+            <div className={"h-16 w-fit flex gap-3 items-center"}>
+                <Avatar.Root className="w-10 h-10 rounded-md overflow-hidden">
+                    <Avatar.Image
+                        className="size-full object-cover"
                         src={picture}
-                        sx={{
-                            borderRadius: "5px",
-                            backgroundColor: "rgba(255,255,255,0.2)",
-                            color: "white",
-                        }}
+                        alt={`${first_name} ${last_name}`}
+                    />
+                    <Avatar.Fallback
+                        className="text-center size-full flex items-center justify-center bg-layer-3 text-xl relative pt-1 text-typography-2"
+                        delayMs={600}
                     >
-                        <Typography variant={"h2"}>
-                            {(first_name || "O").charAt(0).toUpperCase()}
-                        </Typography>
-                    </Avatar>
-                </ListItemAvatar>
-                <div>
-                    <Typography
-                        variant="h4"
-                        sx={{ position: "relative", top: "3px" }}
-                    >
-                        {`${first_name} ${last_name}`}
-                    </Typography>
-                    <Typography variant="body1">{<>{email}</>}</Typography>
+                        {(first_name || "O").charAt(0).toUpperCase()}
+                    </Avatar.Fallback>
+                </Avatar.Root>
+
+                <div className={"flex flex-col pt-1"}>
+                    <h4>{`${first_name} ${last_name}`}</h4>
+                    <p>{<>{email}</>}</p>
                 </div>
-            </ListItem>
-            <Chip
-                label={l1}
-                sx={{
-                    marginRight: "20px",
-                    marginLeft: "10px",
-                    marginY: "10px",
-                    maxWidth: "600px",
-                }}
-            />
+            </div>
+
+            <ToggleChip title={l1} selectable={false} />
         </div>
     );
 };

@@ -31,12 +31,12 @@
     }
 
     h4 {
-        @apply text-[1rem] leading-[1.1rem] my-1 text-[color:var(--text-primary)];
+        @apply text-[1rem] leading-[1.1rem] text-[color:var(--text-primary)];
         font-variation-settings: 'wght' 600;
     }
 
     h5 {
-        @apply text-[1rem] my-1 text-[color:var(--text-primary)];
+        @apply text-[1rem] text-[color:var(--text-primary)];
         font-variation-settings: 'wght' 500;
     }
 

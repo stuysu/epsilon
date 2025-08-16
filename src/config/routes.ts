@@ -33,17 +33,17 @@ export const topNavItems = [
         external: false,
     },
     {
+        label: "Arista",
+        path: "/arista",
+        icon: "bx bxs-hot",
+        external: false,
+    },
+    {
         label: "Vote",
         url: "https://vote.stuysu.org",
         path: "/none",
         icon: "bx bx-note",
         external: true,
-    },
-    {
-        label: "Arista",
-        path: "/arista",
-        icon: "bx bxs-hot",
-        external: false,
     },
     {
         label: "Opportunities",
