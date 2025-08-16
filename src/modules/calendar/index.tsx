@@ -3,16 +3,7 @@ import React, { useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 
 import { useSnackbar } from "notistack";
-
-import { Badge, Box, useMediaQuery } from "@mui/material";
-
-import {
-    DateCalendar,
-    DayCalendarSkeleton,
-    PickersDay,
-    PickersDayProps,
-} from "@mui/x-date-pickers";
-
+import { DayPicker } from "react-day-picker";
 import dayjs, { Dayjs } from "dayjs";
 import DaySchedule from "./components/DaySchedule";
 import LoginGate from "../../components/ui/LoginGate";
@@ -21,33 +12,8 @@ type CachedMeetings = {
     [date: string]: CalendarMeeting[];
 };
 
-function ServerDay(
-    props: PickersDayProps<Dayjs> & { highlightedDays?: number[] },
-) {
-    const { highlightedDays = [], day, outsideCurrentMonth, ...other } = props;
-
-    const isSelected =
-        !props.outsideCurrentMonth &&
-        highlightedDays.indexOf(props.day.date()) >= 0;
-
-    return (
-        <Badge
-            key={props.day.toString()}
-            overlap="circular"
-            badgeContent={isSelected ? "🔴" : undefined}
-        >
-            <PickersDay
-                {...other}
-                outsideCurrentMonth={outsideCurrentMonth}
-                day={day}
-            />
-        </Badge>
-    );
-}
-
 const Index = () => {
     const { enqueueSnackbar } = useSnackbar();
-    const isMobile = useMediaQuery("(max-width: 800px)");
 
     /* meetings for a given day */
     /* cache after fetching once */
@@ -56,6 +22,11 @@ const Index = () => {
 
     /* month adjuster */
     const [time, setTime] = useState<Dayjs>(dayjs());
+
+    const [currentMonth, setCurrentMonth] = useState<Date>(
+        new Date(time.year(), time.month(), 1),
+    );
+
 
     /* days with meetings */
     const [loading, setLoading] = useState(false);
@@ -67,7 +38,6 @@ const Index = () => {
             year,
         });
 
-        /* database function returns null if can't find any meetings */
         if (!data) {
             setHighlightedDays([]);
             setLoading(false);
@@ -136,61 +106,77 @@ const Index = () => {
         };
 
         fetchMeetings();
-    }, [time, enqueueSnackbar, cachedMeetings]);
+    }, [time]);
 
     return (
         <LoginGate sx={{ width: "100%" }} page={"view the calendar"}>
-            <Box
-                sx={{
-                    width: "100%",
-                    display: "flex",
-                    padding: isMobile ? "20px" : "40px",
-                    marginBottom: "250px",
-                    flexWrap: isMobile ? "wrap" : "nowrap",
-                    justifyContent: "center",
-                }}
+            <div
+                className={
+                    "m-12 flex items-start gap-8 min-h-screen max-md:flex-col"
+                }
             >
-                <Box
-                    sx={{
-                        width: "100%",
-                        maxWidth: "320px",
-                        minWidth: "250px",
-                        boxShadow: "rgba(0, 0, 0, 0.35) 0px 5px 15px",
-                        borderRadius: "7px",
-                        backgroundColor: "#232323",
-                        marginRight: "10px",
-                        height: "320px",
+                <DayPicker
+                    mode="single"
+                    month={currentMonth}
+                    selected={time.toDate()}
+                    onSelect={(date) => {
+                        if (!date) return;
+                        setTime(dayjs(date));
                     }}
-                >
-                    <DateCalendar
-                        views={["day"]}
-                        onChange={(newValue) => setTime(newValue)}
-                        onMonthChange={(date: Dayjs) => {
-                            let month = date.month();
-                            let year = date.year();
+                    onMonthChange={(month) => {
+                        setCurrentMonth(month);
+                        setLoading(true);
+                        updateHighlightedDays(
+                            month.getMonth(),
+                            month.getFullYear(),
+                        );
+                    }}
+                    showOutsideDays
+                    weekStartsOn={0} /* Sunday; change if you must */
+                    /* Tailwind layout + theming */
+                    classNames={{
+                        button_previous:
+                            "fill-typography-1 z-10 relative hover:bg-layer-2 rounded-full",
+                        button_next:
+                            "fill-typography-1 z-10 relative hover:bg-layer-2 rounded-full",
+                        root: "p-5 rounded-xl p-3 bg-layer-1 shadow-control relative max-md:w-full",
+                        nav: "absolute flex gap-2 ml-16 right-5 top-3",
+                        month_caption: "relative -top-1 mb-3",
+                        weekday: "font-normal",
+                        day: "p-0 text-center text-typography-1",
+                        day_button:
+                            "sm:w-10 sm:h-10 w-8 h-8 grid place-items-center rounded-md transition-colors hover:bg-layer-2",
+                        selected:
+                            "bg-accent text-typography-1 rounded-md pointer-events-none",
+                        outside: "opacity-50 pointer-events-none",
+                    }}
+                    /* 2-letter weekday names like Mo, Tu, We... */
+                    formatters={{
+                        formatWeekdayName: (weekday, options) =>
+                            new Intl.DateTimeFormat(undefined, {
+                                weekday: "short",
+                                ...options,
+                            })
+                                .format(weekday)
+                                .slice(0, 2),
+                    }}
+                    /* underline markers for meeting days */
+                    modifiers={{
+                        hasMeetings: (date) =>
+                            date.getMonth() === currentMonth.getMonth() &&
+                            date.getFullYear() === currentMonth.getFullYear() &&
+                            highlightedDays.includes(date.getDate()),
+                    }}
+                    modifiersClassNames={{
+                        hasMeetings:
+                            'relative after:content-[""] after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-8 after:h-[4px] after:rounded-full after:bg-yellow',
+                    }}
+                />
 
-                            setLoading(true);
-                            updateHighlightedDays(month, year);
-                        }}
-                        loading={loading}
-                        renderLoading={() => <DayCalendarSkeleton />}
-                        slots={{
-                            day: ServerDay,
-                        }}
-                        slotProps={{
-                            day: {
-                                highlightedDays,
-                            } as any,
-                        }}
-                        sx={{ width: "100%" }}
-                    />
-                </Box>
-                <Box
-                    sx={{ width: "100%", marginTop: isMobile ? "40px" : "0px" }}
-                >
+                <div className={"w-full"}>
                     <DaySchedule day={time} meetings={meetings} />
-                </Box>
-            </Box>
+                </div>
+            </div>
         </LoginGate>
     );
 };

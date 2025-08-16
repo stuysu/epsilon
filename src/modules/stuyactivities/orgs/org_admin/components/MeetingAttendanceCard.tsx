@@ -1,6 +1,4 @@
-import { Card, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
-import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
 
 const MeetingAttendanceCard = ({
     title,
@@ -16,18 +14,16 @@ const MeetingAttendanceCard = ({
     const navigate = useNavigate();
 
     return (
-        <Card sx={{ width: "400px", padding: "10px" }}>
-            <Typography variant="h5">{title}</Typography>
-            <Typography variant="body1" sx={{ marginBottom: "1em" }}>
-                {new Date(startTime).toLocaleString()}
-            </Typography>
-            <Typography variant="body1" sx={{ marginBottom: "1em" }}>
-                Room: {room || "virtual"}
-            </Typography>
-            <AsyncButton variant="outlined" onClick={() => navigate(`${id}`)}>
-                Take Attendance
-            </AsyncButton>
-        </Card>
+        <div
+            className={
+                "bg-layer-1 w-full mb-6 p-6 rounded-lg shadow-control cursor-pointer hover:bg-layer-2"
+            }
+            onClick={() => navigate(`${id}`)}
+        >
+            <h3>{title}</h3>
+            <p>{new Date(startTime).toLocaleString()}</p>
+            <p>Room: {room || "virtual"}</p>
+        </div>
     );
 };
 

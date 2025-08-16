@@ -62,7 +62,7 @@ const AttendanceOverview = () => {
                         boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
                     >
                         <Typography variant="h1" align="center" width="100%">
-                            Attendance Overview
+                            Take Attendance
                         </Typography>
                         <Typography
                             variant="body1"
@@ -70,6 +70,7 @@ const AttendanceOverview = () => {
                             width="100%"
                             paddingX={"2vw"}
                         >
+                            Here is the attendance overview for your Activity.
                             Attendance records must be kept up to date on
                             Epsilon. Strikes will be issued if attendance is not
                             marked or falsely marked.

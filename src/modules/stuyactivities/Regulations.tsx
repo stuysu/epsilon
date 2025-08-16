@@ -1,4 +1,4 @@
-import { Link, Typography } from "@mui/material";
+import { Link } from "@mui/material";
 import { Helmet } from "react-helmet";
 import React from "react";
 
@@ -19,7 +19,7 @@ const Regulations = () => {
             >
                 <h1
                     className={
-                        "w-2/3 bg-blend-color-dodge text-white/75 sm:text-8xl text-4xl sm:text-center"
+                        "w-2/3 bg-blend-color-dodge text-white/75 sm:text-8xl text-4xl sm:text-center font-light"
                     }
                 >
                     Clubs & Pubs
@@ -29,9 +29,7 @@ const Regulations = () => {
             </div>
             <div className={"flex flex-row sm:mx-5 justify-center"}>
                 <div className={"w-1/4 sticky top-20 h-96 sm:block hidden"}>
-                    <Typography variant={"h4"} color="primary" marginBottom={2}>
-                        Table of Contents
-                    </Typography>
+                    <h4 className={"mb-3"}>Table of Contents</h4>
                     <ul className={"opacity-75 space-y-1"}>
                         <li>
                             <Link href="#general">General Guidance</Link>
@@ -60,15 +58,10 @@ const Regulations = () => {
                         "w-full sm:w-3/4 max-w-3xl pl-0 sm:pl-7 md:pl-14"
                     }
                 >
-                    <Typography
-                        variant={"h4"}
-                        color="primary"
-                        marginBottom={2}
-                        id={"general"}
-                    >
+                    <h4 className={"mb-3"} id={"general"}>
                         General Guidance
-                    </Typography>
-                    <Typography paragraph marginBottom={5}>
+                    </h4>
+                    <p className={"mb-10"}>
                         For any issues or difficulties with the Epsilon
                         StuyActivities service, visit the{" "}
                         <Link
@@ -133,17 +126,12 @@ const Regulations = () => {
                         <br />
                         Finally, each club must maintain at least ten official
                         members, not counting faculty advisors.
-                    </Typography>
+                    </p>
 
-                    <Typography
-                        variant={"h4"}
-                        color="primary"
-                        marginBottom={2}
-                        id={"online"}
-                    >
+                    <h4 className={"mb-3"} id={"online"}>
                         Online Meetings
-                    </Typography>
-                    <Typography paragraph marginBottom={5}>
+                    </h4>
+                    <p className={"mb-10"}>
                         Official meetings may be hosted online provided that
                         links and schedules for every meeting are posted on
                         Epsilon and that meetings occur between 2:30 PM and 8:00
@@ -153,17 +141,12 @@ const Regulations = () => {
                         meeting must end immediately and the incident must be
                         reported to MPolazz@schools.nyc.gov and
                         clubpub@stuysu.org.
-                    </Typography>
+                    </p>
 
-                    <Typography
-                        variant={"h4"}
-                        color="primary"
-                        marginBottom={2}
-                        id={"activity"}
-                    >
+                    <h4 className={"mb-3"} id={"activity"}>
                         Activity Meetings
-                    </Typography>
-                    <Typography paragraph marginBottom={5}>
+                    </h4>
+                    <p className={"mb-10"}>
                         All meetings are subject to audit by an SU Auditor, who
                         reports to the directors of the SU Clubs & Pubs
                         department. Any violation of meeting rules results in a
@@ -201,17 +184,12 @@ const Regulations = () => {
                         week after the event, and any flyer deemed
                         inappropriate—or placed near escalators—will be removed
                         without notice.
-                    </Typography>
+                    </p>
 
-                    <Typography
-                        variant={"h4"}
-                        color="primary"
-                        marginBottom={2}
-                        id={"reservations"}
-                    >
+                    <h4 className={"mb-3"} id={"reservations"}>
                         Room Reservations and Usage
-                    </Typography>
-                    <Typography paragraph marginBottom={5}>
+                    </h4>
+                    <p className={"mb-10"}>
                         All Activities must reserve a room to be able to hold a
                         meeting. Rooms must be reserved on Epsilon
                         StuyActivities, which operates on a first‑come,
@@ -235,17 +213,12 @@ const Regulations = () => {
                         justification and logistics. Guest speakers may enter
                         the building only after all listed parties approve the
                         request and School Safety Agents are notified.
-                    </Typography>
+                    </p>
 
-                    <Typography
-                        variant={"h4"}
-                        color="primary"
-                        marginBottom={2}
-                        id={"funding"}
-                    >
+                    <h4 className={"mb-3"} id={"funding"}>
                         Funding
-                    </Typography>
-                    <Typography paragraph marginBottom={5}>
+                    </h4>
+                    <p className={"mb-10"}>
                         The SU manages all Activity funding. Requests will be
                         denied if they involve unapproved trips, unapproved
                         supplies or services (including guest speakers),
@@ -294,17 +267,12 @@ const Regulations = () => {
                         reapply for a charter after suspension; if reinstated, a
                         faculty advisor must attend all meetings until the SU
                         states otherwise.
-                    </Typography>
+                    </p>
 
-                    <Typography
-                        variant={"h4"}
-                        color="primary"
-                        marginBottom={2}
-                        id={"finances"}
-                    >
+                    <h4 className={"mb-3"} id={"finances"}>
                         Fundraising & Finances
-                    </Typography>
-                    <Typography paragraph marginBottom={5}>
+                    </h4>
+                    <p className={"mb-10"}>
                         Before undertaking any fundraising, consult the complete{" "}
                         <Link
                             color="primary"
@@ -359,14 +327,14 @@ const Regulations = () => {
                         large electronic payments. All forms for financial
                         transactions are available in Room 105, and checks are
                         processed twice weekly on Tuesdays and Thursdays.
-                    </Typography>
+                    </p>
 
-                    <Typography variant={"h4"} color="primary" marginBottom={2}>
+                    <p className={"mb-10"}>
                         ANY ACTIVITY THAT DOES NOT COMPLY WITH THESE RULES WILL
                         NOT BE CHARTERED. THE STUYVESANT STUDENT UNION RESERVES
                         THE RIGHT TO SUSPEND ANY ACTIVITY THAT FAILS TO FOLLOW
                         THESE REGULATIONS WITHOUT PRIOR NOTICE.
-                    </Typography>
+                    </p>
                 </div>
             </div>
         </div>

@@ -13,9 +13,9 @@ import NavBar from "../components/ui/NavBar";
 import AboutIndex from "./about";
 import Regulations from "./stuyactivities/Regulations";
 import Support from "./stuyactivities/Support";
-import { Typography } from "@mui/material";
 import UnaffiliatedRoomReservation from "./stuyactivities/UnaffiliatedRoomReservation";
 import ContextualNavBar from "../components/ui/ContextualNavBar";
+import Arista from "./arista";
 
 const Catalog = lazy(() => import("./stuyactivities/Catalog"));
 const Settings = lazy(() => import("./user/Settings"));
@@ -68,6 +68,7 @@ const Pages = () => {
                 )}
                 <Routes>
                     <Route path={"/"} Component={Index} />
+                    <Route path={"/arista"} Component={Arista} />
                     <Route path={"/stuyactivities"} Component={Catalog} />
                     <Route path={"/confirm-join"} Component={ConfirmJoin} />
                     <Route path={"/settings"} Component={Settings} />
@@ -89,7 +90,7 @@ const Pages = () => {
                 {user.signed_in && (
                     <footer
                         className={
-                            "w-full h-36 bg-neutral-900 p-10 max-sm:p-6 pr-12 flex justify-between items-center mt-20 max-sm:pb-56 max-sm:flex-col gap-2"
+                            "w-full h-36 bg-layer-1 p-10 max-sm:p-6 pr-12 flex justify-between items-center mt-20 max-sm:pb-56 max-sm:flex-col gap-2"
                         }
                     >
                         <div className="w-72 flex max-sm:justify-center">
@@ -103,18 +104,18 @@ const Pages = () => {
                         </div>
                         <div
                             className={
-                                "flex items-center justify-center gap-4 w-72"
+                                "flex items-center justify-center gap-5 w-72"
                             }
                         >
-                            <Typography>
+                            <p className={"hover:opacity-75"}>
                                 <a href={"https://github.com/stuysu/epsilon/"}>
                                     Source
                                 </a>
-                            </Typography>
-                            <Typography>
+                            </p>
+                            <p className={"hover:opacity-75"}>
                                 <a href={"https://stuysu.org/"}>StuySU</a>
-                            </Typography>
-                            <Typography>
+                            </p>
+                            <p className={"hover:opacity-75"}>
                                 <a
                                     href={
                                         "https://www.figma.com/design/WfaOkjsU63VjVD1sdmSTXu/Epsilon-Design-File-Revision-1?node-id=0-1&t=xuEKneeUJMZXyrt1-1"
@@ -122,8 +123,8 @@ const Pages = () => {
                                 >
                                     Design
                                 </a>
-                            </Typography>
-                            <Typography>
+                            </p>
+                            <p className={"hover:opacity-75"}>
                                 <a
                                     href={
                                         "https://github.com/willpill/Epsilon-Press-Kit/archive/refs/heads/main.zip"
@@ -131,15 +132,15 @@ const Pages = () => {
                                 >
                                     Press Kit
                                 </a>
-                            </Typography>
+                            </p>
                         </div>
-                        <Typography
+                        <p
                             className={
                                 "opacity-50 w-72 text-right max-sm:text-center"
                             }
                         >
                             MMXXIV
-                        </Typography>
+                        </p>
                     </footer>
                 )}
             </Suspense>

@@ -108,7 +108,7 @@ const Index = () => {
     const audioRef = useRef<HTMLAudioElement | null>(null);
 
     useEffect(() => {
-        audioRef.current = new Audio(`${PUBLIC_URL}/audio/about_music.wav`);
+        audioRef.current = new Audio(`${PUBLIC_URL}/media/about_music.wav`);
         audioRef.current.preload = "auto";
         audioRef.current.volume = 1;
         return () => {
@@ -315,7 +315,7 @@ const Index = () => {
                             <video
                                 ref={videoRef}
                                 className="object-cover w-full h-full"
-                                src={`${PUBLIC_URL}/videos/about_intro.mp4`}
+                                src={`${PUBLIC_URL}/media/about_intro.mp4`}
                                 autoPlay
                                 muted
                                 playsInline

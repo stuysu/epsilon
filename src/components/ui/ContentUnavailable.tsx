@@ -8,7 +8,7 @@ type ContentUnavailableProps = {
 };
 
 const ContentUnavailable: React.FC<ContentUnavailableProps> = ({
-    icon = "bx-error-circle",
+    icon = "bx-circle",
     iconColor = "text-gray-500",
     title,
     description,

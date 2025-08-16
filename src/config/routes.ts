@@ -41,10 +41,9 @@ export const topNavItems = [
     },
     {
         label: "Arista",
-        url: "https://stuyarista.org/",
-        path: "/none",
+        path: "/arista",
         icon: "bx bxs-hot",
-        external: true,
+        external: false,
     },
     {
         label: "Opportunities",

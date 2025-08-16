@@ -1,6 +1,5 @@
 import React from "react";
-import { useNavigate } from "react-router-dom";
-import { Box, Typography } from "@mui/material";
+import ContentUnavailable from "../../../../components/ui/ContentUnavailable";
 
 const FlavorText = [
     "The page is a lie.",
@@ -22,34 +21,13 @@ const FlavorText = [
 ];
 
 const NotFound = () => {
-    const navigate = useNavigate();
-
-    const handleGoHome = () => {
-        navigate("/");
-    };
-
     return (
-        <Box
-            sx={{
-                width: "100vw",
-                height: "80vh",
-                display: "flex",
-                flexDirection: "column",
-                justifyContent: "center",
-                alignItems: "center",
-            }}
-        >
-            <i className="bx bx-question-mark bx-lg text-yellow mb-5"></i>
-            <Typography variant="h1" marginBottom={3}>
-                Page Not Found
-            </Typography>
-            <Typography variant="body1">
-                {FlavorText[Math.floor(Math.random() * FlavorText.length)]}{" "}
-                <a className={"underline"} href={"/"}>
-                    Take me home.
-                </a>
-            </Typography>
-        </Box>
+        <ContentUnavailable
+            title={"Page Not Found"}
+            description={
+                FlavorText[Math.floor(Math.random() * FlavorText.length)]
+            }
+        />
     );
 };
 
