@@ -6,6 +6,7 @@ import ToggleChip from "../ToggleChip";
 import { Avatar } from "radix-ui";
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
+import DisplayLinks from "../../DisplayLinks";
 
 type Props = {
     id?: number;
@@ -105,7 +106,7 @@ const MeetingPreview = ({
                                                 </Avatar.Fallback>
                                             </Avatar.Root>
                                             <a
-                                                href={url}
+                                                href={`/${url}`}
                                                 className="cursor-alias transition-opacity hover:opacity-75"
                                             >
                                                 <h3 className="text-typography-1">
@@ -131,7 +132,11 @@ const MeetingPreview = ({
                                         <div className="flex gap-2 flex-wrap">
                                             <ToggleChip
                                                 selectable={false}
-                                                title={`${daysOfWeek[start.day()]}, ${monthNames[start.month()]} ${start.date()} ${start.year()}, ${start.format("LT")} to ${end.format("LT")}`}
+                                                title={`${daysOfWeek[start.day()]}, ${monthNames[start.month()]} ${start.date()} ${start.year()}`}
+                                            />
+                                            <ToggleChip
+                                                selectable={false}
+                                                title={`${start.format("LT")} to ${end.format("LT")}`}
                                             />
                                             <ToggleChip
                                                 selectable={false}
@@ -147,9 +152,14 @@ const MeetingPreview = ({
                                             />
                                         </div>
 
-                                        <p className="mt-7 mb-5 text-typography-2">
-                                            {description || "No Description"}
-                                        </p>
+                                        <div className="mt-7 mb-5">
+                                            <DisplayLinks
+                                                text={
+                                                    description ||
+                                                    "No Description"
+                                                }
+                                            />
+                                        </div>
                                     </div>
                                 </motion.div>
                             </Dialog.Content>

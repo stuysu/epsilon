@@ -69,7 +69,7 @@ const OrgInspector = () => {
             ) : (
                 <ItemList height={"auto"} title={"Strikes"} icon={"bx-error"}>
                     {strikes.length === 0 ? (
-                        <p className={"mx-4 mb-3.5"}>No Links Provided</p>
+                        <p className={"mx-4 mb-3.5"}>No Strikes Received</p>
                     ) : (
                         strikes.map((strike, i) => (
                             <div className={"px-3.5 py-2 bg-layer-2"}>

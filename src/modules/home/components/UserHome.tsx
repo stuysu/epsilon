@@ -229,7 +229,8 @@ const UserHome = () => {
                             mr-[4%]
                             flex
                             justify-center
-                            group-hover:translate-y-7
+                            max-sm:translate-y-7
+                            sm:group-hover:translate-y-7
                             transition-transform
                             w-[92%]
                             z-[1]
@@ -272,6 +273,11 @@ const UserHome = () => {
                                             </div>
                                         );
                                     })}
+                                {announcements.length === 0 && (
+                                    <p className={"bg-layer-2 p-4"}>
+                                        No announcements. Check back later!
+                                    </p>
+                                )}
                             </ItemList>
                         </div>
                         <div
@@ -285,7 +291,8 @@ const UserHome = () => {
                             mr-[4%]
                             flex
                             justify-center
-                            group-hover:translate-y-7
+                            max-sm:translate-y-7
+                            sm:group-hover:translate-y-7
                             transition-transform
                             w-[92%]
                             z-[1]

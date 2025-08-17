@@ -14,7 +14,7 @@ const Charter = () => {
     return (
         <div
             className={
-                "flex flex-col mt-2 gap-4 mb-10 max-sm:mt-10 max-sm:mx-4"
+                "max-w-3xl flex flex-col mt-2 gap-4 mb-10 max-sm:mt-10 max-sm:mx-4"
             }
         >
             <h3>What is this Activity?</h3>

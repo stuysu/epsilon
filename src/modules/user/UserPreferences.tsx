@@ -13,7 +13,7 @@ type Memberships = {
     allow_notifications: boolean;
 };
 
-const Settings = () => {
+const UserPreferences = () => {
     const user = useContext(UserContext);
     const [memberships, setMemberships] = useState<Memberships[]>([]);
     const [loading, setLoading] = useState(true);
@@ -210,4 +210,4 @@ const Settings = () => {
     );
 };
 
-export default Settings;
+export default UserPreferences;

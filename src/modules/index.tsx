@@ -18,7 +18,7 @@ import ContextualNavBar from "../components/ui/ContextualNavBar";
 import Arista from "./arista";
 
 const Catalog = lazy(() => import("./stuyactivities/Catalog"));
-const Settings = lazy(() => import("./user/Settings"));
+const Settings = lazy(() => import("./user/./CommsSettings"));
 const Profile = lazy(() => import("./user/Profile"));
 const Create = lazy(() => import("./stuyactivities/CharterForm"));
 const Charter = lazy(() => import("./stuyactivities/CharterLanding"));

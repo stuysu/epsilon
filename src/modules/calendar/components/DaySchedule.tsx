@@ -1,10 +1,10 @@
 import { Stack, Typography } from "@mui/material";
 import { motion } from "framer-motion";
-import ScheduleMeeting from "./ScheduleMeeting";
 import { Dayjs } from "dayjs";
 import { monthNames } from "../../../utils/TimeStrings";
 import React from "react";
 import ContentUnavailable from "../../../components/ui/ContentUnavailable";
+import UpcomingMeeting from "../../home/components/UpcomingMeeting";
 
 type Props = {
     day: Dayjs;
@@ -40,7 +40,18 @@ const DaySchedule = ({ day, meetings }: Props) => {
                     meetings
                         .sort(compareTimes)
                         .map((meeting, i) => (
-                            <ScheduleMeeting meeting={meeting} key={i} />
+                            <UpcomingMeeting
+                                id={i}
+                                url={meeting.organizations.url}
+                                title={meeting.title}
+                                description={meeting.description}
+                                start_time={meeting.start_time}
+                                end_time={meeting.end_time}
+                                org_name={meeting.organizations.name}
+                                org_picture={meeting.organizations.picture}
+                                is_public={meeting.is_public}
+                                room_name={meeting.rooms?.name}
+                            ></UpcomingMeeting>
                         ))
                 ) : (
                     <ContentUnavailable

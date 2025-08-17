@@ -8,6 +8,7 @@ import { Avatar } from "radix-ui";
 const UpcomingMeeting = ({
     id,
     title,
+    url,
     description,
     start_time,
     end_time,
@@ -36,7 +37,7 @@ const UpcomingMeeting = ({
     return (
         <div className={"w-full cursor-pointer"}>
             <div
-                className="flex justify-between items-center bg-layer-2 transition-colors hover:bg-layer-3 p-4"
+                className="overflow-scroll flex max-lg:flex-col max-lg:items-start gap-2 justify-between items-center bg-layer-2 transition-colors hover:bg-layer-3 p-4"
                 onClick={() => setOpen(true)}
             >
                 <div className="relative flex gap-3">
@@ -91,6 +92,7 @@ const UpcomingMeeting = ({
 
             <MeetingPreview
                 id={id}
+                url={url}
                 title={title}
                 open={open}
                 isPublic={is_public}

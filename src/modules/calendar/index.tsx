@@ -132,8 +132,7 @@ const Index = () => {
                         );
                     }}
                     showOutsideDays
-                    weekStartsOn={0} /* Sunday; change if you must */
-                    /* Tailwind layout + theming */
+                    weekStartsOn={1}
                     classNames={{
                         button_previous:
                             "fill-typography-1 z-10 relative hover:bg-layer-2 rounded-full",
