@@ -1,6 +1,4 @@
 import React from "react";
-import { Typography } from "@mui/material";
-import Link from "@mui/material/Link";
 
 interface DisplayLinksProps {
     text: string;
@@ -16,14 +14,15 @@ const DisplayLinks: React.FC<DisplayLinksProps> = ({ text }) => {
                 {parts.map((part, index) => {
                     if (urlRegex.test(part)) {
                         return (
-                            <Link
+                            <a
                                 href={part}
+                                className={"underline text-accent"}
                                 key={index}
                                 target="_blank"
                                 rel="noopener noreferrer"
                             >
                                 {part}
-                            </Link>
+                            </a>
                         );
                     } else {
                         return <span key={index}>{part}</span>;
@@ -34,15 +33,9 @@ const DisplayLinks: React.FC<DisplayLinksProps> = ({ text }) => {
     };
 
     return (
-        <Typography
-            variant="body1"
-            sx={{
-                width: "100%",
-                whiteSpace: "pre-line",
-            }}
-        >
+        <p className={"w-full whitespace-pre-line"}>
             {formatTextWithLinks(text)}
-        </Typography>
+        </p>
     );
 };
 

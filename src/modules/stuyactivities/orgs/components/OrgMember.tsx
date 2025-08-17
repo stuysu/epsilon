@@ -55,7 +55,9 @@ const OrgMember = ({
                 </div>
             </div>
 
-            <ToggleChip title={l1} selectable={false} />
+            <div className={"my-3"}>
+                <ToggleChip title={l1} selectable={false} />
+            </div>
         </div>
     );
 };

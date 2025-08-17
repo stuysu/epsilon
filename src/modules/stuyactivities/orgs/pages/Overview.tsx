@@ -375,7 +375,7 @@ const Overview = () => {
                 </div>
             </div>
 
-            <div className={"flex flex-col gap-6"}>
+            <div className={"flex flex-col gap-6 w-full"}>
                 <OverviewList
                     height={"auto"}
                     title={"Meeting Schedule"}
@@ -413,7 +413,7 @@ const Overview = () => {
                     title={"Activity Leaders"}
                     glow={"bg-yellow"}
                 >
-                    {!user.signed_in && (
+                    {!user.signed_in ? (
                         <p className={"bg-layer-2 p-4"}>
                             <i
                                 className={
@@ -426,41 +426,44 @@ const Overview = () => {
                                 organization.
                             </span>
                         </p>
+                    ) : (
+                        <div className={"flex flex-col gap-1"}>
+                            {organization.memberships
+                                ?.sort(sortByRole)
+                                .map(
+                                    (member, i) =>
+                                        [
+                                            "FACULTY",
+                                            "ADMIN",
+                                            "CREATOR",
+                                        ].includes(member.role || "") &&
+                                        member.active && (
+                                            <OrgMember
+                                                key={i}
+                                                role={member.role || "MEMBER"}
+                                                role_name={member.role_name}
+                                                email={
+                                                    member.users?.email ||
+                                                    "no email"
+                                                }
+                                                picture={member.users?.picture}
+                                                first_name={
+                                                    member.users?.first_name ||
+                                                    "First"
+                                                }
+                                                last_name={
+                                                    member.users?.last_name ||
+                                                    "Last"
+                                                }
+                                                is_faculty={
+                                                    member.users?.is_faculty ||
+                                                    false
+                                                }
+                                            />
+                                        ),
+                                )}
+                        </div>
                     )}
-                    <div className={"flex flex-col gap-1"}>
-                        {organization.memberships
-                            ?.sort(sortByRole)
-                            .map(
-                                (member, i) =>
-                                    ["FACULTY", "ADMIN", "CREATOR"].includes(
-                                        member.role || "",
-                                    ) &&
-                                    member.active && (
-                                        <OrgMember
-                                            key={i}
-                                            role={member.role || "MEMBER"}
-                                            role_name={member.role_name}
-                                            email={
-                                                member.users?.email ||
-                                                "no email"
-                                            }
-                                            picture={member.users?.picture}
-                                            first_name={
-                                                member.users?.first_name ||
-                                                "First"
-                                            }
-                                            last_name={
-                                                member.users?.last_name ||
-                                                "Last"
-                                            }
-                                            is_faculty={
-                                                member.users?.is_faculty ||
-                                                false
-                                            }
-                                        />
-                                    ),
-                            )}
-                    </div>
                 </OverviewList>
 
                 <OverviewList

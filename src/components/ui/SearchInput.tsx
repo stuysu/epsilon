@@ -15,7 +15,9 @@ export default function SearchInput({
 }: SearchInputProps) {
     return (
         <div className="relative w-full h-12 mb-5 flex justify-center">
-            <i className={`absolute ${icon} z-10 top-[0.8rem] left-3`} />
+            <i
+                className={`absolute ${icon} z-10 top-[0.8rem] left-3 text-typography-2`}
+            />
             <input
                 type="text"
                 placeholder={placeholder}
@@ -25,15 +27,13 @@ export default function SearchInput({
                 }
                 className=" w-full rounded-xl px-12 pt-1 transition-colors
                 text-typography-1
+                important
               bg-layer-1
               hover:bg-layer-2
               focus:bg-layer-3
               outline-0
-              [box-shadow:inset_0_0_2px_rgba(255,255,255,0.3)]
+              shadow-control
         "
-                style={{
-                    fontVariationSettings: "'wght' 700",
-                }}
             />
         </div>
     );

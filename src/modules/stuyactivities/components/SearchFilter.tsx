@@ -1,5 +1,3 @@
-import { Box } from "@mui/material";
-
 import { capitalizeWords } from "../../../utils/DataFormatters";
 import SearchInput from "../../../components/ui/SearchInput";
 import ToggleChip from "../../../components/ui/ToggleChip";
@@ -40,8 +38,8 @@ const SearchFilter = ({
     isTwoWrap,
 }: Props) => {
     return (
-        <Box
-            sx={{
+        <div
+            style={{
                 width:
                     isOneColumn || isTwoWrap
                         ? "100%"
@@ -137,7 +135,7 @@ const SearchFilter = ({
                     ))}
                 </div>
             </div>
-        </Box>
+        </div>
     );
 };
 

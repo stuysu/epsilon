@@ -1,10 +1,9 @@
-import { Box, Chip, Stack, Typography } from "@mui/material";
-
 import { useState } from "react";
 import dayjs from "dayjs";
 
 import MeetingPreview from "../../../../components/ui/orgs/MeetingPreview";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
+import ToggleChip from "../../../../components/ui/ToggleChip";
 
 type Props = {
     id?: number;
@@ -46,37 +45,43 @@ const OrgMeeting = ({
     }
 
     return (
-        <div style={{ width: "100%" }}>
-            <Stack
-                width={"100%"}
+        <div className={"w-full"}>
+            <div
+                className="
+    flex
+    justify-between
+    items-center
+    bg-layer-2
+    transition-colors
+    hover:bg-layer-3
+    p-4
+  "
                 onClick={() => setOpen(true)}
-                direction={"row"}
-                justifyContent={"space-between"}
-                alignItems={"center"}
-                sx={{
-                    background: "#36363680",
-                    transition: "background-color 0.1s ease-in-out",
-                    "&:hover": {
-                        backgroundColor: "#4d4d4d80",
-                    },
-                }}
-                padding={3}
             >
-                <Box sx={{ width: "100%" }}>
-                    <Typography variant="h4">{title}</Typography>
-                    <Typography>
+                <div className="w-full pt-1">
+                    <h4>{title}</h4>
+                    <p>
                         {startTime} to {endTime}
-                    </Typography>
-                </Box>
-                <Stack direction="row" gap={1}>
-                    <Chip label={"Room " + room_name || "Virtual"}></Chip>
+                    </p>
+                </div>
+                <div className="flex gap-2 w-fit justify-end">
+                    <ToggleChip
+                        title={"Room " + room_name || "Virtual"}
+                        selectable={false}
+                    ></ToggleChip>
                     {is_public ? (
-                        <Chip label="Public"></Chip>
+                        <ToggleChip
+                            title={"Public"}
+                            selectable={false}
+                        ></ToggleChip>
                     ) : (
-                        <Chip label="Private"></Chip>
+                        <ToggleChip
+                            title={"Private"}
+                            selectable={false}
+                        ></ToggleChip>
                     )}
-                </Stack>
-                <Stack direction="row">
+                </div>
+                <div className="flex">
                     {onEdit && (
                         <AsyncButton
                             variant="contained"
@@ -95,8 +100,8 @@ const OrgMeeting = ({
                             Delete
                         </AsyncButton>
                     )}
-                </Stack>
-            </Stack>
+                </div>
+            </div>
             <MeetingPreview
                 id={id}
                 title={title}

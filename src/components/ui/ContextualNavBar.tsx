@@ -28,7 +28,6 @@ const ContextualNavBar: FC = () => {
                     ? "1px solid rgba(255,255,255,0.1)"
                     : undefined,
                 backdropFilter: isMobile ? "blur(30px)" : undefined,
-                backgroundColor: isMobile ? "rgba(17,17,17,0.8)" : undefined,
             }}
         >
             <Stack
@@ -48,18 +47,16 @@ const ContextualNavBar: FC = () => {
                         { label: "Support", path: "/activities-support" },
                     ] as const
                 ).map(({ label, path }) => (
-                    <Typography
+                    <p
                         key={path}
-                        className="cursor-pointer transition-opacity whitespace-nowrap"
+                        className="cursor-pointer transition-opacity whitespace-nowrap important text-typography-1"
                         onClick={() => navigate(path)}
-                        sx={{
-                            fontVariationSettings: "'wght' 700",
+                        style={{
                             opacity: location.pathname === path ? 1 : 0.5,
-                            color: "rgb(209 213 219 / var(--tw-text-opacity, 1))",
                         }}
                     >
                         {label}
-                    </Typography>
+                    </p>
                 ))}
 
                 {user.permission && (

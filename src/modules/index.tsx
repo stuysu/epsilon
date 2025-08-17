@@ -55,12 +55,12 @@ const Pages = () => {
                     <div>
                         <div
                             className={
-                                "max-sm:w-full sm:relative bg-neutral-800 fixed z-50 bottom-0 sm:bg-opacity-0 bg-opacity-80 max-sm:backdrop-blur-2xl max-sm:border-t border-neutral-700"
+                                "max-sm:w-full sm:relative bg-blurDark fixed z-50 bottom-0 sm:bg-opacity-0 bg-opacity-80 max-sm:backdrop-blur-2xl max-sm:border-t border-divider"
                             }
                         >
                             <NavBar />
                         </div>
-                        <div className="sm:hidden fixed bg-gradient-to-r to-[#111111] from-transparent z-[1500] h-[50px] w-14 top-0 right-0 pointer-events-none" />
+                        <div className="sm:hidden fixed bg-gradient-to-r to-bg from-transparent z-[1500] h-[50px] w-14 top-0 right-0 pointer-events-none" />
                         <div className={"max-sm:h-8"}>
                             <ContextualNavBar />
                         </div>
@@ -108,15 +108,24 @@ const Pages = () => {
                             }
                         >
                             <p className={"hover:opacity-75"}>
-                                <a href={"https://github.com/stuysu/epsilon/"}>
+                                <a
+                                    href={"https://github.com/stuysu/epsilon/"}
+                                    className={"no-underline text-typography-2"}
+                                >
                                     Source
                                 </a>
                             </p>
                             <p className={"hover:opacity-75"}>
-                                <a href={"https://stuysu.org/"}>StuySU</a>
+                                <a
+                                    href={"https://stuysu.org/"}
+                                    className={"no-underline text-typography-2"}
+                                >
+                                    StuySU
+                                </a>
                             </p>
                             <p className={"hover:opacity-75"}>
                                 <a
+                                    className={"no-underline text-typography-2"}
                                     href={
                                         "https://www.figma.com/design/WfaOkjsU63VjVD1sdmSTXu/Epsilon-Design-File-Revision-1?node-id=0-1&t=xuEKneeUJMZXyrt1-1"
                                     }
@@ -126,6 +135,7 @@ const Pages = () => {
                             </p>
                             <p className={"hover:opacity-75"}>
                                 <a
+                                    className={"no-underline text-typography-2"}
                                     href={
                                         "https://github.com/willpill/Epsilon-Press-Kit/archive/refs/heads/main.zip"
                                     }

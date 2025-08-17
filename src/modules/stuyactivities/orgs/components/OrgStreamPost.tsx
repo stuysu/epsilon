@@ -1,12 +1,3 @@
-import {
-    Avatar,
-    Box,
-    Card,
-    ListItem,
-    ListItemAvatar,
-    ListItemText,
-    Typography,
-} from "@mui/material";
 import { supabase } from "../../../../lib/supabaseClient";
 
 import React, { useContext, useState } from "react";
@@ -17,6 +8,7 @@ import { useSnackbar } from "notistack";
 import dayjs from "dayjs";
 import OrgContext from "../../../../contexts/OrgContext";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
+import { Avatar } from "radix-ui";
 
 /* This post component will serve as both the org_admin and member post. depending on role, differeing functionality */
 const OrgStreamPost = ({
@@ -92,116 +84,69 @@ const OrgStreamPost = ({
     let timeStr = `${postTime.month() + 1}/${postTime.date()}/${postTime.year()}`;
 
     return (
-        <article>
-            <Card
-                variant="outlined"
-                sx={{
-                    borderRadius: "12px",
-                    position: "relative",
-                    marginBottom: "10px",
-                    padding: "15px",
-                    border: "none",
-                    height: "400px",
-                    boxShadow: "inset rgba(255, 255, 255, 0.5) 0px 0px 1px",
-                }}
-            >
-                <div
-                    style={{
-                        background:
-                            "linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0) 0%, rgba(143, 143, 143, 0.67) 50%, rgba(0, 0, 0, 0) 100%)",
-                        width: "25vw",
-                        height: "1px",
-                        position: "absolute",
-                        top: "0px",
-                        opacity: 0.3,
-                        zIndex: 40,
-                    }}
-                ></div>
-
-                <ListItem>
-                    <ListItemAvatar>
-                        <Avatar
-                            alt={content.organizations?.name}
-                            src={content.organizations?.picture || ""}
-                            sx={{ objectFit: "cover" }}
-                        >
-                            {content.organizations?.name
-                                ?.charAt(0)
-                                .toUpperCase()}
-                        </Avatar>
-                    </ListItemAvatar>
-
-                    <ListItemText
-                        primary={content.organizations?.name}
-                        secondary={timeStr + (isEdited ? " [Edited]" : "")}
+        <article className="relative mb-4 p-6 rounded-xl h-96 border-none shadow-module bg-layer-1">
+            <div className={"flex items-center gap-2"}>
+                <Avatar.Root className="w-10 h-10 rounded-md overflow-hidden block">
+                    <Avatar.Image
+                        className="size-full object-cover"
+                        src={content.organizations?.picture || ""}
+                        alt={content.organizations?.name}
                     />
-                </ListItem>
-
-                <Typography
-                    variant="h3"
-                    width="100%"
-                    sx={{
-                        overflow: "hidden",
-                        paddingLeft: "15px",
-                        paddingRight: "15px",
-                        paddingBottom: "10px",
-                        textOverflow: "ellipsis",
-                    }}
-                >
-                    {content.title}
-                </Typography>
-
-                <div className={"relative"}>
-                    <div
-                        className={
-                            "absolute bg-gradient-to-b from-[#111111] to-transparent z-20 h-5 w-full -top-1"
-                        }
-                    ></div>
-                    <Box
-                        sx={{
-                            width: "100%",
-                            maxHeight: "260px",
-                            overflowY: "auto",
-                        }}
+                    <Avatar.Fallback
+                        className="text-center size-full flex items-center justify-center bg-layer-3 text-xl relative pt-1 text-typography-2"
+                        delayMs={600}
                     >
-                        <br />
-                        <Typography
-                            variant="body1"
-                            width="100%"
-                            sx={{
-                                whiteSpace: "pre-line",
-                                paddingLeft: "15px",
-                                paddingRight: "15px",
-                            }}
-                        >
-                            {content.description}
-                            <br />
-                            <br />
-                            <br />
-                        </Typography>
-                    </Box>
-                </div>
+                        {content.organizations?.name?.charAt(0).toUpperCase()}
+                    </Avatar.Fallback>
+                </Avatar.Root>
 
-                <Box sx={{ marginTop: "20px" }}>
-                    {editable && (
-                        <>
-                            <AsyncButton
-                                onClick={deletePost}
-                                variant="contained"
-                            >
-                                Delete
-                            </AsyncButton>
-                            <AsyncButton
-                                onClick={() => setEditing(true)}
-                                variant="contained"
-                                sx={{ marginLeft: "10px" }}
-                            >
-                                Edit
-                            </AsyncButton>
-                        </>
-                    )}
-                </Box>
-            </Card>
+                <div className={"mt-1.5"}>
+                    <h4>{content.organizations?.name}</h4>
+                    <p>{timeStr + (isEdited ? " [Edited]" : "")}</p>
+                </div>
+            </div>
+
+            <div
+                style={{
+                    background:
+                        "linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0) 0%, rgba(143, 143, 143, 0.67) 50%, rgba(0, 0, 0, 0) 100%)",
+                    width: "25vw",
+                    height: "1px",
+                    position: "absolute",
+                    top: "0px",
+                    opacity: 0.3,
+                    zIndex: 40,
+                }}
+            ></div>
+
+            <h3
+                className={
+                    "my-6 max-h-[2lh] overflow-ellipsis overflow-hidden [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]"
+                }
+            >
+                {content.title}
+            </h3>
+
+            <div className={"w-full overflow-y-scroll relative h-52"}>
+                <p>{content.description}</p>
+            </div>
+
+            <div className="absolute top-5 right-5">
+                {editable && (
+                    <>
+                        <AsyncButton onClick={deletePost} variant="contained">
+                            Delete
+                        </AsyncButton>
+                        <AsyncButton
+                            onClick={() => setEditing(true)}
+                            variant="contained"
+                            sx={{ marginLeft: "10px" }}
+                        >
+                            Edit
+                        </AsyncButton>
+                    </>
+                )}
+            </div>
         </article>
     );
 };

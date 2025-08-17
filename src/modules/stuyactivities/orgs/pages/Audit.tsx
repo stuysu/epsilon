@@ -18,7 +18,11 @@ const Audit = () => {
                     <OrgInspector />
                 </div>
                 {organization.meetings.length > 0 ? (
-                    <ItemList height={"auto"}>
+                    <ItemList
+                        height={"auto"}
+                        title={"Audit Meeting Records"}
+                        icon={"bx-calendar"}
+                    >
                         {organization.meetings
                             .sort(sortByDate)
                             .map((meeting) => (

@@ -8,7 +8,6 @@
 
 import React, { useEffect, useState } from "react";
 import UserContext from "../../../contexts/UserContext";
-import { Box, Stack, Typography } from "@mui/material";
 import OrgBlock from "../../../components/ui/orgs/OrgBlock";
 import { useSnackbar } from "notistack";
 import { supabase } from "../../../lib/supabaseClient";
@@ -16,6 +15,7 @@ import UpcomingMeeting from "./UpcomingMeeting";
 import OrgStreamPost from "../../stuyactivities/orgs/components/OrgStreamPost";
 import DisplayLinks from "../../../components/DisplayLinks";
 import { useNavigate } from "react-router-dom";
+import ItemList from "../../../components/ui/ItemList";
 
 const currentHour = new Date().getHours();
 const timeGreeting = currentHour < 12 ? "Good morning" : "Good evening";
@@ -187,209 +187,126 @@ const UserHome = () => {
                 </div>
 
                 <div className="flex flex-col">
-                    <div className={"relative w-full mb-20"}>
-                        <div className={"relative"}>
-                            <Box
-                                bgcolor="#1f1f1f80"
-                                padding={0.5}
-                                borderRadius={3}
-                                position={"relative"}
-                                zIndex={2}
-                                boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15),
-                        0px 4px 12px rgba(0, 0, 0, 0.25)"
-                                sx={{
-                                    backdropFilter: "blur(20px)",
-                                }}
+                    <div className={"relative w-full mb-14 group"}>
+                        <div className={"relative z-10"}>
+                            <ItemList
+                                title={"My Meetings"}
+                                height={"auto"}
+                                icon={"bx-calendar-week"}
                             >
-                                <Typography
-                                    variant="h4"
-                                    marginTop={2}
-                                    marginBottom={3}
-                                    marginLeft={3}
-                                >
-                                    <i className="bx bx-calendar-week mr-3 bx-sm top-1 relative"></i>
-                                    My Meetings
-                                </Typography>
-                                <Stack
-                                    borderRadius={2}
-                                    overflow="hidden"
-                                    spacing={0.5}
-                                >
-                                    {upcomingMeetings.length === 0 && (
-                                        <Typography
-                                            padding={3}
-                                            variant="body1"
-                                            sx={{
-                                                backgroundColor: "#36363666",
-                                            }}
-                                        >
-                                            No upcoming meetings. Check back
-                                            later!
-                                        </Typography>
-                                    )}
-                                    {upcomingMeetings.map((meeting) => (
-                                        <UpcomingMeeting
-                                            url={meeting.organizations.url}
-                                            key={meeting.id}
-                                            id={meeting.id}
-                                            title={meeting.title}
-                                            description={meeting.description}
-                                            start_time={meeting.start_time}
-                                            end_time={meeting.end_time}
-                                            org_name={
-                                                meeting.organizations.name
-                                            }
-                                            org_picture={
-                                                meeting.organizations.picture
-                                            }
-                                            room_name={meeting.rooms?.name}
-                                            is_public={meeting.is_public}
-                                        />
-                                    ))}
-                                </Stack>
-                            </Box>
-
-                            <Box
-                                bgcolor="#1f1f1f80"
-                                padding={0.5}
-                                position={"absolute"}
-                                borderRadius={3}
-                                bottom={-40}
-                                left={0}
-                                right={0}
-                                marginLeft={"4%"}
-                                marginRight={"4%"}
-                                display={"flex"}
-                                justifyContent={"center"}
-                                width={"92%"}
-                                zIndex={1}
-                                boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
-                            >
-                                <Typography
-                                    variant="body1"
-                                    marginTop={3}
-                                    marginBottom={0.5}
-                                >
-                                    <a
-                                        href={"/meetings"}
-                                        className={
-                                            "hover:text-neutral-300 transition-colors"
+                                {upcomingMeetings.length === 0 && (
+                                    <p className={"bg-layer-2 p-4"}>
+                                        No upcoming meetings. Check back later!
+                                    </p>
+                                )}
+                                {upcomingMeetings.map((meeting) => (
+                                    <UpcomingMeeting
+                                        url={meeting.organizations.url}
+                                        key={meeting.id}
+                                        id={meeting.id}
+                                        title={meeting.title}
+                                        description={meeting.description}
+                                        start_time={meeting.start_time}
+                                        end_time={meeting.end_time}
+                                        org_name={meeting.organizations.name}
+                                        org_picture={
+                                            meeting.organizations.picture
                                         }
-                                    >
-                                        View Calendar
-                                    </a>{" "}
-                                    · {upcomingMeetings.length} Upcoming
-                                </Typography>
-                            </Box>
+                                        room_name={meeting.rooms?.name}
+                                        is_public={meeting.is_public}
+                                    />
+                                ))}
+                            </ItemList>
                         </div>
-                        <Box
-                            bgcolor="rgba(228, 174, 59, 0.1)"
-                            position="absolute"
-                            top="0"
-                            left="0"
-                            right="0"
-                            bottom="0"
-                            borderRadius={3}
-                            zIndex={-1}
-                            sx={{
-                                filter: "blur(30px)",
-                            }}
-                        />
-                    </div>
-
-                    <Box position="relative" width={"100%"} marginBottom={10}>
-                        <div className={"relative"}>
-                            <Box
-                                bgcolor="#1f1f1f80"
-                                padding={0.5}
-                                borderRadius={3}
-                                position={"relative"}
-                                zIndex={2}
-                                boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15),
-                        0px 4px 12px rgba(0, 0, 0, 0.25)"
-                                sx={{
-                                    backdropFilter: "blur(20px)",
-                                }}
-                            >
-                                <Typography
-                                    variant="h4"
-                                    marginTop={2}
-                                    marginBottom={3}
-                                    marginLeft={3}
-                                >
-                                    <i className="bx bxs-megaphone mr-3 bx-sm top-1 relative"></i>
-                                    StuyActivities Announcements
-                                </Typography>
-                                <Stack
-                                    borderRadius={2}
-                                    overflow="hidden"
-                                    spacing={0.5}
-                                >
-                                    {announcements
-                                        .slice(0, visibleAnnouncements)
-                                        .map((announcement, i) => {
-                                            return (
-                                                <Stack
-                                                    key={i}
-                                                    sx={{
-                                                        marginRight: "10px",
-                                                        width: "100%",
-                                                        padding: 3,
-                                                        backgroundColor:
-                                                            "#36363650",
-                                                    }}
-                                                >
-                                                    <DisplayLinks
-                                                        text={
-                                                            announcement.content
-                                                        }
-                                                    />
-                                                </Stack>
-                                            );
-                                        })}
-                                </Stack>
-                            </Box>
-
-                            <Box
-                                bgcolor="#1f1f1f80"
-                                padding={0.5}
-                                position={"absolute"}
-                                borderRadius={3}
-                                bottom={-40}
-                                left={0}
-                                right={0}
-                                marginLeft={"4%"}
-                                marginRight={"4%"}
-                                display={"flex"}
-                                justifyContent={"center"}
-                                width={"92%"}
-                                zIndex={1}
-                                boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
-                            >
-                                <Typography
-                                    variant="body1"
-                                    marginTop={3}
-                                    marginBottom={0.5}
-                                    onClick={() =>
-                                        setVisibleAnnouncements(
-                                            (prev) => prev + 3,
-                                        )
+                        <div
+                            className="
+                            absolute
+                            bottom-0
+                            left-0
+                            right-0
+                            p-2
+                            ml-[4%]
+                            mr-[4%]
+                            flex
+                            justify-center
+                            group-hover:translate-y-7
+                            transition-transform
+                            w-[92%]
+                            z-[1]
+                            rounded-xl
+                            bg-layer-1
+                            shadow-control"
+                        >
+                            <p className={"pt-4"}>
+                                <a
+                                    href={"/meetings"}
+                                    className={
+                                        "hover:opacity-75 transition-colors no-underline"
                                     }
                                 >
-                                    <div
-                                        className={
-                                            announcements.length <=
-                                            visibleAnnouncements
-                                                ? "opacity-50"
-                                                : "cursor-pointer hover:text-neutral-300 transition-colors"
-                                        }
-                                    >
-                                        View More Announcements
-                                    </div>
-                                </Typography>
-                            </Box>
+                                    View Calendar
+                                </a>{" "}
+                                · {upcomingMeetings.length} Upcoming
+                            </p>
                         </div>
-                    </Box>
+                    </div>
+
+                    <div className={"relative w-full mb-20 group"}>
+                        <div className={"relative z-10"}>
+                            <ItemList
+                                title={"StuyActivities Announcements"}
+                                height={"auto"}
+                                icon={"bxs-megaphone"}
+                            >
+                                {announcements
+                                    .slice(0, visibleAnnouncements)
+                                    .map((announcement, i) => {
+                                        return (
+                                            <div
+                                                key={i}
+                                                className={"p-4 bg-layer-2"}
+                                            >
+                                                <DisplayLinks
+                                                    text={announcement.content}
+                                                />
+                                            </div>
+                                        );
+                                    })}
+                            </ItemList>
+                        </div>
+                        <div
+                            className="
+                            absolute
+                            bottom-0
+                            left-0
+                            right-0
+                            p-2
+                            ml-[4%]
+                            mr-[4%]
+                            flex
+                            justify-center
+                            group-hover:translate-y-7
+                            transition-transform
+                            w-[92%]
+                            z-[1]
+                            rounded-xl
+                            bg-layer-1
+                            shadow-control"
+                        >
+                            <p
+                                className={
+                                    announcements.length <= visibleAnnouncements
+                                        ? "opacity-50 pt-4"
+                                        : "pt-4 cursor-pointer hover:opacity-75 transition-colors"
+                                }
+                                onClick={() =>
+                                    setVisibleAnnouncements((prev) => prev + 3)
+                                }
+                            >
+                                View More Announcements
+                            </p>
+                        </div>
+                    </div>
                 </div>
             </section>
 

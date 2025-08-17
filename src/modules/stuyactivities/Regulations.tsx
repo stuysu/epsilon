@@ -1,4 +1,3 @@
-import { Link } from "@mui/material";
 import { Helmet } from "react-helmet";
 import React from "react";
 
@@ -19,7 +18,7 @@ const Regulations = () => {
             >
                 <h1
                     className={
-                        "w-2/3 bg-blend-color-dodge text-white/75 sm:text-8xl text-4xl sm:text-center font-light"
+                        "w-2/3 bg-blend-color-dodge sm:text-8xl text-4xl sm:text-center font-light"
                     }
                 >
                     Clubs & Pubs
@@ -32,24 +31,24 @@ const Regulations = () => {
                     <h4 className={"mb-3"}>Table of Contents</h4>
                     <ul className={"opacity-75 space-y-1"}>
                         <li>
-                            <Link href="#general">General Guidance</Link>
+                            <a href="#general">General Guidance</a>
                         </li>
                         <li>
-                            <Link href="#online">Online Meetings</Link>
+                            <a href="#online">Online Meetings</a>
                         </li>
                         <li>
-                            <Link href="#activity">Activity Meetings</Link>
+                            <a href="#activity">Activity Meetings</a>
                         </li>
                         <li>
-                            <Link href="#reservations">
+                            <a href="#reservations">
                                 Room Reservations and Usage
-                            </Link>
+                            </a>
                         </li>
                         <li>
-                            <Link href="#funding">Funding</Link>
+                            <a href="#funding">Funding</a>
                         </li>
                         <li>
-                            <Link href="#finances">Fundraising & Finances</Link>
+                            <a href="#finances">Fundraising & Finances</a>
                         </li>
                     </ul>
                 </div>
@@ -64,14 +63,13 @@ const Regulations = () => {
                     <p className={"mb-10"}>
                         For any issues or difficulties with the Epsilon
                         StuyActivities service, visit the{" "}
-                        <Link
-                            color="primary"
+                        <a
                             href="/activities-support"
                             target="_blank"
                             rel="noreferrer"
                         >
                             support page
-                        </Link>{" "}
+                        </a>{" "}
                         or consult directly with a Student Union (SU)
                         representative. An Activity can operate only after its
                         charter is submitted to and approved by the Clubs & Pubs
@@ -91,34 +89,31 @@ const Regulations = () => {
                         that violates its charter, and requires that all charter
                         changes receive prior approval from the Clubs & Pubs
                         department. Every Activity must comply with{" "}
-                        <Link
-                            color="primary"
+                        <a
                             href="https://www.schools.nyc.gov/docs/default-source/default-document-library/a-601-english"
                             target="_blank"
                             rel="noreferrer"
                         >
                             Chancellor’s Regulation A‑601
-                        </Link>
+                        </a>
                         {", "}
                         all other{" "}
-                        <Link
-                            color="primary"
+                        <a
                             href="https://www.schools.nyc.gov/about-us/policies/chancellors-regulations"
                             target="_blank"
                             rel="noreferrer"
                         >
                             Chancellor’s Regulations
-                        </Link>
+                        </a>
                         {", "}
                         the{" "}
-                        <Link
-                            color="primary"
+                        <a
                             href="https://stuy.enschool.org/apps/pages/index.jsp?uREC_ID=126635&type=d"
                             target="_blank"
                             rel="noreferrer"
                         >
                             Stuyvesant Code of Conduct
-                        </Link>
+                        </a>
                         {", "}
                         and relevant school policies. Violations result in
                         immediate suspension and charter revocation.
@@ -274,23 +269,21 @@ const Regulations = () => {
                     </h4>
                     <p className={"mb-10"}>
                         Before undertaking any fundraising, consult the complete{" "}
-                        <Link
-                            color="primary"
+                        <a
                             href="https://docs.google.com/document/d/10RD4PIHYYiHTLBMGyKlfOlHU60kzJ8l7PTl4jHjFOmQ/edit?usp=sharing"
                             target="_blank"
                             rel="noreferrer"
                         >
                             StuySU Fundraising Guidelines
-                        </Link>{" "}
+                        </a>{" "}
                         and{" "}
-                        <Link
-                            color="primary"
+                        <a
                             href="https://docs.google.com/document/d/1iXmJKKf6PvroDvOQSekMJFwnokJHgCApGqKx4uNYfM0/edit?usp=sharing"
                             target="_blank"
                             rel="noreferrer"
                         >
                             Staff Treasury Memo
-                        </Link>
+                        </a>
                         {". "}
                         Equipment, supplies, and services must be purchased
                         through FAMIS and ShopDOE in accordance with NYC DOE

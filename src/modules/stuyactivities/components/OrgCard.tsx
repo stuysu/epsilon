@@ -1,4 +1,4 @@
-import { Avatar, Box, Card, Skeleton, Stack, Typography } from "@mui/material";
+import { Avatar, Box, Skeleton, Typography } from "@mui/material";
 import { PUBLIC_URL } from "../../../config/constants";
 import React, { useContext, useState } from "react";
 import UserContext from "../../../contexts/UserContext";
@@ -40,36 +40,23 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                         filter: "blur(50px)",
                     }}
                 />
-                <Card
-                    sx={{
-                        position: "relative",
-                        borderRadius: "20px",
-                        boxShadow:
-                            "inset 0 0 1px 1px rgba(255, 255, 255, 0.075)",
-                        cursor: "pointer",
-                        transition:
-                            "0.2s background ease-in-out, box-shadow 0.2s ease-in-out",
-                        "&:hover": {
-                            background: theme.colorMode
-                                ? "rgba(255, 255, 255, 0.05)"
-                                : "rgba(66,66,66,0.2)",
-                            boxShadow:
-                                "inset 0 0 1px 1px rgba(255, 255, 255, 0.075), 0px 5px 15px rgba(0, 0, 0, 0.3)",
-                        },
-                        height: "445px",
-                        display: "flex",
-                        flexDirection: "column",
-                        overflow: "visible",
-                        padding: "25px",
-                        background: theme.colorMode
-                            ? "rgba(31, 31, 31, 0.5)"
-                            : "rgba(100, 100, 100, 0.2)",
-                        justifyContent: "flex-start",
-                        zIndex: 1,
-                    }}
-                    onClick={() => {
-                        navigate(`/${organization.url}`);
-                    }}
+                <div
+                    onClick={() => navigate(`/${organization.url}`)}
+                    className="
+    relative
+    rounded-3xl
+    cursor-pointer
+    h-[445px]
+    flex flex-col
+    overflow-visible
+    p-6
+    transition-colors
+    bg-layer-1
+    shadow-module
+    hover:bg-layer-2
+    hover:shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.075),0_5px_15px_rgba(0,0,0,0.3)]
+    justify-start
+  "
                 >
                     <div
                         style={{
@@ -224,91 +211,43 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                             </h3>
                         </div>
                     </Box>
-                    <Box
-                        sx={{
-                            width: "100%",
-                            marginTop: "15px",
-                        }}
-                    >
-                        <Typography
-                            variant="body1"
-                            sx={{
-                                fontVariationSettings: `'wght' 700`,
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                whiteSpace: "normal",
-                                display: "-webkit-box",
-                                WebkitBoxOrient: "vertical",
-                                WebkitLineClamp: 1,
-                            }}
+                    <div className={"w-full mt-4"}>
+                        <p
+                            className={
+                                "important overflow-hidden overflow-ellipsis whitespace-normal [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:1]"
+                            }
                         >
                             {organization.tags?.join(" • ")}
-                        </Typography>
-                    </Box>
+                        </p>
+                    </div>
 
-                    <Box
-                        sx={{
-                            width: "100%",
-                            marginTop: "15px",
-                        }}
-                    >
-                        <Typography
-                            variant="body1"
-                            sx={{
-                                overflow: "hidden",
-                                textOverflow: "ellipsis",
-                                whiteSpace: "normal",
-                                display: "-webkit-box",
-                                WebkitBoxOrient: "vertical",
-                                WebkitLineClamp: 4,
-                            }}
+                    <div className="w-full mt-3.5">
+                        <p
+                            className={
+                                "overflow-hidden overflow-ellipsis whitespace-normal [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:4]"
+                            }
                         >
                             {organization.purpose}
-                        </Typography>
+                        </p>
 
-                        <Stack
-                            direction="column"
-                            spacing={0}
-                            sx={{
-                                boxShadow:
-                                    "inset 0 0 1px 1px rgba(255, 255, 255, 0.1)",
-                                borderRadius: "10px",
-                                paddingY: "10px",
-                                paddingX: "15px",
-                                background: "#36363680",
-                                marginTop: "20px",
-                                textTransform: "capitalize",
-                            }}
+                        <div
+                            className={
+                                "flex flex-col bg-layer-2 shadow-module py-3 px-4 mt-5 rounded-xl capitalize"
+                            }
                         >
                             <div className={"flex justify-between"}>
-                                <Typography
-                                    noWrap
-                                    sx={{ fontVariationSettings: "'wght' 500" }}
-                                >
-                                    Commitment
-                                </Typography>
-                                <Typography
-                                    noWrap
-                                    sx={{ fontVariationSettings: "'wght' 700" }}
-                                >
+                                <p>Commitment</p>
+                                <p className={"important"}>
                                     {organization.commitment_level?.toLowerCase()}
-                                </Typography>
+                                </p>
                             </div>
                             <div
                                 className={
                                     "flex justify-between relative top-0.5"
                                 }
                             >
-                                <Typography
-                                    noWrap
-                                    sx={{ fontVariationSettings: "'wght' 500" }}
-                                >
-                                    Days
-                                </Typography>
-                                <Typography
-                                    noWrap
-                                    sx={{ fontVariationSettings: "'wght' 700" }}
-                                >
+                                <p>Days</p>
+                                <p className={"important"}>
                                     {organization.meeting_days?.length
                                         ? organization.meeting_days
                                               .map(
@@ -323,11 +262,11 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                               )
                                               .join(" · ")
                                         : "None"}
-                                </Typography>
+                                </p>
                             </div>
-                        </Stack>
-                    </Box>
-                </Card>
+                        </div>
+                    </div>
+                </div>
             </div>
         </Box>
     );

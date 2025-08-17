@@ -45,6 +45,10 @@
         font-variation-settings: 'wght' 500;
     }
 
+    a {
+        @apply text-[color:var(--accent)] underline;
+    }
+
     .important {
         font-variation-settings: 'wght' 700;
     }
@@ -88,7 +92,7 @@
                 --layer-secondary: #36363666;
                 --layer-tertiary: #6161614D;
 
-                --accent: #2D6AE2CC;
+                --accent: #3788FFCC;
 
                 --text-primary: #E8E8E8CC;
                 --text-secondary: #AEAEAECC;

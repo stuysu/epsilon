@@ -1,19 +1,12 @@
-import {
-    Avatar,
-    Box,
-    Chip,
-    ListItem,
-    ListItemAvatar,
-    Typography,
-} from "@mui/material";
-import { useState } from "react";
+import React, { useState } from "react";
 import MeetingPreview from "../../../components/ui/orgs/MeetingPreview";
 import dayjs from "dayjs";
+import ToggleChip from "../../../components/ui/ToggleChip";
 import { monthNames } from "../../../utils/TimeStrings";
+import { Avatar } from "radix-ui";
 
 const UpcomingMeeting = ({
     id,
-    url,
     title,
     description,
     start_time,
@@ -22,7 +15,6 @@ const UpcomingMeeting = ({
     org_picture,
     room_name,
     is_public,
-    sx,
 }: {
     id: number;
     url: string;
@@ -42,83 +34,75 @@ const UpcomingMeeting = ({
     let end = dayjs(end_time);
 
     return (
-        <Box>
-            <Box
-                sx={{
-                    width: "100%",
-                    display: "flex",
-                    backgroundColor: "#36363650",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    transition: "background-color 0.1s ease-in-out",
-                    "&:hover": {
-                        backgroundColor: "#4d4d4d50",
-                    },
-                }}
+        <div className={"w-full cursor-pointer"}>
+            <div
+                className="flex justify-between items-center bg-layer-2 transition-colors hover:bg-layer-3 p-4"
+                onClick={() => setOpen(true)}
             >
-                <ListItem
-                    onClick={() => setOpen(true)}
-                    sx={{
-                        padding: "20px 25px",
-                        display: "flex",
-                        flexDirection: "row",
-                        cursor: "pointer",
-                        justifyContent: "space-between",
-                        ...sx,
-                    }}
-                >
+                <div className="relative flex gap-3">
                     <div
-                        style={{
-                            display: "flex",
-                            flexDirection: "row",
-                            alignItems: "center",
-                        }}
+                        className={[
+                            "min-w-10 h-10 rounded-md overflow-hidden relative",
+                            !is_public
+                                ? "[mask:radial-gradient(circle_0.8rem_at_2.4rem_2.3rem,transparent_98%,#000_100%)] [-webkit-mask:radial-gradient(circle_0.8rem_at_2.4rem_2.3rem,transparent_98%,#000_100%)]"
+                                : "",
+                        ].join(" ")}
                     >
-                        <ListItemAvatar>
-                            <Avatar
+                        <Avatar.Root className="size-full">
+                            <Avatar.Image
+                                className="size-full object-cover"
+                                src={org_picture}
                                 alt={org_name}
-                                src={org_picture || ""}
-                                sx={{ objectFit: "cover", borderRadius: "5px" }}
+                            />
+                            <Avatar.Fallback
+                                className="text-center size-full flex items-center justify-center bg-layer-3 text-xl relative pt-1 text-typography-2"
+                                delayMs={600}
                             >
-                                {org_name.charAt(0).toUpperCase()}
-                            </Avatar>
-                        </ListItemAvatar>
+                                {(org_name || "O").charAt(0).toUpperCase()}
+                            </Avatar.Fallback>
+                        </Avatar.Root>
+                    </div>
 
-                        <div>
-                            <div className={"relative top-0.5"}>
-                                <Typography variant={"h4"}>{title}</Typography>
-                                <Typography variant={"body1"}>
-                                    {org_name}
-                                </Typography>
-                            </div>
-                        </div>
+                    {!is_public && (
+                        <i className="bx bx-lock absolute z-10 -bottom-0.5 left-7 text-base leading-none text-typography-1" />
+                    )}
+
+                    <div className="w-full pt-1">
+                        <h4>{title}</h4>
+                        <p>{org_name}</p>
                     </div>
-                    <div className={"flex gap-2 max-sm:hidden"}>
-                        <Chip label={is_public ? "Public" : "Private"} />
-                        <Chip
-                            label={`${monthNames[start.month()]} ${start.date()}, ${start.year()}`}
-                        />
-                        <Chip
-                            label={`${start.format("LT")} to ${end.format("LT")}`}
-                        />
-                    </div>
-                </ListItem>
-                <MeetingPreview
-                    id={id}
-                    url={url}
-                    title={title}
-                    open={open}
-                    isPublic={is_public}
-                    description={description}
-                    startTime={start_time}
-                    endTime={end_time}
-                    organizationPicture={org_picture}
-                    organizationName={org_name}
-                    roomName={room_name}
-                    onClose={() => setOpen(false)}
-                />
-            </Box>
-        </Box>
+                </div>
+
+                <div className="flex gap-2 w-fit justify-end pointer-events-none">
+                    <ToggleChip
+                        title={room_name || "Virtual"}
+                        selectable={false}
+                    ></ToggleChip>
+                    <ToggleChip
+                        title={`${start.format("LT")} to ${end.format("LT")}`}
+                        selectable={false}
+                    ></ToggleChip>
+                    <ToggleChip
+                        title={`${monthNames[start.month()]} ${start.date()}, ${start.year()}`}
+                        selectable={false}
+                    ></ToggleChip>
+                </div>
+            </div>
+
+            <MeetingPreview
+                id={id}
+                title={title}
+                open={open}
+                isPublic={is_public}
+                description={description}
+                startTime={start_time}
+                endTime={end_time}
+                organizationPicture={org_picture}
+                organizationName={org_name}
+                roomName={room_name}
+                onClose={() => setOpen(false)}
+            />
+        </div>
     );
 };
 

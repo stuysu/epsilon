@@ -112,7 +112,7 @@ const Index = () => {
         <LoginGate sx={{ width: "100%" }} page={"view the calendar"}>
             <div
                 className={
-                    "m-12 flex items-start gap-8 min-h-screen max-md:flex-col"
+                    "m-4 sm:m-12 flex items-start gap-8 min-h-screen max-md:flex-col"
                 }
             >
                 <DayPicker
@@ -149,16 +149,6 @@ const Index = () => {
                         selected:
                             "bg-accent text-typography-1 rounded-md pointer-events-none",
                         outside: "opacity-50 pointer-events-none",
-                    }}
-                    /* 2-letter weekday names like Mo, Tu, We... */
-                    formatters={{
-                        formatWeekdayName: (weekday, options) =>
-                            new Intl.DateTimeFormat(undefined, {
-                                weekday: "short",
-                                ...options,
-                            })
-                                .format(weekday)
-                                .slice(0, 2),
                     }}
                     /* underline markers for meeting days */
                     modifiers={{
