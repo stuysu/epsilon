@@ -1,6 +1,6 @@
 import { CSSProperties, useContext, useEffect, useState } from "react";
 
-import { Box, Typography, useMediaQuery } from "@mui/material";
+import { Box, Card, Checkbox, FormControlLabel, FormGroup, Typography, useMediaQuery } from "@mui/material";
 import MultiPageForm from "../comps/ui/forms/MultiPageForm";
 import FormPage from "../comps/ui/forms/FormPage";
 import FormTextField from "../comps/ui/forms/FormTextField";
@@ -21,6 +21,7 @@ import { PUBLIC_URL } from "../constants";
 
 import LoginGate from "../comps/ui/LoginGate";
 import UserContext from "../comps/context/UserContext";
+import Terms from "../comps/pages/charter/Terms";
 
 type FormType = {
     name: string;
@@ -88,6 +89,8 @@ const Create = () => {
     const [urlError, setUrlError] = useState<string>("");
     const [checkingUrl, setCheckingUrl] = useState<boolean>(false);
     const urlPattern = /^[a-zA-Z0-9_-]+$/;
+
+    const [checkboxState, setCheckBoxState] = useState(false);
 
     const validateUrl = async (url: string) => {
         if (
@@ -309,12 +312,50 @@ const Create = () => {
                     flexWrap: "wrap",
                 }}
             >
-                <FormPage title="Before You Start">
+                <FormPage
+                    title="Before You Start"
+                    checkRequired={true}
+                    checkCompleted={checkboxState}
+                >
                     <Typography variant="body1">
                         Before you begin the chartering process, make sure to
                         read through the Clubs & Pubs Rules, which all
                         Activities must follow.
                         <br />
+                        <br />
+                    </Typography>
+
+                    <Box display="flex" flexDirection="column">
+                        <Card
+                            sx={{
+                                width: "55em",
+                                height: "50em",
+                                overflowY: "auto",
+                                borderRadius: 3,
+                                boxShadow: 3,
+                            }}
+                        >
+                            <br />
+                            <Terms />
+                        </Card>
+
+                        <FormGroup>
+                            <FormControlLabel
+                                required
+                                control={
+                                    <Checkbox
+                                        checked={checkboxState}
+                                        onChange={(e) =>
+                                            setCheckBoxState(e.target.checked)
+                                        }
+                                    />
+                                }
+                                label="I have read and agree to the terms"
+                            />
+                        </FormGroup>
+                    </Box>
+
+                    <Typography variant="body1">
                         <br />
                         Once you’re confident that your Activity abides by all
                         the regulations, log in to your Epsilon account (You've
