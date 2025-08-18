@@ -28,6 +28,8 @@ type Props<T> = {
     submitText?: string;
     last?: boolean; // if its the last page, have a submit button instead of a next button
     first?: boolean;
+    checkRequired?: boolean;
+    checkCompleted?: boolean;
 };
 
 type FormStatus = {
@@ -48,6 +50,8 @@ const FormPage = <T extends unknown>({
     submitText,
     last,
     first,
+    checkRequired,
+    checkCompleted,
 }: Props<T>) => {
     const [status, setStatus] = useState<FormStatus>({});
     const [valid, setValid] = useState(false);
@@ -194,7 +198,9 @@ const FormPage = <T extends unknown>({
                         <AsyncButton
                             onClick={onNext}
                             variant="contained"
-                            disabled={!valid}
+                            disabled={
+                                !valid || (checkRequired && !checkCompleted)
+                            }
                             sx={{ width: "150px", height: "40px" }}
                         >
                             Next
