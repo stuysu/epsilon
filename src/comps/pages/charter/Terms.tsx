@@ -31,7 +31,7 @@ const Terms = () => {
                 receive email confirmation. <br />
                 <br />
                 Every Activity must have at least two leaders—either two
-                co‑presidents or a president and vice‑president—and must meet at
+                co-presidents or a president and vice-president—and must meet at
                 least once per month, in person or online, with each meeting
                 registered on Epsilon. Activities inactive for more than one
                 month risk suspension or revocation of their charter. The SU may
@@ -45,7 +45,7 @@ const Terms = () => {
                     target="_blank"
                     rel="noreferrer"
                 >
-                    Chancellor’s Regulation A‑601
+                    Chancellor’s Regulation A-601
                 </Link>
                 {", "}
                 all other{" "}
@@ -145,11 +145,11 @@ const Terms = () => {
             <Typography paragraph marginBottom={5}>
                 All Activities must reserve a room to be able to hold a meeting.
                 Rooms must be reserved on Epsilon StuyActivities, which operates
-                on a first‑come, first‑served basis, and no Activity is
+                on a first-come, first-served basis, and no Activity is
                 guaranteed a particular room.
                 <br />
                 <br />
-                Long‑term reservations require an email request to
+                Long-term reservations require an email request to
                 clubpub@stuysu.org explaining the need. Rooms must be restored
                 to their original condition after each meeting; staff or Auditor
                 complaints about cleanliness or damage may result in strikes or
@@ -157,7 +157,7 @@ const Terms = () => {
                 Epsilon, cancel reservations at least 24 hours in advance if
                 plans change, and email clubpub@stuysu.org or consult an SU
                 representative if no suitable room is available. Reserving
-                non‑classroom facilities—such as the cafeteria, auditorium, or
+                non-classroom facilities—such as the cafeteria, auditorium, or
                 lecture halls—requires the faculty advisor to email
                 clubpub@stuysu.org, Mr. Polazzo, and Mr. Moran at least one week
                 ahead with full justification and logistics. Guest speakers may
@@ -176,7 +176,7 @@ const Terms = () => {
                 The SU manages all Activity funding. Requests will be denied if
                 they involve unapproved trips, unapproved supplies or services
                 (including guest speakers), personal items that members keep,
-                faculty‑advisor compensation, computer systems or software, food
+                faculty-advisor compensation, computer systems or software, food
                 or beverages, or apparel. Two funding rounds occur each year—one
                 in Fall and one in Spring. Prior to each round, Activities
                 receive a budget application and rules. Only Activities needing
@@ -192,13 +192,13 @@ const Terms = () => {
                 original receipts, and submit them to budget@stuysu.org for
                 reimbursement (excluding tax). Reimbursement checks are
                 available from Ms. Caruzo in Room 103 roughly two weeks after
-                submission, and the tax‑exempt form supplied by the Budget
+                submission, and the tax-exempt form supplied by the Budget
                 Department should be used to avoid sales tax. A loan must be
                 repaid by the end of the school year unless otherwise specified.
                 Acceptance of SU funds obligates Activities to cooperate fully
                 with audits, submit receipts within seven days of each purchase,
                 present purchased items on request, and return all items to SU
-                storage at year‑end; items are reissued the next year if the
+                storage at year-end; items are reissued the next year if the
                 Activity still exists, otherwise the SU retains them. First
                 violations trigger a warning unless severe; a second infraction
                 allows the Budget Department to withdraw funding and suspend the
