@@ -140,7 +140,6 @@ const Profiles = () => {
                 {fourDigitId && (
                     <Typography
                         width="100%"
-                        marginBottom={5}
                         sx={{ fontFamily: "monospace" }}
                     >
                         Epsilon ID: {String(fourDigitId).padStart(4, "0")}
@@ -148,7 +147,7 @@ const Profiles = () => {
                 )}
                 <img
                     src={`${PUBLIC_URL}/taglines/medals.svg`}
-                    className={"w-64 mb-3"}
+                    className={"w-64 mb-3 mt-16"}
                     alt={"Medals of Honor"}
                 ></img>
                 <p>Medals are coming soon to Epsilon. Preview them below!</p>

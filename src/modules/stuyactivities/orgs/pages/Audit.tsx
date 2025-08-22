@@ -49,7 +49,7 @@ const Audit = () => {
                         icon="bx-calendar-x"
                         iconColor="text-yellow"
                         title="No Meetings Records"
-                        description="This Activity has not yet held any meetings. If meeting records are available, they will be displayed here."
+                        description="This Activity has not yet held any meetings. Meeting records will be displayed here when they become available."
                     />
                 )}
             </section>

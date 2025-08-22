@@ -24,7 +24,7 @@ const Posts = () => {
                 icon="bx-message-alt-x"
                 iconColor="text-red"
                 title="Cannot Create Posts"
-                description="This Activity does not yet meet the requirements to post updates. Please check back later."
+                description="This Activity does not yet meet the requirements to post updates."
             />
         );
 

@@ -95,11 +95,12 @@ const PendingMember = ({
                 <OrgMember
                     email={email}
                     picture={picture}
+                    role_name={"Pending Member"}
                     first_name={first_name}
                     last_name={last_name}
                 />
             </Box>
-            <Box>
+            <div className={"flex px-3"}>
                 <AsyncButton
                     onClick={handleApprove}
                     variant="contained"
@@ -114,7 +115,7 @@ const PendingMember = ({
                 >
                     Reject
                 </AsyncButton>
-            </Box>
+            </div>
         </Box>
     );
 };

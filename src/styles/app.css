@@ -6,6 +6,8 @@
 @tailwind utilities;
 
 @layer base {
+
+    /* text styles */
     html {
         font-size: 16px;
     }
@@ -172,6 +174,44 @@
         --shadow-control: #fff;
     }
 
+    [data-theme="orange"] {
+        --bg-main: #fff3e0;
+
+        --layer-primary: #ffe0b2;
+        --layer-secondary: #ffcc80;
+        --layer-tertiary: #ffb74d;
+
+        --accent: #ff6f00;
+
+        --text-primary: #4e342e;
+        --text-secondary: #6d4c41;
+        --text-tertiary: #8d6e63;
+
+        --blue: #ff7043;
+        --green: #ff8a65;
+        --yellow: #ffb300;
+        --red: #e64a19;
+        --beige: #ffe082;
+
+        --divider: #ffcc80;
+
+        --blur-dark: #ff9800cc;
+        --blur-light: #ffcc80cc;
+    }
+
+    /* orange theme uses serif */
+    [data-theme="orange"] body,
+    [data-theme="orange"] h1,
+    [data-theme="orange"] h2,
+    [data-theme="orange"] h3,
+    [data-theme="orange"] h4,
+    [data-theme="orange"] h5,
+    [data-theme="orange"] p {
+        font-family: "Georgia", "Times New Roman", serif !important;
+    }
+
+    /* light or dark natured */
+    [data-theme="orange"] { color-scheme: light; }
     [data-theme="light"] { color-scheme: light; }
     [data-theme="dark"]  { color-scheme: dark; }
     [data-theme="dark-hc"] { color-scheme: dark; }

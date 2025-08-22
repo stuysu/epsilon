@@ -17,7 +17,7 @@ const Stream = () => {
                 icon="bx-message-alt-x"
                 iconColor="text-red"
                 title="Stream Unavailable"
-                description="This Activity does not yet meet the requirements to post updates. Please check back later."
+                description="This Activity does not yet meet the requirements to post updates."
             />
         );
 

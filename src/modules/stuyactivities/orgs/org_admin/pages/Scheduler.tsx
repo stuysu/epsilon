@@ -46,7 +46,7 @@ const Scheduler = () => {
                 icon="bx-no-entry"
                 iconColor="text-red"
                 title="Cannot Schedule Meetings"
-                description="This Activity does not yet meet the requirements to hold meetings. Please check back later."
+                description="This Activity does not yet meet the requirements to hold meetings."
             />
         );
 

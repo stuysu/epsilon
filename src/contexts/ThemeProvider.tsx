@@ -1,7 +1,7 @@
 import React from "react";
 import { createTheme, ThemeProvider as MUIThemeProvider } from "@mui/material";
 
-export type ThemeMode = "light" | "dark" | "system" | "dark-hc";
+export type ThemeMode = "light" | "dark" | "system" | "dark-hc" | "orange";
 
 export const ThemeContext = React.createContext<{
   mode: ThemeMode;
@@ -18,7 +18,7 @@ const STORAGE_KEY = "mode";
 function getInitialMode(): ThemeMode {
     if (typeof window === "undefined") return "dark";
     const raw = window.localStorage.getItem(STORAGE_KEY) as ThemeMode | null;
-    return raw === "light" || raw === "dark" || raw === "system" || raw === "dark-hc"
+    return raw === "light" || raw === "dark" || raw === "system" || raw === "dark-hc" || raw === "orange"
         ? raw
         : "dark";
 }
@@ -68,7 +68,9 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
             ? getSystemMode()
             : mode === "dark-hc"
                 ? "dark"
-                : mode;
+                : mode === "orange"
+                    ? "light"
+                    : mode;
 
   const muiTheme = React.useMemo(
     () =>
