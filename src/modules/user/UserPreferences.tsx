@@ -9,7 +9,7 @@ const UserPreferences = () => {
 
     return (
         <div className="p-10 max-sm:mb-32">
-            <h1>Your Preferences</h1>
+            <h1>My Preferences</h1>
             <Divider />
             <h2 className={"mb-4"}>Display Theme</h2>
             <RadioGroup.Root
@@ -29,7 +29,7 @@ const UserPreferences = () => {
                         <h4 className={"mt-1 text-left"}>Tranquility Base Hotel & Casino</h4>
                         <p className={"mb-3"}>
                             Our default dark theme, perfect for a calm and
-                            focused experience with a little bit of fun.
+                            focused experience with a little bit of pop.
                         </p>
                         <img
                             src={`${PUBLIC_URL}/symbols/darkmode.png`}
@@ -109,7 +109,7 @@ const UserPreferences = () => {
                     <div>
                         <h4 className={"mt-1 text-left"}>Everything You've Come to Expect<i className={"bx ml-1 bx-test-tube"}></i></h4>
                         <p className={"mb-3"}>
-                            An unapologetically vibrant theme with baroque motifs.
+                            An unapologetically vibrant theme with baroque motifs. Funsies only.
                         </p>
                         <img
                             src={`${PUBLIC_URL}/symbols/orangemode.png`}

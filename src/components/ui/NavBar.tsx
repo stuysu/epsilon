@@ -228,7 +228,7 @@ const NavBar: FC = () => {
                                     className="cursor-pointer transition-colors hover:text-typography-3"
                                     onClick={() => navigate("/preferences")}
                                 >
-                                    User Preferences
+                                    My Preferences
                                 </p>
                                 <p
                                     style={{
@@ -305,7 +305,7 @@ const NavBar: FC = () => {
                                     style={{
                                         marginLeft: 3,
                                         position: "relative",
-                                        bottom: 3,
+                                        bottom: 5,
                                     }}
                                 >
                                     {item.label}
