@@ -79,6 +79,9 @@
 
         --blur-dark: #111111CC;
         --blur-light: #22222299;
+
+        --shadow-module: rgba(255, 255, 255, 0.25);
+        --shadow-control: rgba(255, 255, 255, 0.3);
     }
 
     /* light when user set */
@@ -105,6 +108,9 @@
 
         --blur-dark: #F2F2F280;
         --blur-light: #B2B2B280;
+
+        --shadow-module: rgba(0, 0, 0, 0.25);
+        --shadow-control: rgba(0, 0, 0, 0.3);
     }
 
     /* light when system wants light */
@@ -132,6 +138,9 @@
 
             --blur-dark: #F2F2F280;
             --blur-light: #B2B2B280;
+
+            --shadow-module: rgba(0, 0, 0, 0.25);
+            --shadow-control: rgba(0, 0, 0, 0.3);
         }
     }
 
@@ -158,6 +167,9 @@
 
         --blur-dark: #000000;
         --blur-light: #111111;
+
+        --shadow-module: #fff;
+        --shadow-control: #fff;
     }
 
     [data-theme="light"] { color-scheme: light; }

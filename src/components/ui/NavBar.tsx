@@ -152,7 +152,7 @@ const NavBar: FC = () => {
                 {/* User dropdown */}
                 <div className="pointer-events-auto absolute sm:relative flex flex-row justify-end sm:top-1 -top-20 sm:right-0 right-8">
                     <div
-                        className="flex cursor-pointer flex-row items-center justify-center gap-2 rounded-lg bg-layer-1 pl-1.5 pr-1.5 shadow-[inset_0px_0px_2px_0px_rgba(255,255,255,0.3)] h-10"
+                        className="flex cursor-pointer flex-row items-center justify-center gap-2 rounded-lg bg-layer-1 pl-1.5 pr-1.5 shadow-control h-10"
                         onClick={() => setDrawerOpen(!drawerOpen)}
                     >
                         <Avatar

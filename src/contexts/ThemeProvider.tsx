@@ -18,7 +18,9 @@ const STORAGE_KEY = "mode";
 function getInitialMode(): ThemeMode {
     if (typeof window === "undefined") return "dark";
     const raw = window.localStorage.getItem(STORAGE_KEY) as ThemeMode | null;
-    return raw === "light" || raw === "dark" || raw === "system" ? raw : "dark";
+    return raw === "light" || raw === "dark" || raw === "system" || raw === "dark-hc"
+        ? raw
+        : "dark";
 }
 
 function getSystemMode(): "light" | "dark" {
