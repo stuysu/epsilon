@@ -1,5 +1,5 @@
 import React from "react";
-import { Divider, Typography } from "@mui/material";
+import Divider from "../../components/ui/Divider";
 import { AnimatePresence, motion } from "framer-motion";
 
 const HelpItem = ({
@@ -25,12 +25,12 @@ const HelpItem = ({
                 className={`bx ${icon} max-sm:hidden bx-lg relative top-2.5 ${iconColor}`}
             ></i>
             <div>
-                <Typography variant="h3" mb={1}>
+                <h3 className={"mt-3"}>
                     {title}
-                </Typography>
-                <Typography variant="h4" color="secondary">
+                </h3>
+                <h4 className="mb-3">
                     {description}
-                </Typography>
+                </h4>
                 <AnimatePresence initial={false}>
                     {content && expanded && (
                         <motion.div
@@ -53,15 +53,9 @@ const HelpItem = ({
                             transition={{ duration: 0.5, ease: [0, 0, 0, 1] }}
                             style={{ overflow: "hidden" }}
                         >
-                            <Typography
-                                variant="body1"
-                                color="text.secondary"
-                                align="justify"
-                                mt={2}
-                                maxWidth="770px"
-                            >
+                            <p className={"max-w-2xl"}>
                                 {content}
-                            </Typography>
+                            </p>
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -80,7 +74,7 @@ const Support = () => {
             >
                 <h1
                     className={
-                        "w-2/3 bg-blend-color-dodge text-white/75 sm:text-8xl text-4xl sm:text-center"
+                        "w-2/3 bg-blend-color-dodge sm:text-8xl text-4xl sm:text-center"
                     }
                 >
                     Get help with
@@ -90,9 +84,9 @@ const Support = () => {
             </div>
 
             <div className={"hidden sm:block"}>
-                <Typography variant="h1" marginBottom={3}>
+                <h1>
                     Get help with StuyActivities.
-                </Typography>
+                </h1>
             </div>
 
             <div className={"max-sm:-mr-4"}>

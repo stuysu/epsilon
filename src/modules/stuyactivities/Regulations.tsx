@@ -31,24 +31,24 @@ const Regulations = () => {
                     <h4 className={"mb-3"}>Table of Contents</h4>
                     <ul className={"opacity-75 space-y-1"}>
                         <li>
-                            <a href="#general">General Guidance</a>
+                            <p><a href="#general">General Guidance</a></p>
                         </li>
                         <li>
-                            <a href="#online">Online Meetings</a>
+                            <p><a href="#online">Online Meetings</a></p>
                         </li>
                         <li>
-                            <a href="#activity">Activity Meetings</a>
+                            <p><a href="#activity">Activity Meetings</a></p>
                         </li>
                         <li>
-                            <a href="#reservations">
+                            <p><a href="#reservations">
                                 Room Reservations and Usage
-                            </a>
+                            </a></p>
                         </li>
                         <li>
-                            <a href="#funding">Funding</a>
+                            <p><a href="#funding">Funding</a></p>
                         </li>
                         <li>
-                            <a href="#finances">Fundraising & Finances</a>
+                            <p><a href="#finances">Fundraising & Finances</a></p>
                         </li>
                     </ul>
                 </div>

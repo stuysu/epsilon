@@ -148,13 +148,13 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
 
     return (
         <section className="p-4 relative rounded-xl border border-neutral-800">
-            <Typography variant="h2" mb={1}>
+            <h2>
                 Messaging
-            </Typography>
-            <Typography variant="body1" mb={1}>
+            </h2>
+            <p>
                 Only visible to admins, faculty, and the Clubs & Pubs
                 Department.
-            </Typography>
+            </p>
             <div
                 className={"h-[500px] overflow-auto relative"}
                 ref={chatBoxRef}

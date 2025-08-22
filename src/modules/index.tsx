@@ -16,9 +16,11 @@ import Support from "./stuyactivities/Support";
 import UnaffiliatedRoomReservation from "./stuyactivities/UnaffiliatedRoomReservation";
 import ContextualNavBar from "../components/ui/ContextualNavBar";
 import Arista from "./arista";
+import { ThemeContext } from "../contexts/ThemeProvider";
 
 const Catalog = lazy(() => import("./stuyactivities/Catalog"));
-const Settings = lazy(() => import("./user/./CommsSettings"));
+const CommsSettings = lazy(() => import("./user/./CommsSettings"));
+const UserPreferences = lazy(() => import("./user/./UserPreferences"));
 const Profile = lazy(() => import("./user/Profile"));
 const Create = lazy(() => import("./stuyactivities/CharterForm"));
 const Charter = lazy(() => import("./stuyactivities/CharterLanding"));
@@ -30,6 +32,12 @@ const AdminRouter = lazy(() => import("./stuyactivities/admin"));
 const Pages = () => {
     const location = useLocation();
     const user: UserContextType = useContext(UserContext);
+
+    const theme = useContext(ThemeContext);
+    const wordmarkSrc =
+        theme.effectiveMode === "dark"
+            ? `${PUBLIC_URL}/wordmark.svg`
+            : `${PUBLIC_URL}/wordmark_light.svg`;
 
     return (
         <div className="bg-bg">
@@ -71,7 +79,8 @@ const Pages = () => {
                     <Route path={"/arista"} Component={Arista} />
                     <Route path={"/stuyactivities"} Component={Catalog} />
                     <Route path={"/confirm-join"} Component={ConfirmJoin} />
-                    <Route path={"/settings"} Component={Settings} />
+                    <Route path={"/settings"} Component={CommsSettings} />
+                    <Route path={"/preferences"} Component={UserPreferences} />
                     <Route path={"/profile"} Component={Profile} />
                     <Route path={"/create"} Component={Create} />
                     <Route path={"/charter"} Component={Charter} />
@@ -95,7 +104,7 @@ const Pages = () => {
                     >
                         <div className="w-72 flex max-sm:justify-center">
                             <img
-                                src={`${PUBLIC_URL}/wordmark.svg`}
+                                src={wordmarkSrc}
                                 className={
                                     "w-36 max-sm:w-28 relative bottom-0.5"
                                 }

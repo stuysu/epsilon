@@ -140,13 +140,13 @@ const CommsSettings = () => {
                     marginBottom: "30px",
                 }}
             >
-                <Typography variant="h1" align="center" marginTop="50px">
+                <h1>
                     Communication Options
-                </Typography>
-                <Typography variant="body1" align="center" marginBottom="50px">
+                </h1>
+                <p>
                     Choose if you'd like to receive email communications for
                     each organization you are a member of.
-                </Typography>
+                </p>
             </Box>
             <Box
                 sx={{

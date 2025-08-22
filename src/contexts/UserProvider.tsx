@@ -6,7 +6,7 @@ import { ThemeContext } from "./ThemeProvider";
 
 const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const { enqueueSnackbar } = useSnackbar();
-    const { colorMode } = useContext(ThemeContext);
+    const { effectiveMode } = useContext(ThemeContext);
     const [loading, setLoading] = useState(true);
 
     const [value, setValue] = React.useState<UserContextType>({
@@ -186,7 +186,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
         return (
             <div
                 style={{
-                    backgroundColor: colorMode ? "#0c161b" : "#ebf5f2",
+                    backgroundColor: effectiveMode === "dark" ? "#0c161b" : "#ebf5f2",
                     width: "100vw",
                     height: "100vh",
                 }}

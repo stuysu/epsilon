@@ -32,9 +32,10 @@ const NavBar: FC = () => {
 
     const theme = useContext(ThemeContext);
     const isMobile = useMediaQuery("(max-width: 640px)");
-    const wordmarkSrc = theme.colorMode
-        ? `${PUBLIC_URL}/wordmark.svg`
-        : `${PUBLIC_URL}/wordmark_light.svg`;
+    const wordmarkSrc =
+        theme.effectiveMode === "dark"
+            ? `${PUBLIC_URL}/wordmark.svg`
+            : `${PUBLIC_URL}/wordmark_light.svg`;
 
     const titleStyle: CSSProperties = {
         color: "inherit",
@@ -164,7 +165,7 @@ const NavBar: FC = () => {
                                 : "Guest"}
                         </p>
                         <i
-                            className={`bx bx-chevron-down bx-sm hidden sm:inline-block pr-1 transition-transform duration-200 ${drawerOpen ? "bx-flip-vertical" : ""}`}
+                            className={`text-typography-2 bx bx-chevron-down bx-sm hidden sm:inline-block pr-1 transition-transform duration-200 ${drawerOpen ? "bx-flip-vertical" : ""}`}
                         />
                     </div>
 
@@ -198,7 +199,7 @@ const NavBar: FC = () => {
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
-                                    className="cursor-pointer transition-colors hover:text-neutral-300"
+                                    className="cursor-pointer transition-colors hover:text-typography-3"
                                     onClick={() => navigate("/profile")}
                                 >
                                     My Profile
@@ -215,7 +216,7 @@ const NavBar: FC = () => {
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
-                                    className="cursor-pointer transition-colors hover:text-neutral-300"
+                                    className="cursor-pointer transition-colors hover:text-typography-3"
                                     onClick={() => navigate("/settings")}
                                 >
                                     Communication Options
@@ -224,20 +225,16 @@ const NavBar: FC = () => {
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
-                                    className="cursor-pointer transition-colors hover:text-neutral-300"
-                                    onClick={() => {
-                                        theme.toggleColorMode();
-                                    }}
+                                    className="cursor-pointer transition-colors hover:text-typography-3"
+                                    onClick={() => navigate("/preferences")}
                                 >
-                                    {theme.colorMode
-                                        ? "Light Mode (Experimental)"
-                                        : "Dark Mode"}
+                                    User Preferences
                                 </p>
                                 <p
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
-                                    className="cursor-pointer transition-colors text-red hover:text-red-600"
+                                    className="cursor-pointer transition-[filter] text-red hover:brightness-150"
                                     onClick={signOut}
                                 >
                                     Sign Out
@@ -258,7 +255,7 @@ const NavBar: FC = () => {
                 }}
             >
                 {/* colorful backdrop */}
-                {theme.colorMode && (
+                {theme.effectiveMode === "dark" && (
                     <div
                         className="absolute top-0 w-full h-[100px] bg-cover bg-center pointer-events-none opacity-60 blur-[15px] z-[1]"
                         style={{
@@ -277,7 +274,7 @@ const NavBar: FC = () => {
                         position: "relative",
                         marginLeft: isMobile ? "1rem" : "3rem",
                         mt: isMobile ? 2 : 3,
-                        mb: isMobile ? 2 : 1.5,
+                        mb: isMobile ? 2 : 0,
                     }}
                 >
                     {topNavItems.map((item, index) => (
@@ -308,7 +305,7 @@ const NavBar: FC = () => {
                                     style={{
                                         marginLeft: 3,
                                         position: "relative",
-                                        top: 3,
+                                        bottom: 3,
                                     }}
                                 >
                                     {item.label}
@@ -320,7 +317,7 @@ const NavBar: FC = () => {
                     {/* Animated underline */}
                     {!isMobile && (
                         <div
-                            className="absolute -bottom-3 h-px bg-typography-1 pointer-events-none transition-[left,width] duration-300"
+                            className="absolute bottom-0 h-px bg-typography-1 pointer-events-none transition-[left,width] duration-300"
                             style={{
                                 left: optionUnderline.left - 27,
                                 width: optionUnderline.width,

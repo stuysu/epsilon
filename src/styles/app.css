@@ -53,9 +53,63 @@
         font-variation-settings: 'wght' 700;
     }
 
-    @layer base {
-        /* Light defaults */
-        :root {
+    :root { color-scheme: dark light; }
+
+    /* dark: default, user set, and when system wants dark */
+    :where(:root, [data-theme="dark"]) {
+        --bg-main: #111111;
+
+        --layer-primary: #1F1F1F80;
+        --layer-secondary: #36363666;
+        --layer-tertiary: #6161614D;
+
+        --accent: #3788FFCC;
+
+        --text-primary: #E8E8E8CC;
+        --text-secondary: #AEAEAECC;
+        --text-tertiary: #878787CC;
+
+        --blue: #395BE9;
+        --green: #6DEB68CC;
+        --yellow: #EEFE53CC;
+        --red: #E45647B3;
+        --beige: #B6B684CC;
+
+        --divider: #7D7D7D4D;
+
+        --blur-dark: #111111CC;
+        --blur-light: #22222299;
+    }
+
+    /* light when user set */
+    :where([data-theme="light"]) {
+        --bg-main: #E9E9E9;
+
+        --layer-primary: #FFFFFFB3;
+        --layer-secondary: #D6D6D680;
+        --layer-tertiary: #C4C4C466;
+
+        --accent: #0068FFCC;
+
+        --text-primary: #000000CC;
+        --text-secondary: #4B4B4BCC;
+        --text-tertiary: #595959CC;
+
+        --blue: #395BE9;
+        --green: #33762F;
+        --yellow: #DD9700;
+        --red: #d31300;
+        --beige: #D9D9A2;
+
+        --divider: #A9A9A94D;
+
+        --blur-dark: #F2F2F280;
+        --blur-light: #B2B2B280;
+    }
+
+    /* light when system wants light */
+    @media (prefers-color-scheme: light) {
+        :root:not([data-theme]) {
             --bg-main: #E9E9E9;
 
             --layer-primary: #FFFFFFB3;
@@ -78,37 +132,9 @@
 
             --blur-dark: #F2F2F280;
             --blur-light: #B2B2B280;
-
-            /* Hint to the browser for built‑in widgets */
-            color-scheme: light dark;
-        }
-
-        /* System dark mode overrides */
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg-main: #111111;
-
-                --layer-primary: #1F1F1F80;
-                --layer-secondary: #36363666;
-                --layer-tertiary: #6161614D;
-
-                --accent: #3788FFCC;
-
-                --text-primary: #E8E8E8CC;
-                --text-secondary: #AEAEAECC;
-                --text-tertiary: #878787CC;
-
-                --blue: #395BE9;
-                --green: #6DEB68CC;
-                --yellow: #EEFE53CC;
-                --red: #E45647B3;
-                --beige: #B6B684CC;
-
-                --divider: #7D7D7D4D;
-
-                --blur-dark: #111111CC;
-                --blur-light: #22222299;
-            }
         }
     }
+
+    [data-theme="light"] { color-scheme: light; }
+    [data-theme="dark"]  { color-scheme: dark; }
 }

@@ -140,8 +140,8 @@ const Index = () => {
                             "fill-typography-1 z-10 relative hover:bg-layer-2 rounded-full",
                         root: "p-5 rounded-xl p-3 bg-layer-1 shadow-control relative max-md:w-full",
                         nav: "absolute flex gap-2 ml-16 right-5 top-3",
-                        month_caption: "relative -top-1 mb-3",
-                        weekday: "font-normal",
+                        month_caption: "relative -top-1 mb-3 text-typography-1",
+                        weekday: "font-normal text-typography-2",
                         day: "p-0 text-center text-typography-1",
                         day_button:
                             "sm:w-10 sm:h-10 w-8 h-8 grid place-items-center rounded-md transition-colors hover:bg-layer-2",

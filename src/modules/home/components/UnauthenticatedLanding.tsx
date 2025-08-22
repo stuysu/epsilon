@@ -7,15 +7,11 @@ import { ThemeContext } from "../../../contexts/ThemeProvider";
 import CatalogButton from "../../../components/ui/buttons/CatalogButton";
 
 const UnauthenticatedLanding = () => {
-    const theme = useContext(ThemeContext);
-
     const [isLoginHovered, setIsLoginHovered] = useState(false);
+    const wordmarkSrc = `${PUBLIC_URL}/wordmark.svg`;
 
-    const wordmarkSrc = theme.colorMode
-        ? `${PUBLIC_URL}/wordmark.svg`
-        : `${PUBLIC_URL}/wordmark_light.svg`;
     return (
-        <Box>
+        <div className={"bg-[#111111] h-screen"}>
             <Box
                 sx={{
                     position: "fixed",
@@ -44,16 +40,12 @@ const UnauthenticatedLanding = () => {
                         marginBottom: "50px",
                         maxWidth: "300px",
                         height: "auto",
-                        mixBlendMode: theme.colorMode
-                            ? "color-dodge"
-                            : "normal",
+                        mixBlendMode: "color-dodge",
                         position: "relative",
                         zIndex: 3,
                         opacity: 0,
                         transform: "scale(1.5)",
-                        filter: theme.colorMode
-                            ? "blur(20px)"
-                            : "blur(20px) invert(0%)",
+                        filter: "blur(20px)",
                         animation:
                             "fadeIn 1.5s cubic-bezier(0, 0, 0, 1) forwards",
                         animationDelay: "0.3s",
@@ -98,7 +90,7 @@ const UnauthenticatedLanding = () => {
                 onClick={() => window.open("https://stuysu.org", "_blank")}
                 className="cursor-pointer relative bottom-12 left-1/2 transform -translate-x-1/2 w-14 h-14 object-cover"
             />
-        </Box>
+        </div>
     );
 };
 

@@ -10,7 +10,7 @@ const Archives = () => {
             >
                 <h1
                     className={
-                        "w-2/3 bg-blend-color-dodge text-white/75 sm:text-8xl text-4xl sm:text-center font-light"
+                        "w-2/3 bg-blend-color-dodge text-typography-1 sm:text-8xl text-4xl sm:text-center font-light"
                     }
                 >
                     StuyActivities

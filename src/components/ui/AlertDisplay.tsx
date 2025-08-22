@@ -50,7 +50,7 @@ const AlertDisplay = () => {
     )
         return <></>;
     return (
-        <div className={"z-[9999] relative w-full p-4"}>
+        <div className={"z-[9999] relative w-full p-4 bg-bg"}>
             <Alert
                 sx={{ borderRadius: "10px" }}
                 severity={data.severity}

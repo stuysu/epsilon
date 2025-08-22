@@ -90,7 +90,12 @@ const RelatedActivities = ({ currentOrg }: { currentOrg: Organization }) => {
         >
             <div
                 className={
-                    "absolute bg-gradient-to-r from-bg to-transparent z-20 h-full w-6 left-0"
+                    "absolute bg-bg z-20 h-full w-8 left-0"
+                }
+            ></div>
+            <div
+                className={
+                    "absolute bg-gradient-to-r from-bg to-transparent z-20 h-full w-4 left-8"
                 }
             ></div>
             <div className={"w-fit flex gap-2 my-4"}>

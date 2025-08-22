@@ -18,8 +18,7 @@ import { useNavigate } from "react-router-dom";
 import ItemList from "../../../components/ui/ItemList";
 
 const currentHour = new Date().getHours();
-const timeGreeting = currentHour < 12 ? "Good morning" : "Good evening";
-
+const timeGreeting = currentHour < 12 ? "Good morning" : currentHour < 17 ? "Good afternoon" : "Good evening";
 type meetingType = {
     id: number;
     title: string;
@@ -153,7 +152,7 @@ const UserHome = () => {
                 <h1>
                     {timeGreeting}, {user.first_name}!
                 </h1>
-                <h2>Here's what's happening.</h2>
+                <h2 className={"-mt-1.5"}>Here's what's happening.</h2>
             </header>
 
             <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10 items-start">
@@ -182,7 +181,7 @@ const UserHome = () => {
                         onClick={() => navigate(`/stuyactivities`)}
                     >
                         <i className="bx bx-md bx-plus-circle mb-5 text-indigo-600"></i>
-                        Join an Activity!
+                        <p>Join an Activity!</p>
                     </div>
                 </div>
 

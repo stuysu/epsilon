@@ -10,7 +10,7 @@ const UnaffiliatedRoomReservation = () => {
                 }
             >
                 <img
-                    src={`${PUBLIC_URL}/decorations/unaffiliated.png`}
+                    src={`${PUBLIC_URL}/symbols/unaffiliated.png`}
                     className="w-44 mr-3 animate-pulse"
                     alt=""
                 />

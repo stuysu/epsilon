@@ -71,11 +71,11 @@ const MemberGroup = ({ role, names }: { role: string; names: string[] }) => {
             >
                 {role}
             </p>
-            <div className={"flex flex-col w-80 text-center sm:text-left"}>
+            <div className={"flex flex-col w-80 text-center sm:text-left mt-1.5"}>
                 {names.map((name, index) => (
-                    <Typography key={index} variant={"h2"}>
+                    <h2 className={"-mt-3"}>
                         {name}
-                    </Typography>
+                    </h2>
                 ))}
             </div>
         </div>
@@ -296,10 +296,10 @@ const Index = () => {
                             exit="exit"
                             aria-label="Play"
                         >
-                            <i className="bx bx-play text-5xl relative left-0.5 transition hover:opacity-50 " />
-                            <Typography variant="body1">
+                            <i className="text-white/50 bx bx-play text-5xl relative left-0.5 transition hover:opacity-50 " />
+                            <p>
                                 Learn about the makers of Epsilon.
-                            </Typography>
+                            </p>
                         </motion.button>
                     )}
 
@@ -340,13 +340,13 @@ const Index = () => {
                                 src={`${PUBLIC_URL}/taglines/about.png`}
                                 className="w-full object-contain mx-auto mb-6"
                             />
-                            <Typography variant={"body1"} align={"center"}>
+                            <p className={"text-center"}>
                                 Epsilon is a project carried through each
                                 generation of Stuyvesant students. It's based on
                                 the philosophy that "we honor those who walked
                                 so we could run, and we run so our children
                                 soar."
-                            </Typography>
+                            </p>
                         </motion.div>
                     )}
 

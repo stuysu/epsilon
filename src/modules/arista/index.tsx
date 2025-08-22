@@ -1,8 +1,11 @@
 import { motion } from "framer-motion";
-import React from "react";
+import React, { useContext } from "react";
 import { PUBLIC_URL } from "../../config/constants";
+import { ThemeContext } from "../../contexts/ThemeProvider";
 
 const Arista = () => {
+    const theme = useContext(ThemeContext);
+
     return (
         <section className={"min-h-screen m-12"}>
             <div
@@ -60,9 +63,11 @@ const Arista = () => {
                     >
                         <img
                             src={`${PUBLIC_URL}/taglines/arista.svg`}
-                            className={"w-80 h-auto"}
+                            className={`w-80 h-auto ${
+                                theme.effectiveMode === "light" ? "invert" : ""
+                            }`}
                             alt="Arista is Stuyvesant High School’s premier honor society."
-                        ></img>
+                        />
                     </motion.div>
                     <motion.div
                         className={"max-w-xl"}
@@ -109,19 +114,19 @@ const Arista = () => {
             <a href={"https://stuyarista.org/"} className={"no-underline"}>
                 <div
                     className={
-                        "flex mt-20 w-full py-3 px-6 border-divider border justify-between hover:bg-typography-1 transition-colors"
+                        "flex mt-20 w-full py-3 px-6 border-divider border justify-between hover:bg-divider transition-colors"
                     }
                 >
                     <h1
                         className={
-                            "mix-blend-difference font-light text-xl sm:text-8xl text-typography-1"
+                            "font-light text-xl sm:text-8xl text-typography-1"
                         }
                     >
                         Visit Arista Now
                     </h1>
                     <i
                         className={
-                            "mix-blend-difference relative top-2 bx bx-chevron-right text-xl sm:text-8xl text-typography-1"
+                            "relative top-2 bx bx-chevron-right text-xl sm:text-8xl text-typography-1"
                         }
                     ></i>
                 </div>

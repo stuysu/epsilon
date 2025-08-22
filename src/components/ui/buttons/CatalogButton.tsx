@@ -9,7 +9,6 @@ export default function CatalogButton() {
     return (
         <button
             style={{
-                textDecoration: "underline",
                 marginTop: 30,
                 opacity: hover ? 0.75 : 1,
                 transition: "opacity 0.2s ease",
@@ -18,7 +17,7 @@ export default function CatalogButton() {
             onMouseLeave={() => setHover(false)}
             onClick={() => navigate("/stuyactivities")}
         >
-            Browse StuyActivities
+            <p className={"text-[#ffffff80]"}>Browse StuyActivities</p>
         </button>
     );
 }

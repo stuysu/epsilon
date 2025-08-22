@@ -63,28 +63,17 @@ const Organization = () => {
 
     return (
         <Box sx={{ width: "100%" }}>
-            <Box
-                height="100%"
-                bgcolor="#1f1f1f80"
-                padding={5}
-                borderRadius={3}
-                marginBottom={3}
-                marginTop={1}
-                boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
+            <div
+                className={"bg-layer-1 p-5 pl-7 pb-3 rounded-xl mb-10 mt-2 shadow-module"}
             >
-                <Typography variant="h1" align="center" width="100%">
+                <h1>
                     Amend Charter
-                </Typography>
-                <Typography
-                    variant="body1"
-                    align="center"
-                    width="100%"
-                    paddingX={"2vw"}
-                >
+                </h1>
+                <p>
                     You may update your organization's charter here. Please note
                     that edits are requests to amend, which will be reviewed by
                     the Student Union.
-                </Typography>
+                </p>
 
                 <Box
                     sx={{
@@ -94,7 +83,7 @@ const Organization = () => {
                         marginTop: "20px",
                     }}
                 ></Box>
-            </Box>
+            </div>
             <OrgEditor
                 organization={organization}
                 existingEdit={pendingEdit}

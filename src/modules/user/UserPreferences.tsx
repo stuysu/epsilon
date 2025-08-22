@@ -1,212 +1,69 @@
-import { Box, Paper, Switch, Typography } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
-import UserContext from "../../contexts/UserContext";
-import { supabase } from "../../lib/supabaseClient";
-import { enqueueSnackbar } from "notistack";
-import LoginGate from "../../components/ui/LoginGate";
-import Loading from "../../components/ui/Loading";
-
-type Memberships = {
-    id: number;
-    organization_id: number;
-    organization_name: string;
-    allow_notifications: boolean;
-};
+import * as RadioGroup from "@radix-ui/react-radio-group";
+import React from "react";
+import { ThemeContext, ThemeMode } from "../../contexts/ThemeProvider";
+import { PUBLIC_URL } from "../../config/constants";
+import Divider from "../../components/ui/Divider";
 
 const UserPreferences = () => {
-    const user = useContext(UserContext);
-    const [memberships, setMemberships] = useState<Memberships[]>([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchMemberships = async () => {
-            setLoading(true);
-            const { data: membershipsData, error: membershipsError } =
-                await supabase
-                    .from("memberships")
-                    .select(`id, organization_id`)
-                    .eq("user_id", user.id);
-
-            if (membershipsError) {
-                enqueueSnackbar("Failed to fetch memberships", {
-                    variant: "error",
-                });
-                setLoading(false);
-                return;
-            }
-
-            if (membershipsData && membershipsData.length > 0) {
-                const membershipIds = membershipsData.map((m) => m.id);
-                const organizationIds = membershipsData.map(
-                    (m) => m.organization_id,
-                );
-
-                const { data: notificationsData, error: notificationsError } =
-                    await supabase
-                        .from("membershipnotifications")
-                        .select("membership_id, allow_notifications")
-                        .in("membership_id", membershipIds);
-
-                if (notificationsError) {
-                    enqueueSnackbar("Failed to fetch notification settings", {
-                        variant: "error",
-                    });
-                    setLoading(false);
-                    return;
-                }
-
-                const { data: organizationsData, error: organizationsError } =
-                    await supabase
-                        .from("organizations")
-                        .select("id, name")
-                        .in("id", organizationIds);
-
-                if (organizationsError) {
-                    enqueueSnackbar("Failed to fetch organization names", {
-                        variant: "error",
-                    });
-                    setLoading(false);
-                    return;
-                }
-
-                const mergedData = membershipsData.map((membership) => {
-                    const notification = notificationsData.find(
-                        (n) => n.membership_id === membership.id,
-                    );
-                    const organization = organizationsData.find(
-                        (org) => org.id === membership.organization_id,
-                    );
-
-                    return {
-                        ...membership,
-                        allow_notifications: notification
-                            ? notification.allow_notifications
-                            : true,
-                        organization_name: organization
-                            ? organization.name
-                            : "Unknown",
-                    };
-                });
-
-                setMemberships(mergedData);
-            }
-            setLoading(false);
-        };
-
-        fetchMemberships();
-    }, [user.id]);
-
-    if (loading) {
-        return (
-            <LoginGate sx={{ width: "100%", padding: "20px" }}>
-                <Loading />
-            </LoginGate>
-        );
-    }
-
-    const handleToggle = async (
-        membership_id: number,
-        currentValue: boolean,
-    ) => {
-        const { error } = await supabase
-            .from("membershipnotifications")
-            .update({ allow_notifications: !currentValue })
-            .eq("membership_id", membership_id);
-
-        if (error) {
-            enqueueSnackbar("Failed to update notification settings", {
-                variant: "error",
-            });
-            return;
-        }
-
-        setMemberships((prevMemberships) =>
-            prevMemberships.map((membership) =>
-                membership.id === membership_id
-                    ? { ...membership, allow_notifications: !currentValue }
-                    : membership,
-            ),
-        );
-        enqueueSnackbar("Notification settings updated successfully", {
-            variant: "success",
-        });
-    };
+    const { mode, setMode } = React.useContext(ThemeContext);
 
     return (
-        <LoginGate sx={{ width: "100%", padding: "20px" }}>
-            <Box
-                sx={{
-                    textAlign: "center",
-                    marginBottom: "30px",
-                }}
+        <div className="p-10 max-sm:mb-32">
+            <h1>Your Preferences</h1>
+            <Divider />
+            <h2 className={"mb-4"}>Display Theme</h2>
+            <RadioGroup.Root
+                className="flex flex-col gap-3"
+                value={mode}
+                onValueChange={(val: string) => setMode(val as ThemeMode)}
+                aria-label="Theme preference"
             >
-                <Typography variant="h1" align="center" marginTop="50px">
-                    Communication Options
-                </Typography>
-                <Typography variant="body1" align="center" marginBottom="50px">
-                    Choose if you'd like to receive email communications for
-                    each organization you are a member of.
-                </Typography>
-            </Box>
-            <Box
-                sx={{
-                    width: "100%",
-                    display: "flex",
-                    marginBottom: "10vh",
-                    flexDirection: "column",
-                    alignItems: "center",
-                }}
-            >
-                <Box
-                    sx={{
-                        width: "100%",
-                        display: "flex",
-                        flexDirection: "column",
-                        alignItems: "center",
-                        maxWidth: "800px",
-                    }}
+                <RadioGroup.Item
+                    value="dark"
+                    className="flex gap-2 cursor-pointer"
                 >
-                    {memberships.map((membership) => (
-                        <Paper
-                            key={membership.id}
-                            elevation={1}
-                            sx={{
-                                width: "100%",
-                                borderRadius: "7px",
-                                marginBottom: "15px",
-                                padding: "10px",
-                                display: "flex",
-                                flexWrap: "wrap",
-                                justifyContent: "space-between",
-                                alignItems: "center",
-                            }}
-                        >
-                            <Typography variant={"body1"}>
-                                {membership.organization_name}
-                            </Typography>
-                            <Box
-                                sx={{
-                                    display: "flex",
-                                    justifyContent: "center",
-                                    alignItems: "center",
-                                }}
-                            >
-                                <Switch
-                                    checked={membership.allow_notifications}
-                                    onChange={() =>
-                                        handleToggle(
-                                            membership.id,
-                                            membership.allow_notifications,
-                                        )
-                                    }
-                                    color="primary"
-                                />
-                            </Box>
-                        </Paper>
-                    ))}
-                </Box>
-            </Box>
-        </LoginGate>
+                    <div className="w-5 h-5 rounded-full border border-divider flex items-center justify-center data-[state=checked]:bg-accent data-[state=checked]:border-accent">
+                        <RadioGroup.Indicator className="w-2 h-2 rounded-full bg-white" />
+                    </div>
+                    <div className={"flex flex-col items-start mt-1 mb-8"}>
+                        <h4 className={"mb-3"}>The Crisp Night</h4>
+                        <img
+                            src={`${PUBLIC_URL}/symbols/darkmode.png`}
+                            alt="Dark Mode"
+                            className="w-64"
+                        ></img>
+                    </div>
+                </RadioGroup.Item>
+
+                <RadioGroup.Item
+                    value="light"
+                    className="flex gap-2 cursor-pointer"
+                >
+                    <div className="w-5 h-5 rounded-full border border-divider flex items-center justify-center data-[state=checked]:bg-accent data-[state=checked]:border-accent">
+                        <RadioGroup.Indicator className="w-2 h-2 rounded-full bg-white" />
+                    </div>
+                    <div className={"flex flex-col items-start mt-1 mb-8"}>
+                        <h4 className={"mb-3"}>The Bright Daylight (Beta)</h4>
+                        <img
+                            src={`${PUBLIC_URL}/symbols/lightmode.png`}
+                            alt="Light Mode"
+                            className="w-64"
+                        ></img>
+                    </div>
+                </RadioGroup.Item>
+
+                <RadioGroup.Item
+                    value="system"
+                    className="flex items-center gap-2 cursor-pointer"
+                >
+                    <div className="w-5 h-5 rounded-full border border-divider flex items-center justify-center data-[state=checked]:bg-accent data-[state=checked]:border-accent">
+                        <RadioGroup.Indicator className="w-2 h-2 rounded-full bg-white" />
+                    </div>
+                    <div><h4 className={"mt-1 text-left"}>Follow System</h4>
+                        <p>Uses the system default theme</p></div>
+                </RadioGroup.Item>
+            </RadioGroup.Root>
+        </div>
     );
 };
 

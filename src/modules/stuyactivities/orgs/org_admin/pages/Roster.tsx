@@ -7,6 +7,7 @@ import { Box, Button, Stack, TextField } from "@mui/material";
 
 import { sortByRole } from "../../../../../utils/DataFormatters";
 import { useSnackbar } from "notistack";
+import ItemList from "../../../../../components/ui/ItemList";
 
 const Roster = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -81,36 +82,26 @@ const Roster = () => {
                     </Button>
                 </Box>
             </Box>
-            <Box
-                height="100%"
-                bgcolor="#1f1f1f80"
-                padding={0.5}
-                borderRadius={3}
-                marginBottom={10}
-                marginTop={1}
-                boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
-            >
-                <Stack borderRadius={2} overflow="hidden" spacing={0.5}>
-                    {members
-                        ?.sort(sortByRole)
-                        .map((member, i) => (
-                            <AdminMember
-                                id={member.membershipId || -1}
-                                userId={member.userId || -1}
-                                first_name={member.first_name || "First"}
-                                last_name={member.last_name || "Last"}
-                                email={member.email || ""}
-                                picture={member.picture}
-                                role={member.role || "MEMBER"}
-                                role_name={member.role_name}
-                                isCreator={userMember?.role === "CREATOR"}
-                                isAdmin={userMember?.role === "ADMIN"}
-                                is_faculty={member.is_faculty}
-                                key={i}
-                            />
-                        ))}
-                </Stack>
-            </Box>
+            <ItemList height={"auto"}>
+                {members
+                    ?.sort(sortByRole)
+                    .map((member, i) => (
+                        <AdminMember
+                            id={member.membershipId || -1}
+                            userId={member.userId || -1}
+                            first_name={member.first_name || "First"}
+                            last_name={member.last_name || "Last"}
+                            email={member.email || ""}
+                            picture={member.picture}
+                            role={member.role || "MEMBER"}
+                            role_name={member.role_name}
+                            isCreator={userMember?.role === "CREATOR"}
+                            isAdmin={userMember?.role === "ADMIN"}
+                            is_faculty={member.is_faculty}
+                            key={i}
+                        />
+                    ))}
+            </ItemList>
         </Box>
     );
 };
