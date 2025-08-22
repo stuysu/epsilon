@@ -5,6 +5,7 @@ import { supabase } from "../../lib/supabaseClient";
 import { enqueueSnackbar } from "notistack";
 import LoginGate from "../../components/ui/LoginGate";
 import Loading from "../../components/ui/Loading";
+import Divider from "../../components/ui/Divider";
 
 type Memberships = {
     id: number;
@@ -134,29 +135,16 @@ const CommsSettings = () => {
 
     return (
         <LoginGate sx={{ width: "100%", padding: "20px" }}>
-            <Box
-                sx={{
-                    textAlign: "center",
-                    marginBottom: "30px",
-                }}
-            >
-                <h1>
-                    Communication Options
-                </h1>
-                <p>
-                    Choose if you'd like to receive email communications for
-                    each organization you are a member of.
-                </p>
-            </Box>
-            <Box
-                sx={{
-                    width: "100%",
-                    display: "flex",
-                    marginBottom: "10vh",
-                    flexDirection: "column",
-                    alignItems: "center",
-                }}
-            >
+            <div className={"min-h-dvh m-6"}>
+                <div className={"mb-10"}>
+                    <h1>Communication Options</h1>
+                    <p>
+                        Choose if you'd like to receive email communications for
+                        each organization you are a member of.
+                    </p>
+                    <Divider />
+                </div>
+
                 <Box
                     sx={{
                         width: "100%",
@@ -205,7 +193,7 @@ const CommsSettings = () => {
                         </Paper>
                     ))}
                 </Box>
-            </Box>
+            </div>
         </LoginGate>
     );
 };

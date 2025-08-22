@@ -13,7 +13,7 @@ const UserPreferences = () => {
             <Divider />
             <h2 className={"mb-4"}>Display Theme</h2>
             <RadioGroup.Root
-                className="flex flex-col gap-3"
+                className="flex flex-col gap-10"
                 value={mode}
                 onValueChange={(val: string) => setMode(val as ThemeMode)}
                 aria-label="Theme preference"
@@ -22,11 +22,15 @@ const UserPreferences = () => {
                     value="dark"
                     className="flex gap-2 cursor-pointer"
                 >
-                    <div className="w-5 h-5 rounded-full border border-divider flex items-center justify-center data-[state=checked]:bg-accent data-[state=checked]:border-accent">
-                        <RadioGroup.Indicator className="w-2 h-2 rounded-full bg-white" />
+                    <div className="w-5 h-5 mt-3 rounded-full border border-divider flex items-center justify-center">
+                        <RadioGroup.Indicator className="w-2 h-2 rounded-full bg-accent" />
                     </div>
-                    <div className={"flex flex-col items-start mt-1 mb-8"}>
-                        <h4 className={"mb-3"}>The Crisp Night</h4>
+                    <div>
+                        <h4 className={"mt-1 text-left"}>Tranquility Base</h4>
+                        <p className={"mb-3"}>
+                            Our default dark theme, designed for a calm and
+                            focused experience.
+                        </p>
                         <img
                             src={`${PUBLIC_URL}/symbols/darkmode.png`}
                             alt="Dark Mode"
@@ -39,11 +43,14 @@ const UserPreferences = () => {
                     value="light"
                     className="flex gap-2 cursor-pointer"
                 >
-                    <div className="w-5 h-5 rounded-full border border-divider flex items-center justify-center data-[state=checked]:bg-accent data-[state=checked]:border-accent">
-                        <RadioGroup.Indicator className="w-2 h-2 rounded-full bg-white" />
+                    <div className="w-5 h-5 mt-3 rounded-full border border-divider flex items-center justify-center">
+                        <RadioGroup.Indicator className="w-2 h-2 rounded-full bg-accent" />
                     </div>
-                    <div className={"flex flex-col items-start mt-1 mb-8"}>
-                        <h4 className={"mb-3"}>The Bright Daylight (Beta)</h4>
+                    <div>
+                        <h4 className={"mt-1 text-left"}>Clinical</h4>
+                        <p className={"mb-3"}>
+                            Our new light mode, designed for simplicity with reduced visual noise.
+                        </p>
                         <img
                             src={`${PUBLIC_URL}/symbols/lightmode.png`}
                             alt="Light Mode"
@@ -53,14 +60,44 @@ const UserPreferences = () => {
                 </RadioGroup.Item>
 
                 <RadioGroup.Item
-                    value="system"
-                    className="flex items-center gap-2 cursor-pointer"
+                    value="dark-hc"
+                    className="flex gap-2 cursor-pointer"
                 >
-                    <div className="w-5 h-5 rounded-full border border-divider flex items-center justify-center data-[state=checked]:bg-accent data-[state=checked]:border-accent">
-                        <RadioGroup.Indicator className="w-2 h-2 rounded-full bg-white" />
+                    <div className="w-5 h-5 mt-3 rounded-full border border-divider flex items-center justify-center">
+                        <RadioGroup.Indicator className="w-2 h-2 rounded-full bg-accent" />
                     </div>
-                    <div><h4 className={"mt-1 text-left"}>Follow System</h4>
-                        <p>Uses the system default theme</p></div>
+                    <div>
+                        <h4 className={"mt-1 text-left"}>Dark High Contrast</h4>
+                        <p className={"mb-3"}>
+                            A jet-black, high-contrast theme for an easier
+                            viewing experience.
+                        </p>
+                        <img
+                            src={`${PUBLIC_URL}/symbols/darkhcmode.png`}
+                            alt="Dark High Contrast Mode"
+                            className="w-64"
+                        ></img>
+                    </div>
+                </RadioGroup.Item>
+
+                <RadioGroup.Item
+                    value="system"
+                    className="flex gap-2 cursor-pointer"
+                >
+                    <div className="w-5 h-5 mt-3 rounded-full border border-divider flex items-center justify-center">
+                        <RadioGroup.Indicator className="w-2 h-2 rounded-full bg-accent" />
+                    </div>
+                    <div>
+                        <h4 className={"mt-1 text-left"}>Automatic</h4>
+                        <p className={"mb-3"}>
+                            Follow your system's theme preference.
+                        </p>
+                        <img
+                            src={`${PUBLIC_URL}/symbols/auto.png`}
+                            alt="Automatic Mode"
+                            className="w-64"
+                        ></img>
+                    </div>
                 </RadioGroup.Item>
             </RadioGroup.Root>
         </div>

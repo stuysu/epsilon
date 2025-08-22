@@ -135,6 +135,32 @@
         }
     }
 
+    [data-theme="dark-hc"] {
+        --bg-main: #000000;
+
+        --layer-primary: #000000;
+        --layer-secondary: #1a1a1a;
+        --layer-tertiary: #262626;
+
+        --accent: #bb2c00;
+
+        --text-primary: #ffffff;
+        --text-secondary: #f5f5f5;
+        --text-tertiary: #cccccc;
+
+        --blue: #66aaff;
+        --green: #55dd55;
+        --yellow: #ffff66;
+        --red: #ff4444;
+        --beige: #ffffcc;
+
+        --divider: #666;
+
+        --blur-dark: #000000;
+        --blur-light: #111111;
+    }
+
     [data-theme="light"] { color-scheme: light; }
     [data-theme="dark"]  { color-scheme: dark; }
+    [data-theme="dark-hc"] { color-scheme: dark; }
 }

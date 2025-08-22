@@ -25,13 +25,13 @@ const Profiles = () => {
     return (
         <LoginGate sx={{ width: "100%", paddingLeft: "20px" }}>
             <Box sx={{ padding: "40px" }}>
-                <Typography variant={"body1"}>My Epsilon Profile</Typography>
+                <p>My Epsilon Profile</p>
                 <div
                     className={
                         "flex flex-row justify-between relative items-start"
                     }
                 >
-                    <Typography variant={"h1"} marginBottom={5}>
+                    <h1>
                         {user.first_name + " " + user.last_name}
                         {user.is_faculty ? (
                             <i
@@ -42,7 +42,7 @@ const Profiles = () => {
                         ) : (
                             ""
                         )}
-                    </Typography>
+                    </h1>
                     <div
                         style={{
                             position: "relative",
@@ -52,7 +52,7 @@ const Profiles = () => {
                         onMouseLeave={() => setShowPointsPopup(false)}
                     >
                         <div className={"relative bottom-1"}>
-                            <Typography variant={"h1"} color={"#4486ff"}>
+                            <h1 className={"text-accent"}>
                                 <span
                                     style={{
                                         textDecoration: "underline",
@@ -66,12 +66,12 @@ const Profiles = () => {
                                         "bx bx-tada bx-loader-circle relative top-1"
                                     }
                                 ></i>
-                            </Typography>
+                            </h1>
                         </div>
                         {showPointsPopup && (
                             <div
                                 className={
-                                    "w-96 bg-zinc-800 p-5 absolute right-0 top-16 rounded-lg shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.075)] z-50"
+                                    "w-72 bg-zinc-800 p-5 absolute right-0 top-16 rounded-lg shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.075)] z-50"
                                 }
                             >
                                 <div
@@ -79,10 +79,10 @@ const Profiles = () => {
                                         "flex flex-row justify-between relative items-end"
                                     }
                                 >
-                                    <Typography>Start an Activity</Typography>
-                                    <Typography variant={"h2"}>
+                                    <p>Start an Activity</p>
+                                    <h2>
                                         1,000
-                                    </Typography>
+                                    </h2>
                                 </div>
 
                                 <div
@@ -90,32 +90,32 @@ const Profiles = () => {
                                         "flex flex-row justify-between relative items-end"
                                     }
                                 >
-                                    <Typography>Join an Activity</Typography>
-                                    <Typography variant={"h2"}>250</Typography>
+                                    <p>Join an Activity</p>
+                                    <h2>250</h2>
                                 </div>
                                 <div
                                     className={
                                         "flex flex-row justify-between relative items-end"
                                     }
                                 >
-                                    <Typography>Attend a meeting</Typography>
-                                    <Typography variant={"h2"}>100</Typography>
+                                    <p>Attend a meeting</p>
+                                    <h2>100</h2>
                                 </div>
                                 <div
                                     className={
                                         "flex flex-row justify-between relative items-end"
                                     }
                                 >
-                                    <Typography>Gain a member</Typography>
-                                    <Typography variant={"h2"}>50</Typography>
+                                    <p>Gain a member</p>
+                                    <h2>50</h2>
                                 </div>
                                 <div
                                     className={
                                         "flex flex-row justify-between relative items-end"
                                     }
                                 >
-                                    <Typography>Mark an attendance</Typography>
-                                    <Typography variant={"h2"}>10</Typography>
+                                    <p>Mark an attendance</p>
+                                    <h2>10</h2>
                                 </div>
                             </div>
                         )}
@@ -151,7 +151,7 @@ const Profiles = () => {
                     className={"w-64 mb-3"}
                     alt={"Medals of Honor"}
                 ></img>
-                Medals are coming soon to Epsilon. Preview them below!
+                <p>Medals are coming soon to Epsilon. Preview them below!</p>
                 <div className="flex flex-col -ml-7">
                     <div className={"flex flex-row items-center -mb-6"}>
                         <img
@@ -161,7 +161,7 @@ const Profiles = () => {
                         ></img>
 
                         <div>
-                            <Typography variant={"h2"}>The Presider</Typography>
+                            <h2>The Presider</h2>
                             <Typography variant={"body1"}>
                                 Awarded to members of the Epsilon team and the
                                 Clubs & Pubs division of the Student Union.
@@ -177,7 +177,7 @@ const Profiles = () => {
                         ></img>
 
                         <div>
-                            <Typography variant={"h2"}>The Leader</Typography>
+                            <h2>The Leader</h2>
                             <Typography variant={"body1"}>
                                 Awarded to members of the Clubs and Pubs Leaders
                                 Union of Business.
@@ -193,7 +193,7 @@ const Profiles = () => {
                         ></img>
 
                         <div>
-                            <Typography variant={"h2"}>The Founder</Typography>
+                            <h2>The Founder</h2>
                             <Typography variant={"body1"}>
                                 Awarded to the founders of Epsilon.
                             </Typography>
@@ -208,7 +208,7 @@ const Profiles = () => {
                         ></img>
 
                         <div>
-                            <Typography variant={"h2"}>The Guided</Typography>
+                            <h2>The Guided</h2>
                             <Typography variant={"body1"}>
                                 Awarded to users who have accumulated more than
                                 5,000{" "}
@@ -230,10 +230,10 @@ const Profiles = () => {
                         ></img>
 
                         <div>
-                            <Typography variant={"h2"}>
+                            <h2>
                                 The Determined
-                            </Typography>
-                            <Typography variant={"body1"}>
+                            </h2>
+                            <p>
                                 Awarded to users who have accumulated more than
                                 10,000{" "}
                                 <i
@@ -242,7 +242,7 @@ const Profiles = () => {
                                     }
                                 ></i>
                                 .
-                            </Typography>
+                            </p>
                         </div>
                     </div>
 
@@ -254,7 +254,7 @@ const Profiles = () => {
                         ></img>
 
                         <div>
-                            <Typography variant={"h2"}>The Amender</Typography>
+                            <h2>The Amender</h2>
                             <Typography variant={"body1"}>
                                 Awarded to the administrators of an Activity who
                                 have made a successful amendment to their

@@ -1,7 +1,7 @@
 import React from "react";
 import { createTheme, ThemeProvider as MUIThemeProvider } from "@mui/material";
 
-export type ThemeMode = "light" | "dark" | "system";
+export type ThemeMode = "light" | "dark" | "system" | "dark-hc";
 
 export const ThemeContext = React.createContext<{
   mode: ThemeMode;
@@ -61,7 +61,12 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
   }, [mode]);
 
   // resolve an effective mode for lingering MUI usage
-  const effectiveMode = mode === "system" ? getSystemMode() : mode;
+    const effectiveMode =
+        mode === "system"
+            ? getSystemMode()
+            : mode === "dark-hc"
+                ? "dark"
+                : mode;
 
   const muiTheme = React.useMemo(
     () =>
