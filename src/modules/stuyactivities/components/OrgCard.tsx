@@ -110,24 +110,10 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                             ></Box>
 
                             {user.signed_in && (
-                                <Typography
-                                    variant="body1"
-                                    sx={{
-                                        position: "absolute",
-                                        top: 45,
-                                        right: 0,
-                                        color: "#cdcdcd",
-                                        background: "#36363680",
-                                        padding: "3px 7px",
-                                        borderRadius: "7px",
-                                        fontVariationSettings: "'wght' 700",
-                                        boxShadow:
-                                            "inset 0 0 1px 1px rgba(255, 255, 255, 0.1)",
-                                    }}
-                                >
+                                <p className={"absolute top-12 right-0 text-typography-2 bg-layer-2 px-2 py-1 rounded-md important shadow-module"}>
                                     <i className="bx bx-group bx-xs relative top-0.5 mr-1"></i>
                                     {organization.memberships?.length ?? 0}
-                                </Typography>
+                                </p>
                             )}
 
                             {/* Background avatar with blur effect */}
