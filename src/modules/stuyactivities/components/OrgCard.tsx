@@ -218,7 +218,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
 
                         <div
                             className={
-                                "flex flex-col bg-layer-2 shadow-module py-3 px-4 mt-5 rounded-xl capitalize"
+                                "flex flex-col bg-layer-2 shadow-module py-3 px-4 mt-5 rounded-lg capitalize"
                             }
                         >
                             <div className={"flex justify-between"}>
@@ -229,7 +229,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                             </div>
                             <div
                                 className={
-                                    "flex justify-between relative top-0.5"
+                                    "flex justify-between"
                                 }
                             >
                                 <p>Days</p>

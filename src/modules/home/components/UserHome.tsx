@@ -223,13 +223,13 @@ const UserHome = () => {
                             bottom-0
                             left-0
                             right-0
-                            p-2
+                            p-2.5
                             ml-[4%]
                             mr-[4%]
                             flex
                             justify-center
-                            max-sm:translate-y-6
-                            sm:group-hover:translate-y-6
+                            max-sm:translate-y-7
+                            sm:group-hover:translate-y-7
                             transition-transform
                             w-[92%]
                             z-[1]
@@ -285,13 +285,13 @@ const UserHome = () => {
                             bottom-0
                             left-0
                             right-0
-                            p-2
+                            p-2.5
                             ml-[4%]
                             mr-[4%]
                             flex
                             justify-center
-                            max-sm:translate-y-6
-                            sm:group-hover:translate-y-6
+                            max-sm:translate-y-7
+                            sm:group-hover:translate-y-7
                             transition-transform
                             w-[92%]
                             z-[1]

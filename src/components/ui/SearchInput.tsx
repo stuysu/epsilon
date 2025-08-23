@@ -25,7 +25,7 @@ export default function SearchInput({
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                     onChange(e.target.value)
                 }
-                className=" w-full rounded-xl px-12 pt-1 transition-colors
+                className=" w-full rounded-xl px-12 transition-colors
                 text-typography-1
                 important
               bg-layer-1

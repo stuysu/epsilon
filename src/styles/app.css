@@ -17,12 +17,12 @@
     }
 
     h1 {
-        @apply font-display text-[2.2rem] leading-[2.2rem] my-2 text-[color:var(--text-primary)];
+        @apply font-display text-[2.1rem] leading-[2.1rem] my-2 text-[color:var(--text-primary)];
         font-weight: 700;
     }
 
     h2 {
-        @apply font-display text-[1.6rem] my-1 text-[color:var(--text-secondary)];
+        @apply font-display text-[1.5rem] my-1 text-[color:var(--text-secondary)];
         font-weight: 600;
     }
 

@@ -9,7 +9,7 @@ export default function CatalogButton() {
     return (
         <button
             style={{
-                marginTop: 30,
+                marginTop: 25,
                 opacity: hover ? 0.75 : 1,
                 transition: "opacity 0.2s ease",
             }}

@@ -26,7 +26,7 @@ export default function OverviewList({
                     aria-hidden
                     className={`absolute inset-0 rounded-xl pointer-events-none opacity-5 ${glow} blur-2xl`}
                 />
-                <h3 className="m-4">{title}</h3>
+                <h3 className="m-4 mb-5">{title}</h3>
                 <div className="flex flex-col overflow-hidden gap-0.5 rounded-lg">
                     {children}
                 </div>

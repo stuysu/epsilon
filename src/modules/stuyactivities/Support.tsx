@@ -53,7 +53,7 @@ const HelpItem = ({
                             transition={{ duration: 0.5, ease: [0, 0, 0, 1] }}
                             style={{ overflow: "hidden" }}
                         >
-                            <p className={"max-w-2xl"}>
+                            <p className={"max-w-2xl mb-2"}>
                                 {content}
                             </p>
                         </motion.div>
@@ -74,7 +74,7 @@ const Support = () => {
             >
                 <h1
                     className={
-                        "w-2/3 bg-blend-color-dodge sm:text-8xl text-4xl sm:text-center"
+                        "w-2/3 bg-blend-color-dodge sm:text-8xl text-4xl sm:text-center font-light leading-tight"
                     }
                 >
                     Get help with

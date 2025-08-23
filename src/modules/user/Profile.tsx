@@ -59,7 +59,7 @@ const Profiles = () => {
                                         cursor: "pointer",
                                     }}
                                 >
-                                    Stay tuned for points!
+                                    Points
                                 </span>{" "}
                                 <i
                                     className={
@@ -71,52 +71,10 @@ const Profiles = () => {
                         {showPointsPopup && (
                             <div
                                 className={
-                                    "w-72 bg-zinc-800 p-5 absolute right-0 top-16 rounded-lg shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.075)] z-50"
+                                    "w-72 bg-blurLight backdrop-blur-2xl p-5 absolute right-0 top-16 rounded-lg shadow-module z-50"
                                 }
                             >
-                                <div
-                                    className={
-                                        "flex flex-row justify-between relative items-end"
-                                    }
-                                >
-                                    <p>Start an Activity</p>
-                                    <h2>
-                                        1,000
-                                    </h2>
-                                </div>
-
-                                <div
-                                    className={
-                                        "flex flex-row justify-between relative items-end"
-                                    }
-                                >
-                                    <p>Join an Activity</p>
-                                    <h2>250</h2>
-                                </div>
-                                <div
-                                    className={
-                                        "flex flex-row justify-between relative items-end"
-                                    }
-                                >
-                                    <p>Attend a meeting</p>
-                                    <h2>100</h2>
-                                </div>
-                                <div
-                                    className={
-                                        "flex flex-row justify-between relative items-end"
-                                    }
-                                >
-                                    <p>Gain a member</p>
-                                    <h2>50</h2>
-                                </div>
-                                <div
-                                    className={
-                                        "flex flex-row justify-between relative items-end"
-                                    }
-                                >
-                                    <p>Mark an attendance</p>
-                                    <h2>10</h2>
-                                </div>
+                                <p>Stay tuned for points!</p>
                             </div>
                         )}
                     </div>
@@ -150,9 +108,11 @@ const Profiles = () => {
                     className={"w-64 mb-3 mt-16"}
                     alt={"Medals of Honor"}
                 ></img>
-                <p>Medals are coming soon to Epsilon. Preview them below!</p>
+                <p className={"mb-5"}>Medals are coming soon to Epsilon. Preview them below!</p>
+
                 <div className="flex flex-col -ml-7">
-                    <div className={"flex flex-row items-center -mb-6"}>
+
+                    <div className={"my-4 flex flex-row items-center border border-divider rounded-lg"}>
                         <img
                             alt=""
                             src={`${PUBLIC_URL}/achievements/moderator.png`}
@@ -160,7 +120,7 @@ const Profiles = () => {
                         ></img>
 
                         <div>
-                            <h2>The Presider</h2>
+                            <h4>The Presider</h4>
                             <Typography variant={"body1"}>
                                 Awarded to members of the Epsilon team and the
                                 Clubs & Pubs division of the Student Union.
@@ -168,7 +128,7 @@ const Profiles = () => {
                         </div>
                     </div>
 
-                    <div className={"flex flex-row items-center -mb-6"}>
+                    <div className={"my-4 flex flex-row items-center border border-divider rounded-lg"}>
                         <img
                             alt=""
                             src={`${PUBLIC_URL}/achievements/leader.png`}
@@ -176,7 +136,7 @@ const Profiles = () => {
                         ></img>
 
                         <div>
-                            <h2>The Leader</h2>
+                            <h4>The Leader</h4>
                             <Typography variant={"body1"}>
                                 Awarded to members of the Clubs and Pubs Leaders
                                 Union of Business.
@@ -184,7 +144,7 @@ const Profiles = () => {
                         </div>
                     </div>
 
-                    <div className={"flex flex-row items-center -mb-6"}>
+                    <div className={"my-4 flex flex-row items-center border border-divider rounded-lg"}>
                         <img
                             alt=""
                             src={`${PUBLIC_URL}/achievements/special.png`}
@@ -192,14 +152,14 @@ const Profiles = () => {
                         ></img>
 
                         <div>
-                            <h2>The Founder</h2>
+                            <h4>The Founder</h4>
                             <Typography variant={"body1"}>
                                 Awarded to the founders of Epsilon.
                             </Typography>
                         </div>
                     </div>
 
-                    <div className={"flex flex-row items-center -mb-6"}>
+                    <div className={"my-4 flex flex-row items-center border border-divider rounded-lg"}>
                         <img
                             alt=""
                             src={`${PUBLIC_URL}/achievements/five_thousand.png`}
@@ -207,7 +167,7 @@ const Profiles = () => {
                         ></img>
 
                         <div>
-                            <h2>The Guided</h2>
+                            <h4>The Guided</h4>
                             <Typography variant={"body1"}>
                                 Awarded to users who have accumulated more than
                                 5,000{" "}
@@ -221,7 +181,7 @@ const Profiles = () => {
                         </div>
                     </div>
 
-                    <div className={"flex flex-row items-center -mb-6"}>
+                    <div className={"my-4 flex flex-row items-center border border-divider rounded-lg"}>
                         <img
                             alt=""
                             src={`${PUBLIC_URL}/achievements/ten_thousand.png`}
@@ -229,9 +189,9 @@ const Profiles = () => {
                         ></img>
 
                         <div>
-                            <h2>
+                            <h4>
                                 The Determined
-                            </h2>
+                            </h4>
                             <p>
                                 Awarded to users who have accumulated more than
                                 10,000{" "}
@@ -245,7 +205,7 @@ const Profiles = () => {
                         </div>
                     </div>
 
-                    <div className={"flex flex-row items-center -mb-6"}>
+                    <div className={"my-4 flex flex-row items-center border border-divider rounded-lg"}>
                         <img
                             alt=""
                             src={`${PUBLIC_URL}/achievements/editor.png`}
@@ -253,7 +213,7 @@ const Profiles = () => {
                         ></img>
 
                         <div>
-                            <h2>The Amender</h2>
+                            <h4>The Amender</h4>
                             <Typography variant={"body1"}>
                                 Awarded to the administrators of an Activity who
                                 have made a successful amendment to their
