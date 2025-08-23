@@ -2,11 +2,6 @@ import React, { useContext, useEffect, useState } from "react";
 import OrgContext from "../../../../contexts/OrgContext";
 import {
     Avatar,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogContentText,
-    DialogTitle,
     useMediaQuery,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
@@ -22,6 +17,7 @@ import OrgInspector from "../components/OrgInspector";
 import ToggleChip from "../../../../components/ui/ToggleChip";
 import Divider from "../../../../components/ui/Divider";
 import OverviewList from "../../../../components/ui/OverviewList";
+import ConfirmationDialog from "../../../../components/ui/ConfirmationDialog";
 
 const Overview = () => {
     const navigate = useNavigate();
@@ -271,38 +267,13 @@ const Overview = () => {
                                 .toLowerCase()
                                 .replace(/\b\w/g, (c) => c.toUpperCase())}
                         </AsyncButton>
-                        <Dialog
-                            open={leaveConfirmation}
+                        <ConfirmationDialog
+                            title="Leave Organization?"
+                            description={`Are you sure you want to leave (or cancel your join request to) this organization? You will have to request to join again.`}
+                            onConfirm={handleUserLeave}
                             onClose={handleUserStay}
-                            aria-labelledby="alert-dialog-title"
-                            aria-describedby="alert-dialog-description"
-                        >
-                            <DialogTitle variant="h2" id="alert-dialog-title">
-                                Confirm Leave?
-                            </DialogTitle>
-                            <DialogContent dividers>
-                                <DialogContentText id="alert-dialog-description">
-                                    Are you sure you want to leave/cancel your
-                                    join to this organization? Once you confirm
-                                    your leave, you will have to request to join
-                                    again.
-                                </DialogContentText>
-                            </DialogContent>
-                            <DialogActions>
-                                <AsyncButton onClick={handleUserStay}>
-                                    Cancel
-                                </AsyncButton>
-                                <AsyncButton
-                                    sx={{
-                                        backgroundColor:
-                                            "rgba(248, 19, 19, 0.9)",
-                                    }}
-                                    onClick={handleUserLeave}
-                                >
-                                    Leave
-                                </AsyncButton>
-                            </DialogActions>
-                        </Dialog>
+                            open={leaveConfirmation}
+                        />
                     </div>
                 </div>
             </div>

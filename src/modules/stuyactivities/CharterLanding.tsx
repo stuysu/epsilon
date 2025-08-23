@@ -157,7 +157,7 @@ const CharterLanding = () => {
                             <p
                                 onClick={() => agreed && navigate("/create")}
                                 className={
-                                    "text-blue " +
+                                    "text-accent " +
                                     (agreed
                                         ? "cursor-pointer"
                                         : "cursor-not-allowed opacity-50")

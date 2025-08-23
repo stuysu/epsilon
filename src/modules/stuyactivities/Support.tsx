@@ -148,14 +148,14 @@ const Support = () => {
                 <Divider />
                 <HelpItem
                     icon="bx-mail-send"
-                    iconColor="text-grey-300"
+                    iconColor="text-typography-2"
                     title="Request technical support with the StuyActivities service."
                     description="Send an email to IT@stuysu.org"
                 />
                 <Divider />
                 <HelpItem
                     icon="bx-mail-send"
-                    iconColor="text-grey-300"
+                    iconColor="text-typography-2"
                     title="Request Clubs & Pubs support."
                     description="Send an email to clubpub@stuysu.org"
                 />
