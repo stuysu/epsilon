@@ -3,11 +3,14 @@ import { PUBLIC_URL } from "../../config/constants";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
+import { Checkbox } from "radix-ui";
+import Divider from "../../components/ui/Divider";
 
 const CharterLanding = () => {
     const navigate = useNavigate();
     const title = "Apply for a StuyActivities Charter";
     const [isImgLoaded, isIsImgLoaded] = useState(false);
+    const [agreed, setAgreed] = useState(false);
 
     return (
         <div>
@@ -18,7 +21,7 @@ const CharterLanding = () => {
                     content="Start your own club, pub, or team at Stuyvesant High School with our onlines application."
                 />
             </Helmet>
-            <div className={"relative lg:bottom-32"}>
+            <div className={"relative lg:bottom-32 z-20 pointer-events-none"}>
                 <img
                     alt=""
                     src={`${PUBLIC_URL}/textures/charter.png`}
@@ -111,23 +114,54 @@ const CharterLanding = () => {
                                 <h1>Submit Your Application</h1>
                             </div>
                             <p>
-                                Prior to initiating the chartering process, it
-                                is imperative that you thoroughly review the
-                                Clubs & Pubs Regulations. These regulations are
-                                binding upon all activities and must be adhered
-                                to without exception. Once you have ensured that
-                                your proposed Activity is fully compliant with
-                                these regulations, you may proceed below. It is
-                                crucial to note that your charter submission
-                                will be publicly accessible; therefore, it is
-                                your responsibility to offer comprehensive,
-                                well-considered responses. Submissions should be
-                                clear, precise, and devoid of any misleading,
-                                inappropriate, or erroneous information.
+                                Prior to initiating the chartering process, you
+                                must review the Clubs & Pubs Regulations. These
+                                regulations are binding upon all activities and
+                                must be adhered to without exception. Once you
+                                have ensured that your proposed Activity is
+                                fully compliant with these regulations, you may
+                                proceed below. Your charter submission will be
+                                publicly accessible. It is your responsibility
+                                to offer comprehensive and truthful responses.
                             </p>
+                            <div className={"py-3 w-full"}>
+                                <Divider />
+                            </div>
+                            <div className="flex items-center gap-3">
+                                <Checkbox.Root
+                                    id="agree-regulations"
+                                    checked={agreed}
+                                    onCheckedChange={(checked) =>
+                                        setAgreed(!!checked)
+                                    }
+                                    className="h-5 min-w-5 rounded border border-divider bg-transparent flex items-center justify-center"
+                                    aria-label="Agree to Clubs & Pubs Regulations"
+                                >
+                                    <Checkbox.Indicator>
+                                        <i className="bx bx-check text-typography-1 text-lg"></i>
+                                    </Checkbox.Indicator>
+                                </Checkbox.Root>
+                                <label
+                                    htmlFor="agree-regulations"
+                                    className="select-none"
+                                >
+                                    <p>
+                                        I have read and agree to the{" "}
+                                        <a href={"/rules"}>
+                                            Clubs & Pubs Regulations
+                                        </a>
+                                        .
+                                    </p>
+                                </label>
+                            </div>
                             <p
-                                onClick={() => navigate("/create")}
-                                className={"pt-5 text-blue cursor-pointer"}
+                                onClick={() => agreed && navigate("/create")}
+                                className={
+                                    "text-blue " +
+                                    (agreed
+                                        ? "cursor-pointer"
+                                        : "cursor-not-allowed opacity-50")
+                                }
                             >
                                 Start Application{" "}
                                 <i
@@ -139,7 +173,7 @@ const CharterLanding = () => {
                         </div>
                         <div
                             className={
-                                "relative p-10 max-lg:h-fit w-full h-full flex flex-col items-start justify-start bg-layer-1 rounded-2xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.075)]"
+                                "z-10 relative p-10 max-lg:h-fit w-full h-full flex flex-col items-start justify-start bg-layer-1 rounded-2xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.075)]"
                             }
                         >
                             <div
