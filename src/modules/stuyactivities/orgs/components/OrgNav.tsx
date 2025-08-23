@@ -156,7 +156,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
 
             {isAdmin && (
                 <div>
-                    <div className={"h-px w-5/6 bg-neutral-600 my-2"}></div>
+                    <div className={"h-px w-5/6 bg-divider my-2"}></div>
                     <p className={"mt-6"}>Admin Tools</p>
                     {renderDesktopList(adminLinks)}
                 </div>

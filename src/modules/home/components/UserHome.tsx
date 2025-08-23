@@ -228,8 +228,8 @@ const UserHome = () => {
                             mr-[4%]
                             flex
                             justify-center
-                            max-sm:translate-y-7
-                            sm:group-hover:translate-y-7
+                            max-sm:translate-y-6
+                            sm:group-hover:translate-y-6
                             transition-transform
                             w-[92%]
                             z-[1]
@@ -290,8 +290,8 @@ const UserHome = () => {
                             mr-[4%]
                             flex
                             justify-center
-                            max-sm:translate-y-7
-                            sm:group-hover:translate-y-7
+                            max-sm:translate-y-6
+                            sm:group-hover:translate-y-6
                             transition-transform
                             w-[92%]
                             z-[1]

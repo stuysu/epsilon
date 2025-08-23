@@ -159,7 +159,7 @@ const NavBar: FC = () => {
                             style={{ width: 30, height: 30, borderRadius: 4 }}
                             src={user.picture}
                         />
-                        <p className="relative top-0.5 pr-2 sm:block hidden">
+                        <p className="pr-2 sm:block hidden">
                             {user?.signed_in
                                 ? `${user.first_name} ${user.last_name}`
                                 : "Guest"}
