@@ -164,15 +164,8 @@ const AdminMember = ({
     };
 
     return (
-        <Box
-            sx={{
-                width: "100%",
-                display: "flex",
-                flexWrap: "nowrap",
-                alignItems: "center",
-            }}
-        >
-            <Box sx={{ width: "100%" }}>
+        <div className="w-full flex flex-nowrap items-center h-fit">
+            <div className={"w-full"}>
                 <OrgMember
                     role={role}
                     role_name={role_name}
@@ -182,33 +175,26 @@ const AdminMember = ({
                     last_name={last_name}
                     is_faculty={is_faculty}
                 />
-            </Box>
-            <Box
-                sx={{
-                    width: "120px",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                }}
-            >
+            </div>
+            <div className={"px-3 bg-layer-3 py-[18.5px]"}>
                 {(isCreator ||
                     role === "MEMBER" ||
                     role === "ADVISOR" ||
                     userId === user.id) && (
                     <div onClick={handleEdit}>
-                        <i className={"bx bx-pencil bx-sm"}></i>
+                        <p><i className={"bx bx-pencil bx-sm"}></i></p>
                     </div>
                 )}
 
                 {userId !== user.id &&
                     (isCreator || role === "MEMBER" || role === "ADVISOR") && (
                         <div onClick={() => setKickConfirmOpen(true)}>
-                            <i
+                            <p><i
                                 className={"bx bx-user-x bx-sm ml-3 text-red"}
-                            ></i>
+                            ></i></p>
                         </div>
                     )}
-            </Box>
+            </div>
             <ConfirmationDialog
                 open={kickConfirmOpen}
                 title={`Kick ${first_name} ${last_name}?`}
@@ -251,7 +237,7 @@ const AdminMember = ({
                     </AsyncButton>
                 </DialogActions>
             </Dialog>
-        </Box>
+        </div>
     );
 };
 

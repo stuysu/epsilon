@@ -43,6 +43,7 @@ const Roster = () => {
                     display: "flex",
                     flexWrap: "nowrap",
                     alignItems: "center",
+                    marginBottom: "25px",
                 }}
             >
                 <Box

@@ -316,34 +316,33 @@ const CharterForm = () => {
                 }}
             >
                 <FormPage title="Before You Start">
-                    <Typography variant="body1">
-                        Before you begin the chartering process, make sure to
-                        read through the Clubs & Pubs Rules, which all
-                        Activities must follow.
+                    <p>
+                        We look forward to hosting your Activity at Stuyvesant!
+                        As you complete the chartering form, be sure to provide
+                        thoughtful, detailed responses throughout your
+                        application.
                         <br />
                         <br />
-                        Once you’re confident that your Activity abides by all
-                        the regulations, log in to your Epsilon account (You've
-                        already done that!) and fill out the Chartering form
-                        below. Keep in mind that your charter will be public, so
-                        do your best to provide helpful, substantive responses
-                        to the questions, and avoid including confusing,
-                        inappropriate, or incorrect information.
+                        Once your charter is submitted, please allow up to two
+                        weeks for review by the SU Clubs & Pubs Administrators.
+                        Charters will be approved as long as they comply with
+                        all regulations and provide clear, complete information. Upon
+                        approval, your Activity will appear in the Epsilon
+                        StuyActivities Catalog, and you may begin adding
+                        members. More features, such as scheduling meetings and
+                        creating posts, will be unlocked after the Activity
+                        reaches 10 members.
                         <br />
                         <br />
-                        Once you’ve submitted your club’s charter, please allow
-                        up to two weeks for SU Clubs & Pubs Administrators to
-                        review your charter. Unless there are any issues with
-                        your charter (i.e. lack of compliance with the rules or
-                        unclear submissions) the SU Admins will approve it. Once
-                        your Activity is approved, it will appear in the Epsilon
-                        StuyActivities Catalog, and you can begin adding members
-                        and scheduling meetings. If you have any questions or
-                        concerns regarding the chartering process, please reach
-                        out to us at clubpub@stuysu.org. Happy chartering!
-                    </Typography>
+                        If you have any questions or concerns regarding the
+                        chartering process, please contact us at{" "}
+                        <a>clubpub@stuysu.org</a>.
+                        <br />
+                        <br />
+                        Happy chartering!
+                    </p>
                 </FormPage>
-                <FormPage title="Basic Info">
+                <FormPage title="Basic Information">
                     <FormSection
                         sx={{
                             width: "100%",

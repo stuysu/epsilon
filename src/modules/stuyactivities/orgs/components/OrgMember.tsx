@@ -42,7 +42,7 @@ const OrgMember = ({
                         alt={`${first_name} ${last_name}`}
                     />
                     <Avatar.Fallback
-                        className="text-center size-full flex items-center justify-center bg-layer-3 text-xl relative pt-1 text-typography-2"
+                        className="text-center size-full flex items-center justify-center bg-layer-3 text-xl text-typography-2"
                         delayMs={600}
                     >
                         {(first_name || "O").charAt(0).toUpperCase()}

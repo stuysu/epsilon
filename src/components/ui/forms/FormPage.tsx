@@ -11,7 +11,7 @@ import {
     useState,
 } from "react";
 
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 
 import FormSection from "./FormSection";
 import FormRender from "./FormRender";
@@ -137,15 +137,13 @@ const FormPage = <T extends unknown>({
                 height: "100%",
                 maxWidth: "1000px",
                 width: "100%",
-                padding: "20px",
+                padding: "50px",
             }}
         >
-            <Box sx={{ height: "10%", width: "100%" }}>
-                <Typography variant="h3">{title}</Typography>
-            </Box>
-            <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
+            <h3>{title}</h3>
+            <div className={`mt-5`}>
                 {parseChildren(children)}
-            </Box>
+            </div>
             <Box
                 sx={{
                     height: "10%",
@@ -155,14 +153,7 @@ const FormPage = <T extends unknown>({
                     flexWrap: "wrap",
                 }}
             >
-                <Box
-                    sx={{
-                        width: "50%",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                    }}
-                >
+                <div className={`w-full flex justify-end gap-5 mt-5`}>
                     {!first && (
                         <AsyncButton
                             onClick={onBack}
@@ -172,15 +163,6 @@ const FormPage = <T extends unknown>({
                             Back
                         </AsyncButton>
                     )}
-                </Box>
-                <Box
-                    sx={{
-                        width: "50%",
-                        display: "flex",
-                        justifyContent: "center",
-                        alignItems: "center",
-                    }}
-                >
                     {last ? (
                         <AsyncButton
                             onClick={onSubmit}
@@ -200,7 +182,7 @@ const FormPage = <T extends unknown>({
                             Next
                         </AsyncButton>
                     )}
-                </Box>
+                </div>
             </Box>
         </Box>
     );
