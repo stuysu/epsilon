@@ -2,7 +2,6 @@ import { ChangeEvent, useContext, useState } from "react";
 import UserContext from "../../../../../contexts/UserContext";
 
 import {
-    Box,
     Dialog,
     DialogActions,
     DialogContent,
@@ -182,16 +181,22 @@ const AdminMember = ({
                     role === "ADVISOR" ||
                     userId === user.id) && (
                     <div onClick={handleEdit}>
-                        <p><i className={"bx bx-pencil bx-sm"}></i></p>
+                        <p>
+                            <i className={"bx bx-pencil bx-sm"}></i>
+                        </p>
                     </div>
                 )}
 
                 {userId !== user.id &&
                     (isCreator || role === "MEMBER" || role === "ADVISOR") && (
                         <div onClick={() => setKickConfirmOpen(true)}>
-                            <p><i
-                                className={"bx bx-user-x bx-sm ml-3 text-red"}
-                            ></i></p>
+                            <p>
+                                <i
+                                    className={
+                                        "bx bx-user-x bx-sm ml-3 text-red"
+                                    }
+                                ></i>
+                            </p>
                         </div>
                     )}
             </div>

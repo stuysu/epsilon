@@ -326,8 +326,8 @@ const CharterForm = () => {
                         Once your charter is submitted, please allow up to two
                         weeks for review by the SU Clubs & Pubs Administrators.
                         Charters will be approved as long as they comply with
-                        all regulations and provide clear, complete information. Upon
-                        approval, your Activity will appear in the Epsilon
+                        all regulations and provide clear, complete information.
+                        Upon approval, your Activity will appear in the Epsilon
                         StuyActivities Catalog, and you may begin adding
                         members. More features, such as scheduling meetings and
                         creating posts, will be unlocked after the Activity

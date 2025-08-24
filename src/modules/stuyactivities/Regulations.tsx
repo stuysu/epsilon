@@ -31,24 +31,36 @@ const Regulations = () => {
                     <h4 className={"mb-3"}>Table of Contents</h4>
                     <ul className={"opacity-75 space-y-1"}>
                         <li>
-                            <p><a href="#general">General Guidance</a></p>
+                            <p>
+                                <a href="#general">General Guidance</a>
+                            </p>
                         </li>
                         <li>
-                            <p><a href="#online">Online Meetings</a></p>
+                            <p>
+                                <a href="#online">Online Meetings</a>
+                            </p>
                         </li>
                         <li>
-                            <p><a href="#activity">Activity Meetings</a></p>
+                            <p>
+                                <a href="#activity">Activity Meetings</a>
+                            </p>
                         </li>
                         <li>
-                            <p><a href="#reservations">
-                                Room Reservations and Usage
-                            </a></p>
+                            <p>
+                                <a href="#reservations">
+                                    Room Reservations and Usage
+                                </a>
+                            </p>
                         </li>
                         <li>
-                            <p><a href="#funding">Funding</a></p>
+                            <p>
+                                <a href="#funding">Funding</a>
+                            </p>
                         </li>
                         <li>
-                            <p><a href="#finances">Fundraising & Finances</a></p>
+                            <p>
+                                <a href="#finances">Fundraising & Finances</a>
+                            </p>
                         </li>
                     </ul>
                 </div>

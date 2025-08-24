@@ -1,6 +1,13 @@
 /* ORG ROUTING INFORMATION HERE */
 import React, { useEffect, useState } from "react";
-import { Navigate, Route, Routes, useLocation, useNavigate, useParams, } from "react-router-dom";
+import {
+    Navigate,
+    Route,
+    Routes,
+    useLocation,
+    useNavigate,
+    useParams,
+} from "react-router-dom";
 import OrgContext from "../../../contexts/OrgContext";
 import Loading from "../../../components/ui/Loading";
 import { supabase } from "../../../lib/supabaseClient";
@@ -187,7 +194,12 @@ const OrgRouter = () => {
                             onClick={() => navigate("/stuyactivities")}
                         >
                             <p className={"important relative"}>
-                                <i className={"bx bx-chevron-left bx-sm relative top-1.5"}></i>Catalog
+                                <i
+                                    className={
+                                        "bx bx-chevron-left bx-sm relative top-1.5"
+                                    }
+                                ></i>
+                                Catalog
                             </p>
                         </div>
 

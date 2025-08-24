@@ -7,7 +7,7 @@ import OrgContext from "../../../../../contexts/OrgContext";
 import OrgEditor from "../components/OrgEditor";
 
 import { useSnackbar } from "notistack";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 
 const Organization = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -64,11 +64,11 @@ const Organization = () => {
     return (
         <Box sx={{ width: "100%" }}>
             <div
-                className={"bg-layer-1 p-5 pl-7 pb-3 rounded-xl mb-10 mt-2 shadow-module"}
+                className={
+                    "bg-layer-1 p-5 pl-7 pb-3 rounded-xl mb-10 mt-2 shadow-module"
+                }
             >
-                <h1>
-                    Amend Charter
-                </h1>
+                <h1>Amend Charter</h1>
                 <p>
                     You may update your organization's charter here. Please note
                     that edits are requests to amend, which will be reviewed by

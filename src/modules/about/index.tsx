@@ -1,6 +1,5 @@
 import React, { ReactNode, useEffect, useMemo, useRef, useState } from "react";
 import { PUBLIC_URL } from "../../config/constants";
-import { Typography } from "@mui/material";
 import { Helmet } from "react-helmet";
 import { AnimatePresence, motion } from "framer-motion";
 
@@ -71,7 +70,9 @@ const MemberGroup = ({ role, names }: { role: string; names: string[] }) => {
             >
                 {role}
             </p>
-            <div className={"flex flex-col w-80 text-center sm:text-left mt-1.5"}>
+            <div
+                className={"flex flex-col w-80 text-center sm:text-left mt-1.5"}
+            >
                 {names.map((name, index) => (
                     <h2 className={"-mt-3 text-white/75 relative top-0.5"}>
                         {name}
@@ -128,11 +129,7 @@ const Index = () => {
                     },
                     {
                         role: "core programming",
-                        names: [
-                            "David Chen",
-                            "Rahul Deb",
-                            "Randy Sim",
-                        ],
+                        names: ["David Chen", "Rahul Deb", "Randy Sim"],
                     },
                     { role: "management", names: ["Nathaniel Moy"] },
                 ],
@@ -297,9 +294,7 @@ const Index = () => {
                             aria-label="Play"
                         >
                             <i className="text-white/50 bx bx-play text-5xl relative left-0.5 transition hover:opacity-50 " />
-                            <p>
-                                Learn about the makers of Epsilon.
-                            </p>
+                            <p>Learn about the makers of Epsilon.</p>
                         </motion.button>
                     )}
 

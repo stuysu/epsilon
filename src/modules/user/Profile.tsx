@@ -96,10 +96,7 @@ const Profiles = () => {
                     }
                 ></div>
                 {fourDigitId && (
-                    <Typography
-                        width="100%"
-                        sx={{ fontFamily: "monospace" }}
-                    >
+                    <Typography width="100%" sx={{ fontFamily: "monospace" }}>
                         Epsilon ID: {String(fourDigitId).padStart(4, "0")}
                     </Typography>
                 )}
@@ -108,11 +105,16 @@ const Profiles = () => {
                     className={"w-64 mb-3 mt-16"}
                     alt={"Medals of Honor"}
                 ></img>
-                <p className={"mb-5"}>Medals are coming soon to Epsilon. Preview them below!</p>
+                <p className={"mb-5"}>
+                    Medals are coming soon to Epsilon. Preview them below!
+                </p>
 
                 <div className="flex flex-col -ml-7">
-
-                    <div className={"my-4 flex flex-row items-center border border-divider rounded-lg"}>
+                    <div
+                        className={
+                            "my-4 flex flex-row items-center border border-divider rounded-lg"
+                        }
+                    >
                         <img
                             alt=""
                             src={`${PUBLIC_URL}/achievements/moderator.png`}
@@ -128,7 +130,11 @@ const Profiles = () => {
                         </div>
                     </div>
 
-                    <div className={"my-4 flex flex-row items-center border border-divider rounded-lg"}>
+                    <div
+                        className={
+                            "my-4 flex flex-row items-center border border-divider rounded-lg"
+                        }
+                    >
                         <img
                             alt=""
                             src={`${PUBLIC_URL}/achievements/leader.png`}
@@ -144,7 +150,11 @@ const Profiles = () => {
                         </div>
                     </div>
 
-                    <div className={"my-4 flex flex-row items-center border border-divider rounded-lg"}>
+                    <div
+                        className={
+                            "my-4 flex flex-row items-center border border-divider rounded-lg"
+                        }
+                    >
                         <img
                             alt=""
                             src={`${PUBLIC_URL}/achievements/special.png`}
@@ -159,7 +169,11 @@ const Profiles = () => {
                         </div>
                     </div>
 
-                    <div className={"my-4 flex flex-row items-center border border-divider rounded-lg"}>
+                    <div
+                        className={
+                            "my-4 flex flex-row items-center border border-divider rounded-lg"
+                        }
+                    >
                         <img
                             alt=""
                             src={`${PUBLIC_URL}/achievements/five_thousand.png`}
@@ -181,7 +195,11 @@ const Profiles = () => {
                         </div>
                     </div>
 
-                    <div className={"my-4 flex flex-row items-center border border-divider rounded-lg"}>
+                    <div
+                        className={
+                            "my-4 flex flex-row items-center border border-divider rounded-lg"
+                        }
+                    >
                         <img
                             alt=""
                             src={`${PUBLIC_URL}/achievements/ten_thousand.png`}
@@ -189,9 +207,7 @@ const Profiles = () => {
                         ></img>
 
                         <div>
-                            <h4>
-                                The Determined
-                            </h4>
+                            <h4>The Determined</h4>
                             <p>
                                 Awarded to users who have accumulated more than
                                 10,000{" "}
@@ -205,7 +221,11 @@ const Profiles = () => {
                         </div>
                     </div>
 
-                    <div className={"my-4 flex flex-row items-center border border-divider rounded-lg"}>
+                    <div
+                        className={
+                            "my-4 flex flex-row items-center border border-divider rounded-lg"
+                        }
+                    >
                         <img
                             alt=""
                             src={`${PUBLIC_URL}/achievements/editor.png`}

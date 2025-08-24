@@ -18,7 +18,12 @@ import { useNavigate } from "react-router-dom";
 import ItemList from "../../../components/ui/ItemList";
 
 const currentHour = new Date().getHours();
-const timeGreeting = currentHour < 12 ? "Good morning" : currentHour < 17 ? "Good afternoon" : "Good evening";
+const timeGreeting =
+    currentHour < 12
+        ? "Good morning"
+        : currentHour < 17
+          ? "Good afternoon"
+          : "Good evening";
 type meetingType = {
     id: number;
     title: string;

@@ -25,12 +25,8 @@ const HelpItem = ({
                 className={`bx ${icon} max-sm:hidden bx-lg relative top-2.5 ${iconColor}`}
             ></i>
             <div>
-                <h3 className={"mt-3"}>
-                    {title}
-                </h3>
-                <h4 className="mb-3">
-                    {description}
-                </h4>
+                <h3 className={"mt-3"}>{title}</h3>
+                <h4 className="mb-3">{description}</h4>
                 <AnimatePresence initial={false}>
                     {content && expanded && (
                         <motion.div
@@ -53,9 +49,7 @@ const HelpItem = ({
                             transition={{ duration: 0.5, ease: [0, 0, 0, 1] }}
                             style={{ overflow: "hidden" }}
                         >
-                            <p className={"max-w-2xl mb-2"}>
-                                {content}
-                            </p>
+                            <p className={"max-w-2xl mb-2"}>{content}</p>
                         </motion.div>
                     )}
                 </AnimatePresence>
@@ -84,9 +78,7 @@ const Support = () => {
             </div>
 
             <div className={"hidden sm:block"}>
-                <h1>
-                    Get help with StuyActivities.
-                </h1>
+                <h1>Get help with StuyActivities.</h1>
             </div>
 
             <div className={"max-sm:-mr-4"}>

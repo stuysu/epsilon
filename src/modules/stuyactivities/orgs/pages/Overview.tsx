@@ -1,9 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import OrgContext from "../../../../contexts/OrgContext";
-import {
-    Avatar,
-    useMediaQuery,
-} from "@mui/material";
+import { Avatar, useMediaQuery } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../../../lib/supabaseClient";

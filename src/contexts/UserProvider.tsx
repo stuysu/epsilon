@@ -95,7 +95,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                     // user is not in our public.users table. notify
                     enqueueSnackbar(
                         "Please sign in with your stuy.edu account. If you are an incoming freshmen, wait until" +
-                        "later. For more assistance, contact it@stuysu.org",
+                            "later. For more assistance, contact it@stuysu.org",
                         { variant: "error" },
                     );
                     setLoading(false);
@@ -187,7 +187,8 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
         return (
             <div
                 style={{
-                    backgroundColor: effectiveMode === "dark" ? "#0c161b" : "#ebf5f2",
+                    backgroundColor:
+                        effectiveMode === "dark" ? "#0c161b" : "#ebf5f2",
                     width: "100vw",
                     height: "100vh",
                 }}

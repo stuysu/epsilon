@@ -88,11 +88,7 @@ const RelatedActivities = ({ currentOrg }: { currentOrg: Organization }) => {
                 "scrollbar-none max-w-[calc(100vw+2rem)] sm:max-w-[100vw] lg:max-w-[calc(100vw-160px)] overflow-x-scroll snap-x snap-mandatory"
             }
         >
-            <div
-                className={
-                    "absolute bg-bg z-20 h-full w-8 left-0"
-                }
-            ></div>
+            <div className={"absolute bg-bg z-20 h-full w-8 left-0"}></div>
             <div
                 className={
                     "absolute bg-gradient-to-r from-bg to-transparent z-20 h-full w-4 left-8"

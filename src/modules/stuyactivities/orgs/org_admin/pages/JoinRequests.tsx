@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import OrgContext from "../../../../../contexts/OrgContext";
 
 import PendingMember from "../components/PendingMember";
-import { Box, Stack, Typography } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 
 const JoinRequests = () => {
     const organization = useContext<OrgContextType>(OrgContext);
@@ -21,11 +21,11 @@ const JoinRequests = () => {
     return (
         <Box sx={{ width: "100%", minHeight: "70vh" }}>
             <div
-                className={"bg-layer-1 p-5 pl-7 pb-3 rounded-xl mb-10 mt-2 shadow-module"}
+                className={
+                    "bg-layer-1 p-5 pl-7 pb-3 rounded-xl mb-10 mt-2 shadow-module"
+                }
             >
-                <h1>
-                    Join Requests
-                </h1>
+                <h1>Join Requests</h1>
                 <p>
                     When people request to join your Activity, you'll see them
                     here.

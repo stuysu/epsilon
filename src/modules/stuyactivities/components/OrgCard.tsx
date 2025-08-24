@@ -1,14 +1,11 @@
-import { Avatar, Box, Skeleton, Typography } from "@mui/material";
+import { Avatar, Box, Skeleton } from "@mui/material";
 import { PUBLIC_URL } from "../../../config/constants";
 import React, { useContext, useState } from "react";
 import UserContext from "../../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
 
-import { ThemeContext } from "../../../contexts/ThemeProvider";
-
 const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
     const navigate = useNavigate();
-    const theme = useContext(ThemeContext);
     const [imgLoaded, setImgLoaded] = useState(false);
 
     const user: UserContextType = useContext(UserContext);
@@ -110,7 +107,11 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                             ></Box>
 
                             {user.signed_in && (
-                                <p className={"absolute top-12 right-0 text-typography-2 bg-layer-2 px-2 py-1 rounded-md important shadow-module"}>
+                                <p
+                                    className={
+                                        "absolute top-12 right-0 text-typography-2 bg-layer-2 px-2 py-1 rounded-md important shadow-module"
+                                    }
+                                >
                                     <i className="bx bx-group bx-xs relative top-0.5 mr-1"></i>
                                     {organization.memberships?.length ?? 0}
                                 </p>
@@ -227,11 +228,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                     {organization.commitment_level?.toLowerCase()}
                                 </p>
                             </div>
-                            <div
-                                className={
-                                    "flex justify-between"
-                                }
-                            >
+                            <div className={"flex justify-between"}>
                                 <p>Days</p>
                                 <p className={"important"}>
                                     {organization.meeting_days?.length

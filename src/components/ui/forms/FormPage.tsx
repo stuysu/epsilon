@@ -141,9 +141,7 @@ const FormPage = <T extends unknown>({
             }}
         >
             <h3>{title}</h3>
-            <div className={`mt-5`}>
-                {parseChildren(children)}
-            </div>
+            <div className={`mt-5`}>{parseChildren(children)}</div>
             <Box
                 sx={{
                     height: "10%",
