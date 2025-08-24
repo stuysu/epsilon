@@ -22,7 +22,7 @@ const JoinRequests = () => {
         <Box sx={{ width: "100%", minHeight: "70vh" }}>
             <div
                 className={
-                    "bg-layer-1 p-5 pl-7 pb-3 rounded-xl mb-10 mt-2 shadow-module"
+                    "bg-layer-1 p-5 pl-7 pb-8 rounded-xl mb-10 mt-2 shadow-module"
                 }
             >
                 <h1>Join Requests</h1>
@@ -30,15 +30,6 @@ const JoinRequests = () => {
                     When people request to join your Activity, you'll see them
                     here.
                 </p>
-
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        width: "100%",
-                        marginTop: "20px",
-                    }}
-                ></Box>
             </div>
 
             {pendingMembers?.length > 0 && (

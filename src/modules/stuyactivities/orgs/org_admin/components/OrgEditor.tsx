@@ -47,13 +47,12 @@ const EditField = ({
 }) => {
     return (
         <>
-            <Typography width="100%" sx={{ paddingLeft: "10px" }}>
+            <h4>
                 {orgFieldMap(field)}
-                {" - "}
-                <span style={{ color: pending ? "gray" : "#2ecc71" }}>
-                    {pending ? "Pending" : "Approved"}
-                </span>
-            </Typography>
+            </h4>
+            <p style={{ color: pending ? "gray" : "#2ecc71" }}>
+                {pending ? "Pending" : "Approved"}
+            </p>
             <Box
                 sx={{
                     width: "100%",
@@ -525,12 +524,12 @@ const OrgEditor = ({
 
     return (
         <Paper elevation={1} sx={{ padding: "10px" }}>
-            <Typography variant="h4">
-                Picture -{" "}
-                <span style={{ color: pendingPicture ? "gray" : "#2ecc71" }}>
+            <h4>
+                Picture
+            </h4>
+            <p style={{ color: pendingPicture ? "gray" : "#2ecc71" }}>
                     {pendingPicture ? " Pending" : "Approved"}
-                </span>
-            </Typography>
+            </p>
             <Box
                 sx={{
                     width: "200px",
@@ -657,18 +656,11 @@ const OrgEditor = ({
                             setEditState({ ...editState, [field]: true })
                         }
                         defaultDisplay={
-                            <Typography
-                                sx={{
-                                    wordWrap: "break-word",
-                                    wordBreak: "break-all",
-                                    width: "80%",
-                                    display: "block",
-                                }}
-                            >
+                            <p className={"w-3/4"}>
                                 {editData[field as keyof OrganizationEdit] || (
                                     <em>&lt;empty&gt;</em>
                                 )}
-                            </Typography>
+                            </p>
                         }
                         editDisplay={
                             <FormTextField

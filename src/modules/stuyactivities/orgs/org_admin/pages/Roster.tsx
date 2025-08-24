@@ -1,4 +1,4 @@
-import { useContext } from "react";
+import React, { useContext } from "react";
 import OrgContext from "../../../../../contexts/OrgContext";
 import UserContext from "../../../../../contexts/UserContext";
 
@@ -8,6 +8,7 @@ import { Box, Button, Stack, TextField } from "@mui/material";
 import { sortByRole } from "../../../../../utils/DataFormatters";
 import { useSnackbar } from "notistack";
 import ItemList from "../../../../../components/ui/ItemList";
+import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
 
 const Roster = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -37,6 +38,21 @@ const Roster = () => {
 
     return (
         <Box sx={{ width: "100%" }}>
+            <div
+                className={
+                    "bg-layer-1 p-5 pl-7 pb-8 rounded-xl mb-10 mt-2 shadow-module"
+                }
+            >
+                <h1>Member Roster</h1>
+                <p className={"mb-6"}>
+                    See your members and manage them here. You can also send invites to join.
+                </p>
+
+                <AsyncButton disabled={true}>
+                    <i className={"bx bx-send mr-2"}></i> Invites are coming soon!
+                </AsyncButton>
+            </div>
+
             <Box
                 sx={{
                     width: "100%",

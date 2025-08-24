@@ -65,7 +65,7 @@ const Organization = () => {
         <Box sx={{ width: "100%" }}>
             <div
                 className={
-                    "bg-layer-1 p-5 pl-7 pb-3 rounded-xl mb-10 mt-2 shadow-module"
+                    "bg-layer-1 p-5 pl-7 pb-8 rounded-xl mb-10 mt-2 shadow-module"
                 }
             >
                 <h1>Amend Charter</h1>
@@ -74,15 +74,6 @@ const Organization = () => {
                     that edits are requests to amend, which will be reviewed by
                     the Student Union.
                 </p>
-
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        width: "100%",
-                        marginTop: "20px",
-                    }}
-                ></Box>
             </div>
             <OrgEditor
                 organization={organization}
