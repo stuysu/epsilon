@@ -3,10 +3,10 @@ import OrgContext from "../../../../contexts/OrgContext";
 
 import OrgMeeting from "../components/OrgMeeting";
 import { sortByDate } from "../../../../utils/DataFormatters";
-import LoginGate from "../../../../components/ui/LoginGate";
+import LoginGate from "../../../../components/ui/content/LoginGate";
 import OrgInspector from "../components/OrgInspector";
-import ContentUnavailable from "../../../../components/ui/ContentUnavailable";
-import ItemList from "../../../../components/ui/ItemList";
+import ContentUnavailable from "../../../../components/ui/content/ContentUnavailable";
+import ItemList from "../../../../components/ui/lists/ItemList";
 
 const Audit = () => {
     const organization: OrgContextType = useContext(OrgContext);

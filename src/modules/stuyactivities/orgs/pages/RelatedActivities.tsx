@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import OrgBlock from "../../../../components/ui/orgs/OrgBlock";
+import OrgBlock from "../../../../components/ui/OrgBlock";
 import { useOrgList } from "../../../../contexts/OrgListContext";
 
 function cleanName(str: string): string {

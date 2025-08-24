@@ -4,9 +4,9 @@ import OrgMember from "../components/OrgMember";
 import { AnimatePresence, motion } from "framer-motion";
 
 import { sortByRole } from "../../../../utils/DataFormatters";
-import LoginGate from "../../../../components/ui/LoginGate";
-import ItemList from "../../../../components/ui/ItemList";
-import SearchInput from "../../../../components/ui/SearchInput";
+import LoginGate from "../../../../components/ui/content/LoginGate";
+import ItemList from "../../../../components/ui/lists/ItemList";
+import SearchInput from "../../../../components/ui/input/SearchInput";
 
 const Members = () => {
     const organization: OrgContextType = useContext(OrgContext);

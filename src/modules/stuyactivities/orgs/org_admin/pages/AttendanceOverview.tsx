@@ -3,9 +3,9 @@ import React, { useContext, useEffect, useState } from "react";
 import { supabase } from "../../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import MeetingAttendanceCard from "../components/MeetingAttendanceCard";
-import LoginGate from "../../../../../components/ui/LoginGate";
+import LoginGate from "../../../../../components/ui/content/LoginGate";
 import OrgContext from "../../../../../contexts/OrgContext";
-import ContentUnavailable from "../../../../../components/ui/ContentUnavailable";
+import ContentUnavailable from "../../../../../components/ui/content/ContentUnavailable";
 
 const AttendanceOverview = () => {
     const org = useContext(OrgContext);

@@ -1,6 +1,6 @@
 import { capitalizeWords } from "../../../utils/DataFormatters";
-import SearchInput from "../../../components/ui/SearchInput";
-import ToggleChip from "../../../components/ui/ToggleChip";
+import SearchInput from "../../../components/ui/input/SearchInput";
+import ToggleChip from "../../../components/ui/input/ToggleChip";
 
 type Props = {
     value: SearchParams;

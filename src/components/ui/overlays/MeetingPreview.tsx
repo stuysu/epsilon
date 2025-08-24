@@ -2,7 +2,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import dayjs from "dayjs";
 import { daysOfWeek, monthNames } from "../../../utils/TimeStrings";
 import Divider from "../Divider";
-import ToggleChip from "../ToggleChip";
+import ToggleChip from "../input/ToggleChip";
 import { Avatar } from "radix-ui";
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";

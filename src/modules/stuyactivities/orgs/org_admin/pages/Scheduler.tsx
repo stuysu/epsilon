@@ -9,7 +9,7 @@ import OrgMeeting from "../../components/OrgMeeting";
 
 import { sortByDate } from "../../../../../utils/DataFormatters";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
-import ContentUnavailable from "../../../../../components/ui/ContentUnavailable";
+import ContentUnavailable from "../../../../../components/ui/content/ContentUnavailable";
 
 const Scheduler = () => {
     const organization = useContext(OrgContext);

@@ -8,12 +8,12 @@ import React, {
     useState,
 } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import { supabase } from "../../lib/supabaseClient";
-import UserContext from "../../contexts/UserContext";
+import { supabase } from "../../../lib/supabaseClient";
+import UserContext from "../../../contexts/UserContext";
 import { useSnackbar } from "notistack";
-import { ThemeContext } from "../../contexts/ThemeProvider";
-import { PUBLIC_URL } from "../../config/constants";
-import { isStuyActivitiesPath, topNavItems } from "../../config/routes";
+import { ThemeContext } from "../../../contexts/ThemeProvider";
+import { PUBLIC_URL } from "../../../config/constants";
+import { isStuyActivitiesPath, topNavItems } from "../../../config/routes";
 
 const linkStyle: CSSProperties = {
     color: "inherit",

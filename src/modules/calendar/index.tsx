@@ -6,7 +6,7 @@ import { useSnackbar } from "notistack";
 import { DayPicker } from "react-day-picker";
 import dayjs, { Dayjs } from "dayjs";
 import DaySchedule from "./components/DaySchedule";
-import LoginGate from "../../components/ui/LoginGate";
+import LoginGate from "../../components/ui/content/LoginGate";
 
 type CachedMeetings = {
     [date: string]: CalendarMeeting[];

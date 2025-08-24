@@ -8,14 +8,14 @@
 
 import React, { useEffect, useState } from "react";
 import UserContext from "../../../contexts/UserContext";
-import OrgBlock from "../../../components/ui/orgs/OrgBlock";
+import OrgBlock from "../../../components/ui/OrgBlock";
 import { useSnackbar } from "notistack";
 import { supabase } from "../../../lib/supabaseClient";
 import UpcomingMeeting from "./UpcomingMeeting";
 import OrgStreamPost from "../../stuyactivities/orgs/components/OrgStreamPost";
 import DisplayLinks from "../../../components/DisplayLinks";
 import { useNavigate } from "react-router-dom";
-import ItemList from "../../../components/ui/ItemList";
+import ItemList from "../../../components/ui/lists/ItemList";
 
 const currentHour = new Date().getHours();
 const timeGreeting =

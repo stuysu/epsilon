@@ -1,7 +1,7 @@
 import React, { useState } from "react";
-import MeetingPreview from "../../../components/ui/orgs/MeetingPreview";
+import MeetingPreview from "../../../components/ui/overlays/MeetingPreview";
 import dayjs from "dayjs";
-import ToggleChip from "../../../components/ui/ToggleChip";
+import ToggleChip from "../../../components/ui/input/ToggleChip";
 import { monthNames } from "../../../utils/TimeStrings";
 import { Avatar } from "radix-ui";
 

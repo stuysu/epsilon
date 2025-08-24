@@ -4,7 +4,7 @@ import { supabase } from "../../../../lib/supabaseClient";
 import { Valentine } from "../../../valentines/ValentineType";
 import { enqueueSnackbar } from "notistack";
 import ValentineDisplay from "../../../valentines/components/ValentineDisplay";
-import Loading from "../../../../components/ui/Loading";
+import Loading from "../../../../components/ui/content/Loading";
 
 const ApprovedValentines = () => {
     const [approvedMessages, setApprovedMessages] = useState<Valentine[]>([]);

@@ -11,10 +11,10 @@ import { sortByDate, sortByRole } from "../../../../utils/DataFormatters";
 import UserContext from "../../../../contexts/UserContext";
 import RelatedActivities from "./RelatedActivities";
 import OrgInspector from "../components/OrgInspector";
-import ToggleChip from "../../../../components/ui/ToggleChip";
+import ToggleChip from "../../../../components/ui/input/ToggleChip";
 import Divider from "../../../../components/ui/Divider";
-import OverviewList from "../../../../components/ui/OverviewList";
-import ConfirmationDialog from "../../../../components/ui/ConfirmationDialog";
+import OverviewList from "../../../../components/ui/lists/OverviewList";
+import UserDialog from "../../../../components/ui/overlays/UserDialog";
 
 const Overview = () => {
     const navigate = useNavigate();
@@ -264,7 +264,7 @@ const Overview = () => {
                                 .toLowerCase()
                                 .replace(/\b\w/g, (c) => c.toUpperCase())}
                         </AsyncButton>
-                        <ConfirmationDialog
+                        <UserDialog
                             title="Leave Organization?"
                             description={`Are you sure you want to leave (or cancel your join request to) this organization? You will have to request to join again.`}
                             onConfirm={handleUserLeave}

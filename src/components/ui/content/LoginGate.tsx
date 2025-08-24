@@ -1,7 +1,7 @@
 import { Box } from "@mui/material";
-import LoginButton from "./buttons/LoginButton";
+import LoginButton from "../buttons/LoginButton";
 import React, { useContext } from "react";
-import UserContext from "../../contexts/UserContext";
+import UserContext from "../../../contexts/UserContext";
 
 type Props = {
     page?: string;

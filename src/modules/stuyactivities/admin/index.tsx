@@ -14,7 +14,7 @@ import Announcements from "./pages/Announcements";
 import Rooms from "./pages/Rooms";
 import Valentines from "./pages/Valentines";
 import ApprovedValentines from "./pages/ApprovedValentines";
-import ContentUnavailable from "../../../components/ui/ContentUnavailable";
+import ContentUnavailable from "../../../components/ui/content/ContentUnavailable";
 import AddUser from "./pages/AddUser";
 
 const VALENTINES = false;

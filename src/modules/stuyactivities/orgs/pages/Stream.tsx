@@ -2,7 +2,7 @@ import React, { useContext } from "react";
 import OrgContext from "../../../../contexts/OrgContext";
 import { sortPostByDate } from "../../../../utils/DataFormatters";
 import OrgStreamPost from "../components/OrgStreamPost";
-import ContentUnavailable from "../../../../components/ui/ContentUnavailable";
+import ContentUnavailable from "../../../../components/ui/content/ContentUnavailable";
 
 const Stream = () => {
     const organization: OrgContextType = useContext(OrgContext);

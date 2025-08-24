@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { Dayjs } from "dayjs";
 import { monthNames } from "../../../utils/TimeStrings";
 import React from "react";
-import ContentUnavailable from "../../../components/ui/ContentUnavailable";
+import ContentUnavailable from "../../../components/ui/content/ContentUnavailable";
 import UpcomingMeeting from "../../home/components/UpcomingMeeting";
 
 type Props = {

@@ -1,22 +1,12 @@
 import { ChangeEvent, useContext, useState } from "react";
 import UserContext from "../../../../../contexts/UserContext";
 
-import {
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    MenuItem,
-    Select,
-    SelectChangeEvent,
-    TextField,
-} from "@mui/material";
+import { MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import { supabase } from "../../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import OrgMember from "../../components/OrgMember";
 import OrgContext from "../../../../../contexts/OrgContext";
-import ConfirmationDialog from "../../../../../components/ui/ConfirmationDialog";
-import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
+import UserDialog from "../../../../../components/ui/overlays/UserDialog";
 
 const AdminMember = ({
     id,
@@ -200,21 +190,31 @@ const AdminMember = ({
                         </div>
                     )}
             </div>
-            <ConfirmationDialog
+            <UserDialog
                 open={kickConfirmOpen}
                 title={`Kick ${first_name} ${last_name}?`}
                 description={"This action can't be reversed."}
                 onConfirm={handleKick}
                 onClose={() => setKickConfirmOpen(false)}
             />
-            <Dialog open={editState.editing} onClose={handleClose}>
-                <DialogTitle>Edit User</DialogTitle>
-                <DialogContent>
+            <UserDialog
+                open={editState.editing}
+                title="Edit User"
+                description="Make changes to this user's role and role name."
+                onClose={handleClose}
+                onCancel={handleClose}
+                onConfirm={handleSave}
+                confirmText="Save"
+                cancelText="Cancel"
+            >
+                <div className="flex flex-col gap-4">
                     <TextField
                         value={editState.role_name}
                         onChange={handleType}
                         label="Role Name"
+                        fullWidth
                     />
+
                     {((isCreator && userId !== user.id) ||
                         (isAdmin &&
                             role !== "ADMIN" &&
@@ -222,8 +222,9 @@ const AdminMember = ({
                             userId !== user.id)) && (
                         <Select
                             value={editState.role}
-                            label="Role"
                             onChange={handleSelect}
+                            displayEmpty
+                            fullWidth
                         >
                             <MenuItem value={"MEMBER"}>Member</MenuItem>
                             <MenuItem value={"ADVISOR"}>Advisor</MenuItem>
@@ -232,16 +233,8 @@ const AdminMember = ({
                             )}
                         </Select>
                     )}
-                </DialogContent>
-                <DialogActions>
-                    <AsyncButton variant="contained" onClick={handleClose}>
-                        Cancel
-                    </AsyncButton>
-                    <AsyncButton variant="contained" onClick={handleSave}>
-                        Save
-                    </AsyncButton>
-                </DialogActions>
-            </Dialog>
+                </div>
+            </UserDialog>
         </div>
     );
 };

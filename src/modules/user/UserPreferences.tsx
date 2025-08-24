@@ -3,7 +3,7 @@ import React from "react";
 import { ThemeContext, ThemeMode } from "../../contexts/ThemeProvider";
 import { PUBLIC_URL } from "../../config/constants";
 import Divider from "../../components/ui/Divider";
-import LoginGate from "../../components/ui/LoginGate";
+import LoginGate from "../../components/ui/content/LoginGate";
 
 const UserPreferences = () => {
     const { mode, setMode } = React.useContext(ThemeContext);

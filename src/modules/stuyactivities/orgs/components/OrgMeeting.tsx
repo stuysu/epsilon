@@ -1,9 +1,9 @@
 import { useState } from "react";
 import dayjs from "dayjs";
 
-import MeetingPreview from "../../../../components/ui/orgs/MeetingPreview";
+import MeetingPreview from "../../../../components/ui/overlays/MeetingPreview";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
-import ToggleChip from "../../../../components/ui/ToggleChip";
+import ToggleChip from "../../../../components/ui/input/ToggleChip";
 
 type Props = {
     id?: number;

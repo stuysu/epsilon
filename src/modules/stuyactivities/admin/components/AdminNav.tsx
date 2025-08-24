@@ -1,4 +1,4 @@
-import RouteTabs from "../../../../components/ui/RouteTabs";
+import RouteTabs from "../../../../components/ui/navigation/RouteTabs";
 import { Link } from "../index";
 
 const AdminNav = ({ links }: { links: Link[] }) => {

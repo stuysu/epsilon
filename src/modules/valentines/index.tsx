@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import Valentines from "./Valentines";
-import LoginGate from "../../components/ui/LoginGate";
+import LoginGate from "../../components/ui/content/LoginGate";
 import Create from "./Create";
 import { Box, Divider, Typography } from "@mui/material";
 

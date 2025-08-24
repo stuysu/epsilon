@@ -11,7 +11,7 @@ import { useState } from "react";
 
 import { supabase } from "../../../../lib/supabaseClient";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
-import ConfirmationDialog from "../../../../components/ui/ConfirmationDialog";
+import UserDialog from "../../../../components/ui/overlays/UserDialog";
 
 const AdminRoom = ({
     roomId,
@@ -243,7 +243,7 @@ const AdminRoom = ({
                 )}
             </div>
 
-            <ConfirmationDialog
+            <UserDialog
                 title="Delete Room?"
                 description={`Are you sure you want to delete ${roomName}?`}
                 onConfirm={deleteRoom}

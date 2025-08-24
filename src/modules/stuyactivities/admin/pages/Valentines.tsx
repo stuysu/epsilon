@@ -3,7 +3,7 @@ import { Valentine } from "../../../valentines/ValentineType";
 import { supabase } from "../../../../lib/supabaseClient";
 import { enqueueSnackbar } from "notistack";
 import UserContext from "../../../../contexts/UserContext";
-import Loading from "../../../../components/ui/Loading";
+import Loading from "../../../../components/ui/content/Loading";
 import ValentineDisplay from "../../../valentines/components/ValentineDisplay";
 import { Box, Typography } from "@mui/material";
 

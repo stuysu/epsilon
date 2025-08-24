@@ -1,10 +1,10 @@
 import { Stack, Typography, useMediaQuery } from "@mui/material";
 import React, { FC, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
-import UserContext from "../../contexts/UserContext";
-import { isStuyActivitiesPath } from "../../config/routes";
+import UserContext from "../../../contexts/UserContext";
+import { isStuyActivitiesPath } from "../../../config/routes";
 
-const ContextualNavBar: FC = () => {
+const SubNavBar: FC = () => {
     const user = useContext(UserContext);
     const isMobile = useMediaQuery("(max-width: 640px)");
     const navigate = useNavigate();
@@ -81,4 +81,4 @@ const ContextualNavBar: FC = () => {
     );
 };
 
-export default ContextualNavBar;
+export default SubNavBar;

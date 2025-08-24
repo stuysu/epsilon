@@ -13,7 +13,7 @@ import {
 import UserContext from "../../contexts/UserContext";
 import ValentineDisplay from "./components/ValentineDisplay";
 import { useNavigate } from "react-router-dom";
-import Loading from "../../components/ui/Loading";
+import Loading from "../../components/ui/content/Loading";
 
 // from https://catppuccin.com/palette
 const colors = [

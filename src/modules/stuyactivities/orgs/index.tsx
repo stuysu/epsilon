@@ -9,7 +9,7 @@ import {
     useParams,
 } from "react-router-dom";
 import OrgContext from "../../../contexts/OrgContext";
-import Loading from "../../../components/ui/Loading";
+import Loading from "../../../components/ui/content/Loading";
 import { supabase } from "../../../lib/supabaseClient";
 import { Helmet } from "react-helmet";
 import { CSSTransition, TransitionGroup } from "react-transition-group";

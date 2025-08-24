@@ -1,5 +1,5 @@
 import React from "react";
-import ContentUnavailable from "../../../../components/ui/ContentUnavailable";
+import ContentUnavailable from "../../../../components/ui/content/ContentUnavailable";
 
 const FlavorText = [
     "The page is a lie.",

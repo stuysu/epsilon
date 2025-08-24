@@ -1,5 +1,5 @@
 import { ReactNode, useCallback, useEffect, useState } from "react";
-import { Avatar, Box, Paper, Typography } from "@mui/material";
+import { Avatar, Box, Paper } from "@mui/material";
 import { useSnackbar } from "notistack";
 import FormTextField from "../../../../../components/ui/forms/FormTextField";
 import OrgRequirements from "../../../../../utils/OrgRequirements";
@@ -47,9 +47,7 @@ const EditField = ({
 }) => {
     return (
         <>
-            <h4>
-                {orgFieldMap(field)}
-            </h4>
+            <h4>{orgFieldMap(field)}</h4>
             <p style={{ color: pending ? "gray" : "#2ecc71" }}>
                 {pending ? "Pending" : "Approved"}
             </p>
@@ -524,11 +522,9 @@ const OrgEditor = ({
 
     return (
         <Paper elevation={1} sx={{ padding: "10px" }}>
-            <h4>
-                Picture
-            </h4>
+            <h4>Picture</h4>
             <p style={{ color: pendingPicture ? "gray" : "#2ecc71" }}>
-                    {pendingPicture ? " Pending" : "Approved"}
+                {pendingPicture ? " Pending" : "Approved"}
             </p>
             <Box
                 sx={{

@@ -4,8 +4,8 @@ import { Box, Stack, useMediaQuery } from "@mui/material";
 
 import OrgMeeting from "../components/OrgMeeting";
 import { sortByDate } from "../../../../utils/DataFormatters";
-import LoginGate from "../../../../components/ui/LoginGate";
-import ContentUnavailable from "../../../../components/ui/ContentUnavailable";
+import LoginGate from "../../../../components/ui/content/LoginGate";
+import ContentUnavailable from "../../../../components/ui/content/ContentUnavailable";
 
 const Meetings = () => {
     const organization: OrgContextType = useContext(OrgContext);

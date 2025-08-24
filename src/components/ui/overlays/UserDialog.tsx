@@ -1,23 +1,29 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { AnimatePresence, motion } from "framer-motion";
-import AsyncButton from "./buttons/AsyncButton";
-import Divider from "./Divider";
+import AsyncButton from "../buttons/AsyncButton";
+import Divider from "../Divider";
 import React from "react";
 
-export default function ConfirmationDialog({
+export default function UserDialog({
     title,
     description,
     open,
     onClose,
     onCancel,
     onConfirm,
+    children,
+    confirmText = "Confirm",
+    cancelText = "Cancel",
 }: {
     title: string;
-    description: string;
+    description?: string;
     open: boolean;
     onClose: () => void;
     onCancel?: () => void;
     onConfirm?: () => void;
+    children?: React.ReactNode;
+    confirmText?: string;
+    cancelText?: string;
 }) {
     return (
         <Dialog.Root
@@ -42,7 +48,7 @@ export default function ConfirmationDialog({
 
                             <Dialog.Content asChild>
                                 <motion.div
-                                    className="relative w-[min(420px,92vw)] rounded-2xl bg-layer-1 p-6 shadow-2xl border border-divider"
+                                    className="relative w-[min(480px,92vw)] rounded-2xl bg-layer-1 p-6 shadow-2xl border border-divider"
                                     initial={{
                                         opacity: 0,
                                         y: 20,
@@ -69,15 +75,19 @@ export default function ConfirmationDialog({
                                     }}
                                 >
                                     {title && (
-                                        <Dialog.Title className="text-lg font-semibold text-typography-1">
-                                            {title}
+                                        <Dialog.Title>
+                                            <h3 className={"mb-6"}>{title}</h3>
                                         </Dialog.Title>
                                     )}
 
                                     {description && (
-                                        <Dialog.Description className="mt-2 text-typography-2">
-                                            {description}
+                                        <Dialog.Description>
+                                            <p>{description}</p>
                                         </Dialog.Description>
+                                    )}
+
+                                    {children && (
+                                        <div className="mt-4">{children}</div>
                                     )}
 
                                     <Divider className="my-5" />
@@ -86,19 +96,19 @@ export default function ConfirmationDialog({
                                         <AsyncButton
                                             onClick={() => {
                                                 onClose();
-                                                if (onCancel) onCancel();
+                                                onCancel?.();
                                             }}
                                         >
-                                            Cancel
+                                            {cancelText}
                                         </AsyncButton>
                                         <AsyncButton
                                             onClick={() => {
                                                 onClose();
-                                                if (onConfirm) onConfirm();
+                                                onConfirm?.();
                                             }}
                                             autoFocus
                                         >
-                                            Confirm
+                                            {confirmText}
                                         </AsyncButton>
                                     </div>
                                 </motion.div>

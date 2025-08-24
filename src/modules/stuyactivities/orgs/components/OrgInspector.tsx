@@ -3,7 +3,7 @@ import { Link } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import { supabase } from "../../../../lib/supabaseClient";
 import OrgContext from "../../../../contexts/OrgContext";
-import ItemList from "../../../../components/ui/ItemList";
+import ItemList from "../../../../components/ui/lists/ItemList";
 
 const OrgInspector = () => {
     const organization: OrgContextType = useContext(OrgContext);

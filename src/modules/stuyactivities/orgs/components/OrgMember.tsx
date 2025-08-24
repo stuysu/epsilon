@@ -1,5 +1,5 @@
 import { Avatar } from "radix-ui";
-import ToggleChip from "../../../../components/ui/ToggleChip";
+import ToggleChip from "../../../../components/ui/input/ToggleChip";
 
 type Props = {
     role?: Membership["role"];

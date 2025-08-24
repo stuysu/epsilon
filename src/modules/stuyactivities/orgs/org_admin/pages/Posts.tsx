@@ -7,7 +7,7 @@ import OrgContext from "../../../../../contexts/OrgContext";
 import { Box } from "@mui/material";
 
 import { sortPostByDate } from "../../../../../utils/DataFormatters";
-import ContentUnavailable from "../../../../../components/ui/ContentUnavailable";
+import ContentUnavailable from "../../../../../components/ui/content/ContentUnavailable";
 
 /* create new posts */
 /* fetch existing posts to update or delete */

@@ -13,7 +13,7 @@ import Organization from "./pages/Organization";
 import Messages from "./pages/Messages";
 import AttendanceOverview from "./pages/AttendanceOverview";
 import MeetingAttendance from "./pages/MeetingAttendance";
-import ContentUnavailable from "../../../../components/ui/ContentUnavailable";
+import ContentUnavailable from "../../../../components/ui/content/ContentUnavailable";
 
 const OrgAdminRouter = () => {
     const user = useContext<UserContextType>(UserContext);

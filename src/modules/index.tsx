@@ -1,6 +1,6 @@
 import { PUBLIC_URL } from "../config/constants";
 import { Helmet } from "react-helmet";
-import Loading from "../components/ui/Loading";
+import Loading from "../components/ui/content/Loading";
 import UserContext from "../contexts/UserContext";
 
 import { Route, Routes, useLocation } from "react-router-dom";
@@ -9,12 +9,12 @@ import React, { lazy, Suspense, useContext } from "react";
 // Pages
 import Index from "./home";
 import CalendarIndex from "./calendar";
-import NavBar from "../components/ui/NavBar";
+import NavBar from "../components/ui/navigation/NavBar";
 import AboutIndex from "./about";
 import Regulations from "./stuyactivities/Regulations";
 import Support from "./stuyactivities/Support";
 import UnaffiliatedRoomReservation from "./stuyactivities/UnaffiliatedRoomReservation";
-import ContextualNavBar from "../components/ui/ContextualNavBar";
+import SubNavBar from "../components/ui/navigation/SubNavBar";
 import Arista from "./arista";
 import { ThemeContext } from "../contexts/ThemeProvider";
 
@@ -70,7 +70,7 @@ const Pages = () => {
                         </div>
                         <div className="sm:hidden fixed bg-gradient-to-r to-bg from-transparent z-[1500] h-[50px] w-14 top-0 right-0 pointer-events-none" />
                         <div className={"max-sm:h-8"}>
-                            <ContextualNavBar />
+                            <SubNavBar />
                         </div>
                     </div>
                 )}

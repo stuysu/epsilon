@@ -1,7 +1,7 @@
 import { Box, Typography } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import UserContext from "../../contexts/UserContext";
-import LoginGate from "../../components/ui/LoginGate";
+import LoginGate from "../../components/ui/content/LoginGate";
 import { supabase } from "../../lib/supabaseClient";
 import { PUBLIC_URL } from "../../config/constants";
 

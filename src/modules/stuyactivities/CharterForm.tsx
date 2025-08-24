@@ -19,7 +19,7 @@ import OrgRequirements from "../../utils/OrgRequirements";
 
 import { PUBLIC_URL } from "../../config/constants";
 
-import LoginGate from "../../components/ui/LoginGate";
+import LoginGate from "../../components/ui/content/LoginGate";
 import UserContext from "../../contexts/UserContext";
 import { Helmet } from "react-helmet";
 
