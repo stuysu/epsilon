@@ -1,15 +1,16 @@
-import React, { useState, useEffect, CSSProperties } from "react";
-import "./App.css";
+import React, { CSSProperties, useEffect, useState } from "react";
+import "./styles/app.css";
 import { BrowserRouter } from "react-router-dom";
-import { ThemeProvider } from "./comps/context/ThemeProvider";
-import UserProvider from "./comps/context/UserProvider";
-import AlertDisplay from "./comps/ui/AlertDisplay";
-import Pages from "./pages";
+import { ThemeProvider } from "./contexts/ThemeProvider";
+import UserProvider from "./contexts/UserProvider";
+import AlertDisplay from "./components/ui/AlertDisplay";
+import Pages from "./modules";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { CssBaseline } from "@mui/material";
 import { SnackbarProvider } from "notistack";
 import { Scrollbars } from "react-custom-scrollbars-2";
+import { OrgListProvider } from "./contexts/OrgListContext";
 
 const App = () => {
     const [autoHeightMax, setAutoHeightMax] = useState(window.innerHeight);
@@ -58,7 +59,9 @@ const App = () => {
                     <SnackbarProvider maxSnack={4} autoHideDuration={3000}>
                         <BrowserRouter>
                             <UserProvider>
-                                <Pages />
+                                <OrgListProvider>
+                                    <Pages />
+                                </OrgListProvider>
                             </UserProvider>
                         </BrowserRouter>
                     </SnackbarProvider>

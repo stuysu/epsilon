@@ -7,7 +7,7 @@
 
 https://epsilon.stuysu.org/
 
-[**Contributing Guide**](https://github.com/stuysu/epsilon/wiki)
+[**Developer Wiki**](https://github.com/stuysu/epsilon/wiki)
 
 </div>
 
@@ -15,21 +15,43 @@ https://epsilon.stuysu.org/
 
 <img src="https://cdn.prod.website-files.com/671312f4e1fa4a0d668cd34f/67c4982b7809fd043929a242_67565fe705f625f86a6b68ca_Login-p-2600.png" alt="Epsilon Preview"/>
 
-## Current Services
+## Services
 
-- StuyActivities [finished]
-- Calendar [finished]
-- Attendance [finished]
-- Opportunities [planned]
-- Daily Schedule [planned]
-- Votes [planned]
-- Valentines [finished]
-- Mobile App [planned]
-- StuyArista [planned]
+### StuyActivities
+
+StuyActivities is an integral part of the Clubs & Pubs experience at Stuyvesant High School. Students and faculty use it
+to charter new clubs, reserve meetings, manage memberships, post updates, and so much more.
+
+### Calendar
+
+The Calendar is a comprehensive view of meetings and events happening at Stuyvesant High School.
+
+### Valentine's
+
+Valentine's is a platform for students to send and receive Valentine's Day messages anonymously.
+
+### Opportunities (Planned)
+
+Opportunities is a platform for students to find and apply for internships,
+volunteer work, and other extracurricular activities.
+
+### Applications (Future)
+
+Applications is a platform for students to apply for various SU positions while ensuring that the process is fully
+anonymous.
+
+### Voting (Future)
+
+Voting is a platform for students to vote on future SU leaders.
+
+### Arista (Separate)
+
+A seperate platform for Arista members to manage their membership, post updates, and manage events.
 
 ## Stack
 
-- typescript + react -> netlify
-- supabase = postgres -> docker -> digital ocean
-- [epsilon backend](https://github.com/stuysu/epsilon-database)
-- [epsilon functions](https://github.com/stuysu/epsilon-functions)
+- Typescript + React -> Netlify
+- Supabase = Postgres -> Docker -> Digital Ocean
+- [Epsilon Frontend](https://github.com/stuysu/epsilon/wiki/Frontend)
+- [Epsilon Backend](https://github.com/stuysu/epsilon-database)
+- [Epsilon Functions](https://github.com/stuysu/epsilon-functions)
