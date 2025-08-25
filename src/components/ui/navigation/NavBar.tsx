@@ -208,27 +208,19 @@ const NavBar: FC = () => {
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
-                                    className="cursor-not-allowed opacity-30"
-                                >
-                                    My Documents
-                                </p>
-                                <p
-                                    style={{
-                                        fontVariationSettings: "'wght' 700",
-                                    }}
-                                    className="cursor-pointer transition-colors hover:text-typography-3"
-                                    onClick={() => navigate("/settings")}
-                                >
-                                    Communication Options
-                                </p>
-                                <p
-                                    style={{
-                                        fontVariationSettings: "'wght' 700",
-                                    }}
                                     className="cursor-pointer transition-colors hover:text-typography-3"
                                     onClick={() => navigate("/preferences")}
                                 >
-                                    My Preferences
+                                    Preferences
+                                </p>
+                                <p
+                                    style={{
+                                        fontVariationSettings: "'wght' 700",
+                                    }}
+                                    className="cursor-pointer transition-colors hover:text-typography-3"
+                                    onClick={() => navigate("/communications")}
+                                >
+                                    Communications
                                 </p>
                                 <p
                                     style={{

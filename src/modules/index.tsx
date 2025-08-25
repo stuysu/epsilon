@@ -79,7 +79,7 @@ const Pages = () => {
                     <Route path={"/arista"} Component={Arista} />
                     <Route path={"/stuyactivities"} Component={Catalog} />
                     <Route path={"/confirm-join"} Component={ConfirmJoin} />
-                    <Route path={"/settings"} Component={CommsSettings} />
+                    <Route path={"/communications"} Component={CommsSettings} />
                     <Route path={"/preferences"} Component={UserPreferences} />
                     <Route path={"/profile"} Component={Profile} />
                     <Route path={"/create"} Component={Create} />

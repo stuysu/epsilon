@@ -17,15 +17,12 @@
 .fadeup-exit {
     opacity: 1;
     filter: blur(0px);
-    transform: translateY(0);
 }
 
 .fadeup-exit-active {
     opacity: 0;
-    filter: blur(10px);
-    transform: translateY(-10px);
+    filter: blur(20px);
     transition:
         opacity 300ms ease-out,
-        transform 300ms ease-out,
         filter 300ms ease-out;
 }

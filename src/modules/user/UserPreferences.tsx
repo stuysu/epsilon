@@ -10,8 +10,8 @@ const UserPreferences = () => {
 
     return (
         <LoginGate page={"adjust your preferences"}>
-            <div className="p-10 max-sm:mb-32">
-                <h1>My Preferences</h1>
+            <div className="m-12 max-sm:mb-32">
+                <h1>Preferences</h1>
                 <Divider />
                 <h2 className={"mb-4"}>Display Theme</h2>
                 <RadioGroup.Root
