@@ -20,13 +20,22 @@ const Archives = () => {
             </div>
             <div className={"flex flex-col sm:items-center w-full h-32 mb-96"}>
                 <a
-                    className={"underline mt-10"}
+                    className={"mt-10 important"}
                     href={
                         "https://docs.google.com/spreadsheets/d/1TyFnEPhY3gM-yRJKYDJkQSfHC6OsvC5ftkkoahjVcCU/edit?gid=485693778#gid=485693778"
                     }
                 >
-                    <i className={"bx bx-box mr-1 relative top-0.5"}></i>SY
+                    <i className={"bx bx-box mr-1 relative top-0.5"}></i>
                     2023-2024
+                </a>
+                <a
+                    className={"mt-5 important"}
+                    href={
+                        "https://docs.google.com/spreadsheets/d/1URqnVM9avoD5_oRvBzQXI1ghq4oWRLWMps58cvNCLc0/edit?usp=sharing"
+                    }
+                >
+                    <i className={"bx bx-box mr-1 relative top-0.5"}></i>
+                    2024-2025
                 </a>
             </div>
         </div>
