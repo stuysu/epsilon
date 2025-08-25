@@ -7,6 +7,7 @@ import { useSnackbar } from "notistack";
 import OrgMember from "../../components/OrgMember";
 import OrgContext from "../../../../../contexts/OrgContext";
 import UserDialog from "../../../../../components/ui/overlays/UserDialog";
+import { PUBLIC_URL } from "../../../../../config/constants";
 
 const AdminMember = ({
     id,
@@ -191,9 +192,10 @@ const AdminMember = ({
                     )}
             </div>
             <UserDialog
+                imageSrc={`${PUBLIC_URL}/symbols/warning.png`}
                 open={kickConfirmOpen}
                 title={`Kick ${first_name} ${last_name}?`}
-                description={"This action can't be reversed."}
+                description={"This action can't be reversed. This member will have to request to join again."}
                 onConfirm={handleKick}
                 onClose={() => setKickConfirmOpen(false)}
             />

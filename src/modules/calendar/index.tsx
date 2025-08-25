@@ -148,7 +148,7 @@ const Index = () => {
                         selected:
                             "bg-accent text-typography-1 rounded-md pointer-events-none",
                         outside: "opacity-50 pointer-events-none",
-                        today: "important animate-pulse",
+                        today: "important outline outline-typography-1 -outline-offset-4 rounded-md",
                     }}
                     /* underline markers for meeting days */
                     modifiers={{

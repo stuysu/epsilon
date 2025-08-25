@@ -3,7 +3,7 @@ import OrgContext from "../../../../../contexts/OrgContext";
 import UserContext from "../../../../../contexts/UserContext";
 
 import AdminMember from "../components/AdminMember";
-import { Box, Button, TextField } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 
 import { sortByRole } from "../../../../../utils/DataFormatters";
 import { useSnackbar } from "notistack";
@@ -79,8 +79,7 @@ const Roster = () => {
                     />
                 </Box>
                 <Box sx={{ paddingLeft: "16px", width: "100px" }}>
-                    <Button
-                        variant="outlined"
+                    <AsyncButton
                         onClick={async () => {
                             try {
                                 await navigator.clipboard.writeText(
@@ -98,7 +97,7 @@ const Roster = () => {
                         }}
                     >
                         Copy
-                    </Button>
+                    </AsyncButton>
                 </Box>
             </Box>
             <ItemList height={"auto"}>

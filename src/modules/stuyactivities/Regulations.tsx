@@ -29,7 +29,7 @@ const Regulations = () => {
             <div className={"flex flex-row sm:mx-5 justify-center"}>
                 <div className={"w-1/4 sticky top-20 h-96 sm:block hidden"}>
                     <h4 className={"mb-3"}>Table of Contents</h4>
-                    <ul className={"opacity-75 space-y-1"}>
+                    <ul className={"space-y-1"}>
                         <li>
                             <p>
                                 <a href="#general">General Guidance</a>
@@ -37,12 +37,12 @@ const Regulations = () => {
                         </li>
                         <li>
                             <p>
-                                <a href="#online">Online Meetings</a>
+                                <a href="#activity">Activity Meetings</a>
                             </p>
                         </li>
                         <li>
                             <p>
-                                <a href="#activity">Activity Meetings</a>
+                                <a href="#online">Online Meetings</a>
                             </p>
                         </li>
                         <li>
@@ -131,8 +131,57 @@ const Regulations = () => {
                         immediate suspension and charter revocation.
                         <br />
                         <br />
-                        Finally, each club must maintain at least ten official
-                        members, not counting faculty advisors.
+                        Finally, every Activity must maintain at least ten
+                        official members, not counting faculty advisors.
+                        Features such as scheduling meetings and creating posts
+                        are only available to Activities with at least ten
+                        members.
+                        <br />
+                        <br />
+                        Any violation of the Clubs & Pubs Regulations may result
+                        in a strike unless otherwise noted; three
+                        strikes—regardless of cause—revoke the charter and
+                        cannot be appealed.{" "}
+                    </p>
+
+                    <h4 className={"mb-3"} id={"activity"}>
+                        Activity Meetings
+                    </h4>
+                    <p className={"mb-10"}>
+                        All meetings are subject to audit by an SU Auditor, who
+                        reports to the directors of the SU Clubs & Pubs
+                        department.
+                        <br />
+                        <br />
+                        Meetings must remain orderly and respectful. Complaints
+                        by staff or SU Auditors concerning inappropriate
+                        behavior—such as fighting, roughhousing, discriminatory
+                        remarks, or any breach of the Code of Conduct or
+                        Chancellor’s Regulations—may lead to immediate
+                        suspension.
+                        <br />
+                        <br />
+                        For events or meetings off school premises, the
+                        registered faculty advisor must contact
+                        clubpub@stuysu.org and COSA Mr. Polazzo
+                        (MPolazz@schools.nyc.gov, Room 260) at least one week in
+                        advance with full event details and must attend the
+                        entire event alongside the faculty advisor for the
+                        Activity. The correspondence should detail the date,
+                        location, paperwork, number of people attending,
+                        Activity leader(s) and faculty advisor names for the
+                        event.
+                        <br />
+                        <br />
+                        Activities must vacate the building by 5:00 PM unless
+                        accompanied by a registered faculty advisor. SMARTBoards
+                        may not be used during meetings, and media carts may be
+                        borrowed only when a faculty advisor signs them in and
+                        out. Flyers or advertisements may not be posted until a
+                        charter is approved; all flyers must be removed within a
+                        week after the event, and any flyer deemed
+                        inappropriate—or placed near escalators—will be removed
+                        without notice.
                     </p>
 
                     <h4 className={"mb-3"} id={"online"}>
@@ -147,50 +196,8 @@ const Regulations = () => {
                         misconduct that violates the Code of Conduct, the
                         meeting must end immediately and the incident must be
                         reported to MPolazz@schools.nyc.gov and
-                        clubpub@stuysu.org.
-                    </p>
-
-                    <h4 className={"mb-3"} id={"activity"}>
-                        Activity Meetings
-                    </h4>
-                    <p className={"mb-10"}>
-                        All meetings are subject to audit by an SU Auditor, who
-                        reports to the directors of the SU Clubs & Pubs
-                        department. Any violation of meeting rules results in a
-                        strike unless otherwise noted; three strikes—regardless
-                        of type—revoke the charter and cannot be appealed.{" "}
-                        <br />
-                        <br />
-                        Meetings must remain orderly and respectful. Complaints
-                        by staff or SU Auditors concerning inappropriate
-                        behavior—such as fighting, roughhousing, discriminatory
-                        remarks, or any breach of the Code of Conduct or
-                        Chancellor’s Regulations—may lead to immediate
-                        suspension.
-                        <br />
-                        <br />
-                        For events or meetings off school premises, the
-                        registered faculty advisor must contact
-                        clubpub@stuysu.org, COSA Mr. Polazzo
-                        (MPolazz@schools.nyc.gov, Room 260), and Assistant
-                        Principal Mr. Moran (BMoran@schools.nyc.gov, Room 103)
-                        at least one week in advance with full event details and
-                        must attend the entire event alongside the faculty
-                        advisor for the Activity. The correspondence should
-                        detail the date, location, paperwork, number of people
-                        attending, Activity leader(s) and faculty advisor names
-                        for the event.
-                        <br />
-                        <br />
-                        Activities must vacate the building by 5:00 PM unless
-                        accompanied by a registered faculty advisor. SMARTBoards
-                        may not be used during meetings, and media carts may be
-                        borrowed only when a faculty advisor signs them in and
-                        out. Flyers or advertisements may not be posted until a
-                        charter is approved; all flyers must be removed within a
-                        week after the event, and any flyer deemed
-                        inappropriate—or placed near escalators—will be removed
-                        without notice.
+                        clubpub@stuysu.org. Failure to report such incidents may
+                        result in immediate charter revocation.
                     </p>
 
                     <h4 className={"mb-3"} id={"reservations"}>
@@ -200,8 +207,11 @@ const Regulations = () => {
                         All Activities must reserve a room to be able to hold a
                         meeting. Rooms must be reserved on Epsilon
                         StuyActivities, which operates on a first‑come,
-                        first‑served basis, and no Activity is guaranteed a
-                        particular room.
+                        first‑served basis.
+                        <span className={"important"}>
+                            {" "}
+                            No Activity is guaranteed a particular room.
+                        </span>
                         <br />
                         <br />
                         Long‑term reservations require an email request to
@@ -215,11 +225,11 @@ const Regulations = () => {
                         representative if no suitable room is available.
                         Reserving non‑classroom facilities—such as the
                         cafeteria, auditorium, or lecture halls—requires the
-                        faculty advisor to email clubpub@stuysu.org, Mr.
-                        Polazzo, and Mr. Moran at least one week ahead with full
-                        justification and logistics. Guest speakers may enter
-                        the building only after all listed parties approve the
-                        request and School Safety Agents are notified.
+                        faculty advisor to email clubpub@stuysu.org and Mr.
+                        Polazzo at least one week ahead with full justification
+                        and logistics. Guest speakers may enter the building
+                        only after all listed parties approve the request and
+                        School Safety Agents are notified.
                     </p>
 
                     <h4 className={"mb-3"} id={"funding"}>
@@ -258,7 +268,7 @@ const Regulations = () => {
                         return all items to SU storage at year‑end; items are
                         reissued the next year if the Activity still exists,
                         otherwise the SU retains them. First violations trigger
-                        a warning unless severe; a second infraction allows the
+                        a strike unless severe; a second infraction allows the
                         Budget Department to withdraw funding and suspend the
                         Activity. Any misuse of funds results in immediate
                         suspension and charter revocation. Funding rules may be
@@ -337,8 +347,9 @@ const Regulations = () => {
                     <p className={"mb-10"}>
                         ANY ACTIVITY THAT DOES NOT COMPLY WITH THESE RULES WILL
                         NOT BE CHARTERED. THE STUYVESANT STUDENT UNION RESERVES
-                        THE RIGHT TO SUSPEND ANY ACTIVITY THAT FAILS TO FOLLOW
-                        THESE REGULATIONS WITHOUT PRIOR NOTICE.
+                        THE RIGHT TO SUSPEND, ISSUE STRIKES TO, OR REVOKE THE
+                        CHARTER OF ANY ACTIVITY THAT FAILS TO FOLLOW THESE
+                        REGULATIONS WITHOUT PRIOR NOTICE.
                     </p>
                 </div>
             </div>
