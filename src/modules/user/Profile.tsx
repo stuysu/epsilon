@@ -50,7 +50,7 @@ const MEDALS: Medal[] = [
     },
     {
         key: "twentythree",
-        title: "23 Everywhere",
+        title: "Big 23",
         description:
             "Awarded to those who have attended at least 23 Activity meetings in" +
             " a single school year, joined at least 2 Activities, and signed up for at least 3 Opportunities.",
@@ -87,8 +87,24 @@ const MEDALS: Medal[] = [
         key: "bug",
         title: "The Exterminator",
         description:
-            "Awarded to  users who reported a bug within Epsilon via GitHub that received a fix.",
+            "Awarded to users who reported a bug within Epsilon via GitHub that received a fix. Thank you for making Epsilon better!",
         img: `${PUBLIC_URL}/achievements/bugfinder.png`,
+        category: "Participation",
+    },
+    {
+        key: "connector",
+        title: "The Connector",
+        description:
+            "Successfully invite 10 users to an Activity through the Send Invite feature. Keep going!",
+        img: `${PUBLIC_URL}/achievements/connector.png`,
+        category: "Participation",
+    },
+    {
+        key: "plug",
+        title: "The Plug",
+        description:
+            "Successfully invite 30 users to an Activity to achieve 100 total members through the Send Invite feature. That's about a tenth of the grade!",
+        img: `${PUBLIC_URL}/achievements/plug.png`,
         category: "Participation",
     },
 ];
@@ -142,13 +158,13 @@ const Profiles = () => {
     };
 
     const MedalGrid = ({ items }: { items: Medal[] }) => (
-        <div className="flex flex-wrap bg-layer-1 rounded-lg">
+        <div className="flex flex-wrap bg-layer-1 rounded-lg overflow-hidden">
             {items.map((m) => (
                 <button
                     key={m.key}
                     type="button"
                     onClick={() => openMedalDialog(m)}
-                    className="w-48 max-sm:w-32 rounded-lg overflow-hidden hover:bg-layer-2 transition-colors"
+                    className="w-48 max-sm:w-32 overflow-hidden hover:bg-layer-2 transition-colors"
                     aria-label={m.title}
                     title={m.title}
                 >
