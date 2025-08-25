@@ -9,6 +9,7 @@ module.exports = {
                 "inter-variable",
                 "sans-serif",
             ],
+            mono: ["source-code-pro", "monospace"],
         },
 
         extend: {

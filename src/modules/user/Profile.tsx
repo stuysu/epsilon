@@ -1,14 +1,120 @@
-import { Box, Typography } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import UserContext from "../../contexts/UserContext";
 import LoginGate from "../../components/ui/content/LoginGate";
 import { supabase } from "../../lib/supabaseClient";
 import { PUBLIC_URL } from "../../config/constants";
+import UserDialog from "../../components/ui/overlays/UserDialog";
+import Divider from "../../components/ui/Divider";
+
+type Category = "Exclusive Series" | "Accolades" | "Venturer" | "Participation";
+
+type Medal = {
+    key: string;
+    title: string;
+    description: string;
+    img: string;
+    category: Category;
+};
+
+const MEDALS: Medal[] = [
+    {
+        key: "clubpub",
+        title: "Clubs & Pubs Exclusive",
+        description:
+            "Awarded to members of the Clubs & Pubs division of the Student Union.",
+        img: `${PUBLIC_URL}/achievements/moderator.png`,
+        category: "Exclusive Series",
+    },
+    {
+        key: "epsilon",
+        title: "Epsilon Team Exclusive",
+        description: "Awarded to current and past members of the Epsilon team.",
+        img: `${PUBLIC_URL}/achievements/epsilon.png`,
+        category: "Exclusive Series",
+    },
+    {
+        key: "leader",
+        title: "Activity Leader Exclusive",
+        description:
+            "Awarded to Activity leaders participating in the Clubs and Pubs Leaders' Union of Business.",
+        img: `${PUBLIC_URL}/achievements/leader.png`,
+        category: "Exclusive Series",
+    },
+
+    {
+        key: "founder",
+        title: "Founder's Honor",
+        description: "Awarded to the original creators of Epsilon.",
+        img: `${PUBLIC_URL}/achievements/special.png`,
+        category: "Accolades",
+    },
+    {
+        key: "twentythree",
+        title: "23 Everywhere",
+        description:
+            "Awarded to those who have attended at least 23 Activity meetings in" +
+            " a single school year, joined at least 2 Activities, and signed up for at least 3 Opportunities.",
+        img: `${PUBLIC_URL}/achievements/23.png`,
+        category: "Accolades",
+    },
+
+    {
+        key: "guided",
+        title: "Guided Venturer",
+        description:
+            "Awarded to users who have spent 5,000 hours since joining Epsilon.",
+        img: `${PUBLIC_URL}/achievements/five_thousand.png`,
+        category: "Venturer",
+    },
+    {
+        key: "extraordinary",
+        title: "Extraordinary Venturer",
+        description:
+            "Awarded to users who have spent 10,000 hours since joining Epsilon.",
+        img: `${PUBLIC_URL}/achievements/ten_thousand.png`,
+        category: "Venturer",
+    },
+
+    {
+        key: "amender",
+        title: "The Amender",
+        description:
+            "Awarded to the administrators of an Activity who made a successful amendment to their Activity's charter.",
+        img: `${PUBLIC_URL}/achievements/editor.png`,
+        category: "Participation",
+    },
+    {
+        key: "bug",
+        title: "The Exterminator",
+        description:
+            "Awarded to  users who reported a bug within Epsilon via GitHub that received a fix.",
+        img: `${PUBLIC_URL}/achievements/bugfinder.png`,
+        category: "Participation",
+    },
+];
+
+const SECTIONS: Category[] = [
+    "Exclusive Series",
+    "Accolades",
+    "Venturer",
+    "Participation",
+];
+
+const SECTION_DESCRIPTIONS: Record<Category, string> = {
+    "Exclusive Series":
+        "Reserved for members of specific leadership divisions.",
+    Accolades: "Given for unique accomplishments and milestones.",
+    Venturer: "These medals are granted based on your Epsilon Passport age.",
+    Participation:
+        "Participation medals celebrate the ones who contribute to those around them.",
+};
 
 const Profiles = () => {
     const user = useContext(UserContext);
-    const [fourDigitId, setFourDigitId] = useState<Number | null>(null);
-    const [showPointsPopup, setShowPointsPopup] = useState(false);
+    const [fourDigitId, setFourDigitId] = useState<number | null>(null);
+
+    const [dialogOpen, setDialogOpen] = useState(false);
+    const [activeMedal, setActiveMedal] = useState<Medal | null>(null);
 
     useEffect(() => {
         const fetchID = async () => {
@@ -16,233 +122,114 @@ const Profiles = () => {
                 .from("fourdigitids")
                 .select("value")
                 .maybeSingle();
-            if (error) console.log(error);
-            else if (data) setFourDigitId(data.value as Number);
+            if (error) {
+                console.log(error);
+            } else if (data) {
+                setFourDigitId(Number(data.value));
+            }
         };
         fetchID();
     }, [user]);
 
-    return (
-        <LoginGate sx={{ width: "100%", paddingLeft: "20px" }}>
-            <Box sx={{ padding: "40px" }}>
-                <p>My Epsilon Profile</p>
-                <div
-                    className={
-                        "flex flex-row justify-between relative items-start"
-                    }
+    const openMedalDialog = (medal: Medal) => {
+        setActiveMedal(medal);
+        setDialogOpen(true);
+    };
+
+    const closeMedalDialog = () => {
+        setDialogOpen(false);
+        setActiveMedal(null);
+    };
+
+    const MedalGrid = ({ items }: { items: Medal[] }) => (
+        <div className="flex flex-wrap bg-layer-1 rounded-lg">
+            {items.map((m) => (
+                <button
+                    key={m.key}
+                    type="button"
+                    onClick={() => openMedalDialog(m)}
+                    className="w-48 max-sm:w-32 rounded-lg overflow-hidden hover:bg-layer-2 transition-colors"
+                    aria-label={m.title}
+                    title={m.title}
                 >
-                    <h1>
-                        {user.first_name + " " + user.last_name}
-                        {user.is_faculty ? (
-                            <i
-                                className={
-                                    "text-green-600 bx bx-check-shield relative top-0.5 left-1"
-                                }
-                            ></i>
-                        ) : (
-                            ""
-                        )}
-                    </h1>
-                    <div
-                        style={{
-                            position: "relative",
-                            display: "inline-block",
-                        }}
-                        onMouseEnter={() => setShowPointsPopup(true)}
-                        onMouseLeave={() => setShowPointsPopup(false)}
-                    >
-                        <div className={"relative bottom-1"}>
-                            <h1 className={"text-accent"}>
-                                <span
-                                    style={{
-                                        textDecoration: "underline",
-                                        cursor: "pointer",
-                                    }}
-                                >
-                                    Points
-                                </span>{" "}
-                                <i
-                                    className={
-                                        "bx bx-tada bx-loader-circle relative top-1"
-                                    }
-                                ></i>
-                            </h1>
-                        </div>
-                        {showPointsPopup && (
-                            <div
-                                className={
-                                    "w-72 bg-blurLight backdrop-blur-2xl p-5 absolute right-0 top-16 rounded-lg shadow-module z-50"
-                                }
-                            >
-                                <p>Stay tuned for points!</p>
-                            </div>
-                        )}
-                    </div>
-                </div>
-                <Typography width="100%" sx={{ fontFamily: "monospace" }}>
-                    Grade: {user.grade + "th" || "No Grade"}
-                </Typography>
-                <div
-                    className={
-                        "bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50"
-                    }
-                ></div>
-                <Typography width="100%" sx={{ fontFamily: "monospace" }}>
-                    Email: {user.email || "No Email"}
-                </Typography>
-                <div
-                    className={
-                        "bg-neutral-600 w-full h-px mb-1.5 mt-1 opacity-50"
-                    }
-                ></div>
-                {fourDigitId && (
-                    <Typography width="100%" sx={{ fontFamily: "monospace" }}>
-                        Epsilon ID: {String(fourDigitId).padStart(4, "0")}
-                    </Typography>
-                )}
+                    <img
+                        alt={m.title}
+                        src={m.img}
+                        className="cursor-pointer select-none"
+                    />
+                </button>
+            ))}
+        </div>
+    );
+
+    return (
+        <LoginGate sx={{ width: "100%" }}>
+            <div className={"m-12"}>
+                <p>My Epsilon Passport</p>
+                <h1>
+                    {user.first_name + " " + user.last_name}
+                    {user.is_faculty ? (
+                        <i
+                            className={
+                                "text-green-600 bx bx-check-shield relative top-0.5 left-1"
+                            }
+                        />
+                    ) : (
+                        ""
+                    )}
+                </h1>
+
+                <p className={"mt-6 font-mono"}>
+                    Grade: {user.grade ? `${user.grade}th` : "No Grade"}
+                </p>
+                <Divider />
+                <p className={"font-mono"}>Email: {user.email || "No Email"}</p>
+                <Divider />
+                <p className={"font-mono"}>
+                    Passport ID:{" "}
+                    {fourDigitId == null
+                        ? "SUPPORT"
+                        : String(fourDigitId).padStart(4, "0")}
+                </p>
+
                 <img
                     src={`${PUBLIC_URL}/taglines/medals.svg`}
                     className={"w-64 mb-3 mt-16"}
                     alt={"Medals of Honor"}
-                ></img>
-                <p className={"mb-5"}>
+                />
+                <p className={"mb-6"}>
                     Medals are coming soon to Epsilon. Preview them below!
                 </p>
 
-                <div className="flex flex-col -ml-7">
-                    <div
-                        className={
-                            "my-4 flex flex-row items-center border border-divider rounded-lg"
-                        }
-                    >
-                        <img
-                            alt=""
-                            src={`${PUBLIC_URL}/achievements/moderator.png`}
-                            className={"w-36"}
-                        ></img>
-
-                        <div>
-                            <h4>The Presider</h4>
-                            <Typography variant={"body1"}>
-                                Awarded to members of the Epsilon team and the
-                                Clubs & Pubs division of the Student Union.
-                            </Typography>
-                        </div>
-                    </div>
-
-                    <div
-                        className={
-                            "my-4 flex flex-row items-center border border-divider rounded-lg"
-                        }
-                    >
-                        <img
-                            alt=""
-                            src={`${PUBLIC_URL}/achievements/leader.png`}
-                            className={"w-36"}
-                        ></img>
-
-                        <div>
-                            <h4>The Leader</h4>
-                            <Typography variant={"body1"}>
-                                Awarded to members of the Clubs and Pubs Leaders
-                                Union of Business.
-                            </Typography>
-                        </div>
-                    </div>
-
-                    <div
-                        className={
-                            "my-4 flex flex-row items-center border border-divider rounded-lg"
-                        }
-                    >
-                        <img
-                            alt=""
-                            src={`${PUBLIC_URL}/achievements/special.png`}
-                            className={"w-36"}
-                        ></img>
-
-                        <div>
-                            <h4>The Founder</h4>
-                            <Typography variant={"body1"}>
-                                Awarded to the founders of Epsilon.
-                            </Typography>
-                        </div>
-                    </div>
-
-                    <div
-                        className={
-                            "my-4 flex flex-row items-center border border-divider rounded-lg"
-                        }
-                    >
-                        <img
-                            alt=""
-                            src={`${PUBLIC_URL}/achievements/five_thousand.png`}
-                            className={"w-36"}
-                        ></img>
-
-                        <div>
-                            <h4>The Guided</h4>
-                            <Typography variant={"body1"}>
-                                Awarded to users who have accumulated more than
-                                5,000{" "}
-                                <i
-                                    className={
-                                        "bx bx-loader-circle bx-tada relative top-px"
-                                    }
-                                ></i>
-                                .
-                            </Typography>
-                        </div>
-                    </div>
-
-                    <div
-                        className={
-                            "my-4 flex flex-row items-center border border-divider rounded-lg"
-                        }
-                    >
-                        <img
-                            alt=""
-                            src={`${PUBLIC_URL}/achievements/ten_thousand.png`}
-                            className={"w-36"}
-                        ></img>
-
-                        <div>
-                            <h4>The Determined</h4>
-                            <p>
-                                Awarded to users who have accumulated more than
-                                10,000{" "}
-                                <i
-                                    className={
-                                        "bx bx-loader-circle bx-tada relative top-px"
-                                    }
-                                ></i>
-                                .
+                {SECTIONS.map((section, idx) => {
+                    const items = MEDALS.filter((m) => m.category === section);
+                    if (!items.length) return null;
+                    return (
+                        <div key={section} className="mb-8">
+                            <h4>{section}</h4>
+                            <p className="mb-4">
+                                {SECTION_DESCRIPTIONS[section]}
                             </p>
+                            <MedalGrid items={items} />
+                            {idx !== SECTIONS.length - 1 && (
+                                <Divider className="my-6" />
+                            )}
                         </div>
-                    </div>
+                    );
+                })}
+            </div>
 
-                    <div
-                        className={
-                            "my-4 flex flex-row items-center border border-divider rounded-lg"
-                        }
-                    >
-                        <img
-                            alt=""
-                            src={`${PUBLIC_URL}/achievements/editor.png`}
-                            className={"w-36"}
-                        ></img>
-
-                        <div>
-                            <h4>The Amender</h4>
-                            <Typography variant={"body1"}>
-                                Awarded to the administrators of an Activity who
-                                have made a successful amendment to their
-                                Activity's charter.
-                            </Typography>
-                        </div>
-                    </div>
-                </div>
-            </Box>
+            <UserDialog
+                open={dialogOpen}
+                onClose={closeMedalDialog}
+                title={activeMedal?.title ?? ""}
+                description={activeMedal?.description ?? ""}
+                confirmText="Share Medal"
+                cancelText="Close"
+                onConfirm={() => {}}
+                onCancel={() => {}}
+                imageSrc={activeMedal?.img}
+            />
         </LoginGate>
     );
 };

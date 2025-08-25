@@ -1,7 +1,6 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { AnimatePresence, motion } from "framer-motion";
 import AsyncButton from "../buttons/AsyncButton";
-import Divider from "../Divider";
 import React from "react";
 
 export default function UserDialog({
@@ -14,6 +13,7 @@ export default function UserDialog({
     children,
     confirmText = "Confirm",
     cancelText = "Cancel",
+    imageSrc,
 }: {
     title: string;
     description?: string;
@@ -24,7 +24,10 @@ export default function UserDialog({
     children?: React.ReactNode;
     confirmText?: string;
     cancelText?: string;
+    imageSrc?: string;
 }) {
+    const hasImage = Boolean(imageSrc);
+
     return (
         <Dialog.Root
             open={open}
@@ -74,6 +77,18 @@ export default function UserDialog({
                                         mass: 0.6,
                                     }}
                                 >
+                                    {hasImage && (
+                                        <>
+                                            <img
+                                                src={imageSrc}
+                                                className={
+                                                    "absolute w-32 -left-3 -top-14"
+                                                }
+                                            />
+                                            <div className={"h-10"}></div>
+                                        </>
+                                    )}
+
                                     {title && (
                                         <Dialog.Title>
                                             <h3 className={"mb-6"}>{title}</h3>
@@ -90,7 +105,7 @@ export default function UserDialog({
                                         <div className="mt-4">{children}</div>
                                     )}
 
-                                    <Divider className="my-5" />
+                                    <div className="h-12" />
 
                                     <div className="flex justify-end gap-3">
                                         <AsyncButton

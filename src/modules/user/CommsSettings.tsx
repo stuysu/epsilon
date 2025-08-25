@@ -139,7 +139,8 @@ const CommsSettings = () => {
                 <div className={"mb-6"}>
                     <h1>Communications</h1>
                     <p>
-                        Manage your email preferences for each organization you're part of.
+                        Manage your email preferences for each organization
+                        you're part of.
                     </p>
                     <Divider />
                 </div>
@@ -151,22 +152,21 @@ const CommsSettings = () => {
                                 key={membership.id}
                                 className={"flex flex-row justify-between mb-4"}
                             >
-                                <div className={"flex flex-col gap-1"}><h4>
-                                    {membership.organization_name}
-                                </h4>
-                                    <p>
-                                        ID: {membership.organization_id}
-                                    </p></div>
+                                <div className={"flex flex-col gap-1"}>
+                                    <h4>{membership.organization_name}</h4>
+                                    <p>ID: {membership.organization_id}</p>
+                                </div>
                                 <Switch.Root
                                     checked={membership.allow_notifications}
                                     onCheckedChange={() =>
-                                        handleToggle(membership.id, membership.allow_notifications)
+                                        handleToggle(
+                                            membership.id,
+                                            membership.allow_notifications,
+                                        )
                                     }
                                     className="relative h-6 w-11 cursor-pointer rounded-full bg-layer-3 transition-colors data-[state=checked]:bg-blue"
                                 >
-                                    <Switch.Thumb
-                                        className="hover:scale-110 block h-5 w-5 translate-x-0.5 rounded-full bg-typography-1 shadow transition-transform data-[state=checked]:translate-x-[22px] ease-in-out"
-                                    />
+                                    <Switch.Thumb className="hover:scale-110 block h-5 w-5 translate-x-0.5 rounded-full bg-typography-1 shadow transition-transform data-[state=checked]:translate-x-[22px] ease-in-out" />
                                 </Switch.Root>
                             </div>
                             <Divider />

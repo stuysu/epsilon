@@ -14,6 +14,7 @@ import { useSnackbar } from "notistack";
 import { ThemeContext } from "../../../contexts/ThemeProvider";
 import { PUBLIC_URL } from "../../../config/constants";
 import { isStuyActivitiesPath, topNavItems } from "../../../config/routes";
+import Divider from "../Divider";
 
 const linkStyle: CSSProperties = {
     color: "inherit",
@@ -200,9 +201,9 @@ const NavBar: FC = () => {
                                         fontVariationSettings: "'wght' 700",
                                     }}
                                     className="cursor-pointer transition-colors hover:text-typography-3"
-                                    onClick={() => navigate("/profile")}
+                                    onClick={() => navigate("/passport")}
                                 >
-                                    My Profile
+                                    My Epsilon Passport
                                 </p>
                                 <p
                                     style={{
@@ -222,11 +223,12 @@ const NavBar: FC = () => {
                                 >
                                     Communications
                                 </p>
+                                <Divider />
                                 <p
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
-                                    className="cursor-pointer transition-[filter] text-red hover:brightness-150"
+                                    className="cursor-pointer transition-[filter] text-red hover:brightness-75"
                                     onClick={signOut}
                                 >
                                     Sign Out
