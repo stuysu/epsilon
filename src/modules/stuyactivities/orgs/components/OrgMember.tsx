@@ -31,7 +31,7 @@ const OrgMember = ({
     return (
         <div
             className={
-                "flex flex-row items-center justify-between flex-wrap bg-layer-2 px-4"
+                "flex flex-row items-center justify-between flex-wrap bg-layer-2 pr-4 pl-3"
             }
         >
             <div className={"h-16 w-fit flex gap-3 items-center"}>
@@ -49,7 +49,7 @@ const OrgMember = ({
                     </Avatar.Fallback>
                 </Avatar.Root>
 
-                <div className={"flex flex-col pt-1"}>
+                <div className={"flex flex-col"}>
                     <h4>{`${first_name} ${last_name}`}</h4>
                     <p>{<>{email}</>}</p>
                 </div>

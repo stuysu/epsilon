@@ -1,4 +1,3 @@
-import { Box } from "@mui/material";
 import LoginButton from "../buttons/LoginButton";
 import React, { useContext } from "react";
 import UserContext from "../../../contexts/UserContext";
@@ -12,7 +11,7 @@ const LoginGate = ({ page, children, sx }: Props): React.JSX.Element => {
     const user: UserContextType = useContext(UserContext);
 
     if (!page) page = "access this page";
-    if (user.signed_in) return <Box sx={sx}>{children}</Box>;
+    if (user.signed_in) return <div style={sx}>{children}</div>;
     return (
         <div
             className={
