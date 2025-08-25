@@ -165,14 +165,14 @@ const AdminMember = ({
                     is_faculty={is_faculty}
                 />
             </div>
-            <div className={"px-3 bg-layer-3 py-[18.5px]"}>
+            <div className={"px-3 bg-layer-3 py-[18.5px] flex w-24"}>
                 {(isCreator ||
                     role === "MEMBER" ||
                     role === "ADVISOR" ||
                     userId === user.id) && (
                     <div onClick={handleEdit}>
                         <p>
-                            <i className={"bx bx-pencil bx-sm"}></i>
+                            <i className={"bx bx-pencil bx-sm hover:opacity-75 cursor-pointer"}></i>
                         </p>
                     </div>
                 )}
@@ -183,7 +183,7 @@ const AdminMember = ({
                             <p>
                                 <i
                                     className={
-                                        "bx bx-user-x bx-sm ml-3 text-red"
+                                        "bx bx-user-x bx-sm ml-3 text-red hover:opacity-75 cursor-pointer"
                                     }
                                 ></i>
                             </p>
@@ -224,7 +224,12 @@ const AdminMember = ({
                             value={editState.role}
                             onChange={handleSelect}
                             displayEmpty
-                            fullWidth
+                            MenuProps={{
+                                disablePortal: true,
+                                anchorOrigin: { vertical: 'center', horizontal: 'left' },
+                                PaperProps: { sx: { mt: "-180px", ml: "-12vw" } },
+                            }}
+                            // Temporary fix for menu being off center. migrate to radix.
                         >
                             <MenuItem value={"MEMBER"}>Member</MenuItem>
                             <MenuItem value={"ADVISOR"}>Advisor</MenuItem>
