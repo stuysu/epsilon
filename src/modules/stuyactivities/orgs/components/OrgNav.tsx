@@ -9,6 +9,7 @@ type LinkItem = { to: string; display: string };
 const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const organization = useContext<OrgContextType>(OrgContext);
     const user = useContext<UserContextType>(UserContext);
+    const pendingMembers = organization.memberships?.filter((m) => !m.active) || [];
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -34,7 +35,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
 
     const adminLinks: LinkItem[] = [
         { to: `${main}/admin/roster`, display: "Roster" },
-        { to: `${main}/admin/join-requests`, display: "Join Requests" },
+        { to: `${main}/admin/join-requests`, display: `Join Requests (${pendingMembers?.length})` },
         { to: `${main}/admin/scheduler`, display: "Scheduler" },
         { to: `${main}/admin/attendance`, display: "Attendance" },
         { to: `${main}/admin/posts`, display: "Posts" },
