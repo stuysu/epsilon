@@ -13,7 +13,6 @@ import NavBar from "../components/ui/navigation/NavBar";
 import AboutIndex from "./about";
 import Regulations from "./stuyactivities/Regulations";
 import Support from "./stuyactivities/Support";
-import UnaffiliatedRoomReservation from "./stuyactivities/UnaffiliatedRoomReservation";
 import SubNavBar from "../components/ui/navigation/SubNavBar";
 import Arista from "./arista";
 import { ThemeContext } from "../contexts/ThemeProvider";
@@ -84,10 +83,6 @@ const Pages = () => {
                     <Route path={"/passport"} Component={Profile} />
                     <Route path={"/create"} Component={Create} />
                     <Route path={"/charter"} Component={Charter} />
-                    <Route
-                        path={`/unaffiliated-room-reservation`}
-                        Component={UnaffiliatedRoomReservation}
-                    />
                     <Route path={"/about"} Component={AboutIndex} />
                     <Route path={"/meetings"} Component={CalendarIndex} />
                     <Route path={"/rules"} Component={Regulations} />

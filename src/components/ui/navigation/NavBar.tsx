@@ -184,7 +184,7 @@ const NavBar: FC = () => {
                         {!user?.signed_in ? (
                             <p
                                 style={{ fontVariationSettings: "'wght' 700" }}
-                                className="cursor-pointer transition-colors hover:text-neutral-300"
+                                className="cursor-pointer transition-colors hover:text-typography-3"
                                 onClick={() => navigate("/")}
                             >
                                 <i

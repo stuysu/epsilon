@@ -1,5 +1,4 @@
 import React from "react";
-import { Typography } from "@mui/material";
 import AsyncButton from "../../components/ui/buttons/AsyncButton";
 import { PUBLIC_URL } from "../../config/constants";
 
@@ -7,26 +6,20 @@ const ConfirmJoin = () => {
     return (
         <div
             className={
-                "w-full flex-col flex justify-center items-center h-[70vh]"
+                "w-full flex-col flex justify-center items-center h-[70vh] p-3"
             }
         >
             <img
-                src={`${PUBLIC_URL}/achievements/five.png`}
+                src={`${PUBLIC_URL}/achievements/placeholder.png`}
                 alt="Confirm Join"
                 className="w-64"
             ></img>
-            <Typography variant="body1" align="center" mb={2}>
+            <p>
                 You have been invited to join
-            </Typography>
-            <Typography
-                variant="h1"
-                align="center"
-                mb={5}
-                mx={3}
-                maxWidth={"500px"}
-            >
+            </p>
+            <h1 className="mb-10 text-center">
                 Stuyvesant Placeholder Association
-            </Typography>
+            </h1>
             <AsyncButton>Join Now</AsyncButton>
         </div>
     );

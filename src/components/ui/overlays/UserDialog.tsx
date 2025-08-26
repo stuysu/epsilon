@@ -82,7 +82,7 @@ export default function UserDialog({
                                             <img
                                                 src={imageSrc}
                                                 className={
-                                                    "absolute w-32 -left-3 -top-14"
+                                                    "absolute w-32 -left-2 -top-14"
                                                 }
                                             />
                                             <div className={"h-10"}></div>

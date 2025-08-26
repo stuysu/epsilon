@@ -124,11 +124,11 @@ const Index = () => {
                 title: "the original epsilon team, 2024-2025",
                 groups: [
                     {
-                        role: "interface design & development",
+                        role: "design engineer",
                         names: ["Will Zhang"],
                     },
                     {
-                        role: "core programming",
+                        role: "programming",
                         names: ["David Chen", "Rahul Deb", "Randy Sim"],
                     },
                     { role: "management", names: ["Nathaniel Moy"] },
