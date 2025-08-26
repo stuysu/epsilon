@@ -285,7 +285,7 @@ const NavBar: FC = () => {
                             onMouseEnter={() => setIsHovered(true)}
                             onClick={() => {
                                 if (item.external && (item as any).url) {
-                                    window.location.href = (item as any).url!;
+                                    window.open((item as any).url!, "_blank");
                                 } else {
                                     navigate(item.path);
                                 }
