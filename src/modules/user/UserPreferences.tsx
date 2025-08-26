@@ -15,9 +15,10 @@ const UserPreferences = () => {
                 <p>Make Epsilon yours.</p>
                 <Divider />
 
-                <div className={"flex flex-col pb-6 pt-3 bg-bg sticky top-0"}>
-                    <h2>Display Theme</h2>
-                    <p>Define the visual look of Epsilon.</p>
+                <div className={"flex flex-col sticky top-0"}>
+                    <div className={"bg-bg pb-4 pt-3 "}><h2>Display Theme</h2>
+                        <p>Define the visual look of Epsilon.</p></div>
+                    <div className="bg-gradient-to-b from-bg to-transparent w-full h-4" />
                 </div>
 
                 <RadioGroup.Root

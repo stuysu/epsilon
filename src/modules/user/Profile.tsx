@@ -122,7 +122,7 @@ const SECTION_DESCRIPTIONS: Record<Category, string> = {
     Accolades: "Given for unique accomplishments and milestones.",
     Venturer: "These medals are granted based on your Epsilon Passport age.",
     Participation:
-        "Participation medals celebrate the ones who contribute to those around them.",
+        "Participation medals celebrate the ones who contribute to the Stuy community.",
 };
 
 const Profiles = () => {

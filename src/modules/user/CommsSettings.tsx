@@ -196,7 +196,7 @@ const CommsSettings = () => {
                                 ></i>
                                 <div className={"flex flex-col gap-1"}>
                                     <h4>Epsilon Notices</h4>
-                                    <p>Critical communications</p>
+                                    <p>Critical Communications</p>
                                 </div>
                             </div>
                             <Switch.Root

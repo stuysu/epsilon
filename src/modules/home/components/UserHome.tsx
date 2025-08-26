@@ -190,7 +190,7 @@ const UserHome = () => {
                     </div>
                 </div>
 
-                <div className="flex flex-col">
+                <div className="flex flex-col max-sm:mt-6">
                     <div className={"relative w-full mb-14 group"}>
                         <div className={"relative z-10"}>
                             <ItemList
