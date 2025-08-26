@@ -10,10 +10,16 @@ const UserPreferences = () => {
 
     return (
         <LoginGate page={"adjust your preferences"}>
-            <div className="m-12 max-sm:mb-32">
+            <div className={"sm:m-12 m-6"}>
                 <h1>Preferences</h1>
+                <p>Make Epsilon yours.</p>
                 <Divider />
-                <h2 className={"mb-4"}>Display Theme</h2>
+
+                <div className={"flex flex-col pb-6 pt-3 bg-bg sticky top-0"}>
+                    <h2>Display Theme</h2>
+                    <p>Define the visual look of Epsilon.</p>
+                </div>
+
                 <RadioGroup.Root
                     className="flex flex-col gap-10"
                     value={mode}
@@ -24,14 +30,14 @@ const UserPreferences = () => {
                         value="dark"
                         className="flex gap-2 cursor-pointer"
                     >
-                        <div className="w-5 h-5 mt-3 rounded-full border border-typography-3 flex items-center justify-center">
+                        <div className="min-w-5 h-5 mt-3 rounded-full border border-typography-3 flex items-center justify-center">
                             <RadioGroup.Indicator className="w-3 h-3 rounded-full bg-accent" />
                         </div>
                         <div>
                             <h4 className={"mt-1 text-left"}>
                                 Tranquility Base Hotel & Casino
                             </h4>
-                            <p className={"mb-3"}>
+                            <p className={"mb-3 text-left"}>
                                 Our default dark theme, perfect for a focused
                                 experience with a little bit of pop.
                             </p>
@@ -47,12 +53,12 @@ const UserPreferences = () => {
                         value="light"
                         className="flex gap-2 cursor-pointer"
                     >
-                        <div className="w-5 h-5 mt-3 rounded-full border border-typography-3 flex items-center justify-center">
+                        <div className="min-w-5 h-5 mt-3 rounded-full border border-typography-3 flex items-center justify-center">
                             <RadioGroup.Indicator className="w-3 h-3 rounded-full bg-accent" />
                         </div>
                         <div>
                             <h4 className={"mt-1 text-left"}>Swimming</h4>
-                            <p className={"mb-3"}>
+                            <p className={"mb-3 text-left"}>
                                 Our new light mode inspired by simplicity, with
                                 reduced visual noise all around.
                             </p>
@@ -68,12 +74,12 @@ const UserPreferences = () => {
                         value="system"
                         className="flex gap-2 cursor-pointer"
                     >
-                        <div className="w-5 h-5 mt-3 rounded-full border border-typography-3 flex items-center justify-center">
+                        <div className="min-w-5 h-5 mt-3 rounded-full border border-typography-3 flex items-center justify-center">
                             <RadioGroup.Indicator className="w-3 h-3 rounded-full bg-accent" />
                         </div>
                         <div>
                             <h4 className={"mt-1 text-left"}>Automatic</h4>
-                            <p className={"mb-3"}>
+                            <p className={"mb-3 text-left"}>
                                 Follow your system's theme preference.
                             </p>
                             <img
@@ -88,14 +94,14 @@ const UserPreferences = () => {
                         value="dark-hc"
                         className="flex gap-2 cursor-pointer"
                     >
-                        <div className="w-5 h-5 mt-3 rounded-full border border-typography-3 flex items-center justify-center">
+                        <div className="min-w-5 h-5 mt-3 rounded-full border border-typography-3 flex items-center justify-center">
                             <RadioGroup.Indicator className="w-3 h-3 rounded-full bg-accent" />
                         </div>
                         <div>
                             <h4 className={"mt-1 text-left"}>
                                 Turn On the Bright Lights
                             </h4>
-                            <p className={"mb-3"}>
+                            <p className={"mb-3 text-left"}>
                                 A jet-black, high-contrast theme designed for
                                 visibility.
                             </p>
@@ -111,7 +117,7 @@ const UserPreferences = () => {
                         value="orange"
                         className="flex gap-2 cursor-pointer"
                     >
-                        <div className="w-5 h-5 mt-3 rounded-full border border-typography-3 flex items-center justify-center">
+                        <div className="min-w-5 h-5 mt-3 rounded-full border border-typography-3 flex items-center justify-center">
                             <RadioGroup.Indicator className="w-3 h-3 rounded-full bg-accent" />
                         </div>
                         <div>
@@ -119,7 +125,7 @@ const UserPreferences = () => {
                                 Everything You've Come to Expect
                                 <i className={"bx ml-1 bx-test-tube"}></i>
                             </h4>
-                            <p className={"mb-3"}>
+                            <p className={"mb-3 text-left"}>
                                 An unapologetically vibrant theme with baroque
                                 motifs. Funsies only.
                             </p>

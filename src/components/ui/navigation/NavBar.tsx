@@ -151,9 +151,9 @@ const NavBar: FC = () => {
                 </Box>
 
                 {/* User dropdown */}
-                <div className="pointer-events-auto absolute sm:relative flex flex-row justify-end sm:top-1 -top-20 sm:right-0 right-8">
+                <div className="pointer-events-auto absolute sm:relative flex flex-row justify-end sm:top-1 -top-10 sm:right-0 right-3">
                     <div
-                        className="flex cursor-pointer flex-row items-center justify-center gap-2 rounded-lg bg-layer-1 pl-1.5 pr-1.5 shadow-control h-10"
+                        className="flex cursor-pointer flex-row items-center justify-center gap-2 rounded-lg bg-bg sm:bg-layer-1 pl-1.5 pr-1.5 shadow-control h-10"
                         onClick={() => setDrawerOpen(!drawerOpen)}
                     >
                         <Avatar
@@ -166,19 +166,19 @@ const NavBar: FC = () => {
                                 : "Guest"}
                         </p>
                         <i
-                            className={`text-typography-2 bx bx-chevron-down bx-sm hidden sm:inline-block pr-1 transition-transform duration-200 ${drawerOpen ? "bx-flip-vertical" : ""}`}
+                            className={`text-typography-2 bx bx-chevron-down bx-sm inline-block pr-1 transition-transform duration-200 ${drawerOpen ? "bx-flip-vertical" : ""}`}
                         />
                     </div>
 
                     {/* Drawer */}
                     <div
-                        className={`absolute sm:top-14 top-auto sm:bottom-auto bottom-0 sm:right-auto right-16
-                        z-50 flex w-72 flex-col gap-2 rounded-lg bg-blurLight sm:bg-opacity-80 p-5
+                        className={`absolute sm:top-14 top-auto sm:bottom-auto bottom-12 sm:right-auto right-0
+                        z-50 flex w-72 flex-col gap-2 rounded-lg sm:bg-blurLight bg-bg p-5
                         backdrop-blur-xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)]
                         transition-all duration-300 ${
                             drawerOpen
                                 ? "translate-y-0 opacity-100"
-                                : "pointer-events-none sm:-translate-y-3 max-sm:translate-x-5 opacity-0"
+                                : "pointer-events-none sm:-translate-y-3 translate-y-3 opacity-0"
                         }`}
                     >
                         {!user?.signed_in ? (

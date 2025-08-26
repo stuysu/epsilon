@@ -190,13 +190,17 @@ const OrgRouter = () => {
                         ></div>
                         <div className={`sm:hidden block mt-10`}></div>
                         <div
-                            className={`sm:sticky fixed cursor-pointer ml-6 mt-2 top-0 z-40 flex`}
+                            className={`sm:sticky max-sm:top-0.5 fixed cursor-pointer ml-6 mt-2 top-3 z-40 flex`}
                             onClick={() => navigate("/stuyactivities")}
                         >
-                            <p className={"important relative"}>
+                            <p
+                                className={
+                                    "important relative -left-px hover:text-typography-1"
+                                }
+                            >
                                 <i
                                     className={
-                                        "bx bx-chevron-left bx-sm relative top-1.5"
+                                        "bx bx-chevron-left bx-sm relative top-[5.5px]"
                                     }
                                 ></i>
                                 Catalog

@@ -76,7 +76,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
         links.map((linkData, i) => (
             <button
                 key={i}
-                className={`border border-zinc-600/20 w-full text-left py-2 px-3 rounded-lg text-lg transition-colors bg-neutral-600 text-gray-200 bg-opacity-20`}
+                className={`important border border-zinc-600/20 w-full text-left py-2 px-3 rounded-lg text-lg transition-colors bg-neutral-600 text-gray-200 bg-opacity-20`}
                 onClick={() => {
                     navigate(linkData.to);
                     setMenuOpen(false);
@@ -91,7 +91,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
             <>
                 {/* Need to fix this later */}
                 <button
-                    className={`z-[100000] fixed cursor-pointer transition-colors text-gray-300 hover:text-gray-400 mr-4 top-5 right-0`}
+                    className={`z-[5001] fixed cursor-pointer transition-colors text-gray-300 hover:text-gray-400 mr-4 top-5 right-0`}
                     onClick={() => setMenuOpen(true)}
                 >
                     <span
@@ -106,7 +106,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                 </button>
 
                 {menuOpen && (
-                    <div className="overflow-scroll pb-10 -mx-5 fixed inset-0 flex flex-col items-center justify-start bg-black/70 backdrop-blur-3xl">
+                    <div className="z-[5002] overflow-scroll pb-10 -mx-5 fixed inset-0 flex flex-col items-center justify-start bg-black/70 backdrop-blur-3xl">
                         <button
                             className="absolute top-4 right-14 text-3xl text-white font-bold"
                             onClick={() => setMenuOpen(false)}
@@ -114,7 +114,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                         >
                             <i
                                 className={
-                                    "bx bx-x bx-sm relative right-1 bottom-0.5"
+                                    "bx bx-x bx-sm relative -right-5 bottom-1.5"
                                 }
                             ></i>
                         </button>

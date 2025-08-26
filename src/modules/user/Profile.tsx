@@ -164,7 +164,7 @@ const Profiles = () => {
                     key={m.key}
                     type="button"
                     onClick={() => openMedalDialog(m)}
-                    className="w-48 max-sm:w-32 overflow-hidden hover:bg-layer-2 transition-colors"
+                    className="w-48 max-sm:w-32 overflow-hidden sm:hover:bg-layer-2 transition-colors"
                     aria-label={m.title}
                     title={m.title}
                 >
@@ -180,7 +180,7 @@ const Profiles = () => {
 
     return (
         <LoginGate sx={{ width: "100%" }}>
-            <div className={"m-12"}>
+            <div className={"sm:m-12 m-6"}>
                 <p>My Epsilon Passport</p>
                 <h1>
                     {user.first_name + " " + user.last_name}

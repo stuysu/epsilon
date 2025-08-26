@@ -60,7 +60,7 @@ const HelpItem = ({
 
 const Support = () => {
     return (
-        <div className={"p-10 max-sm:mb-32"}>
+        <div className={"m-12 max-sm:mb-32"}>
             <div
                 className={
                     "sm:hidden flex sm:justify-center items-center w-full h-48 sm:h-96"

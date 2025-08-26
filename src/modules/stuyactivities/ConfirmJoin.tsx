@@ -14,9 +14,7 @@ const ConfirmJoin = () => {
                 alt="Confirm Join"
                 className="w-64"
             ></img>
-            <p>
-                You have been invited to join
-            </p>
+            <p>You have been invited to join</p>
             <h1 className="mb-10 text-center">
                 Stuyvesant Placeholder Association
             </h1>

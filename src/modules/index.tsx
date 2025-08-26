@@ -67,7 +67,6 @@ const Pages = () => {
                         >
                             <NavBar />
                         </div>
-                        <div className="sm:hidden fixed bg-gradient-to-r to-bg from-transparent z-[1500] h-[50px] w-14 top-0 right-0 pointer-events-none" />
                         <div className={"max-sm:h-8"}>
                             <SubNavBar />
                         </div>

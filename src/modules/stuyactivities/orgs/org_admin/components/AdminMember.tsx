@@ -173,7 +173,11 @@ const AdminMember = ({
                     userId === user.id) && (
                     <div onClick={handleEdit}>
                         <p>
-                            <i className={"bx bx-pencil bx-sm hover:opacity-75 cursor-pointer"}></i>
+                            <i
+                                className={
+                                    "bx bx-pencil bx-sm hover:opacity-75 cursor-pointer"
+                                }
+                            ></i>
                         </p>
                     </div>
                 )}
@@ -195,7 +199,9 @@ const AdminMember = ({
                 imageSrc={`${PUBLIC_URL}/symbols/warning.png`}
                 open={kickConfirmOpen}
                 title={`Kick ${first_name} ${last_name}?`}
-                description={"This action can't be reversed. This member will have to request to join again."}
+                description={
+                    "This action can't be reversed. This member will have to request to join again."
+                }
                 onConfirm={handleKick}
                 onClose={() => setKickConfirmOpen(false)}
             />
@@ -228,8 +234,13 @@ const AdminMember = ({
                             displayEmpty
                             MenuProps={{
                                 disablePortal: true,
-                                anchorOrigin: { vertical: 'center', horizontal: 'left' },
-                                PaperProps: { sx: { mt: "-180px", ml: "-12vw" } },
+                                anchorOrigin: {
+                                    vertical: "center",
+                                    horizontal: "left",
+                                },
+                                PaperProps: {
+                                    sx: { mt: "-180px", ml: "-12vw" },
+                                },
                             }}
                             // Temporary fix for menu being off center. migrate to radix.
                         >

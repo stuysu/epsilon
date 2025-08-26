@@ -135,26 +135,33 @@ const CommsSettings = () => {
 
     return (
         <LoginGate>
-            <div className={"min-h-dvh m-12"}>
-                <div className={"mb-6"}>
-                    <h1>Communications</h1>
-                    <p>
-                        Manage your email preferences for each organization
-                        you're part of.
-                    </p>
-                    <Divider />
-                </div>
+            <div className={"sm:m-12 m-6 min-h-dvh"}>
+                <h1>Communications</h1>
+                <p>Manage your email preferences.</p>
+                <Divider />
 
                 <div>
                     {memberships.map((membership) => (
                         <div>
                             <div
                                 key={membership.id}
-                                className={"flex flex-row justify-between mb-4"}
+                                className={
+                                    "flex flex-row justify-between my-4 text-typography-1"
+                                }
                             >
-                                <div className={"flex flex-col gap-1"}>
-                                    <h4>{membership.organization_name}</h4>
-                                    <p>ID: {membership.organization_id}</p>
+                                <div
+                                    className={
+                                        "flex flex-row items-center gap-2"
+                                    }
+                                >
+                                    <i className={"bx bx-group bx-lg"}></i>
+                                    <div className={"flex flex-col gap-1"}>
+                                        <h4>{membership.organization_name}</h4>
+                                        <p>
+                                            Activity (
+                                            {membership.organization_id})
+                                        </p>
+                                    </div>
                                 </div>
                                 <Switch.Root
                                     checked={membership.allow_notifications}
@@ -169,9 +176,41 @@ const CommsSettings = () => {
                                     <Switch.Thumb className="hover:scale-110 block h-5 w-5 translate-x-0.5 rounded-full bg-white/90 shadow transition-transform data-[state=checked]:translate-x-[22px] ease-in-out" />
                                 </Switch.Root>
                             </div>
-                            <Divider />
+                            <div className={"ml-14"}>
+                                <Divider />
+                            </div>
                         </div>
                     ))}
+                    <div>
+                        <div
+                            key={"general"}
+                            className={
+                                "flex flex-row justify-between my-4 text-typography-1"
+                            }
+                        >
+                            <div className={"flex flex-row items-center gap-2"}>
+                                <i
+                                    className={
+                                        "bx bx-bell bx-lg right-0.5 relative"
+                                    }
+                                ></i>
+                                <div className={"flex flex-col gap-1"}>
+                                    <h4>Epsilon Notices</h4>
+                                    <p>Critical communications</p>
+                                </div>
+                            </div>
+                            <Switch.Root
+                                checked={true}
+                                disabled={true}
+                                className="relative h-6 w-11 rounded-full bg-blue opacity-50"
+                            >
+                                <Switch.Thumb className="block h-5 w-5 rounded-full bg-white/90 shadow translate-x-[22px]" />
+                            </Switch.Root>
+                        </div>
+                        <div className={"ml-14"}>
+                            <Divider />
+                        </div>
+                    </div>
                 </div>
             </div>
         </LoginGate>
