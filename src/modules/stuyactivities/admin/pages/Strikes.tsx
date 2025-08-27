@@ -100,33 +100,24 @@ const Strikes = () => {
     };
 
     return (
-        <Box minHeight={"70vh"}>
-            <Typography variant="h1" align="center">
+        <div className={"w-full p-4 sm:p-12"}>
+            <h1>
                 Strikes
-            </Typography>
-            <Box
-                sx={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                    marginTop: "20px",
-                }}
-            >
+            </h1>
                 <TextField
-                    sx={{ width: "300px" }}
+                    sx={{ width: "300px", marginTop: "1rem" }}
                     label="Search Organizations"
                     value={searchInput}
                     onChange={(e) => setSearchInput(e.target.value)}
                 />
-            </Box>
             {searchInput.length < 3 ? (
-                <Typography align="center" sx={{ mt: 2 }}>
+                <p className={"mt-3"}>
                     Keep typing to find an Activity.
-                </Typography>
+                </p>
             ) : filteredOrgs.length > 20 ? (
-                <Typography align="center" sx={{ mt: 2 }}>
+                <p>
                     Too many activities, try a more specific query.
-                </Typography>
+                </p>
             ) : filteredOrgs.length > 0 ? (
                 <Box
                     sx={{
@@ -174,9 +165,9 @@ const Strikes = () => {
                                 flexWrap: "wrap",
                             }}
                         >
-                            <Typography variant="h3" width="100%" mb={3}>
+                            <h3>
                                 Give Strike to {orgName}
-                            </Typography>
+                            </h3>
                             <TextField
                                 sx={{ width: "100%" }}
                                 label="Reason"
@@ -260,7 +251,7 @@ const Strikes = () => {
                     </Box>
                 </>
             )}
-        </Box>
+        </div>
     );
 };
 

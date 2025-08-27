@@ -137,7 +137,7 @@ const AdminRoom = ({
 
     return (
         <div
-            className={"w-96 flex flex-wrap p-7 m-4 bg-neutral-800 rounded-md"}
+            className={"w-96 flex flex-wrap p-7 m-4 bg-layer-1 rounded-md"}
         >
             <div className={"w-full flex"}>
                 <TextField

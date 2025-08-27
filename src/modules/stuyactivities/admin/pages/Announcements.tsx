@@ -78,122 +78,105 @@ const Announcements = () => {
     };
 
     return (
-        <Box minHeight={"60vh"}>
-            <Typography variant="h1" width="100%" align="center">
+        <div className={"w-full p-4 sm:p-12"}>
+            <h1>
                 StuyActivities Announcements
-            </Typography>
-            <Box
-                sx={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                    flexWrap: "wrap",
-                }}
-            >
-                <Typography
-                    variant="h2"
-                    width="100%"
-                    align="center"
-                    mb={5}
-                    color="secondary"
+            </h1>
+            <h2>
+                Create an announcement to be broadcasted to everyone.
+            </h2>
+            <div className={"w-full flex"}><Box sx={{ width: "500px" }}>
+                <TextField
+                    sx={{ width: "100%" }}
+                    multiline
+                    rows={3}
+                    value={content}
+                    label="Content"
+                    onChange={(e) => setContent(e.target.value)}
+                    onKeyDown={(e) => {
+                        if (e.key === "Enter" && e.ctrlKey) {
+                            e.preventDefault();
+                            createAnnouncement();
+                        }
+                    }}
+                />
+                <AsyncButton
+                    sx={{ width: "100%", marginTop: "10px" }}
+                    variant="contained"
+                    onClick={createAnnouncement}
                 >
-                    Create an announcement to be broadcasted to everyone.
-                </Typography>
-                <Box sx={{ width: "500px" }}>
-                    <TextField
-                        sx={{ width: "100%" }}
-                        multiline
-                        rows={3}
-                        value={content}
-                        label="Content"
-                        onChange={(e) => setContent(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter" && e.ctrlKey) {
-                                e.preventDefault();
-                                createAnnouncement();
-                            }
-                        }}
-                    />
-                    <AsyncButton
-                        sx={{ width: "100%", marginTop: "10px" }}
-                        variant="contained"
-                        onClick={createAnnouncement}
-                    >
-                        Create
-                    </AsyncButton>
-                </Box>
+                    Create
+                </AsyncButton>
             </Box>
-            <Box
-                sx={{
-                    width: "100%",
-                    marginTop: "20px",
-                    display: "flex",
-                    flexWrap: "wrap",
-                    justifyContent: "center",
-                }}
-            >
-                {announcements
-                    .slice(0, visibleAnnouncements)
-                    .map((announcement, i) => {
-                        return (
-                            <Box
-                                key={i}
-                                sx={{
-                                    width: "100%",
-                                    display: "flex",
-                                    flexWrap: "wrap",
-                                    justifyContent: "center",
-                                    marginTop: "10px",
-                                }}
-                            >
-                                <Card
+                <Box
+                    sx={{
+                        width: "100%",
+                        display: "flex",
+                        flexWrap: "wrap",
+                        justifyContent: "center",
+                    }}
+                >
+                    {announcements
+                        .slice(0, visibleAnnouncements)
+                        .map((announcement, i) => {
+                            return (
+                                <Box
+                                    key={i}
                                     sx={{
-                                        maxWidth: "600px",
                                         width: "100%",
                                         display: "flex",
-                                        padding: "10px",
-                                        alignItems: "center",
+                                        flexWrap: "wrap",
+                                        justifyContent: "center",
                                     }}
                                 >
-                                    <DisplayLinks text={announcement.content} />
-                                    <AsyncButton
-                                        onClick={() =>
-                                            deleteAnnouncement(announcement.id)
-                                        }
+                                    <Card
                                         sx={{
-                                            width: "15%",
-                                            marginLeft: "20px",
-                                            height: "40px",
+                                            maxWidth: "600px",
+                                            width: "100%",
+                                            display: "flex",
+                                            padding: "10px",
+                                            alignItems: "center",
                                         }}
-                                        variant="contained"
                                     >
-                                        Delete
-                                    </AsyncButton>
-                                </Card>
-                            </Box>
-                        );
-                    })}
-                {visibleAnnouncements < announcements.length && (
-                    <Box
-                        sx={{
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "center",
-                            marginTop: "10px",
-                        }}
-                    >
-                        <AsyncButton
-                            variant="contained"
-                            onClick={() =>
-                                setVisibleAnnouncements((prev) => prev + 3)
-                            }
+                                        <DisplayLinks text={announcement.content} />
+                                        <AsyncButton
+                                            onClick={() =>
+                                                deleteAnnouncement(announcement.id)
+                                            }
+                                            sx={{
+                                                width: "15%",
+                                                marginLeft: "20px",
+                                                height: "40px",
+                                            }}
+                                            variant="contained"
+                                        >
+                                            Delete
+                                        </AsyncButton>
+                                    </Card>
+                                </Box>
+                            );
+                        })}
+                    {visibleAnnouncements < announcements.length && (
+                        <Box
+                            sx={{
+                                width: "100%",
+                                display: "flex",
+                                justifyContent: "center",
+                                marginTop: "10px",
+                            }}
                         >
-                            Show More
-                        </AsyncButton>
-                    </Box>
-                )}
-            </Box>
-        </Box>
+                            <AsyncButton
+                                variant="contained"
+                                onClick={() =>
+                                    setVisibleAnnouncements((prev) => prev + 3)
+                                }
+                            >
+                                Show More
+                            </AsyncButton>
+                        </Box>
+                    )}
+                </Box></div>
+        </div>
     );
 };
 
