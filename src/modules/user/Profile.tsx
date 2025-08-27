@@ -205,7 +205,7 @@ const Profiles = () => {
                 </h1>
 
                 <p className={"mt-6 font-mono"}>
-                    Grade: {user.grade ? `${user.grade}th` : "No Grade"}
+                    Grade: {user.grade ? `${user.grade}th` : "N/A"}
                 </p>
                 <Divider />
                 <p className={"font-mono"}>Email: {user.email || "No Email"}</p>
@@ -213,7 +213,7 @@ const Profiles = () => {
                 <p className={"font-mono"}>
                     Passport ID:{" "}
                     {fourDigitId == null
-                        ? "SUPPORT"
+                        ? "N/A"
                         : String(fourDigitId).padStart(4, "0")}
                 </p>
 
@@ -222,9 +222,11 @@ const Profiles = () => {
                     className={"w-64 mb-3 mt-16"}
                     alt={"Medals of Honor"}
                 />
-                <p className={"mb-6"}>
+                <p>
                     Medals are coming soon to Epsilon. Preview them below!
                 </p>
+
+                <div className={"mb-8"}><Divider /></div>
 
                 {SECTIONS.map((section, idx) => {
                     const items = MEDALS.filter((m) => m.category === section);

@@ -158,8 +158,7 @@ const CommsSettings = () => {
                                     <div className={"flex flex-col gap-1"}>
                                         <h4>{membership.organization_name}</h4>
                                         <p>
-                                            Activity (
-                                            {membership.organization_id})
+                                            Activity <span className={"font-mono"}>{membership.organization_id}</span>
                                         </p>
                                     </div>
                                 </div>

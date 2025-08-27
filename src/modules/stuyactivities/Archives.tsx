@@ -32,7 +32,8 @@ const Archives = () => {
                         href={
                             "https://docs.google.com/spreadsheets/d/1URqnVM9avoD5_oRvBzQXI1ghq4oWRLWMps58cvNCLc0/edit?usp=sharing"
                         }
-                        className="p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex items-center no-underline gap-4 hover:bg-layer-3 shadow-control"
+                        target="_blank"
+                        className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex items-center no-underline gap-4 hover:bg-layer-3 shadow-control"
                     >
                         <i className={"bx bx-box bx-md pt-1"}></i>
                         <div>
@@ -44,7 +45,8 @@ const Archives = () => {
                         href={
                             "https://docs.google.com/spreadsheets/d/1TyFnEPhY3gM-yRJKYDJkQSfHC6OsvC5ftkkoahjVcCU/edit?gid=485693778#gid=485693778"
                         }
-                        className="p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex items-center no-underline gap-4 hover:bg-layer-3 shadow-control"
+                        target="_blank"
+                        className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex items-center no-underline gap-4 hover:bg-layer-3 shadow-control"
                     >
                         <i className={"bx bx-box bx-md pt-1 text-typography-2"}></i>
                         <div>
