@@ -33,7 +33,7 @@ const RouteTabs = ({ tabs }: Props) => {
                     <Tabs.Trigger
                         key={tab.to}
                         value={tab.to}
-                        className={"px-2 py-3 data-[state=active]:text-white"}
+                        className={"text important px-2 py-3 data-[state=active]:text-typography-1 text-typography-3"}
                     >
                         {tab.icon && (
                             <i
@@ -41,7 +41,7 @@ const RouteTabs = ({ tabs }: Props) => {
                                 aria-hidden="true"
                             />
                         )}
-                        <span>{tab.label}</span>
+                        {tab.label}
                     </Tabs.Trigger>
                 ))}
             </Tabs.List>

@@ -61,7 +61,7 @@ const OrgApproval = ({
     return (
         <div className="m-10">
             <div className="mb-10 flex flex-col sm:flex-row justify-between items-center">
-                <Typography variant="h1">{org.name}</Typography>
+                <h1>{org.name}</h1>
                 <div>
                     <AsyncButton
                         variant="contained"
@@ -92,22 +92,16 @@ const OrgApproval = ({
             </div>
 
             <div className={"flex flex-col sm:flex-row gap-10"}>
-                <div className={"w-full"}>
-                    <Typography variant="h5" fontWeight={600}>
-                        Activity Name
-                    </Typography>
-                    <Typography variant="body2">{org.name}</Typography>
+                <div className={"w-full flex flex-col gap-2"}>
+                    <h4>Activity Name</h4>
+                    <p>{org.name}</p>
                     <Divider />
 
-                    <Typography variant="h5" fontWeight={600}>
-                        URL
-                    </Typography>
-                    <Typography variant="body2">{org.url}</Typography>
+                    <h4>URL</h4>
+                    <p className={"font-mono"}>{org.url}</p>
                     <Divider />
 
-                    <Typography variant="h5" fontWeight={600}>
-                        Picture
-                    </Typography>
+                    <h4>Picture</h4>
                     {org.picture ? (
                         <Avatar
                             src={org.picture}
@@ -119,125 +113,121 @@ const OrgApproval = ({
                     )}
                     <Divider />
 
-                    <Typography variant="h5" fontWeight={600}>
-                        Origin Story
-                    </Typography>
-                    <Typography variant="body2">{org.mission}</Typography>
+                    <h4>Origin Story</h4>
+                    <p>{org.mission}</p>
                     <Divider />
 
-                    <Typography variant="h5" fontWeight={600}>
-                        Goals
-                    </Typography>
-                    <Typography variant="body2">{org.goals}</Typography>
+                    <h4>Goals</h4>
+                    <p>{org.goals}</p>
                     <Divider />
 
-                    <Typography variant="h5" fontWeight={600}>
+                    <h4>
                         Activity Description
-                    </Typography>
-                    <Typography variant="body2">{org.purpose}</Typography>
+                    </h4>
+                    <p>{org.purpose}</p>
                     <Divider />
 
-                    <Typography variant="h5" fontWeight={600}>
+                    <h4>
                         Appointment Procedures
-                    </Typography>
-                    <Typography variant="body2">
+                    </h4>
+                    <p>
                         {org.appointment_procedures}
-                    </Typography>
+                    </p>
                     <Divider />
 
-                    <Typography variant="h5" fontWeight={600}>
+                    <h4>
                         Uniqueness
-                    </Typography>
-                    <Typography variant="body2">{org.uniqueness}</Typography>
+                    </h4>
+                    <p>{org.uniqueness}</p>
                     <Divider />
 
-                    <Typography variant="h5" fontWeight={600}>
+                    <h4>
                         Returning Info
-                    </Typography>
-                    <Typography variant="body2">
+                    </h4>
+                    <p>
                         {org.is_returning
                             ? org?.returning_info || "NO INFO SUBMITTED"
                             : "Claims to not be a returning club."}
-                    </Typography>
+                    </p>
                     <Divider />
 
-                    <Typography variant="h5" fontWeight={600}>
+                    <h4>
                         Meeting Description
-                    </Typography>
-                    <Typography variant="body2">
+                    </h4>
+                    <p>
                         {org.meeting_description}
-                    </Typography>
+                    </p>
                     <Divider />
 
-                    <Typography variant="h5" fontWeight={600}>
+                    <h4>
                         Meeting Schedule
-                    </Typography>
-                    <Typography variant="body2">
+                    </h4>
+                    <p>
                         {org.meeting_schedule}
-                    </Typography>
+                    </p>
                     <Divider />
 
-                    <Typography variant="h5" fontWeight={600}>
+                    <h4>
                         Meeting Days
-                    </Typography>
-                    <Typography variant="body2">
+                    </h4>
+                    <p>
                         {org.meeting_days?.join(", ")}
-                    </Typography>
+                    </p>
                     <Divider />
 
-                    <Typography variant="h5" fontWeight={600}>
+                    <h4>
                         Commitment Level
-                    </Typography>
-                    <Typography variant="body2">
+                    </h4>
+                    <p>
                         {org.commitment_level}
-                    </Typography>
+                    </p>
                     <Divider />
 
-                    <Typography variant="h5" fontWeight={600}>
+                    <h4>
                         Keywords
-                    </Typography>
-                    <Typography variant="body2">
+                    </h4>
+                    <p className={"font-mono"}>
                         {org.keywords || "none"}
-                    </Typography>
+                    </p>
                     <Divider />
 
-                    <Typography variant="h5" fontWeight={600}>
+                    <h4>
                         Tags
-                    </Typography>
-                    <Typography variant="body2">
+                    </h4>
+                    <p>
                         {org.tags?.join(", ") || "none"}
-                    </Typography>
+                    </p>
                     <Divider />
 
-                    <Typography variant="h5" fontWeight={600}>
+                    <h4>
                         Clubs/Pubs Fair Interest
-                    </Typography>
-                    <Typography variant="body2">
-                        {org.fair ? "YES" : "NO"}
-                    </Typography>
+                    </h4>
+                    <p>
+                        {org.fair ? "Attending" : "Not Attending"}
+                    </p>
                     <Divider />
 
-                    <Typography variant="h5" fontWeight={600}>
-                        Creator:
-                    </Typography>
-                    <Typography variant="body2">
+                    <h4>
+                        Creator
+                    </h4>
+                    <p className={"font-mono"}>
                         {
                             org.memberships?.find((m) => m.role === "CREATOR")
                                 ?.users?.email
                         }
-                    </Typography>
+                    </p>
                     <Divider />
 
-                    <Typography variant="h5" fontWeight={600}>
+                    <h4>
                         Faculty Advisor
-                    </Typography>
-                    <Typography variant="body2">
+                    </h4>
+                    <p>
                         {org?.faculty_email || "N/A"}
-                    </Typography>
+                    </p>
                     <Divider />
                 </div>
 
-                <div className="max-h-[70vh] sticky top-32 w-full">
+                <div className="max-h-[70vh] sticky top-12 w-full mb-12">
                     <OrgChat organization_id={org.id as number} />
                 </div>
             </div>

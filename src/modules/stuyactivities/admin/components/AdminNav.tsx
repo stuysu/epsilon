@@ -4,8 +4,7 @@ import { Link } from "../index";
 const AdminNav = ({ links }: { links: Link[] }) => {
     return (
         <div
-            className="flex sticky -top-0.5 mt-4 pl-9 mb-10
-        bg-neutral-900 bg-opacity-80 backdrop-blur-xl border-y-neutral-50 border-opacity-10 border-y z-40"
+            className="sm:pl-4 w-screen mt-4 bg-blurDark backdrop-blur-xl border-y-divider border-y z-40"
         >
             <RouteTabs tabs={links} />
         </div>

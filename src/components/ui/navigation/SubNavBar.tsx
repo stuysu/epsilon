@@ -64,15 +64,12 @@ const SubNavBar: FC = () => {
                         onClick={() => navigate("/admin")}
                         className="inline-flex cursor-pointer whitespace-nowrap gap-1 text-yellow"
                     >
-                        <i className="bx bx-shield" />
-                        <Typography
-                            sx={{
-                                fontVariationSettings: "'wght' 700",
-                                color: "rgb(234 179 8 / var(--tw-text-opacity, 1))",
-                            }}
+                        <i className="bx bx-shield pt-px" />
+                        <p
+                            className="cursor-pointer whitespace-nowrap important text-yellow"
                         >
                             Admin Panel
-                        </Typography>
+                        </p>
                     </div>
                 )}
                 <div className="min-w-4" />

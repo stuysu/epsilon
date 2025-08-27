@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
-import { Avatar, Card, Divider, Typography } from "@mui/material";
+import { Avatar, Card } from "@mui/material";
+import Divider from "../../../../components/ui/Divider";
 
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
@@ -144,10 +145,10 @@ const OrgEditApproval = ({
     return (
         <div className="m-10">
             <div className="mb-10 flex flex-col sm:flex-row justify-between items-center">
-                <Typography variant="h1" width="100%">
-                    <span className={"text-green-600"}>Changes to</span>{" "}
+                <h1>
+                    <span className={"text-accent"}>Changes to</span>{" "}
                     {edit.organization_name}
-                </Typography>
+                </h1>
                 <div className={"flex flex-row w-min"}>
                     <AsyncButton
                         variant="contained"
@@ -184,9 +185,9 @@ const OrgEditApproval = ({
                         if (f2 === "picture") {
                             return (
                                 <>
-                                    <Typography variant="h5" fontWeight={600}>
+                                    <h4>
                                         {field}
-                                    </Typography>
+                                    </h4>
                                     <Avatar
                                         src={edit[f2] as string}
                                         alt={edit.organization_name}
@@ -201,20 +202,20 @@ const OrgEditApproval = ({
                                             .charAt(0)
                                             .toUpperCase()}
                                     </Avatar>
-                                    <Divider sx={{ margin: "10px" }} />
+                                    <Divider />
                                 </>
                             );
                         }
 
                         return (
                             <>
-                                <Typography variant="h5" fontWeight={600}>
+                                <h4>
                                     {orgFieldMap(field)}
-                                </Typography>
-                                <Typography variant="body2">
+                                </h4>
+                                <p>
                                     {`"${edit[f2]}"`}
-                                </Typography>
-                                <Divider sx={{ margin: "10px" }} />
+                                </p>
+                                <Divider />
                             </>
                         );
                     })}

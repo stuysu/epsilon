@@ -1,11 +1,9 @@
 import { useEffect, useState } from "react";
-import { Box, Typography } from "@mui/material";
 import OrgEditApproval from "../components/OrgEditApproval";
+import OrgBlock from "../../../../components/ui/OrgBlock";
 
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
-
-import PendingOrgCard from "../components/PendingOrgCard";
 
 const ApproveEdit = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -98,42 +96,24 @@ const ApproveEdit = () => {
     }
 
     return (
-        <Box minHeight={"70vh"}>
-            <Typography variant="h1" align="center">
+        <div className={"w-full p-12"}>
+            <h1 className={"mb-10"}>
                 Approve Edits
-            </Typography>
-            <Box
-                sx={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                    flexWrap: "wrap",
-                    padding: "10px",
-                    gap: "20px",
-                }}
-            >
-                {pendingEdits.map((edit, i) => {
+            </h1>
+            <>
+                <div className={"flex gap-3 flex-wrap"}>{pendingEdits.map((edit, i) => {
                     return (
-                        <Box
-                            key={i}
-                            sx={{
-                                width: "350px",
-                                display: "flex",
-                                justifyContent: "center",
-                                marginTop: "10px",
-                                marginBottom: "10px",
-                            }}
-                        >
-                            <PendingOrgCard
+                        <div onClick={() => setView(edit)}>
+                            <OrgBlock
                                 name={edit.organization_name}
+                                role_name={"Pending"}
                                 picture={edit.organization_picture || ""}
-                                onView={() => setView(edit)}
                             />
-                        </Box>
+                        </div>
                     );
-                })}
-            </Box>
-        </Box>
+                })}</div>
+            </>
+        </div>
     );
 };
 

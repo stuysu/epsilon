@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient";
-import { Box, Typography } from "@mui/material";
 
 import OrgApproval from "../components/OrgApproval";
 import { useSnackbar } from "notistack";
-import PendingOrgCard from "../components/PendingOrgCard";
+import OrgBlock from "../../../../components/ui/OrgBlock";
 
 const ApprovePending = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -87,40 +86,20 @@ const ApprovePending = () => {
     }
 
     return (
-        <Box minHeight={"70vh"}>
-            <Typography variant="h1" align="center">
-                Pending Organizations
-            </Typography>
-            <Box
-                sx={{
-                    width: "100%",
-                    display: "flex",
-                    gap: "20px",
-                    justifyContent: "center",
-                    flexWrap: "wrap",
-                    padding: "10px",
-                }}
-            >
+        <div className={"w-full p-4 sm:p-12"}>
+            <h1 className={"mb-10"}>Pending Organizations</h1>
+            <div className={"flex gap-3 flex-wrap"}>
                 {pendingOrgs.map((org, i) => (
-                    <Box
-                        key={i}
-                        sx={{
-                            width: "350px",
-                            display: "flex",
-                            justifyContent: "center",
-                            marginTop: "10px",
-                            marginBottom: "10px",
-                        }}
-                    >
-                        <PendingOrgCard
+                    <div onClick={() => setView(org)}>
+                        <OrgBlock
                             name={org.name}
+                            role_name={org.id?.toFixed()}
                             picture={org.picture || ""}
-                            onView={() => setView(org)}
                         />
-                    </Box>
+                    </div>
                 ))}
-            </Box>
-        </Box>
+            </div>
+        </div>
     );
 };
 

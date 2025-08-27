@@ -63,11 +63,6 @@ export const getLinks = (user: UserContextType) => {
             label: "Add User",
             icon: "bx-user-plus",
         },
-        {
-            to: "/",
-            label: "CTA (Coming Soon)",
-            icon: "bx-bell",
-        },
     ];
     if (VALENTINES) {
         navLinks.push(

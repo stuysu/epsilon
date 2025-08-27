@@ -6,7 +6,7 @@ type Props = {
     name?: Organization["name"];
     role?: Membership["role"];
     role_name: Membership["role_name"];
-    url: Organization["url"];
+    url?: Organization["url"];
     picture: Organization["picture"];
     force?: boolean;
 };
@@ -26,11 +26,14 @@ const OrgBlock = ({
     const navigate = useNavigate();
     const [imgLoaded, setImgLoaded] = useState(false);
 
+    const handleClick = () => {
+        if (!url) return;
+        force ? (window.location.href = `/${url}`) : navigate(`/${url}`);
+    };
+
     return (
         <div
-            onClick={() =>
-                force ? (window.location.href = `/${url}`) : navigate(`/${url}`)
-            }
+            onClick={url ? handleClick : undefined}
             style={{
                 cursor: "pointer",
                 display: "flex",
