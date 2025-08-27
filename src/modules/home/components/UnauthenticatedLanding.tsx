@@ -2,8 +2,7 @@ import { Box } from "@mui/material";
 import { PUBLIC_URL } from "../../../config/constants";
 
 import LoginButton from "../../../components/ui/buttons/LoginButton";
-import { useContext, useState } from "react";
-import { ThemeContext } from "../../../contexts/ThemeProvider";
+import { useState } from "react";
 import CatalogButton from "../../../components/ui/buttons/CatalogButton";
 
 const UnauthenticatedLanding = () => {

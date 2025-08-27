@@ -155,45 +155,47 @@ const AdminMember = ({
 
     return (
         <div className="w-full flex flex-nowrap items-center h-fit">
-            <div className={"w-full"}>
-                <OrgMember
-                    role={role}
-                    role_name={role_name}
-                    email={email}
-                    picture={picture}
-                    first_name={first_name}
-                    last_name={last_name}
-                    is_faculty={is_faculty}
-                />
-            </div>
-            <div className={"px-3 bg-layer-3 py-[18.5px] flex w-24"}>
-                {(isCreator ||
-                    role === "MEMBER" ||
-                    role === "ADVISOR" ||
-                    userId === user.id) && (
-                    <div onClick={handleEdit}>
-                        <p>
-                            <i
-                                className={
-                                    "bx bx-pencil bx-sm hover:opacity-75 cursor-pointer"
-                                }
-                            ></i>
-                        </p>
-                    </div>
-                )}
-
-                {userId !== user.id &&
-                    (isCreator || role === "MEMBER" || role === "ADVISOR") && (
-                        <div onClick={() => setKickConfirmOpen(true)}>
+            <div className={"w-full flex items-center bg-layer-2"}>
+                <div className={"w-full"}>
+                    <OrgMember
+                        role={role}
+                        role_name={role_name}
+                        email={email}
+                        picture={picture}
+                        first_name={first_name}
+                        last_name={last_name}
+                        is_faculty={is_faculty}
+                    />
+                </div>
+                <div className={"px-3 flex w-24"}>
+                    {(isCreator ||
+                        role === "MEMBER" ||
+                        role === "ADVISOR" ||
+                        userId === user.id) && (
+                        <div onClick={handleEdit}>
                             <p>
                                 <i
                                     className={
-                                        "bx bx-user-x bx-sm ml-3 text-red hover:opacity-75 cursor-pointer"
+                                        "bx bx-pencil bx-sm hover:opacity-75 cursor-pointer"
                                     }
                                 ></i>
                             </p>
                         </div>
                     )}
+
+                    {userId !== user.id &&
+                        (isCreator || role === "MEMBER" || role === "ADVISOR") && (
+                            <div onClick={() => setKickConfirmOpen(true)}>
+                                <p>
+                                    <i
+                                        className={
+                                            "bx bx-user-x bx-sm ml-3 text-red hover:opacity-75 cursor-pointer"
+                                        }
+                                    ></i>
+                                </p>
+                            </div>
+                        )}
+                </div>
             </div>
             <UserDialog
                 imageSrc={`${PUBLIC_URL}/symbols/warning.png`}

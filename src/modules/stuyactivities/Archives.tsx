@@ -27,7 +27,7 @@ const Archives = () => {
                 </h1>
             </div>
             <div className={"flex w-full justify-center"}>
-                <div className={"flex flex-col gap-5 w-full h-32 mb-96 max-w-3xl"}>
+                <div className={"flex flex-col gap-5 w-full h-32 mb-64 max-w-3xl"}>
                     <a
                         href={
                             "https://docs.google.com/spreadsheets/d/1URqnVM9avoD5_oRvBzQXI1ghq4oWRLWMps58cvNCLc0/edit?usp=sharing"

@@ -15,6 +15,7 @@ import ToggleChip from "../../../../components/ui/input/ToggleChip";
 import Divider from "../../../../components/ui/Divider";
 import OverviewList from "../../../../components/ui/lists/OverviewList";
 import UserDialog from "../../../../components/ui/overlays/UserDialog";
+import { PUBLIC_URL } from "../../../../config/constants";
 
 const Overview = () => {
     const navigate = useNavigate();
@@ -266,6 +267,7 @@ const Overview = () => {
                         </AsyncButton>
                         <UserDialog
                             title="Leave Organization?"
+                            imageSrc={`${PUBLIC_URL}/symbols/warning.png`}
                             description={`Are you sure you want to leave (or cancel your join request to) this organization? You will have to request to join again.`}
                             onConfirm={handleUserLeave}
                             onClose={handleUserStay}

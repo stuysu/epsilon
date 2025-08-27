@@ -30,7 +30,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
         { to: `${main}/meetings`, display: "Meetings" },
         { to: `${main}/members`, display: "Members" },
         { to: `${main}/audit`, display: "Audit" },
-        ...(membership ? [{ to: `${main}/stream`, display: "Stream" }] : []),
+        ...(membership?.active ? [{ to: `${main}/stream`, display: "Stream" }] : []),
     ];
 
     const adminLinks: LinkItem[] = [

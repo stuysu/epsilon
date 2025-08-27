@@ -133,7 +133,7 @@ const Support = () => {
                     icon="bx-pencil"
                     iconColor="text-orange-400"
                     title="My Charter update isn’t reflected."
-                    description="I submitted an edit request to an existing Charter, but it has not been reflected on the Activity page."
+                    description="I edited my Charter, but the changes have not been reflected on the Activity page."
                     content="Edit requests to existing charters need to be reviewed and approved by the Clubs & Pubs team before the changes appear on the Activity page. These approvals typically happen on a set day each week."
                 />
                 <Divider />

@@ -160,8 +160,8 @@ const UserHome = () => {
                 <h2 className={"-mt-1.5"}>Here's what's happening.</h2>
             </header>
 
-            <section className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-10 items-start">
-                <div className="max-sm:justify-center flex flex-wrap gap-1.5 sm:gap-2.5">
+            <section className="flex sm:flex-row flex-col gap-12 w-full">
+                <div className="justify-center gap-5 grid grid-cols-[auto] md:grid-cols-[auto_auto] lg:grid-cols-[auto_auto_auto]">
                     {user.memberships?.map((membership) => {
                         if (membership.active)
                             return (
@@ -189,8 +189,7 @@ const UserHome = () => {
                         <p>Join an Activity!</p>
                     </div>
                 </div>
-
-                <div className="flex flex-col max-sm:mt-6">
+                <div className="w-full max-w-3xl flex flex-col max-sm:mt-6">
                     <div className={"relative w-full mb-14 group"}>
                         <div className={"relative z-10"}>
                             <ItemList
