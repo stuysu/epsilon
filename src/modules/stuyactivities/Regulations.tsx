@@ -132,10 +132,10 @@ const Regulations = () => {
                         <br />
                         <br />
                         Finally, every Activity must maintain at least ten
-                        official members, not counting faculty advisors.
-                        Features such as scheduling meetings and creating posts
-                        are only available to Activities with at least ten
-                        members.
+                        official members, not counting faculty advisors, after
+                        each ClubPub fair. Features such as scheduling meetings
+                        and creating posts are only available to Activities with
+                        at least ten members.
                         <br />
                         <br />
                         Any violation of the Clubs & Pubs Regulations may result
