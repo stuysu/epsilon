@@ -36,7 +36,7 @@ const CharterLanding = () => {
                                 "flex justify-center items-center w-full h-full absolute top-0 left-0"
                             }
                         >
-                            <h1 className="max-lg:mt-14 w-5/6 sm:w-2/3 relative bottom-12 text-white/75 md:text-8xl text-4xl text-center max-w-4xl max-sm:leading-9 font-light">
+                            <h1 className="max-sm:pt-4 max-lg:mt-14 w-5/6 sm:w-2/3 relative bottom-12 text-white/75 md:text-8xl text-4xl text-center max-w-4xl max-sm:leading-9 font-light">
                                 {title.split(" ").map((word, i) => (
                                     <motion.span
                                         key={i}
