@@ -7,6 +7,7 @@ import { DayPicker } from "react-day-picker";
 import dayjs, { Dayjs } from "dayjs";
 import DaySchedule from "./components/DaySchedule";
 import LoginGate from "../../components/ui/content/LoginGate";
+import { Helmet } from "react-helmet";
 
 type CachedMeetings = {
     [date: string]: CalendarMeeting[];
@@ -109,6 +110,14 @@ const Index = () => {
 
     return (
         <LoginGate sx={{ width: "100%" }} page={"view the calendar"}>
+            <Helmet>
+                <title>Calendar - Epsilon</title>
+                <meta
+                    name="description"
+                    content="Browse Activities and Happenings at Stuyvesant High School."
+                />
+            </Helmet>
+
             <div
                 className={
                     "m-4 sm:m-12 flex items-start gap-8 min-h-screen max-md:flex-col"

@@ -2,12 +2,21 @@ import { motion } from "framer-motion";
 import React, { useContext } from "react";
 import { PUBLIC_URL } from "../../config/constants";
 import { ThemeContext } from "../../contexts/ThemeProvider";
+import { Helmet } from "react-helmet";
 
 const Arista = () => {
     const theme = useContext(ThemeContext);
 
     return (
         <section className={"min-h-screen m-12"}>
+            <Helmet>
+                <title>Arista - Epsilon</title>
+                <meta
+                    name="description"
+                    content="Join Arista, Stuyvesant High School’s premier honor society."
+                />
+            </Helmet>
+
             <div
                 className={
                     "flex sm:flex-row flex-col items-start justify-start gap-10"

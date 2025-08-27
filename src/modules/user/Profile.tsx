@@ -5,6 +5,7 @@ import { supabase } from "../../lib/supabaseClient";
 import { PUBLIC_URL } from "../../config/constants";
 import UserDialog from "../../components/ui/overlays/UserDialog";
 import Divider from "../../components/ui/Divider";
+import { Helmet } from "react-helmet";
 
 type Category = "Exclusive Series" | "Accolades" | "Venturer" | "Participation";
 
@@ -180,6 +181,14 @@ const Profiles = () => {
 
     return (
         <LoginGate sx={{ width: "100%" }}>
+            <Helmet>
+                <title>My Epsilon Passport</title>
+                <meta
+                    name="description"
+                    content="View your Epsilon profile and earned medals."
+                />
+            </Helmet>
+
             <div className={"sm:m-12 m-6"}>
                 <p>My Epsilon Passport</p>
                 <h1>

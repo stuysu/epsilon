@@ -1,6 +1,7 @@
 import React from "react";
 import Divider from "../../components/ui/Divider";
 import { AnimatePresence, motion } from "framer-motion";
+import { Helmet } from "react-helmet";
 
 const HelpItem = ({
     icon,
@@ -61,6 +62,13 @@ const HelpItem = ({
 const Support = () => {
     return (
         <div className={"m-12 max-sm:mb-32"}>
+            <Helmet>
+                <title>StuyActivities Support - Epsilon</title>
+                <meta
+                    name="description"
+                    content="Get help with StuyActivities questions and issues."
+                />
+            </Helmet>
             <div
                 className={
                     "sm:hidden flex sm:justify-center items-center w-full h-48 sm:h-96"
