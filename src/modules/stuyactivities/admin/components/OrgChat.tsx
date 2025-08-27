@@ -154,7 +154,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                 Department.
             </p>
             <div
-                className={"h-[500px] overflow-auto relative"}
+                className={"h-96 overflow-auto relative"}
                 ref={chatBoxRef}
             >
                 {messages.map((message) => {

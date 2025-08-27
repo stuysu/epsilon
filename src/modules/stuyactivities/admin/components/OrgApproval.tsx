@@ -227,7 +227,7 @@ const OrgApproval = ({
                     <Divider />
                 </div>
 
-                <div className="max-h-[70vh] sticky top-12 w-full mb-12">
+                <div className="h-fit sticky top-12 w-full mb-12">
                     <OrgChat organization_id={org.id as number} />
                 </div>
             </div>

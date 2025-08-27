@@ -46,10 +46,10 @@ const AddUser = () => {
     };
 
     return (
-        <div className={"h-screen"}>
-            <Typography variant="h1" width="100%" align="center">
+        <div className={"w-full p-4 sm:p-12"}>
+            <h1>
                 Add New User
-            </Typography>
+            </h1>
             <MultiPageForm
                 title=""
                 value={userData}
@@ -63,7 +63,7 @@ const AddUser = () => {
                     flexWrap: "wrap",
                 }}
             >
-                <FormPage title=" ">
+                <FormPage title="User Information">
                     <FormSection
                         sx={{
                             width: "100%",

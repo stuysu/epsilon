@@ -4,6 +4,8 @@ import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import OrgChat from "../components/OrgChat";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
+import SearchInput from "../../../../components/ui/input/SearchInput";
+import Divider from "../../../../components/ui/Divider";
 
 const SendMessage = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -44,36 +46,28 @@ const SendMessage = () => {
     }, [searchInput, allOrgs]);
 
     return (
-        <div className={"w-full p-4 sm:p-12"}>
+        <div className={"w-full p-4 sm:p-12 min-h-dvh flex flex-col gap-4"}>
             <h1>
                 Send Message
             </h1>
-            <TextField
-                sx={{ width: "300px", marginTop: "1rem" }}
-                label="Search Organizations"
+            <SearchInput
+                placeholder="Search Activities..."
                 value={searchInput}
-                onChange={(e) => setSearchInput(e.target.value)}
+                onChange={(e) => setSearchInput(e)}
             />
             {searchInput.length < 3 ? (
-                <p className={"mt-3"}>
+                <p>
                     Keep typing to find an Activity.
                 </p>
-            ) : filteredOrgs.length > 20 ? (
+            ) : filteredOrgs.length > 10 ? (
                 <p>
                     Too many activities, try a more specific query.
                 </p>
             ) : filteredOrgs.length > 0 ? (
-                <Box
-                    sx={{
-                        width: "100%",
-                        display: "flex",
-                        justifyContent: "center",
-                        marginTop: "10px",
-                        flexWrap: "wrap",
-                    }}
-                >
+                <div>
                     {filteredOrgs.map((org) => (
-                        <AsyncButton
+                        <div><a
+                            className={"important cursor-pointer"}
                             key={org.id}
                             onClick={() => {
                                 setOrgId(org.id);
@@ -81,12 +75,12 @@ const SendMessage = () => {
                                 setSearchInput(""); // Clear search input after selecting an org
                                 setFilteredOrgs([]); // Clear filtered orgs after selecting an org
                             }}
-                            sx={{ margin: "5px" }}
                         >
                             {org.name}
-                        </AsyncButton>
+                        </a>
+                            <Divider/></div>
                     ))}
-                </Box>
+                </div>
             ) : null}
             <Box
                 sx={{

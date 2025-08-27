@@ -177,8 +177,8 @@ const OrgEditApproval = ({
                     </AsyncButton>
                 </div>
             </div>
-            <div className={"flex flex-col sm:flex-row gap-1"}>
-                <Card sx={{ padding: "10px", minWidth: "40vw" }}>
+            <div className={"flex flex-col sm:flex-row gap-10"}>
+                <div className={"w-full flex flex-col gap-2"}>
                     {fields.map((field, i) => {
                         let f2: EditKey = field as EditKey;
 
@@ -210,7 +210,7 @@ const OrgEditApproval = ({
                         return (
                             <>
                                 <h4>
-                                    {orgFieldMap(field)}
+                                    {orgFieldMap(field)} <i className={"bx bx-refresh"}></i>
                                 </h4>
                                 <p>
                                     {`"${edit[f2]}"`}
@@ -219,9 +219,9 @@ const OrgEditApproval = ({
                             </>
                         );
                     })}
-                </Card>
+                </div>
 
-                <div className="max-h-[70vh] sticky top-32 min-w-[40vw]">
+                <div className="h-fit sticky top-12 w-full mb-12">
                     <OrgChat organization_id={edit.organization_id} />
                 </div>
             </div>

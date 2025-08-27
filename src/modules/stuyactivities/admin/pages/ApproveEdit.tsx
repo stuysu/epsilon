@@ -4,6 +4,7 @@ import OrgBlock from "../../../../components/ui/OrgBlock";
 
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
+import Divider from "../../../../components/ui/Divider";
 
 const ApproveEdit = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -97,11 +98,12 @@ const ApproveEdit = () => {
 
     return (
         <div className={"w-full p-12"}>
-            <h1 className={"mb-10"}>
+            <h1>
                 Approve Edits
             </h1>
-            <>
-                <div className={"flex gap-3 flex-wrap"}>{pendingEdits.map((edit, i) => {
+            <Divider />
+            <div className={"flex mt-8 gap-3 flex-wrap"}>
+                {pendingEdits.map((edit, i) => {
                     return (
                         <div onClick={() => setView(edit)}>
                             <OrgBlock
@@ -112,7 +114,6 @@ const ApproveEdit = () => {
                         </div>
                     );
                 })}</div>
-            </>
         </div>
     );
 };

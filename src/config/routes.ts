@@ -13,6 +13,7 @@ export const STUY_ACTIVITIES_PATHS = [
     "/admin/add-user",
     "/admin/announcements",
     "/admin/rooms",
+    "/admin/reserve",
 ] as const;
 
 export const isStuyActivitiesPath = (pathname: string) =>

@@ -4,6 +4,7 @@ import { supabase } from "../../../../lib/supabaseClient";
 import OrgApproval from "../components/OrgApproval";
 import { useSnackbar } from "notistack";
 import OrgBlock from "../../../../components/ui/OrgBlock";
+import Divider from "../../../../components/ui/Divider";
 
 const ApprovePending = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -87,8 +88,9 @@ const ApprovePending = () => {
 
     return (
         <div className={"w-full p-4 sm:p-12"}>
-            <h1 className={"mb-10"}>Pending Organizations</h1>
-            <div className={"flex gap-3 flex-wrap"}>
+            <h1>Pending Organizations</h1>
+            <Divider />
+            <div className={"flex mt-8 gap-3 flex-wrap"}>
                 {pendingOrgs.map((org, i) => (
                     <div onClick={() => setView(org)}>
                         <OrgBlock

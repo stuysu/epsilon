@@ -1,11 +1,9 @@
-import { Box, Divider, MenuItem, TextField, Typography } from "@mui/material";
-import { DatePicker, TimePicker } from "@mui/x-date-pickers";
+import { Box, Divider} from "@mui/material";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import AdminRoom from "../components/AdminRoom";
 import dayjs, { Dayjs } from "dayjs";
-import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 
 type ApiRoom = {
     id: number;
@@ -174,189 +172,20 @@ const Rooms = () => {
     };
 
     return (
-        <Box>
-            <Typography variant="h1" width="100%" align="center" mb={5}>
+        <div className={"w-full p-4 sm:p-12"}>
+            <h1>
                 Rooms
-            </Typography>
+            </h1>
 
             <Divider />
-            <Box
-                sx={{
-                    marginY: "20px",
-                    width: "100%",
-                    display: "flex",
-                    flexWrap: "wrap",
-                    justifyContent: "center",
-                    alignItems: "center",
-                    height: "auto",
-                    padding: "10px",
-                }}
-            >
-                <Typography variant="h2" width="100%" align="center">
-                    Force Reservation
-                </Typography>
-                <Typography variant="body1" width="100%" align="center" mb={3}>
-                    Reserve a room for an organization manually.
-                </Typography>
-                <Box
-                    sx={{
-                        width: "100%",
-                        display: "flex",
-                        justifyContent: "center",
-                    }}
-                >
-                    <TextField
-                        sx={{ width: "300px" }}
-                        label="Search Organizations"
-                        value={searchInput}
-                        onChange={(e) => setSearchInput(e.target.value)}
-                    />
-                </Box>
-                {filteredOrgs.length > 0 && (
-                    <Box
-                        sx={{
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "center",
-                            marginTop: "10px",
-                            flexWrap: "wrap",
-                        }}
-                    >
-                        {filteredOrgs.map((org) => (
-                            <AsyncButton
-                                key={org.id}
-                                onClick={async () => {
-                                    setForceOrgId(org.id);
-                                    setForceOrgName(org.name);
-                                    setSearchInput(""); // Clear search input after selecting an org
-                                    setFilteredOrgs([]); // Clear filtered orgs after selecting an org
-                                }}
-                                sx={{ margin: "5px" }}
-                            >
-                                {org.name}
-                            </AsyncButton>
-                        ))}
-                    </Box>
-                )}
-                {forceOrgId && (
-                    <Box
-                        sx={{
-                            maxWidth: "600px",
-                            width: "100%",
-                            marginTop: "10px",
-                        }}
-                    >
-                        <Typography
-                            variant="h4"
-                            width="100%"
-                            align={"center"}
-                            mt={3}
-                        >
-                            Force-reserving a meeting for {forceOrgName}
-                        </Typography>
-                        <DatePicker
-                            label="Meeting Day"
-                            value={startTime}
-                            onChange={(newStartTime) => {
-                                if (!newStartTime) return;
-
-                                setStartTime(newStartTime);
-
-                                // also change day of end time
-                                if (!endTime) {
-                                    setEndTime(newStartTime);
-                                } else {
-                                    setEndTime(
-                                        endTime
-                                            ?.year(newStartTime.year())
-                                            .month(newStartTime.month())
-                                            .date(newStartTime.date()),
-                                    );
-                                }
-                            }}
-                            sx={{
-                                width: "100%",
-                                marginTop: "10px",
-                                marginBottom: "10px",
-                            }}
-                        />
-                        <Box
-                            sx={{
-                                width: "100%",
-                                display: "flex",
-                                flexWrap: "nowrap",
-                                alignItems: "center",
-                            }}
-                        >
-                            <TimePicker
-                                label="Start"
-                                value={startTime}
-                                onChange={setStartTime}
-                                sx={{ marginRight: "10px" }}
-                            />
-
-                            <TimePicker
-                                label="End"
-                                value={endTime}
-                                onChange={setEndTime}
-                            />
-                            <TextField
-                                value={!loading ? String(forceRoomId) : ""}
-                                label="Room"
-                                select
-                                onChange={(event) =>
-                                    setForceRoomId(
-                                        Number(event.target.value) || undefined,
-                                    )
-                                }
-                                sx={{
-                                    width: "30%",
-                                    height: "60px",
-                                    marginLeft: "10px",
-                                }}
-                            >
-                                {allRooms.map((room) => (
-                                    <MenuItem
-                                        key={room.id}
-                                        value={String(room.id)}
-                                    >
-                                        {room.name}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
-                        </Box>
-                        <AsyncButton
-                            onClick={forceReserve}
-                            sx={{ width: "100%", marginTop: "10px" }}
-                            variant="outlined"
-                        >
-                            Force Reservation
-                        </AsyncButton>
-                    </Box>
-                )}
-            </Box>
-            <Divider />
-            <Typography
-                variant="h2"
-                width="100%"
-                align="center"
-                sx={{ marginY: "30px" }}
-            >
-                Manage Rooms
-            </Typography>
-            <Box
-                sx={{
-                    width: "100%",
-                    display: "flex",
-                    flexWrap: "wrap",
-                    justifyContent: "center",
-                }}
+            <div className={"flex mt-8 gap-3 flex-wrap"}
             >
                 <div
                     className={
                         "border-zinc-800 border-solid border-2 rounded-lg"
                     }
                 >
+                    <p className={"p-4"}>Create New Room</p>
                     <AdminRoom create onCreate={() => fetchRooms(0)} />
                 </div>
 
@@ -379,8 +208,8 @@ const Rooms = () => {
                     />
                 ))}
                 <div ref={loadMoreRef} style={{ height: "1px" }} />
-            </Box>
-        </Box>
+            </div>
+        </div>
     );
 };
 

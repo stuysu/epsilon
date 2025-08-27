@@ -1,8 +1,10 @@
-import { Box, Card, Divider, TextField, Typography } from "@mui/material";
+import { Box, Card, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
+import Divider from "../../../../components/ui/Divider";
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
+import SearchInput from "../../../../components/ui/input/SearchInput";
 
 const Strikes = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -100,36 +102,28 @@ const Strikes = () => {
     };
 
     return (
-        <div className={"w-full p-4 sm:p-12"}>
+        <div className={"w-full p-4 sm:p-12 min-h-dvh flex flex-col gap-4"}>
             <h1>
                 Strikes
             </h1>
-                <TextField
-                    sx={{ width: "300px", marginTop: "1rem" }}
-                    label="Search Organizations"
-                    value={searchInput}
-                    onChange={(e) => setSearchInput(e.target.value)}
-                />
+            <SearchInput
+                placeholder="Search Activities..."
+                value={searchInput}
+                onChange={(e) => setSearchInput(e)}
+            />
             {searchInput.length < 3 ? (
-                <p className={"mt-3"}>
+                <p>
                     Keep typing to find an Activity.
                 </p>
-            ) : filteredOrgs.length > 20 ? (
+            ) : filteredOrgs.length > 10 ? (
                 <p>
                     Too many activities, try a more specific query.
                 </p>
             ) : filteredOrgs.length > 0 ? (
-                <Box
-                    sx={{
-                        width: "100%",
-                        display: "flex",
-                        justifyContent: "center",
-                        marginTop: "10px",
-                        flexWrap: "wrap",
-                    }}
-                >
+                <div>
                     {filteredOrgs.map((org) => (
-                        <AsyncButton
+                        <div><a
+                            className={"important cursor-pointer"}
                             key={org.id}
                             onClick={() => {
                                 setOrgId(org.id);
@@ -137,12 +131,12 @@ const Strikes = () => {
                                 setSearchInput(""); // Clear search input after selecting an org
                                 setFilteredOrgs([]); // Clear filtered orgs after selecting an org
                             }}
-                            sx={{ margin: "5px" }}
                         >
                             {org.name}
-                        </AsyncButton>
+                        </a>
+                        <Divider/></div>
                     ))}
-                </Box>
+                </div>
             ) : null}
             {orgId && (
                 <>
@@ -165,8 +159,8 @@ const Strikes = () => {
                                 flexWrap: "wrap",
                             }}
                         >
-                            <h3>
-                                Give Strike to {orgName}
+                            <h3 className={"mb-6"}>
+                                Issue Strike to {orgName}
                             </h3>
                             <TextField
                                 sx={{ width: "100%" }}

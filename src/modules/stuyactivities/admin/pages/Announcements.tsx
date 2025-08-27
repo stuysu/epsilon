@@ -82,11 +82,11 @@ const Announcements = () => {
             <h1>
                 StuyActivities Announcements
             </h1>
-            <h2>
+            <p className={"mb-10"}>
                 Create an announcement to be broadcasted to everyone.
-            </h2>
-            <div className={"w-full flex"}><Box sx={{ width: "500px" }}>
-                <TextField
+            </p>
+            <div className={"w-full flex sm:flex-row flex-col gap-5"}>
+                <div className={"w-full sm:w-2/3"}><TextField
                     sx={{ width: "100%" }}
                     multiline
                     rows={3}
@@ -100,21 +100,14 @@ const Announcements = () => {
                         }
                     }}
                 />
-                <AsyncButton
-                    sx={{ width: "100%", marginTop: "10px" }}
-                    variant="contained"
-                    onClick={createAnnouncement}
-                >
-                    Create
-                </AsyncButton>
-            </Box>
-                <Box
-                    sx={{
-                        width: "100%",
-                        display: "flex",
-                        flexWrap: "wrap",
-                        justifyContent: "center",
-                    }}
+                    <AsyncButton
+                        sx={{ width: "100%", marginTop: "10px" }}
+                        variant="contained"
+                        onClick={createAnnouncement}
+                    >
+                        Create
+                    </AsyncButton></div>
+                <div className={"w-full flex flex-col gap-2"}
                 >
                     {announcements
                         .slice(0, visibleAnnouncements)
@@ -175,7 +168,7 @@ const Announcements = () => {
                             </AsyncButton>
                         </Box>
                     )}
-                </Box></div>
+                </div></div>
         </div>
     );
 };
