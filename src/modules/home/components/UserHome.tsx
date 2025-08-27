@@ -1,9 +1,6 @@
 /**
  * Display the logged-in user's dashboard, including:
  * memberships, upcoming meetings, global announcements and recent posts
- *
- * We may need to improve the responsive layout behavior for the OrgBlocks
- * section in the future, but it's good for now.
  */
 
 import React, { useEffect, useState } from "react";
