@@ -104,7 +104,7 @@ const RelatedActivities = ({ currentOrg }: { currentOrg: Organization }) => {
                           />
                       ))
                     : relatedOrgs.map((org) => (
-                          <div className={"snap-start scroll-ml-12"}>
+                          <div className={"snap-start scroll-ml-12"} key={org.id}>
                               <OrgBlock
                                   key={org.id}
                                   name={org.name || "No Name"}

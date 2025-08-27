@@ -7,9 +7,9 @@ const Messages = () => {
     const organization = useContext(OrgContext);
 
     return (
-        <Box>
+        <div className="mt-2 mb-16">
             <OrgChat organization_id={organization.id} />
-        </Box>
+        </div>
     );
 };
 

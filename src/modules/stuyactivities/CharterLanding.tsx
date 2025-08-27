@@ -25,7 +25,7 @@ const CharterLanding = () => {
                 <img
                     alt=""
                     src={`${PUBLIC_URL}/textures/charter.png`}
-                    className="w-full"
+                    className="w-full drop-shadow-2xl"
                     onLoad={() => isIsImgLoaded(true)}
                     style={{ display: isImgLoaded ? "block" : "none" }}
                 />

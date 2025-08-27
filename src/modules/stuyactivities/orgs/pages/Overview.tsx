@@ -216,7 +216,7 @@ const Overview = () => {
                             }
                         >
                             {organization.tags?.map((tag, index) => (
-                                <ToggleChip title={tag} selectable={false} />
+                                <ToggleChip title={tag} selectable={false} key={tag} />
                             )) || (
                                 <ToggleChip
                                     title={"Uncategorized"}
