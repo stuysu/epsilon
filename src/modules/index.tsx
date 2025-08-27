@@ -39,7 +39,7 @@ const Pages = () => {
             : `${PUBLIC_URL}/wordmark_light.svg`;
 
     return (
-        <div className="bg-bg">
+        <div className="bg-bg min-h-dvh">
             <Helmet>
                 <meta
                     property="og:url"

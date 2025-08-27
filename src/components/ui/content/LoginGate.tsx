@@ -19,7 +19,7 @@ const LoginGate = ({ page, children, sx }: Props): React.JSX.Element => {
             }
         >
             <i className="bx bx-lock bx-lg text-blue mb-5"></i>
-            <h1 className={"text-center mb-5"}>Sign in to {page}.</h1>
+            <h1 className={"text-center mb-8"}>Sign in to {page}.</h1>
             <LoginButton />
         </div>
     );

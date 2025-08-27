@@ -124,7 +124,7 @@ const Index = () => {
                 title: "the original epsilon team, 2024-2025",
                 groups: [
                     {
-                        role: "design engineer",
+                        role: "lead design engineer",
                         names: ["Will Zhang"],
                     },
                     {
