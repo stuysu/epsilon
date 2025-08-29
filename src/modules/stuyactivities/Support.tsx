@@ -125,6 +125,7 @@ const Support = () => {
                     description="Learn about the different Activity statuses and their impacts."
                     content="Pending Activities are yet to be approved by the Clubs & Pubs department and are not publicly visible.
                     Activities with less than 10 members, or otherwise specified by the SU, are locked and have limited privileges.
+                    Such Activities cannot create posts, host meetings, or access certain features until they meet the required criteria.
                     Activities that are unlocked have no restrictions and can be joined by anyone, if accepted.
                     If your Activity has another status not listed here and you are unsure what it means, please contact us."
                 />

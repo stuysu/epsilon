@@ -142,12 +142,12 @@ const OrgApproval = ({
                     <Divider />
 
                     <h4>
-                        Returning Info
+                        Returning Activity Declaration
                     </h4>
                     <p>
                         {org.is_returning
-                            ? org?.returning_info || "NO INFO SUBMITTED"
-                            : "Claims to not be a returning club."}
+                            ? org?.returning_info || "N/A"
+                            : "Claims to not be a returning Activity."}
                     </p>
                     <Divider />
 
@@ -221,7 +221,7 @@ const OrgApproval = ({
                     <h4>
                         Faculty Advisor
                     </h4>
-                    <p>
+                    <p className={"font-mono"}>
                         {org?.faculty_email || "N/A"}
                     </p>
                     <Divider />

@@ -120,7 +120,7 @@ const Arista = () => {
                     </motion.div>
                 </div>
             </div>
-            <a href={"https://stuyarista.org/"} className={"no-underline"}>
+            <a href={"https://stuyarista.org/"} className={"no-underline"} target={"_blank"}>
                 <div
                     className={
                         "flex mt-20 w-full py-3 px-6 border-divider border justify-between hover:bg-divider transition-colors"

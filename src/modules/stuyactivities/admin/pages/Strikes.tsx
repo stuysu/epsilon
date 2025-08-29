@@ -5,6 +5,7 @@ import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import SearchInput from "../../../../components/ui/input/SearchInput";
+import UserDialog from "../../../../components/ui/overlays/UserDialog";
 
 const Strikes = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -16,6 +17,8 @@ const Strikes = () => {
     const [searchInput, setSearchInput] = useState("");
     const [filteredOrgs, setFilteredOrgs] = useState<Organization[]>([]);
     const [allOrgs, setAllOrgs] = useState<Organization[]>([]);
+    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+    const [strikeToDelete, setStrikeToDelete] = useState<Strike | null>(null);
 
     useEffect(() => {
         const fetchAllOrgs = async () => {
@@ -99,6 +102,35 @@ const Strikes = () => {
         setOrgStrikes([...orgStrikes, data as Strike]);
         enqueueSnackbar("Strike issued!", { variant: "success" });
         setReason("");
+    };
+
+    const openDeleteDialog = (strike: Strike) => {
+        setStrikeToDelete(strike);
+        setDeleteDialogOpen(true);
+    };
+
+    const closeDeleteDialog = () => {
+        setDeleteDialogOpen(false);
+    };
+
+    const confirmDeleteStrike = async () => {
+        if (!strikeToDelete) return;
+        const { error } = await supabase
+            .from("strikes")
+            .delete()
+            .eq("id", strikeToDelete.id);
+
+        if (error) {
+            enqueueSnackbar(
+                "Error deleting strike. Contact it@stuysu.org for support",
+                { variant: "error" },
+            );
+            return;
+        }
+
+        setOrgStrikes(orgStrikes.filter((s) => s.id !== strikeToDelete.id));
+        setStrikeToDelete(null);
+        enqueueSnackbar("Strike deleted!", { variant: "success" });
     };
 
     return (
@@ -206,36 +238,15 @@ const Strikes = () => {
                                         marginBottom: "10px",
                                     }}
                                 >
-                                    <Typography variant="h2">
+                                    <h4>
                                         {strike.reason}
-                                    </Typography>
-                                    <Typography variant="body1">
+                                    </h4>
+                                    <p>
                                         Issued by {strike.users?.first_name}{" "}
                                         {strike.users?.last_name}
-                                    </Typography>
+                                    </p>
                                     <AsyncButton
-                                        onClick={async () => {
-                                            const { error } = await supabase
-                                                .from("strikes")
-                                                .delete()
-                                                .eq("id", strike.id);
-
-                                            if (error) {
-                                                enqueueSnackbar(
-                                                    "Error deleting strike. Contact it@stuysu.org for support",
-                                                    { variant: "error" },
-                                                );
-                                            }
-
-                                            setOrgStrikes(
-                                                orgStrikes.filter(
-                                                    (s) => s.id !== strike.id,
-                                                ),
-                                            );
-                                            enqueueSnackbar("Strike deleted!", {
-                                                variant: "success",
-                                            });
-                                        }}
+                                        onClick={() => openDeleteDialog(strike)}
                                     >
                                         Delete
                                     </AsyncButton>
@@ -243,6 +254,25 @@ const Strikes = () => {
                             </Box>
                         ))}
                     </Box>
+
+                    <UserDialog
+                        title="Delete this strike?"
+                        description="This action cannot be undone. Ensure that you have
+                        confirmed that this strike should be deleted, in accordance with
+                        the Clubs & Pubs Regulations, with the Clubs & Pubs Department."
+                        open={deleteDialogOpen}
+                        onClose={closeDeleteDialog}
+                        onCancel={() => {
+                            setStrikeToDelete(null);
+                        }}
+                        onConfirm={async () => {
+                            await confirmDeleteStrike();
+                        }}
+                        confirmText="Delete"
+                        cancelText="Cancel"
+                        imageSrc="/symbols/warning.png"
+                    >
+                    </UserDialog>
                 </>
             )}
         </div>

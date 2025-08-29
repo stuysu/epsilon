@@ -41,10 +41,9 @@ export const topNavItems = [
     },
     {
         label: "Vote",
-        url: "https://vote.stuysu.org",
-        path: "/none",
+        path: "/vote",
         icon: "bx bx-note",
-        external: true,
+        external: false,
     },
     {
         label: "Opportunities",

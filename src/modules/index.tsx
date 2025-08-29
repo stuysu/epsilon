@@ -18,6 +18,7 @@ import Arista from "./arista";
 import { ThemeContext } from "../contexts/ThemeProvider";
 
 const Catalog = lazy(() => import("./stuyactivities/Catalog"));
+const Vote = lazy(() => import("./voting/index"));
 const CommsSettings = lazy(() => import("./user/./CommsSettings"));
 const UserPreferences = lazy(() => import("./user/./UserPreferences"));
 const Profile = lazy(() => import("./user/Profile"));
@@ -50,7 +51,7 @@ const Pages = () => {
                 <meta
                     property="og:description"
                     content={
-                        "An app to help students navigate the clubs and organizations at Stuyvesant High School."
+                        "The everything app for Stuyvesant High School. Browse and join Activities, browse the calendar, find new opportunities, and more."
                     }
                 />
                 <meta property={"og:title"} content={"Epsilon"} />
@@ -82,6 +83,7 @@ const Pages = () => {
                     <Route path={"/passport"} Component={Profile} />
                     <Route path={"/create"} Component={Create} />
                     <Route path={"/charter"} Component={Charter} />
+                    <Route path={"/vote"} Component={Vote} />
                     <Route path={"/about"} Component={AboutIndex} />
                     <Route path={"/meetings"} Component={CalendarIndex} />
                     <Route path={"/rules"} Component={Regulations} />
