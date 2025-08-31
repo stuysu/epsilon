@@ -52,7 +52,6 @@ const SearchFilter = ({
                 position: isOneColumn || isTwoWrap ? "relative" : "sticky",
                 top: 0,
                 paddingTop: "40px",
-                overflowY: "auto",
             }}
         >
             <SearchInput

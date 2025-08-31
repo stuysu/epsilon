@@ -372,7 +372,7 @@ const Overview = () => {
                                     organization.meeting_days?.includes(
                                         full.toUpperCase(),
                                     )
-                                        ? "bg-accent text-typography-1 important"
+                                        ? "bg-accent text-white important"
                                         : "bg-layer-2"
                                 }`}
                             >

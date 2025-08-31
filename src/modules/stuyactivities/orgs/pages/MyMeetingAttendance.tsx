@@ -62,7 +62,7 @@ const MyMeetingAttendance = () => {
     if (!valid) {
         return (
             <Box>
-                <Typography variant="h1">Invalid meeting ID</Typography>
+                <h1>Invalid meeting ID</h1>
             </Box>
         );
     }
@@ -102,9 +102,9 @@ const MyMeetingAttendance = () => {
 
     return (
         <Box>
-            <Typography variant="h1" width="100%" align="center">
+            <h1>
                 {meeting?.title}
-            </Typography>
+            </h1>
             <Box
                 sx={{
                     width: "100%",

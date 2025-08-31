@@ -41,8 +41,8 @@ module.exports = {
                 blurLight: "var(--blur-light)",
             },
             boxShadow: {
-                module: "0 0 1.5px 0 var(--shadow-module) inset",
-                control: "0 0 2px 0 var(--shadow-control) inset",
+                module: "0 0 1.5px 0 var(--shadow-module) inset, 0 16px 40px -8px rgba(0,0,0,0.12)",
+                control: "0 0 2px 0 var(--shadow-control) inset, 0 4px 12px -2px rgba(0,0,0,0.18)",
             },
         },
     },
