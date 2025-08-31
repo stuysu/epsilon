@@ -80,7 +80,7 @@ const Pages = () => {
                     <Route path={"/confirm-join"} Component={ConfirmJoin} />
                     <Route path={"/communications"} Component={CommsSettings} />
                     <Route path={"/preferences"} Component={UserPreferences} />
-                    <Route path={"/passport"} Component={Profile} />
+                    <Route path={"/profile"} Component={Profile} />
                     <Route path={"/create"} Component={Create} />
                     <Route path={"/charter"} Component={Charter} />
                     <Route path={"/vote"} Component={Vote} />

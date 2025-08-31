@@ -45,7 +45,7 @@ const OrgMeeting = ({
     }
 
     return (
-        <div className={"w-full"}>
+        <div className={"w-full cursor-pointer"}>
             <div
                 className="
     flex

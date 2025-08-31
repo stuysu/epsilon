@@ -3,14 +3,11 @@ import {
     FormControl,
     FormControlLabel,
     FormGroup,
-    FormLabel,
-    TextField,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useState } from "react";
 
 import { supabase } from "../../../../lib/supabaseClient";
-import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import UserDialog from "../../../../components/ui/overlays/UserDialog";
 
 const AdminRoom = ({
@@ -51,18 +48,19 @@ const AdminRoom = ({
         useState(approvalRequired);
 
     const [isChanged, setIsChanged] = useState(false);
-
     const [confirm, setConfirm] = useState(false);
 
     const saveRoom = async () => {
         if (!isChanged) return;
-
         if (!roomName) {
             enqueueSnackbar("Room name is required", { variant: "error" });
             return;
         }
-
-        if (!roomFloor) {
+        if (
+            roomFloor === undefined ||
+            roomFloor === null ||
+            Number.isNaN(roomFloor)
+        ) {
             enqueueSnackbar("Room floor is required", { variant: "error" });
             return;
         }
@@ -106,11 +104,23 @@ const AdminRoom = ({
         }
 
         enqueueSnackbar(`Room ${roomName} deleted!`, { variant: "success" });
-
         if (onDelete) onDelete();
     };
 
     const createRoom = async () => {
+        if (!roomName) {
+            enqueueSnackbar("Room name is required", { variant: "error" });
+            return;
+        }
+        if (
+            roomFloor === undefined ||
+            roomFloor === null ||
+            Number.isNaN(roomFloor)
+        ) {
+            enqueueSnackbar("Room floor is required", { variant: "error" });
+            return;
+        }
+
         const { error: createError } = await supabase.from("rooms").insert({
             name: roomName,
             floor: roomFloor,
@@ -136,49 +146,41 @@ const AdminRoom = ({
     };
 
     return (
-        <div
-            className={"w-96 flex flex-wrap p-7 m-4 bg-layer-1 rounded-md"}
-        >
-            <div className={"w-full flex"}>
-                <TextField
-                    sx={{ width: "50%", marginRight: "10px" }}
-                    label="Room Name"
-                    value={roomName}
-                    onChange={(e) => {
-                        setRoomName(e.target.value);
-                        setIsChanged(true);
-                    }}
-                />
+        <div className="gap-3 border-b border-divider flex h-12 justify-between w-full pb-3 items-center">
+            <input
+                value={roomName || ""}
+                className="text text-typography-1 w-52 rounded-md px-3 h-9 bg-layer-1 outline-none"
+                placeholder="Room name"
+                onChange={(e) => {
+                    setRoomName(e.target.value);
+                    setIsChanged(true);
+                }}
+            />
 
-                <TextField
-                    sx={{ width: "50%" }}
-                    label="Floor"
-                    value={roomFloor || ""}
+            <input
+                value={roomFloor ?? ""}
+                className="text text-typography-1 rounded-md px-3 w-16 h-9 bg-layer-1 outline-none"
+                placeholder="Floor"
+                inputMode="numeric"
+                onChange={(e) => {
+                    const v = parseInt(e.target.value, 10);
+                    setRoomFloor(Number.isNaN(v) ? (undefined as any) : v);
+                    setIsChanged(true);
+                }}
+            />
+
+            <div className="w-36 flex justify-center">
+                <Checkbox
+                    checked={roomApprovalRequired}
                     onChange={(e) => {
-                        setRoomFloor(parseInt(e.target.value));
+                        setRoomApprovalRequired(e.target.checked);
                         setIsChanged(true);
                     }}
                 />
             </div>
 
-            <FormGroup>
-                <FormControlLabel
-                    control={
-                        <Checkbox
-                            checked={roomApprovalRequired}
-                            onChange={(e) => {
-                                setRoomApprovalRequired(e.target.checked);
-                                setIsChanged(true);
-                            }}
-                        />
-                    }
-                    label={"Approval Required?"}
-                />
-            </FormGroup>
-
-            <FormControl>
-                <FormLabel>Available Days</FormLabel>
-                <FormGroup row>
+            <FormControl className="w-96">
+                <FormGroup row className={"flex justify-center"}>
                     {(
                         [
                             "MONDAY",
@@ -187,11 +189,11 @@ const AdminRoom = ({
                             "THURSDAY",
                             "FRIDAY",
                         ] as Room["available_days"]
-                    ).map((day, i) => (
+                    ).map((day) => (
                         <FormControlLabel
+                            key={day}
                             control={
                                 <Checkbox
-                                    key={i}
                                     checked={roomAvailableDays?.includes(day)}
                                     onChange={(e) => {
                                         if (e.target.checked) {
@@ -206,46 +208,56 @@ const AdminRoom = ({
                                                 ),
                                             );
                                         }
-
                                         setIsChanged(true);
                                     }}
                                 />
                             }
-                            label={day}
+                            label={day.slice(0, 2)}
                         />
                     ))}
                 </FormGroup>
             </FormControl>
 
-            <div className={"w-full pl-2.5"}>
+            <div className="flex items-center pr-2 w-24">
                 {create ? (
-                    <AsyncButton onClick={createRoom} variant="contained">
-                        Create
-                    </AsyncButton>
+                    <button
+                        aria-label="Create room"
+                        className="h-9 w-9 grid place-items-center rounded-md hover:bg-layer-2"
+                        onClick={createRoom}
+                    >
+                        <i className="bx bx-plus text-green text-xl" />
+                    </button>
                 ) : (
                     <>
-                        <AsyncButton
-                            onClick={saveRoom}
+                        <button
+                            aria-label="Save room"
                             disabled={!isChanged}
-                            variant="contained"
-                            sx={{ marginRight: "10px" }}
+                            className={`h-9 w-9 grid place-items-center rounded-md ${
+                                isChanged
+                                    ? "hover:bg-layer-2"
+                                    : "opacity-40 cursor-not-allowed"
+                            }`}
+                            onClick={saveRoom}
                         >
-                            Save
-                        </AsyncButton>
-                        <AsyncButton
+                            <i className="bx bx-save text-typography-1 text-xl" />
+                        </button>
+                        <button
+                            aria-label="Delete room"
+                            className="h-9 w-9 grid place-items-center rounded-md hover:bg-layer-2"
                             onClick={() => setConfirm(true)}
-                            variant="contained"
-                            color="error"
                         >
-                            Delete
-                        </AsyncButton>
+                            <i className="bx bx-trash text-red text-xl" />
+                        </button>
                     </>
                 )}
             </div>
 
             <UserDialog
                 title="Delete Room?"
-                description={`Are you sure you want to delete ${roomName}?`}
+                description={`Are you sure you want to delete room ${
+                    roomName || "this room"
+                }?`}
+                imageSrc="/symbols/warning.png"
                 onConfirm={deleteRoom}
                 onClose={() => setConfirm(false)}
                 open={confirm}

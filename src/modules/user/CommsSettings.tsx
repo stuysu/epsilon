@@ -158,7 +158,10 @@ const CommsSettings = () => {
                                     <div className={"flex flex-col gap-1"}>
                                         <h4>{membership.organization_name}</h4>
                                         <p>
-                                            Activity <span className={"font-mono"}>{membership.organization_id}</span>
+                                            Activity{" "}
+                                            <span className={"font-mono"}>
+                                                {membership.organization_id}
+                                            </span>
                                         </p>
                                     </div>
                                 </div>
@@ -180,36 +183,6 @@ const CommsSettings = () => {
                             </div>
                         </div>
                     ))}
-                    <div>
-                        <div
-                            key={"general"}
-                            className={
-                                "flex flex-row justify-between my-4 text-typography-1"
-                            }
-                        >
-                            <div className={"flex flex-row items-center gap-2"}>
-                                <i
-                                    className={
-                                        "bx bx-bell bx-lg right-0.5 relative"
-                                    }
-                                ></i>
-                                <div className={"flex flex-col gap-1"}>
-                                    <h4>Epsilon Notices</h4>
-                                    <p>Critical Communications</p>
-                                </div>
-                            </div>
-                            <Switch.Root
-                                checked={true}
-                                disabled={true}
-                                className="relative h-6 w-11 rounded-full bg-blue opacity-50"
-                            >
-                                <Switch.Thumb className="block h-5 w-5 rounded-full bg-white/90 shadow translate-x-[22px]" />
-                            </Switch.Root>
-                        </div>
-                        <div className={"ml-14"}>
-                            <Divider />
-                        </div>
-                    </div>
                 </div>
             </div>
         </LoginGate>

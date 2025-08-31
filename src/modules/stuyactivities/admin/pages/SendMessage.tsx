@@ -47,38 +47,34 @@ const SendMessage = () => {
 
     return (
         <div className={"w-full p-4 sm:p-12 min-h-dvh flex flex-col gap-4"}>
-            <h1>
-                Send Message
-            </h1>
+            <h1>Send Message</h1>
             <SearchInput
                 placeholder="Search Activities..."
                 value={searchInput}
                 onChange={(e) => setSearchInput(e)}
             />
             {searchInput.length < 3 ? (
-                <p>
-                    Keep typing to find an Activity.
-                </p>
+                <p>Keep typing to find an Activity.</p>
             ) : filteredOrgs.length > 10 ? (
-                <p>
-                    Too many activities, try a more specific query.
-                </p>
+                <p>Too many activities, try a more specific query.</p>
             ) : filteredOrgs.length > 0 ? (
                 <div>
                     {filteredOrgs.map((org) => (
-                        <div><a
-                            className={"important cursor-pointer"}
-                            key={org.id}
-                            onClick={() => {
-                                setOrgId(org.id);
-                                setOrgName(org.name);
-                                setSearchInput(""); // Clear search input after selecting an org
-                                setFilteredOrgs([]); // Clear filtered orgs after selecting an org
-                            }}
-                        >
-                            {org.name}
-                        </a>
-                            <Divider/></div>
+                        <div>
+                            <a
+                                className={"important cursor-pointer"}
+                                key={org.id}
+                                onClick={() => {
+                                    setOrgId(org.id);
+                                    setOrgName(org.name);
+                                    setSearchInput(""); // Clear search input after selecting an org
+                                    setFilteredOrgs([]); // Clear filtered orgs after selecting an org
+                                }}
+                            >
+                                {org.name}
+                            </a>
+                            <Divider />
+                        </div>
                     ))}
                 </div>
             ) : null}

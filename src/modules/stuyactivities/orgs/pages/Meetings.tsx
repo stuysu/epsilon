@@ -1,11 +1,12 @@
 import React, { useContext } from "react";
 import OrgContext from "../../../../contexts/OrgContext";
-import { Box, Stack, useMediaQuery } from "@mui/material";
+import { useMediaQuery } from "@mui/material";
 
 import OrgMeeting from "../components/OrgMeeting";
 import { sortByDate } from "../../../../utils/DataFormatters";
 import LoginGate from "../../../../components/ui/content/LoginGate";
 import ContentUnavailable from "../../../../components/ui/content/ContentUnavailable";
+import ItemList from "../../../../components/ui/lists/ItemList";
 
 const Meetings = () => {
     const organization: OrgContextType = useContext(OrgContext);
@@ -19,16 +20,12 @@ const Meetings = () => {
     return (
         <LoginGate page="view meetings">
             {hasUpcomingMeetings ? (
-                <Box
-                    height="100%"
-                    bgcolor="#1f1f1f80"
-                    padding={0.5}
-                    borderRadius={3}
-                    marginBottom={10}
-                    marginTop={1}
-                    boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
-                >
-                    <Stack borderRadius={2} overflow="hidden" spacing={0.5}>
+                <div className={"mt-2"}>
+                    <ItemList
+                        height={"auto"}
+                        title={"Upcoming Meetings"}
+                        icon={"bx-calendar"}
+                    >
                         {upcomingMeetings.sort(sortByDate).map((meeting) => (
                             <OrgMeeting
                                 id={meeting.id || -1}
@@ -49,8 +46,8 @@ const Meetings = () => {
                                 onlyUpcoming
                             />
                         ))}
-                    </Stack>
-                </Box>
+                    </ItemList>
+                </div>
             ) : (
                 <ContentUnavailable
                     icon="bx-calendar-x"

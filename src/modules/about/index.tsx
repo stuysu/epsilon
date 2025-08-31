@@ -3,8 +3,8 @@ import { PUBLIC_URL } from "../../config/constants";
 import { Helmet } from "react-helmet";
 import { AnimatePresence, motion } from "framer-motion";
 
-const DISPLAY = 13000;
-const FADE = 3000;
+const DISPLAY = 10000;
+const FADE = 2500;
 
 const fadeVariants = {
     initial: { opacity: 0, filter: "blur(20px)" },
@@ -335,7 +335,7 @@ const Index = () => {
                                 src={`${PUBLIC_URL}/taglines/about.png`}
                                 className="w-full object-contain mx-auto mb-6"
                             />
-                            <p className={"text-center"}>
+                            <p className={"text-center text-white/70"}>
                                 Epsilon is a project carried through each
                                 generation of Stuyvesant students. It's based on
                                 the philosophy that "we honor those who walked

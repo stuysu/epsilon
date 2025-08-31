@@ -1,4 +1,4 @@
-import { Box, Divider} from "@mui/material";
+import Divider from "../../../../components/ui/Divider";
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
@@ -172,42 +172,48 @@ const Rooms = () => {
     };
 
     return (
-        <div className={"w-full p-4 sm:p-12"}>
-            <h1>
-                Rooms
-            </h1>
-
+        <div className={"w-full p-4 sm:p-12 relative"}>
+            <h1>Rooms</h1>
             <Divider />
-            <div className={"flex mt-8 gap-3 flex-wrap"}
-            >
-                <div
-                    className={
-                        "border-zinc-800 border-solid border-2 rounded-lg"
-                    }
-                >
-                    <p className={"p-4"}>Create New Room</p>
-                    <AdminRoom create onCreate={() => fetchRooms(0)} />
-                </div>
 
-                {rooms.map((room) => (
-                    <AdminRoom
-                        key={room.id}
-                        roomId={room.id}
-                        name={room.name}
-                        floor={room.floor as number}
-                        availableDays={
-                            room.available_days.split(
-                                ", ",
-                            ) as Room["available_days"]
+            <div className="h-full w-10 bg-gradient-to-r from-transparent to-bg absolute z-10 right-12 pointer-events-none"></div>
+
+            <div className="w-full overflow-scroll">
+                <div className={"min-w-fit flex mt-3 gap-3 flex-col w-full"}>
+                    <div
+                        className={
+                            "gap-3 text-center z-10 bg-bg py-3 flex justify-between border-b border-divider w-full"
                         }
-                        comments={room.comments}
-                        approvalRequired={room.approval_required}
-                        onDelete={() =>
-                            setRooms(rooms.filter((r) => r.id !== room.id))
-                        }
-                    />
-                ))}
-                <div ref={loadMoreRef} style={{ height: "1px" }} />
+                    >
+                        <p className={"w-52"}>Room Name</p>
+                        <p className={"w-16"}>Floor</p>
+                        <p className={"w-36"}>Requires Approval</p>
+                        <p className={"w-96"}>Available Days</p>
+                        <p className={"w-24 relative right-3"}>Actions</p>
+                    </div>
+
+                    <AdminRoom create onCreate={() => fetchRooms(0)} />
+
+                    {rooms.map((room) => (
+                        <AdminRoom
+                            key={room.id}
+                            roomId={room.id}
+                            name={room.name}
+                            floor={room.floor as number}
+                            availableDays={
+                                room.available_days.split(
+                                    ", ",
+                                ) as Room["available_days"]
+                            }
+                            comments={room.comments}
+                            approvalRequired={room.approval_required}
+                            onDelete={() =>
+                                setRooms(rooms.filter((r) => r.id !== room.id))
+                            }
+                        />
+                    ))}
+                    <div ref={loadMoreRef} style={{ height: "1px" }} />
+                </div>
             </div>
         </div>
     );

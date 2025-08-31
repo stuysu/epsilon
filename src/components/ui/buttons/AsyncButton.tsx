@@ -5,12 +5,14 @@ import { ButtonBase, SxProps, Theme } from "@mui/material";
 interface AsyncButtonProps extends ButtonProps {
     onClick?: () => void | Promise<any>;
     sx?: SxProps<Theme>;
+    isPrimary?: boolean;
 }
 
 const AsyncButton: React.FC<AsyncButtonProps> = ({
     onClick,
     children,
     sx = {},
+    isPrimary = false,
     ...props
 }) => {
     const [isLoading, setIsLoading] = useState(false);
@@ -36,8 +38,10 @@ const AsyncButton: React.FC<AsyncButtonProps> = ({
                 fontFamily: "inter-variable",
                 fontVariationSettings: "'wght' 700",
                 borderRadius: "12px",
-                backgroundColor: "var(--layer-secondary)",
-                color: "var(--text-primary)",
+                backgroundColor: isPrimary
+                    ? "var(--accent)"
+                    : "var(--layer-secondary)",
+                color: isPrimary ? "var(--white)" : "var(--text-primary)",
                 padding: "11px 20px 13px 20px",
                 fontSize: "14px",
                 opacity: isLoading || props.disabled ? 0.7 : 1,

@@ -53,7 +53,7 @@ export const topNavItems = [
         external: true,
     },
     {
-        label: "Apply",
+        label: "SU Apply",
         url: "https://applications.stuysu.org/",
         path: "/none",
         icon: "bx bx-check-circle",

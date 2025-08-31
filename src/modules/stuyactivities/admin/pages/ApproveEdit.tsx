@@ -98,9 +98,7 @@ const ApproveEdit = () => {
 
     return (
         <div className={"w-full p-12"}>
-            <h1>
-                Approve Edits
-            </h1>
+            <h1>Approve Edits</h1>
             <Divider />
             <div className={"flex mt-8 gap-3 flex-wrap"}>
                 {pendingEdits.map((edit, i) => {
@@ -113,7 +111,8 @@ const ApproveEdit = () => {
                             />
                         </div>
                     );
-                })}</div>
+                })}
+            </div>
         </div>
     );
 };

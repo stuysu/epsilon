@@ -214,10 +214,7 @@ const OrgRouter = () => {
                             }}
                         ></Box>
                         <div className={"ml-3 sm:ml-12 sm:mr-0 mr-3 flex"}>
-                            <div
-                                className={"sticky top-14 max-h-1 z-[40] mb-48"}
-                            >
-                                {/*1 max height to not break sticky layout*/}
+                            <div className={"sticky top-14 h-60 z-[40] mb-48"}>
                                 <OrgNav isMobile={isMobile} />
                             </div>
                             <div className={"w-full lg:pr-0 pr-0 min-h-[80vh]"}>

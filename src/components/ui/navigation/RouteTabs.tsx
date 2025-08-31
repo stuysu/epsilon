@@ -33,14 +33,21 @@ const RouteTabs = ({ tabs }: Props) => {
                     <Tabs.Trigger
                         key={tab.to}
                         value={tab.to}
-                        className={"flex-col flex items-center text important px-2 py-3 data-[state=active]:text-typography-1 text-typography-3"}
+                        className={
+                            "flex-col flex items-center text important p-2 data-[state=active]:text-yellow text-typography-3"
+                        }
                     >
                         {tab.icon && (
-                            <i
-                                className={`bx bx-sm ${tab.icon} relative top-px p-1`}
-                                aria-hidden="true"
-                                title={tab.label}
-                            />
+                            <div className={"flex items-center gap-1"}>
+                                <i
+                                    className={`bx bx-sm ${tab.icon} relative top-px p-1`}
+                                    aria-hidden="true"
+                                    title={tab.label}
+                                />
+                                <span className={"text-nowrap"}>
+                                    {tab.label}
+                                </span>
+                            </div>
                         )}
                     </Tabs.Trigger>
                 ))}

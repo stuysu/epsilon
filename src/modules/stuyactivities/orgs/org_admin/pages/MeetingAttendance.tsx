@@ -1,4 +1,4 @@
-import { Avatar, Box, Card, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -6,6 +6,8 @@ import { supabase } from "../../../../../lib/supabaseClient";
 import { PUBLIC_URL } from "../../../../../config/constants";
 import QRCode from "qrcode.react";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
+import OrgMember from "../../components/OrgMember";
+import ItemList from "../../../../../components/ui/lists/ItemList";
 
 const MeetingAttendance = () => {
     const { meetingId: meetingIdParam, orgUrl } = useParams();
@@ -132,166 +134,71 @@ const MeetingAttendance = () => {
 
     return (
         <Box>
-            <Typography variant="h1" width="100%" align="center">
-                {meeting?.title}
-            </Typography>
+            <h1>{meeting?.title}</h1>
 
-            <Typography variant="body1" width="100%" align="center">
-                Send this link to allow attendees to mark their own attendance:
-                <br />
-                {/* FIXED: self-check route uses orgUrl */}
-                {`${PUBLIC_URL}/${orgUrl}/my-attendance/${meetingId}`}
-            </Typography>
+            <div className={"w-full flex gap-5 max-md:flex-col mb-6"}>
+                <div className={"w-full rounded-lg border border-divider p-5"}>
+                    <p>
+                        Send this link to allow attendees to mark their own
+                        attendance.
+                        <br />
+                        <a>{`${PUBLIC_URL}/${orgUrl}/my-attendance/${meetingId}`}</a>
+                    </p>
+                </div>
 
-            <div
-                style={{
-                    display: "flex",
-                    justifyContent: "center",
-                    margin: "20px 0",
-                }}
-            >
-                <QRCode
-                    value={`${PUBLIC_URL}/${orgUrl}/my-attendance/${meetingId}`}
-                    size={300}
-                    style={{ borderRadius: 10, border: "1px solid white" }}
-                />
+                <div className={"w-full rounded-lg border border-divider p-5"}>
+                    <p className={"mb-5"}>Or, send them this QR code.</p>
+                    <QRCode
+                        value={`${PUBLIC_URL}/${orgUrl}/my-attendance/${meetingId}`}
+                        size={300}
+                        style={{ borderRadius: 10, border: "1px solid white" }}
+                    />
+                </div>
             </div>
+            <ItemList height={"auto"}>
+                {meeting?.organizations?.memberships?.map((member) => {
+                    let userId = member.users?.id;
+                    let userName =
+                        member.users?.first_name +
+                        " " +
+                        member.users?.last_name;
+                    let userPicture = member.users?.picture;
+                    let userEmail = member.users?.email;
 
-            <Typography variant="body1" width="100%" align="center">
-                Or send them this QR code
-            </Typography>
-            <Box
-                sx={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                    marginTop: "20px",
-                }}
-            >
-                <Card
-                    sx={{
-                        maxWidth: "800px",
-                        width: "100%",
-                        display: "flex",
-                        flexWrap: "wrap",
-                    }}
-                >
-                    {meeting?.organizations?.memberships?.map((member) => {
-                        let userId = member.users?.id;
-                        let userName =
-                            member.users?.first_name +
-                            " " +
-                            member.users?.last_name;
-                        let userPicture = member.users?.picture;
-                        let userEmail = member.users?.email;
+                    let isPresent = meeting?.attendance?.some(
+                        (attendance) => attendance.user_id === userId,
+                    );
 
-                        let isPresent = meeting?.attendance?.some(
-                            (attendance) => attendance.user_id === userId,
-                        );
-
-                        return (
-                            <Box
-                                key={userId}
-                                sx={{
-                                    width: "100%",
-                                    margin: "10px",
-                                    display: "flex",
-                                    flexWrap: "nowrap",
-                                    height: "60px",
-                                    alignItems: "center",
-                                    position: "relative",
-                                }}
-                            >
-                                <Avatar
-                                    src={userPicture}
-                                    alt={userName}
-                                    sx={{
-                                        width: "50px",
-                                        height: "50px",
-                                        fontSize: "25px",
-                                    }}
+                    return (
+                        <div className={"flex items-center max-sm:flex-col"}>
+                            <div className={"w-full"}>
+                                <OrgMember
+                                    key={userId}
+                                    email={userEmail}
+                                    picture={userPicture}
+                                    role_name={isPresent ? "Present" : "Absent"}
+                                    first_name={userName}
+                                    last_name={String(userId).padStart(5, "0")}
+                                />
+                            </div>
+                            <div className={"w-40"}>
+                                <AsyncButton
+                                    onClick={() =>
+                                        updateStatus(
+                                            userId,
+                                            member.users?.first_name,
+                                            member.users?.last_name,
+                                            isPresent,
+                                        )
+                                    }
                                 >
-                                    {userName[0].toUpperCase()}
-                                </Avatar>
-
-                                <Box
-                                    sx={{
-                                        width: "150px",
-                                        display: "flex",
-                                        justifyContent: "center",
-                                        flexWrap: "wrap",
-                                    }}
-                                >
-                                    <Typography
-                                        variant="body2"
-                                        width="100%"
-                                        align="center"
-                                    >
-                                        {userName}
-                                    </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        width="100%"
-                                        align="center"
-                                    >
-                                        {userEmail}
-                                    </Typography>
-                                    <Typography
-                                        variant="body2"
-                                        width="100%"
-                                        align="center"
-                                    >
-                                        ID: {String(userId).padStart(5, "0")}
-                                    </Typography>
-                                </Box>
-                                <Box
-                                    sx={{
-                                        width: "50px",
-                                        display: "flex",
-                                        justifyContent: "center",
-                                    }}
-                                >
-                                    <Typography
-                                        variant="body1"
-                                        color={
-                                            isPresent ? "#2ecc71" : "secondary"
-                                        }
-                                    >
-                                        {isPresent ? "Present" : "Absent"}
-                                    </Typography>
-                                </Box>
-
-                                <Box
-                                    sx={{
-                                        position: "absolute",
-                                        right: 0,
-                                        width: "130px",
-                                        display: "flex",
-                                        justifyContent: "center",
-                                    }}
-                                >
-                                    <AsyncButton
-                                        variant="outlined"
-                                        color={isPresent ? "error" : "success"}
-                                        onClick={() =>
-                                            updateStatus(
-                                                userId,
-                                                member.users?.first_name,
-                                                member.users?.last_name,
-                                                isPresent,
-                                            )
-                                        }
-                                    >
-                                        {isPresent
-                                            ? "Mark Absent"
-                                            : "Mark Present"}
-                                    </AsyncButton>
-                                </Box>
-                            </Box>
-                        );
-                    })}
-                </Card>
-            </Box>
+                                    {isPresent ? "Mark Absent" : "Mark Present"}
+                                </AsyncButton>
+                            </div>
+                        </div>
+                    );
+                })}
+            </ItemList>
         </Box>
     );
 };

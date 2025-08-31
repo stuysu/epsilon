@@ -175,34 +175,27 @@ const Reserve = () => {
 
     return (
         <div className={"w-full p-4 sm:p-12"}>
-            <h1>
-                Reserve
-            </h1>
+            <h1>Reserve</h1>
             <Divider />
             <div className="my-4">
-                <h2>
-                    Force Reservation
-                </h2>
+                <h2>Force Reservation</h2>
                 <p className={"mb-3"}>
                     Reserve a room for an organization manually.
                 </p>
-                    <SearchInput
-                        placeholder="Search Activities..."
-                        value={searchInput}
-                        onChange={(e) => setSearchInput(e)}
-                    />
-                    {searchInput.length < 3 ? (
-                        <p>
-                            Keep typing to find an Activity.
-                        </p>
-                    ) : filteredOrgs.length > 10 ? (
-                        <p>
-                            Too many activities, try a more specific query.
-                        </p>
-                    ) : filteredOrgs.length > 0 ? (
-                        <div>
-                            {filteredOrgs.map((org) => (
-                                <div><a
+                <SearchInput
+                    placeholder="Search Activities..."
+                    value={searchInput}
+                    onChange={(e) => setSearchInput(e)}
+                />
+                {searchInput.length < 3 ? (
+                    <p>Keep typing to find an Activity.</p>
+                ) : filteredOrgs.length > 10 ? (
+                    <p>Too many activities, try a more specific query.</p>
+                ) : filteredOrgs.length > 0 ? (
+                    <div>
+                        {filteredOrgs.map((org) => (
+                            <div>
+                                <a
                                     className={"important cursor-pointer"}
                                     key={org.id}
                                     onClick={() => {
@@ -214,10 +207,11 @@ const Reserve = () => {
                                 >
                                     {org.name}
                                 </a>
-                                    <Divider/></div>
-                            ))}
-                        </div>
-                    ) : null}
+                                <Divider />
+                            </div>
+                        ))}
+                    </div>
+                ) : null}
                 {forceOrgId && (
                     <div className="my-4">
                         <Divider />

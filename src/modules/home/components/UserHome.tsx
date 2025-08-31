@@ -158,7 +158,7 @@ const UserHome = () => {
             </header>
 
             <section className="flex sm:flex-row flex-col gap-12 w-full">
-                <div className="justify-center gap-5 grid grid-cols-[auto] md:grid-cols-[auto_auto] lg:grid-cols-[auto_auto_auto]">
+                <div className="justify-center gap-5 grid grid-cols-[auto] lg:grid-cols-[auto_auto] xl:grid-cols-[auto_auto_auto]">
                     {user.memberships?.map((membership) => {
                         if (membership.active)
                             return (

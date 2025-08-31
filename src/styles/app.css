@@ -41,7 +41,8 @@
         font-variation-settings: "wght" 500;
     }
 
-    p, .text {
+    p,
+    .text {
         @apply text-[0.9rem] leading-[1.2rem] text-[color:var(--text-secondary)];
         font-variation-settings: "wght" 500;
     }

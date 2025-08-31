@@ -47,9 +47,7 @@ const AddUser = () => {
 
     return (
         <div className={"w-full p-4 sm:p-12"}>
-            <h1>
-                Add New User
-            </h1>
+            <h1>Add New User</h1>
             <MultiPageForm
                 title=""
                 value={userData}

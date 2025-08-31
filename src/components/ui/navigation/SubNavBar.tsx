@@ -65,9 +65,7 @@ const SubNavBar: FC = () => {
                         className="inline-flex cursor-pointer whitespace-nowrap gap-1 text-yellow"
                     >
                         <i className="bx bx-shield pt-px" />
-                        <p
-                            className="cursor-pointer whitespace-nowrap important text-yellow"
-                        >
+                        <p className="cursor-pointer whitespace-nowrap important text-yellow">
                             Admin Panel
                         </p>
                     </div>

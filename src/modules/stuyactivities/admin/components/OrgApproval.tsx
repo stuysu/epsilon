@@ -1,4 +1,4 @@
-import { Avatar, Typography } from "@mui/material";
+import { Avatar } from "@mui/material";
 import { supabase } from "../../../../lib/supabaseClient";
 
 import { useSnackbar } from "notistack";
@@ -76,6 +76,7 @@ const OrgApproval = ({
                         color="success"
                         sx={{ marginRight: "10px" }}
                         disabled={buttonsDisabled}
+                        isPrimary={true}
                     >
                         Approve Activity & Publish
                     </AsyncButton>
@@ -121,27 +122,19 @@ const OrgApproval = ({
                     <p>{org.goals}</p>
                     <Divider />
 
-                    <h4>
-                        Activity Description
-                    </h4>
+                    <h4>Activity Description</h4>
                     <p>{org.purpose}</p>
                     <Divider />
 
-                    <h4>
-                        Appointment Procedures
-                    </h4>
-                    <p>
-                        {org.appointment_procedures}
-                    </p>
+                    <h4>Appointment Procedures</h4>
+                    <p>{org.appointment_procedures}</p>
                     <Divider />
 
-                    <h4>
-                        Uniqueness
-                    </h4>
+                    <h4>Uniqueness</h4>
                     <p>{org.uniqueness}</p>
                     <Divider />
 
-                    <h4>
+                    <h4 className={org.is_returning ? "text-yellow" : ""}>
                         Returning Activity Declaration
                     </h4>
                     <p>
@@ -151,65 +144,35 @@ const OrgApproval = ({
                     </p>
                     <Divider />
 
-                    <h4>
-                        Meeting Description
-                    </h4>
-                    <p>
-                        {org.meeting_description}
-                    </p>
+                    <h4>Meeting Description</h4>
+                    <p>{org.meeting_description}</p>
                     <Divider />
 
-                    <h4>
-                        Meeting Schedule
-                    </h4>
-                    <p>
-                        {org.meeting_schedule}
-                    </p>
+                    <h4>Meeting Schedule</h4>
+                    <p>{org.meeting_schedule}</p>
                     <Divider />
 
-                    <h4>
-                        Meeting Days
-                    </h4>
-                    <p>
-                        {org.meeting_days?.join(", ")}
-                    </p>
+                    <h4>Meeting Days</h4>
+                    <p>{org.meeting_days?.join(", ")}</p>
                     <Divider />
 
-                    <h4>
-                        Commitment Level
-                    </h4>
-                    <p>
-                        {org.commitment_level}
-                    </p>
+                    <h4>Commitment Level</h4>
+                    <p>{org.commitment_level}</p>
                     <Divider />
 
-                    <h4>
-                        Keywords
-                    </h4>
-                    <p className={"font-mono"}>
-                        {org.keywords || "none"}
-                    </p>
+                    <h4>Keywords</h4>
+                    <p className={"font-mono"}>{org.keywords || "none"}</p>
                     <Divider />
 
-                    <h4>
-                        Tags
-                    </h4>
-                    <p>
-                        {org.tags?.join(", ") || "none"}
-                    </p>
+                    <h4>Tags</h4>
+                    <p>{org.tags?.join(", ") || "none"}</p>
                     <Divider />
 
-                    <h4>
-                        Clubs/Pubs Fair Interest
-                    </h4>
-                    <p>
-                        {org.fair ? "Attending" : "Not Attending"}
-                    </p>
+                    <h4>Clubs/Pubs Fair Interest</h4>
+                    <p>{org.fair ? "Attending" : "Not Attending"}</p>
                     <Divider />
 
-                    <h4>
-                        Creator
-                    </h4>
+                    <h4>Creator</h4>
                     <p className={"font-mono"}>
                         {
                             org.memberships?.find((m) => m.role === "CREATOR")
@@ -218,12 +181,8 @@ const OrgApproval = ({
                     </p>
                     <Divider />
 
-                    <h4>
-                        Faculty Advisor
-                    </h4>
-                    <p className={"font-mono"}>
-                        {org?.faculty_email || "N/A"}
-                    </p>
+                    <h4>Faculty Advisor</h4>
+                    <p className={"font-mono"}>{org?.faculty_email || "N/A"}</p>
                     <Divider />
                 </div>
 

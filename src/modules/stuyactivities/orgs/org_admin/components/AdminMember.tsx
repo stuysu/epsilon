@@ -184,7 +184,9 @@ const AdminMember = ({
                     )}
 
                     {userId !== user.id &&
-                        (isCreator || role === "MEMBER" || role === "ADVISOR") && (
+                        (isCreator ||
+                            role === "MEMBER" ||
+                            role === "ADVISOR") && (
                             <div onClick={() => setKickConfirmOpen(true)}>
                                 <p>
                                     <i

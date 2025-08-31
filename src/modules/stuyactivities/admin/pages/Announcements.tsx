@@ -79,36 +79,35 @@ const Announcements = () => {
 
     return (
         <div className={"w-full p-4 sm:p-12"}>
-            <h1>
-                StuyActivities Announcements
-            </h1>
+            <h1>StuyActivities Announcements</h1>
             <p className={"mb-10"}>
                 Create an announcement to be broadcasted to everyone.
             </p>
             <div className={"w-full flex sm:flex-row flex-col gap-5"}>
-                <div className={"w-full sm:w-2/3"}><TextField
-                    sx={{ width: "100%" }}
-                    multiline
-                    rows={3}
-                    value={content}
-                    label="Content"
-                    onChange={(e) => setContent(e.target.value)}
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter" && e.ctrlKey) {
-                            e.preventDefault();
-                            createAnnouncement();
-                        }
-                    }}
-                />
+                <div className={"w-full sm:w-2/3"}>
+                    <TextField
+                        sx={{ width: "100%" }}
+                        multiline
+                        rows={3}
+                        value={content}
+                        label="Content"
+                        onChange={(e) => setContent(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.key === "Enter" && e.ctrlKey) {
+                                e.preventDefault();
+                                createAnnouncement();
+                            }
+                        }}
+                    />
                     <AsyncButton
                         sx={{ width: "100%", marginTop: "10px" }}
                         variant="contained"
                         onClick={createAnnouncement}
                     >
                         Create
-                    </AsyncButton></div>
-                <div className={"w-full flex flex-col gap-2"}
-                >
+                    </AsyncButton>
+                </div>
+                <div className={"w-full flex flex-col gap-2"}>
                     {announcements
                         .slice(0, visibleAnnouncements)
                         .map((announcement, i) => {
@@ -131,10 +130,14 @@ const Announcements = () => {
                                             alignItems: "center",
                                         }}
                                     >
-                                        <DisplayLinks text={announcement.content} />
+                                        <DisplayLinks
+                                            text={announcement.content}
+                                        />
                                         <AsyncButton
                                             onClick={() =>
-                                                deleteAnnouncement(announcement.id)
+                                                deleteAnnouncement(
+                                                    announcement.id,
+                                                )
                                             }
                                             sx={{
                                                 width: "15%",
@@ -168,7 +171,8 @@ const Announcements = () => {
                             </AsyncButton>
                         </Box>
                     )}
-                </div></div>
+                </div>
+            </div>
         </div>
     );
 };

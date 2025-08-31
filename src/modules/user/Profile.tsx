@@ -121,7 +121,7 @@ const SECTION_DESCRIPTIONS: Record<Category, string> = {
     "Exclusive Series":
         "Reserved for members of specific leadership divisions.",
     Accolades: "Given for unique accomplishments and milestones.",
-    Venturer: "These medals are granted based on your Epsilon Passport age.",
+    Venturer: "These medals are granted based on your Epsilon account age.",
     Participation:
         "Participation medals celebrate the ones who contribute to the Stuy community.",
 };
@@ -182,7 +182,7 @@ const Profiles = () => {
     return (
         <LoginGate sx={{ width: "100%" }}>
             <Helmet>
-                <title>My Epsilon Passport</title>
+                <title>Profile</title>
                 <meta
                     name="description"
                     content="View your Epsilon profile and earned medals."
@@ -190,7 +190,7 @@ const Profiles = () => {
             </Helmet>
 
             <div className={"sm:m-12 m-6"}>
-                <p>My Epsilon Passport</p>
+                <p>Profile</p>
                 <h1>
                     {user.first_name + " " + user.last_name}
                     {user.is_faculty ? (
@@ -211,7 +211,7 @@ const Profiles = () => {
                 <p className={"font-mono"}>Email: {user.email || "No Email"}</p>
                 <Divider />
                 <p className={"font-mono"}>
-                    Passport ID:{" "}
+                    Account ID:{" "}
                     {fourDigitId == null
                         ? "N/A"
                         : String(fourDigitId).padStart(4, "0")}
@@ -222,11 +222,11 @@ const Profiles = () => {
                     className={"w-64 mb-3 mt-16"}
                     alt={"Medals of Honor"}
                 />
-                <p>
-                    Medals are coming soon to Epsilon. Preview them below!
-                </p>
+                <p>Medals are coming soon to Epsilon. Preview them below!</p>
 
-                <div className={"mb-8"}><Divider /></div>
+                <div className={"mb-8"}>
+                    <Divider />
+                </div>
 
                 {SECTIONS.map((section, idx) => {
                     const items = MEDALS.filter((m) => m.category === section);

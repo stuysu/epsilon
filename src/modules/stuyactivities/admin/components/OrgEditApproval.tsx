@@ -185,9 +185,7 @@ const OrgEditApproval = ({
                         if (f2 === "picture") {
                             return (
                                 <>
-                                    <h4>
-                                        {field}
-                                    </h4>
+                                    <h4>{field}</h4>
                                     <Avatar
                                         src={edit[f2] as string}
                                         alt={edit.organization_name}
@@ -210,11 +208,10 @@ const OrgEditApproval = ({
                         return (
                             <>
                                 <h4>
-                                    {orgFieldMap(field)} <i className={"bx bx-refresh"}></i>
+                                    {orgFieldMap(field)}{" "}
+                                    <i className={"bx bx-refresh"}></i>
                                 </h4>
-                                <p>
-                                    {`"${edit[f2]}"`}
-                                </p>
+                                <p>{`"${edit[f2]}"`}</p>
                                 <Divider />
                             </>
                         );

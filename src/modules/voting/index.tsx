@@ -16,7 +16,7 @@ const Vote = () => {
                     content="Vote in student government elections and other important school decisions with Epsilon."
                 />
             </Helmet>
-            <div className={"relative z-20 bg-bg -mb-20"}>
+            <div className={"relative z-20 bg-black -mb-20"}>
                 <img
                     alt=""
                     src={`${PUBLIC_URL}/textures/voting.png`}
@@ -25,7 +25,11 @@ const Vote = () => {
                     style={{ display: isImgLoaded ? "block" : "none" }}
                 />
                 {isImgLoaded && (
-                    <div className={"z-30 flex flex-col justify-center items-center w-full h-full absolute top-0 left-0"}>
+                    <div
+                        className={
+                            "z-30 flex flex-col justify-center items-center w-full h-full absolute top-0 left-0"
+                        }
+                    >
                         <div className="relative bottom-12 w-full flex justify-center">
                             <div className="relative max-w-xl sm:w-2/3 w-full">
                                 {/* glow */}
@@ -70,8 +74,22 @@ const Vote = () => {
                                 </h1>
                             </div>
                         </div>
-                        <p className={"text-white/70 mx-3 text-center"}>We're working on integrating voting services into Epsilon. For now, visit</p>
-                        <a href={"https://vote.stuysu.org"} className={"important mt-3"} target={"_blank"}><i className={"bx bx-link-external relative top-0.5 mr-1"}></i>vote.stuysu.org</a>
+                        <p className={"text-white/70 mx-3 text-center"}>
+                            We're working on integrating voting services into
+                            Epsilon. For now, visit
+                        </p>
+                        <a
+                            href={"https://vote.stuysu.org"}
+                            className={"important mt-3"}
+                            target={"_blank"}
+                        >
+                            <i
+                                className={
+                                    "bx bx-link-external relative top-0.5 mr-1"
+                                }
+                            ></i>
+                            vote.stuysu.org
+                        </a>
                     </div>
                 )}
             </div>

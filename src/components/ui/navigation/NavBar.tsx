@@ -4,6 +4,7 @@ import React, {
     FC,
     useContext,
     useEffect,
+    useLayoutEffect,
     useRef,
     useState,
 } from "react";
@@ -65,6 +66,8 @@ const NavBar: FC = () => {
     };
 
     const itemRefs = useRef<HTMLDivElement[]>([]);
+    const containerRef = useRef<HTMLDivElement | null>(null);
+
     const [optionUnderline, setOptionUnderline] = useState({
         left: 0,
         width: 0,
@@ -74,6 +77,7 @@ const NavBar: FC = () => {
     useEffect(() => {
         setIsOrgPage(!!document.querySelector("#activity-page"));
     }, [location.pathname]);
+
     const getActivePaths = (item: TopNavItem): string[] => [item.path];
 
     const isPageOptnActive = (item: TopNavItem): boolean => {
@@ -100,22 +104,48 @@ const NavBar: FC = () => {
     // Close drawer on route change
     useEffect(() => setDrawerOpen(false), [location]);
 
-    useEffect(() => {
-        let currentIndex = topNavItems.findIndex((item) => {
+    const updateUnderline = React.useCallback(() => {
+        const currentIndex = topNavItems.findIndex((item) => {
             if (!item.external && item.path === "/stuyactivities") {
                 return isStuyActivitiesPath(location.pathname) || isOrgPage;
             }
             return getActivePaths(item).includes(location.pathname);
         });
-        if (currentIndex !== -1 && itemRefs.current[currentIndex]) {
-            const el = itemRefs.current[currentIndex];
-            setOptionUnderline({ left: el.offsetLeft, width: el.offsetWidth });
-        } else {
+
+        const parent = containerRef.current;
+        const el = currentIndex >= 0 ? itemRefs.current[currentIndex] : null;
+
+        if (!parent || !el) {
             setOptionUnderline({ left: 0, width: 0 });
+            return;
         }
+
+        const parentRect = parent.getBoundingClientRect();
+        const rect = el.getBoundingClientRect();
+
+        setOptionUnderline({
+            left: rect.left - parentRect.left,
+            width: rect.width,
+        });
     }, [location.pathname, isOrgPage]);
 
-    // Hide navbar on public landing page when signed‑out
+    useLayoutEffect(() => {
+        let raf = requestAnimationFrame(updateUnderline);
+
+        const onResize = () => requestAnimationFrame(updateUnderline);
+        const onPageShow = () => requestAnimationFrame(updateUnderline);
+        window.addEventListener("resize", onResize);
+        window.addEventListener("pageshow", onPageShow);
+        document?.fonts?.ready?.then?.(() =>
+            requestAnimationFrame(updateUnderline),
+        );
+        return () => {
+            cancelAnimationFrame(raf);
+            window.removeEventListener("resize", onResize);
+            window.removeEventListener("pageshow", onPageShow);
+        };
+    }, [updateUnderline, isMobile]);
+
     if (!user?.signed_in && location.pathname === "/")
         return <Box height={20} />;
 
@@ -201,9 +231,9 @@ const NavBar: FC = () => {
                                         fontVariationSettings: "'wght' 700",
                                     }}
                                     className="cursor-pointer transition-colors hover:text-typography-3"
-                                    onClick={() => navigate("/passport")}
+                                    onClick={() => navigate("/profile")}
                                 >
-                                    My Epsilon Passport
+                                    Profile
                                 </p>
                                 <p
                                     style={{
@@ -259,8 +289,9 @@ const NavBar: FC = () => {
                 )}
 
                 <Stack
+                    ref={containerRef}
                     direction="row"
-                    spacing={3.5}
+                    spacing={3}
                     sx={{
                         zIndex: 40,
                         fontSize: 20,
@@ -277,7 +308,7 @@ const NavBar: FC = () => {
                             ref={(el) => {
                                 if (el) itemRefs.current[index] = el;
                             }}
-                            className={`flex items-start flex-nowrap cursor-pointer transition-colors ${
+                            className={`text-nowrap flex items-start flex-nowrap cursor-pointer transition-colors ${
                                 isPageOptnActive(item)
                                     ? "text-typography-1"
                                     : "sm:hover:text-typography-1 text-typography-2"
@@ -290,6 +321,7 @@ const NavBar: FC = () => {
                                     navigate(item.path);
                                 }
                                 setTimeout(() => setIsHovered(false), 300);
+                                requestAnimationFrame(updateUnderline);
                             }}
                             style={{ position: "relative" }}
                         >
@@ -313,7 +345,7 @@ const NavBar: FC = () => {
                         <div
                             className="absolute bottom-0 h-px bg-typography-1 pointer-events-none transition-[left,width] duration-300"
                             style={{
-                                left: optionUnderline.left - 27,
+                                left: optionUnderline.left - 23,
                                 width: optionUnderline.width,
                             }}
                         />

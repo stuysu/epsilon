@@ -27,7 +27,11 @@ const Archives = () => {
                 </h1>
             </div>
             <div className={"flex w-full justify-center"}>
-                <div className={"flex flex-col gap-5 w-full h-32 mb-64 max-w-3xl"}>
+                <div
+                    className={
+                        "flex flex-col gap-5 w-full h-32 mb-64 max-w-3xl"
+                    }
+                >
                     <a
                         href={
                             "https://docs.google.com/spreadsheets/d/1URqnVM9avoD5_oRvBzQXI1ghq4oWRLWMps58cvNCLc0/edit?usp=sharing"
@@ -38,7 +42,7 @@ const Archives = () => {
                         <i className={"bx bx-box bx-md pt-1"}></i>
                         <div>
                             <h3>2024-2025</h3>
-                            <p>Most Recent (421 Activities)</p>
+                            <p>421 Activities</p>
                         </div>
                     </a>
                     <a
@@ -48,10 +52,12 @@ const Archives = () => {
                         target="_blank"
                         className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex items-center no-underline gap-4 hover:bg-layer-3 shadow-control"
                     >
-                        <i className={"bx bx-box bx-md pt-1 text-typography-2"}></i>
+                        <i
+                            className={"bx bx-box bx-md pt-1 text-typography-2"}
+                        ></i>
                         <div>
                             <h3>2023-2024</h3>
-                            <p>Historical (351 Activities)</p>
+                            <p>351 Activities</p>
                         </div>
                     </a>
                 </div>

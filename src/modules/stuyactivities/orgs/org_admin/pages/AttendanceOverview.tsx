@@ -1,4 +1,4 @@
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { supabase } from "../../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
@@ -52,39 +52,19 @@ const AttendanceOverview = () => {
                 />
             ) : (
                 <div>
-                    <Box
-                        height="100%"
-                        bgcolor="#1f1f1f80"
-                        padding={5}
-                        borderRadius={3}
-                        marginBottom={3}
-                        marginTop={1}
-                        boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
+                    <div
+                        className={
+                            "w-full bg-layer-1 p-5 pl-7 pb-8 rounded-xl mb-10 mt-2 shadow-module"
+                        }
                     >
-                        <Typography variant="h1" align="center" width="100%">
-                            Take Attendance
-                        </Typography>
-                        <Typography
-                            variant="body1"
-                            align="center"
-                            width="100%"
-                            paddingX={"2vw"}
-                        >
+                        <h1>Take Attendance</h1>
+                        <p>
                             Here is the attendance overview for your Activity.
                             Attendance records must be kept up to date on
                             Epsilon. Strikes will be issued if attendance is not
                             marked or falsely marked.
-                        </Typography>
-
-                        <Box
-                            sx={{
-                                display: "flex",
-                                justifyContent: "center",
-                                width: "100%",
-                                marginTop: "20px",
-                            }}
-                        ></Box>
-                    </Box>
+                        </p>
+                    </div>
 
                     <Box sx={{ width: "100%" }}>
                         <Box

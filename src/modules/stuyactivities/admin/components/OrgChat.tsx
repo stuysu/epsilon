@@ -153,10 +153,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                 Only visible to admins, faculty, and the Clubs & Pubs
                 Department.
             </p>
-            <div
-                className={"h-96 overflow-auto relative"}
-                ref={chatBoxRef}
-            >
+            <div className={"h-96 overflow-auto relative"} ref={chatBoxRef}>
                 {messages.map((message) => {
                     let messageTime = dayjs(message.created_at);
                     let timeStr = `${messageTime.month() + 1}/${messageTime.date()}/${messageTime.year()}`;

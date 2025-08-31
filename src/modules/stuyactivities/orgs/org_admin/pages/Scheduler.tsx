@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import OrgContext from "../../../../../contexts/OrgContext";
 import AdminUpsertMeeting from "../components/AdminUpsertMeeting";
 
-import { Box, Stack, Typography, useMediaQuery } from "@mui/material";
+import { useMediaQuery } from "@mui/material";
 import { supabase } from "../../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import OrgMeeting from "../../components/OrgMeeting";
@@ -10,6 +10,7 @@ import OrgMeeting from "../../components/OrgMeeting";
 import { sortByDate } from "../../../../../utils/DataFormatters";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
 import ContentUnavailable from "../../../../../components/ui/content/ContentUnavailable";
+import ItemList from "../../../../../components/ui/lists/ItemList";
 
 const Scheduler = () => {
     const organization = useContext(OrgContext);
@@ -51,133 +52,99 @@ const Scheduler = () => {
         );
 
     return (
-        <Box sx={{ width: "100%", display: "flex", flexWrap: "wrap" }}>
-            <Box
-                height="100%"
-                bgcolor="#1f1f1f80"
-                padding={5}
-                borderRadius={3}
-                marginBottom={3}
-                marginTop={1}
-                boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
+        <div className={"w-full flex flex-col"}>
+            <div
+                className={
+                    "w-full bg-layer-1 p-5 pl-7 pb-8 rounded-xl mb-10 mt-2 shadow-module"
+                }
             >
-                <Typography variant="h1" align="center" width="100%">
-                    Activity Meetings Scheduler
-                </Typography>
-                <Typography
-                    variant="body1"
-                    align="center"
-                    width="100%"
-                    paddingX={"2vw"}
-                >
+                <h1>Activity Meetings Scheduler</h1>
+                <p className={"mb-4"}>
                     Meeting records must be kept up to date on Epsilon in order
                     to secure funding and avoid receiving strikes.
-                </Typography>
-
-                <Box
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        width: "100%",
-                        marginTop: "20px",
-                    }}
+                </p>
+                <AsyncButton
+                    onClick={() =>
+                        setEditState({
+                            id: undefined,
+                            title: undefined,
+                            description: undefined,
+                            start: undefined,
+                            end: undefined,
+                            room: undefined,
+                            isPublic: undefined,
+                            editing: true,
+                        })
+                    }
+                    variant="contained"
                 >
-                    <AsyncButton
-                        onClick={() =>
-                            setEditState({
-                                id: undefined,
-                                title: undefined,
-                                description: undefined,
-                                start: undefined,
-                                end: undefined,
-                                room: undefined,
-                                isPublic: undefined,
-                                editing: true,
-                            })
-                        }
-                        variant="contained"
-                    >
-                        Create Meeting
-                    </AsyncButton>
-                </Box>
-            </Box>
+                    Create Meeting
+                </AsyncButton>
+            </div>
 
-            <Box
-                height="100%"
-                width="100%"
-                bgcolor="#1f1f1f80"
-                padding={0.5}
-                borderRadius={3}
-                marginBottom={10}
-                marginTop={1}
-                boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
-            >
-                <Stack borderRadius={2} overflow="hidden" spacing={0.5}>
-                    {organization.meetings
-                        .sort(sortByDate)
-                        .reverse()
-                        .map((meeting) => (
-                            <OrgMeeting
-                                key={meeting.id}
-                                id={meeting.id}
-                                title={meeting.title}
-                                description={meeting.description}
-                                start_time={meeting.start_time}
-                                end_time={meeting.end_time}
-                                room_name={meeting.rooms?.name}
-                                org_name={organization.name}
-                                org_picture={organization.picture || ""}
-                                is_public={meeting.is_public}
-                                isMobile={isMeetingMobile}
-                                onEdit={() => {
-                                    setEditState({
-                                        id: meeting.id,
-                                        title: meeting.title,
-                                        description: meeting.description,
-                                        start: meeting.start_time,
-                                        end: meeting.end_time,
-                                        room: meeting.rooms?.id,
-                                        isPublic: meeting.is_public,
-                                        editing: true,
+            <ItemList height={"auto"}>
+                {organization.meetings
+                    .sort(sortByDate)
+                    .reverse()
+                    .map((meeting) => (
+                        <OrgMeeting
+                            key={meeting.id}
+                            id={meeting.id}
+                            title={meeting.title}
+                            description={meeting.description}
+                            start_time={meeting.start_time}
+                            end_time={meeting.end_time}
+                            room_name={meeting.rooms?.name}
+                            org_name={organization.name}
+                            org_picture={organization.picture || ""}
+                            is_public={meeting.is_public}
+                            isMobile={isMeetingMobile}
+                            onEdit={() => {
+                                setEditState({
+                                    id: meeting.id,
+                                    title: meeting.title,
+                                    description: meeting.description,
+                                    start: meeting.start_time,
+                                    end: meeting.end_time,
+                                    room: meeting.rooms?.id,
+                                    isPublic: meeting.is_public,
+                                    editing: true,
+                                });
+                            }}
+                            onDelete={async () => {
+                                let { error } = await supabase.functions.invoke(
+                                    "delete-meeting",
+                                    {
+                                        body: {
+                                            id: meeting.id,
+                                        },
+                                    },
+                                );
+
+                                if (error) {
+                                    return enqueueSnackbar(
+                                        "Error deleting meeting. Contact it@stuysu.org for support.",
+                                        { variant: "error" },
+                                    );
+                                }
+
+                                if (organization.setOrg) {
+                                    // update org
+                                    organization.setOrg({
+                                        ...organization,
+                                        meetings: organization.meetings.filter(
+                                            (m) => m.id !== meeting.id,
+                                        ),
                                     });
-                                }}
-                                onDelete={async () => {
-                                    let { error } =
-                                        await supabase.functions.invoke(
-                                            "delete-meeting",
-                                            {
-                                                body: {
-                                                    id: meeting.id,
-                                                },
-                                            },
-                                        );
+                                }
 
-                                    if (error) {
-                                        return enqueueSnackbar(
-                                            "Error deleting meeting. Contact it@stuysu.org for support.",
-                                            { variant: "error" },
-                                        );
-                                    }
-
-                                    if (organization.setOrg) {
-                                        // update org
-                                        organization.setOrg({
-                                            ...organization,
-                                            meetings:
-                                                organization.meetings.filter(
-                                                    (m) => m.id !== meeting.id,
-                                                ),
-                                        });
-                                    }
-
-                                    enqueueSnackbar("Deleted Meeting!", {
-                                        variant: "success",
-                                    });
-                                }}
-                            />
-                        ))}
-                </Stack>
-            </Box>
+                                enqueueSnackbar("Deleted Meeting!", {
+                                    variant: "success",
+                                });
+                            }}
+                        />
+                    ))}
+            </ItemList>
 
             {editState.editing && (
                 <AdminUpsertMeeting
@@ -224,7 +191,7 @@ const Scheduler = () => {
                     }}
                 />
             )}
-        </Box>
+        </div>
     );
 };
 
