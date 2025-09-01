@@ -178,7 +178,7 @@ const MeetingAttendance = () => {
                                     picture={userPicture}
                                     role_name={isPresent ? "Present" : "Absent"}
                                     first_name={userName}
-                                    last_name={String(userId).padStart(4, "0")}
+                                    last_name={String(userId).padStart(5, "0")}
                                 />
                             </div>
                             <div className={"w-40"}>
