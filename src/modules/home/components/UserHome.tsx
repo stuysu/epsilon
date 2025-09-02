@@ -157,8 +157,8 @@ const UserHome = () => {
                 <h2 className={"-mt-1.5"}>Here's what's happening.</h2>
             </header>
 
-            <section className="flex sm:flex-row flex-col gap-12 w-full">
-                <div className="justify-center gap-5 grid grid-cols-[auto] lg:grid-cols-[auto_auto] xl:grid-cols-[auto_auto_auto]">
+            <section className="relative flex sm:flex-row flex-col gap-12 w-full mb-10">
+                <div className="h-fit sm:sticky top-5 justify-center gap-5 grid grid-cols-[auto] lg:grid-cols-[auto_auto] xl:grid-cols-[auto_auto_auto]">
                     {user.memberships?.map((membership) => {
                         if (membership.active)
                             return (
@@ -314,13 +314,11 @@ const UserHome = () => {
                             </p>
                         </div>
                     </div>
-                </div>
-            </section>
 
-            <section className={"w-full grid-cols-1 md:grid-cols-2 grid gap-4"}>
-                {posts.map((post) => (
-                    <OrgStreamPost content={post} />
-                ))}
+                    {posts.map((post) => (
+                        <OrgStreamPost content={post} />
+                    ))}
+                </div>
             </section>
         </main>
     );

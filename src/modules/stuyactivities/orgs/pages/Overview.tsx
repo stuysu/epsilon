@@ -282,7 +282,7 @@ const Overview = () => {
             </div>
 
             <Divider />
-            <div className={"max-w-full overflow-scroll max-sm:scrollbar-none"}>
+            <div className={"max-w-full overflow-scroll scrollbar-none"}>
                 <div className={"flex flex-row mt-2 mb-6 items-center"}>
                     {user.signed_in && (
                         <>

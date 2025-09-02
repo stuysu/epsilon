@@ -113,7 +113,7 @@ const AdminRouter = () => {
     }
 
     return (
-        <div>
+        <div className={"min-h-screen"}>
             <AdminNav links={links} />
             <Routes>
                 <Route path="/" Component={AdminRedirect} />

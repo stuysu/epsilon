@@ -140,9 +140,23 @@ const MeetingAttendance = () => {
                 <div className={"w-full rounded-lg border border-divider p-5"}>
                     <p>
                         Send this link to allow attendees to mark their own
-                        attendance.
+                        attendance. Click to copy the link to your clipboard.
                         <br />
-                        <a>{`${PUBLIC_URL}/${orgUrl}/my-attendance/${meetingId}`}</a>
+                        <a
+                            href="#"
+                            onClick={(e) => {
+                                e.preventDefault();
+                                navigator.clipboard.writeText(
+                                    `${PUBLIC_URL}/${orgUrl}/my-attendance/${meetingId}`,
+                                );
+                                enqueueSnackbar("Copied link to clipboard!", {
+                                    variant: "success",
+                                });
+                            }}
+                            className="cursor-pointer text-blue-500 underline"
+                        >
+                            {`${PUBLIC_URL}/${orgUrl}/my-attendance/${meetingId}`}
+                        </a>
                     </p>
                 </div>
 
@@ -181,8 +195,9 @@ const MeetingAttendance = () => {
                                     last_name={String(userId).padStart(5, "0")}
                                 />
                             </div>
-                            <div className={"w-40"}>
+                            <div className={"w-48 px-4"}>
                                 <AsyncButton
+                                    isPrimary={!isPresent}
                                     onClick={() =>
                                         updateStatus(
                                             userId,

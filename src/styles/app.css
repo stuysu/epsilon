@@ -111,7 +111,7 @@
         --divider: #a9a9a94d;
 
         --blur-dark: #f2f2f280;
-        --blur-light: #c5c5c57f;
+        --blur-light: rgba(211, 211, 211, 0.7);
 
         --shadow-module: rgba(0, 0, 0, 0.25);
         --shadow-control: rgba(0, 0, 0, 0.3);
@@ -141,7 +141,7 @@
             --divider: #a9a9a94d;
 
             --blur-dark: #f2f2f280;
-            --blur-light: #c5c5c57f;
+            --blur-light: rgba(211, 211, 211, 0.7);
 
             --shadow-module: rgba(0, 0, 0, 0.25);
             --shadow-control: rgba(0, 0, 0, 0.3);

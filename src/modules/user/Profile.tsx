@@ -219,7 +219,9 @@ const Profiles = () => {
 
                 <img
                     src={`${PUBLIC_URL}/taglines/medals.svg`}
-                    className={"w-64 mb-3 mt-16"}
+                    className={
+                        "w-64 mb-3 mt-16 bg-[#111111] p-3 rounded-lg relative right-3"
+                    }
                     alt={"Medals of Honor"}
                 />
                 <p>Medals are coming soon to Epsilon. Preview them below!</p>
@@ -251,7 +253,7 @@ const Profiles = () => {
                 onClose={closeMedalDialog}
                 title={activeMedal?.title ?? ""}
                 description={activeMedal?.description ?? ""}
-                confirmText="Share Medal"
+                confirmText="Got it!"
                 cancelText="Close"
                 onConfirm={() => {}}
                 onCancel={() => {}}

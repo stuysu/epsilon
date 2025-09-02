@@ -295,7 +295,9 @@ const Index = () => {
                             aria-label="Play"
                         >
                             <i className="text-white/50 bx bx-play text-5xl relative left-0.5 transition hover:opacity-50 " />
-                            <p className={"text-white/50"}>Learn about the makers of Epsilon.</p>
+                            <p className={"text-white/50"}>
+                                Learn about the makers of Epsilon.
+                            </p>
                         </motion.button>
                     )}
 

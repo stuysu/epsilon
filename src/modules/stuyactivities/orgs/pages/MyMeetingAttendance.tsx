@@ -102,9 +102,7 @@ const MyMeetingAttendance = () => {
 
     return (
         <Box>
-            <h1>
-                {meeting?.title}
-            </h1>
+            <h1>{meeting?.title}</h1>
             <Box
                 sx={{
                     width: "100%",

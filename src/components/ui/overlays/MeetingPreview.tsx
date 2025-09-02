@@ -105,15 +105,24 @@ const MeetingPreview = ({
                                                         .toUpperCase()}
                                                 </Avatar.Fallback>
                                             </Avatar.Root>
-                                            <a
-                                                href={`/${url}`}
-                                                className="cursor-alias transition-opacity hover:opacity-75"
-                                            >
-                                                <h3 className="text-typography-1">
-                                                    {organizationName ||
-                                                        "Untitled Organization"}
-                                                </h3>
-                                            </a>
+                                            {url ? (
+                                                <a
+                                                    href={`/${url}`}
+                                                    className="no-underline cursor-alias transition-opacity hover:opacity-75"
+                                                >
+                                                    <h3 className="text-typography-1">
+                                                        {organizationName ||
+                                                            "Untitled Organization"}
+                                                    </h3>
+                                                </a>
+                                            ) : (
+                                                <span className="no-underline">
+                                                    <h3 className="text-typography-1">
+                                                        {organizationName ||
+                                                            "Untitled Organization"}
+                                                    </h3>
+                                                </span>
+                                            )}
                                         </Dialog.Title>
 
                                         <Dialog.Close

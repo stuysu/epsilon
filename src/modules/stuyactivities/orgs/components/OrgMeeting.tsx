@@ -66,7 +66,7 @@ const OrgMeeting = ({
                 </div>
                 <div className="flex gap-2 w-fit justify-end">
                     <ToggleChip
-                        title={"Room " + room_name || "Virtual"}
+                        title={room_name ? `Room ${room_name}` : "Virtual"}
                         selectable={false}
                     ></ToggleChip>
                     {is_public ? (

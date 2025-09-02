@@ -288,6 +288,12 @@ const NavBar: FC = () => {
                     />
                 )}
 
+                <div
+                    className={
+                        "right-0 h-full w-10 bg-gradient-to-r from-transparent to-bg absolute z-50"
+                    }
+                ></div>
+
                 <Stack
                     ref={containerRef}
                     direction="row"

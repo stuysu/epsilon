@@ -41,7 +41,7 @@ const AsyncButton: React.FC<AsyncButtonProps> = ({
                 backgroundColor: isPrimary
                     ? "var(--accent)"
                     : "var(--layer-secondary)",
-                color: isPrimary ? "var(--white)" : "var(--text-primary)",
+                color: isPrimary ? "white" : "var(--text-primary)",
                 padding: "11px 20px 13px 20px",
                 fontSize: "14px",
                 opacity: isLoading || props.disabled ? 0.7 : 1,

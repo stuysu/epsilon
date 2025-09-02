@@ -2,7 +2,8 @@ import React, { useContext } from "react";
 import OrgContext from "../../../../../contexts/OrgContext";
 
 import PendingMember from "../components/PendingMember";
-import { Box, Stack } from "@mui/material";
+import { Box } from "@mui/material";
+import ItemList from "../../../../../components/ui/lists/ItemList";
 
 const JoinRequests = () => {
     const organization = useContext<OrgContextType>(OrgContext);
@@ -33,28 +34,18 @@ const JoinRequests = () => {
             </div>
 
             {pendingMembers?.length > 0 && (
-                <Box
-                    height="100%"
-                    bgcolor="#1f1f1f80"
-                    padding={0.5}
-                    borderRadius={3}
-                    marginBottom={10}
-                    marginTop={1}
-                    boxShadow="inset 0 0 1px 1px rgba(255, 255, 255, 0.15)"
-                >
-                    <Stack borderRadius={2} overflow="hidden" spacing={0.5}>
-                        {pendingMembers?.map((member, i) => (
-                            <PendingMember
-                                id={member.membershipId || -1}
-                                first_name={member.first_name}
-                                last_name={member.last_name}
-                                email={member.email || "Undefined"}
-                                picture={member.picture}
-                                key={i}
-                            />
-                        ))}
-                    </Stack>
-                </Box>
+                <ItemList height={"auto"}>
+                    {pendingMembers?.map((member, i) => (
+                        <PendingMember
+                            id={member.membershipId || -1}
+                            first_name={member.first_name}
+                            last_name={member.last_name}
+                            email={member.email || "Undefined"}
+                            picture={member.picture}
+                            key={i}
+                        />
+                    ))}
+                </ItemList>
             )}
         </Box>
     );
