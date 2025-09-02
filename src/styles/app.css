@@ -1,0 +1,228 @@
+@import url("https://use.typekit.net/trt3qfc.css");
+@import url("https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css");
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+    /* text styles */
+    html {
+        font-size: 16px;
+    }
+
+    body {
+        @apply font-sans text-[0.9rem] leading-[1.2rem] text-[color:var(--text-secondary)];
+    }
+
+    h1 {
+        @apply font-display text-[2.1rem] leading-[2.1rem] my-2 text-[color:var(--text-primary)];
+        font-weight: 700;
+    }
+
+    h2 {
+        @apply font-display text-[1.5rem] my-1 text-[color:var(--text-secondary)];
+        font-weight: 600;
+    }
+
+    h3 {
+        @apply text-[1.4rem] leading-[1.4rem] my-1 text-[color:var(--text-primary)];
+        font-variation-settings: "wght" 700;
+        padding-top: 0.12em;
+    }
+
+    h4 {
+        @apply text-[1rem] leading-[1.1rem] text-[color:var(--text-primary)];
+        font-variation-settings: "wght" 600;
+    }
+
+    h5 {
+        @apply text-[1rem] text-[color:var(--text-primary)];
+        font-variation-settings: "wght" 500;
+    }
+
+    p,
+    .text {
+        @apply text-[0.9rem] leading-[1.2rem] text-[color:var(--text-secondary)];
+        font-variation-settings: "wght" 500;
+    }
+
+    a {
+        @apply text-[color:var(--accent)] underline;
+    }
+
+    .important {
+        font-variation-settings: "wght" 700;
+    }
+
+    :root {
+        color-scheme: dark light;
+    }
+
+    /* dark: default, user set, and when system wants dark */
+    :where(:root, [data-theme="dark"]) {
+        --bg-main: #111111;
+
+        --layer-primary: #1f1f1f80;
+        --layer-secondary: #36363666;
+        --layer-tertiary: #6161614d;
+
+        --accent: #3788ffcc;
+
+        --text-primary: #e8e8e8cc;
+        --text-secondary: #aeaeaecc;
+        --text-tertiary: #878787cc;
+
+        --blue: #395be9;
+        --green: #6deb68cc;
+        --yellow: #eefe53cc;
+        --red: #e45647b3;
+        --beige: #b6b684cc;
+
+        --divider: #7d7d7d4d;
+
+        --blur-dark: #111111cc;
+        --blur-light: #22222299;
+
+        --shadow-module: rgba(255, 255, 255, 0.25);
+        --shadow-control: rgba(255, 255, 255, 0.3);
+    }
+
+    /* light when user set */
+    :where([data-theme="light"]) {
+        --bg-main: #e9e9e9;
+
+        --layer-primary: #ffffffb3;
+        --layer-secondary: #d6d6d680;
+        --layer-tertiary: #c4c4c466;
+
+        --accent: #0068ffcc;
+
+        --text-primary: #000000cc;
+        --text-secondary: #4b4b4bcc;
+        --text-tertiary: #595959cc;
+
+        --blue: #395be9;
+        --green: #33762f;
+        --yellow: #dd9700;
+        --red: #d31300;
+        --beige: #d9d9a2;
+
+        --divider: #a9a9a94d;
+
+        --blur-dark: #f2f2f280;
+        --blur-light: rgba(211, 211, 211, 0.7);
+
+        --shadow-module: rgba(0, 0, 0, 0.25);
+        --shadow-control: rgba(0, 0, 0, 0.3);
+    }
+
+    /* light when system wants light */
+    @media (prefers-color-scheme: light) {
+        :root:not([data-theme]) {
+            --bg-main: #e9e9e9;
+
+            --layer-primary: #ffffffb3;
+            --layer-secondary: #d6d6d680;
+            --layer-tertiary: #c4c4c466;
+
+            --accent: #0068ffcc;
+
+            --text-primary: #000000cc;
+            --text-secondary: #4b4b4bcc;
+            --text-tertiary: #595959cc;
+
+            --blue: #395be9;
+            --green: #33762f;
+            --yellow: #dd9700;
+            --red: #d31300;
+            --beige: #d9d9a2;
+
+            --divider: #a9a9a94d;
+
+            --blur-dark: #f2f2f280;
+            --blur-light: rgba(211, 211, 211, 0.7);
+
+            --shadow-module: rgba(0, 0, 0, 0.25);
+            --shadow-control: rgba(0, 0, 0, 0.3);
+        }
+    }
+
+    [data-theme="dark-hc"] {
+        --bg-main: #000000;
+
+        --layer-primary: #000000;
+        --layer-secondary: #1a1a1a;
+        --layer-tertiary: #262626;
+
+        --accent: #bb2c00;
+
+        --text-primary: #ffffff;
+        --text-secondary: #f5f5f5;
+        --text-tertiary: #cccccc;
+
+        --blue: #66aaff;
+        --green: #55dd55;
+        --yellow: #ffff66;
+        --red: #ff4444;
+        --beige: #ffffcc;
+
+        --divider: #666;
+
+        --blur-dark: #000000;
+        --blur-light: #111111;
+
+        --shadow-module: #fff;
+        --shadow-control: #fff;
+    }
+
+    [data-theme="orange"] {
+        --bg-main: #fff3e0;
+
+        --layer-primary: #ffe0b2;
+        --layer-secondary: #ffcc80;
+        --layer-tertiary: #ffb74d;
+
+        --accent: #ff6f00;
+
+        --text-primary: #4e342e;
+        --text-secondary: #6d4c41;
+        --text-tertiary: #8d6e63;
+
+        --blue: #ff7043;
+        --green: #ff8a65;
+        --yellow: #ffb300;
+        --red: #e64a19;
+        --beige: #ffe082;
+
+        --divider: #ffcc80;
+
+        --blur-dark: #ff9800cc;
+        --blur-light: #ffcc80cc;
+    }
+
+    /* orange theme uses serif */
+    [data-theme="orange"] body,
+    [data-theme="orange"] h1,
+    [data-theme="orange"] h2,
+    [data-theme="orange"] h3,
+    [data-theme="orange"] h4,
+    [data-theme="orange"] h5,
+    [data-theme="orange"] p {
+        font-family: "Georgia", "Times New Roman", serif !important;
+    }
+
+    /* light or dark natured */
+    [data-theme="orange"] {
+        color-scheme: light;
+    }
+    [data-theme="light"] {
+        color-scheme: light;
+    }
+    [data-theme="dark"] {
+        color-scheme: dark;
+    }
+    [data-theme="dark-hc"] {
+        color-scheme: dark;
+    }
+}
