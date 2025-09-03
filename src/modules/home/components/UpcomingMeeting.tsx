@@ -43,7 +43,7 @@ const UpcomingMeeting = ({
                 <div className="relative flex gap-3">
                     <div
                         className={[
-                            "min-w-10 h-10 rounded-md overflow-hidden relative",
+                            "min-w-10 w-10 h-10 rounded-md overflow-hidden relative",
                             !is_public
                                 ? "[mask:radial-gradient(circle_0.8rem_at_2.4rem_2.3rem,transparent_98%,#000_100%)] [-webkit-mask:radial-gradient(circle_0.8rem_at_2.4rem_2.3rem,transparent_98%,#000_100%)]"
                                 : "",
@@ -68,7 +68,7 @@ const UpcomingMeeting = ({
                         <i className="bx bx-lock absolute z-10 -bottom-0.5 left-7 text-base leading-none text-typography-1" />
                     )}
 
-                    <div className="w-full pt-1">
+                    <div className="w-full pt-1 text-nowrap">
                         <h4>{title}</h4>
                         <p>{org_name}</p>
                     </div>

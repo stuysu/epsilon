@@ -1,4 +1,4 @@
-import { Box, Paper, TextField, Typography } from "@mui/material";
+import { Box, Paper, TextField } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
 
 import { supabase } from "../../../../../lib/supabaseClient";
@@ -145,9 +145,9 @@ const PostEditor = ({
                 marginBottom: "2rem",
             }}
         >
-            <Typography variant="h3" width="100%">
+            <h3>
                 {content ? "Update Post" : "Create Post"}
-            </Typography>
+            </h3>
             <Box sx={{ marginBottom: "10px" }}>
                 <TextField
                     value={postData["title"]}

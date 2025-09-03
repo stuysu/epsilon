@@ -16,7 +16,7 @@ const Vote = () => {
                     content="Vote in student government elections and other important school decisions with Epsilon."
                 />
             </Helmet>
-            <div className={"relative z-20 bg-black -mb-20"}>
+            <div className={"relative z-20 bg-black sm:-mb-20 min-h-screen"}>
                 <img
                     alt=""
                     src={`${PUBLIC_URL}/textures/voting.png`}
@@ -31,7 +31,7 @@ const Vote = () => {
                         }
                     >
                         <div className="relative bottom-12 w-full flex justify-center">
-                            <div className="relative max-w-xl sm:w-2/3 w-full">
+                            <div className="max-sm:mt-5 max-sm:w-1/2 relative max-w-xl sm:w-2/3 w-full">
                                 {/* glow */}
                                 <h1
                                     aria-hidden="true"

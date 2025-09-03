@@ -149,7 +149,7 @@ const UserHome = () => {
     }, [enqueueSnackbar]);
 
     return (
-        <main className="m-3 sm:my-8 sm:mx-12 max-sm:mt-10">
+        <main className="m-3 sm:my-8 sm:mx-12 max-sm:mt-10 min-h-[90vh]">
             <header className="flex flex-col mb-10 max-sm:items-center max-sm:text-center">
                 <h1>
                     {timeGreeting}, {user.first_name}!
@@ -158,7 +158,7 @@ const UserHome = () => {
             </header>
 
             <section className="relative flex sm:flex-row flex-col gap-12 w-full mb-10">
-                <div className="h-fit sm:sticky top-5 justify-center gap-5 grid grid-cols-[auto] lg:grid-cols-[auto_auto] xl:grid-cols-[auto_auto_auto]">
+                <div className="h-fit sm:sticky top-5 justify-center gap-5 grid grid-cols-[auto_auto] sm:grid-cols-[auto] lg:grid-cols-[auto_auto] xl:grid-cols-[auto_auto_auto]">
                     {user.memberships?.map((membership) => {
                         if (membership.active)
                             return (
@@ -238,7 +238,7 @@ const UserHome = () => {
                             bg-layer-1
                             shadow-control"
                         >
-                            <p className={"pt-4"}>
+                            <p className={"pt-4 important"}>
                                 <a
                                     href={"/meetings"}
                                     className={
@@ -303,8 +303,8 @@ const UserHome = () => {
                             <p
                                 className={
                                     announcements.length <= visibleAnnouncements
-                                        ? "opacity-50 pt-4"
-                                        : "pt-4 cursor-pointer hover:opacity-75 transition-colors"
+                                        ? "opacity-50 pt-4 important"
+                                        : "pt-4 cursor-pointer hover:opacity-75 transition-colors important"
                                 }
                                 onClick={() =>
                                     setVisibleAnnouncements((prev) => prev + 3)
