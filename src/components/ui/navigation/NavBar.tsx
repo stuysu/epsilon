@@ -170,7 +170,7 @@ const NavBar: FC = () => {
                             src={wordmarkSrc}
                             alt="Epsilon"
                             style={{
-                                marginTop: 10,
+                                marginTop: 14,
                                 maxWidth: 100,
                                 height: "auto",
                                 position: "relative",

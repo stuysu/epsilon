@@ -168,14 +168,13 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                     width: "120px",
                                     height: "120px",
                                     borderRadius: "20px",
-                                    fontSize: "60px",
                                     objectFit: "cover",
-                                    backgroundColor: "#232323",
-                                    color: "#cdcdcd",
+                                    backgroundColor: "var(--layer-secondary)",
+                                    color: "var(--text-primary)",
                                 }}
                                 alt={`${organization.name}`}
                             >
-                                <h1>
+                                <h1 className="text-7xl font-light">
                                     {organization.name?.charAt(0).toUpperCase()}
                                 </h1>
                             </Avatar>

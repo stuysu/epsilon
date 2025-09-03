@@ -79,7 +79,7 @@ const Overview = () => {
                         memberships: [...organization.memberships, data],
                     });
                 }
-                enqueueSnackbar("Sent organization a join request!", {
+                enqueueSnackbar("Join request sent!", {
                     variant: "success",
                 });
             } else if (

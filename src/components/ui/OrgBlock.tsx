@@ -106,15 +106,14 @@ const OrgBlock = ({
                             height: "180px",
                             overflow: "hidden",
                             borderRadius: "15px",
-                            backgroundColor: "#232323",
+                            backgroundColor: "var(--layer-secondary)",
+                            color: "var(--text-primary)",
                             display: "flex",
                             alignItems: "center",
                             justifyContent: "center",
-                            fontSize: "100px",
-                            color: "#cdcdcd",
                         }}
                     >
-                        <h1>{name?.charAt(0).toUpperCase()}</h1>
+                        <h1 className="text-9xl font-light">{name?.charAt(0).toUpperCase()}</h1>
                     </div>
                 )}
             </div>
