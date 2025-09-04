@@ -190,13 +190,13 @@ const OrgRouter = () => {
                         ></div>
                         <div className={`sm:hidden block mt-10`}></div>
                         <div
-                            className={`sm:sticky max-sm:top-0.5 fixed cursor-pointer ml-6 mt-2 top-3 z-40 flex`}
-                            onClick={() => navigate("/stuyactivities")}
+                            className={`sm:sticky max-sm:top-0.5 fixed ml-6 mt-2 top-3 z-40 flex`}
                         >
                             <p
                                 className={
-                                    "important relative -left-px hover:text-typography-1"
+                                    "important relative -left-px hover:text-typography-1 cursor-pointer"
                                 }
+                                onClick={() => navigate("/stuyactivities")}
                             >
                                 <i
                                     className={

@@ -16,6 +16,7 @@ import Divider from "../../../../components/ui/Divider";
 import OverviewList from "../../../../components/ui/lists/OverviewList";
 import UserDialog from "../../../../components/ui/overlays/UserDialog";
 import { PUBLIC_URL } from "../../../../config/constants";
+import DisplayLinks from "../../../../components/DisplayLinks";
 
 const Overview = () => {
     const navigate = useNavigate();
@@ -355,9 +356,9 @@ const Overview = () => {
                     title={"Meeting Schedule"}
                     glow={"bg-blue"}
                 >
-                    <p className={"bg-layer-2 p-4 mb-0.5"}>
-                        {organization.meeting_schedule || "None"}
-                    </p>
+                    <div className={"bg-layer-2 p-4 mb-0.5"}>
+                        <DisplayLinks text={organization.meeting_schedule || "None"} />
+                    </div>
                     <div className="flex gap-1">
                         {[
                             ["Mon", "Monday"],

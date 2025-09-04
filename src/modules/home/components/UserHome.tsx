@@ -178,12 +178,12 @@ const UserHome = () => {
                     })}
                     <div
                         className={
-                            "cursor-pointer flex items-center justify-center flex-col w-[180px] h-[180px] rounded-xl hover:scale-105 transition-transform border-indigo-600 border-dashed border"
+                            "cursor-pointer flex items-center justify-center flex-col w-44 h-44 rounded-xl hover:opacity-75 transition-opacity border-accent border-dashed border"
                         }
                         onClick={() => navigate(`/stuyactivities`)}
                     >
-                        <i className="bx bx-md bx-plus-circle mb-5 text-indigo-600"></i>
-                        <p>Join an Activity!</p>
+                        <i className="bx bx-md bx-plus-circle mb-5 text-accent"></i>
+                        <p className="text-accent">Join an Activity!</p>
                     </div>
                 </div>
                 <div className="w-full max-w-3xl flex flex-col gap-14 max-sm:mt-6">
