@@ -101,7 +101,7 @@ const PostEditor = ({
         };
 
         if (onCreate) onCreate(data as Post);
-        enqueueSnackbar("OrgStreamPost created!", { variant: "success" });
+        enqueueSnackbar("Post created!", { variant: "success" });
     };
 
     const savePost = async () => {
@@ -130,7 +130,7 @@ const PostEditor = ({
         };
 
         if (onSave) onSave(data[0] as Post);
-        enqueueSnackbar("OrgStreamPost updated!", { variant: "success" });
+        enqueueSnackbar("Post updated!", { variant: "success" });
     };
 
     return (

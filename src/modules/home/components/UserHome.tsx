@@ -315,8 +315,8 @@ const UserHome = () => {
                         </div>
                     </div>
 
-                    {posts.map((post) => (
-                        <OrgStreamPost content={post} />
+                    {posts.map((post, i) => (
+                        <OrgStreamPost content={post} key={i} />
                     ))}
                 </div>
             </section>
