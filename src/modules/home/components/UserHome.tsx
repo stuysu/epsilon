@@ -158,7 +158,7 @@ const UserHome = () => {
             </header>
 
             <section className="relative flex sm:flex-row flex-col gap-12 w-full mb-10">
-                <div className="h-fit sm:sticky top-5 justify-center gap-5 grid grid-cols-[auto_auto] sm:grid-cols-[auto] lg:grid-cols-[auto_auto] xl:grid-cols-[auto_auto_auto]">
+                <div className="h-fit sm:sticky top-10 justify-center gap-2 sm:gap-5 grid grid-cols-[auto_auto] sm:grid-cols-[auto] lg:grid-cols-[auto_auto] xl:grid-cols-[auto_auto_auto]">
                     {user.memberships?.map((membership) => {
                         if (membership.active)
                             return (
@@ -186,8 +186,8 @@ const UserHome = () => {
                         <p>Join an Activity!</p>
                     </div>
                 </div>
-                <div className="w-full max-w-3xl flex flex-col max-sm:mt-6">
-                    <div className={"relative w-full mb-14 group"}>
+                <div className="w-full max-w-3xl flex flex-col gap-14 max-sm:mt-6">
+                    <div className={"relative w-full group"}>
                         <div className={"relative z-10"}>
                             <ItemList
                                 title={"My Meetings"}
@@ -252,7 +252,7 @@ const UserHome = () => {
                         </div>
                     </div>
 
-                    <div className={"relative w-full mb-20 group"}>
+                    <div className={"relative w-full group"}>
                         <div className={"relative z-10"}>
                             <ItemList
                                 title={"StuyActivities Announcements"}

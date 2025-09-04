@@ -33,13 +33,8 @@ const OrgBlock = ({
 
     return (
         <div
+            className={"cursor-pointer flex flex-col w-44"}
             onClick={url ? handleClick : undefined}
-            style={{
-                cursor: "pointer",
-                display: "flex",
-                flexDirection: "column",
-                width: "180px",
-            }}
         >
             <div>
                 {picture ? (
@@ -47,8 +42,8 @@ const OrgBlock = ({
                         {!imgLoaded && (
                             <Skeleton
                                 variant="rectangular"
-                                width={180}
-                                height={180}
+                                width={"11rem"}
+                                height={"11rem"}
                                 sx={{ borderRadius: "15px" }}
                             />
                         )}
@@ -71,7 +66,7 @@ const OrgBlock = ({
                                 alt={name}
                                 style={{
                                     display: imgLoaded ? "block" : "none",
-                                    height: "180px",
+                                    height: "11rem",
                                     borderRadius: "15px",
                                     objectFit: "cover",
                                     opacity: "0.3",
@@ -91,7 +86,7 @@ const OrgBlock = ({
                                     position: "absolute",
                                     bottom: "0px",
                                     zIndex: 10,
-                                    height: "180px",
+                                    height: "11rem",
                                     borderRadius: "15px",
                                     objectFit: "cover",
                                 }}
@@ -102,8 +97,8 @@ const OrgBlock = ({
                     // fallback for no picture
                     <div
                         style={{
-                            width: "180px",
-                            height: "180px",
+                            width: "11rem",
+                            height: "11rem",
                             overflow: "hidden",
                             borderRadius: "15px",
                             backgroundColor: "var(--layer-secondary)",
