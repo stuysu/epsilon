@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import OrgContext from "../../../../contexts/OrgContext";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import { Avatar } from "radix-ui";
+import DisplayLinks from "../../../../components/DisplayLinks";
 
 /* This post component will serve as both the org_admin and member post. depending on role, differeing functionality */
 const OrgStreamPost = ({
@@ -128,7 +129,7 @@ const OrgStreamPost = ({
             </h3>
 
                 <div className={"w-full overflow-y-scroll relative min-h-full max-h-[8lh]"}>
-                    <p>{content.description}</p>
+                    <DisplayLinks text={content.description} />
                 </div>
 
                 <div className="absolute top-5 right-5">
