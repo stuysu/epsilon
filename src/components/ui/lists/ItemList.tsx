@@ -5,6 +5,7 @@ type ItemListProps = {
     height: number | "auto";
     contentRef?: RefObject<HTMLDivElement>;
     title?: ReactNode;
+    subtitle?: ReactNode;
     icon?: string;
     children: ReactNode;
 };
@@ -13,6 +14,7 @@ export default function ItemList({
     height,
     contentRef,
     title,
+    subtitle,
     icon = "bx-link",
     children,
 }: ItemListProps) {
@@ -24,15 +26,22 @@ export default function ItemList({
         >
             <div className="bg-layer-1 p-1 rounded-xl mb-2.5 relative shadow-module backdrop-blur-xl">
                 <div ref={contentRef}>
-                    {title && (
-                        <h4 className="m-4">
-                            {icon && (
-                                <i
-                                    className={`${icon} bx relative top-px mr-1`}
-                                />
+                    {(title || subtitle) && (
+                        <div className="m-4">
+                            {title && (
+                                <h4 className="flex items-center">
+                                    {icon && (
+                                        <i className={`${icon} bx mr-1`} />
+                                    )}
+                                    {title}
+                                </h4>
                             )}
-                            {title}
-                        </h4>
+                            {subtitle && (
+                                <p className="text-sm text-text-secondary mt-4">
+                                    {subtitle}
+                                </p>
+                            )}
+                        </div>
                     )}
                     <div className="flex flex-col overflow-hidden gap-0.5 rounded-lg">
                         {children}
