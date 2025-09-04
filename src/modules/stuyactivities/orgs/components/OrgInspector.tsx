@@ -76,7 +76,7 @@ const OrgInspector = () => {
                     }
                 >
                     {strikes.length === 0 ? (
-                        <p className={"mx-4 mb-3.5"}>
+                        <p className={"px-3.5 py-2 bg-layer-2"}>
                             No strikes received. This Activity is in good
                             standing.
                         </p>
