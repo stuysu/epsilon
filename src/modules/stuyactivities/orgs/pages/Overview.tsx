@@ -220,7 +220,7 @@ const Overview = () => {
                                 <ToggleChip
                                     title={tag}
                                     selectable={false}
-                                    key={tag}
+                                    key={index}
                                 />
                             )) || (
                                 <ToggleChip
@@ -468,7 +468,7 @@ const Overview = () => {
                                 ></i>
                                 <span className={"relative -top-1"}>
                                     {" "}
-                                    No meetings records.
+                                    No meeting records.
                                 </span>
                             </p>
                         )
