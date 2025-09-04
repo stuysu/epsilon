@@ -176,7 +176,7 @@ const OrgRouter = () => {
                     name="description"
                     content={
                         org.purpose ||
-                        "Epsilon is the everything app for Stuyvesant High School. Browse and join Activities, browse the calendar, find new opportunities, and more."
+                        "Epsilon is the everything app for Stuyvesant High School. Find and join Activities, browse the calendar, find new opportunities, and more."
                     }
                 />
             </Helmet>
