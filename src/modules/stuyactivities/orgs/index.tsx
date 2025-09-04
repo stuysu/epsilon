@@ -148,12 +148,12 @@ const OrgRouter = () => {
 
     if (loading)
         return (
-            <div id="activity-page">
+            <main id="activity-page">
                 <Loading />
-            </div>
+            </main>
         );
     return (
-        <div id="activity-page">
+        <main id="activity-page">
             <Helmet>
                 <meta
                     property="og:image"
@@ -214,10 +214,10 @@ const OrgRouter = () => {
                             }}
                         ></Box>
                         <div className={"ml-3 sm:ml-12 sm:mr-0 mr-3 flex"}>
-                            <div className={"sticky top-14 h-60 z-[40] mb-48"}>
+                            <aside className={"sticky top-14 h-60 z-[40] mb-48"}>
                                 <OrgNav isMobile={isMobile} />
-                            </div>
-                            <div className={"w-full lg:pr-0 pr-0 min-h-[80vh]"}>
+                            </aside>
+                            <section className={"w-full lg:pr-0 pr-0 min-h-[80vh]"}>
                                 <TransitionGroup component={null}>
                                     <CSSTransition
                                         key={location.pathname}
@@ -266,7 +266,7 @@ const OrgRouter = () => {
                                         </Routes>
                                     </CSSTransition>
                                 </TransitionGroup>
-                            </div>
+                            </section>
                             <div className="max-xl:hidden mt-2 max-xl:bottom-6">
                                 <OrgInspector />
                             </div>
@@ -275,7 +275,7 @@ const OrgRouter = () => {
                     </>
                 )}
             </OrgContext.Provider>
-        </div>
+        </main>
     );
 };
 

@@ -60,7 +60,7 @@ const Pages = () => {
 
             <Suspense fallback={<Loading />}>
                 {!(!user.signed_in && location.pathname === "/") && (
-                    <div>
+                    <header>
                         <div
                             className={
                                 "max-sm:w-full sm:relative bg-blurDark fixed z-50 bottom-0 sm:bg-opacity-0 bg-opacity-80 max-sm:backdrop-blur-2xl max-sm:border-t border-divider"
@@ -71,7 +71,7 @@ const Pages = () => {
                         <div className={"max-sm:h-8"}>
                             <SubNavBar />
                         </div>
-                    </div>
+                    </header>
                 )}
                 <Routes>
                     <Route path={"/"} Component={Index} />

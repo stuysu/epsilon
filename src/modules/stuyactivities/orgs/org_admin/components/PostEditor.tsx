@@ -148,7 +148,7 @@ const PostEditor = ({
             <h3>
                 {content ? "Update Post" : "Create Post"}
             </h3>
-            <Box sx={{ marginBottom: "10px" }}>
+            <Box sx={{ marginY: "10px" }}>
                 <TextField
                     value={postData["title"]}
                     name={"title"}
