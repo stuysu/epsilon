@@ -22,7 +22,4 @@
 .fadeup-exit-active {
     opacity: 0;
     filter: blur(20px);
-    transition:
-        opacity 300ms ease-out,
-        filter 300ms ease-out;
 }

@@ -47,24 +47,16 @@ const OrgMeeting = ({
     return (
         <div className={"w-full cursor-pointer"}>
             <div
-                className="
-    flex
-    justify-between
-    items-center
-    bg-layer-2
-    transition-colors
-    hover:bg-layer-3
-    p-4
-  "
-                onClick={() => setOpen(true)}
+                className="flex justify-between items-center bg-layer-2 transition-colors hover:bg-layer-3 p-4"
             >
+                <div onClick={() => setOpen(true)} className={"w-full flex justify-between items-center"}>
                 <div className="w-full pt-1">
                     <h4>{title}</h4>
                     <p>
                         {startTime} to {endTime}
                     </p>
                 </div>
-                <div className="flex gap-2 w-fit justify-end">
+                <div className=" pointer-events-none flex gap-2 w-fit justify-end">
                     <ToggleChip
                         title={room_name ? `Room ${room_name}` : "Virtual"}
                         selectable={false}
@@ -80,6 +72,7 @@ const OrgMeeting = ({
                             selectable={false}
                         ></ToggleChip>
                     )}
+                </div>
                 </div>
                 <div className="flex">
                     {onEdit && (

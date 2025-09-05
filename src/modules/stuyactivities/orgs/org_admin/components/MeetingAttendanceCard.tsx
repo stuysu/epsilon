@@ -16,13 +16,13 @@ const MeetingAttendanceCard = ({
     return (
         <div
             className={
-                "bg-layer-1 w-full mb-6 p-6 rounded-lg shadow-control cursor-pointer hover:bg-layer-2"
+                "transition-colors bg-layer-1 w-full mb-6 p-6 rounded-xl shadow-control cursor-pointer hover:bg-layer-2"
             }
             onClick={() => navigate(`${id}`)}
         >
             <h3>{title}</h3>
             <p>{new Date(startTime).toLocaleString()}</p>
-            <p>Room: {room || "virtual"}</p>
+            <p>Room: {room || "Virtual"}</p>
         </div>
     );
 };

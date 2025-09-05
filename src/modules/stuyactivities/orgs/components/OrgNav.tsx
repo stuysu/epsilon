@@ -19,11 +19,15 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const membership = organization.memberships?.find(
         (m) => m.users?.id === user.id,
     );
-    const isAdmin = organization.memberships?.some(
-        (m) =>
-            m.users?.id === user.id &&
-            (m.role === "ADMIN" || m.role === "CREATOR"),
-    );
+
+    const isOrgAdmin =
+        organization.memberships?.some(
+            (m) =>
+                m.users?.id === user.id &&
+                (m.role === "ADMIN" || m.role === "CREATOR"),
+        ) ?? false;
+
+    const isStuyActivitiesAdmin = Boolean(user.permission);
 
     const navLinks: LinkItem[] = [
         { to: main, display: "Overview" },
@@ -36,7 +40,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
             : []),
     ];
 
-    const adminLinks: LinkItem[] = [
+    const fullAdminLinks: LinkItem[] = [
         { to: `${main}/admin/roster`, display: "Roster" },
         {
             to: `${main}/admin/join-requests`,
@@ -49,9 +53,18 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
         { to: `${main}/admin/org-edits`, display: "Amend Charter" },
     ];
 
+    const stuyActivitiesAdminLinks: LinkItem[] = [
+        { to: `${main}/admin/messages`, display: "Messages" },
+    ];
+
+    const adminLinks: LinkItem[] = isOrgAdmin
+        ? fullAdminLinks
+        : isStuyActivitiesAdmin
+          ? stuyActivitiesAdminLinks
+          : [];
+
     const [menuOpen, setMenuOpen] = useState(false);
 
-    // Shared renderers to avoid duplicating map blocks
     const renderDesktopList = (links: LinkItem[]) => (
         <List sx={{ width: "100%" }}>
             {links.map((linkData, i) => (
@@ -136,7 +149,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
 
                             {renderMobileButtons(navLinks)}
 
-                            {isAdmin && (
+                            {adminLinks.length > 0 && (
                                 <>
                                     <div
                                         className="mt-5 text-l text-white/50 ml-3"
@@ -161,7 +174,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
             <p>About</p>
             {renderDesktopList(navLinks)}
 
-            {isAdmin && (
+            {adminLinks.length > 0 && (
                 <div>
                     <div className={"h-px w-5/6 bg-divider my-2"}></div>
                     <p className={"mt-6"}>Admin Tools</p>

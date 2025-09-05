@@ -110,7 +110,7 @@ const OrgApproval = ({
                             sx={{ width: "150px", height: "150px" }}
                         />
                     ) : (
-                        "No picture provided"
+                        <p>No picture provided</p>
                     )}
                     <Divider />
 

@@ -48,7 +48,7 @@ const Audit = () => {
                     <ContentUnavailable
                         icon="bx-calendar-x"
                         iconColor="text-yellow"
-                        title="No Meetings Records"
+                        title="No Meeting Records"
                         description="This Activity has not yet held any meetings. Meeting records and audit results will be displayed here when they become available."
                     />
                 )}

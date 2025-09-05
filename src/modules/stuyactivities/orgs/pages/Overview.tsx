@@ -16,6 +16,7 @@ import Divider from "../../../../components/ui/Divider";
 import OverviewList from "../../../../components/ui/lists/OverviewList";
 import UserDialog from "../../../../components/ui/overlays/UserDialog";
 import { PUBLIC_URL } from "../../../../config/constants";
+import DisplayLinks from "../../../../components/DisplayLinks";
 
 const Overview = () => {
     const navigate = useNavigate();
@@ -79,7 +80,7 @@ const Overview = () => {
                         memberships: [...organization.memberships, data],
                     });
                 }
-                enqueueSnackbar("Sent organization a join request!", {
+                enqueueSnackbar("Join request sent!", {
                     variant: "success",
                 });
             } else if (
@@ -220,7 +221,7 @@ const Overview = () => {
                                 <ToggleChip
                                     title={tag}
                                     selectable={false}
-                                    key={tag}
+                                    key={index}
                                 />
                             )) || (
                                 <ToggleChip
@@ -355,9 +356,9 @@ const Overview = () => {
                     title={"Meeting Schedule"}
                     glow={"bg-blue"}
                 >
-                    <p className={"bg-layer-2 p-4 mb-0.5"}>
-                        {organization.meeting_schedule || "None"}
-                    </p>
+                    <div className={"bg-layer-2 p-4 mb-0.5"}>
+                        <DisplayLinks text={organization.meeting_schedule || "None"} />
+                    </div>
                     <div className="flex gap-1">
                         {[
                             ["Mon", "Monday"],
@@ -468,7 +469,7 @@ const Overview = () => {
                                 ></i>
                                 <span className={"relative -top-1"}>
                                     {" "}
-                                    No meetings records.
+                                    No meeting records.
                                 </span>
                             </p>
                         )

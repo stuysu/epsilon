@@ -11,14 +11,10 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
     const user: UserContextType = useContext(UserContext);
 
     return (
-        <Box
-            sx={{
-                position: "relative",
-                transition: "transform 0.4s cubic-bezier(0.3, 0.9, 0.3, 1)",
-                "&:hover": {
-                    transform: "translateY(-5px)",
-                },
-            }}
+        <article
+            tabIndex={0}
+            role="link"
+            className="relative transition-transform duration-[400ms] ease-[cubic-bezier(0.3,0.9,0.3,1)] hover:-translate-y-[5px]"
         >
             <div className="mt-10"></div>
             <div className="relative rounded-2xl overflow-visible">
@@ -168,14 +164,13 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                     width: "120px",
                                     height: "120px",
                                     borderRadius: "20px",
-                                    fontSize: "60px",
                                     objectFit: "cover",
-                                    backgroundColor: "#232323",
-                                    color: "#cdcdcd",
+                                    backgroundColor: "var(--layer-secondary)",
+                                    color: "var(--text-primary)",
                                 }}
                                 alt={`${organization.name}`}
                             >
-                                <h1>
+                                <h1 className="text-7xl font-light">
                                     {organization.name?.charAt(0).toUpperCase()}
                                 </h1>
                             </Avatar>
@@ -251,7 +246,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                     </div>
                 </div>
             </div>
-        </Box>
+        </article>
     );
 };
 

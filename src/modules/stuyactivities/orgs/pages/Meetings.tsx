@@ -28,6 +28,7 @@ const Meetings = () => {
                     >
                         {upcomingMeetings.sort(sortByDate).map((meeting) => (
                             <OrgMeeting
+                                key={meeting.id}
                                 id={meeting.id || -1}
                                 title={meeting.title || "No Title"}
                                 description={

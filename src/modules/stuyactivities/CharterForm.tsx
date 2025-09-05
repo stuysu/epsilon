@@ -471,6 +471,7 @@ const CharterForm = () => {
                     <FormSection sx={{ width: "100%", marginTop: "20px" }}>
                         <FormTextField
                             label="Socials (optional)"
+                            description="Include the Activity's website or social media links here. Input each link with a just SPACE in between."
                             field="socials"
                             sx={{ width: "100%" }}
                             required={OrgRequirements.socials.required}

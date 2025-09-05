@@ -163,7 +163,7 @@ const CharterLanding = () => {
                                         : "cursor-not-allowed opacity-50")
                                 }
                             >
-                                Start Application{" "}
+                                Start Application
                                 <i
                                     className={
                                         "bx bx-chevron-right bx-md relative top-[10px]"
