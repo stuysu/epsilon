@@ -31,7 +31,7 @@ export default function ItemList({
                             {title && (
                                 <h4 className="flex items-center">
                                     {icon && (
-                                        <i className={`${icon} bx mr-1`} />
+                                        <i className={`${icon} bx mr-2`} />
                                     )}
                                     {title}
                                 </h4>

@@ -32,7 +32,6 @@ const UpcomingMeeting = ({
     const [open, setOpen] = useState(false);
 
     let start = dayjs(start_time);
-    let end = dayjs(end_time);
 
     return (
         <div className={"w-full cursor-pointer"}>
@@ -80,11 +79,11 @@ const UpcomingMeeting = ({
                         selectable={false}
                     ></ToggleChip>
                     <ToggleChip
-                        title={`${start.format("LT")} to ${end.format("LT")}`}
+                        title={start.format("LT")}
                         selectable={false}
                     ></ToggleChip>
                     <ToggleChip
-                        title={`${monthNames[start.month()]} ${start.date()}, ${start.year()}`}
+                        title={`${monthNames[start.month()].slice(0, 3)} ${start.date()}`}
                         selectable={false}
                     ></ToggleChip>
                 </div>
