@@ -403,7 +403,7 @@ const NavBar: FC = () => {
                             </div>
 
                             <div
-                                className={`fixed left-2 right-2 bottom-16 rounded-lg bg-bg
+                                className={`transform-gpu z-50 fixed left-2 right-2 bottom-16 rounded-lg bg-bg
     shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)]
     transition-all duration-200 ${
         moreOpen
