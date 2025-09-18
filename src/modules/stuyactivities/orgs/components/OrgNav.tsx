@@ -96,7 +96,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
         links.map((linkData, i) => (
             <button
                 key={i}
-                className={`important border border-zinc-600/20 w-full text-left py-2 px-3 rounded-lg text-lg transition-colors bg-neutral-600 text-gray-200 bg-opacity-20`}
+                className={`important border border-zinc-600/20 w-full text-left py-2 px-3 rounded-lg text-lg transition-colors bg-neutral-600 text-typography-2 bg-opacity-20`}
                 onClick={() => {
                     navigate(linkData.to);
                     setMenuOpen(false);
@@ -111,7 +111,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
             <>
                 {/* Need to fix this later */}
                 <button
-                    className={`z-[5001] fixed cursor-pointer transition-colors text-gray-300 hover:text-gray-400 mr-4 top-5 right-0`}
+                    className={`z-[5001] fixed cursor-pointer transition-colors text-typography-2 hover:text-typography-1 mr-4 top-5 right-0`}
                     onClick={() => setMenuOpen(true)}
                 >
                     <span
@@ -126,9 +126,9 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                 </button>
 
                 {menuOpen && (
-                    <div className="z-[5002] overflow-scroll pb-10 -mx-5 fixed inset-0 flex flex-col items-center justify-start bg-black/70 backdrop-blur-3xl">
+                    <div className="z-[5002] overflow-scroll pb-10 -mx-5 fixed inset-0 flex flex-col items-center justify-start bg-blurLight backdrop-blur-3xl">
                         <button
-                            className="absolute top-4 right-14 text-3xl text-white font-bold"
+                            className="absolute top-4 right-14 text-3xl text-typography-1 font-bold"
                             onClick={() => setMenuOpen(false)}
                             aria-label="Close menu"
                         >
@@ -141,7 +141,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
 
                         <div className="flex flex-col gap-1 w-full p-16">
                             <div
-                                className=" text-l text-white/50 ml-3"
+                                className=" text-l text-typography-2 ml-3"
                                 style={{ fontVariationSettings: "'wght' 700" }}
                             >
                                 About
@@ -152,7 +152,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                             {adminLinks.length > 0 && (
                                 <>
                                     <div
-                                        className="mt-5 text-l text-white/50 ml-3"
+                                        className="mt-5 text-l text-typography-2 ml-3"
                                         style={{
                                             fontVariationSettings: "'wght' 700",
                                         }}

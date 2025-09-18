@@ -189,7 +189,7 @@ const Overview = () => {
                         sx={{
                             width: "240px",
                             height: "240px",
-                            backgroundColor: "#232323",
+                            backgroundColor: "var(--layer-primary)",
                             borderRadius: "25px",
                             objectFit: "cover",
                             position: "relative",
@@ -208,7 +208,7 @@ const Overview = () => {
                 <div className={"flex flex-col relative bottom-0.5"}>
                     <div>
                         <div
-                            className={"text-center sm:text-left max-sm:mb-10"}
+                            className={"text-center sm:text-left max-sm:mb-6"}
                         >
                             <h1>{organization.name}</h1>
                         </div>
@@ -233,7 +233,7 @@ const Overview = () => {
 
                         <div
                             className={
-                                "max-sm:m-1 max-sm:mt-6 mb-2 cursor-help hover:brightness-125 transition"
+                                "max-sm:mb-6 max-sm:m-1 max-sm:mt-6 mb-2 cursor-help hover:brightness-125 transition"
                             }
                         >
                             <p
