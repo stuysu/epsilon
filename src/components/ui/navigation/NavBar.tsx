@@ -495,7 +495,7 @@ const NavBar: FC = () => {
                                         </>
                                     ) : (
                                         <div
-                                            className="flex items-center gap-2 px-3 py-2 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                                            className="flex items-center gap-2 px-3 pt-2 pb-3 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
                                             onClick={() => {
                                                 navigate("/");
                                                 setMoreOpen(false);
