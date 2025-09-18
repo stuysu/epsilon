@@ -188,6 +188,107 @@ const NavBar: FC = () => {
 
     return (
         <nav>
+            {/* Mobile nav toolbox */}
+            <div
+                className={`transform-gpu z-50 fixed left-2 right-2 bottom-16 rounded-lg bg-bg
+    shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)]
+    transition-all duration-200 ${
+        moreOpen
+            ? "opacity-100 translate-y-0"
+            : "pointer-events-none opacity-0 translate-y-1"
+    }`}
+            >
+                <div className="p-2">
+                    {/* overflow nav */}
+                    <p className="p-3 uppercase text-sm opacity-75">
+                        More Tools
+                    </p>
+                    {overflowItems.map((item, idx) => (
+                        <div
+                            key={`${item.path}-overflow-${idx}`}
+                            className="flex items-center gap-2 px-3 py-2 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                            onClick={() => {
+                                if (item.external && (item as any).url) {
+                                    window.open((item as any).url!, "_blank");
+                                } else {
+                                    navigate(item.path);
+                                }
+                                setMoreOpen(false);
+                                setTimeout(() => setIsHovered(false), 300);
+                            }}
+                        >
+                            <i className={item.icon} />
+                            <span className="text-base">{item.label}</span>
+                        </div>
+                    ))}
+
+                    <div className="my-2 h-px bg-divider" />
+
+                    <p className="p-3 uppercase text-sm opacity-75">Account</p>
+
+                    {user?.signed_in ? (
+                        <>
+                            <div
+                                className="flex items-center gap-2 px-3 py-2 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                                onClick={() => {
+                                    navigate("/profile");
+                                    setMoreOpen(false);
+                                }}
+                            >
+                                <i className="bx bx-id-card" />
+                                <span className="text-base">Profile</span>
+                            </div>
+
+                            <div
+                                className="flex items-center gap-2 px-3 py-2 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                                onClick={() => {
+                                    navigate("/preferences");
+                                    setMoreOpen(false);
+                                }}
+                            >
+                                <i className="bx bx-slider" />
+                                <span className="text-base">Preferences</span>
+                            </div>
+
+                            <div
+                                className="flex items-center gap-2 px-3 py-2 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                                onClick={() => {
+                                    navigate("/communications");
+                                    setMoreOpen(false);
+                                }}
+                            >
+                                <i className="bx bx-envelope" />
+                                <span className="text-base">
+                                    Communications
+                                </span>
+                            </div>
+
+                            <div
+                                className="flex items-center gap-2 px-3 pt-2 pb-3 cursor-pointer text-red hover:brightness-90 transition-[filter,color]"
+                                onClick={() => {
+                                    signOut();
+                                    setMoreOpen(false);
+                                }}
+                            >
+                                <i className="bx bx-log-out" />
+                                <span className="text-base">Sign Out</span>
+                            </div>
+                        </>
+                    ) : (
+                        <div
+                            className="flex items-center gap-2 px-3 pt-2 pb-3 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                            onClick={() => {
+                                navigate("/");
+                                setMoreOpen(false);
+                            }}
+                        >
+                            <i className="bx bx-log-in" />
+                            <span className="text-base">Sign In</span>
+                        </div>
+                    )}
+                </div>
+            </div>
+
             {/* Backdrop when hovering over nav items */}
             <div
                 className={`max-sm:hidden bg-blurDark fixed left-0 top-0 z-40 h-full w-full backdrop-blur-2xl transition-opacity duration-300 ${
@@ -365,11 +466,21 @@ const NavBar: FC = () => {
                             style={{ position: "relative" }}
                         >
                             <i className={`${item.icon} max-sm:hidden`}></i>
-                            <div className={"sm:hidden flex flex-col items-center w-10"}>
+                            <div
+                                className={
+                                    "sm:hidden flex flex-col items-center w-10"
+                                }
+                            >
                                 <i className={`${item.icon} scale-110`}></i>
-                                <p className={`text-xs ${isPageOptnActive(item)
-                                    ? "text-typography-1"
-                                    : "text-typography-3"}`}>{item.label}</p>
+                                <p
+                                    className={`text-xs ${
+                                        isPageOptnActive(item)
+                                            ? "text-typography-1"
+                                            : "text-typography-3"
+                                    }`}
+                                >
+                                    {item.label}
+                                </p>
                             </div>
                             {!isMobile && (
                                 <span
@@ -392,134 +503,17 @@ const NavBar: FC = () => {
                                 className="max-sm:w-full text-nowrap flex items-start flex-nowrap cursor-pointer text-typography-2"
                                 onClick={() => setMoreOpen((v) => !v)}
                             >
-                                <div className={"flex flex-col items-center w-10"}>
+                                <div
+                                    className={
+                                        "flex flex-col items-center w-10"
+                                    }
+                                >
                                     <i
                                         className={
-                                            'bx bx-dots-horizontal-rounded scale-110'
+                                            "bx bx-dots-horizontal-rounded scale-110"
                                         }
                                     ></i>
                                     <p className={"text-xs"}>Toolbox</p>
-                                </div>
-                            </div>
-
-                            <div
-                                className={`transform-gpu z-50 fixed left-2 right-2 bottom-16 rounded-lg bg-bg
-    shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)]
-    transition-all duration-200 ${
-        moreOpen
-            ? "opacity-100 translate-y-0"
-            : "pointer-events-none opacity-0 translate-y-1"
-    }`}
-                            >
-                                <div className="p-2">
-                                    {/* overflow nav */}
-                                    <p className="p-3 uppercase text-sm opacity-75">
-                                        More Tools
-                                    </p>
-                                    {overflowItems.map((item, idx) => (
-                                        <div
-                                            key={`${item.path}-overflow-${idx}`}
-                                            className="flex items-center gap-2 px-3 py-2 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
-                                            onClick={() => {
-                                                if (
-                                                    item.external &&
-                                                    (item as any).url
-                                                ) {
-                                                    window.open(
-                                                        (item as any).url!,
-                                                        "_blank",
-                                                    );
-                                                } else {
-                                                    navigate(item.path);
-                                                }
-                                                setMoreOpen(false);
-                                                setTimeout(
-                                                    () => setIsHovered(false),
-                                                    300,
-                                                );
-                                            }}
-                                        >
-                                            <i className={item.icon} />
-                                            <span className="text-base">
-                                                {item.label}
-                                            </span>
-                                        </div>
-                                    ))}
-
-                                    <div className="my-2 h-px bg-divider" />
-
-                                    <p className="p-3 uppercase text-sm opacity-75">
-                                        Account
-                                    </p>
-
-                                    {user?.signed_in ? (
-                                        <>
-                                            <div
-                                                className="flex items-center gap-2 px-3 py-2 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
-                                                onClick={() => {
-                                                    navigate("/profile");
-                                                    setMoreOpen(false);
-                                                }}
-                                            >
-                                                <i className="bx bx-id-card" />
-                                                <span className="text-base">
-                                                    Profile
-                                                </span>
-                                            </div>
-
-                                            <div
-                                                className="flex items-center gap-2 px-3 py-2 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
-                                                onClick={() => {
-                                                    navigate("/preferences");
-                                                    setMoreOpen(false);
-                                                }}
-                                            >
-                                                <i className="bx bx-slider" />
-                                                <span className="text-base">
-                                                    Preferences
-                                                </span>
-                                            </div>
-
-                                            <div
-                                                className="flex items-center gap-2 px-3 py-2 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
-                                                onClick={() => {
-                                                    navigate("/communications");
-                                                    setMoreOpen(false);
-                                                }}
-                                            >
-                                                <i className="bx bx-envelope" />
-                                                <span className="text-base">
-                                                    Communications
-                                                </span>
-                                            </div>
-
-                                            <div
-                                                className="flex items-center gap-2 px-3 pt-2 pb-3 cursor-pointer text-red hover:brightness-90 transition-[filter,color]"
-                                                onClick={() => {
-                                                    signOut();
-                                                    setMoreOpen(false);
-                                                }}
-                                            >
-                                                <i className="bx bx-log-out" />
-                                                <span className="text-base">
-                                                    Sign Out
-                                                </span>
-                                            </div>
-                                        </>
-                                    ) : (
-                                        <div
-                                            className="flex items-center gap-2 px-3 pt-2 pb-3 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
-                                            onClick={() => {
-                                                navigate("/");
-                                                setMoreOpen(false);
-                                            }}
-                                        >
-                                            <i className="bx bx-log-in" />
-                                            <span className="text-base">
-                                                Sign In
-                                            </span>
-                                        </div>
-                                    )}
                                 </div>
                             </div>
                         </div>
