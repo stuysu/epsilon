@@ -1,5 +1,5 @@
 import { motion } from "framer-motion";
-import { ReactNode, RefObject } from "react";
+import React, { ReactNode, RefObject } from "react";
 
 type ItemListProps = {
     height: number | "auto";
@@ -28,6 +28,19 @@ export default function ItemList({
                 <div ref={contentRef}>
                     {(title || subtitle) && (
                         <div className="m-4">
+                            <div
+                                style={{
+                                    background:
+                                        "linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0) 0%, rgba(143, 143, 143, 0.67) 50%, rgba(0, 0, 0, 0) 100%)",
+                                    width: "25vw",
+                                    height: "1px",
+                                    position: "absolute",
+                                    top: "0px",
+                                    opacity: 0.3,
+                                    zIndex: 40,
+                                }}
+                            ></div>
+
                             {title && (
                                 <h4 className="flex items-center">
                                     {icon && (

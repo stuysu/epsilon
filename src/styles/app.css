@@ -61,7 +61,7 @@
 
     /* dark: default, user set, and when system wants dark */
     :where(:root, [data-theme="dark"]) {
-        --bg-main: #111111;
+        --bg-main: #101010;
 
         --layer-primary: #1f1f1f80;
         --layer-secondary: #36363666;

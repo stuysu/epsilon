@@ -34,6 +34,17 @@ const NavBar: FC = () => {
 
     const theme = useContext(ThemeContext);
     const isMobile = useMediaQuery("(max-width: 640px)");
+
+    const itemsToRender = React.useMemo(
+        () => (isMobile ? topNavItems.slice(0, 5) : topNavItems),
+        [isMobile],
+    );
+
+    const overflowItems = React.useMemo(
+        () => (isMobile ? topNavItems.slice(5) : []),
+        [isMobile],
+    );
+
     const wordmarkSrc =
         theme.effectiveMode === "dark"
             ? `${PUBLIC_URL}/wordmark.svg`
@@ -67,6 +78,13 @@ const NavBar: FC = () => {
 
     const itemRefs = useRef<HTMLDivElement[]>([]);
     const containerRef = useRef<HTMLDivElement | null>(null);
+    const dotsRef = useRef<HTMLDivElement | null>(null);
+
+    const [moreOpen, setMoreOpen] = useState(false);
+
+    useEffect(() => {
+        itemRefs.current = new Array(itemsToRender.length);
+    }, [itemsToRender.length]);
 
     const [optionUnderline, setOptionUnderline] = useState({
         left: 0,
@@ -93,7 +111,9 @@ const NavBar: FC = () => {
         if (error) {
             enqueueSnackbar(
                 "Error signing out. Contact it@stuysu.org for support.",
-                { variant: "error" },
+                {
+                    variant: "error",
+                },
             );
             return;
         }
@@ -101,11 +121,28 @@ const NavBar: FC = () => {
         navigate("/");
     };
 
-    // Close drawer on route change
-    useEffect(() => setDrawerOpen(false), [location]);
+    useEffect(() => {
+        setDrawerOpen(false);
+        setMoreOpen(false);
+    }, [location]);
+
+    useEffect(() => {
+        if (!moreOpen) return;
+        const onClick = (e: MouseEvent) => {
+            if (!dotsRef.current) return;
+            if (!dotsRef.current.contains(e.target as Node)) setMoreOpen(false);
+        };
+        document.addEventListener("click", onClick);
+        return () => document.removeEventListener("click", onClick);
+    }, [moreOpen]);
 
     const updateUnderline = React.useCallback(() => {
-        const currentIndex = topNavItems.findIndex((item) => {
+        if (isMobile) {
+            setOptionUnderline({ left: 0, width: 0 });
+            return;
+        }
+
+        const currentIndex = itemsToRender.findIndex((item) => {
             if (!item.external && item.path === "/stuyactivities") {
                 return isStuyActivitiesPath(location.pathname) || isOrgPage;
             }
@@ -127,7 +164,7 @@ const NavBar: FC = () => {
             left: rect.left - parentRect.left,
             width: rect.width,
         });
-    }, [location.pathname, isOrgPage]);
+    }, [location.pathname, isOrgPage, isMobile, itemsToRender]);
 
     useLayoutEffect(() => {
         let raf = requestAnimationFrame(updateUnderline);
@@ -181,29 +218,31 @@ const NavBar: FC = () => {
                 </Box>
 
                 {/* User dropdown */}
-                <div className="pointer-events-auto absolute sm:relative flex flex-row justify-end sm:top-1 -top-10 sm:right-0 right-3">
+                <div className="max-sm:hidden pointer-events-auto relative flex flex-row justify-end top-1 right-0">
                     <div
-                        className="flex cursor-pointer flex-row items-center justify-center gap-2 rounded-lg bg-bg sm:bg-layer-1 pl-1.5 pr-1.5 shadow-control h-10"
+                        className="flex cursor-pointer flex-row items-center justify-center gap-2 rounded-lg bg-layer-1 pl-1.5 pr-1.5 shadow-control h-10"
                         onClick={() => setDrawerOpen(!drawerOpen)}
                     >
                         <Avatar
                             style={{ width: 30, height: 30, borderRadius: 4 }}
                             src={user.picture}
                         />
-                        <p className="pr-2 sm:block hidden">
+                        <p className="pr-2">
                             {user?.signed_in
                                 ? `${user.first_name} ${user.last_name}`
                                 : "Guest"}
                         </p>
                         <i
-                            className={`text-typography-2 bx bx-chevron-down bx-sm inline-block pr-1 transition-transform duration-200 ${drawerOpen ? "bx-flip-vertical" : ""}`}
+                            className={`text-typography-2 bx bx-chevron-down bx-sm inline-block pr-1 transition-transform duration-200 ${
+                                drawerOpen ? "bx-flip-vertical" : ""
+                            }`}
                         />
                     </div>
 
-                    {/* Drawer */}
+                    {/* User Drawer */}
                     <div
-                        className={`absolute sm:top-14 top-auto sm:bottom-auto bottom-12 sm:right-auto right-0
-                        z-50 flex w-72 flex-col gap-2 rounded-lg sm:bg-blurLight bg-bg p-5
+                        className={`absolute top-14 bottom-auto right-auto
+                        z-50 flex w-72 flex-col gap-2 rounded-lg bg-blurLight p-5
                         backdrop-blur-xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)]
                         transition-all duration-300 ${
                             drawerOpen
@@ -297,18 +336,18 @@ const NavBar: FC = () => {
                         fontSize: 20,
                         fontVariationSettings: "'wght' 700",
                         position: "relative",
-                        marginLeft: isMobile ? "1rem" : "3rem",
+                        mx: isMobile ? "2rem" : "3rem",
                         mt: isMobile ? 2 : 3,
                         mb: isMobile ? 2 : 0,
                     }}
                 >
-                    {topNavItems.map((item, index) => (
+                    {itemsToRender.map((item, index) => (
                         <div
                             key={`${item.path}${index}`}
                             ref={(el) => {
                                 if (el) itemRefs.current[index] = el;
                             }}
-                            className={`text-nowrap flex items-start flex-nowrap cursor-pointer transition-colors ${
+                            className={`max-sm:w-full text-nowrap flex items-start flex-nowrap cursor-pointer transition-colors ${
                                 isPageOptnActive(item)
                                     ? "text-typography-1"
                                     : "sm:hover:text-typography-1 text-typography-2"
@@ -340,6 +379,139 @@ const NavBar: FC = () => {
                         </div>
                     ))}
 
+                    {/* mobile hidden items */}
+                    {isMobile && overflowItems.length > 0 && (
+                        <div ref={dotsRef} className="relative">
+                            <div
+                                className="max-sm:w-full text-nowrap flex items-start flex-nowrap cursor-pointer text-typography-2"
+                                onClick={() => setMoreOpen((v) => !v)}
+                            >
+                                <i className="bx bx-dots-horizontal-rounded"></i>
+                            </div>
+
+                            <div
+                                className={`fixed left-2 right-2 bottom-12 rounded-lg bg-bg
+    shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)]
+    transition-all duration-200 ${
+        moreOpen
+            ? "opacity-100 translate-y-0"
+            : "pointer-events-none opacity-0 translate-y-1"
+    }`}
+                            >
+                                <div className="p-2">
+                                    {/* overflow nav */}
+                                    <p className="p-3 uppercase text-sm opacity-75">
+                                        More Tools
+                                    </p>
+                                    {overflowItems.map((item, idx) => (
+                                        <div
+                                            key={`${item.path}-overflow-${idx}`}
+                                            className="flex items-center gap-2 px-3 py-2 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                                            onClick={() => {
+                                                if (
+                                                    item.external &&
+                                                    (item as any).url
+                                                ) {
+                                                    window.open(
+                                                        (item as any).url!,
+                                                        "_blank",
+                                                    );
+                                                } else {
+                                                    navigate(item.path);
+                                                }
+                                                setMoreOpen(false);
+                                                setTimeout(
+                                                    () => setIsHovered(false),
+                                                    300,
+                                                );
+                                            }}
+                                        >
+                                            <i className={item.icon} />
+                                            <span className="text-base">
+                                                {item.label}
+                                            </span>
+                                        </div>
+                                    ))}
+
+                                    <div className="my-2 h-px bg-divider" />
+
+                                    <p className="p-3 uppercase text-sm opacity-75">
+                                        Account
+                                    </p>
+
+                                    {user?.signed_in ? (
+                                        <>
+                                            <div
+                                                className="flex items-center gap-2 px-3 py-2 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                                                onClick={() => {
+                                                    navigate("/profile");
+                                                    setMoreOpen(false);
+                                                }}
+                                            >
+                                                <i className="bx bx-id-card" />
+                                                <span className="text-base">
+                                                    Profile
+                                                </span>
+                                            </div>
+
+                                            <div
+                                                className="flex items-center gap-2 px-3 py-2 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                                                onClick={() => {
+                                                    navigate("/preferences");
+                                                    setMoreOpen(false);
+                                                }}
+                                            >
+                                                <i className="bx bx-slider" />
+                                                <span className="text-base">
+                                                    Preferences
+                                                </span>
+                                            </div>
+
+                                            <div
+                                                className="flex items-center gap-2 px-3 py-2 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                                                onClick={() => {
+                                                    navigate("/communications");
+                                                    setMoreOpen(false);
+                                                }}
+                                            >
+                                                <i className="bx bx-envelope" />
+                                                <span className="text-base">
+                                                    Communications
+                                                </span>
+                                            </div>
+
+                                            <div
+                                                className="flex items-center gap-2 px-3 py-2 cursor-pointer text-red hover:brightness-90 transition-[filter,color]"
+                                                onClick={() => {
+                                                    signOut();
+                                                    setMoreOpen(false);
+                                                }}
+                                            >
+                                                <i className="bx bx-log-out" />
+                                                <span className="text-base">
+                                                    Sign Out
+                                                </span>
+                                            </div>
+                                        </>
+                                    ) : (
+                                        <div
+                                            className="flex items-center gap-2 px-3 py-2 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                                            onClick={() => {
+                                                navigate("/");
+                                                setMoreOpen(false);
+                                            }}
+                                        >
+                                            <i className="bx bx-log-in" />
+                                            <span className="text-base">
+                                                Sign In
+                                            </span>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        </div>
+                    )}
+
                     {/* Animated underline */}
                     {!isMobile && (
                         <div
@@ -350,7 +522,7 @@ const NavBar: FC = () => {
                             }}
                         />
                     )}
-                    <div className={"min-w-3"}></div>
+                    <div className={"max-sm:hidden min-w-3"}></div>
                 </Stack>
             </Box>
 
