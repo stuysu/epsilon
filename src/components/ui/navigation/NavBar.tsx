@@ -481,7 +481,7 @@ const NavBar: FC = () => {
                                             </div>
 
                                             <div
-                                                className="flex items-center gap-2 px-3 py-2 cursor-pointer text-red hover:brightness-90 transition-[filter,color]"
+                                                className="flex items-center gap-2 px-3 pt-2 pb-3 cursor-pointer text-red hover:brightness-90 transition-[filter,color]"
                                                 onClick={() => {
                                                     signOut();
                                                     setMoreOpen(false);
