@@ -36,12 +36,12 @@ const NavBar: FC = () => {
     const isMobile = useMediaQuery("(max-width: 640px)");
 
     const itemsToRender = React.useMemo(
-        () => (isMobile ? topNavItems.slice(0, 5) : topNavItems),
+        () => (isMobile ? topNavItems.slice(0, 4) : topNavItems),
         [isMobile],
     );
 
     const overflowItems = React.useMemo(
-        () => (isMobile ? topNavItems.slice(5) : []),
+        () => (isMobile ? topNavItems.slice(4) : []),
         [isMobile],
     );
 
@@ -336,7 +336,7 @@ const NavBar: FC = () => {
                         fontSize: 20,
                         fontVariationSettings: "'wght' 700",
                         position: "relative",
-                        mx: isMobile ? "2rem" : "3rem",
+                        mx: isMobile ? "1.5rem" : "3rem",
                         mt: isMobile ? 2 : 3,
                         mb: isMobile ? 2 : 0,
                     }}
@@ -350,7 +350,7 @@ const NavBar: FC = () => {
                             className={`max-sm:w-full text-nowrap flex items-start flex-nowrap cursor-pointer transition-colors ${
                                 isPageOptnActive(item)
                                     ? "text-typography-1"
-                                    : "sm:hover:text-typography-1 text-typography-2"
+                                    : "sm:hover:text-typography-1 text-typography-3"
                             }`}
                             onMouseEnter={() => setIsHovered(true)}
                             onClick={() => {
@@ -364,7 +364,13 @@ const NavBar: FC = () => {
                             }}
                             style={{ position: "relative" }}
                         >
-                            <i className={item.icon}></i>
+                            <i className={`${item.icon} max-sm:hidden`}></i>
+                            <div className={"sm:hidden flex flex-col items-center w-10"}>
+                                <i className={`${item.icon} scale-110`}></i>
+                                <p className={`text-xs ${isPageOptnActive(item)
+                                    ? "text-typography-1"
+                                    : "text-typography-3"}`}>{item.label}</p>
+                            </div>
                             {!isMobile && (
                                 <span
                                     style={{
@@ -386,11 +392,18 @@ const NavBar: FC = () => {
                                 className="max-sm:w-full text-nowrap flex items-start flex-nowrap cursor-pointer text-typography-2"
                                 onClick={() => setMoreOpen((v) => !v)}
                             >
-                                <i className="bx bx-dots-horizontal-rounded"></i>
+                                <div className={"flex flex-col items-center w-10"}>
+                                    <i
+                                        className={
+                                            'bx bx-dots-horizontal-rounded scale-110'
+                                        }
+                                    ></i>
+                                    <p className={"text-xs"}>Toolbox</p>
+                                </div>
                             </div>
 
                             <div
-                                className={`fixed left-2 right-2 bottom-12 rounded-lg bg-bg
+                                className={`fixed left-2 right-2 bottom-16 rounded-lg bg-bg
     shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)]
     transition-all duration-200 ${
         moreOpen

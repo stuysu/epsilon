@@ -22,7 +22,7 @@ export const isStuyActivitiesPath = (pathname: string) =>
 export const topNavItems = [
     { label: "Home", path: "/", icon: "bx bx-home-alt", external: false },
     {
-        label: "StuyActivities",
+        label: "Activities",
         path: "/stuyactivities",
         icon: "bx bx-group",
         external: false,
