@@ -220,7 +220,7 @@ const Profiles = () => {
                 <img
                     src={`${PUBLIC_URL}/taglines/medals.svg`}
                     className={
-                        "w-64 mb-3 mt-16 bg-[#101010] p-3 rounded-lg relative right-3"
+                        "w-64 mb-3 mt-16 bg-[#0e0e0e] p-3 rounded-lg relative right-3"
                     }
                     alt={"Medals of Honor"}
                 />

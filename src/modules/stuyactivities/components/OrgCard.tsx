@@ -105,7 +105,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                             {user.signed_in && (
                                 <p
                                     className={
-                                        "absolute top-12 right-0 text-typography-2 bg-layer-2 px-2 py-1 rounded-md important shadow-module"
+                                        "absolute top-12 right-0 text-typography-2 bg-layer-2 px-2 py-1 rounded-md important shadow-control"
                                     }
                                 >
                                     <i className="bx bx-group bx-xs relative top-0.5 mr-1"></i>
@@ -146,7 +146,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                 sx={{
                                     width: "120px",
                                     height: "120px",
-                                    backgroundColor: "rgb(23,23,23)",
+                                    backgroundColor: "var(--bg-main)",
                                     borderRadius: "20px",
                                     position: "absolute",
                                 }}
@@ -214,7 +214,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
 
                         <div
                             className={
-                                "flex flex-col bg-layer-2 shadow-module py-3 px-4 mt-5 rounded-lg capitalize"
+                                "flex flex-col bg-layer-2 shadow-control py-3 px-4 mt-5 rounded-lg capitalize"
                             }
                         >
                             <div className={"flex justify-between"}>

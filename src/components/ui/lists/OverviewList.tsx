@@ -24,7 +24,7 @@ export default function OverviewList({
             <div className="bg-layer-1 p-1 rounded-xl relative shadow-module">
                 <div
                     aria-hidden
-                    className={`absolute inset-0 rounded-xl pointer-events-none opacity-5 ${glow} blur-2xl`}
+                    className={`absolute inset-0 rounded-xl pointer-events-none opacity-10 ${glow} blur-2xl`}
                 />
                 <div
                     style={{

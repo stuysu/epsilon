@@ -344,7 +344,7 @@ const NavBar: FC = () => {
                     <div
                         className={`absolute top-14 bottom-auto right-auto
                         z-50 flex w-72 flex-col gap-2 rounded-lg bg-blurLight p-5
-                        backdrop-blur-xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)]
+                        backdrop-blur-xl shadow-control
                         transition-all duration-300 ${
                             drawerOpen
                                 ? "translate-y-0 opacity-100"
@@ -421,7 +421,7 @@ const NavBar: FC = () => {
                 {/* colorful backdrop */}
                 {theme.effectiveMode === "dark" && (
                     <div
-                        className="absolute top-0 w-full h-[100px] bg-cover bg-center pointer-events-none opacity-60 blur-[15px] z-[1]"
+                        className="absolute top-0 w-full h-[100px] bg-cover bg-center pointer-events-none opacity-50 blur-[20px] z-[1]"
                         style={{
                             backgroundImage: `url(${PUBLIC_URL}/textures/navigation.png)`,
                         }}
