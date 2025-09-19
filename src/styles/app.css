@@ -201,7 +201,7 @@
         --green: #ff8a65;
         --yellow: #ffb300;
         --red: #e64a19;
-        --beige: #ffe082;
+        --beige: #bd9200;
 
         --divider: #ffcc80;
 
@@ -222,7 +222,7 @@
     [data-theme="orange"] h4,
     [data-theme="orange"] h5,
     [data-theme="orange"] p {
-        font-family: "Georgia", "Times New Roman", serif !important;
+        font-family: "Georgia", "instrument-serif", serif !important;
     }
 
     /* light or dark natured */

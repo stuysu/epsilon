@@ -47,7 +47,6 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
     bg-layer-1
     shadow-module
     hover:bg-layer-2
-    hover:shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.075),0_5px_15px_rgba(0,0,0,0.3)]
     justify-start
   "
                 >
