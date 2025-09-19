@@ -26,8 +26,8 @@ const HelpItem = ({
                 className={`bx ${icon} max-sm:hidden bx-lg relative top-2.5 ${iconColor}`}
             ></i>
             <div>
-                <h3 className={"mt-3"}>{title}</h3>
-                <h4 className="mb-3">{description}</h4>
+                <h3 className="mt-3">{title}</h3>
+                <p className="mb-3">{description}</p>
                 <AnimatePresence initial={false}>
                     {content && expanded && (
                         <motion.div

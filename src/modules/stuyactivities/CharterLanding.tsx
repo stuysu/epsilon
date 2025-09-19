@@ -111,7 +111,7 @@ const CharterLanding = () => {
                                 >
                                     1
                                 </h1>
-                                <h1 className={"font-['instrument-serif'] font-light text-beige"}>Submit Your Charter Application Online</h1>
+                                <h1 className={"font-['instrument-serif'] font-normal text-beige"}>Submit Your Charter Application Online</h1>
                             </div>
                             <p>
                                 Prior to initiating the chartering process, you
@@ -201,7 +201,7 @@ const CharterLanding = () => {
                                 }}
                             ></div>
                             <div className={"relative min-h-28 max-w-72"}>
-                                <h1 className={"font-['instrument-serif'] font-light text-beige"}>Get Approved Quickly and Listed on Epsilon!</h1>
+                                <h1 className={"font-['instrument-serif'] font-normal text-beige"}>Get Approved Quickly and Listed on Epsilon!</h1>
                                 <h1
                                     className={
                                         "absolute bottom-28 font-bold text-6xl text-beige"

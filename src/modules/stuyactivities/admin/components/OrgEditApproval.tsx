@@ -145,8 +145,8 @@ const OrgEditApproval = ({
     return (
         <div className="m-10">
             <div className="mb-10 flex flex-col sm:flex-row justify-between items-center">
-                <h1 className={"font-['instrument-serif']"}>
-                    <span className={"text-accent"}>Charter changes to</span>{" "}
+                <h1 className={"font-['instrument-serif'] font-normal"}>
+                    <span className={"text-accent"}>Charter Changes: </span>{" "}
                     {edit.organization_name}
                 </h1>
                 <div className={"flex flex-row w-min"}>

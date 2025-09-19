@@ -126,7 +126,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                 </button>
 
                 {menuOpen && (
-                    <div className="z-[5002] overflow-scroll pb-10 -mx-5 fixed inset-0 flex flex-col items-center justify-start bg-blurLight backdrop-blur-3xl">
+                    <div className="z-[5002] overflow-scroll pb-10 -mx-5 fixed inset-0 flex flex-col items-center justify-start bg-blurDark backdrop-blur-3xl">
                         <button
                             className="absolute top-4 right-14 text-3xl text-typography-1 font-bold"
                             onClick={() => setMenuOpen(false)}
