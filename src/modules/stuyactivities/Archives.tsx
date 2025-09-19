@@ -40,7 +40,13 @@ const Archives = () => {
                         className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex justify-center no-underline gap-4 hover:bg-layer-3 shadow-control"
                     >
                         <div>
-                            <h1 className={"font-['instrument-serif'] text-beige font-normal"}>2024-2025 Archives</h1>
+                            <h1
+                                className={
+                                    "font-['instrument-serif'] text-beige font-normal"
+                                }
+                            >
+                                2024-2025 Archives
+                            </h1>
                             <p className={"text-center"}>421 Activities</p>
                         </div>
                     </a>
@@ -52,7 +58,13 @@ const Archives = () => {
                         className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex justify-center no-underline gap-4 hover:bg-layer-3 shadow-control"
                     >
                         <div>
-                            <h1 className={"font-['instrument-serif'] font-normal"}>2023-2024 Archives</h1>
+                            <h1
+                                className={
+                                    "font-['instrument-serif'] font-normal"
+                                }
+                            >
+                                2023-2024 Archives
+                            </h1>
                             <p className={"text-center"}>351 Activities</p>
                         </div>
                     </a>

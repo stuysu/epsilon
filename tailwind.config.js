@@ -45,8 +45,7 @@ module.exports = {
                     "0 4px 20px 0 var(--shadow-base), 0 4px 3px 0 var(--shadow-base), 0 0 3px 0 var(--shadow-antithesis) inset, 0 -7px 20px 0 var(--shadow-fume) inset",
                 control:
                     "0 4px 4px 0 var(--shadow-base), 0 0 1px 0 var(--shadow-antithesis) inset, 0 1px 3px 0 var(--shadow-decoration) inset",
-                inner:
-                    "0 3px 3px 0 var(--shadow-base) inset, 0 0 2px 0 var(--shadow-antithesis) inset, 0 1px 1px 0 var(--shadow-decoration) inset, 0 -5px 20px 0 var(--shadow-fume) inset",
+                inner: "0 3px 3px 0 var(--shadow-base) inset, 0 0 2px 0 var(--shadow-antithesis) inset, 0 1px 1px 0 var(--shadow-decoration) inset, 0 -5px 20px 0 var(--shadow-fume) inset",
             },
         },
     },

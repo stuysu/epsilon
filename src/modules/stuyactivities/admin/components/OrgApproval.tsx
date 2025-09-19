@@ -61,7 +61,9 @@ const OrgApproval = ({
     return (
         <div className="m-10">
             <div className="mb-10 flex flex-col sm:flex-row justify-between items-center">
-                <h1 className={"font-['instrument-serif'] font-normal"}>New Charter: {org.name}</h1>
+                <h1 className={"font-['instrument-serif'] font-normal"}>
+                    New Charter: {org.name}
+                </h1>
                 <div>
                     <AsyncButton
                         variant="contained"

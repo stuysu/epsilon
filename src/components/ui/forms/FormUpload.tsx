@@ -145,7 +145,11 @@ const FormUpload = ({
                     <img
                         alt={`${value?.name || "Empty File"}`}
                         src={value ? URL.createObjectURL(value) : ""}
-                        style={{ borderRadius: "10%", width: "200px", height: "200px"}}
+                        style={{
+                            borderRadius: "10%",
+                            width: "200px",
+                            height: "200px",
+                        }}
                     />
                 </Box>
             )}

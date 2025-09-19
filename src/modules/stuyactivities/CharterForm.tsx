@@ -317,21 +317,21 @@ const CharterForm = () => {
             >
                 <FormPage title="Before You Start">
                     <p>
-                        We're looking forward to hosting your Activity at Stuyvesant!
-                        As you complete the chartering form, be sure to provide
-                        thoughtful, detailed responses throughout your
-                        application.
+                        We're looking forward to hosting your Activity at
+                        Stuyvesant! As you complete the chartering form, be sure
+                        to provide thoughtful, detailed responses throughout
+                        your application.
                         <br />
                         <br />
                         Once your charter is submitted, please allow up to two
                         weeks for review by the SU Clubs & Pubs Administrators.
                         Charters will be approved as long as they comply with
-                        all relevant regulations and provide clear, complete information.
-                        Upon approval, your Activity will appear in the Epsilon
-                        StuyActivities Catalog, and you may begin adding
-                        members. More features, such as scheduling meetings and
-                        creating posts, will be unlocked after the Activity
-                        reaches 10 members.
+                        all relevant regulations and provide clear, complete
+                        information. Upon approval, your Activity will appear in
+                        the Epsilon StuyActivities Catalog, and you may begin
+                        adding members. More features, such as scheduling
+                        meetings and creating posts, will be unlocked after the
+                        Activity reaches 10 members.
                         <br />
                         <br />
                         If you have any questions or concerns regarding the

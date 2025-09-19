@@ -120,22 +120,30 @@ const OrgStreamPost = ({
                 }}
             ></div>
 
-            <div className={"bg-layer-2 p-4 rounded-lg h-fit"}><h3
-                className={
-                    "mb-4 max-h-[2lh] overflow-ellipsis overflow-hidden [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]"
-                }
-            >
-                {content.title}
-            </h3>
+            <div className={"bg-layer-2 p-4 rounded-lg h-fit"}>
+                <h3
+                    className={
+                        "mb-4 max-h-[2lh] overflow-ellipsis overflow-hidden [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]"
+                    }
+                >
+                    {content.title}
+                </h3>
 
-                <div className={"w-full overflow-y-scroll relative min-h-full max-h-[8lh]"}>
+                <div
+                    className={
+                        "w-full overflow-y-scroll relative min-h-full max-h-[8lh]"
+                    }
+                >
                     <DisplayLinks text={content.description} />
                 </div>
 
                 <div className="absolute top-5 right-5">
                     {editable && (
                         <>
-                            <AsyncButton onClick={deletePost} variant="contained">
+                            <AsyncButton
+                                onClick={deletePost}
+                                variant="contained"
+                            >
                                 Delete
                             </AsyncButton>
                             <AsyncButton

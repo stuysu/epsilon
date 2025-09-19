@@ -207,9 +207,7 @@ const Overview = () => {
 
                 <div className={"flex flex-col relative bottom-0.5"}>
                     <div>
-                        <div
-                            className={"text-center sm:text-left max-sm:mb-6"}
-                        >
+                        <div className={"text-center sm:text-left max-sm:mb-6"}>
                             <h1>{organization.name}</h1>
                         </div>
                         <div
@@ -357,7 +355,9 @@ const Overview = () => {
                     glow={"bg-blue"}
                 >
                     <div className={"bg-layer-2 p-4 mb-0.5"}>
-                        <DisplayLinks text={organization.meeting_schedule || "None"} />
+                        <DisplayLinks
+                            text={organization.meeting_schedule || "None"}
+                        />
                     </div>
                     <div className="flex gap-1">
                         {[

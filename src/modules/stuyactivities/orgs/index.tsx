@@ -214,10 +214,14 @@ const OrgRouter = () => {
                             }}
                         ></Box>
                         <div className={"ml-3 sm:ml-12 sm:mr-0 mr-3 flex"}>
-                            <aside className={"sticky top-14 h-60 z-[40] mb-48"}>
+                            <aside
+                                className={"sticky top-14 h-60 z-[40] mb-48"}
+                            >
                                 <OrgNav isMobile={isMobile} />
                             </aside>
-                            <section className={"w-full lg:pr-0 pr-0 min-h-[80vh]"}>
+                            <section
+                                className={"w-full lg:pr-0 pr-0 min-h-[80vh]"}
+                            >
                                 <TransitionGroup component={null}>
                                     <CSSTransition
                                         key={location.pathname}

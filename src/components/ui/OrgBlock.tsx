@@ -108,7 +108,9 @@ const OrgBlock = ({
                             justifyContent: "center",
                         }}
                     >
-                        <h1 className="text-9xl font-light">{name?.charAt(0).toUpperCase()}</h1>
+                        <h1 className="text-9xl font-light">
+                            {name?.charAt(0).toUpperCase()}
+                        </h1>
                     </div>
                 )}
             </div>

@@ -141,9 +141,7 @@ const MyMeetingAttendance = () => {
                             justifyContent: "center",
                         }}
                     >
-                        <h1>
-                            {user.first_name + " " + user.last_name}
-                        </h1>
+                        <h1>{user.first_name + " " + user.last_name}</h1>
                     </Box>
                     <Box
                         sx={{
@@ -152,9 +150,7 @@ const MyMeetingAttendance = () => {
                             justifyContent: "center",
                         }}
                     >
-                        <h2>
-                            Status: {isPresent ? "Present" : "Absent"}
-                        </h2>
+                        <h2>Status: {isPresent ? "Present" : "Absent"}</h2>
                     </Box>
                     <AsyncButton
                         onClick={markPresent}

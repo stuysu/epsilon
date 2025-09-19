@@ -63,9 +63,9 @@
     :where(:root, [data-theme="dark"]) {
         --bg-main: #0e0e0e;
 
-        --layer-primary: #1C1C1C7F;
-        --layer-secondary: #2C2C2C66;
-        --layer-tertiary: #5353534C;
+        --layer-primary: #1c1c1c7f;
+        --layer-secondary: #2c2c2c66;
+        --layer-tertiary: #5353534c;
 
         --accent: #3788ffcc;
 
@@ -87,7 +87,7 @@
         --shadow-base: rgba(0, 0, 0, 0.25);
         --shadow-antithesis: rgba(255, 255, 255, 0.25);
         --shadow-fume: rgba(255, 255, 255, 0.05);
-        --shadow-decoration: rgba(182, 182, 126, 0.10);
+        --shadow-decoration: rgba(182, 182, 126, 0.1);
     }
 
     /* light when user set */

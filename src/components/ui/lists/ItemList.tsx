@@ -32,7 +32,7 @@ export default function ItemList({
                                 style={{
                                     background:
                                         "linear-gradient(90deg, rgba(0, 0, 0, 0) 0%, rgba(255, 255, 255, 0) 0%, rgba(143, 143, 143, 0.67) 50%, rgba(0, 0, 0, 0) 100%)",
-                                    width: "25vw",
+                                    width: "50%",
                                     height: "1px",
                                     position: "absolute",
                                     top: "0px",

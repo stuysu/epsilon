@@ -120,7 +120,8 @@ const SECTIONS: Category[] = [
 const SECTION_DESCRIPTIONS: Record<Category, string> = {
     "Exclusive Series":
         "These medals are reserved for members of leadership divisions.",
-    Accolades: "These medals are given for unique accomplishments and milestones.",
+    Accolades:
+        "These medals are given for unique accomplishments and milestones.",
     Venturer: "These medals are granted based on your Epsilon account age.",
     Participation:
         "These medals celebrate the ones who contribute to the Stuy community.",
