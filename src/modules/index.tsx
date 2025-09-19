@@ -95,7 +95,7 @@ const Pages = () => {
                 {user.signed_in && (
                     <footer
                         className={
-                            "w-full h-36 bg-layer-1 p-10 max-sm:p-6 pr-12 flex justify-between items-center mt-20 max-sm:pb-56 max-sm:flex-col gap-2"
+                            "w-full h-36 bg-layer-1 p-10 max-sm:p-6 pr-12 flex justify-between items-center mt-20 max-sm:pb-48 max-sm:flex-col gap-2"
                         }
                     >
                         <div className="w-72 flex max-sm:justify-center">

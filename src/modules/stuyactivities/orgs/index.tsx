@@ -186,7 +186,7 @@ const OrgRouter = () => {
                 ) : (
                     <>
                         <div
-                            className={`sm:hidden block w-full h-14 bg-blurLight fixed top-0 backdrop-blur-lg z-40 border-b-divider border-b`}
+                            className={`sm:hidden block w-full h-14 bg-blurDark fixed top-0 backdrop-blur-3xl z-40 border-b-divider border-b`}
                         ></div>
                         <div className={`sm:hidden block mt-10`}></div>
                         <div
