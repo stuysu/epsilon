@@ -24,7 +24,7 @@ export default function ItemList({
             initial={false}
             transition={{ duration: 0.3 }}
         >
-            <div className="bg-layer-1 p-1 rounded-xl mb-2.5 relative shadow-module backdrop-blur-xl">
+            <div className="bg-layer-1 p-1 rounded-xl mb-2.5 relative shadow-prominent backdrop-blur-xl">
                 <div ref={contentRef}>
                     {(title || subtitle) && (
                         <div className="m-4">

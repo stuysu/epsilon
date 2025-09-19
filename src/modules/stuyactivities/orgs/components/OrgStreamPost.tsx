@@ -85,7 +85,7 @@ const OrgStreamPost = ({
     let timeStr = `${postTime.month() + 1}/${postTime.date()}/${postTime.year()}`;
 
     return (
-        <article className="w-full relative p-1 rounded-xl h-fit max-h-96 border-none shadow-module bg-layer-1">
+        <article className="w-full relative p-1 rounded-xl h-fit max-h-96 border-none shadow-prominent bg-layer-1">
             <div className={"flex items-center gap-2 m-4"}>
                 <Avatar.Root className="w-10 h-10 rounded-md overflow-hidden block">
                     <Avatar.Image

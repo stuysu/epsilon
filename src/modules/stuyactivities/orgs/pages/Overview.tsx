@@ -386,7 +386,7 @@ const Overview = () => {
                 <OverviewList
                     height={"auto"}
                     title={"Activity Leaders"}
-                    glow={"bg-yellow"}
+                    glow={"bg-red"}
                 >
                     {!user.signed_in ? (
                         <p className={"bg-layer-2 p-4"}>

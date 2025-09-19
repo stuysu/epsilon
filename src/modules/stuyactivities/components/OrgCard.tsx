@@ -45,7 +45,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
     p-6
     transition-colors
     bg-layer-1
-    shadow-module
+    shadow-prominent
     hover:bg-layer-2
     justify-start
   "

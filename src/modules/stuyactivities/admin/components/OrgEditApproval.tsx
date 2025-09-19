@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { Avatar, Card } from "@mui/material";
+import { Avatar } from "@mui/material";
 import Divider from "../../../../components/ui/Divider";
 
 import { supabase } from "../../../../lib/supabaseClient";
@@ -145,8 +145,8 @@ const OrgEditApproval = ({
     return (
         <div className="m-10">
             <div className="mb-10 flex flex-col sm:flex-row justify-between items-center">
-                <h1>
-                    <span className={"text-accent"}>Changes to</span>{" "}
+                <h1 className={"font-['instrument-serif']"}>
+                    <span className={"text-accent"}>Charter changes to</span>{" "}
                     {edit.organization_name}
                 </h1>
                 <div className={"flex flex-row w-min"}>

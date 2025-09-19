@@ -37,7 +37,7 @@ const AsyncButton: React.FC<AsyncButtonProps> = ({
             sx={{
                 fontFamily: "inter-variable",
                 fontVariationSettings: "'wght' 700",
-                borderRadius: "12px",
+                borderRadius: "11px",
                 backgroundColor: isPrimary
                     ? "var(--accent)"
                     : "var(--layer-secondary)",
@@ -46,7 +46,7 @@ const AsyncButton: React.FC<AsyncButtonProps> = ({
                 fontSize: "14px",
                 opacity: isLoading || props.disabled ? 0.7 : 1,
                 boxShadow:
-                    "0px 0px 1.5px 0px rgba(255, 255, 255, 0.25) inset, 0px 0px 10px 0px rgba(255, 255, 255, 0.10) inset, 0px 4px 17.1px 0px rgba(0, 0, 0, 0.25)",
+                    "0 4px 20px 0 var(--shadow-base), 0 4px 3px 0 var(--shadow-base), 0 0 3px 0 var(--shadow-antithesis) inset, 0 -7px 20px 0 var(--shadow-fume) inset",
                 ...sx,
             }}
             disabled={isLoading || props.disabled}

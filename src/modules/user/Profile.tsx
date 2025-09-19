@@ -159,7 +159,7 @@ const Profiles = () => {
     };
 
     const MedalGrid = ({ items }: { items: Medal[] }) => (
-        <div className="flex flex-wrap bg-layer-1 rounded-xl overflow-hidden shadow-module">
+        <div className="flex flex-wrap bg-layer-1 rounded-xl overflow-hidden shadow-prominent">
             {items.map((m) => (
                 <button
                     key={m.key}

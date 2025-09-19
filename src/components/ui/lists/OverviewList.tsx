@@ -21,7 +21,7 @@ export default function OverviewList({
             transition={{ duration: 0.3 }}
             className={"w-full"}
         >
-            <div className="bg-layer-1 p-1 rounded-xl relative shadow-module">
+            <div className="bg-layer-1 p-1 rounded-xl relative shadow-prominent">
                 <div
                     aria-hidden
                     className={`absolute inset-0 rounded-xl pointer-events-none opacity-10 ${glow} blur-2xl`}
