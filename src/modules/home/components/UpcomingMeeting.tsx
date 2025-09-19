@@ -67,7 +67,7 @@ const UpcomingMeeting = ({
                         <i className="bx bx-lock absolute z-10 -bottom-0.5 left-7 text-base leading-none text-typography-1" />
                     )}
 
-                    <div className="w-full pt-1 text-nowrap">
+                    <div className="w-full pt-1">
                         <h4>{title}</h4>
                         <p>{org_name}</p>
                     </div>

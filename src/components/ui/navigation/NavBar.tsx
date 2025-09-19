@@ -343,8 +343,8 @@ const NavBar: FC = () => {
                     {/* User Drawer */}
                     <div
                         className={`absolute top-14 bottom-auto right-auto
-                        z-50 flex w-72 flex-col gap-2 rounded-lg bg-blurLight p-5
-                        backdrop-blur-xl shadow-control
+                        z-50 flex w-72 flex-col gap-2 rounded-xl bg-blurDark p-5
+                        backdrop-blur-xl shadow-prominent
                         transition-all duration-300 ${
                             drawerOpen
                                 ? "translate-y-0 opacity-100"

@@ -554,7 +554,7 @@ const OrgEditor = ({
                     component="label"
                     sx={{ marginTop: "10px" }}
                 >
-                    Upload Image
+                    Upload Avatar
                     <input
                         type="file"
                         accept="images/*"
