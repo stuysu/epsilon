@@ -51,7 +51,7 @@ const Arista = () => {
 
                 <div className={"flex flex-col gap-5 items-start w-full"}>
                     <motion.div
-                        className={"max-w-xl"}
+                        className={"max-w-xl relative"}
                         initial={{
                             opacity: 0,
                             y: 10,
@@ -76,6 +76,14 @@ const Arista = () => {
                                 theme.effectiveMode === "light" ? "invert" : ""
                             }`}
                             alt="Arista is Stuyvesant High School’s premier honor society."
+                        />
+                        <img
+                            src={`${PUBLIC_URL}/taglines/arista.svg`}
+                            className={`w-80 h-auto top-0 absolute blur-2xl ${
+                                theme.effectiveMode === "light" ? "invert" : ""
+                            }`}
+                            alt=""
+                            aria-hidden="true"
                         />
                     </motion.div>
                     <motion.div

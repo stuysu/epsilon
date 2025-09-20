@@ -9,6 +9,7 @@ import dayjs from "dayjs";
 import OrgContext from "../../../../contexts/OrgContext";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import { Avatar } from "radix-ui";
+import DisplayLinks from "../../../../components/DisplayLinks";
 
 /* This post component will serve as both the org_admin and member post. depending on role, differeing functionality */
 const OrgStreamPost = ({
@@ -38,7 +39,7 @@ const OrgStreamPost = ({
         }
 
         if (onDelete) onDelete();
-        enqueueSnackbar("OrgStreamPost deleted!", { variant: "success" });
+        enqueueSnackbar("Post deleted!", { variant: "success" });
     };
 
     if (editing) {
@@ -84,8 +85,8 @@ const OrgStreamPost = ({
     let timeStr = `${postTime.month() + 1}/${postTime.date()}/${postTime.year()}`;
 
     return (
-        <article className="w-full relative mb-4 p-6 rounded-xl h-96 border-none shadow-module bg-layer-1">
-            <div className={"flex items-center gap-2"}>
+        <article className="w-full relative p-1 rounded-xl h-fit max-h-96 border-none shadow-prominent bg-layer-1">
+            <div className={"flex items-center gap-2 m-4"}>
                 <Avatar.Root className="w-10 h-10 rounded-md overflow-hidden block">
                     <Avatar.Image
                         className="size-full object-cover"
@@ -102,7 +103,7 @@ const OrgStreamPost = ({
 
                 <div className={"mt-1.5"}>
                     <h4>{content.organizations?.name}</h4>
-                    <p>{timeStr + (isEdited ? " [Edited]" : "")}</p>
+                    <p>{timeStr + (isEdited ? " · Edited" : "")}</p>
                 </div>
             </div>
 
@@ -119,33 +120,42 @@ const OrgStreamPost = ({
                 }}
             ></div>
 
-            <h3
-                className={
-                    "my-6 max-h-[2lh] overflow-ellipsis overflow-hidden [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]"
-                }
-            >
-                {content.title}
-            </h3>
+            <div className={"bg-layer-2 p-4 rounded-lg h-fit"}>
+                <h3
+                    className={
+                        "mb-4 max-h-[2lh] overflow-ellipsis overflow-hidden [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]"
+                    }
+                >
+                    {content.title}
+                </h3>
 
-            <div className={"w-full overflow-y-scroll relative h-52"}>
-                <p>{content.description}</p>
-            </div>
+                <div
+                    className={
+                        "w-full overflow-y-scroll relative min-h-full max-h-[8lh]"
+                    }
+                >
+                    <DisplayLinks text={content.description} />
+                </div>
 
-            <div className="absolute top-5 right-5">
-                {editable && (
-                    <>
-                        <AsyncButton onClick={deletePost} variant="contained">
-                            Delete
-                        </AsyncButton>
-                        <AsyncButton
-                            onClick={() => setEditing(true)}
-                            variant="contained"
-                            sx={{ marginLeft: "10px" }}
-                        >
-                            Edit
-                        </AsyncButton>
-                    </>
-                )}
+                <div className="absolute top-5 right-5">
+                    {editable && (
+                        <>
+                            <AsyncButton
+                                onClick={deletePost}
+                                variant="contained"
+                            >
+                                Delete
+                            </AsyncButton>
+                            <AsyncButton
+                                onClick={() => setEditing(true)}
+                                variant="contained"
+                                sx={{ marginLeft: "10px" }}
+                            >
+                                Edit
+                            </AsyncButton>
+                        </>
+                    )}
+                </div>
             </div>
         </article>
     );

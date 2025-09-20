@@ -100,7 +100,7 @@ const RelatedActivities = ({ currentOrg }: { currentOrg: Organization }) => {
                     ? Array.from({ length: 10 }).map((_, i) => (
                           <div
                               key={i}
-                              className="w-[180px] h-[180px] rounded-xl bg-neutral-800/50 animate-pulse mb-20"
+                              className="w-44 h-44 rounded-xl bg-neutral-800/50 animate-pulse mb-20"
                           />
                       ))
                     : relatedOrgs.map((org) => (

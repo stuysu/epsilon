@@ -26,8 +26,8 @@ const HelpItem = ({
                 className={`bx ${icon} max-sm:hidden bx-lg relative top-2.5 ${iconColor}`}
             ></i>
             <div>
-                <h3 className={"mt-3"}>{title}</h3>
-                <h4 className="mb-3">{description}</h4>
+                <h3 className="mt-3">{title}</h3>
+                <p className="mb-3">{description}</p>
                 <AnimatePresence initial={false}>
                     {content && expanded && (
                         <motion.div
@@ -61,7 +61,7 @@ const HelpItem = ({
 
 const Support = () => {
     return (
-        <div className={"m-12 max-sm:mb-32"}>
+        <div className={"m-10 sm:m-12 max-sm:mb-32"}>
             <Helmet>
                 <title>StuyActivities Support - Epsilon</title>
                 <meta
@@ -76,7 +76,7 @@ const Support = () => {
             >
                 <h1
                     className={
-                        "w-2/3 bg-blend-color-dodge sm:text-8xl text-4xl sm:text-center font-light leading-tight"
+                        "sm:w-2/3 bg-blend-color-dodge sm:text-8xl text-4xl sm:text-center font-light leading-tight"
                     }
                 >
                     Get help with

@@ -42,7 +42,7 @@ const UserPreferences = () => {
                             </h4>
                             <p className={"mb-3 text-left"}>
                                 Our default dark theme, perfect for a focused
-                                experience with a little bit of pop.
+                                experience that's a little classy.
                             </p>
                             <img
                                 src={`${PUBLIC_URL}/symbols/darkmode.png`}

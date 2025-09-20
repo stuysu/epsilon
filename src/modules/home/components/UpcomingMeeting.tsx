@@ -32,7 +32,6 @@ const UpcomingMeeting = ({
     const [open, setOpen] = useState(false);
 
     let start = dayjs(start_time);
-    let end = dayjs(end_time);
 
     return (
         <div className={"w-full cursor-pointer"}>
@@ -43,7 +42,7 @@ const UpcomingMeeting = ({
                 <div className="relative flex gap-3">
                     <div
                         className={[
-                            "min-w-10 h-10 rounded-md overflow-hidden relative",
+                            "min-w-10 w-10 h-10 rounded-md overflow-hidden relative",
                             !is_public
                                 ? "[mask:radial-gradient(circle_0.8rem_at_2.4rem_2.3rem,transparent_98%,#000_100%)] [-webkit-mask:radial-gradient(circle_0.8rem_at_2.4rem_2.3rem,transparent_98%,#000_100%)]"
                                 : "",
@@ -80,11 +79,11 @@ const UpcomingMeeting = ({
                         selectable={false}
                     ></ToggleChip>
                     <ToggleChip
-                        title={`${start.format("LT")} to ${end.format("LT")}`}
+                        title={start.format("LT")}
                         selectable={false}
                     ></ToggleChip>
                     <ToggleChip
-                        title={`${monthNames[start.month()]} ${start.date()}, ${start.year()}`}
+                        title={`${monthNames[start.month()].slice(0, 3)} ${start.date()}`}
                         selectable={false}
                     ></ToggleChip>
                 </div>

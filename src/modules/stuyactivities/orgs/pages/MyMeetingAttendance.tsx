@@ -141,9 +141,7 @@ const MyMeetingAttendance = () => {
                             justifyContent: "center",
                         }}
                     >
-                        <Typography variant="h4">
-                            {user.first_name + " " + user.last_name}
-                        </Typography>
+                        <h1>{user.first_name + " " + user.last_name}</h1>
                     </Box>
                     <Box
                         sx={{
@@ -152,9 +150,7 @@ const MyMeetingAttendance = () => {
                             justifyContent: "center",
                         }}
                     >
-                        <Typography variant="h5">
-                            Status: {isPresent ? "Present" : "Absent"}
-                        </Typography>
+                        <h2>Status: {isPresent ? "Present" : "Absent"}</h2>
                     </Box>
                     <AsyncButton
                         onClick={markPresent}
@@ -163,7 +159,7 @@ const MyMeetingAttendance = () => {
                         color="success"
                         variant="contained"
                     >
-                        Mark Present
+                        Mark Myself Present
                     </AsyncButton>
                 </Card>
             </Box>

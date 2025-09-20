@@ -3,7 +3,6 @@ import {
     ListItem,
     ListItemAvatar,
     ListItemText,
-    TextField,
     Typography,
 } from "@mui/material";
 import React, { useContext, useEffect, useRef, useState } from "react";
@@ -12,6 +11,7 @@ import { useSnackbar } from "notistack";
 import UserContext from "../../../../contexts/UserContext";
 import dayjs from "dayjs";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
+import TextInput from "../../../../components/ui/input/TextInput";
 
 type OrgMessage = {
     id: number;
@@ -147,7 +147,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
     };
 
     return (
-        <section className="p-4 relative rounded-xl border border-divider">
+        <section className="p-6 relative rounded-xl shadow-prominent">
             <h2>Messaging</h2>
             <p>
                 Only visible to admins, faculty, and the Clubs & Pubs
@@ -201,23 +201,8 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                     );
                 })}
             </div>
-            <div className={"w-full flex items-center mt-2"}>
-                <TextField
-                    variant="filled"
-                    label="Type message here."
-                    sx={{ width: "90%", marginRight: "15px" }}
-                    value={message}
-                    onChange={(e) => setMessage(e.target.value)}
-                    onKeyDown={(e) => {
-                        if (e.key === "Enter") {
-                            e.preventDefault();
-
-                            if (message) {
-                                sendMessage();
-                            }
-                        }
-                    }}
-                />
+            <div className={"w-full flex items-center mt-2 gap-4"}>
+                <TextInput value={message} onChange={(e) => setMessage(e)} />
                 <AsyncButton
                     variant="contained"
                     sx={{ width: "10%" }}

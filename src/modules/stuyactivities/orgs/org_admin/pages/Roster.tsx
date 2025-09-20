@@ -40,7 +40,7 @@ const Roster = () => {
         <Box sx={{ width: "100%" }}>
             <div
                 className={
-                    "bg-layer-1 p-5 pl-7 pb-8 rounded-xl mb-10 mt-2 shadow-module"
+                    "bg-layer-1 p-5 pl-7 pb-8 rounded-xl mb-10 mt-2 shadow-prominent"
                 }
             >
                 <h1>Member Roster</h1>

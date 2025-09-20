@@ -74,7 +74,7 @@ const CharterLanding = () => {
                     >
                         <div
                             className={
-                                "relative p-10 max-lg:h-fit w-full h-full flex flex-col items-start justify-start bg-layer-1 rounded-2xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.075)]"
+                                "relative p-10 max-lg:h-fit w-full h-full flex flex-col items-start justify-start bg-layer-1 rounded-3xl shadow-prominent"
                             }
                         >
                             <div
@@ -106,12 +106,18 @@ const CharterLanding = () => {
                             <div className={"relative min-h-28 max-w-72"}>
                                 <h1
                                     className={
-                                        "absolute bottom-32 font-bold text-6xl"
+                                        "absolute bottom-28 font-bold text-6xl text-beige"
                                     }
                                 >
                                     1
                                 </h1>
-                                <h1>Submit Your Application</h1>
+                                <h1
+                                    className={
+                                        "font-['instrument-serif'] font-normal text-beige"
+                                    }
+                                >
+                                    Submit Your Charter Application Online
+                                </h1>
                             </div>
                             <p>
                                 Prior to initiating the chartering process, you
@@ -163,7 +169,7 @@ const CharterLanding = () => {
                                         : "cursor-not-allowed opacity-50")
                                 }
                             >
-                                Start Application{" "}
+                                Start Application
                                 <i
                                     className={
                                         "bx bx-chevron-right bx-md relative top-[10px]"
@@ -173,7 +179,7 @@ const CharterLanding = () => {
                         </div>
                         <div
                             className={
-                                "z-10 relative p-10 max-lg:h-fit w-full h-full flex flex-col items-start justify-start bg-layer-1 rounded-2xl shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.075)]"
+                                "z-10 relative p-10 max-lg:h-fit w-full h-full flex flex-col items-start justify-start bg-layer-1 rounded-3xl shadow-prominent"
                             }
                         >
                             <div
@@ -201,10 +207,16 @@ const CharterLanding = () => {
                                 }}
                             ></div>
                             <div className={"relative min-h-28 max-w-72"}>
-                                <h1>Get Approved & Listed on Epsilon</h1>
                                 <h1
                                     className={
-                                        "absolute bottom-32 font-bold text-6xl"
+                                        "font-['instrument-serif'] font-normal text-beige"
+                                    }
+                                >
+                                    Get Approved Quickly and Listed on Epsilon!
+                                </h1>
+                                <h1
+                                    className={
+                                        "absolute bottom-28 font-bold text-6xl text-beige"
                                     }
                                 >
                                     2

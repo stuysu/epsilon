@@ -19,11 +19,15 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const membership = organization.memberships?.find(
         (m) => m.users?.id === user.id,
     );
-    const isAdmin = organization.memberships?.some(
-        (m) =>
-            m.users?.id === user.id &&
-            (m.role === "ADMIN" || m.role === "CREATOR"),
-    );
+
+    const isOrgAdmin =
+        organization.memberships?.some(
+            (m) =>
+                m.users?.id === user.id &&
+                (m.role === "ADMIN" || m.role === "CREATOR"),
+        ) ?? false;
+
+    const isStuyActivitiesAdmin = Boolean(user.permission);
 
     const navLinks: LinkItem[] = [
         { to: main, display: "Overview" },
@@ -36,7 +40,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
             : []),
     ];
 
-    const adminLinks: LinkItem[] = [
+    const fullAdminLinks: LinkItem[] = [
         { to: `${main}/admin/roster`, display: "Roster" },
         {
             to: `${main}/admin/join-requests`,
@@ -49,9 +53,18 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
         { to: `${main}/admin/org-edits`, display: "Amend Charter" },
     ];
 
+    const stuyActivitiesAdminLinks: LinkItem[] = [
+        { to: `${main}/admin/messages`, display: "Messages" },
+    ];
+
+    const adminLinks: LinkItem[] = isOrgAdmin
+        ? fullAdminLinks
+        : isStuyActivitiesAdmin
+          ? stuyActivitiesAdminLinks
+          : [];
+
     const [menuOpen, setMenuOpen] = useState(false);
 
-    // Shared renderers to avoid duplicating map blocks
     const renderDesktopList = (links: LinkItem[]) => (
         <List sx={{ width: "100%" }}>
             {links.map((linkData, i) => (
@@ -83,7 +96,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
         links.map((linkData, i) => (
             <button
                 key={i}
-                className={`important border border-zinc-600/20 w-full text-left py-2 px-3 rounded-lg text-lg transition-colors bg-neutral-600 text-gray-200 bg-opacity-20`}
+                className={`important border border-zinc-600/20 w-full text-left py-2 px-3 rounded-lg text-lg transition-colors bg-neutral-600 text-typography-2 bg-opacity-20`}
                 onClick={() => {
                     navigate(linkData.to);
                     setMenuOpen(false);
@@ -98,7 +111,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
             <>
                 {/* Need to fix this later */}
                 <button
-                    className={`z-[5001] fixed cursor-pointer transition-colors text-gray-300 hover:text-gray-400 mr-4 top-5 right-0`}
+                    className={`z-[5001] fixed cursor-pointer transition-colors text-typography-2 hover:text-typography-1 mr-4 top-5 right-0`}
                     onClick={() => setMenuOpen(true)}
                 >
                     <span
@@ -113,9 +126,9 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                 </button>
 
                 {menuOpen && (
-                    <div className="z-[5002] overflow-scroll pb-10 -mx-5 fixed inset-0 flex flex-col items-center justify-start bg-black/70 backdrop-blur-3xl">
+                    <div className="z-[5002] overflow-scroll pb-10 -mx-5 fixed inset-0 flex flex-col items-center justify-start bg-blurDark backdrop-blur-3xl">
                         <button
-                            className="absolute top-4 right-14 text-3xl text-white font-bold"
+                            className="absolute top-4 right-14 text-3xl text-typography-1 font-bold"
                             onClick={() => setMenuOpen(false)}
                             aria-label="Close menu"
                         >
@@ -128,7 +141,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
 
                         <div className="flex flex-col gap-1 w-full p-16">
                             <div
-                                className=" text-l text-white/50 ml-3"
+                                className=" text-l text-typography-2 ml-3"
                                 style={{ fontVariationSettings: "'wght' 700" }}
                             >
                                 About
@@ -136,10 +149,10 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
 
                             {renderMobileButtons(navLinks)}
 
-                            {isAdmin && (
+                            {adminLinks.length > 0 && (
                                 <>
                                     <div
-                                        className="mt-5 text-l text-white/50 ml-3"
+                                        className="mt-5 text-l text-typography-2 ml-3"
                                         style={{
                                             fontVariationSettings: "'wght' 700",
                                         }}
@@ -161,7 +174,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
             <p>About</p>
             {renderDesktopList(navLinks)}
 
-            {isAdmin && (
+            {adminLinks.length > 0 && (
                 <div>
                     <div className={"h-px w-5/6 bg-divider my-2"}></div>
                     <p className={"mt-6"}>Admin Tools</p>

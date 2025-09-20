@@ -119,11 +119,12 @@ const SECTIONS: Category[] = [
 
 const SECTION_DESCRIPTIONS: Record<Category, string> = {
     "Exclusive Series":
-        "Reserved for members of specific leadership divisions.",
-    Accolades: "Given for unique accomplishments and milestones.",
+        "These medals are reserved for members of leadership divisions.",
+    Accolades:
+        "These medals are given for unique accomplishments and milestones.",
     Venturer: "These medals are granted based on your Epsilon account age.",
     Participation:
-        "Participation medals celebrate the ones who contribute to the Stuy community.",
+        "These medals celebrate the ones who contribute to the Stuy community.",
 };
 
 const Profiles = () => {
@@ -159,7 +160,7 @@ const Profiles = () => {
     };
 
     const MedalGrid = ({ items }: { items: Medal[] }) => (
-        <div className="flex flex-wrap bg-layer-1 rounded-lg overflow-hidden">
+        <div className="flex flex-wrap bg-layer-1 rounded-xl overflow-hidden shadow-prominent">
             {items.map((m) => (
                 <button
                     key={m.key}
@@ -220,7 +221,7 @@ const Profiles = () => {
                 <img
                     src={`${PUBLIC_URL}/taglines/medals.svg`}
                     className={
-                        "w-64 mb-3 mt-16 bg-[#111111] p-3 rounded-lg relative right-3"
+                        "w-64 mb-3 mt-16 bg-[#0e0e0e] p-3 rounded-lg relative right-3"
                     }
                     alt={"Medals of Honor"}
                 />

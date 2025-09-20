@@ -51,7 +51,7 @@ const Pages = () => {
                 <meta
                     property="og:description"
                     content={
-                        "The everything app for Stuyvesant High School. Browse and join Activities, browse the calendar, find new opportunities, and more."
+                        "The everything app for Stuyvesant High School. Find and join Activities, browse the calendar, find new opportunities, and more."
                     }
                 />
                 <meta property={"og:title"} content={"Epsilon"} />
@@ -60,7 +60,7 @@ const Pages = () => {
 
             <Suspense fallback={<Loading />}>
                 {!(!user.signed_in && location.pathname === "/") && (
-                    <div>
+                    <header>
                         <div
                             className={
                                 "max-sm:w-full sm:relative bg-blurDark fixed z-50 bottom-0 sm:bg-opacity-0 bg-opacity-80 max-sm:backdrop-blur-2xl max-sm:border-t border-divider"
@@ -71,7 +71,7 @@ const Pages = () => {
                         <div className={"max-sm:h-8"}>
                             <SubNavBar />
                         </div>
-                    </div>
+                    </header>
                 )}
                 <Routes>
                     <Route path={"/"} Component={Index} />
@@ -95,7 +95,7 @@ const Pages = () => {
                 {user.signed_in && (
                     <footer
                         className={
-                            "w-full h-36 bg-layer-1 p-10 max-sm:p-6 pr-12 flex justify-between items-center mt-20 max-sm:pb-56 max-sm:flex-col gap-2"
+                            "w-full h-36 bg-layer-1 p-10 max-sm:p-6 pr-12 flex justify-between items-center mt-20 max-sm:pb-48 max-sm:flex-col gap-2"
                         }
                     >
                         <div className="w-72 flex max-sm:justify-center">

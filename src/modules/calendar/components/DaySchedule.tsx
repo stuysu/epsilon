@@ -24,7 +24,7 @@ function compareTimes(a: CalendarMeeting, b: CalendarMeeting) {
 /* Schedule of meetings for a given day */
 const DaySchedule = ({ day, meetings }: Props) => {
     return (
-        <div className={"bg-layer-1 rounded-xl shadow-module p-1"}>
+        <div className={"bg-layer-1 rounded-xl shadow-prominent p-1"}>
             <div className={"pl-5 py-3"}>
                 <Typography>{`${monthNames[day.month()]} ${day.date()}`}</Typography>
             </div>

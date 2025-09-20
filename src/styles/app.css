@@ -61,11 +61,11 @@
 
     /* dark: default, user set, and when system wants dark */
     :where(:root, [data-theme="dark"]) {
-        --bg-main: #111111;
+        --bg-main: #0e0e0e;
 
-        --layer-primary: #1f1f1f80;
-        --layer-secondary: #36363666;
-        --layer-tertiary: #6161614d;
+        --layer-primary: #1c1c1c7f;
+        --layer-secondary: #2c2c2c66;
+        --layer-tertiary: #5353534c;
 
         --accent: #3788ffcc;
 
@@ -74,18 +74,20 @@
         --text-tertiary: #878787cc;
 
         --blue: #395be9;
-        --green: #6deb68cc;
-        --yellow: #eefe53cc;
-        --red: #e45647b3;
-        --beige: #b6b684cc;
+        --green: #6deb68;
+        --yellow: #eefe53;
+        --red: #e45647;
+        --beige: #b6b684;
 
         --divider: #7d7d7d4d;
 
         --blur-dark: #111111cc;
         --blur-light: #22222299;
 
-        --shadow-module: rgba(255, 255, 255, 0.25);
-        --shadow-control: rgba(255, 255, 255, 0.3);
+        --shadow-base: rgba(0, 0, 0, 0.25);
+        --shadow-antithesis: rgba(255, 255, 255, 0.25);
+        --shadow-fume: rgba(255, 255, 255, 0.05);
+        --shadow-decoration: rgba(182, 182, 126, 0.1);
     }
 
     /* light when user set */
@@ -106,15 +108,17 @@
         --green: #33762f;
         --yellow: #dd9700;
         --red: #d31300;
-        --beige: #d9d9a2;
+        --beige: #8b7355;
 
         --divider: #a9a9a94d;
 
         --blur-dark: #f2f2f280;
         --blur-light: rgba(211, 211, 211, 0.7);
 
-        --shadow-module: rgba(0, 0, 0, 0.25);
-        --shadow-control: rgba(0, 0, 0, 0.3);
+        --shadow-base: rgba(168, 168, 168, 0.25);
+        --shadow-antithesis: rgba(76, 76, 76, 0.25);
+        --shadow-fume: rgba(0, 0, 0, 0.05);
+        --shadow-decoration: rgba(210, 220, 255, 0.1);
     }
 
     /* light when system wants light */
@@ -136,15 +140,17 @@
             --green: #33762f;
             --yellow: #dd9700;
             --red: #d31300;
-            --beige: #d9d9a2;
+            --beige: #8b7355;
 
             --divider: #a9a9a94d;
 
             --blur-dark: #f2f2f280;
             --blur-light: rgba(211, 211, 211, 0.7);
 
-            --shadow-module: rgba(0, 0, 0, 0.25);
-            --shadow-control: rgba(0, 0, 0, 0.3);
+            --shadow-base: rgba(168, 168, 168, 0.25);
+            --shadow-antithesis: rgba(76, 76, 76, 0.25);
+            --shadow-fume: rgba(0, 0, 0, 0.05);
+            --shadow-decoration: rgba(210, 220, 255, 0.1);
         }
     }
 
@@ -172,8 +178,10 @@
         --blur-dark: #000000;
         --blur-light: #111111;
 
-        --shadow-module: #fff;
-        --shadow-control: #fff;
+        --shadow-base: rgba(255, 255, 255, 0);
+        --shadow-antithesis: rgba(255, 255, 255, 1);
+        --shadow-fume: rgba(0, 0, 0, 0);
+        --shadow-decoration: rgba(210, 220, 255, 0.8);
     }
 
     [data-theme="orange"] {
@@ -193,12 +201,17 @@
         --green: #ff8a65;
         --yellow: #ffb300;
         --red: #e64a19;
-        --beige: #ffe082;
+        --beige: #bd9200;
 
         --divider: #ffcc80;
 
         --blur-dark: #ff9800cc;
         --blur-light: #ffcc80cc;
+
+        --shadow-base: rgba(255, 69, 2, 0.1);
+        --shadow-antithesis: rgb(255, 174, 0.1);
+        --shadow-fume: rgb(255, 0, 0, 0.2);
+        --shadow-decoration: rgba(255, 97, 0, 0.8);
     }
 
     /* orange theme uses serif */
@@ -209,7 +222,7 @@
     [data-theme="orange"] h4,
     [data-theme="orange"] h5,
     [data-theme="orange"] p {
-        font-family: "Georgia", "Times New Roman", serif !important;
+        font-family: "Georgia", "instrument-serif", serif !important;
     }
 
     /* light or dark natured */

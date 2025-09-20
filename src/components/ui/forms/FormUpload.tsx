@@ -1,6 +1,6 @@
 import { ChangeEvent, useEffect } from "react";
 
-import { Box, Paper, PaperProps, Typography } from "@mui/material";
+import { Box, Paper, PaperProps } from "@mui/material";
 import { useSnackbar } from "notistack";
 import AsyncButton from "../buttons/AsyncButton";
 
@@ -102,7 +102,7 @@ const FormUpload = ({
                     component="label"
                     sx={{ width: "100%", height: hasFile ? "auto" : "100%" }}
                 >
-                    {hasFile ? "Change" : "Upload Image"}
+                    {hasFile ? "Change" : "Upload Avatar"}
                     <input
                         type="file"
                         accept={
@@ -116,7 +116,7 @@ const FormUpload = ({
                         hidden
                     />
                 </AsyncButton>
-                <Typography>{value?.name}</Typography>
+                <h3 className={"text-nowrap"}>{value?.name}</h3>
 
                 {hasFile && (
                     <AsyncButton
@@ -145,9 +145,11 @@ const FormUpload = ({
                     <img
                         alt={`${value?.name || "Empty File"}`}
                         src={value ? URL.createObjectURL(value) : ""}
-                        width="200px"
-                        height="200px"
-                        style={{ borderRadius: "100%", objectFit: "cover" }}
+                        style={{
+                            borderRadius: "10%",
+                            width: "200px",
+                            height: "200px",
+                        }}
                     />
                 </Box>
             )}

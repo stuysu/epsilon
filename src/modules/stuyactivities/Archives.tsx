@@ -37,12 +37,17 @@ const Archives = () => {
                             "https://docs.google.com/spreadsheets/d/1URqnVM9avoD5_oRvBzQXI1ghq4oWRLWMps58cvNCLc0/edit?usp=sharing"
                         }
                         target="_blank"
-                        className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex items-center no-underline gap-4 hover:bg-layer-3 shadow-control"
+                        className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex justify-center no-underline gap-4 hover:bg-layer-3 shadow-control"
                     >
-                        <i className={"bx bx-box bx-md pt-1"}></i>
                         <div>
-                            <h3>2024-2025</h3>
-                            <p>421 Activities</p>
+                            <h1
+                                className={
+                                    "font-['instrument-serif'] text-beige font-normal"
+                                }
+                            >
+                                2024-2025 Archives
+                            </h1>
+                            <p className={"text-center"}>421 Activities</p>
                         </div>
                     </a>
                     <a
@@ -50,14 +55,17 @@ const Archives = () => {
                             "https://docs.google.com/spreadsheets/d/1TyFnEPhY3gM-yRJKYDJkQSfHC6OsvC5ftkkoahjVcCU/edit?gid=485693778#gid=485693778"
                         }
                         target="_blank"
-                        className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex items-center no-underline gap-4 hover:bg-layer-3 shadow-control"
+                        className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex justify-center no-underline gap-4 hover:bg-layer-3 shadow-control"
                     >
-                        <i
-                            className={"bx bx-box bx-md pt-1 text-typography-2"}
-                        ></i>
                         <div>
-                            <h3>2023-2024</h3>
-                            <p>351 Activities</p>
+                            <h1
+                                className={
+                                    "font-['instrument-serif'] font-normal"
+                                }
+                            >
+                                2023-2024 Archives
+                            </h1>
+                            <p className={"text-center"}>351 Activities</p>
                         </div>
                     </a>
                 </div>

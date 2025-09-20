@@ -54,7 +54,7 @@ const AttendanceOverview = () => {
                 <div>
                     <div
                         className={
-                            "w-full bg-layer-1 p-5 pl-7 pb-8 rounded-xl mb-10 mt-2 shadow-module"
+                            "w-full bg-layer-1 p-5 pl-7 pb-8 rounded-xl mb-10 mt-2 shadow-prominent"
                         }
                     >
                         <h1>Take Attendance</h1>

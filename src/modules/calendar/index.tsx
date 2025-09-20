@@ -142,11 +142,12 @@ const Index = () => {
                     showOutsideDays
                     weekStartsOn={1}
                     classNames={{
+                        month_grid: "max-sm:scale-125 origin-top-left",
                         button_previous:
                             "fill-typography-1 z-10 relative hover:bg-layer-2 rounded-full",
                         button_next:
                             "fill-typography-1 z-10 relative hover:bg-layer-2 rounded-full",
-                        root: "p-5 rounded-xl p-3 bg-layer-1 shadow-control relative max-md:w-full",
+                        root: "max-sm:pb-16 p-5 rounded-xl p-3 bg-layer-1 shadow-control relative max-md:w-full",
                         nav: "absolute flex gap-2 ml-16 right-5 top-3.5",
                         month_caption:
                             "relative -top-1 mb-3 text-typography-1 important",
@@ -168,7 +169,7 @@ const Index = () => {
                     }}
                     modifiersClassNames={{
                         hasMeetings:
-                            'relative after:content-[""] after:absolute after:bottom-1 after:left-1/2 after:-translate-x-1/2 after:w-8 after:h-[4px] after:rounded-full after:bg-yellow',
+                            'relative after:content-[""] after:left-1/2 after:absolute after:-translate-x-1/2 after:bottom-1 after:w-1 after:h-1 after:rounded-full after:bg-yellow',
                     }}
                 />
 

@@ -11,14 +11,10 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
     const user: UserContextType = useContext(UserContext);
 
     return (
-        <Box
-            sx={{
-                position: "relative",
-                transition: "transform 0.4s cubic-bezier(0.3, 0.9, 0.3, 1)",
-                "&:hover": {
-                    transform: "translateY(-5px)",
-                },
-            }}
+        <article
+            tabIndex={0}
+            role="link"
+            className="relative transition-transform duration-[400ms] ease-[cubic-bezier(0.3,0.9,0.3,1)] hover:-translate-y-[5px]"
         >
             <div className="mt-10"></div>
             <div className="relative rounded-2xl overflow-visible">
@@ -49,9 +45,8 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
     p-6
     transition-colors
     bg-layer-1
-    shadow-module
+    shadow-prominent
     hover:bg-layer-2
-    hover:shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.075),0_5px_15px_rgba(0,0,0,0.3)]
     justify-start
   "
                 >
@@ -109,7 +104,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                             {user.signed_in && (
                                 <p
                                     className={
-                                        "absolute top-12 right-0 text-typography-2 bg-layer-2 px-2 py-1 rounded-md important shadow-module"
+                                        "absolute top-12 right-0 text-typography-2 bg-layer-2 px-2 py-1 rounded-md important shadow-control"
                                     }
                                 >
                                     <i className="bx bx-group bx-xs relative top-0.5 mr-1"></i>
@@ -150,7 +145,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                 sx={{
                                     width: "120px",
                                     height: "120px",
-                                    backgroundColor: "rgb(23,23,23)",
+                                    backgroundColor: "var(--bg-main)",
                                     borderRadius: "20px",
                                     position: "absolute",
                                 }}
@@ -168,14 +163,13 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                     width: "120px",
                                     height: "120px",
                                     borderRadius: "20px",
-                                    fontSize: "60px",
                                     objectFit: "cover",
-                                    backgroundColor: "#232323",
-                                    color: "#cdcdcd",
+                                    backgroundColor: "var(--layer-secondary)",
+                                    color: "var(--text-primary)",
                                 }}
                                 alt={`${organization.name}`}
                             >
-                                <h1>
+                                <h1 className="text-7xl font-light">
                                     {organization.name?.charAt(0).toUpperCase()}
                                 </h1>
                             </Avatar>
@@ -219,7 +213,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
 
                         <div
                             className={
-                                "flex flex-col bg-layer-2 shadow-module py-3 px-4 mt-5 rounded-lg capitalize"
+                                "flex flex-col bg-layer-2 shadow-control py-3 px-4 mt-5 rounded-lg capitalize"
                             }
                         >
                             <div className={"flex justify-between"}>
@@ -251,7 +245,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                     </div>
                 </div>
             </div>
-        </Box>
+        </article>
     );
 };
 

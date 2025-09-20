@@ -148,12 +148,12 @@ const OrgRouter = () => {
 
     if (loading)
         return (
-            <div id="activity-page">
+            <main id="activity-page">
                 <Loading />
-            </div>
+            </main>
         );
     return (
-        <div id="activity-page">
+        <main id="activity-page">
             <Helmet>
                 <meta
                     property="og:image"
@@ -176,7 +176,7 @@ const OrgRouter = () => {
                     name="description"
                     content={
                         org.purpose ||
-                        "Epsilon is the everything app for Stuyvesant High School. Browse and join Activities, browse the calendar, find new opportunities, and more."
+                        "Epsilon is the everything app for Stuyvesant High School. Find and join Activities, browse the calendar, find new opportunities, and more."
                     }
                 />
             </Helmet>
@@ -186,17 +186,17 @@ const OrgRouter = () => {
                 ) : (
                     <>
                         <div
-                            className={`sm:hidden block w-full h-14 bg-[#111111] bg-opacity-75 fixed top-0 backdrop-blur-lg z-40 border-b-gray-100 border-opacity-10 border-b`}
+                            className={`sm:hidden block w-full h-14 bg-blurDark fixed top-0 backdrop-blur-3xl z-40 border-b-divider border-b`}
                         ></div>
                         <div className={`sm:hidden block mt-10`}></div>
                         <div
-                            className={`sm:sticky max-sm:top-0.5 fixed cursor-pointer ml-6 mt-2 top-3 z-40 flex`}
-                            onClick={() => navigate("/stuyactivities")}
+                            className={`sm:sticky max-sm:top-0.5 fixed ml-6 mt-2 top-3 z-40 flex`}
                         >
                             <p
                                 className={
-                                    "important relative -left-px hover:text-typography-1"
+                                    "important relative -left-px hover:text-typography-1 cursor-pointer"
                                 }
+                                onClick={() => navigate("/stuyactivities")}
                             >
                                 <i
                                     className={
@@ -214,10 +214,14 @@ const OrgRouter = () => {
                             }}
                         ></Box>
                         <div className={"ml-3 sm:ml-12 sm:mr-0 mr-3 flex"}>
-                            <div className={"sticky top-14 h-60 z-[40] mb-48"}>
+                            <aside
+                                className={"sticky top-14 h-60 z-[40] mb-48"}
+                            >
                                 <OrgNav isMobile={isMobile} />
-                            </div>
-                            <div className={"w-full lg:pr-0 pr-0 min-h-[80vh]"}>
+                            </aside>
+                            <section
+                                className={"w-full lg:pr-0 pr-0 min-h-[80vh]"}
+                            >
                                 <TransitionGroup component={null}>
                                     <CSSTransition
                                         key={location.pathname}
@@ -266,7 +270,7 @@ const OrgRouter = () => {
                                         </Routes>
                                     </CSSTransition>
                                 </TransitionGroup>
-                            </div>
+                            </section>
                             <div className="max-xl:hidden mt-2 max-xl:bottom-6">
                                 <OrgInspector />
                             </div>
@@ -275,7 +279,7 @@ const OrgRouter = () => {
                     </>
                 )}
             </OrgContext.Provider>
-        </div>
+        </main>
     );
 };
 

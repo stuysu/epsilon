@@ -22,7 +22,7 @@ const Stream = () => {
         );
 
     return (
-        <section className="flex flex-col mt-2 gap-2">
+        <section className="flex flex-col mt-2 gap-8">
             {organization.posts
                 .sort(sortPostByDate)
                 .reverse()
@@ -30,7 +30,7 @@ const Stream = () => {
                     return (
                         <OrgStreamPost
                             content={post}
-                            editable
+                            key={i}
                             onDelete={() => {
                                 if (organization.setOrg) {
                                     organization.setOrg({

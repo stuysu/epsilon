@@ -16,6 +16,7 @@ import Divider from "../../../../components/ui/Divider";
 import OverviewList from "../../../../components/ui/lists/OverviewList";
 import UserDialog from "../../../../components/ui/overlays/UserDialog";
 import { PUBLIC_URL } from "../../../../config/constants";
+import DisplayLinks from "../../../../components/DisplayLinks";
 
 const Overview = () => {
     const navigate = useNavigate();
@@ -79,7 +80,7 @@ const Overview = () => {
                         memberships: [...organization.memberships, data],
                     });
                 }
-                enqueueSnackbar("Sent organization a join request!", {
+                enqueueSnackbar("Join request sent!", {
                     variant: "success",
                 });
             } else if (
@@ -188,7 +189,7 @@ const Overview = () => {
                         sx={{
                             width: "240px",
                             height: "240px",
-                            backgroundColor: "#232323",
+                            backgroundColor: "var(--layer-primary)",
                             borderRadius: "25px",
                             objectFit: "cover",
                             position: "relative",
@@ -206,9 +207,7 @@ const Overview = () => {
 
                 <div className={"flex flex-col relative bottom-0.5"}>
                     <div>
-                        <div
-                            className={"text-center sm:text-left max-sm:mb-10"}
-                        >
+                        <div className={"text-center sm:text-left max-sm:mb-6"}>
                             <h1>{organization.name}</h1>
                         </div>
                         <div
@@ -220,7 +219,7 @@ const Overview = () => {
                                 <ToggleChip
                                     title={tag}
                                     selectable={false}
-                                    key={tag}
+                                    key={index}
                                 />
                             )) || (
                                 <ToggleChip
@@ -232,7 +231,7 @@ const Overview = () => {
 
                         <div
                             className={
-                                "max-sm:m-1 max-sm:mt-6 mb-2 cursor-help hover:brightness-125 transition"
+                                "max-sm:mb-6 max-sm:m-1 max-sm:mt-6 mb-2 cursor-help hover:brightness-125 transition"
                             }
                         >
                             <p
@@ -355,9 +354,11 @@ const Overview = () => {
                     title={"Meeting Schedule"}
                     glow={"bg-blue"}
                 >
-                    <p className={"bg-layer-2 p-4 mb-0.5"}>
-                        {organization.meeting_schedule || "None"}
-                    </p>
+                    <div className={"bg-layer-2 p-4 mb-0.5"}>
+                        <DisplayLinks
+                            text={organization.meeting_schedule || "None"}
+                        />
+                    </div>
                     <div className="flex gap-1">
                         {[
                             ["Mon", "Monday"],
@@ -385,7 +386,7 @@ const Overview = () => {
                 <OverviewList
                     height={"auto"}
                     title={"Activity Leaders"}
-                    glow={"bg-yellow"}
+                    glow={"bg-red"}
                 >
                     {!user.signed_in ? (
                         <p className={"bg-layer-2 p-4"}>
@@ -468,7 +469,7 @@ const Overview = () => {
                                 ></i>
                                 <span className={"relative -top-1"}>
                                     {" "}
-                                    No meetings records.
+                                    No meeting records.
                                 </span>
                             </p>
                         )

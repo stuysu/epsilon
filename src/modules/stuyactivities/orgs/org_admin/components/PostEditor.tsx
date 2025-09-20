@@ -1,4 +1,4 @@
-import { Box, Paper, TextField, Typography } from "@mui/material";
+import { Box, Paper, TextField } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
 
 import { supabase } from "../../../../../lib/supabaseClient";
@@ -101,7 +101,7 @@ const PostEditor = ({
         };
 
         if (onCreate) onCreate(data as Post);
-        enqueueSnackbar("OrgStreamPost created!", { variant: "success" });
+        enqueueSnackbar("Post created!", { variant: "success" });
     };
 
     const savePost = async () => {
@@ -130,7 +130,7 @@ const PostEditor = ({
         };
 
         if (onSave) onSave(data[0] as Post);
-        enqueueSnackbar("OrgStreamPost updated!", { variant: "success" });
+        enqueueSnackbar("Post updated!", { variant: "success" });
     };
 
     return (
@@ -145,10 +145,8 @@ const PostEditor = ({
                 marginBottom: "2rem",
             }}
         >
-            <Typography variant="h3" width="100%">
-                {content ? "Update Post" : "Create Post"}
-            </Typography>
-            <Box sx={{ marginBottom: "10px" }}>
+            <h3>{content ? "Update Post" : "Create Post"}</h3>
+            <Box sx={{ marginY: "10px" }}>
                 <TextField
                     value={postData["title"]}
                     name={"title"}

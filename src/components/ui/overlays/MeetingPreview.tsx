@@ -141,7 +141,7 @@ const MeetingPreview = ({
                                         <div className="flex gap-2 flex-wrap">
                                             <ToggleChip
                                                 selectable={false}
-                                                title={`${daysOfWeek[start.day()]}, ${monthNames[start.month()]} ${start.date()} ${start.year()}`}
+                                                title={`${daysOfWeek[start.day()]}, ${monthNames[start.month()]} ${start.date()}, ${start.year()}`}
                                             />
                                             <ToggleChip
                                                 selectable={false}
