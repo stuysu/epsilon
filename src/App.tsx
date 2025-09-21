@@ -7,10 +7,18 @@ import AlertDisplay from "./components/ui/AlertDisplay";
 import Pages from "./modules";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
-import { CssBaseline } from "@mui/material";
-import { SnackbarProvider } from "notistack";
+import { CssBaseline, styled } from "@mui/material";
+import { SnackbarProvider, MaterialDesignContent } from "notistack";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { OrgListProvider } from "./contexts/OrgListContext";
+
+const SnackbarOverride = styled(MaterialDesignContent)(() => ({
+    borderRadius: "10px",
+    fontSize: "14px",
+    fontVariationSettings: "'wght' 700",
+    padding: "7px 15px",
+    boxShadow: "0 4px 4px 0 var(--shadow-base), 0 0 1px 0 var(--shadow-antithesis) inset, 0 1px 3px 0 var(--shadow-decoration) inset",
+}));
 
 const App = () => {
     const [autoHeightMax, setAutoHeightMax] = useState(window.innerHeight);
@@ -56,7 +64,17 @@ const App = () => {
                 <ThemeProvider>
                     <CssBaseline />
                     <AlertDisplay />
-                    <SnackbarProvider maxSnack={4} autoHideDuration={3000}>
+                    <SnackbarProvider
+                        Components={{
+                            default: SnackbarOverride,
+                            success: SnackbarOverride,
+                            error: SnackbarOverride,
+                            warning: SnackbarOverride,
+                            info: SnackbarOverride,
+                        }}
+                        maxSnack={3}
+                        autoHideDuration={5000}
+                    >
                         <BrowserRouter>
                             <UserProvider>
                                 <OrgListProvider>
