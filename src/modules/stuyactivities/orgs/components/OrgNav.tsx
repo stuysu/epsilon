@@ -111,7 +111,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
             <>
                 {/* Need to fix this later */}
                 <button
-                    className={`z-[5001] fixed cursor-pointer transition-colors text-typography-2 hover:text-typography-1 mr-4 top-5 right-0`}
+                    className={`z-[5001] fixed cursor-pointer transition-colors text-typography-2 hover:text-typography-1 mr-4 top-4 right-0`}
                     onClick={() => setMenuOpen(true)}
                 >
                     <span
@@ -121,7 +121,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                             position: "relative",
                         }}
                     >
-                        <i className={"bx bx-menu bx-sm relative bottom-1"}></i>
+                        <i className={"bx bx-menu bx-sm relative bottom-1.5"}></i>
                     </span>
                 </button>
 
