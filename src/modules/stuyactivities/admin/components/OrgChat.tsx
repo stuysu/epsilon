@@ -74,7 +74,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
         };
 
         fetchMessages();
-        const interval = setInterval(fetchMessages, 1000);
+        const interval = setInterval(fetchMessages, 10000);
         return () => {
             isMounted = false;
             clearInterval(interval);
@@ -150,7 +150,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
         <section className="p-6 relative rounded-3xl shadow-prominent">
             <h4>Messaging</h4>
             <p>
-                Only visible to admins, faculty, and the Clubs & Pubs
+                Only visible to Activity admins, faculty, and the Clubs & Pubs
                 Department.
             </p>
             <div className={"h-96 overflow-auto relative"} ref={chatBoxRef}>
