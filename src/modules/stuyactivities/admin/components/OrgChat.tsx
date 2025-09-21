@@ -147,8 +147,8 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
     };
 
     return (
-        <section className="p-6 relative rounded-xl shadow-prominent">
-            <h2>Messaging</h2>
+        <section className="p-6 relative rounded-3xl shadow-prominent">
+            <h4>Messaging</h4>
             <p>
                 Only visible to admins, faculty, and the Clubs & Pubs
                 Department.

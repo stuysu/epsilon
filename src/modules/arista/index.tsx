@@ -8,7 +8,7 @@ const Arista = () => {
     const theme = useContext(ThemeContext);
 
     return (
-        <section className={"min-h-screen m-12"}>
+        <section className={"min-h-screen p-12"}>
             <Helmet>
                 <title>Arista - Epsilon</title>
                 <meta
