@@ -315,9 +315,11 @@ const UserHome = () => {
                         </div>
                     </div>
 
-                    <div className={"flex flex-col gap-8"}>{posts.map((post, i) => (
-                        <OrgStreamPost content={post} key={i} />
-                    ))}</div>
+                    <div className={"flex flex-col gap-8"}>
+                        {posts.map((post, i) => (
+                            <OrgStreamPost content={post} key={i} />
+                        ))}
+                    </div>
                 </div>
             </section>
         </main>

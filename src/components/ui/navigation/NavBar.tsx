@@ -438,8 +438,8 @@ const NavBar: FC = () => {
                         fontVariationSettings: "'wght' 700",
                         position: "relative",
                         mx: isMobile ? "1.5rem" : "3rem",
-                        mt: isMobile ? 2 : 3,
-                        mb: isMobile ? 2 : 0,
+                        mt: isMobile ? 1.8 : 3,
+                        mb: isMobile ? 1.5 : 0,
                     }}
                 >
                     {itemsToRender.map((item, index) => (
@@ -468,19 +468,10 @@ const NavBar: FC = () => {
                             <i className={`${item.icon} max-sm:hidden`}></i>
                             <div
                                 className={
-                                    "sm:hidden flex flex-col items-center w-10"
+                                    "sm:hidden w-10"
                                 }
                             >
-                                <i className={`${item.icon} scale-110`}></i>
-                                <p
-                                    className={`text-xs ${
-                                        isPageOptnActive(item)
-                                            ? "text-typography-1"
-                                            : "text-typography-3"
-                                    }`}
-                                >
-                                    {item.label}
-                                </p>
+                                <i className={`${item.icon} scale-125`}></i>
                             </div>
                             {!isMobile && (
                                 <span
@@ -500,21 +491,14 @@ const NavBar: FC = () => {
                     {isMobile && overflowItems.length > 0 && (
                         <div ref={dotsRef} className="relative">
                             <div
-                                className="max-sm:w-full text-nowrap flex items-start flex-nowrap cursor-pointer text-typography-2"
                                 onClick={() => setMoreOpen((v) => !v)}
+                                className="w-10"
                             >
-                                <div
-                                    className={
-                                        "flex flex-col items-center w-10"
-                                    }
-                                >
                                     <i
                                         className={
-                                            "bx bx-dots-horizontal-rounded scale-110"
+                                            "text-typography-2 bx bx-dots-horizontal-rounded scale-150"
                                         }
                                     ></i>
-                                    <p className={"text-xs"}>Toolbox</p>
-                                </div>
                             </div>
                         </div>
                     )}

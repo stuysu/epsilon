@@ -37,9 +37,9 @@ const Arista = () => {
                         filter: "blur(0px)",
                     }}
                     transition={{
-                        duration: 0.4,
+                        duration: 1,
                         ease: [0.33, 1, 0.68, 1],
-                        delay: 1,
+                        delay: 0.5,
                     }}
                 >
                     <img
@@ -65,9 +65,9 @@ const Arista = () => {
                             filter: "blur(0px)",
                         }}
                         transition={{
-                            duration: 0.4,
+                            duration: 1,
                             ease: [0.33, 1, 0.68, 1],
-                            delay: 1.5,
+                            delay: 0.8,
                         }}
                     >
                         <img
@@ -101,9 +101,9 @@ const Arista = () => {
                             filter: "blur(0px)",
                         }}
                         transition={{
-                            duration: 0.4,
+                            duration: 1,
                             ease: [0.33, 1, 0.68, 1],
-                            delay: 2,
+                            delay: 1.1,
                         }}
                     >
                         <p>
