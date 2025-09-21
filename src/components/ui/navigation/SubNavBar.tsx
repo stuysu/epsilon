@@ -22,7 +22,7 @@ const SubNavBar: FC = () => {
                 position: isMobile ? "fixed" : "relative",
                 top: isMobile ? 0 : undefined,
                 left: isMobile ? 0 : undefined,
-                backgroundColor: "var(--blur-dark)",
+                backgroundColor: isMobile ? "var(--blur-dark)" : undefined,
                 width: isMobile ? "100%" : undefined,
                 zIndex: isMobile ? 1000 : undefined,
                 borderBottom: isMobile
@@ -35,7 +35,7 @@ const SubNavBar: FC = () => {
                 direction="row"
                 spacing={3}
                 ml={isMobile ? "1rem" : "3rem"}
-                mt={1.5}
+                mt={isMobile ? 1.5 : 2}
                 position="relative"
                 zIndex={2}
             >

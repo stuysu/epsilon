@@ -149,7 +149,7 @@ const UserHome = () => {
     }, [enqueueSnackbar]);
 
     return (
-        <main className="m-3 sm:my-8 sm:mx-12 max-sm:mt-10 min-h-[90vh]">
+        <main className="m-3 sm:my-8 sm:mx-12 max-sm:mt-4 min-h-[90vh]">
             <header className="flex flex-col mb-10 max-sm:items-center max-sm:text-center">
                 <h1>
                     {timeGreeting}, {user.first_name}!
