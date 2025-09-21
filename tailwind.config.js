@@ -61,5 +61,9 @@ module.exports = {
                 },
             });
         },
+        ({ addVariant }) => {
+            addVariant("scheme-light", ":root[data-scheme='light'] &");
+            addVariant("scheme-dark", ":root[data-scheme='dark'] &");
+        },
     ],
 };

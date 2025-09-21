@@ -37,14 +37,25 @@ function getSystemMode(): "light" | "dark" {
 
 const applyDOMTheme = (mode: ThemeMode) => {
     const root = document.documentElement;
+
+    const toEffective = (m: ThemeMode): "light" | "dark" => {
+        if (m === "system") return getSystemMode();
+        if (m === "dark-hc") return "dark";
+        if (m === "orange") return "light";
+        return m; // "light" | "dark"
+    };
+
+    const eff = toEffective(mode);
+
     if (mode === "system") {
         root.removeAttribute("data-theme");
-        root.style.colorScheme = getSystemMode();
     } else {
-        // lock variables by forcing data-theme
         root.setAttribute("data-theme", mode);
-        root.style.colorScheme = mode;
     }
+
+    root.setAttribute("data-scheme", eff);
+
+    root.style.colorScheme = eff;
 };
 
 const ThemeProvider = ({ children }: { children: React.ReactNode }) => {

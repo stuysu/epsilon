@@ -281,7 +281,7 @@ const Index = () => {
                 />
             </Helmet>
 
-            <section className="z-30 top-0 fixed h-screen w-screen bg-[#000000] flex items-center justify-center">
+            <section className="scheme-light:invert z-30 top-0 fixed h-screen w-screen bg-[#000000] flex items-center justify-center">
                 <AnimatePresence mode="wait">
                     {stage === "idle" && (
                         <motion.button
@@ -312,7 +312,7 @@ const Index = () => {
                         >
                             <video
                                 ref={videoRef}
-                                className="object-cover w-full h-full"
+                                className="max-sm:scale-150 sm:object-cover w-full h-full"
                                 src={`${PUBLIC_URL}/media/about_intro.mp4`}
                                 autoPlay
                                 muted
@@ -327,7 +327,7 @@ const Index = () => {
                     {stage === "tagline" && (
                         <motion.div
                             key={`tagline-${runId}`}
-                            className="max-w-2xl w-full"
+                            className="max-w-2xl w-full m-3"
                             variants={fadeVariants}
                             initial="initial"
                             animate="animate"

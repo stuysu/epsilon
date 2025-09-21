@@ -6,7 +6,7 @@
 @tailwind utilities;
 
 @layer base {
-    /* text styles */
+    /* Text Styles */
     html {
         font-size: 16px;
     }
@@ -59,7 +59,7 @@
         color-scheme: dark light;
     }
 
-    /* dark: default, user set, and when system wants dark */
+    /* Dark Theme: default, explicit data theme setting, and effective dark via system */
     :where(:root, [data-theme="dark"]) {
         --bg-main: #0e0e0e;
 
@@ -90,8 +90,9 @@
         --shadow-decoration: rgba(182, 182, 126, 0.1);
     }
 
-    /* light when user set */
-    :where([data-theme="light"]) {
+    /* Light Theme: explicit data theme setting, or effective scheme is light and there is no explicit data-theme */
+    :where([data-theme="light"]),
+    :root[data-scheme="light"]:not([data-theme]) {
         --bg-main: #e9e9e9;
 
         --layer-primary: #ffffffb3;
@@ -121,39 +122,7 @@
         --shadow-decoration: rgba(210, 220, 255, 0.1);
     }
 
-    /* light when system wants light */
-    @media (prefers-color-scheme: light) {
-        :root:not([data-theme]) {
-            --bg-main: #e9e9e9;
-
-            --layer-primary: #ffffffb3;
-            --layer-secondary: #d6d6d680;
-            --layer-tertiary: #c4c4c466;
-
-            --accent: #0068ffcc;
-
-            --text-primary: #000000cc;
-            --text-secondary: #4b4b4bcc;
-            --text-tertiary: #595959cc;
-
-            --blue: #395be9;
-            --green: #33762f;
-            --yellow: #dd9700;
-            --red: #d31300;
-            --beige: #8b7355;
-
-            --divider: #a9a9a94d;
-
-            --blur-dark: #f2f2f280;
-            --blur-light: rgba(211, 211, 211, 0.7);
-
-            --shadow-base: rgba(168, 168, 168, 0.25);
-            --shadow-antithesis: rgba(76, 76, 76, 0.25);
-            --shadow-fume: rgba(0, 0, 0, 0.05);
-            --shadow-decoration: rgba(210, 220, 255, 0.1);
-        }
-    }
-
+    /* High contrast dark */
     [data-theme="dark-hc"] {
         --bg-main: #000000;
 
@@ -184,6 +153,7 @@
         --shadow-decoration: rgba(210, 220, 255, 0.8);
     }
 
+    /* Orange theme */
     [data-theme="orange"] {
         --bg-main: #fff3e0;
 
@@ -209,15 +179,17 @@
         --blur-light: #ffcc80cc;
 
         --shadow-base: rgba(255, 69, 2, 0.1);
-        --shadow-antithesis: rgb(255, 174, 0.1);
-        --shadow-fume: rgb(255, 0, 0, 0.2);
+        --shadow-antithesis: rgba(255, 174, 0, 0.1);
+        --shadow-fume: rgba(255, 0, 0, 0.2);
         --shadow-decoration: rgba(255, 97, 0, 0.8);
     }
 
-    /* orange theme uses serif */
-    [data-theme="orange"] body,
     [data-theme="orange"] h1,
-    [data-theme="orange"] h2,
+    [data-theme="orange"] h2 {
+        font-family: "instrument-serif", "Georgia", serif !important;
+    }
+
+    [data-theme="orange"] body,
     [data-theme="orange"] h3,
     [data-theme="orange"] h4,
     [data-theme="orange"] h5,
@@ -225,17 +197,15 @@
         font-family: "Georgia", "instrument-serif", serif !important;
     }
 
-    /* light or dark natured */
-    [data-theme="orange"] {
+    /* Effective color-scheme exposure: Light or Dark natured theme */
+    [data-theme="orange"],
+    [data-theme="light"],
+    :root[data-scheme="light"] {
         color-scheme: light;
     }
-    [data-theme="light"] {
-        color-scheme: light;
-    }
-    [data-theme="dark"] {
-        color-scheme: dark;
-    }
-    [data-theme="dark-hc"] {
+    [data-theme="dark"],
+    [data-theme="dark-hc"],
+    :root[data-scheme="dark"] {
         color-scheme: dark;
     }
 }

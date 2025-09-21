@@ -14,7 +14,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
         <article
             tabIndex={0}
             role="link"
-            className="relative transition-transform duration-[400ms] ease-[cubic-bezier(0.3,0.9,0.3,1)] hover:-translate-y-[5px]"
+            className="relative transition-transform duration-[400ms] ease-[cubic-bezier(0.3,0.9,0.3,1)] sm:hover:-translate-y-[5px]"
         >
             <div className="mt-10"></div>
             <div className="relative rounded-2xl overflow-visible">
@@ -46,7 +46,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
     transition-colors
     bg-layer-1
     shadow-prominent
-    hover:bg-layer-2
+    sm:hover:bg-layer-2
     justify-start
   "
                 >
