@@ -9,7 +9,7 @@ const UnauthenticatedLanding = () => {
     const wordmarkSrc = `${PUBLIC_URL}/wordmark.svg`;
 
     return (
-        <main className={"bg-[#0e0e0e] h-screen"}>
+        <main className={"bg-[#0e0e0e] h-screen unauth-landing"}>
             <div
                 style={{
                     position: "fixed",
