@@ -37,7 +37,7 @@
     }
 
     h5 {
-        @apply text-[0.8rem] leading-[2rem] text-[color:var(--text-secondary)] uppercase;
+        @apply text-[0.8rem] leading-[2rem] text-[color:var(--text-tertiary)] uppercase;
         font-variation-settings: "wght" 700;
     }
 
