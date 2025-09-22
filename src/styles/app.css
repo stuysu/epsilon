@@ -80,6 +80,7 @@
         --beige: #b6b684;
 
         --divider: #7d7d7d4d;
+        --highlight: #C5C5C54C;
 
         --blur-dark: #111111cc;
         --blur-light: #22222299;
@@ -112,6 +113,7 @@
         --beige: #8b7355;
 
         --divider: #a9a9a94d;
+        --highlight: #a9a9a94d;
 
         --blur-dark: #f2f2f280;
         --blur-light: rgba(211, 211, 211, 0.7);
@@ -143,6 +145,7 @@
         --beige: #ffffcc;
 
         --divider: #666;
+        --highlight: #666;
 
         --blur-dark: #000000;
         --blur-light: #111111;
@@ -174,6 +177,7 @@
         --beige: #bd9200;
 
         --divider: #ffcc80;
+        --highlight: #ffcc80;
 
         --blur-dark: #ff9800cc;
         --blur-light: #ffcc80cc;
