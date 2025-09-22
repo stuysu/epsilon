@@ -162,7 +162,7 @@ const MeetingPreview = ({
                                         </div>
 
                                         <div className="mt-7 pb-10 max-h-[15lh] overflow-y-scroll">
-                                            <div className="rounded-2xl right-0 bg-gradient-to-t from-bg to-transparent w-full h-16 bottom-0 absolute" />
+                                            <div className="rounded-2xl right-0 bg-gradient-to-t from-bg to-transparent w-full h-12 bottom-0 absolute" />
                                             <DisplayLinks
                                                 text={
                                                     description ||
