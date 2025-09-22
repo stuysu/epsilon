@@ -14,7 +14,8 @@ module.exports = {
 
         extend: {
             backgroundImage: {
-                lineSeparator: "linear-gradient(to right, var(--divider) 0%, var(--highlight) 25%, var(--divider) 100%)",
+                lineSeparator:
+                    "linear-gradient(to right, var(--divider) 0%, var(--highlight) 25%, var(--divider) 100%)",
             },
             colors: {
                 bg: "var(--bg-main)",
