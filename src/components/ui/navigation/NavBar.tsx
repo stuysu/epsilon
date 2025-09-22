@@ -198,15 +198,15 @@ const NavBar: FC = () => {
             : "pointer-events-none opacity-0 translate-y-1"
     }`}
             >
-                <div className="p-2">
+                <div className="px-6 py-4">
                     {/* overflow nav */}
-                    <p className="p-3 uppercase text-sm opacity-75">
+                    <h5>
                         More Tools
-                    </p>
+                    </h5>
                     {overflowItems.map((item, idx) => (
                         <div
                             key={`${item.path}-overflow-${idx}`}
-                            className="flex items-center gap-2 px-3 py-2 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                            className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
                             onClick={() => {
                                 if (item.external && (item as any).url) {
                                     window.open((item as any).url!, "_blank");
@@ -218,72 +218,72 @@ const NavBar: FC = () => {
                             }}
                         >
                             <i className={item.icon} />
-                            <span className="text-base">{item.label}</span>
+                            <span className="important">{item.label}</span>
                         </div>
                     ))}
 
-                    <div className="my-2 h-px bg-divider" />
+                    <Divider />
 
-                    <p className="p-3 uppercase text-sm opacity-75">Account</p>
+                    <h5>Account</h5>
 
                     {user?.signed_in ? (
                         <>
                             <div
-                                className="flex items-center gap-2 px-3 py-2 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                                className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
                                 onClick={() => {
                                     navigate("/profile");
                                     setMoreOpen(false);
                                 }}
                             >
                                 <i className="bx bx-id-card" />
-                                <span className="text-base">Profile</span>
+                                <span className="important">Profile</span>
                             </div>
 
                             <div
-                                className="flex items-center gap-2 px-3 py-2 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                                className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
                                 onClick={() => {
                                     navigate("/preferences");
                                     setMoreOpen(false);
                                 }}
                             >
                                 <i className="bx bx-slider" />
-                                <span className="text-base">Preferences</span>
+                                <span className="important">Preferences</span>
                             </div>
 
                             <div
-                                className="flex items-center gap-2 px-3 py-2 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                                className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
                                 onClick={() => {
                                     navigate("/communications");
                                     setMoreOpen(false);
                                 }}
                             >
                                 <i className="bx bx-envelope" />
-                                <span className="text-base">
+                                <span className="important">
                                     Communications
                                 </span>
                             </div>
 
                             <div
-                                className="flex items-center gap-2 px-3 pt-2 pb-3 cursor-pointer text-red hover:brightness-90 transition-[filter,color]"
+                                className="flex items-center gap-2 py-1 cursor-pointer text-red hover:brightness-90 transition-[filter,color]"
                                 onClick={() => {
                                     signOut();
                                     setMoreOpen(false);
                                 }}
                             >
                                 <i className="bx bx-log-out" />
-                                <span className="text-base">Sign Out</span>
+                                <span className="important">Sign Out</span>
                             </div>
                         </>
                     ) : (
                         <div
-                            className="flex items-center gap-2 px-3 pt-2 pb-3 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                            className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
                             onClick={() => {
                                 navigate("/");
                                 setMoreOpen(false);
                             }}
                         >
                             <i className="bx bx-log-in" />
-                            <span className="text-base">Sign In</span>
+                            <span className="important">Sign In</span>
                         </div>
                     )}
                 </div>
@@ -451,7 +451,7 @@ const NavBar: FC = () => {
                             className={`max-sm:w-full text-nowrap flex items-start flex-nowrap cursor-pointer transition-colors ${
                                 isPageOptnActive(item)
                                     ? "text-typography-1"
-                                    : "sm:hover:text-typography-1 text-typography-3"
+                                    : "max-sm:opacity-75 sm:hover:text-typography-1 text-typography-3"
                             }`}
                             onMouseEnter={() => setIsHovered(true)}
                             onClick={() => {
@@ -496,8 +496,11 @@ const NavBar: FC = () => {
                             >
                                     <i
                                         className={
-                                            "text-typography-2 bx bx-dots-horizontal-rounded scale-150"
-                                        }
+                                            `bx bx-dots-horizontal-rounded scale-150 ${
+                                                moreOpen
+                                                    ? "opacity-100 text-typography-1"
+                                                    : "opacity-75 text-typography-2"
+                                            }`}
                                     ></i>
                             </div>
                         </div>
