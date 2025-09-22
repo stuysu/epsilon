@@ -51,7 +51,7 @@ const Pages = () => {
                 <meta
                     property="og:description"
                     content={
-                        "The everything app for Stuyvesant High School. Find and join Activities, browse the calendar, find new opportunities, and more."
+                        "The everything app for Stuyvesant High School. Find and join Activities, browse the calendar, discover new opportunities, and more."
                     }
                 />
                 <meta property={"og:title"} content={"Epsilon"} />
