@@ -20,7 +20,7 @@ const ToggleChip: React.FC<ToggleChipProps> = ({
             onPressedChange={(state) => onChange?.(state)}
             disabled={!selectable}
             className={`text-nowrap px-3 pt-1 pb-[0.35rem] rounded-lg text-sm text-typography-2 transition-colors bg-layer-2 shadow-control
-        ${selectable ? "sm:hover:bg-layer-3 cursor-pointer" : "cursor-default"}
+        ${selectable ? "hover:bg-layer-3 cursor-pointer" : "cursor-default"}
         data-[state=on]:bg-accent data-[state=on]:text-white  important`}
         >
             {title}
