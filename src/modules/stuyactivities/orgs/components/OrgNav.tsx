@@ -96,7 +96,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
         links.map((linkData, i) => (
             <button
                 key={i}
-                className={`important border border-zinc-600/20 w-full text-left py-2 px-3 rounded-lg text-lg transition-colors bg-neutral-600 text-typography-2 bg-opacity-20`}
+                className={`important shadow-control w-full text-left py-2 px-3 rounded-lg transition-colors bg-layer-2 text-typography-1`}
                 onClick={() => {
                     navigate(linkData.to);
                     setMenuOpen(false);
@@ -139,26 +139,18 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                             ></i>
                         </button>
 
-                        <div className="flex flex-col gap-1 w-full p-16">
-                            <div
-                                className=" text-l text-typography-2 ml-3"
-                                style={{ fontVariationSettings: "'wght' 700" }}
-                            >
+                        <div className="flex flex-col gap-1.5 w-full p-16">
+                            <h5 className={"px-3"}>
                                 About
-                            </div>
+                            </h5>
 
                             {renderMobileButtons(navLinks)}
 
                             {adminLinks.length > 0 && (
                                 <>
-                                    <div
-                                        className="mt-5 text-l text-typography-2 ml-3"
-                                        style={{
-                                            fontVariationSettings: "'wght' 700",
-                                        }}
-                                    >
+                                    <h5 className={"mt-6 px-3"}>
                                         Admin Tools
-                                    </div>
+                                    </h5>
                                     {renderMobileButtons(adminLinks)}
                                 </>
                             )}
