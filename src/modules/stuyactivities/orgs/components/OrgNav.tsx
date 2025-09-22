@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Box, List } from "@mui/material";
+import { List } from "@mui/material";
 import OrgContext from "../../../../contexts/OrgContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import UserContext from "../../../../contexts/UserContext";
@@ -68,9 +68,9 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const renderDesktopList = (links: LinkItem[]) => (
         <List sx={{ width: "100%" }}>
             {links.map((linkData, i) => (
-                <Box
+                <div
                     key={i}
-                    sx={{
+                    style={{
                         height: `30px`,
                         display: "flex",
                         alignItems: "center",
@@ -87,7 +87,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     >
                         {linkData.display}
                     </p>
-                </Box>
+                </div>
             ))}
         </List>
     );

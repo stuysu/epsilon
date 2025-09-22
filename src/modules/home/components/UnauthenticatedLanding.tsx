@@ -1,4 +1,3 @@
-import { Box } from "@mui/material";
 import { PUBLIC_URL } from "../../../config/constants";
 
 import LoginButton from "../../../components/ui/buttons/LoginButton";
@@ -10,9 +9,9 @@ const UnauthenticatedLanding = () => {
     const wordmarkSrc = `${PUBLIC_URL}/wordmark.svg`;
 
     return (
-        <div className={"bg-[#0e0e0e] h-screen"}>
-            <Box
-                sx={{
+        <main className={"bg-[#0e0e0e] h-screen"}>
+            <div
+                style={{
                     position: "fixed",
                     width: "100vw",
                     height: "100vh",
@@ -27,7 +26,7 @@ const UnauthenticatedLanding = () => {
                     zIndex: 2,
                 }}
             />
-            <Box
+            <section
                 className={
                     "w-full max-sm:h-[80vh] h-[90vh] flex justify-center items-center flex-col"
                 }
@@ -82,14 +81,14 @@ const UnauthenticatedLanding = () => {
                 >
                     <CatalogButton />
                 </div>
-            </Box>
+            </section>
             <img
                 src={`${PUBLIC_URL}/icons/stuysu.png`}
                 alt="Stuyvesant Student Union"
                 onClick={() => window.open("https://stuysu.org", "_blank")}
                 className="cursor-pointer relative bottom-12 left-1/2 transform -translate-x-1/2 w-14 h-14 object-cover"
             />
-        </div>
+        </main>
     );
 };
 

@@ -1,10 +1,10 @@
-import { Box, Typography } from "@mui/material";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient";
 import { Valentine } from "../../../valentines/ValentineType";
 import { enqueueSnackbar } from "notistack";
 import ValentineDisplay from "../../../valentines/components/ValentineDisplay";
 import Loading from "../../../../components/ui/content/Loading";
+import ContentUnavailable from "../../../../components/ui/content/ContentUnavailable";
 
 const ApprovedValentines = () => {
     const [approvedMessages, setApprovedMessages] = useState<Valentine[]>([]);
@@ -42,30 +42,20 @@ const ApprovedValentines = () => {
     if (loading) return <Loading />;
 
     return (
-        <Box
-            sx={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                paddingBottom: "10vh",
-            }}
-        >
+        <section className={"m-6"}>
             {approvedMessages.length > 0 ? (
                 approvedMessages.map((v) => (
                     <ValentineDisplay key={v.id} valentine={v} admin mini />
                 ))
             ) : (
-                <Typography
-                    sx={{
-                        marginTop: "2rem",
-                    }}
-                    variant="h4"
-                >
-                    No valentines found &lt;3
-                </Typography>
+                <ContentUnavailable
+                    icon="bx-heart"
+                    iconColor="text-red"
+                    title="No Approved Messages"
+                    description="No valentines messages found."
+                />
             )}
-        </Box>
+        </section>
     );
 };
 
