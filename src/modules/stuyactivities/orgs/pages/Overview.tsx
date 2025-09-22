@@ -231,7 +231,7 @@ const Overview = () => {
 
                         <div
                             className={
-                                "max-sm:mb-6 max-sm:m-1 max-sm:mt-6 mb-2 cursor-help hover:brightness-125 transition"
+                                "max-sm:mb-6 max-sm:m-1 max-sm:mt-6 mb-2 cursor-help sm:hover:brightness-125 transition"
                             }
                         >
                             <p
@@ -308,7 +308,7 @@ const Overview = () => {
                             Activity Status
                             <i
                                 className={
-                                    "bx bx-info-circle relative top-px ml-1 cursor-help hover:brightness-200"
+                                    "bx bx-info-circle relative top-px ml-1 cursor-help sm:hover:brightness-200"
                                 }
                                 onClick={() => navigate(`/activities-support`)}
                             ></i>

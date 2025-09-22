@@ -43,7 +43,7 @@ const OrgInspector = () => {
                                 >
                                     <div
                                         className={
-                                            "px-3.5 py-2 bg-layer-2 hover:bg-layer-3 transition-colors"
+                                            "px-3.5 py-2 bg-layer-2 sm:hover:bg-layer-3 transition-colors"
                                         }
                                     >
                                         <p className="important">

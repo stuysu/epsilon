@@ -206,7 +206,7 @@ const NavBar: FC = () => {
                     {overflowItems.map((item, idx) => (
                         <div
                             key={`${item.path}-overflow-${idx}`}
-                            className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                            className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 sm:hover:text-typography-1 transition-colors"
                             onClick={() => {
                                 if (item.external && (item as any).url) {
                                     window.open((item as any).url!, "_blank");
@@ -229,7 +229,7 @@ const NavBar: FC = () => {
                     {user?.signed_in ? (
                         <>
                             <div
-                                className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                                className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 sm:hover:text-typography-1 transition-colors"
                                 onClick={() => {
                                     navigate("/profile");
                                     setMoreOpen(false);
@@ -240,7 +240,7 @@ const NavBar: FC = () => {
                             </div>
 
                             <div
-                                className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                                className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 sm:hover:text-typography-1 transition-colors"
                                 onClick={() => {
                                     navigate("/preferences");
                                     setMoreOpen(false);
@@ -251,7 +251,7 @@ const NavBar: FC = () => {
                             </div>
 
                             <div
-                                className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                                className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 sm:hover:text-typography-1 transition-colors"
                                 onClick={() => {
                                     navigate("/communications");
                                     setMoreOpen(false);
@@ -264,7 +264,7 @@ const NavBar: FC = () => {
                             </div>
 
                             <div
-                                className="flex items-center gap-2 py-1 cursor-pointer text-red hover:brightness-90 transition-[filter,color]"
+                                className="flex items-center gap-2 py-1 cursor-pointer text-red sm:hover:brightness-90 transition-[filter,color]"
                                 onClick={() => {
                                     signOut();
                                     setMoreOpen(false);
@@ -276,7 +276,7 @@ const NavBar: FC = () => {
                         </>
                     ) : (
                         <div
-                            className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                            className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 sm:hover:text-typography-1 transition-colors"
                             onClick={() => {
                                 navigate("/");
                                 setMoreOpen(false);
@@ -354,7 +354,7 @@ const NavBar: FC = () => {
                         {!user?.signed_in ? (
                             <p
                                 style={{ fontVariationSettings: "'wght' 700" }}
-                                className="cursor-pointer transition-colors hover:text-typography-3"
+                                className="cursor-pointer transition-colors sm:hover:text-typography-3"
                                 onClick={() => navigate("/")}
                             >
                                 <i
@@ -370,7 +370,7 @@ const NavBar: FC = () => {
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
-                                    className="cursor-pointer transition-colors hover:text-typography-3"
+                                    className="cursor-pointer transition-colors sm:hover:text-typography-3"
                                     onClick={() => navigate("/profile")}
                                 >
                                     Profile
@@ -379,7 +379,7 @@ const NavBar: FC = () => {
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
-                                    className="cursor-pointer transition-colors hover:text-typography-3"
+                                    className="cursor-pointer transition-colors sm:hover:text-typography-3"
                                     onClick={() => navigate("/preferences")}
                                 >
                                     Preferences
@@ -388,7 +388,7 @@ const NavBar: FC = () => {
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
-                                    className="cursor-pointer transition-colors hover:text-typography-3"
+                                    className="cursor-pointer transition-colors sm:hover:text-typography-3"
                                     onClick={() => navigate("/communications")}
                                 >
                                     Communications
@@ -398,7 +398,7 @@ const NavBar: FC = () => {
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
-                                    className="cursor-pointer transition-[filter] text-red hover:brightness-75"
+                                    className="cursor-pointer transition-[filter] text-red sm:hover:brightness-75"
                                     onClick={signOut}
                                 >
                                     Sign Out
@@ -437,7 +437,8 @@ const NavBar: FC = () => {
                         fontSize: 20,
                         fontVariationSettings: "'wght' 700",
                         position: "relative",
-                        mx: isMobile ? "1.5rem" : "3rem",
+                        ml: isMobile ? "1.5rem" : "3rem",
+                        mr: isMobile ? "0.5rem" : "3rem",
                         mt: isMobile ? 1.8 : 3,
                         mb: isMobile ? 1.5 : 0,
                     }}
@@ -451,7 +452,7 @@ const NavBar: FC = () => {
                             className={`max-sm:w-full text-nowrap flex items-start flex-nowrap cursor-pointer transition-colors ${
                                 isPageOptnActive(item)
                                     ? "text-typography-1"
-                                    : "max-sm:opacity-75 sm:hover:text-typography-1 text-typography-3"
+                                    : "max-sm:opacity-75 sm:sm:hover:text-typography-1 text-typography-3"
                             }`}
                             onMouseEnter={() => setIsHovered(true)}
                             onClick={() => {

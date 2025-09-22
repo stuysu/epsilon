@@ -135,7 +135,7 @@ const Arista = () => {
             >
                 <div
                     className={
-                        "flex mt-20 w-full py-3 px-6 border-divider border justify-between hover:bg-divider transition-colors"
+                        "flex mt-20 w-full py-3 px-6 border-divider border justify-between sm:hover:bg-divider transition-colors"
                     }
                 >
                     <h1

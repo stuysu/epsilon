@@ -166,7 +166,7 @@ const Profiles = () => {
                     key={m.key}
                     type="button"
                     onClick={() => openMedalDialog(m)}
-                    className="w-48 max-sm:w-32 overflow-hidden sm:hover:bg-layer-2 transition-colors"
+                    className="w-48 max-sm:w-32 overflow-hidden sm:sm:hover:bg-layer-2 transition-colors"
                     aria-label={m.title}
                     title={m.title}
                 >

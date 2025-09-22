@@ -194,7 +194,7 @@ const OrgRouter = () => {
                         >
                             <p
                                 className={
-                                    "important relative -left-px hover:text-typography-1 cursor-pointer"
+                                    "important relative -left-px sm:hover:text-typography-1 cursor-pointer"
                                 }
                                 onClick={() => navigate("/stuyactivities")}
                             >

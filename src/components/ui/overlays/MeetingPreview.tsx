@@ -108,7 +108,7 @@ const MeetingPreview = ({
                                             {url ? (
                                                 <a
                                                     href={`/${url}`}
-                                                    className="no-underline cursor-alias transition-opacity hover:opacity-75"
+                                                    className="no-underline cursor-alias transition-opacity sm:hover:opacity-75"
                                                 >
                                                     <h3 className="text-typography-1">
                                                         {organizationName ||
@@ -129,7 +129,7 @@ const MeetingPreview = ({
                                             aria-label="Close"
                                             onClick={onClose}
                                         >
-                                            <i className="bx bx-x bx-md text-typography-2 mt-1 hover:opacity-75" />
+                                            <i className="bx bx-x bx-md text-typography-2 mt-1 sm:hover:opacity-75" />
                                         </Dialog.Close>
                                     </div>
 

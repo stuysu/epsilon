@@ -192,7 +192,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                             {message.users.id === user.id && (
                                 <div
                                     className={
-                                        "bx bx-trash bx-sm text-red cursor-pointer hover:opacity-75 transition-opacity"
+                                        "bx bx-trash bx-sm text-red cursor-pointer sm:hover:opacity-75 transition-opacity"
                                     }
                                     onClick={() => deleteMessage(message.id)}
                                 ></div>

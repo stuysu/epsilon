@@ -175,7 +175,7 @@ const CommsSettings = () => {
                                     }
                                     className="relative h-6 w-11 cursor-pointer rounded-full bg-layer-3 transition-colors data-[state=checked]:bg-blue"
                                 >
-                                    <Switch.Thumb className="hover:scale-110 block h-5 w-5 translate-x-0.5 rounded-full bg-white/90 shadow transition-transform data-[state=checked]:translate-x-[22px] ease-in-out" />
+                                    <Switch.Thumb className="sm:hover:scale-110 block h-5 w-5 translate-x-0.5 rounded-full bg-white/90 shadow transition-transform data-[state=checked]:translate-x-[22px] ease-in-out" />
                                 </Switch.Root>
                             </div>
                             <div className={"ml-14"}>

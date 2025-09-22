@@ -178,7 +178,7 @@ const UserHome = () => {
                     })}
                     <div
                         className={
-                            "cursor-pointer flex items-center justify-center flex-col w-44 h-44 rounded-xl hover:opacity-75 transition-opacity border-accent border-dashed border"
+                            "cursor-pointer flex items-center justify-center flex-col w-44 h-44 rounded-xl sm:hover:opacity-75 transition-opacity border-accent border-dashed border"
                         }
                         onClick={() => navigate(`/stuyactivities`)}
                     >
@@ -230,7 +230,7 @@ const UserHome = () => {
                             flex
                             justify-center
                             max-sm:translate-y-7
-                            sm:group-hover:translate-y-7
+                            sm:group-sm:hover:translate-y-7
                             transition-transform
                             w-[92%]
                             z-[1]
@@ -242,7 +242,7 @@ const UserHome = () => {
                                 <a
                                     href={"/meetings"}
                                     className={
-                                        "hover:opacity-75 transition-colors no-underline"
+                                        "sm:hover:opacity-75 transition-colors no-underline"
                                     }
                                 >
                                     View Calendar
@@ -292,7 +292,7 @@ const UserHome = () => {
                             flex
                             justify-center
                             max-sm:translate-y-7
-                            sm:group-hover:translate-y-7
+                            sm:group-sm:hover:translate-y-7
                             transition-transform
                             w-[92%]
                             z-[1]
@@ -304,7 +304,7 @@ const UserHome = () => {
                                 className={
                                     announcements.length <= visibleAnnouncements
                                         ? "opacity-50 pt-4 important"
-                                        : "pt-4 cursor-pointer hover:opacity-75 transition-colors important"
+                                        : "pt-4 cursor-pointer sm:hover:opacity-75 transition-colors important"
                                 }
                                 onClick={() =>
                                     setVisibleAnnouncements((prev) => prev + 3)

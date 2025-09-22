@@ -16,7 +16,7 @@ const MeetingAttendanceCard = ({
     return (
         <div
             className={
-                "transition-colors bg-layer-1 w-full mb-6 p-6 rounded-xl shadow-control cursor-pointer hover:bg-layer-2"
+                "transition-colors bg-layer-1 w-full mb-6 p-6 rounded-xl shadow-control cursor-pointer sm:hover:bg-layer-2"
             }
             onClick={() => navigate(`${id}`)}
         >

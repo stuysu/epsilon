@@ -176,7 +176,7 @@ const AdminMember = ({
                             <p>
                                 <i
                                     className={
-                                        "bx bx-pencil bx-sm hover:opacity-75 cursor-pointer"
+                                        "bx bx-pencil bx-sm sm:hover:opacity-75 cursor-pointer"
                                     }
                                 ></i>
                             </p>
@@ -191,7 +191,7 @@ const AdminMember = ({
                                 <p>
                                     <i
                                         className={
-                                            "bx bx-user-x bx-sm ml-3 text-red hover:opacity-75 cursor-pointer"
+                                            "bx bx-user-x bx-sm ml-3 text-red sm:hover:opacity-75 cursor-pointer"
                                         }
                                     ></i>
                                 </p>

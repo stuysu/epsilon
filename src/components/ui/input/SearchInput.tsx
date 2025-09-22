@@ -29,7 +29,7 @@ export default function SearchInput({
                 text-typography-1
                 important
               bg-layer-1
-              hover:bg-layer-2
+              sm:hover:bg-layer-2
               focus:bg-layer-3
               outline-0
               shadow-control
