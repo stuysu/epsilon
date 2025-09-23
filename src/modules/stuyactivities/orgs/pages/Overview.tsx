@@ -55,12 +55,15 @@ const Overview = () => {
         disabled = true;
     } else if (!user.signed_in) {
         interactString = "Sign In To Join";
-        disabled = true;
     }
 
     const handleInteract = async () => {
         setAttemptingInteract(true);
         try {
+            if (!user.signed_in) {
+                navigate("/");
+                return;
+            }
             if (interactString === "JOIN") {
                 const body = { organization_id: organization.id };
                 const { data, error } = await supabase.functions.invoke(
