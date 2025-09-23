@@ -230,7 +230,7 @@ const UserHome = () => {
                             flex
                             justify-center
                             max-sm:translate-y-7
-                            sm:group-sm:hover:translate-y-7
+                            sm:group-hover:translate-y-7
                             transition-transform
                             w-[92%]
                             z-[1]
@@ -292,7 +292,7 @@ const UserHome = () => {
                             flex
                             justify-center
                             max-sm:translate-y-7
-                            sm:group-sm:hover:translate-y-7
+                            sm:group-hover:translate-y-7
                             transition-transform
                             w-[92%]
                             z-[1]

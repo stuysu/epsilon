@@ -4,7 +4,6 @@ import {
     Step,
     StepLabel,
     Stepper,
-    Typography,
 } from "@mui/material";
 import {
     Children,
@@ -78,9 +77,9 @@ const MultiPageForm = <T extends unknown>({
     return (
         <Box {...boxProps}>
             <Box sx={{ height: "10%", width: "100%", padding: "20px" }}>
-                <Typography variant="h2" align="center">
+                <h2>
                     {title}
-                </Typography>
+                </h2>
             </Box>
 
             <Box
