@@ -1,5 +1,5 @@
 import { Valentine } from "../ValentineType";
-import { Box, Card, Divider, TextField, Typography } from "@mui/material";
+import { Box, Divider, TextField } from "@mui/material";
 import AsyncButton from "../../../components/ui/buttons/AsyncButton";
 import { supabase } from "../../../lib/supabaseClient";
 import { enqueueSnackbar } from "notistack";
@@ -78,6 +78,8 @@ const ValentineCard = ({
                 <Box
                     sx={{
                         color: "black",
+                        borderRadius: "1rem",
+                        m: 1,
                         backgroundColor: valentine.background,
                         width: "20em",
                         height: "30em",
@@ -86,7 +88,7 @@ const ValentineCard = ({
                         whiteSpace: "pre-wrap",
                     }}
                 >
-                    <p>{valentine.message}</p>
+                    <p className={"text-black"}>{valentine.message}</p>
                     {sender && (
                         <>
                             <p>{"\n"}</p>
@@ -115,30 +117,10 @@ const ValentineList = ({
     toggle,
 }: ValentineDisplayInput) => {
     return (
-        <Card
-            sx={{
-                display: "flex",
-                width: "90vw",
-                height: "4rem",
-                margin: "1rem",
-                padding: "1rem",
-                textOverflow: "ellipsis",
-                overflow: "hidden",
-                justifyContent: "space-between",
-            }}
-        >
-            <Typography
-                sx={{
-                    width: "60%",
-                    overflow: "hidden",
-                    whiteSpace: "nowrap",
-                    textOverflow: "ellipsis",
-                    alignContent: "center",
-                }}
-            >
+        <article className={"bg-layer-1 rounded-lg p-4 mb-3"}>
+            <p>
                 {valentine.message}
-            </Typography>
-
+            </p>
             <Buttons
                 valentine={valentine}
                 refresh={refresh}
@@ -146,7 +128,7 @@ const ValentineList = ({
                 toggle={toggle}
                 mini
             />
-        </Card>
+        </article>
     );
 };
 

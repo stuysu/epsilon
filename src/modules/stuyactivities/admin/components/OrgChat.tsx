@@ -1,10 +1,3 @@
-import {
-    Avatar,
-    ListItem,
-    ListItemAvatar,
-    ListItemText,
-    Typography,
-} from "@mui/material";
 import React, { useContext, useEffect, useRef, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
@@ -12,6 +5,7 @@ import UserContext from "../../../../contexts/UserContext";
 import dayjs from "dayjs";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import TextInput from "../../../../components/ui/input/TextInput";
+import { Avatar } from "radix-ui";
 
 type OrgMessage = {
     id: number;
@@ -74,7 +68,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
         };
 
         fetchMessages();
-        const interval = setInterval(fetchMessages, 1000);
+        const interval = setInterval(fetchMessages, 10000);
         return () => {
             isMounted = false;
             clearInterval(interval);
@@ -147,10 +141,10 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
     };
 
     return (
-        <section className="p-6 relative rounded-xl shadow-prominent">
-            <h2>Messaging</h2>
+        <section className="p-6 relative rounded-3xl shadow-prominent">
+            <h4>Messaging</h4>
             <p>
-                Only visible to admins, faculty, and the Clubs & Pubs
+                Only visible to Activity admins, faculty, and the Clubs & Pubs
                 Department.
             </p>
             <div className={"h-96 overflow-auto relative"} ref={chatBoxRef}>
@@ -158,46 +152,43 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                     let messageTime = dayjs(message.created_at);
                     let timeStr = `${messageTime.month() + 1}/${messageTime.date()}/${messageTime.year()}`;
                     return (
-                        <ListItem key={message.id}>
-                            <ListItemAvatar>
-                                <Avatar
-                                    alt={message.users.first_name}
+                        <article key={message.id} className={"my-6 bg-layer-1 p-3 rounded-xl shadow-control"}>
+                            <div className={"flex gap-3 items-center mb-3"}><Avatar.Root className="w-10 h-10 rounded-md overflow-hidden block">
+                                <Avatar.Image
+                                    className="size-full object-cover"
                                     src={message.users.picture || ""}
+                                    alt={message.users.first_name}
+                                />
+                                <Avatar.Fallback
+                                    className="text-center size-full flex items-center justify-center bg-layer-3 text-xl relative pt-1 text-typography-2"
+                                    delayMs={600}
                                 >
                                     {message.users.first_name
                                         ?.charAt(0)
                                         .toUpperCase()}
-                                </Avatar>
-                            </ListItemAvatar>
-                            <ListItemText
-                                primary={
-                                    message.users.first_name +
-                                    " " +
-                                    message.users.last_name
-                                }
-                                secondary={
-                                    <>
-                                        <Typography
-                                            component="span"
-                                            variant="body2"
-                                            color="textPrimary"
-                                        >
-                                            {timeStr}
-                                        </Typography>
-                                        <br />
-                                        {message.content}
-                                    </>
-                                }
-                            />
-                            {message.users.id === user.id && (
-                                <div
-                                    className={
-                                        "bx bx-trash bx-sm text-red cursor-pointer hover:opacity-75 transition-opacity"
+                                </Avatar.Fallback>
+                            </Avatar.Root>
+                                <div><h4>
+                                    {
+                                        message.users.first_name +
+                                        " " +
+                                        message.users.last_name
                                     }
-                                    onClick={() => deleteMessage(message.id)}
-                                ></div>
-                            )}
-                        </ListItem>
+                                </h4>
+                                    <p>{timeStr}</p></div>
+                            </div>
+
+                            <div className={"relative p-4 bg-layer-2 rounded-lg"}><p className={"text-wrap overflow-scroll"}>{message.content}</p>
+
+                                {message.users.id === user.id && (
+                                    <div
+                                        className={
+                                            "absolute right-3 top-3.5 bx bx-trash bx-sm text-red cursor-pointer sm:hover:opacity-75 transition-opacity"
+                                        }
+                                        onClick={() => deleteMessage(message.id)}
+                                    ></div>
+                                )}</div>
+                        </article>
                     );
                 })}
             </div>

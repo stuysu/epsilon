@@ -185,11 +185,15 @@ const OrgEditApproval = ({
                         if (f2 === "picture") {
                             return (
                                 <>
-                                    <h4>{field}</h4>
+                                    <h4 className={"capitalize"}>
+                                        {field}{" "}
+                                        <i className={"bx bx-refresh"}></i>
+                                    </h4>
                                     <Avatar
                                         src={edit[f2] as string}
                                         alt={edit.organization_name}
                                         style={{
+                                            borderRadius: "15px",
                                             width: "150px",
                                             height: "150px",
                                             fontSize: "60px",

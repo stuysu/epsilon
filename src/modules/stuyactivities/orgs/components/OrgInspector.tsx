@@ -43,7 +43,7 @@ const OrgInspector = () => {
                                 >
                                     <div
                                         className={
-                                            "px-3.5 py-2 bg-layer-2 hover:bg-layer-3 transition-colors"
+                                            "px-3.5 py-2 bg-layer-2 sm:hover:bg-layer-3 transition-colors"
                                         }
                                     >
                                         <p className="important">
@@ -76,7 +76,7 @@ const OrgInspector = () => {
                     }
                 >
                     {strikes.length === 0 ? (
-                        <p className={"px-3.5 py-2 bg-layer-2"}>
+                        <p className={"px-3.5 py-3 bg-layer-2"}>
                             No strikes received. This Activity is in good
                             standing.
                         </p>

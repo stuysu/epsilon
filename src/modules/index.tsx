@@ -51,7 +51,7 @@ const Pages = () => {
                 <meta
                     property="og:description"
                     content={
-                        "The everything app for Stuyvesant High School. Find and join Activities, browse the calendar, find new opportunities, and more."
+                        "The everything app for Stuyvesant High School. Find and join Activities, browse the calendar, discover new opportunities, and more."
                     }
                 />
                 <meta property={"og:title"} content={"Epsilon"} />
@@ -112,7 +112,7 @@ const Pages = () => {
                                 "flex items-center justify-center gap-5 w-72"
                             }
                         >
-                            <p className={"hover:opacity-75"}>
+                            <p className={"sm:hover:opacity-75"}>
                                 <a
                                     href={"https://github.com/stuysu/epsilon/"}
                                     className={"no-underline text-typography-2"}
@@ -120,7 +120,7 @@ const Pages = () => {
                                     Source
                                 </a>
                             </p>
-                            <p className={"hover:opacity-75"}>
+                            <p className={"sm:hover:opacity-75"}>
                                 <a
                                     href={"https://stuysu.org/"}
                                     className={"no-underline text-typography-2"}
@@ -128,7 +128,7 @@ const Pages = () => {
                                     StuySU
                                 </a>
                             </p>
-                            <p className={"hover:opacity-75"}>
+                            <p className={"sm:hover:opacity-75"}>
                                 <a
                                     className={"no-underline text-typography-2"}
                                     href={
@@ -138,7 +138,7 @@ const Pages = () => {
                                     Design
                                 </a>
                             </p>
-                            <p className={"hover:opacity-75"}>
+                            <p className={"sm:hover:opacity-75"}>
                                 <a
                                     className={"no-underline text-typography-2"}
                                     href={

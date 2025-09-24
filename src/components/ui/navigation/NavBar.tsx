@@ -198,15 +198,15 @@ const NavBar: FC = () => {
             : "pointer-events-none opacity-0 translate-y-1"
     }`}
             >
-                <div className="p-2">
+                <div className="px-6 py-4">
                     {/* overflow nav */}
-                    <p className="p-3 uppercase text-sm opacity-75">
+                    <h5>
                         More Tools
-                    </p>
+                    </h5>
                     {overflowItems.map((item, idx) => (
                         <div
                             key={`${item.path}-overflow-${idx}`}
-                            className="flex items-center gap-2 px-3 py-2 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                            className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 sm:hover:text-typography-1 transition-colors"
                             onClick={() => {
                                 if (item.external && (item as any).url) {
                                     window.open((item as any).url!, "_blank");
@@ -218,72 +218,72 @@ const NavBar: FC = () => {
                             }}
                         >
                             <i className={item.icon} />
-                            <span className="text-base">{item.label}</span>
+                            <span className="important">{item.label}</span>
                         </div>
                     ))}
 
-                    <div className="my-2 h-px bg-divider" />
+                    <Divider />
 
-                    <p className="p-3 uppercase text-sm opacity-75">Account</p>
+                    <h5>Account</h5>
 
                     {user?.signed_in ? (
                         <>
                             <div
-                                className="flex items-center gap-2 px-3 py-2 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                                className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 sm:hover:text-typography-1 transition-colors"
                                 onClick={() => {
                                     navigate("/profile");
                                     setMoreOpen(false);
                                 }}
                             >
                                 <i className="bx bx-id-card" />
-                                <span className="text-base">Profile</span>
+                                <span className="important">Profile</span>
                             </div>
 
                             <div
-                                className="flex items-center gap-2 px-3 py-2 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                                className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 sm:hover:text-typography-1 transition-colors"
                                 onClick={() => {
                                     navigate("/preferences");
                                     setMoreOpen(false);
                                 }}
                             >
                                 <i className="bx bx-slider" />
-                                <span className="text-base">Preferences</span>
+                                <span className="important">Preferences</span>
                             </div>
 
                             <div
-                                className="flex items-center gap-2 px-3 py-2 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                                className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 sm:hover:text-typography-1 transition-colors"
                                 onClick={() => {
                                     navigate("/communications");
                                     setMoreOpen(false);
                                 }}
                             >
                                 <i className="bx bx-envelope" />
-                                <span className="text-base">
+                                <span className="important">
                                     Communications
                                 </span>
                             </div>
 
                             <div
-                                className="flex items-center gap-2 px-3 pt-2 pb-3 cursor-pointer text-red hover:brightness-90 transition-[filter,color]"
+                                className="flex items-center gap-2 py-1 cursor-pointer text-red sm:hover:brightness-90 transition-[filter,color]"
                                 onClick={() => {
                                     signOut();
                                     setMoreOpen(false);
                                 }}
                             >
                                 <i className="bx bx-log-out" />
-                                <span className="text-base">Sign Out</span>
+                                <span className="important">Sign Out</span>
                             </div>
                         </>
                     ) : (
                         <div
-                            className="flex items-center gap-2 px-3 pt-2 pb-3 cursor-pointer text-typography-2 hover:text-typography-1 transition-colors"
+                            className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 sm:hover:text-typography-1 transition-colors"
                             onClick={() => {
                                 navigate("/");
                                 setMoreOpen(false);
                             }}
                         >
                             <i className="bx bx-log-in" />
-                            <span className="text-base">Sign In</span>
+                            <span className="important">Sign In</span>
                         </div>
                     )}
                 </div>
@@ -354,7 +354,7 @@ const NavBar: FC = () => {
                         {!user?.signed_in ? (
                             <p
                                 style={{ fontVariationSettings: "'wght' 700" }}
-                                className="cursor-pointer transition-colors hover:text-typography-3"
+                                className="cursor-pointer transition-colors sm:hover:text-typography-3"
                                 onClick={() => navigate("/")}
                             >
                                 <i
@@ -370,7 +370,7 @@ const NavBar: FC = () => {
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
-                                    className="cursor-pointer transition-colors hover:text-typography-3"
+                                    className="cursor-pointer transition-colors sm:hover:text-typography-3"
                                     onClick={() => navigate("/profile")}
                                 >
                                     Profile
@@ -379,7 +379,7 @@ const NavBar: FC = () => {
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
-                                    className="cursor-pointer transition-colors hover:text-typography-3"
+                                    className="cursor-pointer transition-colors sm:hover:text-typography-3"
                                     onClick={() => navigate("/preferences")}
                                 >
                                     Preferences
@@ -388,7 +388,7 @@ const NavBar: FC = () => {
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
-                                    className="cursor-pointer transition-colors hover:text-typography-3"
+                                    className="cursor-pointer transition-colors sm:hover:text-typography-3"
                                     onClick={() => navigate("/communications")}
                                 >
                                     Communications
@@ -398,7 +398,7 @@ const NavBar: FC = () => {
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
-                                    className="cursor-pointer transition-[filter] text-red hover:brightness-75"
+                                    className="cursor-pointer transition-[filter] text-red sm:hover:brightness-75"
                                     onClick={signOut}
                                 >
                                     Sign Out
@@ -437,9 +437,10 @@ const NavBar: FC = () => {
                         fontSize: 20,
                         fontVariationSettings: "'wght' 700",
                         position: "relative",
-                        mx: isMobile ? "1.5rem" : "3rem",
-                        mt: isMobile ? 2 : 3,
-                        mb: isMobile ? 2 : 0,
+                        ml: isMobile ? "1.5rem" : "3rem",
+                        mr: isMobile ? "0.5rem" : "3rem",
+                        mt: isMobile ? 1.8 : 3,
+                        mb: isMobile ? 1.5 : 0,
                     }}
                 >
                     {itemsToRender.map((item, index) => (
@@ -451,7 +452,7 @@ const NavBar: FC = () => {
                             className={`max-sm:w-full text-nowrap flex items-start flex-nowrap cursor-pointer transition-colors ${
                                 isPageOptnActive(item)
                                     ? "text-typography-1"
-                                    : "sm:hover:text-typography-1 text-typography-3"
+                                    : "max-sm:opacity-75 sm:sm:hover:text-typography-1 text-typography-3"
                             }`}
                             onMouseEnter={() => setIsHovered(true)}
                             onClick={() => {
@@ -468,19 +469,10 @@ const NavBar: FC = () => {
                             <i className={`${item.icon} max-sm:hidden`}></i>
                             <div
                                 className={
-                                    "sm:hidden flex flex-col items-center w-10"
+                                    "sm:hidden w-10"
                                 }
                             >
-                                <i className={`${item.icon} scale-110`}></i>
-                                <p
-                                    className={`text-xs ${
-                                        isPageOptnActive(item)
-                                            ? "text-typography-1"
-                                            : "text-typography-3"
-                                    }`}
-                                >
-                                    {item.label}
-                                </p>
+                                <i className={`${item.icon} scale-125`}></i>
                             </div>
                             {!isMobile && (
                                 <span
@@ -500,21 +492,17 @@ const NavBar: FC = () => {
                     {isMobile && overflowItems.length > 0 && (
                         <div ref={dotsRef} className="relative">
                             <div
-                                className="max-sm:w-full text-nowrap flex items-start flex-nowrap cursor-pointer text-typography-2"
                                 onClick={() => setMoreOpen((v) => !v)}
+                                className="w-10"
                             >
-                                <div
-                                    className={
-                                        "flex flex-col items-center w-10"
-                                    }
-                                >
                                     <i
                                         className={
-                                            "bx bx-dots-horizontal-rounded scale-110"
-                                        }
+                                            `bx bx-dots-horizontal-rounded scale-150 ${
+                                                moreOpen
+                                                    ? "opacity-100 text-typography-1"
+                                                    : "opacity-75 text-typography-2"
+                                            }`}
                                     ></i>
-                                    <p className={"text-xs"}>Toolbox</p>
-                                </div>
                             </div>
                         </div>
                     )}

@@ -23,17 +23,15 @@ const LoginButton = ({ onMouseEnter, onMouseLeave }: LoginButtonProps) => {
     return (
         <button
             onClick={signInWithGoogle}
-            className="button"
+            className="button shadow-control"
             onMouseEnter={onMouseEnter}
             onMouseLeave={onMouseLeave}
             title="You must sign in with a stuy.edu address"
         >
-            <img
-                src={`${PUBLIC_URL}/icons/google.svg`}
-                alt="Google Icon"
-                className="google-icon"
+            <i
+                className="absolute bx bxl-google left-4 bx-sm"
             />
-            <span className="button-text">Sign in with Google</span>
+            <span>Sign in with Google</span>
         </button>
     );
 };

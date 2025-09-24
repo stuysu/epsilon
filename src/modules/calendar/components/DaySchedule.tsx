@@ -1,4 +1,4 @@
-import { Stack, Typography } from "@mui/material";
+import { Stack } from "@mui/material";
 import { motion } from "framer-motion";
 import { Dayjs } from "dayjs";
 import { monthNames } from "../../../utils/TimeStrings";
@@ -25,8 +25,8 @@ function compareTimes(a: CalendarMeeting, b: CalendarMeeting) {
 const DaySchedule = ({ day, meetings }: Props) => {
     return (
         <div className={"bg-layer-1 rounded-xl shadow-prominent p-1"}>
-            <div className={"pl-5 py-3"}>
-                <Typography>{`${monthNames[day.month()]} ${day.date()}`}</Typography>
+            <div className={"pl-5 py-3.5"}>
+                <h4>{`${monthNames[day.month()]} ${day.date()}`}</h4>
             </div>
             <Stack
                 component={motion.div}

@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Box, List } from "@mui/material";
+import { List } from "@mui/material";
 import OrgContext from "../../../../contexts/OrgContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import UserContext from "../../../../contexts/UserContext";
@@ -68,9 +68,9 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const renderDesktopList = (links: LinkItem[]) => (
         <List sx={{ width: "100%" }}>
             {links.map((linkData, i) => (
-                <Box
+                <div
                     key={i}
-                    sx={{
+                    style={{
                         height: `30px`,
                         display: "flex",
                         alignItems: "center",
@@ -87,7 +87,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     >
                         {linkData.display}
                     </p>
-                </Box>
+                </div>
             ))}
         </List>
     );
@@ -96,7 +96,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
         links.map((linkData, i) => (
             <button
                 key={i}
-                className={`important border border-zinc-600/20 w-full text-left py-2 px-3 rounded-lg text-lg transition-colors bg-neutral-600 text-typography-2 bg-opacity-20`}
+                className={`important shadow-control w-full text-left py-2 px-3 rounded-lg transition-colors bg-layer-2 text-typography-1`}
                 onClick={() => {
                     navigate(linkData.to);
                     setMenuOpen(false);
@@ -111,7 +111,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
             <>
                 {/* Need to fix this later */}
                 <button
-                    className={`z-[5001] fixed cursor-pointer transition-colors text-typography-2 hover:text-typography-1 mr-4 top-5 right-0`}
+                    className={`z-[5001] fixed cursor-pointer transition-colors text-typography-2 sm:hover:text-typography-1 mr-4 top-4 right-0`}
                     onClick={() => setMenuOpen(true)}
                 >
                     <span
@@ -121,7 +121,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                             position: "relative",
                         }}
                     >
-                        <i className={"bx bx-menu bx-sm relative bottom-1"}></i>
+                        <i className={"bx bx-menu bx-sm relative bottom-1.5"}></i>
                     </span>
                 </button>
 
@@ -139,26 +139,18 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                             ></i>
                         </button>
 
-                        <div className="flex flex-col gap-1 w-full p-16">
-                            <div
-                                className=" text-l text-typography-2 ml-3"
-                                style={{ fontVariationSettings: "'wght' 700" }}
-                            >
+                        <div className="flex flex-col gap-1.5 w-full p-16">
+                            <h5 className={"px-3"}>
                                 About
-                            </div>
+                            </h5>
 
                             {renderMobileButtons(navLinks)}
 
                             {adminLinks.length > 0 && (
                                 <>
-                                    <div
-                                        className="mt-5 text-l text-typography-2 ml-3"
-                                        style={{
-                                            fontVariationSettings: "'wght' 700",
-                                        }}
-                                    >
+                                    <h5 className={"mt-6 px-3"}>
                                         Admin Tools
-                                    </div>
+                                    </h5>
                                     {renderMobileButtons(adminLinks)}
                                 </>
                             )}

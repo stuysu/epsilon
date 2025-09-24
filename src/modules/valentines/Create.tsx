@@ -173,9 +173,9 @@ const Create = () => {
             <Box sx={{ margin: "1rem 0", width: "80vw" }}>
                 <Divider />
             </Box>
-            <Typography variant="h5" sx={{ marginBottom: "1rem" }}>
+            <h4>
                 Preview
-            </Typography>
+            </h4>
             <ValentineDisplay
                 valentine={{
                     id: 0,

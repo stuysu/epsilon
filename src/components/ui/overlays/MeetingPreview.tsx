@@ -108,7 +108,7 @@ const MeetingPreview = ({
                                             {url ? (
                                                 <a
                                                     href={`/${url}`}
-                                                    className="no-underline cursor-alias transition-opacity hover:opacity-75"
+                                                    className="no-underline cursor-alias transition-opacity sm:hover:opacity-75"
                                                 >
                                                     <h3 className="text-typography-1">
                                                         {organizationName ||
@@ -129,7 +129,7 @@ const MeetingPreview = ({
                                             aria-label="Close"
                                             onClick={onClose}
                                         >
-                                            <i className="bx bx-x bx-md text-typography-2 mt-1 hover:opacity-75" />
+                                            <i className="bx bx-x bx-md text-typography-2 mt-1 sm:hover:opacity-75" />
                                         </Dialog.Close>
                                     </div>
 
@@ -161,7 +161,8 @@ const MeetingPreview = ({
                                             />
                                         </div>
 
-                                        <div className="mt-7 mb-5">
+                                        <div className="mt-7 pb-10 max-h-[15lh] overflow-y-scroll">
+                                            <div className="rounded-2xl right-0 bg-gradient-to-t from-bg to-transparent w-full h-12 bottom-0 absolute" />
                                             <DisplayLinks
                                                 text={
                                                     description ||

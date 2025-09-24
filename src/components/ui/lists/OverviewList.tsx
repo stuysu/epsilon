@@ -35,7 +35,7 @@ export default function OverviewList({
                         position: "absolute",
                         top: "0px",
                         opacity: 0.3,
-                        zIndex: 40,
+                        zIndex: 20,
                     }}
                 ></div>
                 <div
@@ -48,7 +48,7 @@ export default function OverviewList({
                         bottom: "0px",
                         right: "105px",
                         opacity: 0.5,
-                        zIndex: 35,
+                        zIndex: 20,
                     }}
                 ></div>
                 <h3 className="m-4 mb-5">{title}</h3>

@@ -60,10 +60,13 @@ const UserPreferences = () => {
                             <RadioGroup.Indicator className="w-3 h-3 rounded-full bg-accent" />
                         </div>
                         <div>
-                            <h4 className={"mt-1 text-left"}>Swimming</h4>
+                            <h4 className={"mt-1 text-left"}>
+                                Swimming
+                                <i className={"bx ml-1 bx-test-tube"}></i>
+                            </h4>
                             <p className={"mb-3 text-left"}>
-                                Our new light mode inspired by simplicity, with
-                                reduced visual noise all around.
+                                Our light mode inspired by simplicity, with
+                                reduced visual noise all around. Now in beta.
                             </p>
                             <img
                                 src={`${PUBLIC_URL}/symbols/lightmode.png`}
@@ -81,7 +84,10 @@ const UserPreferences = () => {
                             <RadioGroup.Indicator className="w-3 h-3 rounded-full bg-accent" />
                         </div>
                         <div>
-                            <h4 className={"mt-1 text-left"}>Automatic</h4>
+                            <h4 className={"mt-1 text-left"}>
+                                Automatic
+                                <i className={"bx ml-1 bx-test-tube"}></i>
+                            </h4>
                             <p className={"mb-3 text-left"}>
                                 Follow your system's theme preference.
                             </p>
@@ -126,7 +132,7 @@ const UserPreferences = () => {
                         <div>
                             <h4 className={"mt-1 text-left"}>
                                 Everything You've Come to Expect
-                                <i className={"bx ml-1 bx-test-tube"}></i>
+                                <i className={"bx ml-1 bx-happy-alt top-px relative"}></i>
                             </h4>
                             <p className={"mb-3 text-left"}>
                                 An unapologetically vibrant theme with baroque

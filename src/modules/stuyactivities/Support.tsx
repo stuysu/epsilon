@@ -94,7 +94,7 @@ const Support = () => {
                 <HelpItem
                     icon="bx-time"
                     iconColor="text-blue"
-                    title="My Charter has not been approved yet."
+                    title="Charter Pending"
                     description="I submitted my charter over a week ago, yet it still hasn’t been approved."
                     content="Charters are reviewed and approved once a week by the Clubs & Pubs administrators.
                 If your charter hasn't been approved yet, it may still be under review. Once it's fully approved,
@@ -106,7 +106,7 @@ const Support = () => {
                 <HelpItem
                     icon="bx-message-square-error"
                     iconColor="text-red"
-                    title="My Charter was denied."
+                    title="Charter Denied"
                     description="My Charter submission was denied and I don’t know what went wrong."
                     content="We may have shared specific details regarding why the submission was denied with you
                      via the Activity’s Messaging channel on Epsilon. Please review it carefully and determine
@@ -121,19 +121,19 @@ const Support = () => {
                 <HelpItem
                     icon="bx-question-mark"
                     iconColor="text-pink-500"
-                    title="What do the different Activity statuses mean?"
+                    title="Understanding Statuses"
                     description="Learn about the different Activity statuses and their impacts."
                     content="Pending Activities are yet to be approved by the Clubs & Pubs department and are not publicly visible.
                     Activities with less than 10 members, or otherwise specified by the SU, are locked and have limited privileges.
                     Such Activities cannot create posts, host meetings, or access certain features until they meet the required criteria.
-                    Activities that are unlocked have no restrictions and can be joined by anyone, if accepted.
-                    If your Activity has another status not listed here and you are unsure what it means, please contact us."
+                    Activities that are unlocked have no restrictions.
+                    If your Activity has another status not listed here and you are unsure what it means, contact us."
                 />
                 <Divider />
                 <HelpItem
                     icon="bx-pencil"
                     iconColor="text-orange-400"
-                    title="My Charter update isn’t reflected."
+                    title="Charter Edits Pending"
                     description="I edited my Charter, but the changes have not been reflected on the Activity page."
                     content="Edit requests to existing charters need to be reviewed and approved by the Clubs & Pubs team before the changes appear on the Activity page. These approvals typically happen on a set day each week."
                 />
@@ -141,10 +141,10 @@ const Support = () => {
                 <HelpItem
                     icon="bx-user-plus"
                     iconColor="text-yellow"
-                    title="How do I invite new members?"
-                    description="I can’t figure out how to invite new members."
+                    title="Inviting New Members"
+                    description="I can’t figure out how to invite new members to my Activity."
                     content="To invite new members to your Activity, you can share the activity link. This link allows anyone with it to join your Activity.
-                You can also encourage them to visit the Epsilon website and search for your Activity in the catalog."
+                You can also encourage them to visit the Epsilon website and search for your Activity in the catalog. In the future, you will be able to invite members with a one-time link that bypasses the need for approval."
                 />
                 <Divider />
                 <HelpItem

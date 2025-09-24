@@ -23,7 +23,7 @@ export default function TextInput({
                 text-typography-1
                 important
               bg-layer-2
-              hover:bg-layer-3
+              sm:hover:bg-layer-3
               focus:outline-1
               shadow-inner
         "

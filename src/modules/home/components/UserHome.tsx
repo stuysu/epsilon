@@ -149,7 +149,7 @@ const UserHome = () => {
     }, [enqueueSnackbar]);
 
     return (
-        <main className="m-3 sm:my-8 sm:mx-12 max-sm:mt-10 min-h-[90vh]">
+        <main className="m-3 sm:my-8 sm:mx-12 max-sm:mt-4 min-h-[90vh]">
             <header className="flex flex-col mb-10 max-sm:items-center max-sm:text-center">
                 <h1>
                     {timeGreeting}, {user.first_name}!
@@ -178,7 +178,7 @@ const UserHome = () => {
                     })}
                     <div
                         className={
-                            "cursor-pointer flex items-center justify-center flex-col w-44 h-44 rounded-xl hover:opacity-75 transition-opacity border-accent border-dashed border"
+                            "cursor-pointer flex items-center justify-center flex-col w-44 h-44 rounded-xl sm:hover:opacity-75 transition-opacity border-accent border-dashed border"
                         }
                         onClick={() => navigate(`/stuyactivities`)}
                     >
@@ -242,7 +242,7 @@ const UserHome = () => {
                                 <a
                                     href={"/meetings"}
                                     className={
-                                        "hover:opacity-75 transition-colors no-underline"
+                                        "sm:hover:opacity-75 transition-colors no-underline"
                                     }
                                 >
                                     View Calendar
@@ -304,7 +304,7 @@ const UserHome = () => {
                                 className={
                                     announcements.length <= visibleAnnouncements
                                         ? "opacity-50 pt-4 important"
-                                        : "pt-4 cursor-pointer hover:opacity-75 transition-colors important"
+                                        : "pt-4 cursor-pointer sm:hover:opacity-75 transition-colors important"
                                 }
                                 onClick={() =>
                                     setVisibleAnnouncements((prev) => prev + 3)
@@ -315,9 +315,11 @@ const UserHome = () => {
                         </div>
                     </div>
 
-                    <div className={"flex flex-col gap-8"}>{posts.map((post, i) => (
-                        <OrgStreamPost content={post} key={i} />
-                    ))}</div>
+                    <div className={"flex flex-col gap-8"}>
+                        {posts.map((post, i) => (
+                            <OrgStreamPost content={post} key={i} />
+                        ))}
+                    </div>
                 </div>
             </section>
         </main>

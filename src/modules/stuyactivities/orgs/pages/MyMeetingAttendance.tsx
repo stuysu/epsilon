@@ -1,4 +1,4 @@
-import { Avatar, Box, Card, Typography } from "@mui/material";
+import { Avatar, Box, Card } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "../../../../lib/supabaseClient";

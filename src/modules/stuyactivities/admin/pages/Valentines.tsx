@@ -1,11 +1,12 @@
-import { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Valentine } from "../../../valentines/ValentineType";
 import { supabase } from "../../../../lib/supabaseClient";
 import { enqueueSnackbar } from "notistack";
 import UserContext from "../../../../contexts/UserContext";
 import Loading from "../../../../components/ui/content/Loading";
 import ValentineDisplay from "../../../valentines/components/ValentineDisplay";
-import { Box, Typography } from "@mui/material";
+import { Box } from "@mui/material";
+import ContentUnavailable from "../../../../components/ui/content/ContentUnavailable";
 
 const Valentines = () => {
     const [valentines, setValentines] = useState<Valentine[]>([]);
@@ -65,14 +66,12 @@ const Valentines = () => {
                     />
                 ))
             ) : (
-                <Typography
-                    sx={{
-                        marginTop: "2rem",
-                    }}
-                    variant="h4"
-                >
-                    No valentines found &lt;3
-                </Typography>
+                <ContentUnavailable
+                    icon="bx-heart"
+                    iconColor="text-red"
+                    title="No New Messages"
+                    description="No messages pending approval."
+                />
             )}
         </Box>
     );
