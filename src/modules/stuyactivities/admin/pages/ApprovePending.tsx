@@ -60,7 +60,7 @@ const ApprovePending = () => {
 
             const count = (await supabase.from("organizations").select('*').order('id', {ascending: true})).data;
             console.log(count![0]);
-                
+
 
             if (error || !data) {
                 return enqueueSnackbar(
