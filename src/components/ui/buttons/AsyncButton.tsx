@@ -44,9 +44,10 @@ const AsyncButton: React.FC<AsyncButtonProps> = ({
                 color: isPrimary ? "white" : "var(--text-primary)",
                 padding: "11px 20px 13px 20px",
                 fontSize: "14px",
-                opacity: isLoading || props.disabled ? 0.7 : 1,
-                boxShadow:
-                    "0 4px 20px 0 var(--shadow-base), 0 4px 3px 0 var(--shadow-base), 0 0 3px 0 var(--shadow-antithesis) inset, 0 -7px 20px 0 var(--shadow-fume) inset",
+                opacity: isLoading || props.disabled ? 0.6 : 1,
+                boxShadow: props.disabled
+                    ? "0 3px 3px 0 var(--shadow-base) inset, 0 0 2px 0 var(--shadow-antithesis) inset, 0 1px 1px 0 var(--shadow-decoration) inset, 0 -5px 20px 0 var(--shadow-fume) inset"
+                    : "0 4px 20px 0 var(--shadow-base), 0 4px 3px 0 var(--shadow-base), 0 0 3px 0 var(--shadow-antithesis) inset, 0 -7px 20px 0 var(--shadow-fume) inset",
                 ...sx,
             }}
             disabled={isLoading || props.disabled}

@@ -8,7 +8,7 @@ const Arista = () => {
     const theme = useContext(ThemeContext);
 
     return (
-        <section className={"min-h-screen m-12"}>
+        <section className={"min-h-screen p-12"}>
             <Helmet>
                 <title>Arista - Epsilon</title>
                 <meta
@@ -37,9 +37,9 @@ const Arista = () => {
                         filter: "blur(0px)",
                     }}
                     transition={{
-                        duration: 0.4,
+                        duration: 1,
                         ease: [0.33, 1, 0.68, 1],
-                        delay: 1,
+                        delay: 0.5,
                     }}
                 >
                     <img
@@ -65,9 +65,9 @@ const Arista = () => {
                             filter: "blur(0px)",
                         }}
                         transition={{
-                            duration: 0.4,
+                            duration: 1,
                             ease: [0.33, 1, 0.68, 1],
-                            delay: 1.5,
+                            delay: 0.8,
                         }}
                     >
                         <img
@@ -101,9 +101,9 @@ const Arista = () => {
                             filter: "blur(0px)",
                         }}
                         transition={{
-                            duration: 0.4,
+                            duration: 1,
                             ease: [0.33, 1, 0.68, 1],
-                            delay: 2,
+                            delay: 1.1,
                         }}
                     >
                         <p>
@@ -135,7 +135,7 @@ const Arista = () => {
             >
                 <div
                     className={
-                        "flex mt-20 w-full py-3 px-6 border-divider border justify-between hover:bg-divider transition-colors"
+                        "flex mt-20 w-full py-3 px-6 border-divider border justify-between sm:hover:bg-divider transition-colors"
                     }
                 >
                     <h1

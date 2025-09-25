@@ -6,6 +6,7 @@ import { useSnackbar } from "notistack";
 import dayjs, { Dayjs } from "dayjs";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import SearchInput from "../../../../components/ui/input/SearchInput";
+import MeetingAttendanceCard from "../../orgs/org_admin/components/MeetingAttendanceCard";
 
 type ApiRoom = {
     id: number;
@@ -26,7 +27,6 @@ const getDefaultTime = () => {
 };
 
 const Reserve = () => {
-    const [rooms, setRooms] = useState<ApiRoom[]>([]);
     const { enqueueSnackbar } = useSnackbar();
 
     /* force reservation data */
@@ -45,22 +45,43 @@ const Reserve = () => {
     const [startTime, setStartTime] = useState<Dayjs | null>(getDefaultTime());
     const [endTime, setEndTime] = useState<Dayjs | null>(getDefaultTime());
 
-    const [page, setPage] = useState<number>(0);
-    const [hasMore, setHasMore] = useState(true);
-    const observerRef = useRef<IntersectionObserver | null>(null);
-    const loadMoreRef = useRef<HTMLDivElement | null>(null);
+    const [reservedMeetings, setReservedMeetings] = useState<Meeting[]>([]);
 
-    const fetchRooms = async (pageToFetch = 0) => {
+    const fetchOrgMeetings = async () => {
+        if (!forceOrgId || forceOrgId === -1) return;
+
+        const { data: meetingsData, error: meetingFetchError } = await supabase
+            .from("meetings")
+            .select(`*, rooms(name)`)
+            .eq("organization_id", forceOrgId)
+            .eq("title", "Reserved Meeting");
+
+        if (meetingFetchError) {
+            enqueueSnackbar("Failed to fetch meetings.", {
+                variant: "error",
+            });
+            return;
+        }
+
+        const sortedMeetings = (meetingsData as Meeting[]).sort(
+            (a, b) =>
+                new Date(b.start_time).getTime() -
+                new Date(a.start_time).getTime(),
+        );
+        setReservedMeetings(sortedMeetings);
+    };
+
+    useEffect(() => {
+        fetchOrgMeetings();
+    }, [forceOrgId]);
+
+    const fetchRooms = async () => {
         setLoading(true);
-        const pageSize = 10;
-        const from = pageToFetch * pageSize;
-        const to = from + pageSize - 1;
 
         const { data: roomData, error: roomFetchError } = await supabase
             .from("rooms")
             .select("*")
-            .range(from, to)
-            .returns<ApiRoom[]>();
+            .order("name", { ascending: true });
 
         if (roomFetchError || !roomData) {
             enqueueSnackbar("Failed to fetch rooms", { variant: "error" });
@@ -68,25 +89,12 @@ const Reserve = () => {
             return;
         }
 
-        if (pageToFetch === 0) {
-            setRooms(roomData);
-        } else {
-            setRooms((prev) => [...prev, ...roomData]);
-        }
+        setAllRooms(roomData);
 
-        if (roomData.length < pageSize) {
-            setHasMore(false);
-        }
-
-        if (pageToFetch === 0 && roomData.length) {
+        if (roomData.length) {
             setForceRoomId(roomData[0].id);
         }
 
-        setAllRooms((prev) =>
-            pageToFetch === 0 ? roomData : [...prev, ...roomData],
-        );
-
-        setPage(pageToFetch);
         setLoading(false);
     };
 
@@ -124,26 +132,6 @@ const Reserve = () => {
         }
     }, [searchInput, allOrgs]);
 
-    useEffect(() => {
-        if (loading || !hasMore) return;
-
-        if (observerRef.current) observerRef.current.disconnect();
-
-        observerRef.current = new IntersectionObserver((entries) => {
-            if (entries[0].isIntersecting) {
-                fetchRooms(page + 1);
-            }
-        });
-
-        if (loadMoreRef.current) {
-            observerRef.current.observe(loadMoreRef.current);
-        }
-
-        return () => {
-            if (observerRef.current) observerRef.current.disconnect();
-        };
-    }, [loading, hasMore, page]);
-
     const forceReserve = async () => {
         const { error: reserveError } = await supabase.functions.invoke(
             "force-reserve",
@@ -166,9 +154,9 @@ const Reserve = () => {
 
         enqueueSnackbar("Room reserved successfully", { variant: "success" });
 
+        await fetchOrgMeetings();
+
         /* reset state */
-        setForceOrgId(undefined);
-        setForceOrgName(undefined);
         setStartTime(getDefaultTime());
         setEndTime(getDefaultTime());
     };
@@ -297,6 +285,29 @@ const Reserve = () => {
                             Force Reservation
                         </AsyncButton>
                     </div>
+                )}
+
+                {forceOrgId && (
+                    <Box sx={{ width: "100%" }}>
+                        <Box
+                            sx={{
+                                width: "100%",
+                                display: "flex",
+                                flexWrap: "wrap",
+                            }}
+                        >
+                            {reservedMeetings.map((meeting) => (
+                                <MeetingAttendanceCard
+                                    key={meeting.id}
+                                    title={meeting.title}
+                                    id={meeting.id}
+                                    room={meeting.rooms?.name}
+                                    startTime={meeting.start_time}
+                                    clickable={false}
+                                />
+                            ))}
+                        </Box>
+                    </Box>
                 )}
             </div>
         </div>

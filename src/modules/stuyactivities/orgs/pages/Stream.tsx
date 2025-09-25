@@ -21,6 +21,17 @@ const Stream = () => {
             />
         );
 
+    if (organization.posts.length === 0) {
+        return (
+            <ContentUnavailable
+                icon="bx-message-alt-dots"
+                iconColor="text-yellow"
+                title="No Posts Yet"
+                description="This Activity has not posted any updates yet."
+            />
+        )
+    }
+
     return (
         <section className="flex flex-col mt-2 gap-8">
             {organization.posts

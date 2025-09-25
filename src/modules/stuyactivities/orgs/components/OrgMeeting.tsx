@@ -46,9 +46,10 @@ const OrgMeeting = ({
 
     return (
         <div className={"w-full cursor-pointer"}>
-            <div className="flex justify-between items-center bg-layer-2 transition-colors hover:bg-layer-3 p-4">
+            <div className="flex justify-between items-center bg-layer-2 transition-colors sm:hover:bg-layer-3 p-4"
+                 onClick={() => setOpen(true)}
+            >
                 <div
-                    onClick={() => setOpen(true)}
                     className={"w-full flex justify-between items-center"}
                 >
                     <div className="w-full pt-1">

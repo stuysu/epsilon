@@ -222,7 +222,7 @@ const AdminRoom = ({
                 {create ? (
                     <button
                         aria-label="Create room"
-                        className="h-9 w-9 grid place-items-center rounded-md hover:bg-layer-2"
+                        className="h-9 w-9 grid place-items-center rounded-md sm:hover:bg-layer-2"
                         onClick={createRoom}
                     >
                         <i className="bx bx-plus text-green text-xl" />
@@ -234,7 +234,7 @@ const AdminRoom = ({
                             disabled={!isChanged}
                             className={`h-9 w-9 grid place-items-center rounded-md ${
                                 isChanged
-                                    ? "hover:bg-layer-2"
+                                    ? "sm:hover:bg-layer-2"
                                     : "opacity-40 cursor-not-allowed"
                             }`}
                             onClick={saveRoom}
@@ -243,7 +243,7 @@ const AdminRoom = ({
                         </button>
                         <button
                             aria-label="Delete room"
-                            className="h-9 w-9 grid place-items-center rounded-md hover:bg-layer-2"
+                            className="h-9 w-9 grid place-items-center rounded-md sm:hover:bg-layer-2"
                             onClick={() => setConfirm(true)}
                         >
                             <i className="bx bx-trash text-red text-xl" />

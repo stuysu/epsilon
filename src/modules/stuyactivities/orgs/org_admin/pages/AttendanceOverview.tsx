@@ -81,6 +81,7 @@ const AttendanceOverview = () => {
                                     id={meeting.id}
                                     room={meeting.rooms?.name}
                                     startTime={meeting.start_time}
+                                    clickable={true}
                                 />
                             ))}
                         </Box>

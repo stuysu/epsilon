@@ -176,7 +176,7 @@ const OrgRouter = () => {
                     name="description"
                     content={
                         org.purpose ||
-                        "Epsilon is the everything app for Stuyvesant High School. Find and join Activities, browse the calendar, find new opportunities, and more."
+                        "Epsilon is the everything app for Stuyvesant High School. Find and join Activities, browse the calendar, discover new opportunities, and more."
                     }
                 />
             </Helmet>
@@ -186,15 +186,15 @@ const OrgRouter = () => {
                 ) : (
                     <>
                         <div
-                            className={`sm:hidden block w-full h-14 bg-blurDark fixed top-0 backdrop-blur-3xl z-40 border-b-divider border-b`}
+                            className={`sm:hidden block w-full h-11 bg-blurDark fixed top-0 backdrop-blur-3xl z-40 border-b-divider border-b`}
                         ></div>
                         <div className={`sm:hidden block mt-10`}></div>
                         <div
-                            className={`sm:sticky max-sm:top-0.5 fixed ml-6 mt-2 top-3 z-40 flex`}
+                            className={`sm:sticky max-sm:top-0.5 fixed ml-3 sm:ml-6 mt-0.5 sm:mt-2 top-3 z-40 flex`}
                         >
                             <p
                                 className={
-                                    "important relative -left-px hover:text-typography-1 cursor-pointer"
+                                    "important relative -left-px sm:hover:text-typography-1 cursor-pointer"
                                 }
                                 onClick={() => navigate("/stuyactivities")}
                             >

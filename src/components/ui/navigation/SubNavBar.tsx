@@ -1,4 +1,4 @@
-import { Stack, Typography, useMediaQuery } from "@mui/material";
+import { Stack, useMediaQuery } from "@mui/material";
 import React, { FC, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import UserContext from "../../../contexts/UserContext";
@@ -15,13 +15,14 @@ const SubNavBar: FC = () => {
 
     return (
         <div
-            className="max-sm:pb-4"
+            className="max-sm:pb-3"
             style={{
                 overflowX: "scroll",
                 scrollbarWidth: "none",
                 position: isMobile ? "fixed" : "relative",
                 top: isMobile ? 0 : undefined,
                 left: isMobile ? 0 : undefined,
+                backgroundColor: isMobile ? "var(--blur-dark)" : undefined,
                 width: isMobile ? "100%" : undefined,
                 zIndex: isMobile ? 1000 : undefined,
                 borderBottom: isMobile
@@ -34,7 +35,7 @@ const SubNavBar: FC = () => {
                 direction="row"
                 spacing={3}
                 ml={isMobile ? "1rem" : "3rem"}
-                mt={2}
+                mt={isMobile ? 1.5 : 2}
                 position="relative"
                 zIndex={2}
             >

@@ -36,7 +36,7 @@ const UpcomingMeeting = ({
     return (
         <div className={"w-full cursor-pointer"}>
             <div
-                className="overflow-scroll scrollbar-none flex max-lg:flex-col max-lg:items-start gap-2 justify-between items-center bg-layer-2 transition-colors hover:bg-layer-3 p-4"
+                className="overflow-scroll scrollbar-none flex max-lg:flex-col max-lg:items-start gap-2 justify-between items-center bg-layer-2 transition-colors sm:hover:bg-layer-3 p-4"
                 onClick={() => setOpen(true)}
             >
                 <div className="relative flex gap-3">

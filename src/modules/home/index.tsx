@@ -16,7 +16,7 @@ const Index = () => {
                 <title>Home - Epsilon</title>
                 <meta
                     name="description"
-                    content="The everything app for Stuyvesant High School. Find and join Activities, browse the calendar, find new opportunities, and more."
+                    content="The everything app for Stuyvesant High School. Find and join Activities, browse the calendar, discover new opportunities, and more."
                 />
             </Helmet>
             {user.signed_in ? <UserHome /> : <UnauthenticatedLanding />}
