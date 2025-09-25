@@ -80,7 +80,7 @@ const FormTextField = ({
 
     const textChanged = (event: ChangeEvent<HTMLInputElement>) => {
         let targetValue = event.target.value;
-
+        console.log(`changed to ${targetValue}`, requirements!);
         if (
             requirements?.maxChar &&
             targetValue.length > requirements.maxChar
@@ -129,7 +129,7 @@ const FormTextField = ({
         let countChars = false;
         if (requirements.minChar) {
             countChars = true;
-            helperText += `: min ${requirements.minChar} Characters`;
+            helperText += `: Minimum ${requirements.minChar} Characters`;
         }
 
         if (requirements.maxChar) {
@@ -140,10 +140,10 @@ const FormTextField = ({
             }
             countChars = true;
 
-            helperText += ` max ${requirements.maxChar} Characters`;
+            helperText += `Maximum ${requirements.maxChar} Characters`;
         }
 
-        if (countChars) helperText += `, at ${value?.length || 0}.`;
+        if (countChars) helperText += ` (${value?.length || 0}/${requirements.maxChar}.`;
 
         let countWords = false;
 
@@ -153,7 +153,7 @@ const FormTextField = ({
             }
 
             countWords = true;
-            helperText += ` min ${requirements.minWords} Words`;
+            helperText += ` Minimum ${requirements.minWords} Words`;
         }
 
         if (requirements.maxWords) {
@@ -162,15 +162,15 @@ const FormTextField = ({
             }
 
             if (countWords) {
-                helperText += " to";
+                helperText += " to ";
             }
 
             countWords = true;
-            helperText += ` max ${requirements.maxWords} Words`;
+            helperText += `Maximum ${requirements.maxWords} Words`;
         }
 
         if (countWords)
-            helperText += `, at ${value?.trim().split(" ").length || 0}.`;
+            helperText += ` (${value?.trim().split(" ").length || 0}/${requirements.maxWords})`;
     }
 
     return (
