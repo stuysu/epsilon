@@ -741,7 +741,7 @@ const OrgEditor = ({
                     requirements={OrgRequirements.keywords.requirements}
                     description={`You are allowed up to 3 keywords that describe your Activity. These will not be publicly visible but will help your Activity show up in search results. Examples of keywords include alternate names or acronyms, such as 'SU' for the Student Union. Create a keyword using <ENTER> or <,>. PLEASE NOTE: You cannot paste a list of keywords, you must type them manually.`}
                 />
-                
+
                 <FormTagSelect
                     field="tags"
                     label="Choose Tags"
