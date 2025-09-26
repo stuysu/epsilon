@@ -11,6 +11,7 @@ import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
 import FormTagSelect from "../../../../../components/ui/forms/FormTagSelect";
 import FormSection from "../../../../../components/ui/forms/FormSection";
 import FormChipText from "../../../../../components/ui/forms/FormChipText";
+import UnifiedChipSelector from "../../../../../components/ui/forms/UnifiedChipSelector";
 
 type Props = {
     organization: Partial<Organization>; // Make organization a prop to allow component to become reusable
@@ -727,7 +728,7 @@ const OrgEditor = ({
                 flexDirection: "column",
                 gap: "10px"
             }}>
-                <FormChipText
+                <UnifiedChipSelector
                     field="keywords"
                     label="Keywords"
                     onChange={(val) => {
@@ -742,10 +743,10 @@ const OrgEditor = ({
                     description={`You are allowed up to 3 keywords that describe your Activity. These will not be publicly visible but will help your Activity show up in search results. Examples of keywords include alternate names or acronyms, such as 'SU' for the Student Union. Create a keyword using <ENTER> or <,>. PLEASE NOTE: You cannot paste a list of keywords, you must type them manually.`}
                 />
 
-                <FormTagSelect
+                <UnifiedChipSelector
                     field="tags"
                     label="Choose Tags"
-                    tags={[
+                    options={[
                         "Arts & Crafts",
                         "Academic & Professional",
                         "Club Sports & Recreational Games",
