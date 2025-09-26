@@ -53,7 +53,7 @@ const UnifiedChipSelector = ({
     )
     } else {
         return (
-            <FormTagSelect 
+            <FormTagSelect
                 field={field}
                 label={label}
                 onChange={onChange}
