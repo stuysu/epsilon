@@ -75,7 +75,7 @@ const Pages = () => {
                 )}
                 <Routes>
                     <Route path={"/"} Component={Index} />
-                    <Route path={"/arista"} Component={Arista} />
+                    <Route path={"/arista-landing"} Component={Arista} />
                     <Route path={"/stuyactivities"} Component={Catalog} />
                     <Route path={"/confirm-join"} Component={ConfirmJoin} />
                     <Route path={"/communications"} Component={CommsSettings} />
