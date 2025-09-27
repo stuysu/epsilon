@@ -19,7 +19,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const membership = organization.memberships?.find(
         (m) => m.users?.id === user.id,
     );
-    
+
     const isOrgAdmin =
         (organization.memberships?.some(
             (m) =>

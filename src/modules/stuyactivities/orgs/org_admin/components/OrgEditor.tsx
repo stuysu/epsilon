@@ -535,7 +535,7 @@ const OrgEditor = ({
     const updateEdit = (field: keyof OrganizationEdit, value: any) => {
         if (field == "tags") setEditTags(value);
         if (field == "keywords") setEditKeywords(value);
-        
+
         setEditData({
             ...editData,
             [field]: value,

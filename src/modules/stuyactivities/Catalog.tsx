@@ -157,10 +157,10 @@ const Catalog = () => {
                         const sortedIds = [...counts.entries()]
                             .sort(([, v1], [, v2]) => v2 - v1)
                             .map(([id]) => id);
-                        
+
                         query.range(originalOffset, 100 + originalOffset);
                         ({ data: orgData, error: orgError } = await query);
-                        
+
 
                         if (orgData) {
                             const orderMap = new Map(sortedIds.map((id, index) => [id, index]));

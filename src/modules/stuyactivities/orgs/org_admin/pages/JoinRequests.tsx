@@ -43,7 +43,7 @@ import { enqueueSnackbar } from "notistack";
 
 const JoinRequests = () => {
     const [autoAccept, setAutoAccept] = useState(false);
-    const organization = useContext<OrgContextType>(OrgContext); 
+    const organization = useContext<OrgContextType>(OrgContext);
     console.log(organization.memberships);
     const pendingMembers = organization.memberships
         ?.filter((member) => !member.active)
@@ -56,7 +56,7 @@ const JoinRequests = () => {
                 picture: member.users?.picture,
             };
         });
-    
+
 
     useEffect(() => {
         if (autoAccept) {
