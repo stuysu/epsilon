@@ -78,7 +78,7 @@ const FormTagSelect = ({
             onChange={valueChanged}
             value={value}
             options={tags}
-            renderTags={(value, props) => {
+            renderTags={(value: string[], props) => {
                 return value.map((option, index) => (
                     <Chip label={option} {...props({ index })} />
                 ));

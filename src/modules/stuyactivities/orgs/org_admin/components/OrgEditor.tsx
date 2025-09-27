@@ -1,5 +1,5 @@
 import { ReactNode, useCallback, useEffect, useState } from "react";
-import { Avatar, Box, Paper } from "@mui/material";
+import { Avatar, Box, Paper, useMediaQuery } from "@mui/material";
 import { useSnackbar } from "notistack";
 import FormTextField from "../../../../../components/ui/forms/FormTextField";
 import OrgRequirements from "../../../../../utils/OrgRequirements";
@@ -8,6 +8,10 @@ import { supabase } from "../../../../../lib/supabaseClient";
 import { PUBLIC_URL } from "../../../../../config/constants";
 import { useNavigate } from "react-router-dom";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
+import FormTagSelect from "../../../../../components/ui/forms/FormTagSelect";
+import FormSection from "../../../../../components/ui/forms/FormSection";
+import FormChipText from "../../../../../components/ui/forms/FormChipText";
+import UnifiedChipSelector from "../../../../../components/ui/forms/UnifiedChipSelector";
 
 type Props = {
     organization: Partial<Organization>; // Make organization a prop to allow component to become reusable
@@ -28,6 +32,12 @@ type FormStatus = {
 
 type orgKey = keyof OrganizationEdit & keyof Organization;
 
+function formatStr(a: string | string[] | undefined) {
+    let final_value = a;
+    final_value = (typeof a == "object" ?
+        Array.from(a).join('\n') : a)
+    return final_value;
+}
 const EditField = ({
     field,
     pending,
@@ -127,6 +137,17 @@ const hiddenFields: string[] = [
     "picture", // picture field has custom logic
 ];
 
+function arraysEqual(a: string[], b: string[]) {
+    if (a === b) return true;
+    if (a == null || b == null) return false;
+    if (a.length !== b.length) return false;
+
+    for (let i = 0; i < a.length; i++) {
+        if (a[i] !== b[i]) return false;
+    }
+    return true;
+}
+
 /*
 TextField Statuses:
 - default is Approved
@@ -142,7 +163,7 @@ const OrgEditor = ({
     setPendingEdit,
 }: Props) => {
     const { enqueueSnackbar } = useSnackbar();
-
+    const isMobile = useMediaQuery("(max-width: 640px)");
     /* everything that is displayed on the page (could include values similar to original)*/
     const [editData, setEditData] = useState<OrganizationEdit>({});
 
@@ -156,9 +177,11 @@ const OrgEditor = ({
         File | null | undefined | string
     >();
 
+    const [editTags, setEditTags] = useState<string[] | null>(null);
+
     const oldPicture =
         existingEdit["picture"] === undefined ||
-        existingEdit["picture"] === null
+            existingEdit["picture"] === null
             ? organization["picture"]
             : existingEdit["picture"];
 
@@ -172,6 +195,11 @@ const OrgEditor = ({
         /* check if picture is saved before terminating if no other fields are saved */
 
         if (editPicture !== undefined && editPicture !== oldPicture) {
+            setSavable(true);
+            return;
+        }
+
+        if (editTags !== null && !arraysEqual(editTags, organization.tags!)) {
             setSavable(true);
             return;
         }
@@ -233,7 +261,12 @@ const OrgEditor = ({
         }
 
         setEditData(baseData);
+        console.log(organization);
     }, [existingEdit, organization]);
+
+    useEffect(() => {
+        console.log("change:", editData);
+    }, [editData]);
 
     const saveChanges = async () => {
         if (!savable) {
@@ -299,9 +332,9 @@ const OrgEditor = ({
             allNull = false; // even though all the fields could be null, this edit is worth keeping because the picture is different
         } else if (
             editPicture !==
-                (existingEdit === undefined
-                    ? organization["picture"]
-                    : existingEdit["picture"]) &&
+            (existingEdit === undefined
+                ? organization["picture"]
+                : existingEdit["picture"]) &&
             editPicture
         ) {
             // picture is different, but needs to be uploaded first
@@ -392,10 +425,11 @@ const OrgEditor = ({
         }
 
         let data, error;
-
+        console.log(payload);
         if (organization.state !== "PENDING") {
             if (existingEdit.id === undefined) {
                 // insert new
+
                 ({ data, error } = await supabase
                     .from("organizationedits")
                     .insert({ organization_id: organization.id, ...payload })
@@ -417,7 +451,6 @@ const OrgEditor = ({
                     delete payload[key];
                 }
             }
-
             ({ data, error } = await supabase
                 .from("organizations")
                 .update(payload)
@@ -426,6 +459,7 @@ const OrgEditor = ({
         }
 
         if (error || !data) {
+            console.error(error);
             return enqueueSnackbar(
                 "Error editing organization. Contact it@stuysu.org for support.",
                 { variant: "error" },
@@ -497,6 +531,9 @@ const OrgEditor = ({
     );
 
     const updateEdit = (field: keyof OrganizationEdit, value: any) => {
+        if (field == "tags") {
+            setEditTags(value);
+        }
         setEditData({
             ...editData,
             [field]: value,
@@ -564,9 +601,9 @@ const OrgEditor = ({
                             if (
                                 e.target.files[0].size >
                                 1024 *
-                                    1024 *
-                                    OrgRequirements.picture?.requirements
-                                        ?.maxSize[0]
+                                1024 *
+                                OrgRequirements.picture?.requirements
+                                    ?.maxSize[0]
                             ) {
                                 return enqueueSnackbar(
                                     `File is too large. Max size is ${OrgRequirements.picture?.requirements?.maxSize[0]}MB.`,
@@ -621,7 +658,7 @@ const OrgEditor = ({
                             (existingEdit[field as keyof OrganizationEdit] !==
                                 null &&
                                 existingEdit[
-                                    field as keyof OrganizationEdit
+                                field as keyof OrganizationEdit
                                 ] !== undefined) ||
                             organization.state === "PENDING"
                         }
@@ -631,7 +668,7 @@ const OrgEditor = ({
                             updateEdit(
                                 field as keyof OrganizationEdit,
                                 existingEdit[field as keyof OrganizationEdit] ||
-                                    organization[field as keyof Organization],
+                                organization[field as keyof Organization],
                             );
 
                             // remove self from list of fields being edited
@@ -652,8 +689,8 @@ const OrgEditor = ({
                             setEditState({ ...editState, [field]: true })
                         }
                         defaultDisplay={
-                            <p className={"w-3/4"}>
-                                {editData[field as keyof OrganizationEdit] || (
+                            <p className={"w-5/6 my-1"}>
+                                {formatStr(editData[field as keyof OrganizationEdit]) || (
                                     <em>&lt;empty&gt;</em>
                                 )}
                             </p>
@@ -670,7 +707,7 @@ const OrgEditor = ({
                                     )
                                 }
                                 value={
-                                    editData[field as keyof OrganizationEdit]
+                                    formatStr(editData[field as keyof OrganizationEdit])
                                 }
                                 required={OrgRequirements[field].required}
                                 requirements={
@@ -684,6 +721,61 @@ const OrgEditor = ({
                     />
                 );
             })}
+            <FormSection sx={{
+                width: "100%",
+                display: "flex",
+                flexWrap: isMobile ? "wrap" : "nowrap",
+                flexDirection: "column",
+                gap: "10px"
+            }}>
+                <UnifiedChipSelector
+                    field="keywords"
+                    label="Keywords"
+                    onChange={(val) => {
+                        updateEdit(
+                            "keywords" as keyof OrganizationEdit,
+                            val.join(","),
+                        )
+                    }}
+                    value={editData.keywords?.split(",") ?? []}
+                    required={OrgRequirements.keywords.required}
+                    requirements={OrgRequirements.keywords.requirements}
+                    description={`You are allowed up to 3 keywords that describe your Activity. These will not be publicly visible but will help your Activity show up in search results. Examples of keywords include alternate names or acronyms, such as 'SU' for the Student Union. Create a keyword using <ENTER> or <,>. PLEASE NOTE: You cannot paste a list of keywords, you must type them manually.`}
+                />
+
+                <UnifiedChipSelector
+                    field="tags"
+                    label="Choose Tags"
+                    options={[
+                        "Arts & Crafts",
+                        "Academic & Professional",
+                        "Club Sports & Recreational Games",
+                        "Community Service & Volunteering",
+                        "Cultural & Religious",
+                        "Music",
+                        "Public Speaking",
+                        "STEM",
+                        "Student Support & Government",
+                        "Hobby & Special Interest",
+                        "Publication",
+                    ]}
+                    description="Select up to 3 tags that best represent your Activity"
+                    required={OrgRequirements.tags.required}
+                    requirements={OrgRequirements.tags.requirements}
+                    sx={{
+                        width: "100%",
+                        marginLeft: isMobile ? "" : "0px",
+                        marginTop: isMobile ? "20px" : "",
+                    }}
+                    value={editData.tags ?? []}
+                    onChange={(val) =>
+                        updateEdit(
+                            "tags" as keyof OrganizationEdit,
+                            val,
+                        )
+                    }
+                />
+            </FormSection>
             <Box
                 sx={{
                     width: "100%",
@@ -694,6 +786,7 @@ const OrgEditor = ({
                     flexWrap: "nowrap",
                 }}
             >
+
                 <AsyncButton
                     color="error"
                     variant="contained"
