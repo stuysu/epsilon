@@ -99,7 +99,7 @@ export const getLinks = (user: UserContextType) => {
 const AdminRouter = () => {
     const user = useContext(UserContext);
     const links = getLinks(user);
-    console.log(links, "neow");
+    // console.log(links, "neow");
 
     if (!user.permission || !links.length) {
         return (

@@ -8,6 +8,7 @@ import { Helmet } from "react-helmet";
 
 import OrgCard from "./components/OrgCard";
 import SearchFilter from "./components/SearchFilter";
+import Organization from "./orgs/org_admin/pages/Organization";
 
 type SearchState = {
     orgs: Partial<Organization>[];
@@ -35,6 +36,7 @@ const Catalog = () => {
         meetingDays: [],
         commitmentLevels: [],
         tags: [],
+        filter: "",
     });
 
     const [debouncedSearchParams, setDebouncedSearchParams] =
@@ -72,14 +74,15 @@ const Catalog = () => {
         async (isReset: boolean) => {
             const originalOffset = isReset ? 0 : offsetRef.current;
 
-            let orgData: Partial<Organization>[] | null;
+            let orgData: Partial<Organization>[] | null = null;
             let orgError: any;
-
+            let otherData: Partial<Organization>[] | null = null;
             const noFilters =
                 !debouncedSearchParams.name.length &&
                 !debouncedSearchParams.meetingDays.length &&
                 !debouncedSearchParams.commitmentLevels.length &&
-                !debouncedSearchParams.tags.length;
+                !debouncedSearchParams.tags.length &&
+                !debouncedSearchParams.filter.length;
 
             if (noFilters) {
                 // get orgs in random order (no search params)
@@ -123,13 +126,64 @@ const Catalog = () => {
                     : "";
                 const catalogQuery = `and(or(name.ilike.%${debouncedSearchParams.name}%,keywords.ilike.%${debouncedSearchParams.name}%)${extra})`;
 
-                ({ data: orgData, error: orgError } = await supabase
+                let query = supabase
                     .from("organizations")
                     .select("*")
                     .neq("state", "PENDING")
                     .neq("state", "PUNISHED")
                     .or(catalogQuery)
-                    .range(originalOffset, originalOffset + querySize - 1));
+                    .range(originalOffset, originalOffset + querySize - 1);
+                console.log(originalOffset);
+                let skipQuery = false;
+                console.log(debouncedSearchParams);
+                if (debouncedSearchParams.filter.length > 0) {
+                    const filterReq = debouncedSearchParams.filter;
+
+                    if (filterReq.toLowerCase().includes('new')) {
+                        query.range(originalOffset, 50 + originalOffset);
+                        query = query.order("created_at", { ascending: false });
+                    }
+                    if (filterReq.toLowerCase().includes("popular")) {
+                        const { data: mems } = await supabase
+                            .from("memberships")
+                            .select("*")
+                            .eq("active", true);
+
+                        const counts = new Map<number, number>();
+                        (mems ?? []).forEach((m: any) => {
+                            counts.set(m.organization_id, (counts.get(m.organization_id) ?? 0) + 1);
+                        });
+
+                        const sortedIds = [...counts.entries()]
+                            .sort(([, v1], [, v2]) => v2 - v1)
+                            .map(([id]) => id);
+                        
+                        query.range(originalOffset, 100 + originalOffset);
+                        ({ data: orgData, error: orgError } = await query);
+                        
+
+                        if (orgData) {
+                            const orderMap = new Map(sortedIds.map((id, index) => [id, index]));
+                            orgData.sort(
+                                (a, b) =>
+                                    (orderMap.get(a.id!) ?? sortedIds.length) -
+                                    (orderMap.get(b.id!) ?? sortedIds.length)
+                            );
+                            const {data: tops} = await supabase
+                            .from("organizations")
+                            .select("organization_id")
+                            .in("organization_id", [sortedIds[0]])
+                            .eq("active", true);
+                            console.log(tops);
+                        }
+
+                        skipQuery = true;
+                    }
+                }
+                otherData = orgData ?? otherData ?? [];
+                console.log(debouncedSearchParams);
+                if (!skipQuery) ({ data: orgData, error: orgError } = await query);
+                otherData = orgData;
             }
 
             if (orgError) {
@@ -140,7 +194,7 @@ const Catalog = () => {
                 return { data: [] as Partial<Organization>[], more: false };
             }
 
-            const safe = orgData ?? [];
+            const safe = orgData ?? otherData ?? [];
             return { data: safe, more: safe.length >= querySize };
         },
         [
@@ -149,6 +203,7 @@ const Catalog = () => {
             debouncedSearchParams.tags,
             debouncedSearchParams.meetingDays,
             debouncedSearchParams.commitmentLevels,
+            debouncedSearchParams.filter,
             debouncedSearchParams.name,
         ],
     );
@@ -159,7 +214,6 @@ const Catalog = () => {
             isFetchingRef.current = true;
             if (isReset) setLoadingInitial(true);
             else setLoadingNext(true);
-
             try {
                 const res = await fetchPage(isReset);
                 if (!res) return;

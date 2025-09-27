@@ -23,6 +23,7 @@ interface Organization {
     memberships?: Partial<Membership>[];
     fair?: boolean;
     faculty_email?: string;
+    auto_accept?: boolean;
 }
 
 interface OrganizationEdit {

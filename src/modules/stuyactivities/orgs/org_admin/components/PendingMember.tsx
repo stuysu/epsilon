@@ -22,6 +22,7 @@ const PendingMember = ({
     const { enqueueSnackbar } = useSnackbar();
     const organization = useContext(OrgContext);
 
+
     const handleApprove = async () => {
         const { error } = await supabase.functions.invoke("approve-member", {
             body: { member_id: id },
@@ -81,6 +82,10 @@ const PendingMember = ({
 
         enqueueSnackbar("User rejected!", { variant: "success" });
     };
+
+    if (organization.auto_accept) {
+        handleApprove();
+    }
 
     return (
         <Box

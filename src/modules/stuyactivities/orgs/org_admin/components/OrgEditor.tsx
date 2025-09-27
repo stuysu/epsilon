@@ -68,7 +68,7 @@ const EditField = ({
                     flexWrap: "nowrap",
                     padding: "10px",
                     position: "relative",
-                    minHeight: "100px",
+                    minHeight: "fit-content",
                 }}
             >
                 {editing ? (
@@ -166,7 +166,7 @@ const OrgEditor = ({
     const isMobile = useMediaQuery("(max-width: 640px)");
     /* everything that is displayed on the page (could include values similar to original)*/
     const [editData, setEditData] = useState<OrganizationEdit>({});
-
+    const [editKeywords, setEditKeywords] = useState<string | null>(null);
     /* only includes keys who are currently being edited */
     // idk why i split this up, this could both be in one but i was just copy and pasting code from FormPage
     const [editState, setEditState] = useState<EditState>({}); // whether or not a field is being edited
@@ -200,6 +200,11 @@ const OrgEditor = ({
         }
 
         if (editTags !== null && !arraysEqual(editTags, organization.tags!)) {
+            setSavable(true);
+            return;
+        }
+
+        if (editKeywords !== null && editKeywords != organization.keywords!) {
             setSavable(true);
             return;
         }
@@ -264,10 +269,6 @@ const OrgEditor = ({
         console.log(organization);
     }, [existingEdit, organization]);
 
-    useEffect(() => {
-        console.log("change:", editData);
-    }, [editData]);
-
     const saveChanges = async () => {
         if (!savable) {
             enqueueSnackbar(
@@ -278,7 +279,7 @@ const OrgEditor = ({
         }
 
         let payload: any = {};
-
+        setSavable(false);
         let allNull = true;
         for (let key of Object.keys(existingEdit)) {
             let field = key as orgKey;
@@ -366,6 +367,7 @@ const OrgEditor = ({
             }
 
             payload.picture = urlData.publicUrl;
+
             allNull = false;
         }
 
@@ -531,9 +533,9 @@ const OrgEditor = ({
     );
 
     const updateEdit = (field: keyof OrganizationEdit, value: any) => {
-        if (field == "tags") {
-            setEditTags(value);
-        }
+        if (field == "tags") setEditTags(value);
+        if (field == "keywords") setEditKeywords(value);
+        
         setEditData({
             ...editData,
             [field]: value,
@@ -690,7 +692,7 @@ const OrgEditor = ({
                         }
                         defaultDisplay={
                             <p className={"w-5/6 my-1"}>
-                                {formatStr(editData[field as keyof OrganizationEdit]) || (
+                                {(field == "url" ? `${PUBLIC_URL}/${formatStr(editData[field as keyof OrganizationEdit])}` : formatStr(editData[field as keyof OrganizationEdit])) || (
                                     <em>&lt;empty&gt;</em>
                                 )}
                             </p>
@@ -726,7 +728,8 @@ const OrgEditor = ({
                 display: "flex",
                 flexWrap: isMobile ? "wrap" : "nowrap",
                 flexDirection: "column",
-                gap: "10px"
+                gap: "10px",
+                marginTop: "25px",
             }}>
                 <UnifiedChipSelector
                     field="keywords"

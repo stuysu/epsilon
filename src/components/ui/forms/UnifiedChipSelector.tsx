@@ -37,6 +37,13 @@ const UnifiedChipSelector = ({
     sx,
 }: Props) => {
     if (typeof value === 'string') value = value.split(value_delim!);
+    else {
+        let newValue = value as string[];
+        newValue.map((element, index) => {
+            if (element == "") newValue.splice(index, 1);
+        });
+        value = newValue;
+    }
     const thereAreOptions = !!options;
     if (!thereAreOptions) {
     return (

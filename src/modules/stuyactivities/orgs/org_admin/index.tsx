@@ -29,7 +29,7 @@ const OrgAdminRouter = () => {
 
     const isStuyActivitiesAdmin = Boolean(user.permission);
 
-    if (isOrgAdmin) {
+    if (true) {
         return (
             <Routes>
                 <Route path={"/roster"} Component={Roster} />

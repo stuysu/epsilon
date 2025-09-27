@@ -24,6 +24,7 @@ const tags = [
     "Publication",
 ];
 
+const filters = ["POPULAR", "NEW"];
 const commitmentLevels = ["NONE", "LOW", "MEDIUM", "HIGH"];
 
 const meetingDays = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
@@ -132,6 +133,28 @@ const SearchFilter = ({
                             }}
                         />
                     ))}
+                </div>
+            </div>
+
+            <div className={"w-full mt-6"}>
+                <p>Filters</p>
+                <div className="flex flex-row gap-2 flex-wrap mt-2">
+                {filters.map((filter) => (
+                        <ToggleChip
+                            key={filter}
+                            title={capitalizeWords(filter)}
+                            selectable={true}
+                            defaultSelected={value.filter == filter}
+                            onChange={(selected) => {
+                                onChange({
+                                    ...value,
+                                    filter: selected
+                                        ? filter
+                                        : value.filter,
+                                });
+                            }}
+                        />
+                ))}
                 </div>
             </div>
         </div>

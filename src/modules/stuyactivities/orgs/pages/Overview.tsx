@@ -37,7 +37,7 @@ const Overview = () => {
     const isCreator =
         isInOrg &&
         organization.memberships?.find((m) => m.users?.id === user.id)?.role ===
-            "CREATOR";
+        "CREATOR";
     const isActive =
         isInOrg &&
         organization.memberships?.find((m) => m.users?.id === user.id)?.active;
@@ -66,6 +66,7 @@ const Overview = () => {
             }
             if (interactString === "JOIN") {
                 const body = { organization_id: organization.id };
+
                 const { data, error } = await supabase.functions.invoke(
                     "join-organization",
                     { body },
@@ -77,6 +78,22 @@ const Overview = () => {
                     });
                     return;
                 }
+
+                if (organization.auto_accept) {
+                    if (organization.setOrg) {
+                        organization.setOrg({
+                            ...organization,
+                            memberships: [...organization.memberships, {...data, active: true}],
+                        });
+                    }
+
+                    enqueueSnackbar("Join request sent!", {
+                        variant: "success",
+                    });
+
+                    return;
+                }
+
                 if (organization.setOrg) {
                     organization.setOrg({
                         ...organization,
@@ -225,11 +242,11 @@ const Overview = () => {
                                     key={index}
                                 />
                             )) || (
-                                <ToggleChip
-                                    title={"Uncategorized"}
-                                    selectable={false}
-                                />
-                            )}
+                                    <ToggleChip
+                                        title={"Uncategorized"}
+                                        selectable={false}
+                                    />
+                                )}
                         </div>
 
                         <div
@@ -257,12 +274,12 @@ const Overview = () => {
                             disabled={disabled || attemptingInteract}
                             sx={{
                                 ...(interactString === "LEAVE" ||
-                                interactString === "CANCEL JOIN"
+                                    interactString === "CANCEL JOIN"
                                     ? {
-                                          backgroundColor:
-                                              "rgba(248, 19, 19, 0.88)",
-                                          color: "white",
-                                      }
+                                        backgroundColor:
+                                            "rgba(248, 19, 19, 0.88)",
+                                        color: "white",
+                                    }
                                     : {}),
                                 ...(isMobile && { width: "100%" }),
                             }}
@@ -324,11 +341,11 @@ const Overview = () => {
                         <h3 className={"w-32 text-center"}>
                             {organization.commitment_level
                                 ? organization.commitment_level
-                                      .charAt(0)
-                                      .toUpperCase() +
-                                  organization.commitment_level
-                                      .slice(1)
-                                      .toLowerCase()
+                                    .charAt(0)
+                                    .toUpperCase() +
+                                organization.commitment_level
+                                    .slice(1)
+                                    .toLowerCase()
                                 : "None"}
                         </h3>
                         <p className={"text-center"}>Commitment</p>
@@ -372,13 +389,12 @@ const Overview = () => {
                         ].map(([abbr, full]) => (
                             <p
                                 key={abbr}
-                                className={`flex-1 text-center py-2 ${
-                                    organization.meeting_days?.includes(
-                                        full.toUpperCase(),
-                                    )
-                                        ? "bg-accent text-white important"
-                                        : "bg-layer-2"
-                                }`}
+                                className={`flex-1 text-center py-2 ${organization.meeting_days?.includes(
+                                    full.toUpperCase(),
+                                )
+                                    ? "bg-accent text-white important"
+                                    : "bg-layer-2"
+                                    }`}
                             >
                                 {abbr}
                             </p>

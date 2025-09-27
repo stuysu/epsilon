@@ -56,11 +56,8 @@ const ApprovePending = () => {
                         )
                     )
                 `,
-                ).order('id', {ascending:true});
-
-            const count = (await supabase.from("organizations").select('*').order('id', {ascending: true})).data;
-            console.log(count![0]);
-
+                ).eq("state", "PENDING")
+                .order('id', {ascending:true});
 
             if (error || !data) {
                 return enqueueSnackbar(
@@ -100,6 +97,7 @@ const ApprovePending = () => {
                             name={org.name}
                             role_name={org.id?.toFixed()}
                             picture={org.picture || ""}
+                            key={i}
                         />
                     </div>
                 ))}

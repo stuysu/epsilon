@@ -36,4 +36,5 @@ type SearchParams = {
     meetingDays: string[];
     commitmentLevels: string[];
     tags: string[];
+    filter: string;
 };
