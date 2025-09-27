@@ -4,7 +4,6 @@ import { Checkbox } from "radix-ui";
 import PendingMember from "../components/PendingMember";
 import { Box } from "@mui/material";
 import ItemList from "../../../../../components/ui/lists/ItemList";
-import FormRadioCheck from "../../../../../components/ui/forms/FormRadioCheck";
 import { supabase } from "../../../../../lib/supabaseClient";
 import { enqueueSnackbar } from "notistack";
 
