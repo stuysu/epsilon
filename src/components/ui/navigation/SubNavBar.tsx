@@ -42,7 +42,7 @@ const SubNavBar: FC = () => {
                 {(
                     [
                         { label: "Catalog", path: "/stuyactivities" },
-                        { label: "Charter", path: "/charter" },
+                        { label: "Charter (Create)", path: "/charter" },
                         { label: "Regulations", path: "/rules" },
                         { label: "Archives", path: "/archives" },
                         { label: "Support", path: "/activities-support" },

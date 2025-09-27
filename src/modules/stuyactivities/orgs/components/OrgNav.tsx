@@ -19,7 +19,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const membership = organization.memberships?.find(
         (m) => m.users?.id === user.id,
     );
-    
+
     const isOrgAdmin =
         (organization.memberships?.some(
             (m) =>
@@ -31,7 +31,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
 
     const navLinks: LinkItem[] = [
         { to: main, display: "Overview" },
-        { to: `${main}/charter`, display: "Charter" },
+        { to: `${main}/charter`, display: "Charter Details" },
         { to: `${main}/meetings`, display: "Meetings" },
         { to: `${main}/members`, display: "Members" },
         { to: `${main}/audit`, display: "Audit" },
