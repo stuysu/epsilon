@@ -192,7 +192,7 @@ const FormTextField = ({
                                 <br />
                             </span>
                         ))}
-                        
+
                         {/* internal helper text (requirements like min/max chars/words) */}
                        {textHelper?.split("\n").map((line, idx) => (
                             <span key={idx}>
@@ -205,7 +205,7 @@ const FormTextField = ({
             }
             label={label}
             sx={sx}
-            
+
             {...textFieldProps}
         />
     );
