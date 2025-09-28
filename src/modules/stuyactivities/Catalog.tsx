@@ -177,7 +177,7 @@ const Catalog = () => {
                         const mapEntriesArray = [...counts.entries()].sort((a, b) => b[1] - a[1]);
                         query.range(originalOffset, sortedIds.length);
                         ({ data: orgData, error: orgError } = await query);
-                        
+
                         if (orgData) {
                             const orderMap = new Map(mapEntriesArray);
                             orgData.sort(
