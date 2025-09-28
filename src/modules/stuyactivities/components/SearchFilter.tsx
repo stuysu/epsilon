@@ -45,8 +45,8 @@ const SearchFilter = ({
                     isOneColumn || isTwoWrap
                         ? "100%"
                         : isTwoColumn
-                          ? "30%"
-                          : "25%",
+                            ? "30%"
+                            : "25%",
                 height: isOneColumn || isTwoWrap ? " " : "100vh",
                 paddingLeft: isOneColumn ? "1rem" : "3rem",
                 paddingRight: isOneColumn ? "1rem" : "0rem",
@@ -103,8 +103,8 @@ const SearchFilter = ({
                                     commitmentLevels: selected
                                         ? [level, ...value.commitmentLevels]
                                         : value.commitmentLevels.filter(
-                                              (v) => v !== level,
-                                          ),
+                                            (v) => v !== level,
+                                        ),
                                 });
                             }}
                         />
@@ -127,8 +127,8 @@ const SearchFilter = ({
                                     meetingDays: selected
                                         ? [day, ...value.meetingDays]
                                         : value.meetingDays.filter(
-                                              (v) => v !== day,
-                                          ),
+                                            (v) => v !== day,
+                                        ),
                                 });
                             }}
                         />
@@ -136,27 +136,29 @@ const SearchFilter = ({
                 </div>
             </div>
 
-            <div className={"w-full mt-6"}>
+            <div className="w-full mt-6">
                 <p>Filters</p>
                 <div className="flex flex-row gap-2 flex-wrap mt-2">
-                {filters.map((filter) => (
+                    {filters.map((filter) => {
+                        const isSelected = value.filter === filter;
+                        return (
                         <ToggleChip
                             key={filter}
                             title={capitalizeWords(filter)}
                             selectable={true}
-                            defaultSelected={value.filter == filter}
+                            selected={isSelected}
                             onChange={(selected) => {
                                 onChange({
                                     ...value,
-                                    filter: selected
-                                        ? filter
-                                        : value.filter,
+                                    filter: selected ? filter : "",
                                 });
                             }}
                         />
-                ))}
+                        );
+                    })}
                 </div>
             </div>
+
         </div>
     );
 };

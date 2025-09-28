@@ -4,9 +4,10 @@ import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import OrgChat from "./OrgChat";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import Divider from "../../../../components/ui/Divider";
+import { PUBLIC_URL } from "../../../../config/constants";
 
 
 const acronyms = ["AI", "AP", "CS", "GSA"];
@@ -21,6 +22,8 @@ const OrgApproval = ({
     const { enqueueSnackbar } = useSnackbar();
     const [buttonsDisabled, setButtonsDisabled] = useState(false);
     const creator = org.memberships?.find((m) => m.role === 'CREATOR');
+    const [memStr, setMemStr] = useState("");
+    const [orgLinks, setOrgLinks] = useState<string[]>([]);
     let keywords = org.keywords?.split(",");
     const approve = async () => {
         setButtonsDisabled(true);
@@ -60,6 +63,38 @@ const OrgApproval = ({
         setButtonsDisabled(false);
         onDecision();
     };
+
+    useEffect(() => {
+        const test = async (id: number) => {
+            const { data } = await supabase.from("memberships").select("*").neq("organization_id", org.id).eq("user_id", id);
+            const collection: Map<number, string> = new Map<number, string>();
+            data?.forEach((m: any) => {
+                collection.set(m.organization_id, m.role);
+            });
+            const { data: orgsss } = await supabase.from("organizations").select("*").in("id", Array.from(collection.keys()));
+
+            if (orgsss) {
+                const links: string[] = [];
+                const str = orgsss
+                    .map((org: any, index: number) => {
+                        return (
+                            collection.get(org.id) +
+                            " at " +
+                            org.name +
+                            (index === orgsss.length - 1 ? "" : ", ")
+                        );
+                    })
+                    .join("");
+
+                orgsss.map((org: any) => {
+                    links.push(org.url);
+                })
+                setMemStr(str);
+                setOrgLinks(links);
+            };
+        }
+        test(creator?.users?.id!);
+    }, [creator, keywords]);
 
     return (
         <div className="m-10">
@@ -112,7 +147,7 @@ const OrgApproval = ({
                         <Avatar
                             src={org.picture}
                             alt={org.name}
-                            sx={{ width: "150px", height: "150px", borderRadius: "15px",}}
+                            sx={{ width: "150px", height: "150px", borderRadius: "15px", }}
                         />
                     ) : (
                         <p>No picture provided</p>
@@ -191,6 +226,15 @@ const OrgApproval = ({
 
                     <h4>Faculty Advisor</h4>
                     <p className={"font-mono"}>{org?.faculty_email || "N/A"}</p>
+                    <Divider />
+
+                    <h4>Activities</h4>
+                        {memStr && memStr.split(",").map((v: string, index) => (
+                            <div className="flex flex-row gap-2">
+                                <p className="flex items-center" key={index}>{v}</p>
+                                <a target="_blank" href={`${PUBLIC_URL}/${orgLinks[index]}`}>Link</a>
+                            </div>
+                        ))}
                     <Divider />
                 </div>
 

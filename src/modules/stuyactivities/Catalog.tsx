@@ -8,7 +8,6 @@ import { Helmet } from "react-helmet";
 
 import OrgCard from "./components/OrgCard";
 import SearchFilter from "./components/SearchFilter";
-import Organization from "./orgs/org_admin/pages/Organization";
 
 type SearchState = {
     orgs: Partial<Organization>[];
@@ -126,16 +125,16 @@ const Catalog = () => {
                     : "";
                 const catalogQuery = `and(or(name.ilike.%${debouncedSearchParams.name}%,keywords.ilike.%${debouncedSearchParams.name}%)${extra})`;
 
-                let query = supabase
+                const origQuery = supabase
                     .from("organizations")
                     .select("*")
                     .neq("state", "PENDING")
                     .neq("state", "PUNISHED")
                     .or(catalogQuery)
                     .range(originalOffset, originalOffset + querySize - 1);
-                console.log(originalOffset);
+
+                let query = origQuery;
                 let skipQuery = false;
-                console.log(debouncedSearchParams);
                 if (debouncedSearchParams.filter.length > 0) {
                     const filterReq = debouncedSearchParams.filter;
 
@@ -144,44 +143,56 @@ const Catalog = () => {
                         query = query.order("created_at", { ascending: false });
                     }
                     if (filterReq.toLowerCase().includes("popular")) {
-                        const { data: mems } = await supabase
-                            .from("memberships")
-                            .select("*")
-                            .eq("active", true);
+                        const { data: mus } = await supabase
+                            .from("organizations")
+                            .select(`id,
+                                memberships (
+                                id,
+                                role,
+                                role_name,
+                                active,
+                                users(
+                                    id,
+                                    first_name,
+                                    last_name,
+                                    email,
+                                    picture,
+                                    is_faculty
+                                )
+                            )`);
 
                         const counts = new Map<number, number>();
-                        (mems ?? []).forEach((m: any) => {
-                            counts.set(m.organization_id, (counts.get(m.organization_id) ?? 0) + 1);
+                        (mus ?? []).forEach((m: any) => {
+                            let membs = 0;
+                            m.memberships.forEach((mem: any) => {
+                                membs += (mem.active ? 1 : 0);
+                            });
+                            counts.set(m.id, membs);
                         });
 
                         const sortedIds = [...counts.entries()]
                             .sort(([, v1], [, v2]) => v2 - v1)
                             .map(([id]) => id);
-                        
-                        query.range(originalOffset, 100 + originalOffset);
+
+                        const mapEntriesArray = [...counts.entries()].sort((a, b) => b[1] - a[1]);
+                        query.range(originalOffset, sortedIds.length);
                         ({ data: orgData, error: orgError } = await query);
                         
-
                         if (orgData) {
-                            const orderMap = new Map(sortedIds.map((id, index) => [id, index]));
+                            const orderMap = new Map(mapEntriesArray);
                             orgData.sort(
                                 (a, b) =>
-                                    (orderMap.get(a.id!) ?? sortedIds.length) -
-                                    (orderMap.get(b.id!) ?? sortedIds.length)
+                                    (orderMap.get(b.id!) ?? sortedIds.length) -
+                                    (orderMap.get(a.id!) ?? sortedIds.length)
                             );
-                            const {data: tops} = await supabase
-                            .from("organizations")
-                            .select("organization_id")
-                            .in("organization_id", [sortedIds[0]])
-                            .eq("active", true);
-                            console.log(tops);
+                            console.log("sorted:", orderMap);
                         }
 
                         skipQuery = true;
                     }
                 }
+                if (JSON.stringify(query['url']).includes("created_at.desc") && !debouncedSearchParams.filter.toLowerCase().includes('new')) query = origQuery;
                 otherData = orgData ?? otherData ?? [];
-                console.log(debouncedSearchParams);
                 if (!skipQuery) ({ data: orgData, error: orgError } = await query);
                 otherData = orgData;
             }
