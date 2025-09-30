@@ -18,7 +18,7 @@ const CharterLanding = () => {
                 <title>Charter an Activity - Epsilon</title>
                 <meta
                     name="description"
-                    content="Start your own club, pub, or team at Stuyvesant High School with our onlines application."
+                    content="Start your own club at Stuyvesant High School with our online application."
                 />
             </Helmet>
             <div className={"relative lg:bottom-32 z-20 pointer-events-none"}>

@@ -169,8 +169,8 @@ const OrgRouter = () => {
                 />
                 <title>
                     {org.name
-                        ? `${org.name} - Epsilon`
-                        : "Unnamed Organization - Epsilon"}
+                        ? `${org.name} - Activity on Epsilon`
+                        : "Unnamed Activity on Epsilon"}
                 </title>
                 <meta
                     name="description"
