@@ -21,9 +21,9 @@ const fadeVariants = {
 };
 
 const Credit = ({
-                    title,
-                    children,
-                }: {
+    title,
+    children,
+}: {
     title: string;
     children?: ReactNode;
 }) => {
@@ -250,7 +250,10 @@ const Index = () => {
             let c = 0;
             const fade = setInterval(() => {
                 c++;
-                audioRef.current!.volume = Math.max(0, audioRef.current!.volume - 0.05);
+                audioRef.current!.volume = Math.max(
+                    0,
+                    audioRef.current!.volume - 0.05,
+                );
                 if (c >= 20) {
                     clearInterval(fade);
                     audioRef.current!.pause();
