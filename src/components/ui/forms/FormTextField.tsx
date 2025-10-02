@@ -24,6 +24,7 @@ type Props = {
     };
     changeStatus?: (field: string, newStatus: boolean) => void;
     hideHelper?: boolean;
+    textHelper?: string;
 };
 
 const FormTextField = ({
@@ -36,6 +37,10 @@ const FormTextField = ({
     status,
     changeStatus,
     hideHelper,
+    textHelper,
+    label,
+    sx,
+    error,
     ...textFieldProps
 }: Props & TextFieldProps) => {
     useEffect(() => {
@@ -80,7 +85,6 @@ const FormTextField = ({
 
     const textChanged = (event: ChangeEvent<HTMLInputElement>) => {
         let targetValue = event.target.value;
-        console.log(`changed to ${targetValue}`, requirements!);
         if (
             requirements?.maxChar &&
             targetValue.length > requirements.maxChar
@@ -90,7 +94,7 @@ const FormTextField = ({
         if (
             requirements?.maxWords &&
             targetValue.replace(/  +/g, " ").split(" ").length >
-                requirements.maxWords
+            requirements.maxWords
         ) {
             targetValue = targetValue
                 .replace(/  +/g, " ")
@@ -132,9 +136,9 @@ const FormTextField = ({
             helperText += `: Minimum ${requirements.minChar} Characters`;
         }
 
-        if (requirements.maxChar) {
+        if (requirements.maxChar && !description) {
             if (countChars) {
-                helperText += " to ";
+                helperText += " to";
             } else {
                 helperText += ":";
             }
@@ -143,7 +147,7 @@ const FormTextField = ({
             helperText += `Maximum ${requirements.maxChar} Characters`;
         }
 
-        if (countChars) helperText += ` (${value?.length || 0}/${requirements.maxChar}).`;
+        if (countChars) helperText += ` (${value?.length || 0}/${requirements.maxChar}.`;
 
         let countWords = false;
 
@@ -172,26 +176,36 @@ const FormTextField = ({
         if (countWords)
             helperText += ` (${value?.trim().split(" ").length || 0}/${requirements.maxWords})`;
     }
-
     return (
         <TextField
             required={required}
-            error={required && status && !!value && !status.value}
+            error={(required && status && !!value && !status.value) || error!}
             onChange={textChanged}
             value={value}
             helperText={
                 !hideHelper && (
                     <>
-                        {description?.split("\n").map((line) => (
-                            <>
+                        {/* description */}
+                        {description?.split("\n").map((line, idx) => (
+                            <span key={idx}>
                                 {line}
                                 <br />
-                            </>
+                            </span>
                         ))}
-                        {helperText}
+
+                        {/* internal helper text (requirements like min/max chars/words) */}
+                       {textHelper?.split("\n").map((line, idx) => (
+                            <span key={idx}>
+                                {line}
+                                <br />
+                            </span>
+                        ))}
                     </>
                 )
             }
+            label={label}
+            sx={sx}
+
             {...textFieldProps}
         />
     );
