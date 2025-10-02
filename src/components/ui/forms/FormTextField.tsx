@@ -24,6 +24,7 @@ type Props = {
     };
     changeStatus?: (field: string, newStatus: boolean) => void;
     hideHelper?: boolean;
+    textHelper?: string;
 };
 
 const FormTextField = ({
@@ -36,6 +37,10 @@ const FormTextField = ({
     status,
     changeStatus,
     hideHelper,
+    textHelper,
+    label,
+    sx,
+    error,
     ...textFieldProps
 }: Props & TextFieldProps) => {
     useEffect(() => {
@@ -80,7 +85,6 @@ const FormTextField = ({
 
     const textChanged = (event: ChangeEvent<HTMLInputElement>) => {
         let targetValue = event.target.value;
-
         if (
             requirements?.maxChar &&
             targetValue.length > requirements.maxChar
@@ -90,7 +94,7 @@ const FormTextField = ({
         if (
             requirements?.maxWords &&
             targetValue.replace(/  +/g, " ").split(" ").length >
-                requirements.maxWords
+            requirements.maxWords
         ) {
             targetValue = targetValue
                 .replace(/  +/g, " ")
@@ -129,21 +133,21 @@ const FormTextField = ({
         let countChars = false;
         if (requirements.minChar) {
             countChars = true;
-            helperText += `: min ${requirements.minChar} Characters`;
+            helperText += `: Minimum ${requirements.minChar} Characters`;
         }
 
-        if (requirements.maxChar) {
+        if (requirements.maxChar && !description) {
             if (countChars) {
-                helperText += " to";
+                helperText += " to ";
             } else {
                 helperText += ":";
             }
             countChars = true;
 
-            helperText += ` max ${requirements.maxChar} Characters`;
+            helperText += `Maximum ${requirements.maxChar} Characters`;
         }
 
-        if (countChars) helperText += `, at ${value?.length || 0}.`;
+        if (countChars) helperText += ` (${value?.length || 0}/${requirements.maxChar}).`;
 
         let countWords = false;
 
@@ -153,7 +157,7 @@ const FormTextField = ({
             }
 
             countWords = true;
-            helperText += ` min ${requirements.minWords} Words`;
+            helperText += ` Minimum ${requirements.minWords} Words`;
         }
 
         if (requirements.maxWords) {
@@ -162,36 +166,46 @@ const FormTextField = ({
             }
 
             if (countWords) {
-                helperText += " to";
+                helperText += " to ";
             }
 
             countWords = true;
-            helperText += ` max ${requirements.maxWords} Words`;
+            helperText += `Maximum ${requirements.maxWords} Words`;
         }
 
         if (countWords)
-            helperText += `, at ${value?.trim().split(" ").length || 0}.`;
+            helperText += ` (${value?.trim().split(" ").length || 0}/${requirements.maxWords})`;
     }
-
     return (
         <TextField
             required={required}
-            error={required && status && !!value && !status.value}
+            error={(required && status && !!value && !status.value) || error!}
             onChange={textChanged}
             value={value}
             helperText={
                 !hideHelper && (
                     <>
-                        {description?.split("\n").map((line) => (
-                            <>
+                        {/* description */}
+                        {description?.split("\n").map((line, idx) => (
+                            <span key={idx}>
                                 {line}
                                 <br />
-                            </>
+                            </span>
                         ))}
-                        {helperText}
+
+                        {/* internal helper text (requirements like min/max chars/words) */}
+                       {textHelper?.split("\n").map((line, idx) => (
+                            <span key={idx}>
+                                {line}
+                                <br />
+                            </span>
+                        ))}
                     </>
                 )
             }
+            label={label}
+            sx={sx}
+
             {...textFieldProps}
         />
     );

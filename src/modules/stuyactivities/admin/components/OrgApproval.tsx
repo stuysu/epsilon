@@ -8,6 +8,8 @@ import { useState } from "react";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import Divider from "../../../../components/ui/Divider";
 
+
+const acronyms = ["AI", "AP", "CS", "GSA"];
 const OrgApproval = ({
     onBack,
     onDecision,
@@ -18,7 +20,8 @@ const OrgApproval = ({
 } & Partial<OrgContextType>) => {
     const { enqueueSnackbar } = useSnackbar();
     const [buttonsDisabled, setButtonsDisabled] = useState(false);
-
+    const creator = org.memberships?.find((m) => m.role === 'CREATOR');
+    let keywords = org.keywords?.split(",");
     const approve = async () => {
         setButtonsDisabled(true);
         const { error } = await supabase.functions.invoke(
@@ -163,7 +166,12 @@ const OrgApproval = ({
                     <Divider />
 
                     <h4>Keywords</h4>
-                    <p className={"font-mono"}>{org.keywords || "none"}</p>
+                    {!org.keywords && <p>none</p>}
+                    {org.keywords &&
+                        keywords?.map((n, i) => (
+                            <p key={i}>{acronyms.includes(n.toUpperCase()) ? n.toUpperCase() : n[0].toUpperCase() + n.slice(1)}</p>
+                        ))
+                    }
                     <Divider />
 
                     <h4>Tags</h4>
@@ -175,11 +183,9 @@ const OrgApproval = ({
                     <Divider />
 
                     <h4>Creator</h4>
+                    <p className="text-sm my-2">{creator?.users?.first_name} {" "} {creator?.users?.last_name}</p>
                     <p className={"font-mono"}>
-                        {
-                            org.memberships?.find((m) => m.role === "CREATOR")
-                                ?.users?.email
-                        }
+                        {creator?.users?.email}
                     </p>
                     <Divider />
 
