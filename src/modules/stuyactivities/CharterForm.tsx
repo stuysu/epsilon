@@ -358,7 +358,7 @@ const CharterForm = () => {
                             sx={{ width: isMobile ? "100%" : "50%" }}
                         />
                         <FormTextField
-                            label="Url"
+                            label="URL Slug"
                             field="url"
                             description={
                                 "https://epsilon.stuysu.org/<this is the part you are entering>\nExample: https://epsilon.stuysu.org/suit"
@@ -371,22 +371,26 @@ const CharterForm = () => {
                                 width: isMobile ? "100%" : "50%",
                             }}
                             error={!!urlError}
-                            helperText={
-                                urlError
+                            textHelper={
+                                (`\nCurrently, the web page to access your Activity would be https://epsilon.stuysu.org/${formData.url}. \n`) +
+                                (urlError
                                     ? urlError
                                     : checkingUrl
-                                      ? "Checking URL..."
-                                      : formData.url && !urlError
-                                        ? "URL is valid."
-                                        : undefined
+                                        ? "Checking URL..."
+                                        : formData.url && !urlError
+                                            ? "URL is valid."
+                                            : "")
                             }
+
+
                             onBlur={async (e: any) => {
                                 const url = e.target.value;
                                 if (url) await validateUrl(url);
+                                if (url.length < 1) setUrlError("");
                             }}
                             onChange={(e: any) => {
                                 const url = e.target.value;
-                                if (url === "" || urlPattern.test(url)) {
+                                if (url.length < 1 || urlPattern.test(url)) {
                                     setFormData((prev) => ({ ...prev, url }));
                                     setUrlError("");
                                 } else {
@@ -396,6 +400,7 @@ const CharterForm = () => {
                                 }
                             }}
                             inputProps={{ pattern: urlPattern.source }}
+                            hideHelper={false}
                         />
                     </FormSection>
                     <FormSection
