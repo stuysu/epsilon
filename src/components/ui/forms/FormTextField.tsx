@@ -138,7 +138,7 @@ const FormTextField = ({
 
         if (requirements.maxChar && !description) {
             if (countChars) {
-                helperText += " to";
+                helperText += " to ";
             } else {
                 helperText += ":";
             }
@@ -147,7 +147,7 @@ const FormTextField = ({
             helperText += `Maximum ${requirements.maxChar} Characters`;
         }
 
-        if (countChars) helperText += ` (${value?.length || 0}/${requirements.maxChar}.`;
+        if (countChars) helperText += ` (${value?.length || 0}/${requirements.maxChar}).`;
 
         let countWords = false;
 
