@@ -21,6 +21,32 @@ function compareTimes(a: CalendarMeeting, b: CalendarMeeting) {
     return 0;
 }
 
+const getRoomNameKey = (roomName?: string) => {
+    if (!roomName) return { isVirtualOrUnknown: true, normalized: "" };
+    const name = String(roomName).trim();
+    if (/^virtual$/i.test(name) || /virtual/i.test(name)) { // if room is virtual, send to bottom
+        return { isVirtualOrUnknown: true, normalized: "" };
+    }
+    return { isVirtualOrUnknown: false, normalized: name.toLowerCase() };
+};
+
+const compareByRoomNameThenTime = (a: CalendarMeeting, b: CalendarMeeting) => {
+    const ra = getRoomNameKey(a.rooms?.name);
+    const rb = getRoomNameKey(b.rooms?.name);
+
+    if (ra.isVirtualOrUnknown && rb.isVirtualOrUnknown) {
+        return compareTimes(a, b);
+    }
+
+    if (ra.isVirtualOrUnknown) return 1;
+    if (rb.isVirtualOrUnknown) return -1;
+
+    const cmp = ra.normalized.localeCompare(rb.normalized);
+    if (cmp !== 0) return cmp;
+
+    return compareTimes(a, b);
+};
+
 /* Schedule of meetings for a given day */
 const DaySchedule = ({ day, meetings }: Props) => {
     return (
@@ -38,17 +64,19 @@ const DaySchedule = ({ day, meetings }: Props) => {
             >
                 {meetings.length ? (
                     meetings
-                        .sort(compareTimes)
+                        .slice()
+                        .sort(compareByRoomNameThenTime)
                         .map((meeting, i) => (
                             <UpcomingMeeting
-                                id={i}
-                                url={meeting.organizations.url}
+                                key={meeting.id ?? i}
+                                id={meeting.id ?? i}
+                                url={meeting.organizations?.url}
                                 title={meeting.title}
                                 description={meeting.description}
                                 start_time={meeting.start_time}
                                 end_time={meeting.end_time}
-                                org_name={meeting.organizations.name}
-                                org_picture={meeting.organizations.picture}
+                                org_name={meeting.organizations?.name}
+                                org_picture={meeting.organizations?.picture}
                                 is_public={meeting.is_public}
                                 room_name={meeting.rooms?.name}
                             ></UpcomingMeeting>
