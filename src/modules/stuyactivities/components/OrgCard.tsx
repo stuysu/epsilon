@@ -3,6 +3,7 @@ import { PUBLIC_URL } from "../../../config/constants";
 import React, { useContext, useState } from "react";
 import UserContext from "../../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
+import ContextMenu from "../../../components/ui/content/ContextMenu";
 
 const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
     const navigate = useNavigate();
@@ -15,7 +16,21 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
             tabIndex={0}
             role="link"
             className="relative transition-transform duration-[400ms] ease-[cubic-bezier(0.3,0.9,0.3,1)] sm:sm:hover:-translate-y-[5px]"
+            id={organization.id?.toString()}
         >
+            <ContextMenu 
+                id={organization.id?.toString()!}
+                items={[
+                    {
+                        label: "Open in new tab",
+                        onClick: () => window.open(`/${organization.url}`, "_blank"),
+                    },
+                    {
+                        label: "Open here",
+                        onClick: () => navigate(`/${organization.url}`),
+                    },
+                ]}
+            >
             <div className="mt-10"></div>
             <div className="relative rounded-2xl overflow-visible">
                 <Box
@@ -245,6 +260,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                     </div>
                 </div>
             </div>
+            </ContextMenu>
         </article>
     );
 };
