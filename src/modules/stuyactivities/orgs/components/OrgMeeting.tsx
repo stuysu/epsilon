@@ -80,7 +80,10 @@ const OrgMeeting = ({
                     {onEdit && (
                         <AsyncButton
                             variant="contained"
-                            onClick={onEdit}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onEdit();
+                            }}
                             sx={{ marginLeft: "10px" }}
                         >
                             Edit
