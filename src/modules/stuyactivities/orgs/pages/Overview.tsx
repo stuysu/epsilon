@@ -65,6 +65,33 @@ const Overview = () => {
                 return;
             }
             if (interactString === "JOIN") {
+                const { data: orgData, error: orgError } = await supabase
+                    .from("organizations")
+                    .select("joinable")
+                    .eq("id", organization.id)
+                    .single();
+
+                if (orgError || !orgData) {
+                    enqueueSnackbar("Unable to verify organization joinability.", {
+                        variant: "error",
+                    });
+                    return;
+                }
+
+                if (!orgData.joinable) {
+                    enqueueSnackbar(
+                        "This club is not joinable.",
+                        { variant: "error" },
+                    );
+                    if (organization.setOrg) {
+                        organization.setOrg({
+                            ...organization,
+                            joinable: false,
+                        });
+                    }
+                    return;
+                }
+
                 const body = { organization_id: organization.id };
                 const { data, error } = await supabase.functions.invoke(
                     "join-organization",

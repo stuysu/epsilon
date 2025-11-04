@@ -1,9 +1,11 @@
-import React, { useContext } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import OrgContext from "../../../../../contexts/OrgContext";
 import UserContext from "../../../../../contexts/UserContext";
+import { supabase } from "../../../../../lib/supabaseClient";
 
 import AdminMember from "../components/AdminMember";
 import { Box, TextField } from "@mui/material";
+import { Switch } from "radix-ui";
 
 import { sortByRole } from "../../../../../utils/DataFormatters";
 import { useSnackbar } from "notistack";
@@ -15,6 +17,16 @@ const Roster = () => {
 
     const user = useContext(UserContext);
     const organization = useContext<OrgContextType>(OrgContext);
+
+    const [joinableState, setJoinableState] = useState<boolean>(
+        organization.joinable ?? false,
+    );
+    const [toggling, setToggling] = useState(false);
+
+    useEffect(() => {
+        setJoinableState(organization.joinable ?? false);
+    }, [organization.joinable]);
+
     const members = organization.memberships
         .filter((member) => member.active)
         .map((member) => {
@@ -36,6 +48,47 @@ const Roster = () => {
         (member) => member.users?.id === user.id,
     );
 
+    const canToggleJoinable =
+        userMember?.role === "CREATOR" || userMember?.role === "ADMIN";
+
+    const toggleJoinable = async () => {
+        if (!canToggleJoinable) {
+            enqueueSnackbar(
+                "You do not have permission to change this setting.",
+                {
+                    variant: "error",
+                },
+            );
+            return;
+        }
+        setToggling(true);
+        const { error } = await supabase
+            .from("organizations")
+            .update({ joinable: !joinableState })
+            .eq("id", organization.id);
+
+        if (error) {
+            enqueueSnackbar("Failed to update joinable state.", {
+                variant: "error",
+            });
+            setToggling(false);
+            return;
+        }
+
+        if (organization.setOrg) {
+            organization.setOrg({
+                ...organization,
+                joinable: !joinableState,
+            });
+        }
+        setJoinableState((prev) => !prev);
+        enqueueSnackbar(
+            `Organization is now ${!joinableState ? "joinable" : "private"}.`,
+            { variant: "success" },
+        );
+        setToggling(false);
+    };
+
     return (
         <Box sx={{ width: "100%" }}>
             <div
@@ -45,9 +98,33 @@ const Roster = () => {
             >
                 <h1>Member Roster</h1>
                 <p className={"mb-6"}>
-                    See your members and manage them here. You can also send
-                    invites to join.
+                    See your members, manage them, or change your club's
+                    joinable status here. Sending invites to join is a feature
+                    in development.
                 </p>
+
+                <div
+                    style={{ marginBottom: 12 }}
+                    className="flex items-center gap-4"
+                >
+                    <div className="font-medium">
+                        {joinableState ? "Joinable" : "Private"}
+                    </div>
+                    <Switch.Root
+                        checked={joinableState}
+                        onCheckedChange={() => toggleJoinable()}
+                        disabled={!canToggleJoinable || toggling}
+                        className={
+                            "relative h-6 w-11 cursor-pointer rounded-full bg-layer-3 transition-colors " +
+                            "data-[state=checked]:bg-blue " +
+                            (!canToggleJoinable || toggling
+                                ? "opacity-50 cursor-not-allowed"
+                                : "")
+                        }
+                    >
+                        <Switch.Thumb className="sm:hover:scale-110 block h-5 w-5 translate-x-0.5 rounded-full bg-white/90 shadow transition-transform data-[state=checked]:translate-x-[22px] ease-in-out" />
+                    </Switch.Root>
+                </div>
 
                 <AsyncButton disabled={true}>
                     <i className={"bx bx-send mr-2"}></i> Invites are coming
@@ -100,6 +177,7 @@ const Roster = () => {
                     </AsyncButton>
                 </Box>
             </Box>
+
             <ItemList height={"auto"}>
                 {members
                     ?.sort(sortByRole)
