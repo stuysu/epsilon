@@ -18,7 +18,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
             className="relative transition-transform duration-[400ms] ease-[cubic-bezier(0.3,0.9,0.3,1)] sm:sm:hover:-translate-y-[5px]"
             id={organization.id?.toString()}
         >
-            <ContextMenu 
+            <ContextMenu
                 id={organization.id?.toString()!}
                 items={[
                     {

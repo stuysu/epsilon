@@ -28,7 +28,7 @@ export default function ContextMenu({ id, items, children }: ContextMenuProps) {
     const handleScroll = () => closeMenu();
 
     document.addEventListener("click", handleClickOutside);
-    document.addEventListener("scroll", handleScroll, true); 
+    document.addEventListener("scroll", handleScroll, true);
     return () => {
         document.removeEventListener("scroll", handleScroll, true);
         document.removeEventListener("click", handleClickOutside);
