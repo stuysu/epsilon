@@ -109,75 +109,77 @@ const Index = () => {
     }, [time]);
 
     return (
-        <LoginGate sx={{ width: "100%" }} page={"view the calendar"}>
+        <div>
             <Helmet>
                 <title>Calendar - Epsilon</title>
                 <meta
                     name="description"
-                    content="Browse Activities and Happenings at Stuyvesant High School."
+                    content="Happenings at Stuyvesant High School."
                 />
             </Helmet>
+            <LoginGate sx={{ width: "100%" }} page={"view the calendar"}>
+                <div
+                    className={
+                        "m-4 sm:m-12 flex items-start gap-8 min-h-screen max-md:flex-col"
+                    }
+                >
+                    <DayPicker
+                        mode="single"
+                        month={currentMonth}
+                        selected={time.toDate()}
+                        onSelect={(date) => {
+                            if (!date) return;
+                            setTime(dayjs(date));
+                        }}
+                        onMonthChange={(month) => {
+                            setCurrentMonth(month);
+                            setLoading(true);
+                            updateHighlightedDays(
+                                month.getMonth(),
+                                month.getFullYear(),
+                            );
+                        }}
+                        showOutsideDays
+                        weekStartsOn={1}
+                        classNames={{
+                            month_grid: "max-sm:scale-125 origin-top-left",
+                            button_previous:
+                                "fill-typography-1 z-10 relative sm:hover:bg-layer-2 rounded-full",
+                            button_next:
+                                "fill-typography-1 z-10 relative sm:hover:bg-layer-2 rounded-full",
+                            root: "max-sm:pb-16 p-5 rounded-xl p-3 bg-layer-1 shadow-control relative max-md:w-full",
+                            nav: "absolute flex gap-2 ml-16 right-5 top-3.5",
+                            month_caption:
+                                "relative -top-1 mb-3 text-typography-1 important",
+                            weekday: "font-normal text-typography-2",
+                            day: "p-0 text-center text-typography-1",
+                            day_button:
+                                "sm:w-10 sm:h-10 w-8 h-8 grid place-items-center rounded-md transition-colors sm:hover:bg-layer-2",
+                            selected:
+                                "bg-accent text-typography-1 rounded-md pointer-events-none",
+                            outside: "opacity-50 pointer-events-none",
+                            today: "important rounded-md",
+                        }}
+                        /* underline markers for meeting days */
+                        modifiers={{
+                            hasMeetings: (date) =>
+                                date.getMonth() === currentMonth.getMonth() &&
+                                date.getFullYear() ===
+                                    currentMonth.getFullYear() &&
+                                highlightedDays.includes(date.getDate()),
+                        }}
+                        modifiersClassNames={{
+                            hasMeetings:
+                                'relative after:content-[""] after:left-1/2 after:absolute after:-translate-x-1/2 after:bottom-1 after:w-1 after:h-1 after:rounded-full after:bg-yellow',
+                        }}
+                    />
 
-            <div
-                className={
-                    "m-4 sm:m-12 flex items-start gap-8 min-h-screen max-md:flex-col"
-                }
-            >
-                <DayPicker
-                    mode="single"
-                    month={currentMonth}
-                    selected={time.toDate()}
-                    onSelect={(date) => {
-                        if (!date) return;
-                        setTime(dayjs(date));
-                    }}
-                    onMonthChange={(month) => {
-                        setCurrentMonth(month);
-                        setLoading(true);
-                        updateHighlightedDays(
-                            month.getMonth(),
-                            month.getFullYear(),
-                        );
-                    }}
-                    showOutsideDays
-                    weekStartsOn={1}
-                    classNames={{
-                        month_grid: "max-sm:scale-125 origin-top-left",
-                        button_previous:
-                            "fill-typography-1 z-10 relative sm:hover:bg-layer-2 rounded-full",
-                        button_next:
-                            "fill-typography-1 z-10 relative sm:hover:bg-layer-2 rounded-full",
-                        root: "max-sm:pb-16 p-5 rounded-xl p-3 bg-layer-1 shadow-control relative max-md:w-full",
-                        nav: "absolute flex gap-2 ml-16 right-5 top-3.5",
-                        month_caption:
-                            "relative -top-1 mb-3 text-typography-1 important",
-                        weekday: "font-normal text-typography-2",
-                        day: "p-0 text-center text-typography-1",
-                        day_button:
-                            "sm:w-10 sm:h-10 w-8 h-8 grid place-items-center rounded-md transition-colors sm:hover:bg-layer-2",
-                        selected:
-                            "bg-accent text-typography-1 rounded-md pointer-events-none",
-                        outside: "opacity-50 pointer-events-none",
-                        today: "important rounded-md",
-                    }}
-                    /* underline markers for meeting days */
-                    modifiers={{
-                        hasMeetings: (date) =>
-                            date.getMonth() === currentMonth.getMonth() &&
-                            date.getFullYear() === currentMonth.getFullYear() &&
-                            highlightedDays.includes(date.getDate()),
-                    }}
-                    modifiersClassNames={{
-                        hasMeetings:
-                            'relative after:content-[""] after:left-1/2 after:absolute after:-translate-x-1/2 after:bottom-1 after:w-1 after:h-1 after:rounded-full after:bg-yellow',
-                    }}
-                />
-
-                <div className={"w-full"}>
-                    <DaySchedule day={time} meetings={meetings} />
+                    <div className={"w-full"}>
+                        <DaySchedule day={time} meetings={meetings} />
+                    </div>
                 </div>
-            </div>
-        </LoginGate>
+            </LoginGate>
+        </div>
     );
 };
 

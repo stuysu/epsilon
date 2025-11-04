@@ -35,7 +35,7 @@ export const topNavItems = [
     },
     {
         label: "Arista",
-        path: "/arista",
+        path: "/arista-landing",
         icon: "bx bxs-hot",
         external: false,
     },
