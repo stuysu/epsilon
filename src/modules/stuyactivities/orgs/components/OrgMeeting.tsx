@@ -46,12 +46,11 @@ const OrgMeeting = ({
 
     return (
         <div className={"w-full cursor-pointer"}>
-            <div className="flex justify-between items-center bg-layer-2 transition-colors sm:hover:bg-layer-3 p-4"
-                 onClick={() => setOpen(true)}
+            <div
+                className="flex justify-between items-center bg-layer-2 transition-colors sm:hover:bg-layer-3 p-4"
+                onClick={() => setOpen(true)}
             >
-                <div
-                    className={"w-full flex justify-between items-center"}
-                >
+                <div className={"w-full flex justify-between items-center"}>
                     <div className="w-full pt-1">
                         <h4>{title}</h4>
                         <p>
@@ -80,7 +79,10 @@ const OrgMeeting = ({
                     {onEdit && (
                         <AsyncButton
                             variant="contained"
-                            onClick={onEdit}
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onEdit();
+                            }}
                             sx={{ marginLeft: "10px" }}
                         >
                             Edit

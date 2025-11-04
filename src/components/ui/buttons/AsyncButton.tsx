@@ -3,7 +3,9 @@ import { ButtonProps } from "@mui/material/Button";
 import { ButtonBase, SxProps, Theme } from "@mui/material";
 
 interface AsyncButtonProps extends ButtonProps {
-    onClick?: () => void | Promise<any>;
+    onClick?: (
+        e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    ) => void | Promise<any>;
     sx?: SxProps<Theme>;
     isPrimary?: boolean;
 }
@@ -17,11 +19,13 @@ const AsyncButton: React.FC<AsyncButtonProps> = ({
 }) => {
     const [isLoading, setIsLoading] = useState(false);
 
-    const handleClick = async () => {
+    const handleClick = async (
+        e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
+    ) => {
         setIsLoading(true);
         try {
             if (onClick) {
-                const result = onClick();
+                const result = onClick(e);
                 if (result instanceof Promise) {
                     await result;
                 }
@@ -33,7 +37,9 @@ const AsyncButton: React.FC<AsyncButtonProps> = ({
 
     return (
         <ButtonBase
-            onClick={handleClick}
+            onClick={(e) => {
+                handleClick(e);
+            }}
             sx={{
                 fontFamily: "inter-variable",
                 fontVariationSettings: "'wght' 700",
