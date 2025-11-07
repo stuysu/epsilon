@@ -3,7 +3,7 @@ import { PUBLIC_URL } from "../../../config/constants";
 import React, { useContext, useState } from "react";
 import UserContext from "../../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
-import ContextMenu from "../../../components/ui/content/ContextMenu";
+import ContextMenu from "../../../components/ui/content/ContextGroup";
 
 const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
     const navigate = useNavigate();
@@ -19,7 +19,6 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
             id={organization.id?.toString()}
         >
             <ContextMenu 
-                id={organization.id?.toString()!}
                 items={[
                     {
                         label: "Open in new tab",
