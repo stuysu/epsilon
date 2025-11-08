@@ -158,7 +158,7 @@ const UserHome = () => {
             </header>
 
             <section className="relative flex sm:flex-row flex-col gap-12 w-full mb-10">
-                <div className="sm:sticky top-10 flex flex-wrap content-start gap-x-5 gap-y-2 sm:max-w-[50vw] max-h-[calc(100dvh-2.5rem)] overflow-y-auto pb-6">
+                <div className="sm:sticky top-10 flex flex-wrap content-start justify-start gap-2 sm:max-w-[50vw] max-h-[calc(100dvh-2.5rem)] overflow-y-auto pb-6">
                     {user.memberships?.map((membership) => {
                         if (membership.active)
                             return (
