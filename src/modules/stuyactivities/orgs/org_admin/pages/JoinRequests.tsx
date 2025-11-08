@@ -4,6 +4,9 @@ import OrgContext from "../../../../../contexts/OrgContext";
 import PendingMember from "../components/PendingMember";
 import { Box } from "@mui/material";
 import ItemList from "../../../../../components/ui/lists/ItemList";
+import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
+import { supabase } from "../../../../../lib/supabaseClient";
+import { enqueueSnackbar } from "notistack";
 
 const JoinRequests = () => {
     const organization = useContext<OrgContextType>(OrgContext);
@@ -19,6 +22,44 @@ const JoinRequests = () => {
             };
         });
 
+    const handleApproveAll = async () => {
+        let membersApproved = 0;
+        pendingMembers.forEach(async (member) => {
+            const { error } = await supabase.functions.invoke("approve-member", {
+                body: { member_id: member.membershipId },
+            });
+
+            if (error) {
+                enqueueSnackbar(
+                    "Error approving member. Contact it@stuysu.org for support.",
+                    { variant: "error" },
+                );
+                return;
+            }
+
+            let memberIndex = organization.memberships.findIndex(
+                (m) => m.id === member.membershipId,
+            );
+            let memberData = organization.memberships[memberIndex];
+
+            memberData.active = true;
+
+            if (organization.setOrg) {
+                organization.setOrg({
+                    ...organization,
+                    memberships: [
+                        ...organization.memberships.slice(0, memberIndex),
+                        memberData,
+                        ...organization.memberships.slice(memberIndex + 1),
+                    ],
+                });
+            }
+            membersApproved++;
+        });
+
+        if (membersApproved > 0) enqueueSnackbar(`Approved ${membersApproved} members!`, { variant: "success" });
+        else enqueueSnackbar("No join requests to approve.", {variant: "info"});
+    };
     return (
         <Box sx={{ width: "100%", minHeight: "70vh" }}>
             <div
@@ -31,6 +72,8 @@ const JoinRequests = () => {
                     When people request to join your Activity, you'll see them
                     here.
                 </p>
+                <br />
+                <AsyncButton variant="contained" onClick={handleApproveAll} className="rounded-md border-b-2 border-black">Approve All</AsyncButton>
             </div>
 
             {pendingMembers?.length > 0 && (
