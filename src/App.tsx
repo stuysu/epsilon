@@ -30,11 +30,9 @@ const App = () => {
 
         window.addEventListener("resize", handleResize);
 
-        // Cleanup function to remove the event listener
         return () => window.removeEventListener("resize", handleResize);
     }, []);
 
-    // Custom thumb component with type annotations
     const renderThumb = ({
         style,
         ...props
@@ -44,7 +42,7 @@ const App = () => {
     }) => {
         const thumbStyle: CSSProperties = {
             backgroundColor: "grey",
-            borderRadius: "4px", // Adjust this value as needed to match your design
+            borderRadius: "4px",
         };
         return <div style={{ ...style, ...thumbStyle }} {...props} />;
     };
