@@ -178,7 +178,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                                     <p>{timeStr}</p></div>
                             </div>
 
-                            <div className={"relative p-4 bg-layer-2 rounded-lg"}><p className={"text-wrap overflow-scroll"}>{message.content}</p>
+                            <div className={"relative p-4 bg-layer-2 rounded-lg"}><p className={"text-wrap"}>{message.content}</p>
 
                                 {message.users.id === user.id && (
                                     <div
