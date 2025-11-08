@@ -3,7 +3,6 @@ import { PUBLIC_URL } from "../../../config/constants";
 import React, { useContext, useState } from "react";
 import UserContext from "../../../contexts/UserContext";
 import { useNavigate } from "react-router-dom";
-import ContextMenu from "../../../components/ui/content/ContextGroup";
 
 const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
     const navigate = useNavigate();
@@ -12,24 +11,14 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
     const user: UserContextType = useContext(UserContext);
 
     return (
-        <article
+        <a
             tabIndex={0}
             role="link"
-            className="relative transition-transform duration-[400ms] ease-[cubic-bezier(0.3,0.9,0.3,1)] sm:sm:hover:-translate-y-[5px]"
+            className="relative transition-transform duration-[400ms] ease-[cubic-bezier(0.3,0.9,0.3,1)] sm:sm:hover:-translate-y-[5px] no-underline"
             id={organization.id?.toString()}
+            href={`/${organization.url}`}
+            target="_blank"
         >
-            <ContextMenu 
-                items={[
-                    {
-                        label: "Open in new tab",
-                        onClick: () => window.open(`/${organization.url}`, "_blank"),
-                    },
-                    {
-                        label: "Open here",
-                        onClick: () => navigate(`/${organization.url}`),
-                    },
-                ]}
-            >
             <div className="mt-10"></div>
             <div className="relative rounded-2xl overflow-visible">
                 <Box
@@ -48,7 +37,6 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                     }}
                 />
                 <div
-                    onClick={() => navigate(`/${organization.url}`)}
                     className="
     relative
     rounded-3xl
@@ -259,8 +247,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                     </div>
                 </div>
             </div>
-            </ContextMenu>
-        </article>
+        </a>
     );
 };
 
