@@ -34,7 +34,11 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                 />
                 <Link
                     to={`/${organization.url}`}
-                    style={{ textDecoration: "none", color: "inherit", display: "block" }}
+                    style={{
+                        textDecoration: "none",
+                        color: "inherit",
+                        display: "block",
+                    }}
                     className="
     relative
     rounded-3xl
