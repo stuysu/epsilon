@@ -8,6 +8,39 @@ import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
 import { supabase } from "../../../../../lib/supabaseClient";
 import { enqueueSnackbar } from "notistack";
 
+export const handleApprove = async (id: number, organization: OrgContextType, single: boolean) => {
+        const { error } = await supabase.functions.invoke("approve-member", {
+            body: { member_id: id },
+        });
+
+        if (error) {
+            enqueueSnackbar(
+                "Error approving member. Contact it@stuysu.org for support.",
+                { variant: "error" },
+            );
+            return;
+        }
+
+        let memberIndex = organization.memberships.findIndex(
+            (m) => m.id === id,
+        );
+        let memberData = organization.memberships[memberIndex];
+
+        memberData.active = true;
+
+        if (organization.setOrg) {
+            organization.setOrg({
+                ...organization,
+                memberships: [
+                    ...organization.memberships.slice(0, memberIndex),
+                    memberData,
+                    ...organization.memberships.slice(memberIndex + 1),
+                ],
+            });
+        }
+        if (single) enqueueSnackbar("Member approved!", { variant: "success" });
+};
+
 const JoinRequests = () => {
     const organization = useContext<OrgContextType>(OrgContext);
     const pendingMembers = organization.memberships
@@ -25,40 +58,11 @@ const JoinRequests = () => {
     const handleApproveAll = async () => {
         let membersApproved = 0;
         pendingMembers.forEach(async (member) => {
-            const { error } = await supabase.functions.invoke("approve-member", {
-                body: { member_id: member.membershipId },
-            });
-
-            if (error) {
-                enqueueSnackbar(
-                    "Error approving member. Contact it@stuysu.org for support.",
-                    { variant: "error" },
-                );
-                return;
-            }
-
-            let memberIndex = organization.memberships.findIndex(
-                (m) => m.id === member.membershipId,
-            );
-            let memberData = organization.memberships[memberIndex];
-
-            memberData.active = true;
-
-            if (organization.setOrg) {
-                organization.setOrg({
-                    ...organization,
-                    memberships: [
-                        ...organization.memberships.slice(0, memberIndex),
-                        memberData,
-                        ...organization.memberships.slice(memberIndex + 1),
-                    ],
-                });
-            }
+            handleApprove(member.membershipId!, organization, false);
             membersApproved++;
         });
 
-        if (membersApproved > 0) enqueueSnackbar(`Approved ${membersApproved} members!`, { variant: "success" });
-        else enqueueSnackbar("No join requests to approve.", {variant: "info"});
+        enqueueSnackbar(`Approved ${membersApproved} members`, { variant: "success" });
     };
     return (
         <Box sx={{ width: "100%", minHeight: "70vh" }}>
@@ -86,6 +90,7 @@ const JoinRequests = () => {
                             email={member.email || "Undefined"}
                             picture={member.picture}
                             key={i}
+                            approveFunc={(() => {handleApprove(member.membershipId!, organization, true)})}
                         />
                     ))}
                 </ItemList>
