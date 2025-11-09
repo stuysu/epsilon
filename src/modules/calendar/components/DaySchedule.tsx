@@ -110,7 +110,14 @@ const DaySchedule = ({ day, meetings }: Props) => {
                             className="ml-2 text-2xl leading-none"
                             aria-hidden="true"
                         >
-                            {sortDesc ? "↓" : "↑"}
+                            <i
+                                className={`bx ${
+                                    sortDesc
+                                        ? "bx-down-arrow-alt"
+                                        : "bx-up-arrow-alt"
+                                }`}
+                                aria-hidden="true"
+                            />
                         </span>
                     </button>
                 </div>
