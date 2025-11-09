@@ -11,13 +11,10 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
     const user: UserContextType = useContext(UserContext);
 
     return (
-        <a
+        <article
             tabIndex={0}
             role="link"
-            className="relative transition-transform duration-[400ms] ease-[cubic-bezier(0.3,0.9,0.3,1)] sm:sm:hover:-translate-y-[5px] no-underline"
-            id={organization.id?.toString()}
-            href={`/${organization.url}`}
-            target="_blank"
+            className="relative transition-transform duration-[400ms] ease-[cubic-bezier(0.3,0.9,0.3,1)] sm:sm:hover:-translate-y-[5px]"
         >
             <div className="mt-10"></div>
             <div className="relative rounded-2xl overflow-visible">
@@ -37,6 +34,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                     }}
                 />
                 <div
+                    onClick={() => navigate(`/${organization.url}`)}
                     className="
     relative
     rounded-3xl
@@ -247,7 +245,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                     </div>
                 </div>
             </div>
-        </a>
+        </article>
     );
 };
 

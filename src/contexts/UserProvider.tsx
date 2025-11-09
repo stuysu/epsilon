@@ -197,9 +197,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
     }
 
     return (
-        <UserContext.Provider value={value}>
-            {children}
-        </UserContext.Provider>
+        <UserContext.Provider value={value}>{children}</UserContext.Provider>
     );
 };
 
