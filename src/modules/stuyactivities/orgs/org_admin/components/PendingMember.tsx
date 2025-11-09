@@ -23,7 +23,7 @@ const PendingMember = ({
 }) => {
     const { enqueueSnackbar } = useSnackbar();
     const organization = useContext(OrgContext);
-    
+
     const handleReject = async () => {
         const { error } = await supabase
             .from("memberships")
