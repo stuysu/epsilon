@@ -256,7 +256,7 @@ const AdminUpsertMeeting = ({
             return;
         }
 
-        if(advisorNeeded && meetingAdvisor === "") {
+        if(advisorNeeded && !meetingAdvisor.trim()) {
             enqueueSnackbar("Meeting in this room requires a faculty advisor.", {
                 variant: "error",
             });
@@ -378,6 +378,7 @@ const AdminUpsertMeeting = ({
                     fullWidth
                     multiline
                     rows={4}
+                    sx={{ mt: 2 }}
                 />
 
                 <DatePicker
