@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import OrgContext from "../../../../../contexts/OrgContext";
 import AdminUpsertMeeting from "../components/AdminUpsertMeeting";
 
@@ -16,6 +16,10 @@ const Scheduler = () => {
     const organization = useContext(OrgContext);
     const { enqueueSnackbar } = useSnackbar();
     const isMeetingMobile = useMediaQuery("(max-width: 1450px)");
+
+    const advisorNeededRooms = ["503", "505", "507"];
+    const advisorNeededLowestFloor = 7;
+    const [advisorNeeded, setAdvisorNeeded] = useState<boolean>(false);
 
     const [editState, setEditState] = useState<{
         id: number | undefined;
@@ -36,6 +40,34 @@ const Scheduler = () => {
         isPublic: undefined,
         editing: false,
     });
+
+    useEffect(() => {
+        const checkAdvisorNeeded = async () => {
+            if(!editState.room) return;
+
+            const { data, error } = await supabase
+                .from("rooms")
+                .select("id, name, floor")
+                .eq("id", editState.room)
+                .single();
+
+            if (error || !data) {
+                return enqueueSnackbar("Error checking room floor.", { variant: "error" });
+            }
+
+            console.log(data);
+
+            const roomName = data.name?.toString();
+            const roomFloor = data.floor;
+
+            const needsAdvisorPrompt =
+                roomFloor >= advisorNeededLowestFloor || advisorNeededRooms.includes(roomName);
+
+            needsAdvisorPrompt ? setAdvisorNeeded(true) : setAdvisorNeeded(false);
+        };
+
+        checkAdvisorNeeded();
+    }, [editState]);
 
     if (
         organization.state === "LOCKED" ||
