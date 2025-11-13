@@ -17,10 +17,6 @@ const Scheduler = () => {
     const { enqueueSnackbar } = useSnackbar();
     const isMeetingMobile = useMediaQuery("(max-width: 1450px)");
 
-    const advisorNeededRooms = ["503", "505", "507"];
-    const advisorNeededLowestFloor = 7;
-    const [advisorNeeded, setAdvisorNeeded] = useState<boolean>(false);
-
     const [editState, setEditState] = useState<{
         id: number | undefined;
         title: string | undefined;
@@ -29,6 +25,7 @@ const Scheduler = () => {
         end: string | undefined;
         room: number | undefined;
         isPublic: boolean | undefined;
+        advisor: string | undefined;
         editing: boolean;
     }>({
         id: undefined,
@@ -38,36 +35,9 @@ const Scheduler = () => {
         end: undefined,
         room: undefined,
         isPublic: undefined,
+        advisor: undefined,
         editing: false,
     });
-
-    useEffect(() => {
-        const checkAdvisorNeeded = async () => {
-            if(!editState.room) return;
-
-            const { data, error } = await supabase
-                .from("rooms")
-                .select("id, name, floor")
-                .eq("id", editState.room)
-                .single();
-
-            if (error || !data) {
-                return enqueueSnackbar("Error checking room floor.", { variant: "error" });
-            }
-
-            console.log(data);
-
-            const roomName = data.name?.toString();
-            const roomFloor = data.floor;
-
-            const needsAdvisorPrompt =
-                roomFloor >= advisorNeededLowestFloor || advisorNeededRooms.includes(roomName);
-
-            needsAdvisorPrompt ? setAdvisorNeeded(true) : setAdvisorNeeded(false);
-        };
-
-        checkAdvisorNeeded();
-    }, [editState]);
 
     if (
         organization.state === "LOCKED" ||
@@ -105,6 +75,7 @@ const Scheduler = () => {
                             end: undefined,
                             room: undefined,
                             isPublic: undefined,
+                            advisor: undefined,
                             editing: true,
                         })
                     }
@@ -140,6 +111,7 @@ const Scheduler = () => {
                                     end: meeting.end_time,
                                     room: meeting.rooms?.id,
                                     isPublic: meeting.is_public,
+                                    advisor: meeting.advisor,
                                     editing: true,
                                 });
                             }}
@@ -187,6 +159,7 @@ const Scheduler = () => {
                     start={editState.start}
                     end={editState.end}
                     isPublic={editState.isPublic}
+                    advisor={editState.advisor}
                     open={editState.editing}
                     onClose={() => {
                         setEditState({
@@ -197,6 +170,7 @@ const Scheduler = () => {
                             end: undefined,
                             room: undefined,
                             isPublic: undefined,
+                            advisor: undefined,
                             editing: false,
                         });
                     }}
