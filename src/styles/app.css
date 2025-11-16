@@ -213,3 +213,12 @@
         color-scheme: dark;
     }
 }
+
+.scroll-hide {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+}
+.scroll-hide::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}

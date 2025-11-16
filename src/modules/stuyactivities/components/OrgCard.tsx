@@ -2,10 +2,9 @@ import { Avatar, Box, Skeleton } from "@mui/material";
 import { PUBLIC_URL } from "../../../config/constants";
 import React, { useContext, useState } from "react";
 import UserContext from "../../../contexts/UserContext";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
-    const navigate = useNavigate();
     const [imgLoaded, setImgLoaded] = useState(false);
 
     const user: UserContextType = useContext(UserContext);
@@ -33,8 +32,13 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                         filter: "blur(50px)",
                     }}
                 />
-                <div
-                    onClick={() => navigate(`/${organization.url}`)}
+                <Link
+                    to={`/${organization.url}`}
+                    style={{
+                        textDecoration: "none",
+                        color: "inherit",
+                        display: "block",
+                    }}
                     className="
     relative
     rounded-3xl
@@ -243,7 +247,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                             </div>
                         </div>
                     </div>
-                </div>
+                </Link>
             </div>
         </article>
     );

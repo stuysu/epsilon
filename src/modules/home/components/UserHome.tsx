@@ -13,6 +13,7 @@ import OrgStreamPost from "../../stuyactivities/orgs/components/OrgStreamPost";
 import DisplayLinks from "../../../components/DisplayLinks";
 import { useNavigate } from "react-router-dom";
 import ItemList from "../../../components/ui/lists/ItemList";
+import { Scrollbars } from "react-custom-scrollbars-2";
 
 const currentHour = new Date().getHours();
 const timeGreeting =
@@ -159,34 +160,79 @@ const UserHome = () => {
                 <h2 className={"-mt-1.5"}>Here's what's happening.</h2>
             </header>
 
-            <section className="relative flex sm:flex-row flex-col gap-12 w-full mb-10">
-                <div className="h-fit sm:sticky top-10 justify-center gap-2 sm:gap-5 grid grid-cols-[auto_auto] sm:grid-cols-[auto] lg:grid-cols-[auto_auto] xl:grid-cols-[auto_auto_auto]">
-                    {user.memberships?.map((membership) => {
-                        if (membership.active)
-                            return (
-                                <OrgBlock
-                                    key={membership.id}
-                                    name={
-                                        membership?.organizations?.name ||
-                                        "No Name"
-                                    }
-                                    role={membership?.role || "MEMBER"}
-                                    role_name={membership?.role_name}
-                                    url={membership?.organizations?.url || "/"}
-                                    picture={membership?.organizations?.picture}
-                                />
-                            );
-                        return null;
-                    })}
-                    <div
-                        className={
-                            "cursor-pointer flex items-center justify-center flex-col w-44 h-44 rounded-xl sm:hover:opacity-75 transition-opacity border-accent border-dashed border"
-                        }
-                        onClick={() => navigate(`/stuyactivities`)}
+            <section className="relative flex sm:flex-row justify-between flex-col gap-12 w-full mb-10">
+                <div
+                    className="sm:sticky top-10 sm:max-w-[50vw] w-full"
+                    style={{
+                        height: "calc(100dvh - 96px)",
+                        maxHeight: "calc(100dvh - 96px)",
+                    }}
+                >
+                    <Scrollbars
+                        universal
+                        autoHide
+                        autoHideTimeout={1000}
+                        autoHideDuration={200}
+                        style={{ height: "100%" }}
+                        onWheel={(e) => e.stopPropagation()}
+                        renderView={(
+                            props: React.HTMLProps<HTMLDivElement>,
+                        ) => (
+                            <div
+                                {...props}
+                                className="scroll-hide flex flex-wrap content-start justify-start gap-2 pb-6 w-full h-full"
+                                style={{ overflowX: "hidden" }}
+                            />
+                        )}
+                        renderTrackHorizontal={() => (
+                            <div style={{ display: "none" }} />
+                        )}
+                        renderThumbVertical={({
+                            style,
+                            ...props
+                        }: {
+                            style: React.CSSProperties;
+                        } & React.HTMLProps<HTMLDivElement>) => (
+                            <div
+                                {...props}
+                                style={{
+                                    ...style,
+                                    backgroundColor: "grey",
+                                    borderRadius: 4,
+                                }}
+                            />
+                        )}
                     >
-                        <i className="bx bx-md bx-plus-circle mb-5 text-accent"></i>
-                        <p className="text-accent">Join an Activity!</p>
-                    </div>
+                        {user.memberships?.map((membership) => {
+                            if (membership.active)
+                                return (
+                                    <OrgBlock
+                                        key={membership.id}
+                                        name={
+                                            membership?.organizations?.name ||
+                                            "No Name"
+                                        }
+                                        role={membership?.role || "MEMBER"}
+                                        role_name={membership?.role_name}
+                                        url={
+                                            membership?.organizations?.url ||
+                                            "/"
+                                        }
+                                        picture={
+                                            membership?.organizations?.picture
+                                        }
+                                    />
+                                );
+                            return null;
+                        })}
+                        <div
+                            className="cursor-pointer flex items-center justify-center flex-col w-44 h-44 rounded-xl sm:hover:opacity-75 transition-opacity border-accent border-dashed border"
+                            onClick={() => navigate(`/stuyactivities`)}
+                        >
+                            <i className="bx bx-md bx-plus-circle mb-5 text-accent"></i>
+                            <p className="text-accent">Join an Activity!</p>
+                        </div>
+                    </Scrollbars>
                 </div>
                 <div className="w-full max-w-3xl flex flex-col gap-14 max-sm:mt-6">
                     <div className={"relative w-full group"}>
