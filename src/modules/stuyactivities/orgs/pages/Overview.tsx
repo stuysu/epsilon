@@ -540,6 +540,7 @@ const Overview = () => {
                                         end_time={meeting.end_time}
                                         is_public={meeting.is_public}
                                         room_name={meeting.rooms?.name}
+                                        advisor={meeting.advisor || "None"}
                                         org_name={organization.name}
                                         org_picture={organization.picture || ""}
                                         isMobile={isMeetingMobile}

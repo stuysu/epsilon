@@ -36,6 +36,7 @@ type meetingType = {
         name: string;
     };
     is_public: boolean;
+    advisor: string;
 };
 
 const UserHome = () => {
@@ -71,7 +72,8 @@ const UserHome = () => {
                     rooms (
                         name
                     ),
-                    is_public
+                    is_public,
+                    advisor
                 `,
                 )
                 .in("organization_id", [userOrgIds])
@@ -214,6 +216,7 @@ const UserHome = () => {
                                         }
                                         room_name={meeting.rooms?.name}
                                         is_public={meeting.is_public}
+                                        advisor={meeting.advisor}
                                     />
                                 ))}
                             </ItemList>

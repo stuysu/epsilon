@@ -102,6 +102,7 @@ const Scheduler = () => {
                             org_picture={organization.picture || ""}
                             is_public={meeting.is_public}
                             isMobile={isMeetingMobile}
+                            advisor={meeting.advisor}
                             onEdit={() => {
                                 setEditState({
                                     id: meeting.id,

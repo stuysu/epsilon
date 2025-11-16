@@ -29,6 +29,7 @@ type CalendarMeeting = {
         name: string;
         picture: string;
     };
+    advisor: string;
 };
 
 type SearchParams = {

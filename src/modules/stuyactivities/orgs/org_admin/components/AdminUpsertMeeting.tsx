@@ -275,7 +275,7 @@ const AdminUpsertMeeting = ({
                     start_time: startTime.toISOString(),
                     end_time: endTime.toISOString(),
                     is_public: isPub,
-                    advisor: meetingAdvisor
+                    advisor: meetingAdvisor.trim()
                 },
             });
         } else {
@@ -291,7 +291,7 @@ const AdminUpsertMeeting = ({
                     end_time: endTime.toISOString(),
                     is_public: isPub,
                     notify_faculty: notifyFaculty,
-                    advisor: meetingAdvisor
+                    advisor: meetingAdvisor.trim()
                 },
             });
         }

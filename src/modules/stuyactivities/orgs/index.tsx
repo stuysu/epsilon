@@ -111,7 +111,8 @@ const OrgRouter = () => {
                             id,
                             name,
                             floor
-                        )
+                        ),
+                        advisor
                     ),
                     posts (
                         id,

@@ -36,6 +36,7 @@ const Audit = () => {
                                     end_time={meeting.end_time || ""}
                                     is_public={meeting.is_public || false}
                                     room_name={meeting.rooms?.name || "Virtual"}
+                                    advisor={meeting.advisor || "None"}
                                     org_name={organization.name || "No Org"}
                                     org_picture={
                                         organization.picture ||
