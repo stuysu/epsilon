@@ -88,7 +88,8 @@ const Index = () => {
             url,
             name,
             picture
-          )
+          ),
+          advisor
         `,
                 )
                 .gte("start_time", dayStart.toISOString())

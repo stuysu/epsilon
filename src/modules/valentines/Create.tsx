@@ -173,9 +173,7 @@ const Create = () => {
             <Box sx={{ margin: "1rem 0", width: "80vw" }}>
                 <Divider />
             </Box>
-            <h4>
-                Preview
-            </h4>
+            <h4>Preview</h4>
             <ValentineDisplay
                 valentine={{
                     id: 0,

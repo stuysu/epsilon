@@ -28,9 +28,7 @@ const LoginButton = ({ onMouseEnter, onMouseLeave }: LoginButtonProps) => {
             onMouseLeave={onMouseLeave}
             title="You must sign in with a stuy.edu address"
         >
-            <i
-                className="absolute bx bxl-google left-4 bx-sm"
-            />
+            <i className="absolute bx bxl-google left-4 bx-sm" />
             <span>Sign in with Google</span>
         </button>
     );

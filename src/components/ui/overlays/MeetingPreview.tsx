@@ -20,6 +20,7 @@ type Props = {
     organizationPicture?: string;
     organizationName?: string;
     roomName?: string;
+    advisor?: string;
     onClose: () => void;
 };
 
@@ -34,6 +35,7 @@ const MeetingPreview = ({
     organizationPicture,
     organizationName,
     roomName,
+    advisor,
     onClose,
 }: Props) => {
     const start = dayjs(startTime);
@@ -159,6 +161,14 @@ const MeetingPreview = ({
                                                         : "Private Meeting"
                                                 }
                                             />
+                                            {advisor?.trim() ? (
+                                                <ToggleChip
+                                                    title={
+                                                        "Advisor: " + advisor
+                                                    }
+                                                    selectable={false}
+                                                ></ToggleChip>
+                                            ) : null}
                                         </div>
 
                                         <div className="mt-7 pb-10 max-h-[15lh] overflow-y-scroll">

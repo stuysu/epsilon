@@ -152,42 +152,56 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                     let messageTime = dayjs(message.created_at);
                     let timeStr = `${messageTime.month() + 1}/${messageTime.date()}/${messageTime.year()}`;
                     return (
-                        <article key={message.id} className={"my-6 bg-layer-1 p-3 rounded-xl shadow-control"}>
-                            <div className={"flex gap-3 items-center mb-3"}><Avatar.Root className="w-10 h-10 rounded-md overflow-hidden block">
-                                <Avatar.Image
-                                    className="size-full object-cover"
-                                    src={message.users.picture || ""}
-                                    alt={message.users.first_name}
-                                />
-                                <Avatar.Fallback
-                                    className="text-center size-full flex items-center justify-center bg-layer-3 text-xl relative pt-1 text-typography-2"
-                                    delayMs={600}
-                                >
-                                    {message.users.first_name
-                                        ?.charAt(0)
-                                        .toUpperCase()}
-                                </Avatar.Fallback>
-                            </Avatar.Root>
-                                <div><h4>
-                                    {
-                                        message.users.first_name +
-                                        " " +
-                                        message.users.last_name
-                                    }
-                                </h4>
-                                    <p>{timeStr}</p></div>
+                        <article
+                            key={message.id}
+                            className={
+                                "my-6 bg-layer-1 p-3 rounded-xl shadow-control"
+                            }
+                        >
+                            <div className={"flex gap-3 items-center mb-3"}>
+                                <Avatar.Root className="w-10 h-10 rounded-md overflow-hidden block">
+                                    <Avatar.Image
+                                        className="size-full object-cover"
+                                        src={message.users.picture || ""}
+                                        alt={message.users.first_name}
+                                    />
+                                    <Avatar.Fallback
+                                        className="text-center size-full flex items-center justify-center bg-layer-3 text-xl relative pt-1 text-typography-2"
+                                        delayMs={600}
+                                    >
+                                        {message.users.first_name
+                                            ?.charAt(0)
+                                            .toUpperCase()}
+                                    </Avatar.Fallback>
+                                </Avatar.Root>
+                                <div>
+                                    <h4>
+                                        {message.users.first_name +
+                                            " " +
+                                            message.users.last_name}
+                                    </h4>
+                                    <p>{timeStr}</p>
+                                </div>
                             </div>
 
-                            <div className={"relative p-4 bg-layer-2 rounded-lg"}><p className={"text-wrap"}>{message.content}</p>
+                            <div
+                                className={"relative p-4 bg-layer-2 rounded-lg"}
+                            >
+                                <p className={"text-wrap overflow-scroll"}>
+                                    {message.content}
+                                </p>
 
                                 {message.users.id === user.id && (
                                     <div
                                         className={
                                             "absolute right-3 top-3.5 bx bx-trash bx-sm text-red cursor-pointer sm:hover:opacity-75 transition-opacity"
                                         }
-                                        onClick={() => deleteMessage(message.id)}
+                                        onClick={() =>
+                                            deleteMessage(message.id)
+                                        }
                                     ></div>
-                                )}</div>
+                                )}
+                            </div>
                         </article>
                     );
                 })}

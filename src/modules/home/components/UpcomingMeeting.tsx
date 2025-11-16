@@ -16,6 +16,7 @@ const UpcomingMeeting = ({
     org_picture,
     room_name,
     is_public,
+    advisor,
 }: {
     id: number;
     url: string;
@@ -27,6 +28,7 @@ const UpcomingMeeting = ({
     org_picture: string;
     room_name?: string;
     is_public: boolean;
+    advisor: string;
     sx?: object;
 }) => {
     const [open, setOpen] = useState(false);
@@ -100,6 +102,7 @@ const UpcomingMeeting = ({
                 endTime={end_time}
                 organizationPicture={org_picture}
                 organizationName={org_name}
+                advisor={advisor}
                 roomName={room_name}
                 onClose={() => setOpen(false)}
             />

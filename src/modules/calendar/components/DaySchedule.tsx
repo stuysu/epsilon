@@ -145,6 +145,7 @@ const DaySchedule = ({ day, meetings }: Props) => {
                             org_picture={meeting.organizations?.picture}
                             is_public={meeting.is_public}
                             room_name={meeting.rooms?.name}
+                            advisor={meeting.advisor}
                         ></UpcomingMeeting>
                     ))
                 ) : (

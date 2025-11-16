@@ -109,7 +109,11 @@ const OrgApproval = ({
                         <Avatar
                             src={org.picture}
                             alt={org.name}
-                            sx={{ width: "150px", height: "150px", borderRadius: "15px",}}
+                            sx={{
+                                width: "150px",
+                                height: "150px",
+                                borderRadius: "15px",
+                            }}
                         />
                     ) : (
                         <p>No picture provided</p>

@@ -13,6 +13,7 @@ type Props = {
     end_time?: string;
     is_public?: boolean;
     room_name?: string;
+    advisor?: string;
     org_name?: string;
     org_picture?: string;
     isMobile?: boolean;
@@ -29,6 +30,7 @@ const OrgMeeting = ({
     end_time,
     is_public,
     room_name,
+    advisor,
     org_name,
     org_picture,
     onlyUpcoming,
@@ -73,6 +75,12 @@ const OrgMeeting = ({
                                 selectable={false}
                             ></ToggleChip>
                         )}
+                        {advisor?.trim() ? (
+                            <ToggleChip
+                                title={"Advisor: " + advisor}
+                                selectable={false}
+                            ></ToggleChip>
+                        ) : null}
                     </div>
                 </div>
                 <div className="flex">
@@ -110,6 +118,7 @@ const OrgMeeting = ({
                 organizationPicture={org_picture}
                 organizationName={org_name}
                 roomName={room_name}
+                advisor={advisor}
                 onClose={() => setOpen(false)}
             />
         </div>

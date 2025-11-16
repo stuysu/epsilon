@@ -29,7 +29,7 @@ const Stream = () => {
                 title="No Posts Yet"
                 description="This Activity has not posted any updates yet."
             />
-        )
+        );
     }
 
     return (

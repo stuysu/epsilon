@@ -200,9 +200,7 @@ const NavBar: FC = () => {
             >
                 <div className="px-6 py-4">
                     {/* overflow nav */}
-                    <h5>
-                        More Tools
-                    </h5>
+                    <h5>More Tools</h5>
                     {overflowItems.map((item, idx) => (
                         <div
                             key={`${item.path}-overflow-${idx}`}
@@ -467,11 +465,7 @@ const NavBar: FC = () => {
                             style={{ position: "relative" }}
                         >
                             <i className={`${item.icon} max-sm:hidden`}></i>
-                            <div
-                                className={
-                                    "sm:hidden w-10"
-                                }
-                            >
+                            <div className={"sm:hidden w-10"}>
                                 <i className={`${item.icon} scale-125`}></i>
                             </div>
                             {!isMobile && (
@@ -495,14 +489,13 @@ const NavBar: FC = () => {
                                 onClick={() => setMoreOpen((v) => !v)}
                                 className="w-10"
                             >
-                                    <i
-                                        className={
-                                            `bx bx-dots-horizontal-rounded scale-150 ${
-                                                moreOpen
-                                                    ? "opacity-100 text-typography-1"
-                                                    : "opacity-75 text-typography-2"
-                                            }`}
-                                    ></i>
+                                <i
+                                    className={`bx bx-dots-horizontal-rounded scale-150 ${
+                                        moreOpen
+                                            ? "opacity-100 text-typography-1"
+                                            : "opacity-75 text-typography-2"
+                                    }`}
+                                ></i>
                             </div>
                         </div>
                     )}

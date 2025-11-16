@@ -35,6 +35,7 @@ const AdminUpsertMeeting = ({
     end,
     isPublic,
     open,
+    advisor,
     onClose,
     onSave,
 }: {
@@ -46,6 +47,7 @@ const AdminUpsertMeeting = ({
     end?: string;
     isPublic?: boolean;
     open: boolean;
+    advisor?: string;
     onClose: () => void;
     onSave: (saveState: Partial<Meeting>, isInsert: boolean) => void;
 }) => {
@@ -55,6 +57,12 @@ const AdminUpsertMeeting = ({
     const [meetingTitle, setMeetingTitle] = useState(title || "");
     const [meetingDesc, setMeetingDesc] = useState(description || "");
     const [roomId, setRoomId] = useState(room_id);
+    const [meetingAdvisor, setMeetingAdvisor] = useState(advisor || "");
+
+    /* hard coded constants to be changed later */
+    const advisorNeededRooms = ["503", "505", "507"];
+    const advisorNeededLowestFloor = 7;
+    const [advisorNeeded, setAdvisorNeeded] = useState<boolean>(false);
 
     /* date inputs */
     const [startTime, setStartTime] = useState<Dayjs | null>(
@@ -174,6 +182,37 @@ const AdminUpsertMeeting = ({
         filterRooms();
     }, [loading, id, roomId, startTime, endTime, enqueueSnackbar]);
 
+    useEffect(() => {
+        const checkAdvisorNeeded = async () => {
+            if (!roomId) return;
+
+            const { data, error } = await supabase
+                .from("rooms")
+                .select("id, name, floor")
+                .eq("id", roomId)
+                .single();
+
+            if (error || !data) {
+                return enqueueSnackbar("Error checking room floor.", {
+                    variant: "error",
+                });
+            }
+
+            const roomName = data.name?.toString();
+            const roomFloor = data.floor;
+
+            const needsAdvisorPrompt =
+                roomFloor >= advisorNeededLowestFloor ||
+                advisorNeededRooms.includes(roomName);
+
+            needsAdvisorPrompt
+                ? setAdvisorNeeded(true)
+                : setAdvisorNeeded(false);
+        };
+
+        checkAdvisorNeeded();
+    }, [roomId, enqueueSnackbar]);
+
     const handleSave = async () => {
         let supabaseReturn;
 
@@ -222,6 +261,16 @@ const AdminUpsertMeeting = ({
             return;
         }
 
+        if (advisorNeeded && !meetingAdvisor.trim()) {
+            enqueueSnackbar(
+                "Meeting in this room requires a faculty advisor.",
+                {
+                    variant: "error",
+                },
+            );
+            return;
+        }
+
         if (id) {
             // update
             supabaseReturn = await supabase.functions.invoke("edit-meeting", {
@@ -234,6 +283,7 @@ const AdminUpsertMeeting = ({
                     start_time: startTime.toISOString(),
                     end_time: endTime.toISOString(),
                     is_public: isPub,
+                    advisor: meetingAdvisor.trim(),
                 },
             });
         } else {
@@ -249,6 +299,7 @@ const AdminUpsertMeeting = ({
                     end_time: endTime.toISOString(),
                     is_public: isPub,
                     notify_faculty: notifyFaculty,
+                    advisor: meetingAdvisor.trim(),
                 },
             });
         }
@@ -316,6 +367,16 @@ const AdminUpsertMeeting = ({
                         ))}
                     </TextField>
                 </Box>
+
+                <TextField
+                    value={meetingAdvisor}
+                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                        setMeetingAdvisor(event.target.value)
+                    }
+                    label="Faculty Advisor Present"
+                    fullWidth
+                />
+
                 <TextField
                     value={meetingDesc}
                     onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -325,6 +386,7 @@ const AdminUpsertMeeting = ({
                     fullWidth
                     multiline
                     rows={4}
+                    sx={{ mt: 2 }}
                 />
 
                 <DatePicker

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import OrgContext from "../../../../../contexts/OrgContext";
 import AdminUpsertMeeting from "../components/AdminUpsertMeeting";
 
@@ -25,6 +25,7 @@ const Scheduler = () => {
         end: string | undefined;
         room: number | undefined;
         isPublic: boolean | undefined;
+        advisor: string | undefined;
         editing: boolean;
     }>({
         id: undefined,
@@ -34,6 +35,7 @@ const Scheduler = () => {
         end: undefined,
         room: undefined,
         isPublic: undefined,
+        advisor: undefined,
         editing: false,
     });
 
@@ -73,6 +75,7 @@ const Scheduler = () => {
                             end: undefined,
                             room: undefined,
                             isPublic: undefined,
+                            advisor: undefined,
                             editing: true,
                         })
                     }
@@ -99,6 +102,7 @@ const Scheduler = () => {
                             org_picture={organization.picture || ""}
                             is_public={meeting.is_public}
                             isMobile={isMeetingMobile}
+                            advisor={meeting.advisor}
                             onEdit={() => {
                                 setEditState({
                                     id: meeting.id,
@@ -108,6 +112,7 @@ const Scheduler = () => {
                                     end: meeting.end_time,
                                     room: meeting.rooms?.id,
                                     isPublic: meeting.is_public,
+                                    advisor: meeting.advisor,
                                     editing: true,
                                 });
                             }}
@@ -155,6 +160,7 @@ const Scheduler = () => {
                     start={editState.start}
                     end={editState.end}
                     isPublic={editState.isPublic}
+                    advisor={editState.advisor}
                     open={editState.editing}
                     onClose={() => {
                         setEditState({
@@ -165,6 +171,7 @@ const Scheduler = () => {
                             end: undefined,
                             room: undefined,
                             isPublic: undefined,
+                            advisor: undefined,
                             editing: false,
                         });
                     }}

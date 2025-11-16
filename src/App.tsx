@@ -17,7 +17,8 @@ const SnackbarOverride = styled(MaterialDesignContent)(() => ({
     fontSize: "14px",
     fontVariationSettings: "'wght' 700",
     padding: "7px 15px",
-    boxShadow: "0 4px 4px 0 var(--shadow-base), 0 0 1px 0 var(--shadow-antithesis) inset, 0 1px 3px 0 var(--shadow-decoration) inset",
+    boxShadow:
+        "0 4px 4px 0 var(--shadow-base), 0 0 1px 0 var(--shadow-antithesis) inset, 0 1px 3px 0 var(--shadow-decoration) inset",
 }));
 
 const App = () => {
