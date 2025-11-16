@@ -118,9 +118,7 @@ const ValentineList = ({
 }: ValentineDisplayInput) => {
     return (
         <article className={"bg-layer-1 rounded-lg p-4 mb-3"}>
-            <p>
-                {valentine.message}
-            </p>
+            <p>{valentine.message}</p>
             <Buttons
                 valentine={valentine}
                 refresh={refresh}

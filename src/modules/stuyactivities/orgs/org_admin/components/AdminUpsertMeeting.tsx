@@ -184,29 +184,34 @@ const AdminUpsertMeeting = ({
 
     useEffect(() => {
         const checkAdvisorNeeded = async () => {
-            if(!roomId) return;
-    
+            if (!roomId) return;
+
             const { data, error } = await supabase
                 .from("rooms")
                 .select("id, name, floor")
                 .eq("id", roomId)
                 .single();
-    
+
             if (error || !data) {
-                return enqueueSnackbar("Error checking room floor.", { variant: "error" });
+                return enqueueSnackbar("Error checking room floor.", {
+                    variant: "error",
+                });
             }
-        
+
             const roomName = data.name?.toString();
             const roomFloor = data.floor;
-    
+
             const needsAdvisorPrompt =
-                roomFloor >= advisorNeededLowestFloor || advisorNeededRooms.includes(roomName);
-    
-            needsAdvisorPrompt ? setAdvisorNeeded(true) : setAdvisorNeeded(false);
+                roomFloor >= advisorNeededLowestFloor ||
+                advisorNeededRooms.includes(roomName);
+
+            needsAdvisorPrompt
+                ? setAdvisorNeeded(true)
+                : setAdvisorNeeded(false);
         };
-    
+
         checkAdvisorNeeded();
-    }, [roomId, enqueueSnackbar])
+    }, [roomId, enqueueSnackbar]);
 
     const handleSave = async () => {
         let supabaseReturn;
@@ -256,10 +261,13 @@ const AdminUpsertMeeting = ({
             return;
         }
 
-        if(advisorNeeded && !meetingAdvisor.trim()) {
-            enqueueSnackbar("Meeting in this room requires a faculty advisor.", {
-                variant: "error",
-            });
+        if (advisorNeeded && !meetingAdvisor.trim()) {
+            enqueueSnackbar(
+                "Meeting in this room requires a faculty advisor.",
+                {
+                    variant: "error",
+                },
+            );
             return;
         }
 
@@ -275,7 +283,7 @@ const AdminUpsertMeeting = ({
                     start_time: startTime.toISOString(),
                     end_time: endTime.toISOString(),
                     is_public: isPub,
-                    advisor: meetingAdvisor.trim()
+                    advisor: meetingAdvisor.trim(),
                 },
             });
         } else {
@@ -291,7 +299,7 @@ const AdminUpsertMeeting = ({
                     end_time: endTime.toISOString(),
                     is_public: isPub,
                     notify_faculty: notifyFaculty,
-                    advisor: meetingAdvisor.trim()
+                    advisor: meetingAdvisor.trim(),
                 },
             });
         }

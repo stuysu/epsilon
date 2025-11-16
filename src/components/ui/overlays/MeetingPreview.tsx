@@ -163,10 +163,12 @@ const MeetingPreview = ({
                                             />
                                             {advisor?.trim() ? (
                                                 <ToggleChip
-                                                    title={"Advisor: " + advisor}
+                                                    title={
+                                                        "Advisor: " + advisor
+                                                    }
                                                     selectable={false}
                                                 ></ToggleChip>
-                                            ) : null }
+                                            ) : null}
                                         </div>
 
                                         <div className="mt-7 pb-10 max-h-[15lh] overflow-y-scroll">

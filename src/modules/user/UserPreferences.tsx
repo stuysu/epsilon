@@ -132,7 +132,11 @@ const UserPreferences = () => {
                         <div>
                             <h4 className={"mt-1 text-left"}>
                                 Everything You've Come to Expect
-                                <i className={"bx ml-1 bx-happy-alt top-px relative"}></i>
+                                <i
+                                    className={
+                                        "bx ml-1 bx-happy-alt top-px relative"
+                                    }
+                                ></i>
                             </h4>
                             <p className={"mb-3 text-left"}>
                                 An unapologetically vibrant theme with baroque

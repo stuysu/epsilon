@@ -1,10 +1,4 @@
-import {
-    Box,
-    BoxProps,
-    Step,
-    StepLabel,
-    Stepper,
-} from "@mui/material";
+import { Box, BoxProps, Step, StepLabel, Stepper } from "@mui/material";
 import {
     Children,
     cloneElement,
@@ -77,9 +71,7 @@ const MultiPageForm = <T extends unknown>({
     return (
         <Box {...boxProps}>
             <Box sx={{ height: "10%", width: "100%", padding: "20px" }}>
-                <h2>
-                    {title}
-                </h2>
+                <h2>{title}</h2>
             </Box>
 
             <Box

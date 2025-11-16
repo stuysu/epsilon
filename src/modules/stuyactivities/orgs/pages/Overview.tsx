@@ -72,17 +72,19 @@ const Overview = () => {
                     .single();
 
                 if (orgError || !orgData) {
-                    enqueueSnackbar("Unable to verify organization joinability.", {
-                        variant: "error",
-                    });
+                    enqueueSnackbar(
+                        "Unable to verify organization joinability.",
+                        {
+                            variant: "error",
+                        },
+                    );
                     return;
                 }
 
                 if (!orgData.joinable) {
-                    enqueueSnackbar(
-                        "This club is not joinable.",
-                        { variant: "error" },
-                    );
+                    enqueueSnackbar("This club is not joinable.", {
+                        variant: "error",
+                    });
                     if (organization.setOrg) {
                         organization.setOrg({
                             ...organization,

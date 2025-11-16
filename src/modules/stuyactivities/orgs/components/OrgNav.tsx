@@ -121,7 +121,9 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                             position: "relative",
                         }}
                     >
-                        <i className={"bx bx-menu bx-sm relative bottom-1.5"}></i>
+                        <i
+                            className={"bx bx-menu bx-sm relative bottom-1.5"}
+                        ></i>
                     </span>
                 </button>
 
@@ -140,17 +142,13 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                         </button>
 
                         <div className="flex flex-col gap-1.5 w-full p-16">
-                            <h5 className={"px-3"}>
-                                About
-                            </h5>
+                            <h5 className={"px-3"}>About</h5>
 
                             {renderMobileButtons(navLinks)}
 
                             {adminLinks.length > 0 && (
                                 <>
-                                    <h5 className={"mt-6 px-3"}>
-                                        Admin Tools
-                                    </h5>
+                                    <h5 className={"mt-6 px-3"}>Admin Tools</h5>
                                     {renderMobileButtons(adminLinks)}
                                 </>
                             )}

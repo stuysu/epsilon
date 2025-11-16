@@ -80,7 +80,7 @@ const OrgMeeting = ({
                                 title={"Advisor: " + advisor}
                                 selectable={false}
                             ></ToggleChip>
-                        ) : null }
+                        ) : null}
                     </div>
                 </div>
                 <div className="flex">

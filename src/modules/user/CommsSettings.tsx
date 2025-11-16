@@ -155,7 +155,11 @@ const CommsSettings = () => {
                                     }
                                 >
                                     <i className={"bx bx-group bx-lg"}></i>
-                                    <div className={"flex flex-col gap-1 w-[60vw]"}>
+                                    <div
+                                        className={
+                                            "flex flex-col gap-1 w-[60vw]"
+                                        }
+                                    >
                                         <h4>{membership.organization_name}</h4>
                                         <p>
                                             Activity{" "}
