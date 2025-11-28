@@ -5,7 +5,6 @@ import { Route, Routes } from "react-router-dom";
 import UserContext from "../../../../contexts/UserContext";
 import OrgContext from "../../../../contexts/OrgContext";
 
-    import { useSearchParams } from "react-router-dom";
 import Roster from "./pages/Roster";
 import JoinRequests from "./pages/JoinRequests";
 import Scheduler from "./pages/Scheduler";
@@ -16,11 +15,7 @@ import AttendanceOverview from "./pages/AttendanceOverview";
 import MeetingAttendance from "./pages/MeetingAttendance";
 import ContentUnavailable from "../../../../components/ui/content/ContentUnavailable";
 
-
 const OrgAdminRouter = () => {
-
-    const [searchParams] = useSearchParams();
-    const interventionMode = searchParams.get("intervention") === "true";
     const user = useContext<UserContextType>(UserContext);
     const organization = useContext<OrgContextType>(OrgContext);
 
