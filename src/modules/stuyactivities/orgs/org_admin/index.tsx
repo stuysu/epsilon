@@ -47,7 +47,7 @@ const OrgAdminRouter = () => {
             </Routes>
         );
     }
-   
+
     return (
         <ContentUnavailable
             icon="bx-no-entry"
