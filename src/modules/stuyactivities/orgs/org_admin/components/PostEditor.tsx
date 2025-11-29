@@ -110,26 +110,28 @@ const PostEditor = ({
             description: postData.description,
         };
 
+        // There is no need for .limits(1) since id is primary_key/unique
         let { data, error } = await supabase
             .from("posts")
             .update(payload)
             .eq("id", postData.id)
-            .select();
+            .select()
+            .single();
 
-        if (error || !data) {
+        if (error) {
             return enqueueSnackbar(
                 "Could not update post. Please contact it@stuysu.org for support.",
                 { variant: "error" },
             );
         }
 
-        data[0].organizations = {
+        data.organizations = {
             id: orgId,
             name: orgName,
             picture: orgPicture,
         };
 
-        if (onSave) onSave(data[0] as Post);
+        if (onSave) onSave(data as Post);
         enqueueSnackbar("Post updated!", { variant: "success" });
     };
 
