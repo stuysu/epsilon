@@ -114,7 +114,9 @@ const PostEditor = ({
             .from("posts")
             .update(payload)
             .eq("id", postData.id)
-            .select();
+            .select()
+            .limit(1)
+            .single();
 
         if (error || !data) {
             return enqueueSnackbar(
@@ -123,13 +125,13 @@ const PostEditor = ({
             );
         }
 
-        data[0].organizations = {
+        data.organizations = {
             id: orgId,
             name: orgName,
             picture: orgPicture,
         };
 
-        if (onSave) onSave(data[0] as Post);
+        if (onSave) onSave(data as Post);
         enqueueSnackbar("Post updated!", { variant: "success" });
     };
 
