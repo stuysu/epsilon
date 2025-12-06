@@ -58,6 +58,9 @@ const OrgMeeting = ({
                         <p>
                             {startTime} to {endTime}
                         </p>
+                        <p>
+                            {advisor?.trim() ? `Advisor: ${advisor}` : ""}
+                        </p>
                     </div>
                     <div className=" pointer-events-none flex gap-2 w-fit justify-end">
                         <ToggleChip
@@ -75,12 +78,6 @@ const OrgMeeting = ({
                                 selectable={false}
                             ></ToggleChip>
                         )}
-                        {advisor?.trim() ? (
-                            <ToggleChip
-                                title={"Advisor: " + advisor}
-                                selectable={false}
-                            ></ToggleChip>
-                        ) : null}
                     </div>
                 </div>
                 <div className="flex">
