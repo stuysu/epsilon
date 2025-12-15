@@ -215,14 +215,18 @@ const Regulations = () => {
                         <br />
                         <br />
                         Long‑term reservations require an email request to
-                        clubpub@stuysu.org explaining the need. Rooms must be
+                        clubpub@stuysu.org explaining the need, and excessive
+                        room bookings will be monitored. Rooms must be
                         restored to their original condition after each meeting;
                         staff or Auditor complaints about cleanliness or damage
-                        may result in strikes or suspension. Activities must use
+                        may result in strikes or suspension. Clubs must use
                         the specific room indicated on Epsilon, cancel
                         reservations at least 24 hours in advance if plans
                         change, and email clubpub@stuysu.org or consult an SU
-                        representative if no suitable room is available.
+                        representative if no suitable room is available. Any club
+                        found not using a room that has been reserved or has not had
+                        its reservation cancelled at least 24 hours in advance
+                        will receive a strike.
                         Reserving non‑classroom facilities—such as the
                         cafeteria, auditorium, or lecture halls—requires the
                         faculty advisor to email clubpub@stuysu.org and Mr.
