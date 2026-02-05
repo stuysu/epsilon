@@ -57,7 +57,7 @@ const AlertDisplay = () => {
                 variant="filled"
                 onClose={data.severity === "error" ? undefined : handleClose}
             >
-                <div className={"relative top-0.5 invert brightness-200"}>
+                <div className={"relative top-0.5 invert brightness-200 *:text-[var(--text-primary)]"}>
                     <DisplayLinks text={data.message} />
                 </div>
             </Alert>
