@@ -5,10 +5,8 @@ import { Route, Routes } from "react-router-dom";
 import UserContext from "../../../../contexts/UserContext";
 import OrgContext from "../../../../contexts/OrgContext";
 
-import Roster from "./pages/Roster";
-import JoinRequests from "./pages/JoinRequests";
+import Personnel from "./pages/Personnel";
 import Scheduler from "./pages/Scheduler";
-import Posts from "./pages/Posts";
 import Organization from "./pages/Organization";
 import Messages from "./pages/Messages";
 import AttendanceOverview from "./pages/AttendanceOverview";
@@ -32,10 +30,8 @@ const OrgAdminRouter = () => {
     if (isOrgAdmin) {
         return (
             <Routes>
-                <Route path={"/roster"} Component={Roster} />
-                <Route path={"/join-requests"} Component={JoinRequests} />
+                <Route path={"/roster"} Component={Personnel} />
                 <Route path={"/scheduler"} Component={Scheduler} />
-                <Route path={"/posts"} Component={Posts} />
                 <Route path={"/attendance"} Component={AttendanceOverview} />
                 <Route
                     path="/attendance/:meetingId"
@@ -43,7 +39,7 @@ const OrgAdminRouter = () => {
                 />
                 <Route path={"/org-edits"} Component={Organization} />
                 <Route path={"/messages"} Component={Messages} />
-                <Route path={"/*"} Component={Roster} />
+                <Route path={"/*"} Component={Personnel} />
             </Routes>
         );
     }

@@ -38,11 +38,11 @@ const UserPreferences = () => {
                         </div>
                         <div>
                             <h4 className={"mt-1 text-left"}>
-                                Tranquility Base Hotel & Casino
+                                Tranquility Base
                             </h4>
                             <p className={"mb-3 text-left"}>
-                                Our default dark theme, perfect for a focused
-                                experience that's a little classy.
+                                Our default dark theme, detailed and easy on
+                                the eyes.
                             </p>
                             <img
                                 src={`${PUBLIC_URL}/symbols/darkmode.png`}
@@ -65,8 +65,8 @@ const UserPreferences = () => {
                                 <i className={"bx ml-1 bx-test-tube"}></i>
                             </h4>
                             <p className={"mb-3 text-left"}>
-                                Our light mode inspired by simplicity, with
-                                reduced visual noise all around. Now in beta.
+                                Our light theme inspired by simplicity, with
+                                reduced visual noise.
                             </p>
                             <img
                                 src={`${PUBLIC_URL}/symbols/lightmode.png`}
@@ -140,7 +140,7 @@ const UserPreferences = () => {
                             </h4>
                             <p className={"mb-3 text-left"}>
                                 An unapologetically vibrant theme with baroque
-                                motifs. Funsies only.
+                                motifs.
                             </p>
                             <img
                                 src={`${PUBLIC_URL}/symbols/orangemode.png`}

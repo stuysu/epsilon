@@ -148,10 +148,10 @@ const Index = () => {
                                 "fill-typography-1 z-10 relative sm:hover:bg-layer-2 rounded-full",
                             button_next:
                                 "fill-typography-1 z-10 relative sm:hover:bg-layer-2 rounded-full",
-                            root: "max-sm:pb-16 p-5 rounded-xl p-3 bg-layer-1 shadow-control relative max-md:w-full",
-                            nav: "absolute flex gap-2 ml-16 right-5 top-3.5",
+                            root: "max-sm:pb-16 p-7 rounded-xl bg-layer-1 shadow-control relative max-md:w-full",
+                            nav: "absolute flex gap-2 ml-16 right-7 top-6",
                             month_caption:
-                                "relative -top-1 mb-3 text-typography-1 important",
+                                "relative -top-1 mb-5 text-typography-1 important",
                             weekday: "font-normal text-typography-2",
                             day: "p-0 text-center text-typography-1",
                             day_button:

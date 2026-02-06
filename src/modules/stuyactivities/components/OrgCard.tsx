@@ -25,7 +25,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                         width: "100%",
                         opacity: 0.2,
                         height: "100%",
-                        backgroundImage: `url(${PUBLIC_URL}/textures/org_card.png)`,
+                        backgroundImage: `url(${PUBLIC_URL}/textures/org_color.png)`,
                         backgroundSize: "cover",
                         backgroundPosition: "center",
                         zIndex: 0,
@@ -41,7 +41,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                     }}
                     className="
     relative
-    rounded-3xl
+    rounded-2xl
     cursor-pointer
     h-[445px]
     flex flex-col
@@ -100,7 +100,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                     borderRadius: "20px",
                                     position: "absolute",
                                     boxShadow:
-                                        "inset 0 0 5px 1px rgba(255, 255, 255, 0.3)",
+                                        "inset 0 0 2px 1px rgba(255, 255, 255, 0.1)",
                                     zIndex: 10,
                                 }}
                             ></Box>
@@ -108,7 +108,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                             {user.signed_in && (
                                 <p
                                     className={
-                                        "absolute top-12 right-0 text-typography-2 bg-layer-2 px-2 py-1 rounded-md important shadow-control"
+                                        "absolute top-12 right-0 text-typography-2 bg-layer-2 px-2.5 py-1 rounded-full important shadow-control"
                                     }
                                 >
                                     <i className="bx bx-group bx-xs relative top-0.5 mr-1"></i>
@@ -125,7 +125,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                     height: "120px",
                                     borderRadius: "20px",
                                     position: "absolute",
-                                    opacity: 0.25,
+                                    opacity: 0.3,
                                     objectFit: "cover",
                                     filter: "blur(20px)",
                                 }}
@@ -202,7 +202,16 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                 "important overflow-hidden overflow-ellipsis whitespace-normal [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:1]"
                             }
                         >
-                            {organization.tags?.join(" • ")}
+                            {organization.tags?.length ? (
+                                organization.tags.map((tag: string, i: number) => (
+                                    <React.Fragment key={tag + i}>
+                                        {i > 0 && (
+                                            <span className="opacity-50 mx-1 bottom-px relative">•</span>
+                                        )}
+                                        <span>{tag}</span>
+                                    </React.Fragment>
+                                ))
+                            ) : null}
                         </p>
                     </div>
 
@@ -229,20 +238,26 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                             <div className={"flex justify-between"}>
                                 <p>Days</p>
                                 <p className={"important"}>
-                                    {organization.meeting_days?.length
-                                        ? organization.meeting_days
-                                              .map(
-                                                  (day: string) =>
-                                                      ({
-                                                          MONDAY: "M",
-                                                          TUESDAY: "T",
-                                                          WEDNESDAY: "W",
-                                                          THURSDAY: "R",
-                                                          FRIDAY: "F",
-                                                      })[day],
-                                              )
-                                              .join(" · ")
-                                        : "None"}
+                                    {organization.meeting_days?.length ? (
+                                        organization.meeting_days.map(
+                                            (day: string, i: number) => (
+                                                <React.Fragment key={day + i}>
+                                                    {i > 0 && (
+                                                        <span className="opacity-50 mx-1">·</span>
+                                                    )}
+                                                    {({
+                                                        MONDAY: "M",
+                                                        TUESDAY: "T",
+                                                        WEDNESDAY: "W",
+                                                        THURSDAY: "R",
+                                                        FRIDAY: "F",
+                                                    } as Record<string, string>)[day]}
+                                                </React.Fragment>
+                                            ),
+                                        )
+                                    ) : (
+                                        "None"
+                                    )}
                                 </p>
                             </div>
                         </div>

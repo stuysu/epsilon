@@ -48,7 +48,7 @@ const AsyncButton: React.FC<AsyncButtonProps> = ({
                     ? "var(--accent)"
                     : "var(--layer-secondary)",
                 color: isPrimary ? "white" : "var(--text-primary)",
-                padding: "11px 20px 13px 20px",
+                padding: "9px 18px 11px 18px",
                 fontSize: "14px",
                 opacity: isLoading || props.disabled ? 0.6 : 1,
                 boxShadow: props.disabled

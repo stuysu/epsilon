@@ -2,7 +2,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import dayjs from "dayjs";
 import { daysOfWeek, monthNames } from "../../../utils/TimeStrings";
 import Divider from "../Divider";
-import ToggleChip from "../input/ToggleChip";
+import InteractiveChip from "../input/InteractiveChip";
 import { Avatar } from "radix-ui";
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -99,7 +99,7 @@ const MeetingPreview = ({
                                                     alt={organizationName}
                                                 />
                                                 <Avatar.Fallback
-                                                    className="text-center size-full flex items-center justify-center bg-layer-3 text-xl relative pt-1 text-typography-2"
+                                                    className="w-8 text-center size-full flex items-center justify-center bg-layer-3 text-xl relative pt-1 text-typography-2"
                                                     delayMs={600}
                                                 >
                                                     {(organizationName || "O")
@@ -141,19 +141,19 @@ const MeetingPreview = ({
                                         <h1>{title || "Untitled Meeting"}</h1>
 
                                         <div className="flex gap-2 flex-wrap">
-                                            <ToggleChip
+                                            <InteractiveChip
                                                 selectable={false}
                                                 title={`${daysOfWeek[start.day()]}, ${monthNames[start.month()]} ${start.date()}, ${start.year()}`}
                                             />
-                                            <ToggleChip
+                                            <InteractiveChip
                                                 selectable={false}
                                                 title={`${start.format("LT")} to ${end.format("LT")}`}
                                             />
-                                            <ToggleChip
+                                            <InteractiveChip
                                                 selectable={false}
                                                 title={roomName || "Virtual"}
                                             />
-                                            <ToggleChip
+                                            <InteractiveChip
                                                 selectable={false}
                                                 title={
                                                     isPublic
@@ -162,12 +162,12 @@ const MeetingPreview = ({
                                                 }
                                             />
                                             {advisor?.trim() ? (
-                                                <ToggleChip
+                                                <InteractiveChip
                                                     title={
                                                         "Advisor: " + advisor
                                                     }
                                                     selectable={false}
-                                                ></ToggleChip>
+                                                ></InteractiveChip>
                                             ) : null}
                                         </div>
 

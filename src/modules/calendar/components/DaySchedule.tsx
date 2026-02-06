@@ -4,7 +4,7 @@ import { Dayjs } from "dayjs";
 import { monthNames } from "../../../utils/TimeStrings";
 import React, { useEffect, useState } from "react";
 import ContentUnavailable from "../../../components/ui/content/ContentUnavailable";
-import UpcomingMeeting from "../../home/components/UpcomingMeeting";
+import OrgMeeting from "../../stuyactivities/orgs/components/OrgMeeting";
 
 type Props = {
     day: Dayjs;
@@ -105,20 +105,17 @@ const DaySchedule = ({ day, meetings }: Props) => {
                             "px-2 py-1 rounded bg-transparent hover:bg-layer-2 focus:outline-none flex items-center"
                         }
                     >
-                        <span className="font-semibold text-base">Room</span>
-                        <span
-                            className="ml-2 text-2xl leading-none"
-                            aria-hidden="true"
-                        >
+                        <h4 className={"pl-1 gap-1 inline-flex items-center"}>
+                            Room
                             <i
-                                className={`bx ${
+                                className={`bx bx-sm ${
                                     sortDesc
                                         ? "bx-down-arrow-alt"
                                         : "bx-up-arrow-alt"
                                 }`}
                                 aria-hidden="true"
                             />
-                        </span>
+                        </h4>
                     </button>
                 </div>
             </div>
@@ -133,7 +130,7 @@ const DaySchedule = ({ day, meetings }: Props) => {
             >
                 {sortedMeetings.length ? (
                     sortedMeetings.map((meeting, i) => (
-                        <UpcomingMeeting
+                        <OrgMeeting
                             key={meeting.id ?? i}
                             id={meeting.id ?? i}
                             url={meeting.organizations?.url}
@@ -146,7 +143,8 @@ const DaySchedule = ({ day, meetings }: Props) => {
                             is_public={meeting.is_public}
                             room_name={meeting.rooms?.name}
                             advisor={meeting.advisor}
-                        ></UpcomingMeeting>
+                            activityInformationOverDetails={true}
+                        ></OrgMeeting>
                     ))
                 ) : (
                     <ContentUnavailable

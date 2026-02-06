@@ -1,11 +1,22 @@
 import React, { useContext } from "react";
 import OrgContext from "../../../../contexts/OrgContext";
+import UserContext from "../../../../contexts/UserContext";
 import { sortPostByDate } from "../../../../utils/DataFormatters";
 import OrgStreamPost from "../components/OrgStreamPost";
+import PostEditor from "../org_admin/components/PostEditor";
 import ContentUnavailable from "../../../../components/ui/content/ContentUnavailable";
 
 const Stream = () => {
     const organization: OrgContextType = useContext(OrgContext);
+    const user = useContext<UserContextType>(UserContext);
+
+    const membership = organization.memberships?.find(
+        (m) => m.users?.id === user.id,
+    );
+
+    const isAdmin =
+        !!membership &&
+        (membership.role === "ADMIN" || membership.role === "CREATOR");
 
     if (
         organization.state === "LOCKED" ||
@@ -21,7 +32,7 @@ const Stream = () => {
             />
         );
 
-    if (organization.posts.length === 0) {
+    if (organization.posts.length === 0 && !isAdmin) {
         return (
             <ContentUnavailable
                 icon="bx-message-alt-dots"
@@ -34,6 +45,21 @@ const Stream = () => {
 
     return (
         <section className="flex flex-col mt-2 gap-8">
+            {isAdmin && (
+                <PostEditor
+                    orgId={organization.id}
+                    orgName={organization.name}
+                    orgPicture={organization.picture as string}
+                    onCreate={(newPost) => {
+                        if (organization.setOrg) {
+                            organization.setOrg({
+                                ...organization,
+                                posts: [...organization.posts, newPost],
+                            });
+                        }
+                    }}
+                />
+            )}
             {organization.posts
                 .sort(sortPostByDate)
                 .reverse()
@@ -42,6 +68,7 @@ const Stream = () => {
                         <OrgStreamPost
                             content={post}
                             key={i}
+                            editable={isAdmin}
                             onDelete={() => {
                                 if (organization.setOrg) {
                                     organization.setOrg({

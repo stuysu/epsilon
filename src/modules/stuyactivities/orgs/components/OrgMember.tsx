@@ -1,5 +1,6 @@
 import { Avatar } from "radix-ui";
-import ToggleChip from "../../../../components/ui/input/ToggleChip";
+import InteractiveChip from "../../../../components/ui/input/InteractiveChip";
+import React from "react";
 
 type Props = {
     role?: Membership["role"];
@@ -9,6 +10,9 @@ type Props = {
     first_name?: User["first_name"];
     last_name?: User["last_name"];
     is_faculty?: User["is_faculty"];
+    approvalMode?: boolean;
+    onApprove?: (e?: React.MouseEvent) => void;
+    onReject?: (e?: React.MouseEvent) => void;
 };
 
 const formatCapitals = (txt?: string) => {
@@ -24,6 +28,9 @@ const OrgMember = ({
     first_name,
     last_name,
     is_faculty,
+    approvalMode,
+    onApprove,
+    onReject,
 }: Props) => {
     let l1 =
         role_name || formatCapitals(role) + (is_faculty ? " - Faculty" : "");
@@ -56,7 +63,30 @@ const OrgMember = ({
             </div>
 
             <div className={"my-3"}>
-                <ToggleChip title={l1} selectable={false} />
+                {!approvalMode ? (
+                    <InteractiveChip title={l1} selectable={false} flat={true} />
+                ) : (
+                    <>
+                        <InteractiveChip
+                            title="Approve"
+                            selectable={false}
+                            flat
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onApprove?.(e as React.MouseEvent);
+                            }}
+                        />
+                        <InteractiveChip
+                            title="Reject"
+                            selectable={false}
+                            flat
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                onReject?.(e as React.MouseEvent);
+                            }}
+                        />
+                    </>
+                )}
             </div>
         </div>
     );

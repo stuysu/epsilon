@@ -14,6 +14,7 @@ export default function UserDialog({
     confirmText = "Confirm",
     cancelText = "Cancel",
     imageSrc,
+    hideCancel = false,
 }: {
     title: string;
     description?: string;
@@ -25,6 +26,7 @@ export default function UserDialog({
     confirmText?: string;
     cancelText?: string;
     imageSrc?: string;
+    hideCancel?: boolean;
 }) {
     const hasImage = Boolean(imageSrc);
 
@@ -108,14 +110,16 @@ export default function UserDialog({
                                     <div className="h-12" />
 
                                     <div className="flex justify-end gap-3">
-                                        <AsyncButton
-                                            onClick={() => {
-                                                onClose();
-                                                onCancel?.();
-                                            }}
-                                        >
-                                            {cancelText}
-                                        </AsyncButton>
+                                        {!hideCancel && (
+                                            <AsyncButton
+                                                onClick={() => {
+                                                    onClose();
+                                                    onCancel?.();
+                                                }}
+                                            >
+                                                {cancelText}
+                                            </AsyncButton>
+                                        )}
                                         <AsyncButton
                                             onClick={() => {
                                                 onClose();

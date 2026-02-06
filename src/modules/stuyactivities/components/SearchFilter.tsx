@@ -1,6 +1,8 @@
 import { capitalizeWords } from "../../../utils/DataFormatters";
 import SearchInput from "../../../components/ui/input/SearchInput";
-import ToggleChip from "../../../components/ui/input/ToggleChip";
+import InteractiveChip from "../../../components/ui/input/InteractiveChip";
+import { PUBLIC_URL } from "../../../config/constants";
+import React from "react";
 
 type Props = {
     value: SearchParams;
@@ -54,6 +56,10 @@ const SearchFilter = ({
                 paddingTop: "40px",
             }}
         >
+            <img
+                src={`${PUBLIC_URL}/textures/org_color.png`}
+                className="absolute blur-2xl opacity-15 pointer-events-none"
+            />
             <SearchInput
                 placeholder="Find Activities..."
                 value={value.name}
@@ -67,7 +73,7 @@ const SearchFilter = ({
                 <p>Include Tags</p>
                 <div className={"flex flex-row gap-2 flex-wrap mt-2"}>
                     {tags.map((tag) => (
-                        <ToggleChip
+                        <InteractiveChip
                             key={tag}
                             title={capitalizeWords(tag)}
                             selectable={true}
@@ -89,7 +95,7 @@ const SearchFilter = ({
                 <p>Commitment Level</p>
                 <div className={"flex flex-row gap-2 flex-wrap mt-2"}>
                     {commitmentLevels.map((level) => (
-                        <ToggleChip
+                        <InteractiveChip
                             key={level}
                             title={capitalizeWords(level)}
                             selectable={true}
@@ -115,7 +121,7 @@ const SearchFilter = ({
                 <p>Meeting Days</p>
                 <div className={"flex flex-row gap-2 flex-wrap mt-2"}>
                     {meetingDays.map((day) => (
-                        <ToggleChip
+                        <InteractiveChip
                             key={day}
                             title={capitalizeWords(day)}
                             selectable={true}

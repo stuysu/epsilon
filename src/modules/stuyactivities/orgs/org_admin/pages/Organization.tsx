@@ -68,7 +68,7 @@ const Organization = () => {
                     "bg-layer-1 p-5 pl-7 pb-8 rounded-xl mb-10 mt-2 shadow-prominent"
                 }
             >
-                <h1>Amend Charter</h1>
+                <h1>Amendments</h1>
                 <p>
                     You may update your organization's charter here. Please note
                     that edits are requests to amend, which will be reviewed by

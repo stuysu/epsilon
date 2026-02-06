@@ -86,7 +86,7 @@
         --blur-light: #22222299;
 
         --shadow-base: rgba(0, 0, 0, 0.25);
-        --shadow-antithesis: rgba(255, 255, 255, 0.25);
+        --shadow-antithesis: rgba(255, 255, 255, 0.2);
         --shadow-fume: rgba(255, 255, 255, 0.05);
         --shadow-decoration: rgba(182, 182, 126, 0.1);
     }

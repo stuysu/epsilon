@@ -55,35 +55,37 @@ const Scheduler = () => {
 
     return (
         <div className={"w-full flex flex-col"}>
-            <div
-                className={
-                    "w-full bg-layer-1 p-5 pl-7 pb-8 rounded-xl mb-10 mt-2 shadow-prominent"
-                }
-            >
-                <h1>Activity Meetings Scheduler</h1>
-                <p className={"mb-4"}>
-                    Meeting records must be kept up to date on Epsilon in order
-                    to secure funding and avoid receiving strikes.
+            <header className={"mb-6 mt-2"}>
+                <section className={"flex justify-between mb-2"}>
+                    <h1>Scheduler</h1>
+                    <div>
+                        <AsyncButton
+                            isPrimary={true}
+                            onClick={() =>
+                                setEditState({
+                                    id: undefined,
+                                    title: undefined,
+                                    description: undefined,
+                                    start: undefined,
+                                    end: undefined,
+                                    room: undefined,
+                                    isPublic: undefined,
+                                    advisor: undefined,
+                                    editing: true,
+                                })
+                            }
+                            variant="contained"
+                        >
+                            New Meeting
+                        </AsyncButton>
+                    </div>
+                </section>
+                <p>
+                    Manage your meetings here. Meeting records must be kept up
+                    to date in order to secure funding and avoid receiving
+                    strikes.
                 </p>
-                <AsyncButton
-                    onClick={() =>
-                        setEditState({
-                            id: undefined,
-                            title: undefined,
-                            description: undefined,
-                            start: undefined,
-                            end: undefined,
-                            room: undefined,
-                            isPublic: undefined,
-                            advisor: undefined,
-                            editing: true,
-                        })
-                    }
-                    variant="contained"
-                >
-                    Create Meeting
-                </AsyncButton>
-            </div>
+            </header>
 
             <ItemList height={"auto"}>
                 {organization.meetings

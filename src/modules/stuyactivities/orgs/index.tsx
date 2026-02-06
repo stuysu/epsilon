@@ -131,7 +131,7 @@ const OrgRouter = () => {
                 .ilike("url", orgUrl || "");
 
             if (error) {
-                enqueueSnackbar("Error fetching organization.", {
+                enqueueSnackbar(error.message || "Failed to fetch organization.", {
                     variant: "error",
                 });
                 return;

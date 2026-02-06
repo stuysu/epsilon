@@ -382,7 +382,7 @@ const AdminUpsertMeeting = ({
                     onChange={(event: ChangeEvent<HTMLInputElement>) =>
                         setMeetingDesc(event.target.value)
                     }
-                    label="Description"
+                    label="Description (Links are supported)"
                     fullWidth
                     multiline
                     rows={4}

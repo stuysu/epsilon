@@ -18,13 +18,14 @@ const Regulations = () => {
             >
                 <h1
                     className={
-                        "w-2/3 bg-blend-color-dodge sm:text-8xl text-4xl sm:text-center font-light"
+                        "w-2/3 sm:text-8xl text-4xl sm:text-center font-light text-accent"
                     }
                 >
                     Clubs & Pubs
                     <br />
                     Regulations
                 </h1>
+                <div className={"absolute w-48 h-48 bg-blue opacity-10 blur-2xl z-10 pointer-events-none"}></div>
             </div>
             <div className={"flex flex-row sm:mx-5 justify-center"}>
                 <div className={"w-1/4 sticky top-20 h-96 sm:block hidden"}>

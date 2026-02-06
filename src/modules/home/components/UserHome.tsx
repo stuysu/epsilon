@@ -8,12 +8,12 @@ import UserContext from "../../../contexts/UserContext";
 import OrgBlock from "../../../components/ui/OrgBlock";
 import { useSnackbar } from "notistack";
 import { supabase } from "../../../lib/supabaseClient";
-import UpcomingMeeting from "./UpcomingMeeting";
 import OrgStreamPost from "../../stuyactivities/orgs/components/OrgStreamPost";
 import DisplayLinks from "../../../components/DisplayLinks";
 import { useNavigate } from "react-router-dom";
 import ItemList from "../../../components/ui/lists/ItemList";
 import { Scrollbars } from "react-custom-scrollbars-2";
+import OrgMeeting from "../../stuyactivities/orgs/components/OrgMeeting";
 
 const currentHour = new Date().getHours();
 const timeGreeting =
@@ -152,57 +152,20 @@ const UserHome = () => {
     }, [enqueueSnackbar]);
 
     return (
-        <main className="m-3 sm:my-8 sm:mx-12 max-sm:mt-4 min-h-[90vh]">
-            <header className="flex flex-col mb-10 max-sm:items-center max-sm:text-center">
-                <h1>
-                    {timeGreeting}, {user.first_name}!
-                </h1>
-                <h2 className={"-mt-1.5"}>Here's what's happening.</h2>
-            </header>
+        <main className="m-3 sm:my-8 sm:mx-12 max-sm:mt-4 min-h-[90vh] flex flex-col items-center">
+            <div>
+                <header className="flex mb-10 max-sm:items-center max-sm:text-center right-3 top-1 relative">
+                    <i className={"bx bx-play bx-lg text-orange-500"} />
+                    <div>
+                        <h1>
+                            {timeGreeting}, {user.first_name}!
+                        </h1>
+                        <h2 className={"-mt-1.5"}>Here's what's happening.</h2>
+                    </div>
+                </header>
 
-            <section className="relative flex sm:flex-row justify-between flex-col gap-12 w-full mb-10">
-                <div
-                    className="sm:sticky top-10 sm:max-w-[50vw] w-full"
-                    style={{
-                        height: "calc(100dvh - 96px)",
-                        maxHeight: "calc(100dvh - 96px)",
-                    }}
-                >
-                    <Scrollbars
-                        universal
-                        autoHide
-                        autoHideTimeout={1000}
-                        autoHideDuration={200}
-                        style={{ height: "100%" }}
-                        onWheel={(e) => e.stopPropagation()}
-                        renderView={(
-                            props: React.HTMLProps<HTMLDivElement>,
-                        ) => (
-                            <div
-                                {...props}
-                                className="scroll-hide flex flex-wrap content-start justify-start gap-2 pb-6 w-full h-full"
-                                style={{ overflowX: "hidden" }}
-                            />
-                        )}
-                        renderTrackHorizontal={() => (
-                            <div style={{ display: "none" }} />
-                        )}
-                        renderThumbVertical={({
-                            style,
-                            ...props
-                        }: {
-                            style: React.CSSProperties;
-                        } & React.HTMLProps<HTMLDivElement>) => (
-                            <div
-                                {...props}
-                                style={{
-                                    ...style,
-                                    backgroundColor: "grey",
-                                    borderRadius: 4,
-                                }}
-                            />
-                        )}
-                    >
+                <section className="relative flex sm:flex-row flex-col gap-12 w-full mb-10">
+                    <div className="h-fit top-10 justify-center gap-2 sm:gap-5 grid grid-cols-[auto_auto] sm:grid-cols-[auto] lg:grid-cols-[auto_auto] xl:grid-cols-[auto_auto_auto]">
                         {user.memberships?.map((membership) => {
                             if (membership.active)
                                 return (
@@ -226,49 +189,58 @@ const UserHome = () => {
                             return null;
                         })}
                         <div
-                            className="cursor-pointer flex items-center justify-center flex-col w-44 h-44 rounded-xl sm:hover:opacity-75 transition-opacity border-accent border-dashed border"
+                            className={
+                                "cursor-pointer flex items-center justify-center flex-col w-44 h-44 rounded-xl sm:hover:opacity-75 transition-opacity border-accent border-dashed border"
+                            }
                             onClick={() => navigate(`/stuyactivities`)}
                         >
                             <i className="bx bx-md bx-plus-circle mb-5 text-accent"></i>
                             <p className="text-accent">Join an Activity!</p>
                         </div>
-                    </Scrollbars>
-                </div>
-                <div className="w-full max-w-3xl flex flex-col gap-14 max-sm:mt-6">
-                    <div className={"relative w-full group"}>
-                        <div className={"relative z-10"}>
-                            <ItemList
-                                title={"My Meetings"}
-                                height={"auto"}
-                                icon={"bx-calendar-week"}
-                            >
-                                {upcomingMeetings.length === 0 && (
-                                    <p className={"bg-layer-2 p-4"}>
-                                        No upcoming meetings. Check back later!
-                                    </p>
-                                )}
-                                {upcomingMeetings.map((meeting) => (
-                                    <UpcomingMeeting
-                                        url={meeting.organizations.url}
-                                        key={meeting.id}
-                                        id={meeting.id}
-                                        title={meeting.title}
-                                        description={meeting.description}
-                                        start_time={meeting.start_time}
-                                        end_time={meeting.end_time}
-                                        org_name={meeting.organizations.name}
-                                        org_picture={
-                                            meeting.organizations.picture
-                                        }
-                                        room_name={meeting.rooms?.name}
-                                        is_public={meeting.is_public}
-                                        advisor={meeting.advisor}
-                                    />
-                                ))}
-                            </ItemList>
-                        </div>
-                        <div
-                            className="
+                        <div className={"w-44 h-44"} />
+                        <div className={"w-44 h-44"} />
+                    </div>
+                    <div className="w-full max-w-3xl flex flex-col gap-14 max-sm:mt-6">
+                        <div className={"relative w-full group"}>
+                            <div className={"relative z-10"}>
+                                <ItemList
+                                    title={"My Meetings"}
+                                    height={"auto"}
+                                    icon={"bx-calendar-week"}
+                                >
+                                    {upcomingMeetings.length === 0 && (
+                                        <p className={"bg-layer-2 p-4 md:min-w-[60ch]"}>
+                                            No upcoming meetings. Looks like you're all set!
+                                        </p>
+                                    )}
+                                    {upcomingMeetings.map((meeting) => (
+                                        <OrgMeeting
+                                            activityInformationOverDetails={
+                                                true
+                                            }
+                                            url={meeting.organizations.url}
+                                            key={meeting.id}
+                                            id={meeting.id}
+                                            title={meeting.title}
+                                            description={meeting.description}
+                                            start_time={meeting.start_time}
+                                            end_time={meeting.end_time}
+                                            is_public={meeting.is_public}
+                                            room_name={meeting.rooms?.name}
+                                            advisor={meeting.advisor || "None"}
+                                            org_name={
+                                                meeting.organizations.name
+                                            }
+                                            org_picture={
+                                                meeting.organizations.picture
+                                            }
+                                            onlyUpcoming
+                                        />
+                                    ))}
+                                </ItemList>
+                            </div>
+                            <div
+                                className="
                             absolute
                             bottom-0
                             left-0
@@ -286,91 +258,97 @@ const UserHome = () => {
                             rounded-xl
                             bg-layer-1
                             shadow-control"
-                        >
-                            <p className={"pt-4 important"}>
-                                <a
-                                    href={"/meetings"}
+                            >
+                                <p className={"pt-4 important"}>
+                                    <a
+                                        href={"/meetings"}
+                                        className={
+                                            "sm:hover:opacity-75 transition-colors no-underline"
+                                        }
+                                    >
+                                        View Calendar
+                                    </a>{" "}
+                                    · {upcomingMeetings.length} Upcoming
+                                </p>
+                            </div>
+                        </div>
+
+                        <div className={"relative w-full group"}>
+                            <div className={"relative z-10"}>
+                                <ItemList
+                                    title={"StuyActivities Announcements"}
+                                    height={"auto"}
+                                    icon={"bxs-megaphone"}
+                                >
+                                    {announcements
+                                        .slice(0, visibleAnnouncements)
+                                        .map((announcement, i) => {
+                                            return (
+                                                <div
+                                                    key={i}
+                                                    className={"p-4 bg-layer-2"}
+                                                >
+                                                    <DisplayLinks
+                                                        text={
+                                                            announcement.content
+                                                        }
+                                                    />
+                                                </div>
+                                            );
+                                        })}
+                                    {announcements.length === 0 && (
+                                        <p className={"bg-layer-2 p-4"}>
+                                            No announcements. Check back later!
+                                        </p>
+                                    )}
+                                </ItemList>
+                            </div>
+                            <div
+                                className="
+                            absolute
+                            bottom-0
+                            left-0
+                            right-0
+                            p-2.5
+                            ml-[4%]
+                            mr-[4%]
+                            flex
+                            justify-center
+                            max-sm:translate-y-7
+                            sm:group-hover:translate-y-7
+                            transition-transform
+                            w-[92%]
+                            z-[1]
+                            rounded-xl
+                            bg-layer-1
+                            shadow-control"
+                            >
+                                <p
                                     className={
-                                        "sm:hover:opacity-75 transition-colors no-underline"
+                                        announcements.length <=
+                                        visibleAnnouncements
+                                            ? "opacity-50 pt-4 important"
+                                            : "pt-4 cursor-pointer sm:hover:opacity-75 transition-colors important"
+                                    }
+                                    onClick={() =>
+                                        setVisibleAnnouncements(
+                                            (prev) => prev + 3,
+                                        )
                                     }
                                 >
-                                    View Calendar
-                                </a>{" "}
-                                · {upcomingMeetings.length} Upcoming
-                            </p>
+                                    View More Announcements
+                                </p>
+                            </div>
                         </div>
-                    </div>
 
-                    <div className={"relative w-full group"}>
-                        <div className={"relative z-10"}>
-                            <ItemList
-                                title={"StuyActivities Announcements"}
-                                height={"auto"}
-                                icon={"bxs-megaphone"}
-                            >
-                                {announcements
-                                    .slice(0, visibleAnnouncements)
-                                    .map((announcement, i) => {
-                                        return (
-                                            <div
-                                                key={i}
-                                                className={"p-4 bg-layer-2"}
-                                            >
-                                                <DisplayLinks
-                                                    text={announcement.content}
-                                                />
-                                            </div>
-                                        );
-                                    })}
-                                {announcements.length === 0 && (
-                                    <p className={"bg-layer-2 p-4"}>
-                                        No announcements. Check back later!
-                                    </p>
-                                )}
-                            </ItemList>
-                        </div>
-                        <div
-                            className="
-                            absolute
-                            bottom-0
-                            left-0
-                            right-0
-                            p-2.5
-                            ml-[4%]
-                            mr-[4%]
-                            flex
-                            justify-center
-                            max-sm:translate-y-7
-                            sm:group-hover:translate-y-7
-                            transition-transform
-                            w-[92%]
-                            z-[1]
-                            rounded-xl
-                            bg-layer-1
-                            shadow-control"
-                        >
-                            <p
-                                className={
-                                    announcements.length <= visibleAnnouncements
-                                        ? "opacity-50 pt-4 important"
-                                        : "pt-4 cursor-pointer sm:hover:opacity-75 transition-colors important"
-                                }
-                                onClick={() =>
-                                    setVisibleAnnouncements((prev) => prev + 3)
-                                }
-                            >
-                                View More Announcements
-                            </p>
+                        <div className={"flex flex-col gap-8"}>
+                            {posts.map((post, i) => (
+                                <OrgStreamPost content={post} key={i} />
+                            ))}
                         </div>
                     </div>
-
-                    <div className={"flex flex-col gap-8"}>
-                        {posts.map((post, i) => (
-                            <OrgStreamPost content={post} key={i} />
-                        ))}
-                    </div>
-                </div>
-            </section>
+                </section>
+            </div>
         </main>
     );
 };

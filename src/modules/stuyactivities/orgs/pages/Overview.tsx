@@ -11,7 +11,7 @@ import { sortByDate, sortByRole } from "../../../../utils/DataFormatters";
 import UserContext from "../../../../contexts/UserContext";
 import RelatedActivities from "./RelatedActivities";
 import OrgInspector from "../components/OrgInspector";
-import ToggleChip from "../../../../components/ui/input/ToggleChip";
+import InteractiveChip from "../../../../components/ui/input/InteractiveChip";
 import Divider from "../../../../components/ui/Divider";
 import OverviewList from "../../../../components/ui/lists/OverviewList";
 import UserDialog from "../../../../components/ui/overlays/UserDialog";
@@ -248,13 +248,13 @@ const Overview = () => {
                             }
                         >
                             {organization.tags?.map((tag, index) => (
-                                <ToggleChip
+                                <InteractiveChip
                                     title={tag}
                                     selectable={false}
                                     key={index}
                                 />
                             )) || (
-                                <ToggleChip
+                                <InteractiveChip
                                     title={"Uncategorized"}
                                     selectable={false}
                                 />
@@ -327,7 +327,7 @@ const Overview = () => {
                                 </h3>
                                 <p className={"text-center"}>Members</p>
                             </div>
-                            <h1 className={"opacity-25"}>•</h1>
+                            <h1 className={"opacity-20"}>•</h1>
                         </>
                     )}
 
@@ -347,7 +347,7 @@ const Overview = () => {
                         </p>
                     </div>
 
-                    <h1 className={"opacity-25"}>•</h1>
+                    <h1 className={"opacity-20"}>•</h1>
 
                     <div>
                         <h3 className={"w-32 text-center"}>
@@ -365,7 +365,7 @@ const Overview = () => {
 
                     {user.signed_in && (
                         <>
-                            <h1 className={"opacity-25"}>•</h1>
+                            <h1 className={"opacity-20"}>•</h1>
                             <div>
                                 <h3 className={"w-48 text-center"}>
                                     {organization.meetings
@@ -560,9 +560,7 @@ const Overview = () => {
 
             <div className={"w-full mt-10"}>
                 <h2 className={"mb-2 text-typography-1"}>
-                    Activities Like This
-                    <span className={"opacity-75"}> (Beta)</span>
-                </h2>
+                    Activities Like This</h2>
                 {isMobile ? (
                     <Divider />
                 ) : (

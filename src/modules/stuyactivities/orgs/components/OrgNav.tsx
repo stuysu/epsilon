@@ -35,22 +35,18 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
         { to: `${main}/meetings`, display: "Meetings" },
         { to: `${main}/members`, display: "Members" },
         { to: `${main}/audit`, display: "Audit" },
-        ...(membership?.active
-            ? [{ to: `${main}/stream`, display: "Stream" }]
-            : []),
     ];
 
+    const updatesLinks: LinkItem[] = membership?.active
+        ? [{ to: `${main}/stream`, display: "Stream" }]
+        : [];
+
     const fullAdminLinks: LinkItem[] = [
-        { to: `${main}/admin/roster`, display: "Roster" },
-        {
-            to: `${main}/admin/join-requests`,
-            display: `Join Requests (${pendingMembers?.length})`,
-        },
+        { to: `${main}/admin/roster`, display: "Personnel" },
         { to: `${main}/admin/scheduler`, display: "Scheduler" },
         { to: `${main}/admin/attendance`, display: "Attendance" },
-        { to: `${main}/admin/posts`, display: "Posts" },
         { to: `${main}/admin/messages`, display: "Messages" },
-        { to: `${main}/admin/org-edits`, display: "Amend Charter" },
+        { to: `${main}/admin/org-edits`, display: "Amendments" },
     ];
 
     const stuyActivitiesAdminLinks: LinkItem[] = [
@@ -66,12 +62,12 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const [menuOpen, setMenuOpen] = useState(false);
 
     const renderDesktopList = (links: LinkItem[]) => (
-        <List sx={{ width: "100%" }}>
+        <nav>
             {links.map((linkData, i) => (
                 <div
                     key={i}
                     style={{
-                        height: `30px`,
+                        height: `27px`,
                         display: "flex",
                         alignItems: "center",
                         cursor: "pointer",
@@ -89,7 +85,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     </p>
                 </div>
             ))}
-        </List>
+        </nav>
     );
 
     const renderMobileButtons = (links: LinkItem[]) =>
@@ -146,6 +142,13 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
 
                             {renderMobileButtons(navLinks)}
 
+                            {updatesLinks.length > 0 && (
+                                <>
+                                    <h5 className={"mt-6 px-3"}>Updates</h5>
+                                    {renderMobileButtons(updatesLinks)}
+                                </>
+                            )}
+
                             {adminLinks.length > 0 && (
                                 <>
                                     <h5 className={"mt-6 px-3"}>Admin Tools</h5>
@@ -161,13 +164,21 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
 
     return (
         <div className={"w-[160px] mt-4"}>
-            <p>About</p>
+            <h5>About</h5>
             {renderDesktopList(navLinks)}
+
+            {updatesLinks.length > 0 && (
+                <div>
+                    <div className={"h-px w-5/6 bg-divider my-3"}></div>
+                    <h5>Updates</h5>
+                    {renderDesktopList(updatesLinks)}
+                </div>
+            )}
 
             {adminLinks.length > 0 && (
                 <div>
-                    <div className={"h-px w-5/6 bg-divider my-2"}></div>
-                    <p className={"mt-6"}>Admin Tools</p>
+                    <div className={"h-px w-5/6 bg-divider my-3"}></div>
+                    <h5>Admin Tools</h5>
                     {renderDesktopList(adminLinks)}
                 </div>
             )}
