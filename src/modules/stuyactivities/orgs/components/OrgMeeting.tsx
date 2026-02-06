@@ -90,7 +90,7 @@ const OrgMeeting = ({
 
                                     {!is_public && (
                                         <p className="important text-white/80 bg-blue rounded-sm px-1 ml-2 bottom-px relative">
-                                            PRIVATE
+                                            Private
                                         </p>
                                     )}
                                 </div>

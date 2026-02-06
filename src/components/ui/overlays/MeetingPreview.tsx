@@ -112,14 +112,14 @@ const MeetingPreview = ({
                                                     href={`/${url}`}
                                                     className="no-underline cursor-alias transition-opacity sm:hover:opacity-75"
                                                 >
-                                                    <h3 className="text-typography-1">
+                                                    <h3 className="text-typography-1 line-clamp-1 max-w-[30ch]">
                                                         {organizationName ||
                                                             "Untitled Organization"}
                                                     </h3>
                                                 </a>
                                             ) : (
                                                 <span className="no-underline">
-                                                    <h3 className="text-typography-1">
+                                                    <h3 className="text-typography-1 line-clamp-1 max-w-[30ch]">
                                                         {organizationName ||
                                                             "Untitled Organization"}
                                                     </h3>

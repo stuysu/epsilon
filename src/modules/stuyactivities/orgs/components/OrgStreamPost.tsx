@@ -101,10 +101,10 @@ const OrgStreamPost = ({
                     </Avatar.Fallback>
                 </Avatar.Root>
 
-                <div className={"mt-1.5"}>
-                    <h4>{content.organizations?.name}</h4>
+                <header>
+                    <h4 className={"line-clamp-1 max-w-[40ch]"}>{content.organizations?.name}</h4>
                     <p>{timeStr + (isEdited ? " · Edited" : "")}</p>
-                </div>
+                </header>
             </div>
 
             <div
