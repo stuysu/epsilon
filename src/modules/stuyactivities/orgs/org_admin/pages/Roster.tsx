@@ -43,6 +43,15 @@ const Roster = () => {
             };
         });
     const member_emails = members.map((member) => member.email).join(", ");
+    const admin_emails = members
+        .filter(
+            (member) =>
+                member.role === "ADMIN" ||
+                member.role === "ADVISOR" ||
+                member.role === "CREATOR",
+        )
+        .map((member) => member.email)
+        .join(", ");
 
     const userMember = organization.memberships.find(
         (member) => member.users?.id === user.id,
@@ -131,6 +140,51 @@ const Roster = () => {
                     soon!
                 </AsyncButton>
             </div>
+            <Box
+                sx={{
+                    width: "100%",
+                    display: "flex",
+                    flexWrap: "nowrap",
+                    alignItems: "center",
+                    marginBottom: "25px",
+                }}
+            >
+                <Box
+                    sx={{
+                        paddingTop: "8px",
+                        paddingBottom: "8px",
+                        width: "100%",
+                    }}
+                >
+                    <TextField
+                        disabled
+                        fullWidth
+                        value={admin_emails}
+                        variant="outlined"
+                    />
+                </Box>
+                <Box sx={{ paddingLeft: "16px", width: "100px" }}>
+                    <AsyncButton
+                        onClick={async () => {
+                            try {
+                                await navigator.clipboard.writeText(
+                                    admin_emails,
+                                );
+                                enqueueSnackbar("Copied emails to clipboard!", {
+                                    variant: "success",
+                                });
+                            } catch (error) {
+                                enqueueSnackbar(
+                                    "Failed to copy emails to clipboard. :( Try manually copying from the page.",
+                                    { variant: "error" },
+                                );
+                            }
+                        }}
+                    >
+                        Copy Admins
+                    </AsyncButton>
+                </Box>
+            </Box>
 
             <Box
                 sx={{
