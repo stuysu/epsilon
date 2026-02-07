@@ -111,7 +111,7 @@ const CommsSettings = () => {
     ) => {
         const { error } = await supabase
             .from("membershipnotifications")
-            .update({ allow_notifications: !currentValue })
+            .upsert({ membership_id, allow_notifications: !currentValue })
             .eq("membership_id", membership_id);
 
         if (error) {
