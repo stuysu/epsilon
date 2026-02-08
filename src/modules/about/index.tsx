@@ -122,6 +122,24 @@ const Index = () => {
     const credits: CreditData[] = useMemo(
         () => [
             {
+                title: "SU I.T. department, 2025-2026",
+                groups: [
+                    {
+                        role: "operations director",
+                        names: ["Nathaniel Moy"],
+                    },
+                    {
+                        role: "director of I.T.",
+                        names: ["Rahul Deb"],
+                    },
+                    {
+                        role: "programming",
+                        names: ["Dominic Okoye", "Peter Predolac"],
+                    },
+                    { role: "management", names: ["Nathan Lai"] },
+                ],
+            },
+            {
                 title: "the original epsilon team, 2024-2025",
                 groups: [
                     {
