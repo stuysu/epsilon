@@ -3,8 +3,8 @@ import { Helmet } from "react-helmet";
 import UserContext from "../../contexts/UserContext";
 
 /* Index Pages */
-import UnauthenticatedLanding from "./components/UnauthenticatedLanding";
-import UserHome from "./components/UserHome";
+import UnauthenticatedLanding from "./pages/UnauthenticatedLanding";
+import UserHome from "./pages/UserHome";
 import { Box } from "@mui/material";
 
 const Index = () => {
