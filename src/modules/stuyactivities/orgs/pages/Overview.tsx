@@ -240,7 +240,9 @@ const Overview = () => {
                 <div className={"flex flex-col relative bottom-0.5"}>
                     <div>
                         <div className={"text-center sm:text-left max-sm:mb-6"}>
-                            <h1>{organization.name}</h1>
+                            <h1 className={"line-clamp-3"} title={organization.name}>
+                                {organization.name}
+                            </h1>
                         </div>
                         <div
                             className={
@@ -342,7 +344,9 @@ const Overview = () => {
                                 className={
                                     "bx bx-info-circle relative top-px ml-1 cursor-help sm:hover:brightness-200"
                                 }
-                                onClick={() => navigate(`/activities-support`)}
+                                onClick={() =>
+                                    navigate(`/stuyactivities/support`)
+                                }
                             ></i>
                         </p>
                     </div>
@@ -560,7 +564,8 @@ const Overview = () => {
 
             <div className={"w-full mt-10"}>
                 <h2 className={"mb-2 text-typography-1"}>
-                    Activities Like This</h2>
+                    Activities Like This
+                </h2>
                 {isMobile ? (
                     <Divider />
                 ) : (
