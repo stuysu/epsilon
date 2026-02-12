@@ -58,13 +58,23 @@ const OrgMember = ({
 
                 <div className={"flex flex-col"}>
                     <h4>{`${first_name} ${last_name}`}</h4>
-                    <p>{<>{email}</>}</p>
+                    {email ? (
+                        <a href={`mailto:${email}`} className={"no-underline"}>
+                            <p>{email}</p>
+                        </a>
+                    ) : (
+                        <p>No email</p>
+                    )}
                 </div>
             </div>
 
             <div className={"my-3"}>
                 {!approvalMode ? (
-                    <InteractiveChip title={l1} selectable={false} flat={true} />
+                    <InteractiveChip
+                        title={l1}
+                        selectable={false}
+                        flat={true}
+                    />
                 ) : (
                     <>
                         <InteractiveChip
