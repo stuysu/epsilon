@@ -12,7 +12,6 @@ import OrgStreamPost from "../../stuyactivities/orgs/components/OrgStreamPost";
 import DisplayLinks from "../../../components/DisplayLinks";
 import { useNavigate } from "react-router-dom";
 import ItemList from "../../../components/ui/lists/ItemList";
-import { Scrollbars } from "react-custom-scrollbars-2";
 import OrgMeeting from "../../stuyactivities/orgs/components/OrgMeeting";
 
 const currentHour = new Date().getHours();
@@ -152,10 +151,9 @@ const UserHome = () => {
     }, [enqueueSnackbar]);
 
     return (
-        <main className="m-3 sm:my-8 sm:mx-12 max-sm:mt-4 min-h-[90vh] flex flex-col items-center">
-            <div>
-                <header className="flex mb-10 max-sm:items-center max-sm:text-center right-3 top-1 relative">
-                    <i className={"bx bx-play bx-lg text-orange-500"} />
+        <main className="m-3 sm:my-8 sm:mx-12 max-sm:mt-8 min-h-[90vh]">
+                <header className="flex mb-10 max-sm:justify-center max-sm:text-center right-3 top-1 relative">
+                    <i className={"bx bx-play bx-lg text-orange-500 max-sm:hidden"} />
                     <div>
                         <h1>
                             {timeGreeting}, {user.first_name}!
@@ -163,7 +161,6 @@ const UserHome = () => {
                         <h2 className={"-mt-1.5"}>Here's what's happening.</h2>
                     </div>
                 </header>
-
                 <section className="relative flex sm:flex-row flex-col gap-12 w-full mb-10">
                     <div className="h-fit top-10 justify-center gap-2 sm:gap-5 grid grid-cols-[auto_auto] sm:grid-cols-[auto] lg:grid-cols-[auto_auto] xl:grid-cols-[auto_auto_auto]">
                         {user.memberships?.map((membership) => {
@@ -348,7 +345,6 @@ const UserHome = () => {
                         </div>
                     </div>
                 </section>
-            </div>
         </main>
     );
 };
