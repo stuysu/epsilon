@@ -1,6 +1,6 @@
-import AsyncButton from "../../components/ui/buttons/AsyncButton";
+import AsyncButton from "../../../components/ui/buttons/AsyncButton";
 import { useContext, useEffect, useState } from "react";
-import { supabase } from "../../lib/supabaseClient";
+import { supabase } from "../../../lib/supabaseClient";
 import { enqueueSnackbar } from "notistack";
 import {
     Box,
@@ -10,10 +10,10 @@ import {
     TextField,
     Typography,
 } from "@mui/material";
-import UserContext from "../../contexts/UserContext";
-import ValentineDisplay from "./components/ValentineDisplay";
+import UserContext from "../../../contexts/UserContext";
+import ValentineDisplay from "../components/ValentineDisplay";
 import { useNavigate } from "react-router-dom";
-import Loading from "../../components/ui/content/Loading";
+import Loading from "../../../components/ui/content/Loading";
 
 // from https://catppuccin.com/palette
 const colors = [
