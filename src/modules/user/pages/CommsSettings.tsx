@@ -1,10 +1,10 @@
 import { useContext, useEffect, useState } from "react";
-import UserContext from "../../contexts/UserContext";
-import { supabase } from "../../lib/supabaseClient";
+import UserContext from "../../../contexts/UserContext";
+import { supabase } from "../../../lib/supabaseClient";
 import { enqueueSnackbar } from "notistack";
-import LoginGate from "../../components/ui/content/LoginGate";
-import Loading from "../../components/ui/content/Loading";
-import Divider from "../../components/ui/Divider";
+import LoginGate from "../../../components/ui/content/LoginGate";
+import Loading from "../../../components/ui/content/Loading";
+import Divider from "../../../components/ui/Divider";
 import { Switch } from "radix-ui";
 
 type Memberships = {
