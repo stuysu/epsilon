@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
-import Valentines from "./Valentines";
+import Valentines from "./pages/Valentines";
 import LoginGate from "../../components/ui/content/LoginGate";
-import Create from "./Create";
+import Create from "./pages/Create";
 import { Box, Divider, Typography } from "@mui/material";
 
 // overkill but leaving room for growth if needed
