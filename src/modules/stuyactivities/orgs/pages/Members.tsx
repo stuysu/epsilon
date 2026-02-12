@@ -3,11 +3,20 @@ import OrgContext from "../../../../contexts/OrgContext";
 import OrgMember from "../components/OrgMember";
 import { AnimatePresence, motion } from "framer-motion";
 
-import { sortByRole } from "../../../../utils/DataFormatters";
 import LoginGate from "../../../../components/ui/content/LoginGate";
 import ItemList from "../../../../components/ui/lists/ItemList";
 import SearchInput from "../../../../components/ui/input/SearchInput";
 import OrgInspector from "../components/OrgInspector";
+
+const sortByOrderingId = (
+    memberA: Partial<Membership>,
+    memberB: Partial<Membership>,
+) => {
+    const orderA = memberA.ordering_id ?? Number.MAX_SAFE_INTEGER;
+    const orderB = memberB.ordering_id ?? Number.MAX_SAFE_INTEGER;
+    if (orderA === orderB) return 0;
+    return orderA - orderB;
+};
 
 const Members = () => {
     const organization: OrgContextType = useContext(OrgContext);
@@ -26,7 +35,7 @@ const Members = () => {
                 const query = search.toLowerCase();
                 return name.includes(query) || email.includes(query);
             })
-            .sort(sortByRole);
+            .sort(sortByOrderingId);
     }, [organization.memberships, search]);
 
     useLayoutEffect(() => {
