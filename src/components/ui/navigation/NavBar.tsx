@@ -14,7 +14,13 @@ import UserContext from "../../../contexts/UserContext";
 import { useSnackbar } from "notistack";
 import { ThemeContext } from "../../../contexts/ThemeProvider";
 import { PUBLIC_URL } from "../../../config/constants";
-import { isStuyActivitiesPath, topNavItems } from "../../../config/routes";
+import {
+    isAboutPath,
+    isOpportunitiesPath,
+    isSchedulePath,
+    isStuyActivitiesPath,
+    topNavItems,
+} from "../../../config/routes";
 import Divider from "../Divider";
 
 const linkStyle: CSSProperties = {
@@ -24,7 +30,19 @@ const linkStyle: CSSProperties = {
 
 type TopNavItem = (typeof topNavItems)[number];
 
-const NavBar: FC = () => {
+type NavBarProps = {
+    onSubNavPreviewChange?: (
+        target: "activities" | "schedule" | "opportunities" | "about" | null,
+    ) => void;
+    onNavModeChange?: (inNavMode: boolean) => void;
+    holdNavMode?: boolean;
+};
+
+const NavBar: FC<NavBarProps> = ({
+    onSubNavPreviewChange,
+    onNavModeChange,
+    holdNavMode = false,
+}) => {
     const user = useContext(UserContext);
     const { enqueueSnackbar } = useSnackbar();
     const [drawerOpen, setDrawerOpen] = useState(false);
@@ -80,6 +98,9 @@ const NavBar: FC = () => {
     const containerRef = useRef<HTMLDivElement | null>(null);
     const dotsRef = useRef<HTMLDivElement | null>(null);
 
+    // Track if pointer is still inside top nav bounds
+    const isTopNavHoveredRef = useRef(false);
+
     const [moreOpen, setMoreOpen] = useState(false);
 
     useEffect(() => {
@@ -102,6 +123,15 @@ const NavBar: FC = () => {
         if (!item.external && item.path === "/stuyactivities") {
             if (isOrgPage) return true;
             return isStuyActivitiesPath(location.pathname);
+        }
+        if (!item.external && item.path === "/meetings") {
+            return isSchedulePath(location.pathname);
+        }
+        if (!item.external && item.path === "/opportunities") {
+            return isOpportunitiesPath(location.pathname);
+        }
+        if (!item.external && item.path === "/about") {
+            return isAboutPath(location.pathname);
         }
         return getActivePaths(item).includes(location.pathname);
     };
@@ -146,6 +176,15 @@ const NavBar: FC = () => {
             if (!item.external && item.path === "/stuyactivities") {
                 return isStuyActivitiesPath(location.pathname) || isOrgPage;
             }
+            if (!item.external && item.path === "/meetings") {
+                return isSchedulePath(location.pathname);
+            }
+            if (!item.external && item.path === "/opportunities") {
+                return isOpportunitiesPath(location.pathname);
+            }
+            if (!item.external && item.path === "/about") {
+                return isAboutPath(location.pathname);
+            }
             return getActivePaths(item).includes(location.pathname);
         });
 
@@ -182,6 +221,13 @@ const NavBar: FC = () => {
             window.removeEventListener("pageshow", onPageShow);
         };
     }, [updateUnderline, isMobile]);
+
+    useEffect(() => {
+        // if the parent no longer wants nav mode held and we're outside nav bounds
+        if (!holdNavMode && !isTopNavHoveredRef.current) {
+            setIsHovered(false);
+        }
+    }, [holdNavMode]);
 
     if (!user?.signed_in && location.pathname === "/")
         return <Box height={20} />;
@@ -342,7 +388,7 @@ const NavBar: FC = () => {
                     <div
                         className={`absolute top-14 bottom-auto right-auto
                         z-50 flex w-72 flex-col gap-2 rounded-xl bg-blurDark p-5
-                        backdrop-blur-xl shadow-prominent
+                        backdrop-blur-xl shadow-control
                         transition-all duration-300 ${
                             drawerOpen
                                 ? "translate-y-0 opacity-100"
@@ -409,7 +455,16 @@ const NavBar: FC = () => {
 
             {/* Top-level tabs */}
             <Box
-                onMouseLeave={() => setIsHovered(false)}
+                onMouseEnter={() => {
+                    isTopNavHoveredRef.current = true;
+                    onNavModeChange?.(true);
+                }}
+                onMouseLeave={() => {
+                    isTopNavHoveredRef.current = false;
+                    if (!holdNavMode) {
+                        setIsHovered(false);
+                    }
+                }}
                 overflow={"scroll"}
                 sx={{
                     scrollbarWidth: "none",
@@ -452,7 +507,26 @@ const NavBar: FC = () => {
                                     ? "text-typography-1"
                                     : "max-sm:opacity-75 sm:sm:hover:text-typography-1 text-typography-3"
                             }`}
-                            onMouseEnter={() => setIsHovered(true)}
+                            onMouseEnter={() => {
+                                setIsHovered(true);
+                                if (!item.external && item.path === "/stuyactivities") {
+                                    onSubNavPreviewChange?.("activities");
+                                    return;
+                                }
+                                if (!item.external && item.path === "/meetings") {
+                                    onSubNavPreviewChange?.("schedule");
+                                    return;
+                                }
+                                if (!item.external && item.path === "/opportunities") {
+                                    onSubNavPreviewChange?.("opportunities");
+                                    return;
+                                }
+                                if (!item.external && item.path === "/about") {
+                                    onSubNavPreviewChange?.("about");
+                                    return;
+                                }
+                                onSubNavPreviewChange?.(null);
+                            }}
                             onClick={() => {
                                 if (item.external && (item as any).url) {
                                     window.open((item as any).url!, "_blank");
@@ -460,6 +534,7 @@ const NavBar: FC = () => {
                                     navigate(item.path);
                                 }
                                 setTimeout(() => setIsHovered(false), 300);
+                                onSubNavPreviewChange?.(null);
                                 requestAnimationFrame(updateUnderline);
                             }}
                             style={{ position: "relative" }}
