@@ -4,8 +4,6 @@ import React, { useContext } from "react";
 
 import UserContext from "../../../contexts/UserContext";
 
-import AdminNav from "./components/AdminNav";
-import AdminRedirect from "./AdminRedirect";
 import ApprovePending from "./pages/ApprovePending";
 import ApproveEdit from "./pages/ApproveEdit";
 import Strikes from "./pages/Strikes";
@@ -17,6 +15,8 @@ import Valentines from "./pages/Valentines";
 import ApprovedValentines from "./pages/ApprovedValentines";
 import ContentUnavailable from "../../../components/ui/content/ContentUnavailable";
 import AddUser from "./pages/AddUser";
+import AdminLanding from "./pages/AdminLanding";
+import { AdminOrgProvider } from "./AdminOrgContext";
 
 const VALENTINES = false;
 
@@ -113,30 +113,31 @@ const AdminRouter = () => {
     }
 
     return (
-        <div className={"min-h-screen"}>
-            <AdminNav links={links} />
-            <Routes>
-                <Route path="/" Component={AdminRedirect} />
-                <Route path="/approve-pending" Component={ApprovePending} />
-                <Route path="/approve-edit" Component={ApproveEdit} />
-                <Route path="/strikes" Component={Strikes} />
-                <Route path="/send-message" Component={SendMessage} />
-                <Route path="/announcements" Component={Announcements} />
-                <Route path="/rooms" Component={Rooms} />
-                <Route path="/reserve" Component={Reserve} />
-                <Route path="/add-user" Component={AddUser} />
-                {VALENTINES && (
-                    <>
-                        <Route path="/valentines" Component={Valentines} />
-                        <Route
-                            path="/approved-valentines"
-                            Component={ApprovedValentines}
-                        />
-                    </>
-                )}
-                <Route path="/*" Component={ApprovePending} />
-            </Routes>
-        </div>
+        <AdminOrgProvider>
+            <div className={"min-h-screen"}>
+                <Routes>
+                    <Route path="/" Component={AdminLanding} />
+                    <Route path="/approve-pending" Component={ApprovePending} />
+                    <Route path="/approve-edit" Component={ApproveEdit} />
+                    <Route path="/strikes" Component={Strikes} />
+                    <Route path="/send-message" Component={SendMessage} />
+                    <Route path="/announcements" Component={Announcements} />
+                    <Route path="/rooms" Component={Rooms} />
+                    <Route path="/reserve" Component={Reserve} />
+                    <Route path="/add-user" Component={AddUser} />
+                    {VALENTINES && (
+                        <>
+                            <Route path="/valentines" Component={Valentines} />
+                            <Route
+                                path="/approved-valentines"
+                                Component={ApprovedValentines}
+                            />
+                        </>
+                    )}
+                    <Route path="/*" Component={ApprovePending} />
+                </Routes>
+            </div>
+        </AdminOrgProvider>
     );
 };
 
