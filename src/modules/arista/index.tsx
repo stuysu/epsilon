@@ -77,14 +77,6 @@ const Arista = () => {
                             }`}
                             alt="Arista is Stuyvesant High School’s premier honor society."
                         />
-                        <img
-                            src={`${PUBLIC_URL}/taglines/arista.svg`}
-                            className={`w-80 h-auto top-0 absolute blur-2xl ${
-                                theme.effectiveMode === "light" ? "invert" : ""
-                            }`}
-                            alt=""
-                            aria-hidden="true"
-                        />
                     </motion.div>
                     <motion.div
                         className={"max-w-xl"}
