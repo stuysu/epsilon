@@ -1,10 +1,10 @@
 import React, { useContext, useEffect, useState } from "react";
-import UserContext from "../../contexts/UserContext";
-import LoginGate from "../../components/ui/content/LoginGate";
-import { supabase } from "../../lib/supabaseClient";
-import { PUBLIC_URL } from "../../config/constants";
-import UserDialog from "../../components/ui/overlays/UserDialog";
-import Divider from "../../components/ui/Divider";
+import UserContext from "../../../contexts/UserContext";
+import LoginGate from "../../../components/ui/content/LoginGate";
+import { supabase } from "../../../lib/supabaseClient";
+import { PUBLIC_URL } from "../../../config/constants";
+import UserDialog from "../../../components/ui/overlays/UserDialog";
+import Divider from "../../../components/ui/Divider";
 import { Helmet } from "react-helmet";
 
 type Category = "Exclusive Series" | "Accolades" | "Venturer" | "Participation";
