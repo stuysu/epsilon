@@ -7,6 +7,7 @@ import { sortByRole } from "../../../../utils/DataFormatters";
 import LoginGate from "../../../../components/ui/content/LoginGate";
 import ItemList from "../../../../components/ui/lists/ItemList";
 import SearchInput from "../../../../components/ui/input/SearchInput";
+import OrgInspector from "../components/OrgInspector";
 
 const Members = () => {
     const organization: OrgContextType = useContext(OrgContext);
@@ -37,12 +38,21 @@ const Members = () => {
     return (
         <LoginGate page="view members">
             <section className="w-full mt-2 mb-10">
+                <div className={"xl:hidden mb-10 w-full"}>
+                    <OrgInspector />
+                </div>
                 <SearchInput
                     placeholder="Search members by name or email..."
                     value={search}
                     onChange={setSearch}
                 />
-                <ItemList height={boxHeight} contentRef={contentRef}>
+                <ItemList
+                    height={boxHeight}
+                    contentRef={contentRef}
+                    title="Members"
+                    subtitle={`${filteredMembers.length} Total`}
+                    icon="bx-group"
+                >
                     <AnimatePresence initial={false}>
                         {filteredMembers.map((member) => (
                             <motion.div
@@ -63,9 +73,7 @@ const Members = () => {
                                     first_name={
                                         member.users?.first_name || "First"
                                     }
-                                    last_name={
-                                        member.users?.last_name || "Last"
-                                    }
+                                    last_name={member.users?.last_name || "Last"}
                                     is_faculty={
                                         member.users?.is_faculty || false
                                     }
