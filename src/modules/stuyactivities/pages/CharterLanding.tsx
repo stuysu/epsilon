@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { PUBLIC_URL } from "../../config/constants";
+import { PUBLIC_URL } from "../../../config/constants";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { Helmet } from "react-helmet";
 import { Checkbox } from "radix-ui";
-import Divider from "../../components/ui/Divider";
+import Divider from "../../../components/ui/Divider";
 
 const CharterLanding = () => {
     const navigate = useNavigate();
@@ -153,7 +153,7 @@ const CharterLanding = () => {
                                 >
                                     <p>
                                         I have read and agree to the{" "}
-                                        <a href={"/rules"}>
+                                        <a href={"/stuyactivities/rules"}>
                                             Clubs & Pubs Regulations
                                         </a>
                                         .
@@ -161,7 +161,10 @@ const CharterLanding = () => {
                                 </label>
                             </div>
                             <p
-                                onClick={() => agreed && navigate("/create")}
+                                onClick={() =>
+                                    agreed &&
+                                    navigate("/stuyactivities/create")
+                                }
                                 className={
                                     "text-accent " +
                                     (agreed
