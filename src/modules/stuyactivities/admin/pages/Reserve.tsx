@@ -1,6 +1,13 @@
-import { Box, Divider, MenuItem, TextField } from "@mui/material";
+import {
+    Box,
+    Divider,
+    FormControlLabel,
+    MenuItem,
+    Switch,
+    TextField,
+} from "@mui/material";
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
-import { useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import dayjs, { Dayjs } from "dayjs";
@@ -47,6 +54,8 @@ const Reserve = () => {
 
     const [reservedMeetings, setReservedMeetings] = useState<Meeting[]>([]);
 
+    const [excludeBooked, setexcludeBooked] = useState<boolean>(false);
+
     const fetchOrgMeetings = async () => {
         if (!forceOrgId || forceOrgId === -1) return;
 
@@ -74,7 +83,44 @@ const Reserve = () => {
     useEffect(() => {
         fetchOrgMeetings();
     }, [forceOrgId]);
-
+    useEffect(() => {
+        // No other way to use async here
+        (async () => {
+            let { data: roomData, error: roomFetchError } = await supabase
+                .from("rooms")
+                .select("*")
+                .order("name", { ascending: true });
+            if (roomFetchError || !roomData) {
+                enqueueSnackbar("Failed to fetch rooms", {
+                    variant: "error",
+                });
+                setLoading(false);
+                return;
+            }
+            if (excludeBooked) {
+                // Fetch booked rooms overlapping with current times
+                // Date should in theory be filled but just in case:
+                if (!startTime || !endTime) return;
+                type RoomMeta = {
+                    room_id: number;
+                    meeting_id: number;
+                };
+                const { data: bookedRoomsRaw, error } = await supabase
+                    .rpc("get_booked_rooms", {
+                        meeting_start: startTime.toISOString(),
+                        meeting_end: endTime.toISOString(),
+                    })
+                    .returns<RoomMeta[]>();
+                const bookedRooms: RoomMeta[] = Array.isArray(bookedRoomsRaw)
+                    ? bookedRoomsRaw
+                    : [];
+                roomData = roomData.filter((meta) =>
+                    bookedRooms.every((room) => room.room_id !== meta.id),
+                );
+            }
+            setAllRooms(roomData);
+        })();
+    }, [excludeBooked]);
     const fetchRooms = async () => {
         setLoading(true);
 
@@ -276,6 +322,23 @@ const Reserve = () => {
                                     </MenuItem>
                                 ))}
                             </TextField>
+                            <FormControlLabel
+                                control={
+                                    <Switch
+                                        checked={excludeBooked}
+                                        onChange={(
+                                            event: ChangeEvent<HTMLInputElement>,
+                                        ) =>
+                                            setexcludeBooked(
+                                                event.target.checked,
+                                            )
+                                        }
+                                    ></Switch>
+                                }
+                                sx={{ marginLeft: "10px" }}
+                                label="hide booked rooms?"
+                                disabled={!endTime || !startTime}
+                            ></FormControlLabel>
                         </Box>
                         <AsyncButton
                             onClick={forceReserve}
