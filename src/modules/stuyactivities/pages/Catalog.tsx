@@ -1,13 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react";
-import { supabase } from "../../lib/supabaseClient";
+import { supabase } from "../../../lib/supabaseClient";
 import { Box, Skeleton, useMediaQuery } from "@mui/material";
 import { Masonry } from "@mui/lab";
 import { motion } from "framer-motion";
 import { useSnackbar } from "notistack";
 import { Helmet } from "react-helmet";
 
-import OrgCard from "./components/OrgCard";
-import SearchFilter from "./components/SearchFilter";
+import OrgCard from "../components/OrgCard";
+import SearchFilter from "../components/SearchFilter";
 
 type SearchState = {
     orgs: Partial<Organization>[];
@@ -259,7 +259,7 @@ const Catalog = () => {
     );
 
     return (
-        <section className={"flex relative flex-wrap"}>
+        <section className={"flex relative flex-wrap mt-10"}>
             <Helmet>
                 <title>StuyActivities Catalog - Epsilon</title>
                 <meta
