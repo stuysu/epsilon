@@ -1,11 +1,11 @@
 import { Box, Divider, Typography } from "@mui/material";
-import ValentineDisplay from "./components/ValentineDisplay";
+import ValentineDisplay from "../components/ValentineDisplay";
 import { useContext, useEffect, useState } from "react";
-import { Valentine } from "./ValentineType";
-import { supabase } from "../../lib/supabaseClient";
-import UserContext from "../../contexts/UserContext";
+import { Valentine } from "../ValentineType";
+import { supabase } from "../../../lib/supabaseClient";
+import UserContext from "../../../contexts/UserContext";
 import { enqueueSnackbar } from "notistack";
-import AsyncButton from "../../components/ui/buttons/AsyncButton";
+import AsyncButton from "../../../components/ui/buttons/AsyncButton";
 import { useNavigate } from "react-router-dom";
 
 const Valentines = () => {
