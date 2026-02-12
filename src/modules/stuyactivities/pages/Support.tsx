@@ -1,5 +1,5 @@
 import React from "react";
-import Divider from "../../components/ui/Divider";
+import Divider from "../../../components/ui/Divider";
 import { AnimatePresence, motion } from "framer-motion";
 import { Helmet } from "react-helmet";
 
@@ -61,7 +61,7 @@ const HelpItem = ({
 
 const Support = () => {
     return (
-        <div className={"m-10 sm:m-12 max-sm:mb-32"}>
+        <div className={"m-10 sm:m-12 max-sm:mb-32 pt-10"}>
             <Helmet>
                 <title>StuyActivities Support - Epsilon</title>
                 <meta
