@@ -1,6 +1,6 @@
 import React from "react";
-import AsyncButton from "../../components/ui/buttons/AsyncButton";
-import { PUBLIC_URL } from "../../config/constants";
+import AsyncButton from "../../../components/ui/buttons/AsyncButton";
+import { PUBLIC_URL } from "../../../config/constants";
 
 const ConfirmJoin = () => {
     return (
