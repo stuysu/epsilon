@@ -77,7 +77,7 @@ const Regulations = () => {
                         For any issues or difficulties with the Epsilon
                         StuyActivities service, visit the{" "}
                         <a
-                            href="/activities-support"
+                            href="/stuyactivities/support"
                             target="_blank"
                             rel="noreferrer"
                         >
