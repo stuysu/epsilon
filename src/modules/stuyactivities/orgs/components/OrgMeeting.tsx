@@ -64,7 +64,7 @@ const OrgMeeting = ({
                             {activityInformationOverDetails && (
                                 <Avatar.Root>
                                     <Avatar.Image
-                                        className="min-w-10 h-10 rounded-md object-cover"
+                                        className="w-10 h-10 rounded-md object-cover"
                                         src={org_picture}
                                         alt={org_name}
                                     />
