@@ -18,7 +18,7 @@ import ApprovedValentines from "./pages/ApprovedValentines";
 import ContentUnavailable from "../../../components/ui/content/ContentUnavailable";
 import AddUser from "./pages/AddUser";
 
-const VALENTINES = false;
+const VALENTINES = true;
 
 export type Link = {
     to: string;

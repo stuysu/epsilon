@@ -46,6 +46,7 @@ const SubNavBar: FC = () => {
                         { label: "Regulations", path: "/rules" },
                         { label: "Archives", path: "/archives" },
                         { label: "Support", path: "/activities-support" },
+                        { label: "Valentines", path:"/valentines"},
                     ] as const
                 ).map(({ label, path }) => (
                     <p

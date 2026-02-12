@@ -28,6 +28,7 @@ const ConfirmJoin = lazy(() => import("./stuyactivities/ConfirmJoin"));
 const Archives = lazy(() => import("./stuyactivities/Archives"));
 const OrgRouter = lazy(() => import("./stuyactivities/orgs"));
 const AdminRouter = lazy(() => import("./stuyactivities/admin"));
+const ValentinesRouter = lazy(() => import ("./valentines/index"));
 
 const Pages = () => {
     const location = useLocation();
@@ -91,6 +92,7 @@ const Pages = () => {
                     <Route path={"/activities-support"} Component={Support} />
                     <Route path={"/admin/*"} Component={AdminRouter} />
                     <Route path={"/:orgUrl/*"} Component={OrgRouter} />
+                    <Route path={"/valentines/*"} Component={ValentinesRouter} />
                 </Routes>
                 {user.signed_in && (
                     <footer
