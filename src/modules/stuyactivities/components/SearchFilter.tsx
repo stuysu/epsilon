@@ -58,7 +58,8 @@ const SearchFilter = ({
         >
             <img
                 src={`${PUBLIC_URL}/textures/org_color.png`}
-                className="absolute blur-2xl opacity-15 pointer-events-none"
+                alt={""}
+                className="absolute blur-2xl opacity-10 pointer-events-none"
             />
             <SearchInput
                 placeholder="Find Activities..."

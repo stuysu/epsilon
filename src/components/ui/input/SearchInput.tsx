@@ -1,10 +1,11 @@
-import { ChangeEvent } from "react";
+import { ChangeEvent, KeyboardEvent } from "react";
 
 type SearchInputProps = {
     placeholder?: string;
     value: string;
     onChange: (value: string) => void;
     icon?: string;
+    onEnter?: (value: string) => void;
 };
 
 export default function SearchInput({
@@ -12,6 +13,7 @@ export default function SearchInput({
     value,
     onChange,
     icon = "bx bx-search bx-sm",
+    onEnter,
 }: SearchInputProps) {
     return (
         <div className="relative w-full h-12 mb-5 flex justify-center">
@@ -25,6 +27,11 @@ export default function SearchInput({
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                     onChange(e.target.value)
                 }
+                onKeyDown={(e: KeyboardEvent<HTMLInputElement>) => {
+                    if (e.key === "Enter" && onEnter) {
+                        onEnter(value);
+                    }
+                }}
                 className=" w-full rounded-xl px-12 transition-colors
                 text-typography-1
                 important
