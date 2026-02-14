@@ -76,7 +76,7 @@ const EditField = ({
     if (usedForSpecificPurpose) {
         if (field === "keywords") {
             display =
-                <FormSection sx={{width: "70%"}}> 
+                <FormSection sx={{width: "70%"}}>
                     <FormChipText
                     field="keywords"
                     label="Keywords"
@@ -336,7 +336,7 @@ const OrgEditor = ({
                 payload[field] = stringifyThing(editData[field as keyof OrganizationEdit] as string[] || existingEdit[field as keyof OrganizationEdit] || organization[field as keyof Organization]) || null;
             }
             else payload[field] = editData[field] || existingEdit[field] || null;
-                
+
             // if it is equal to the original, approved value, don't put it in the request.
             if (
                 typeof payload[field] === "string" ||
