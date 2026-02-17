@@ -1,12 +1,12 @@
 import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@mui/material";
 
 type Props = {
     name?: Organization["name"];
     role?: Membership["role"];
     role_name: Membership["role_name"];
-    url?: Organization["url"]; // Doesn't make sense for an org to not have an url, removed to fix type error
+    url?: Organization["url"];
     picture: Organization["picture"];
     force?: boolean;
 };
@@ -23,14 +23,18 @@ const OrgBlock = ({
     picture,
     force = false,
 }: Props) => {
+    const navigate = useNavigate();
     const [imgLoaded, setImgLoaded] = useState(false);
 
+    const handleClick = () => {
+        if (!url) return;
+        force ? (window.location.href = `/${url}`) : navigate(`/${url}`);
+    };
 
     return (
-        <Link
+        <div
             className={"cursor-pointer flex flex-col w-44"}
-            style={{ textDecoration: "none", color: "inherit", display: "block" }}
-            to={`/${url}`}
+            onClick={url ? handleClick : undefined}
         >
             <div>
                 {picture ? (
@@ -122,7 +126,7 @@ const OrgBlock = ({
                     {role_name || formatCapitals(role || "")}
                 </p>
             </div>
-        </Link>
+        </div>
     );
 };
 
