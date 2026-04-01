@@ -36,8 +36,8 @@ const Pages = () => {
     const theme = useContext(ThemeContext);
     const wordmarkSrc =
         theme.effectiveMode === "dark"
-            ? `${PUBLIC_URL}/wordmark.svg`
-            : `${PUBLIC_URL}/wordmark_light.svg`;
+            ? `${PUBLIC_URL}/sigma.svg`
+            : `${PUBLIC_URL}/sigma_light.svg`;
 
     return (
         <div className="bg-bg min-h-dvh">

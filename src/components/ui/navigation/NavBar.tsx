@@ -47,8 +47,8 @@ const NavBar: FC = () => {
 
     const wordmarkSrc =
         theme.effectiveMode === "dark"
-            ? `${PUBLIC_URL}/wordmark.svg`
-            : `${PUBLIC_URL}/wordmark_light.svg`;
+            ? `${PUBLIC_URL}/sigma.svg`
+            : `${PUBLIC_URL}/sigma_light.svg`;
 
     const titleStyle: CSSProperties = {
         color: "inherit",
