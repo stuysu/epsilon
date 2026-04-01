@@ -261,7 +261,7 @@ const Catalog = () => {
     return (
         <section className={"flex relative flex-wrap"}>
             <Helmet>
-                <title>StuyActivities Catalog - Epsilon</title>
+                <title>StuyActivities Catalog - Sigma</title>
                 <meta
                     name="description"
                     content="Discover and explore student organizations at Stuyvesant High School. Find Activities that match your interests."

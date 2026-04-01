@@ -33,7 +33,7 @@ const UnauthenticatedLanding = () => {
             >
                 <img
                     src={wordmarkSrc}
-                    alt="Epsilon"
+                    alt="Sigma"
                     style={{
                         marginBottom: "50px",
                         maxWidth: "300px",

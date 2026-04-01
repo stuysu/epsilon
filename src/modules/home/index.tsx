@@ -13,10 +13,10 @@ const Index = () => {
     return (
         <Box sx={{ width: "100%" }}>
             <Helmet>
-                <title>Home - Epsilon</title>
+                <title>Home - Sigma</title>
                 <meta
                     name="description"
-                    content="Epsilon is the everything app for Stuyvesant High School. Find and join Activities, browse the calendar, discover new opportunities, and more."
+                    content="Sigma is the everything app for Stuyvesant High School. Find and join Activities, browse the calendar, discover new opportunities, and more."
                 />
             </Helmet>
             {user.signed_in ? <UserHome /> : <UnauthenticatedLanding />}

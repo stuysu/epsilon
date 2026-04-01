@@ -12,13 +12,13 @@ const UserPreferences = () => {
         <LoginGate page={"adjust your preferences"}>
             <div className={"sm:m-12 m-6"}>
                 <h1>Preferences</h1>
-                <p>Make Epsilon yours.</p>
+                <p>Make Sigma yours.</p>
                 <Divider />
 
                 <div className={"flex flex-col sticky top-0"}>
                     <div className={"bg-bg pb-4 pt-3 "}>
                         <h2>Display Theme</h2>
-                        <p>Define the visual look of Epsilon.</p>
+                        <p>Define the visual look of Sigma.</p>
                     </div>
                     <div className="bg-gradient-to-b from-bg to-transparent w-full h-4" />
                 </div>

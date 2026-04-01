@@ -46,16 +46,16 @@ const Pages = () => {
                     property="og:url"
                     content={PUBLIC_URL + location.pathname}
                 />
-                <meta property="og:site_name" content={"Epsilon"} />
+                <meta property="og:site_name" content={"Sigma"} />
                 <meta property="og:type" content={"website"} />
                 <meta
                     property="og:description"
                     content={
-                        "Epsilon is the everything app for Stuyvesant High School. Find and join Activities, browse the calendar, discover new opportunities, and more."
+                        "Sigma is the everything app for Stuyvesant High School. Find and join Activities, browse the calendar, discover new opportunities, and more."
                     }
                 />
-                <meta property={"og:title"} content={"Epsilon"} />
-                <title>Epsilon</title>
+                <meta property={"og:title"} content={"Sigma"} />
+                <title>Sigma</title>
             </Helmet>
 
             <Suspense fallback={<Loading />}>
@@ -104,7 +104,7 @@ const Pages = () => {
                                 className={
                                     "w-36 max-sm:w-28 relative bottom-0.5"
                                 }
-                                alt={"Epsilon"}
+                                alt={"Sigma"}
                             ></img>
                         </div>
                         <div
@@ -114,7 +114,7 @@ const Pages = () => {
                         >
                             <p className={"sm:hover:opacity-75"}>
                                 <a
-                                    href={"https://github.com/stuysu/epsilon/"}
+                                    href={"https://github.com/stuysu/Sigma/"}
                                     className={"no-underline text-typography-2"}
                                 >
                                     Source
@@ -132,7 +132,7 @@ const Pages = () => {
                                 <a
                                     className={"no-underline text-typography-2"}
                                     href={
-                                        "https://www.figma.com/design/WfaOkjsU63VjVD1sdmSTXu/Epsilon-Design-File-Revision-1?node-id=0-1&t=xuEKneeUJMZXyrt1-1"
+                                        "https://www.figma.com/design/WfaOkjsU63VjVD1sdmSTXu/Sigma-Design-File-Revision-1?node-id=0-1&t=xuEKneeUJMZXyrt1-1"
                                     }
                                 >
                                     Design
@@ -142,7 +142,7 @@ const Pages = () => {
                                 <a
                                     className={"no-underline text-typography-2"}
                                     href={
-                                        "https://github.com/willpill/Epsilon-Press-Kit/archive/refs/heads/main.zip"
+                                        "https://github.com/willpill/Sigma-Press-Kit/archive/refs/heads/main.zip"
                                     }
                                 >
                                     Press Kit

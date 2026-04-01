@@ -112,7 +112,7 @@ const Index = () => {
     return (
         <div>
             <Helmet>
-                <title>Calendar - Epsilon</title>
+                <title>Calendar - Sigma</title>
                 <meta
                     name="description"
                     content="Happenings at Stuyvesant High School."

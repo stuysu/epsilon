@@ -304,7 +304,7 @@ const NavBar: FC = () => {
                     >
                         <img
                             src={wordmarkSrc}
-                            alt="Epsilon"
+                            alt="Sigma"
                             style={{
                                 marginTop: 14,
                                 maxWidth: 100,

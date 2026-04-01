@@ -61,7 +61,7 @@ const AttendanceOverview = () => {
                         <p>
                             Here is the attendance overview for your Activity.
                             Attendance records must be kept up to date on
-                            Epsilon. Strikes will be issued if attendance is not
+                            Sigma. Strikes will be issued if attendance is not
                             marked or falsely marked.
                         </p>
                     </div>
