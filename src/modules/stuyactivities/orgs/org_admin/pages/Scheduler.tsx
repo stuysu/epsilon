@@ -62,7 +62,7 @@ const Scheduler = () => {
             >
                 <h1>Activity Meetings Scheduler</h1>
                 <p className={"mb-4"}>
-                    Meeting records must be kept up to date on Sigma in order
+                    Meeting records must be kept up to date on Epsilon in order
                     to secure funding and avoid receiving strikes.
                 </p>
                 <AsyncButton

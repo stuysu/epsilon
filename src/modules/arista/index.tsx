@@ -10,7 +10,7 @@ const Arista = () => {
     return (
         <section className={"min-h-screen p-12"}>
             <Helmet>
-                <title>Arista - Sigma</title>
+                <title>Arista - Epsilon</title>
                 <meta
                     name="description"
                     content="Join Arista, Stuyvesant High School’s premier honor society."

@@ -73,7 +73,7 @@ const Regulations = () => {
                         General Guidance
                     </h4>
                     <p className={"mb-10"}>
-                        For any issues or difficulties with the Sigma
+                        For any issues or difficulties with the Epsilon
                         StuyActivities service, visit the{" "}
                         <a
                             href="/activities-support"
@@ -88,13 +88,13 @@ const Regulations = () => {
                         administrators. Charters are reviewed on a fixed day
                         each week and may be approved only between August 1 and
                         May 31. Once a charter is approved, it becomes visible
-                        on the Sigma site and the Activity leaders receive
+                        on the Epsilon site and the Activity leaders receive
                         email confirmation. <br />
                         <br />
                         Every Activity must have at least two leaders—either two
                         co‑presidents or a president and vice‑president—and must
                         meet at least once per month, in person or online, with
-                        each meeting registered on Sigma. Activities inactive
+                        each meeting registered on Epsilon. Activities inactive
                         for more than one month risk suspension or revocation of
                         their charter. The SU may merge Activities with
                         substantially similar missions, may suspend any Activity
@@ -190,7 +190,7 @@ const Regulations = () => {
                     <p className={"mb-10"}>
                         Official meetings may be hosted online provided that
                         links and schedules for every meeting are posted on
-                        Sigma and that meetings occur between 2:30 PM and 8:00
+                        Epsilon and that meetings occur between 2:30 PM and 8:00
                         PM. If uninvited guests appear, or if any participant
                         engages in disrespectful comments, bullying, or other
                         misconduct that violates the Code of Conduct, the
@@ -205,7 +205,7 @@ const Regulations = () => {
                     </h4>
                     <p className={"mb-10"}>
                         All Activities must reserve a room to be able to hold a
-                        meeting. Rooms must be reserved on Sigma
+                        meeting. Rooms must be reserved on Epsilon
                         StuyActivities, which operates on a first‑come,
                         first‑served basis.
                         <span className={"important"}>
@@ -220,7 +220,7 @@ const Regulations = () => {
                         restored to their original condition after each meeting;
                         staff or Auditor complaints about cleanliness or damage
                         may result in strikes or suspension. Clubs must use
-                        the specific room indicated on Sigma, cancel
+                        the specific room indicated on Epsilon, cancel
                         reservations at least 24 hours in advance if plans
                         change, and email clubpub@stuysu.org or consult an SU
                         representative if no suitable room is available. Any club

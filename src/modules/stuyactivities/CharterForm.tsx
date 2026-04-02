@@ -328,7 +328,7 @@ const CharterForm = () => {
                         Charters will be approved as long as they comply with
                         all relevant regulations and provide clear, complete
                         information. Upon approval, your Activity will appear in
-                        the Sigma StuyActivities Catalog, and you may begin
+                        the Epsilon StuyActivities Catalog, and you may begin
                         adding members. More features, such as scheduling
                         meetings and creating posts, will be unlocked after the
                         Activity reaches 10 members.
@@ -508,7 +508,7 @@ const CharterForm = () => {
                         required={OrgRequirements.mission.required}
                         sx={multilineStyle}
                         rows={4}
-                        description="Tell us, in simple words, why you want to create this club OR what motivates you to lead it this year. This information won’t be displayed on Sigma, we will use it to gauge your passion and reasoning in forming this club."
+                        description="Tell us, in simple words, why you want to create this club OR what motivates you to lead it this year. This information won’t be displayed on Epsilon, we will use it to gauge your passion and reasoning in forming this club."
                     />
                     <FormTextField
                         label="Goals"
@@ -528,7 +528,7 @@ const CharterForm = () => {
                         required={OrgRequirements.purpose.required}
                         sx={multilineStyle}
                         rows={4}
-                        description="This is what will be displayed on Sigma: What do you want the Stuyvesant Community to know about your club?"
+                        description="This is what will be displayed on Epsilon: What do you want the Stuyvesant Community to know about your club?"
                     />
                     <FormTextField
                         label="Meeting Description"

@@ -170,14 +170,14 @@ const OrgRouter = () => {
                 />
                 <title>
                     {org.name
-                        ? `${org.name} - Activity on Sigma`
-                        : "Unnamed Activity on Sigma"}
+                        ? `${org.name} - Activity on Epsilon`
+                        : "Unnamed Activity on Epsilon"}
                 </title>
                 <meta
                     name="description"
                     content={
                         org.purpose ||
-                        "Sigma is the everything app for Stuyvesant High School. Find and join Activities, browse the calendar, discover new opportunities, and more."
+                        "Epsilon is the everything app for Stuyvesant High School. Find and join Activities, browse the calendar, discover new opportunities, and more."
                     }
                 />
             </Helmet>

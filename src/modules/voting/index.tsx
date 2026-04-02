@@ -10,10 +10,10 @@ const Vote = () => {
     return (
         <div>
             <Helmet>
-                <title>Vote Now - Sigma</title>
+                <title>Vote Now - Epsilon</title>
                 <meta
                     name="description"
-                    content="Vote in student government elections and other important school decisions with Sigma."
+                    content="Vote in student government elections and other important school decisions with Epsilon."
                 />
             </Helmet>
             <div className={"relative z-20 bg-black sm:-mb-20 min-h-screen"}>
@@ -76,7 +76,7 @@ const Vote = () => {
                         </div>
                         <p className={"text-white/70 mx-3 text-center"}>
                             We're working on integrating voting services into
-                            Sigma. For now, visit
+                            Epsilon. For now, visit
                         </p>
                         <a
                             href={"https://vote.stuysu.org"}

@@ -140,7 +140,7 @@ const Index = () => {
                 ],
             },
             {
-                title: "the original sigma team, 2024-2025",
+                title: "the original epsilon team, 2024-2025",
                 groups: [
                     {
                         role: "lead design engineer",
@@ -304,7 +304,7 @@ const Index = () => {
     return (
         <div className="pb-0">
             <Helmet>
-                <title>About - Sigma</title>
+                <title>About - Epsilon</title>
                 <meta
                     name="description"
                     content="One Site, One School, For Everyone."
@@ -326,7 +326,7 @@ const Index = () => {
                         >
                             <i className="text-white/50 bx bx-play text-5xl relative left-0.5 transition sm:hover:opacity-50 " />
                             <p className={"text-white/50"}>
-                                Learn about the makers of Sigma.
+                                Learn about the makers of Epsilon.
                             </p>
                         </motion.button>
                     )}
@@ -369,7 +369,7 @@ const Index = () => {
                                 className="w-full object-contain mx-auto mb-6"
                             />
                             <p className={"text-center text-white/70"}>
-                                Sigma is a project carried through each
+                                Epsilon is a project carried through each
                                 generation of Stuyvesant students. It's based on
                                 the philosophy that "we honor those who walked
                                 so we could run, and we run so our children

@@ -15,7 +15,7 @@ const CharterLanding = () => {
     return (
         <div>
             <Helmet>
-                <title>Charter an Activity - Sigma</title>
+                <title>Charter an Activity - Epsilon</title>
                 <meta
                     name="description"
                     content="Start your own club at Stuyvesant High School with our online application."
@@ -212,7 +212,7 @@ const CharterLanding = () => {
                                         "font-['instrument-serif'] font-normal text-beige"
                                     }
                                 >
-                                    Get Approved Quickly and Listed on Sigma!
+                                    Get Approved Quickly and Listed on Epsilon!
                                 </h1>
                                 <h1
                                     className={
@@ -234,7 +234,7 @@ const CharterLanding = () => {
                                 proceed. Assuming all criteria are met, the SU
                                 Administration will grant approval for your
                                 Activity. Once approved, your Activity will be
-                                listed in the Sigma StuyActivities Catalog, at
+                                listed in the Epsilon StuyActivities Catalog, at
                                 which point you may begin the process of
                                 enrolling members and scheduling meetings.
                             </p>
