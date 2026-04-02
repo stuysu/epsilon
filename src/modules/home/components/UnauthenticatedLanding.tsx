@@ -6,7 +6,7 @@ import CatalogButton from "../../../components/ui/buttons/CatalogButton";
 
 const UnauthenticatedLanding = () => {
     const [isLoginHovered, setIsLoginHovered] = useState(false);
-    const wordmarkSrc = `${PUBLIC_URL}/sigma.svg`;
+    const wordmarkSrc = `${PUBLIC_URL}/wordmark.svg`;
 
     return (
         <main className={"bg-[#0e0e0e] h-screen unauth-landing"}>
