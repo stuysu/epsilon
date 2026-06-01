@@ -89,6 +89,7 @@ interface Room {
         | "SUNDAY"
     )[];
     comments?: string;
+    ais_days: string[];
 }
 
 interface Permission {

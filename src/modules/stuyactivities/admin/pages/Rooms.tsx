@@ -12,6 +12,7 @@ type ApiRoom = {
     approval_required: boolean;
     available_days: string;
     comments?: string;
+    ais_days: string[];
 };
 
 type Organization = {
@@ -207,6 +208,7 @@ const Rooms = () => {
                             }
                             comments={room.comments}
                             approvalRequired={room.approval_required}
+                            aisDays={room.ais_days || []}
                             onDelete={() =>
                                 setRooms(rooms.filter((r) => r.id !== room.id))
                             }

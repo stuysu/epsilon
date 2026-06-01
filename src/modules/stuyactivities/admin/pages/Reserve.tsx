@@ -192,9 +192,8 @@ const Reserve = () => {
         );
 
         if (reserveError) {
-            enqueueSnackbar("Failed to force reserve room", {
-                variant: "error",
-            });
+            const message = await reserveError.context?.text();
+            enqueueSnackbar(message || "Failed to force reserve room", { variant: "error" });
             return;
         }
 

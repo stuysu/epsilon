@@ -17,6 +17,7 @@ const AdminRoom = ({
     availableDays,
     comments,
     approvalRequired,
+    aisDays,
     onDelete,
     create,
     onCreate,
@@ -27,6 +28,7 @@ const AdminRoom = ({
     availableDays?: Room["available_days"];
     comments?: string;
     approvalRequired?: boolean;
+    aisDays?: string[];
     onDelete?: () => void;
     create?: boolean;
     onCreate?: (room: {
@@ -35,6 +37,7 @@ const AdminRoom = ({
         available_days: string;
         comments: string;
         approval_required: boolean;
+        ais_days: string[];
     }) => void;
 }) => {
     const { enqueueSnackbar } = useSnackbar();
@@ -47,8 +50,13 @@ const AdminRoom = ({
     const [roomApprovalRequired, setRoomApprovalRequired] =
         useState(approvalRequired);
 
+    const [roomAisDays, setRoomAisDays] = useState<string[]>(aisDays || []);
+    const [aisExpanded, setAisExpanded] = useState(false);
+
     const [isChanged, setIsChanged] = useState(false);
     const [confirm, setConfirm] = useState(false);
+    
+    const DAYS = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
 
     const saveRoom = async () => {
         if (!isChanged) return;
@@ -75,6 +83,7 @@ const AdminRoom = ({
                     available_days: roomAvailableDays,
                     comments,
                     approval_required: roomApprovalRequired,
+                    ais_days: roomAisDays,
                 },
             },
         );
@@ -127,6 +136,7 @@ const AdminRoom = ({
             available_days: roomAvailableDays.join(", "),
             comments,
             approval_required: roomApprovalRequired,
+            ais_days: roomAisDays,
         });
         if (createError) {
             enqueueSnackbar("Failed to create room", { variant: "error" });
@@ -141,116 +151,153 @@ const AdminRoom = ({
                 available_days: roomAvailableDays.join(", "),
                 comments: "",
                 approval_required: roomApprovalRequired || false,
+                ais_days: roomAisDays,
             });
         }
     };
 
     return (
-        <div className="gap-3 border-b border-divider flex h-12 justify-between w-full pb-3 items-center">
-            <input
-                value={roomName || ""}
-                className="text text-typography-1 w-52 rounded-md px-3 h-9 bg-layer-1 outline-none"
-                placeholder="Room name"
-                onChange={(e) => {
-                    setRoomName(e.target.value);
-                    setIsChanged(true);
-                }}
-            />
-
-            <input
-                value={roomFloor ?? ""}
-                className="text text-typography-1 rounded-md px-3 w-16 h-9 bg-layer-1 outline-none"
-                placeholder="Floor"
-                inputMode="numeric"
-                onChange={(e) => {
-                    const v = parseInt(e.target.value, 10);
-                    setRoomFloor(Number.isNaN(v) ? (undefined as any) : v);
-                    setIsChanged(true);
-                }}
-            />
-
-            <div className="w-36 flex justify-center">
-                <Checkbox
-                    checked={roomApprovalRequired}
+        <div className="border-b border-divider w-full pb-3">
+            <div className="gap-3 flex h-12 justify-between w-full items-center">
+                <input
+                    value={roomName || ""}
+                    className="text text-typography-1 w-52 rounded-md px-3 h-9 bg-layer-1 outline-none"
+                    placeholder="Room name"
                     onChange={(e) => {
-                        setRoomApprovalRequired(e.target.checked);
+                        setRoomName(e.target.value);
                         setIsChanged(true);
                     }}
                 />
-            </div>
 
-            <FormControl className="w-96">
-                <FormGroup row className={"flex justify-center"}>
-                    {(
-                        [
-                            "MONDAY",
-                            "TUESDAY",
-                            "WEDNESDAY",
-                            "THURSDAY",
-                            "FRIDAY",
-                        ] as Room["available_days"]
-                    ).map((day) => (
-                        <FormControlLabel
-                            key={day}
-                            control={
-                                <Checkbox
-                                    checked={roomAvailableDays?.includes(day)}
-                                    onChange={(e) => {
-                                        if (e.target.checked) {
-                                            setRoomAvailableDays([
-                                                ...roomAvailableDays,
-                                                day,
-                                            ]);
-                                        } else {
-                                            setRoomAvailableDays(
-                                                roomAvailableDays?.filter(
-                                                    (d) => d !== day,
-                                                ),
-                                            );
-                                        }
-                                        setIsChanged(true);
-                                    }}
-                                />
-                            }
-                            label={day.slice(0, 2)}
-                        />
-                    ))}
-                </FormGroup>
-            </FormControl>
+                <input
+                    value={roomFloor ?? ""}
+                    className="text text-typography-1 rounded-md px-3 w-16 h-9 bg-layer-1 outline-none"
+                    placeholder="Floor"
+                    inputMode="numeric"
+                    onChange={(e) => {
+                        const v = parseInt(e.target.value, 10);
+                        setRoomFloor(Number.isNaN(v) ? (undefined as any) : v);
+                        setIsChanged(true);
+                    }}
+                />
 
-            <div className="flex items-center pr-2 w-24">
-                {create ? (
-                    <button
-                        aria-label="Create room"
-                        className="h-9 w-9 grid place-items-center rounded-md sm:hover:bg-layer-2"
-                        onClick={createRoom}
-                    >
-                        <i className="bx bx-plus text-green text-xl" />
-                    </button>
-                ) : (
-                    <>
+                <div className="w-36 flex justify-center">
+                    <Checkbox
+                        checked={roomApprovalRequired}
+                        onChange={(e) => {
+                            setRoomApprovalRequired(e.target.checked);
+                            setIsChanged(true);
+                        }}
+                    />
+                </div>
+
+                <FormControl className="w-96">
+                    <FormGroup row className={"flex justify-center"}>
+                        {(
+                            DAYS as Room["available_days"]
+                        ).map((day) => (
+                            <FormControlLabel
+                                key={day}
+                                control={
+                                    <Checkbox
+                                        checked={roomAvailableDays?.includes(day)}
+                                        onChange={(e) => {
+                                            if (e.target.checked) {
+                                                setRoomAvailableDays([
+                                                    ...roomAvailableDays,
+                                                    day,
+                                                ]);
+                                            } else {
+                                                setRoomAvailableDays(
+                                                    roomAvailableDays?.filter(
+                                                        (d) => d !== day,
+                                                    ),
+                                                );
+                                            }
+                                            setIsChanged(true);
+                                        }}
+                                    />
+                                }
+                                label={day.slice(0, 2)}
+                            />
+                        ))}
+                    </FormGroup>
+                </FormControl>
+
+                <div className="flex items-center pr-2 w-24">
+                    {create ? (
                         <button
-                            aria-label="Save room"
-                            disabled={!isChanged}
-                            className={`h-9 w-9 grid place-items-center rounded-md ${
-                                isChanged
-                                    ? "sm:hover:bg-layer-2"
-                                    : "opacity-40 cursor-not-allowed"
-                            }`}
-                            onClick={saveRoom}
-                        >
-                            <i className="bx bx-save text-typography-1 text-xl" />
-                        </button>
-                        <button
-                            aria-label="Delete room"
+                            aria-label="Create room"
                             className="h-9 w-9 grid place-items-center rounded-md sm:hover:bg-layer-2"
-                            onClick={() => setConfirm(true)}
+                            onClick={createRoom}
                         >
-                            <i className="bx bx-trash text-red text-xl" />
+                            <i className="bx bx-plus text-green text-xl" />
                         </button>
-                    </>
-                )}
+                    ) : (
+                        <>
+                            <button
+                                aria-label="Toggle AIS days"
+                                className={`h-9 w-9 grid place-items-center rounded-md sm:hover:bg-layer-2 text-xs font-bold ${
+                                    roomAisDays.length > 0 ? "text-red" : "text-typography-2"
+                                }`}
+                                onClick={() => setAisExpanded((prev) => !prev)}
+                            >
+                                AIS
+                            </button>
+                            <button
+                                aria-label="Save room"
+                                disabled={!isChanged}
+                                className={`h-9 w-9 grid place-items-center rounded-md ${
+                                    isChanged
+                                        ? "sm:hover:bg-layer-2"
+                                        : "opacity-40 cursor-not-allowed"
+                                }`}
+                                onClick={saveRoom}
+                            >
+                                <i className="bx bx-save text-typography-1 text-xl" />
+                            </button>
+                            <button
+                                aria-label="Delete room"
+                                className="h-9 w-9 grid place-items-center rounded-md sm:hover:bg-layer-2"
+                                onClick={() => setConfirm(true)}
+                            >
+                                <i className="bx bx-trash text-red text-xl" />
+                            </button>
+                        </>
+                    )}
+                </div>
+
             </div>
+
+            {aisExpanded && !create && (
+                <div className="flex items-center gap-3 pl-2 pt-1 pb-1 justify-end">
+                    <p className="text-sm text-typography-2 whitespace-nowrap">AIS Days:</p>
+                    <FormControl>
+                        <FormGroup row>
+                            {DAYS.map((day) => (
+                                <FormControlLabel
+                                    key={day}
+                                    control={
+                                        <Checkbox
+                                            checked={roomAisDays.includes(day)}
+                                            size="small"
+                                            onChange={(e) => {
+                                                if (e.target.checked) {
+                                                    setRoomAisDays([...roomAisDays, day]);
+                                                } else {
+                                                    setRoomAisDays(roomAisDays.filter((d) => d !== day));
+                                                }
+                                                setIsChanged(true);
+                                            }}
+                                        />
+                                    }
+                                    label={day.slice(0, 2)}
+                                />
+                            ))}
+                        </FormGroup>
+                    </FormControl>
+                </div>
+            )}
 
             <UserDialog
                 title="Delete Room?"

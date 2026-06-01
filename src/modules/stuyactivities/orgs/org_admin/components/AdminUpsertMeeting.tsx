@@ -161,7 +161,8 @@ const AdminUpsertMeeting = ({
                 (room) =>
                     !~filteredBookedRooms.findIndex(
                         (meta) => meta.room_id === room.id,
-                    ) && room.available_days.includes(days[startTime!.day()]),
+                    ) && room.available_days.includes(days[startTime!.day()]) &&
+                    !room.ais_days?.includes(days[startTime!.day()]),
             );
 
             // check if the currently selected room id is no longer valid
