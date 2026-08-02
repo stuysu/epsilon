@@ -34,6 +34,24 @@ const Archives = () => {
                 >
                     <a
                         href={
+                            "https://docs.google.com/spreadsheets/d/1enQNUbduXRY0pGyngbRjpYma4LVkJdep3jh66iL_EWs/edit?usp=sharing"
+                        }
+                        target="_blank"
+                        className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex justify-center no-underline gap-4 sm:hover:bg-layer-3 shadow-control"
+                    >
+                        <div>
+                            <h1
+                                className={
+                                    "font-['instrument-serif'] text-beige font-normal"
+                                }
+                            >
+                                2025-2026 Archives
+                            </h1>
+                            <p className={"text-center"}>358 Activities</p>
+                        </div>
+                    </a>
+                    <a
+                        href={
                             "https://docs.google.com/spreadsheets/d/1URqnVM9avoD5_oRvBzQXI1ghq4oWRLWMps58cvNCLc0/edit?usp=sharing"
                         }
                         target="_blank"
