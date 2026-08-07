@@ -1,5 +1,5 @@
 import { ReactNode, useCallback, useEffect, useState } from "react";
-import { Avatar, Box, Paper } from "@mui/material";
+import { Avatar, Box, Paper, useMediaQuery } from "@mui/material";
 import { useSnackbar } from "notistack";
 import FormTextField from "../../../../../components/ui/forms/FormTextField";
 import OrgRequirements from "../../../../../utils/OrgRequirements";
@@ -8,6 +8,9 @@ import { supabase } from "../../../../../lib/supabaseClient";
 import { PUBLIC_URL } from "../../../../../config/constants";
 import { useNavigate } from "react-router-dom";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
+import FormChipText from "../../../../../components/ui/forms/FormChipText";
+import FormTagSelect from "../../../../../components/ui/forms/FormTagSelect";
+import FormSection from "../../../../../components/ui/forms/FormSection";
 
 type Props = {
     organization: Partial<Organization>; // Make organization a prop to allow component to become reusable
@@ -28,23 +31,94 @@ type FormStatus = {
 
 type orgKey = keyof OrganizationEdit & keyof Organization;
 
+const stringifyThing = (name: string | string []) => {
+    if (!name) return null;
+    if (Array.isArray(name)) {
+        return name.join(",");
+    }
+
+    if (name.length <= 0) return null;
+    return name;
+}
+
+const arrayifyThing = (thing: string | string[]) => {
+    if (Array.isArray(thing)) {
+        return thing;
+    }
+    return thing.split(",").map((s) => s.trim());
+}
 const EditField = ({
     field,
     pending,
     editing,
     onCancel,
     onEdit,
+    onChange,
     defaultDisplay,
     editDisplay,
+    usedForSpecificPurpose,
+    dataValue
 }: {
     field: string;
     pending: boolean;
     editing: boolean;
     onCancel: () => void;
     onEdit: () => void;
+    onChange: (updatedValue: string | string[]) => void;
     defaultDisplay: ReactNode;
     editDisplay: ReactNode;
+    usedForSpecificPurpose?: boolean;
+    dataValue: string | string[];
 }) => {
+    const isMobile = useMediaQuery("(max-width: 640px)");
+    let display: ReactNode = editDisplay;
+
+    if (usedForSpecificPurpose) {
+        if (field === "keywords") {
+            display =
+                <FormSection sx={{width: "70%"}}>
+                    <FormChipText
+                    field="keywords"
+                    label="Keywords"
+                    required={OrgRequirements.keywords.required}
+                    requirements={OrgRequirements.keywords.requirements}
+                    description={`You are allowed up to 3 keywords that describe your Activity. These will not be publicly visible but will help your Activity show up in search results. Examples of keywords include alternate names or acronyms, such as 'SU' for the Student Union. Create a keyword using <ENTER> or <,>. PLEASE NOTE: You cannot paste a list of keywords, you must type them manually.`}
+                    onChange={(val) => onChange(val)}
+                    value={arrayifyThing(dataValue)}
+                    />
+                </FormSection>
+        } else if (field === "tags") {
+            display = <FormTagSelect
+
+                field="tags"
+                label="Choose Tags"
+                onChange={(val) => onChange(val)}
+                tags={[
+                    "Arts & Crafts",
+                    "Academic & Professional",
+                    "Club Sports & Recreational Games",
+                    "Community Service & Volunteering",
+                    "Cultural & Religious",
+                    "Music",
+                    "Public Speaking",
+                    "STEM",
+                    "Student Support & Government",
+                    "Hobby & Special Interest",
+                    "Publication",
+                ]}
+
+                description="Select up to 3 tags that best represent your Activity"
+                required={OrgRequirements.tags.required}
+                requirements={OrgRequirements.tags.requirements}
+                sx={{
+                    width: "80%",
+                    marginRight: isMobile ? "" : "10px",
+                    marginTop: isMobile ? "20px" : "",
+                }}
+                value={dataValue as string[]}
+            />
+        }
+    }
     return (
         <>
             <h4>{orgFieldMap(field)}</h4>
@@ -63,7 +137,7 @@ const EditField = ({
             >
                 {editing ? (
                     <>
-                        {editDisplay}
+                        {display}
                         <Box
                             sx={{
                                 width: "15%",
@@ -105,6 +179,8 @@ const EditField = ({
     );
 };
 
+
+
 // too lazy to write them all out, use array.map to write it faster
 const textFields = [
     "name",
@@ -117,6 +193,8 @@ const textFields = [
     "meeting_description",
     "meeting_schedule",
     "faculty_email",
+    "keywords",
+    "tags"
 ];
 
 const hiddenFields: string[] = [
@@ -158,7 +236,7 @@ const OrgEditor = ({
 
     const oldPicture =
         existingEdit["picture"] === undefined ||
-        existingEdit["picture"] === null
+            existingEdit["picture"] === null
             ? organization["picture"]
             : existingEdit["picture"];
 
@@ -186,13 +264,16 @@ const OrgEditor = ({
         /* check if the edited fields are different from the original */
         let atleastOneDiff = false;
         for (let field of editedFields) {
+            console.log(field);
             if (hiddenFields.includes(field)) continue;
 
             let editedValue = editData[field as keyof OrganizationEdit];
+            if (field === "keywords") editedValue = stringifyThing(editedValue as string[]);
+
             let originalValue =
                 existingEdit[field as keyof OrganizationEdit] ||
                 organization[field as keyof Organization];
-
+            console.log(editedValue, originalValue);
             if (editedValue !== originalValue) {
                 atleastOneDiff = true;
                 break;
@@ -251,7 +332,10 @@ const OrgEditor = ({
             let field = key as orgKey;
             if (hiddenFields.includes(field)) continue;
 
-            payload[field] = editData[field] || existingEdit[field] || null;
+            if (field === "keywords") {
+                payload[field] = stringifyThing(editData[field as keyof OrganizationEdit] as string[] || existingEdit[field as keyof OrganizationEdit] || organization[field as keyof Organization]) || null;
+            }
+            else payload[field] = editData[field] || existingEdit[field] || null;
 
             // if it is equal to the original, approved value, don't put it in the request.
             if (
@@ -299,9 +383,9 @@ const OrgEditor = ({
             allNull = false; // even though all the fields could be null, this edit is worth keeping because the picture is different
         } else if (
             editPicture !==
-                (existingEdit === undefined
-                    ? organization["picture"]
-                    : existingEdit["picture"]) &&
+            (existingEdit === undefined
+                ? organization["picture"]
+                : existingEdit["picture"]) &&
             editPicture
         ) {
             // picture is different, but needs to be uploaded first
@@ -564,9 +648,9 @@ const OrgEditor = ({
                             if (
                                 e.target.files[0].size >
                                 1024 *
-                                    1024 *
-                                    OrgRequirements.picture?.requirements
-                                        ?.maxSize[0]
+                                1024 *
+                                OrgRequirements.picture?.requirements
+                                    ?.maxSize[0]
                             ) {
                                 return enqueueSnackbar(
                                     `File is too large. Max size is ${OrgRequirements.picture?.requirements?.maxSize[0]}MB.`,
@@ -612,78 +696,83 @@ const OrgEditor = ({
                     </AsyncButton>
                 )}
             </Box>
-            {textFields.map((field) => {
+            {textFields.map((field, i) => {
                 return (
-                    <EditField
-                        key={field}
-                        field={field}
-                        pending={
-                            (existingEdit[field as keyof OrganizationEdit] !==
-                                null &&
-                                existingEdit[
+                    <div key={i}>
+                        <EditField
+                            field={field}
+                            pending={
+                                (existingEdit[field as keyof OrganizationEdit] !==
+                                    null &&
+                                    existingEdit[
                                     field as keyof OrganizationEdit
-                                ] !== undefined) ||
-                            organization.state === "PENDING"
-                        }
-                        editing={editState[field]}
-                        onCancel={() => {
-                            // replace editData with original value
-                            updateEdit(
-                                field as keyof OrganizationEdit,
-                                existingEdit[field as keyof OrganizationEdit] ||
+                                    ] !== undefined) ||
+                                organization.state === "PENDING"
+                            }
+                            editing={editState[field]}
+                            onCancel={() => {
+                                // replace editData with original value
+                                updateEdit(
+                                    field as keyof OrganizationEdit,
+                                    existingEdit[field as keyof OrganizationEdit] ||
                                     organization[field as keyof Organization],
-                            );
+                                );
 
-                            // remove self from list of fields being edited
-                            setEditState((prevState) => {
-                                const state = { ...prevState };
-                                delete state[field];
-                                return state;
-                            });
+                                // remove self from list of fields being edited
+                                setEditState((prevState) => {
+                                    const state = { ...prevState };
+                                    delete state[field];
+                                    return state;
+                                });
 
-                            // remove self from validation checker
-                            setStatus((prevState) => {
-                                const state = { ...prevState };
-                                delete state[field];
-                                return state;
-                            });
-                        }}
-                        onEdit={() =>
-                            setEditState({ ...editState, [field]: true })
-                        }
-                        defaultDisplay={
-                            <p className={"w-3/4"}>
-                                {editData[field as keyof OrganizationEdit] || (
-                                    <em>&lt;empty&gt;</em>
-                                )}
-                            </p>
-                        }
-                        editDisplay={
-                            <FormTextField
-                                sx={{ width: "80%" }}
-                                label={orgFieldMap(field)}
-                                field={field}
-                                onChange={(val) =>
-                                    updateEdit(
-                                        field as keyof OrganizationEdit,
-                                        val,
-                                    )
-                                }
-                                value={
-                                    editData[field as keyof OrganizationEdit]
-                                }
-                                required={OrgRequirements[field].required}
-                                requirements={
-                                    OrgRequirements[field].requirements
-                                }
-                                changeStatus={changeStatus}
-                                multiline
-                                rows={4}
-                            />
-                        }
-                    />
+                                // remove self from validation checker
+                                setStatus((prevState) => {
+                                    const state = { ...prevState };
+                                    delete state[field];
+                                    return state;
+                                });
+                            }}
+                            onEdit={() =>
+                                setEditState({ ...editState, [field]: true })
+                            }
+                            onChange={(val) => updateEdit(field as keyof OrganizationEdit, val)}
+                            defaultDisplay={
+                                <p className={"w-3/4"}>
+                                    {stringifyThing(editData[field as keyof OrganizationEdit]) || (
+                                        <em>&lt;empty&gt;</em>
+                                    )}
+                                </p>
+                            }
+                            dataValue={editData[field as keyof OrganizationEdit] || ""}
+                            editDisplay={
+                                <FormTextField
+                                    sx={{ width: "80%" }}
+                                    label={orgFieldMap(field)}
+                                    field={field}
+                                    onChange={(val) =>
+                                        updateEdit(
+                                            field as keyof OrganizationEdit,
+                                            val,
+                                        )
+                                    }
+                                    value={
+                                        editData[field as keyof OrganizationEdit]
+                                    }
+                                    required={OrgRequirements[field].required}
+                                    requirements={
+                                        OrgRequirements[field].requirements
+                                    }
+                                    changeStatus={changeStatus}
+                                    multiline
+                                    rows={4}
+                                />
+                            }
+                            usedForSpecificPurpose={true}
+                        />
+                    </div>
                 );
             })}
+
             <Box
                 sx={{
                     width: "100%",

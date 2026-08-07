@@ -1,4 +1,4 @@
-import { Autocomplete, Chip, TextField } from "@mui/material";
+import { Autocomplete, Chip, SxProps, TextField } from "@mui/material";
 import {
     KeyboardEvent,
     SyntheticEvent,
