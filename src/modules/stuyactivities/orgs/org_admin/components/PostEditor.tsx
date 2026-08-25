@@ -1,4 +1,4 @@
-import { Box, Paper, TextField } from "@mui/material";
+import { Box, TextField } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
 
 import { supabase } from "../../../../../lib/supabaseClient";
@@ -136,18 +136,12 @@ const PostEditor = ({
     };
 
     return (
-        <Paper
-            elevation={1}
-            sx={{
-                width: "100%",
-                padding: "15px",
-                borderRadius: "10px",
-                height: "400px",
-                marginTop: "0.5rem",
-                marginBottom: "2rem",
-            }}
+        <div
+            className={
+                "bg-layer-1 p-5 pl-7 pb-8 rounded-xl shadow-prominent"
+            }
         >
-            <h3>{content ? "Update Post" : "Create Post"}</h3>
+            <h1>{content ? "Update Post" : "Create Post"}</h1>
             <Box sx={{ marginY: "10px" }}>
                 <TextField
                     value={postData["title"]}
@@ -187,7 +181,7 @@ const PostEditor = ({
                     Create
                 </AsyncButton>
             )}
-        </Paper>
+        </div>
     );
 };
 
