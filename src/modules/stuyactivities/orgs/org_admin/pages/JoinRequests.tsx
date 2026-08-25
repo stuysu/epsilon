@@ -4,6 +4,7 @@ import OrgContext from "../../../../../contexts/OrgContext";
 import PendingMember from "../components/PendingMember";
 import { Box } from "@mui/material";
 import ItemList from "../../../../../components/ui/lists/ItemList";
+import ContentUnavailable from "../../../../../components/ui/content/ContentUnavailable";
 
 const JoinRequests = () => {
     const organization = useContext<OrgContextType>(OrgContext);
@@ -28,12 +29,12 @@ const JoinRequests = () => {
             >
                 <h1>Join Requests</h1>
                 <p>
-                    When people request to join your Activity, you'll see them
-                    here.
+                    Review requests from students who want to join your
+                    Activity. Approving a request adds them to your roster.
                 </p>
             </div>
 
-            {pendingMembers?.length > 0 && (
+            {pendingMembers?.length > 0 ? (
                 <ItemList height={"auto"}>
                     {pendingMembers?.map((member, i) => (
                         <PendingMember
@@ -46,6 +47,13 @@ const JoinRequests = () => {
                         />
                     ))}
                 </ItemList>
+            ) : (
+                <ContentUnavailable
+                    title="No Join Requests"
+                    iconColor="text-red"
+                    icon="bx-user-x"
+                    description="When people request to join your Activity, you'll see them here."
+                ></ContentUnavailable>
             )}
         </Box>
     );
