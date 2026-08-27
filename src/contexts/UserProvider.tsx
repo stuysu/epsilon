@@ -3,10 +3,12 @@ import { supabase } from "../lib/supabaseClient";
 import UserContext from "./UserContext";
 import { useSnackbar } from "notistack";
 import { ThemeContext } from "./ThemeProvider";
+import { useNavigate } from "react-router-dom";
 
 const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const { enqueueSnackbar } = useSnackbar();
     const { effectiveMode } = useContext(ThemeContext);
+    const navigate = useNavigate();
     const [loading, setLoading] = useState(true);
 
     const [value, setValue] = React.useState<UserContextType>({
@@ -92,12 +94,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 }
 
                 if (!Array.isArray(data) || data?.length === 0) {
-                    // user is not in our public.users table. notify
-                    enqueueSnackbar(
-                        "Please sign in with your stuy.edu account. If you are an incoming freshmen, wait until" +
-                            " later. For more assistance, contact it@stuysu.org",
-                        { variant: "error" },
-                    );
+                    navigate("/unauthorized", { replace: true });
                     setLoading(false);
                     return;
                 }
@@ -181,7 +178,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
         };
 
         getUser();
-    }, [enqueueSnackbar]);
+    }, [enqueueSnackbar, navigate]);
 
     if (loading) {
         return (
