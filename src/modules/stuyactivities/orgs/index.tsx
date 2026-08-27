@@ -12,8 +12,7 @@ import OrgContext from "../../../contexts/OrgContext";
 import Loading from "../../../components/ui/content/Loading";
 import { supabase } from "../../../lib/supabaseClient";
 import { Helmet } from "react-helmet";
-import { CSSTransition, TransitionGroup } from "react-transition-group";
-import "../../../styles/transitions.css";
+import { AnimatePresence, motion, Variants } from "framer-motion";
 import OrgNav from "./components/OrgNav";
 
 import NotFound from "./pages/NotFound";
@@ -28,6 +27,32 @@ import { useSnackbar } from "notistack";
 import { Box, useMediaQuery } from "@mui/material";
 import OrgInspector from "./components/OrgInspector";
 import MyMeetingAttendance from "./pages/MyMeetingAttendance";
+
+const routeVariants: Variants = {
+    initial: {
+        opacity: 0,
+        y: 16,
+        filter: "blur(12px)",
+    },
+    animate: {
+        opacity: 1,
+        y: 0,
+        filter: "blur(0px)",
+        transition: {
+            duration: 0.4,
+            ease: [0.22, 1, 0.36, 1],
+        },
+    },
+    exit: {
+        opacity: 0,
+        y: -16,
+        filter: "blur(12px)",
+        transition: {
+            duration: 0.25,
+            ease: [0.4, 0, 1, 1],
+        },
+    },
+};
 
 const OrgRouter = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -54,6 +79,7 @@ const OrgRouter = () => {
         state: "PENDING",
         joinable: false,
         join_instructions: "",
+        pinned_notice: "",
         memberships: [],
         meetings: [],
         posts: [],
@@ -71,6 +97,7 @@ const OrgRouter = () => {
                     socials,
                     url,
                     picture,
+                    mission,
                     purpose,
                     goals,
                     appointment_procedures,
@@ -141,7 +168,17 @@ const OrgRouter = () => {
                 return;
             }
 
-            setOrg(data[0] as OrgContextType);
+            const organization = data[0] as OrgContextType;
+            const { data: noticeData } = await supabase
+                .from("organizations")
+                .select("pinned_notice")
+                .eq("id", organization.id)
+                .maybeSingle();
+
+            setOrg({
+                ...organization,
+                pinned_notice: noticeData?.pinned_notice || "",
+            });
         };
 
         getOrgData().then(() => setLoading(false));
@@ -223,11 +260,13 @@ const OrgRouter = () => {
                             <section
                                 className={"w-full lg:pr-0 pr-0 min-h-[80vh]"}
                             >
-                                <TransitionGroup component={null}>
-                                    <CSSTransition
+                                <AnimatePresence mode="wait" initial={false}>
+                                    <motion.div
                                         key={location.pathname}
-                                        classNames="fadeup"
-                                        timeout={300}
+                                        variants={routeVariants}
+                                        initial="initial"
+                                        animate="animate"
+                                        exit="exit"
                                     >
                                         <Routes location={location}>
                                             <Route
@@ -269,8 +308,8 @@ const OrgRouter = () => {
                                                 }
                                             />
                                         </Routes>
-                                    </CSSTransition>
-                                </TransitionGroup>
+                                    </motion.div>
+                                </AnimatePresence>
                             </section>
                             <div className="max-xl:hidden mt-2 max-xl:bottom-6">
                                 <OrgInspector />
