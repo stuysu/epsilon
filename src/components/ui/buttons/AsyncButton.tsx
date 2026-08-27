@@ -1,23 +1,38 @@
-import React, { useState } from "react";
-import { ButtonProps } from "@mui/material/Button";
-import { ButtonBase, SxProps, Theme } from "@mui/material";
+import React, { CSSProperties, useState } from "react";
 
-interface AsyncButtonProps extends ButtonProps {
+type AsyncButtonProps = Omit<
+    React.ButtonHTMLAttributes<HTMLButtonElement>,
+    "color" | "onClick"
+> & {
     onClick?: (
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     ) => void | Promise<any>;
-    sx?: SxProps<Theme>;
+    sx?: CSSProperties;
     isPrimary?: boolean;
-}
+    component?: "button" | "label";
+    color?: string;
+    variant?: string;
+};
 
 const AsyncButton: React.FC<AsyncButtonProps> = ({
     onClick,
     children,
     sx = {},
     isPrimary = false,
+    component = "button",
+    disabled = false,
+    className,
+    style,
+    type,
+    color: _color,
+    variant: _variant,
     ...props
 }) => {
+    void _color;
+    void _variant;
+
     const [isLoading, setIsLoading] = useState(false);
+    const isDisabled = isLoading || disabled;
 
     const handleClick = async (
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -35,32 +50,64 @@ const AsyncButton: React.FC<AsyncButtonProps> = ({
         }
     };
 
+    const buttonClassName = [
+        "important relative inline-flex items-center justify-center",
+        "px-5 pb-[10px] pt-[9px] align-middle text-[14px] no-underline outline-none",
+        "rounded-xl active:scale-[98%]",
+        isPrimary ? "bg-accent text-white" : "bg-layer-2 text-typography-1",
+        disabled ? "" : "shadow-control",
+        isDisabled
+            ? "pointer-events-none cursor-default opacity-50"
+            : "cursor-pointer hover:brightness-125",
+        className,
+    ]
+        .filter(Boolean)
+        .join(" ");
+
+    const buttonStyle: CSSProperties = { ...sx, ...style };
+
+    const content = isLoading ? "Loading..." : children;
+
+    if (component === "label") {
+        const labelProps =
+            props as unknown as React.LabelHTMLAttributes<HTMLLabelElement>;
+
+        return (
+            <label
+                {...labelProps}
+                className={buttonClassName}
+                style={buttonStyle}
+                aria-disabled={isDisabled}
+                onClick={(event) => {
+                    if (isDisabled) {
+                        event.preventDefault();
+                        return;
+                    }
+
+                    void handleClick(
+                        event as unknown as React.MouseEvent<
+                            HTMLButtonElement,
+                            MouseEvent
+                        >,
+                    );
+                }}
+            >
+                {content}
+            </label>
+        );
+    }
+
     return (
-        <ButtonBase
-            onClick={(e) => {
-                handleClick(e);
-            }}
-            sx={{
-                fontFamily: "inter-variable",
-                fontVariationSettings: "'wght' 700",
-                borderRadius: "11px",
-                backgroundColor: isPrimary
-                    ? "var(--accent)"
-                    : "var(--layer-secondary)",
-                color: isPrimary ? "white" : "var(--text-primary)",
-                padding: "11px 20px 13px 20px",
-                fontSize: "14px",
-                opacity: isLoading || props.disabled ? 0.6 : 1,
-                boxShadow: props.disabled
-                    ? "0 3px 3px 0 var(--shadow-base) inset, 0 0 2px 0 var(--shadow-antithesis) inset, 0 1px 1px 0 var(--shadow-decoration) inset, 0 -5px 20px 0 var(--shadow-fume) inset"
-                    : "0 4px 20px 0 var(--shadow-base), 0 4px 3px 0 var(--shadow-base), 0 0 3px 0 var(--shadow-antithesis) inset, 0 -7px 20px 0 var(--shadow-fume) inset",
-                ...sx,
-            }}
-            disabled={isLoading || props.disabled}
+        <button
             {...props}
+            type={type || "button"}
+            className={buttonClassName}
+            style={buttonStyle}
+            disabled={isDisabled}
+            onClick={(event) => void handleClick(event)}
         >
-            {isLoading ? "Loading..." : children}
-        </ButtonBase>
+            {content}
+        </button>
     );
 };
 
