@@ -8,7 +8,6 @@ import OrgContext from "../../../../contexts/OrgContext";
 import Personnel from "./pages/Personnel";
 import JoinRequests from "./pages/JoinRequests";
 import Scheduler from "./pages/Scheduler";
-import Posts from "./pages/Posts";
 import Organization from "./pages/Organization";
 import Messages from "./pages/Messages";
 import AttendanceOverview from "./pages/AttendanceOverview";
@@ -34,15 +33,6 @@ const OrgAdminRouter = () => {
             <Routes>
                 <Route path={"/personnel"} Component={Personnel} />
                 <Route
-                    path={"/roster"}
-                    element={
-                        <Navigate
-                            to={`/${organization.url}/admin/personnel`}
-                            replace
-                        />
-                    }
-                />
-                <Route
                     path={"/personnel/join-requests"}
                     Component={JoinRequests}
                 />
@@ -56,7 +46,6 @@ const OrgAdminRouter = () => {
                     }
                 />
                 <Route path={"/scheduler"} Component={Scheduler} />
-                <Route path={"/posts"} Component={Posts} />
                 <Route path={"/attendance"} Component={AttendanceOverview} />
                 <Route
                     path="/attendance/:meetingId"
