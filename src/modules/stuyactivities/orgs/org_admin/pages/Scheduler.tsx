@@ -84,72 +84,82 @@ const Scheduler = () => {
                     Create Meeting
                 </AsyncButton>
             </div>
-
-            <ItemList height={"auto"}>
-                {organization.meetings
-                    .sort(sortByDate)
-                    .reverse()
-                    .map((meeting) => (
-                        <OrgMeeting
-                            key={meeting.id}
-                            id={meeting.id}
-                            title={meeting.title}
-                            description={meeting.description}
-                            start_time={meeting.start_time}
-                            end_time={meeting.end_time}
-                            room_name={meeting.rooms?.name}
-                            org_name={organization.name}
-                            org_picture={organization.picture || ""}
-                            is_public={meeting.is_public}
-                            isMobile={isMeetingMobile}
-                            advisor={meeting.advisor}
-                            onEdit={() => {
-                                setEditState({
-                                    id: meeting.id,
-                                    title: meeting.title,
-                                    description: meeting.description,
-                                    start: meeting.start_time,
-                                    end: meeting.end_time,
-                                    room: meeting.rooms?.id,
-                                    isPublic: meeting.is_public,
-                                    advisor: meeting.advisor,
-                                    editing: true,
-                                });
-                            }}
-                            onDelete={async () => {
-                                let { error } = await supabase.functions.invoke(
-                                    "delete-meeting",
-                                    {
-                                        body: {
-                                            id: meeting.id,
-                                        },
-                                    },
-                                );
-
-                                if (error) {
-                                    return enqueueSnackbar(
-                                        "Error deleting meeting. Contact it@stuysu.org for support.",
-                                        { variant: "error" },
-                                    );
-                                }
-
-                                if (organization.setOrg) {
-                                    // update org
-                                    organization.setOrg({
-                                        ...organization,
-                                        meetings: organization.meetings.filter(
-                                            (m) => m.id !== meeting.id,
-                                        ),
+            {(organization.meetings.length === 0 && (
+                <ContentUnavailable
+                    icon="bx-calendar"
+                    iconColor="text-blue"
+                    title="No Meetings Scheduled"
+                    description="You have not scheduled any meetings yet. Click the button above to create a meeting."
+                />
+            )) || (
+                <ItemList height={"auto"}>
+                    {organization.meetings
+                        .sort(sortByDate)
+                        .reverse()
+                        .map((meeting) => (
+                            <OrgMeeting
+                                key={meeting.id}
+                                id={meeting.id}
+                                title={meeting.title}
+                                description={meeting.description}
+                                start_time={meeting.start_time}
+                                end_time={meeting.end_time}
+                                room_name={meeting.rooms?.name}
+                                org_name={organization.name}
+                                org_picture={organization.picture || ""}
+                                is_public={meeting.is_public}
+                                isMobile={isMeetingMobile}
+                                advisor={meeting.advisor}
+                                onEdit={() => {
+                                    setEditState({
+                                        id: meeting.id,
+                                        title: meeting.title,
+                                        description: meeting.description,
+                                        start: meeting.start_time,
+                                        end: meeting.end_time,
+                                        room: meeting.rooms?.id,
+                                        isPublic: meeting.is_public,
+                                        advisor: meeting.advisor,
+                                        editing: true,
                                     });
-                                }
+                                }}
+                                onDelete={async () => {
+                                    let { error } =
+                                        await supabase.functions.invoke(
+                                            "delete-meeting",
+                                            {
+                                                body: {
+                                                    id: meeting.id,
+                                                },
+                                            },
+                                        );
 
-                                enqueueSnackbar("Deleted Meeting!", {
-                                    variant: "success",
-                                });
-                            }}
-                        />
-                    ))}
-            </ItemList>
+                                    if (error) {
+                                        return enqueueSnackbar(
+                                            "Error deleting meeting. Contact it@stuysu.org for support.",
+                                            { variant: "error" },
+                                        );
+                                    }
+
+                                    if (organization.setOrg) {
+                                        // update org
+                                        organization.setOrg({
+                                            ...organization,
+                                            meetings:
+                                                organization.meetings.filter(
+                                                    (m) => m.id !== meeting.id,
+                                                ),
+                                        });
+                                    }
+
+                                    enqueueSnackbar("Deleted Meeting!", {
+                                        variant: "success",
+                                    });
+                                }}
+                            />
+                        ))}
+                </ItemList>
+            )}
 
             {editState.editing && (
                 <AdminUpsertMeeting

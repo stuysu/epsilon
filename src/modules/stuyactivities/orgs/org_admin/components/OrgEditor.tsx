@@ -1,7 +1,8 @@
-import { ReactNode, useCallback, useEffect, useState } from "react";
-import { Avatar, Box, Paper } from "@mui/material";
+import { Fragment, ReactNode, useCallback, useEffect, useState } from "react";
+import { Avatar, Box } from "@mui/material";
 import { useSnackbar } from "notistack";
 import FormTextField from "../../../../../components/ui/forms/FormTextField";
+import Divider from "../../../../../components/ui/Divider";
 import OrgRequirements from "../../../../../utils/OrgRequirements";
 import orgFieldMap from "../../../../../utils/OrgFieldMap";
 import { supabase } from "../../../../../lib/supabaseClient";
@@ -47,16 +48,18 @@ const EditField = ({
 }) => {
     return (
         <>
-            <h4>{orgFieldMap(field)}</h4>
-            <p style={{ color: pending ? "gray" : "#2ecc71" }}>
-                {pending ? "Pending" : "Approved"}
-            </p>
+            <div className="flex items-baseline gap-2">
+                <h4>{orgFieldMap(field)}</h4>
+                <p className={pending ? "text-yellow" : "text-green"}>
+                    {pending ? "Pending" : "Approved"}
+                </p>
+            </div>
             <Box
                 sx={{
                     width: "100%",
                     display: "flex",
                     flexWrap: "nowrap",
-                    padding: "10px",
+                    padding: "10px 0",
                     position: "relative",
                     minHeight: "100px",
                 }}
@@ -521,167 +524,190 @@ const OrgEditor = ({
     );
 
     return (
-        <Paper elevation={1} sx={{ padding: "10px" }}>
-            <h4>Picture</h4>
-            <p style={{ color: pendingPicture ? "gray" : "#2ecc71" }}>
-                {pendingPicture ? " Pending" : "Approved"}
-            </p>
+        <div className="bg-layer-1 p-5 pl-7 pb-8 rounded-xl mb-10 mt-2 shadow-prominent">
+            <div className="flex items-baseline gap-2">
+                <h4>Picture</h4>
+                <p className={pendingPicture ? "text-yellow" : "text-green"}>
+                    {pendingPicture ? "Pending" : "Approved"}
+                </p>
+            </div>
             <Box
                 sx={{
-                    width: "200px",
                     display: "flex",
-                    flexWrap: "wrap",
-                    justifyContent: "center",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    padding: "10px 0",
                     marginBottom: "20px",
                 }}
             >
-                <Box>
-                    <Avatar
-                        src={putPicture}
-                        sx={{
-                            width: "170px",
-                            height: "170px",
-                            borderRadius: "100%",
-                            fontSize: "70px",
-                            objectFit: "cover",
-                        }}
-                    >
-                        {(organization.name || "O").slice(0, 1).toUpperCase()}
-                    </Avatar>
-                </Box>
-                <AsyncButton
-                    variant="contained"
-                    component="label"
-                    sx={{ marginTop: "10px" }}
-                >
-                    Upload Avatar
-                    <input
-                        type="file"
-                        accept="images/*"
-                        id="input-file-upload"
-                        onChange={(e) => {
-                            if (!e.target.files) return;
-                            if (
-                                e.target.files[0].size >
-                                1024 *
-                                    1024 *
-                                    OrgRequirements.picture?.requirements
-                                        ?.maxSize[0]
-                            ) {
-                                return enqueueSnackbar(
-                                    `File is too large. Max size is ${OrgRequirements.picture?.requirements?.maxSize[0]}MB.`,
-                                    {
-                                        variant: "error",
-                                    },
-                                );
-                            }
-
-                            setEditPicture(e.target.files[0] || null);
-                        }}
-                        value={
-                            editPicture
-                                ? (editPicture as File).webkitRelativePath
-                                : ""
-                        }
-                        hidden
-                    />
-                </AsyncButton>
-                <AsyncButton
-                    variant="contained"
-                    sx={{ marginTop: "10px" }}
-                    onClick={() => {
-                        if (!oldPicture) {
-                            // if there was no old picture to begin with, then removing the picture is like making no edit
-                            setEditPicture(undefined);
-                        } else {
-                            setEditPicture("");
-                        }
+                <Avatar
+                    src={putPicture}
+                    sx={{
+                        width: "170px",
+                        height: "170px",
+                        borderRadius: "25px",
+                        fontSize: "70px",
+                        objectFit: "cover",
                     }}
                 >
-                    Remove Image
-                </AsyncButton>
-                {editPicture !== undefined && organization.picture && (
+                    {(organization.name || "O").slice(0, 1).toUpperCase()}
+                </Avatar>
+                <Box
+                    sx={{
+                        width: "200px",
+                        display: "flex",
+                        flexDirection: "column",
+                        paddingRight: "20px",
+                    }}
+                >
                     <AsyncButton
                         variant="contained"
-                        sx={{ marginTop: "10px" }}
-                        onClick={async () => {
-                            setEditPicture(undefined);
+                        component="label"
+                        sx={{ width: "100%" }}
+                    >
+                        Upload Avatar
+                        <input
+                            type="file"
+                            accept="images/*"
+                            id="input-file-upload"
+                            onChange={(e) => {
+                                if (!e.target.files) return;
+                                if (
+                                    e.target.files[0].size >
+                                    1024 *
+                                        1024 *
+                                        OrgRequirements.picture?.requirements
+                                            ?.maxSize[0]
+                                ) {
+                                    return enqueueSnackbar(
+                                        `File is too large. Max size is ${OrgRequirements.picture?.requirements?.maxSize[0]}MB.`,
+                                        {
+                                            variant: "error",
+                                        },
+                                    );
+                                }
+
+                                setEditPicture(e.target.files[0] || null);
+                            }}
+                            value={
+                                editPicture
+                                    ? (editPicture as File).webkitRelativePath
+                                    : ""
+                            }
+                            hidden
+                        />
+                    </AsyncButton>
+                    <AsyncButton
+                        variant="contained"
+                        sx={{ marginTop: "10px", width: "100%" }}
+                        onClick={() => {
+                            if (!oldPicture) {
+                                // if there was no old picture to begin with, then removing the picture is like making no edit
+                                setEditPicture(undefined);
+                            } else {
+                                setEditPicture("");
+                            }
                         }}
                     >
-                        Reset Image
+                        Remove Image
                     </AsyncButton>
-                )}
+                    {editPicture !== undefined && organization.picture && (
+                        <AsyncButton
+                            variant="contained"
+                            sx={{ marginTop: "10px", width: "100%" }}
+                            onClick={async () => {
+                                setEditPicture(undefined);
+                            }}
+                        >
+                            Reset Image
+                        </AsyncButton>
+                    )}
+                </Box>
             </Box>
-            {textFields.map((field) => {
+            <Divider />
+            {textFields.map((field, i) => {
                 return (
-                    <EditField
-                        key={field}
-                        field={field}
-                        pending={
-                            (existingEdit[field as keyof OrganizationEdit] !==
-                                null &&
-                                existingEdit[
+                    <Fragment key={field}>
+                        <EditField
+                            field={field}
+                            pending={
+                                (existingEdit[
                                     field as keyof OrganizationEdit
-                                ] !== undefined) ||
-                            organization.state === "PENDING"
-                        }
-                        editing={editState[field]}
-                        onCancel={() => {
-                            // replace editData with original value
-                            updateEdit(
-                                field as keyof OrganizationEdit,
-                                existingEdit[field as keyof OrganizationEdit] ||
-                                    organization[field as keyof Organization],
-                            );
+                                ] !== null &&
+                                    existingEdit[
+                                        field as keyof OrganizationEdit
+                                    ] !== undefined) ||
+                                organization.state === "PENDING"
+                            }
+                            editing={editState[field]}
+                            onCancel={() => {
+                                // replace editData with original value
+                                updateEdit(
+                                    field as keyof OrganizationEdit,
+                                    existingEdit[
+                                        field as keyof OrganizationEdit
+                                    ] ||
+                                        organization[
+                                            field as keyof Organization
+                                        ],
+                                );
 
-                            // remove self from list of fields being edited
-                            setEditState((prevState) => {
-                                const state = { ...prevState };
-                                delete state[field];
-                                return state;
-                            });
+                                // remove self from list of fields being edited
+                                setEditState((prevState) => {
+                                    const state = { ...prevState };
+                                    delete state[field];
+                                    return state;
+                                });
 
-                            // remove self from validation checker
-                            setStatus((prevState) => {
-                                const state = { ...prevState };
-                                delete state[field];
-                                return state;
-                            });
-                        }}
-                        onEdit={() =>
-                            setEditState({ ...editState, [field]: true })
-                        }
-                        defaultDisplay={
-                            <p className={"w-3/4"}>
-                                {editData[field as keyof OrganizationEdit] || (
-                                    <em>&lt;empty&gt;</em>
-                                )}
-                            </p>
-                        }
-                        editDisplay={
-                            <FormTextField
-                                sx={{ width: "80%" }}
-                                label={orgFieldMap(field)}
-                                field={field}
-                                onChange={(val) =>
-                                    updateEdit(
-                                        field as keyof OrganizationEdit,
-                                        val,
-                                    )
-                                }
-                                value={
-                                    editData[field as keyof OrganizationEdit]
-                                }
-                                required={OrgRequirements[field].required}
-                                requirements={
-                                    OrgRequirements[field].requirements
-                                }
-                                changeStatus={changeStatus}
-                                multiline
-                                rows={4}
-                            />
-                        }
-                    />
+                                // remove self from validation checker
+                                setStatus((prevState) => {
+                                    const state = { ...prevState };
+                                    delete state[field];
+                                    return state;
+                                });
+                            }}
+                            onEdit={() =>
+                                setEditState({ ...editState, [field]: true })
+                            }
+                            defaultDisplay={
+                                <p className={"w-3/4"}>
+                                    {editData[
+                                        field as keyof OrganizationEdit
+                                    ] || (
+                                        <em className="text-typography-3">
+                                            &lt;empty&gt;
+                                        </em>
+                                    )}
+                                </p>
+                            }
+                            editDisplay={
+                                <FormTextField
+                                    sx={{ width: "80%" }}
+                                    label={orgFieldMap(field)}
+                                    field={field}
+                                    onChange={(val) =>
+                                        updateEdit(
+                                            field as keyof OrganizationEdit,
+                                            val,
+                                        )
+                                    }
+                                    value={
+                                        editData[
+                                            field as keyof OrganizationEdit
+                                        ]
+                                    }
+                                    required={OrgRequirements[field].required}
+                                    requirements={
+                                        OrgRequirements[field].requirements
+                                    }
+                                    changeStatus={changeStatus}
+                                    multiline
+                                    rows={4}
+                                />
+                            }
+                        />
+                        {i < textFields.length - 1 && <Divider />}
+                    </Fragment>
                 );
             })}
             <Box
@@ -695,8 +721,8 @@ const OrgEditor = ({
                 }}
             >
                 <AsyncButton
-                    color="error"
                     variant="contained"
+                    isPrimary
                     disabled={!savable}
                     onClick={saveChanges}
                     sx={{ marginLeft: "10px" }}
@@ -704,7 +730,6 @@ const OrgEditor = ({
                     Submit Changes for Review
                 </AsyncButton>
                 <AsyncButton
-                    color="error"
                     variant="contained"
                     disabled={allNull}
                     onClick={deleteEdit}
@@ -712,7 +737,7 @@ const OrgEditor = ({
                     Delete Edit
                 </AsyncButton>
             </Box>
-        </Paper>
+        </div>
     );
 };
 
