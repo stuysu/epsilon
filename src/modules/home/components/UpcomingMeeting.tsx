@@ -57,7 +57,7 @@ const UpcomingMeeting = ({
                                 alt={org_name}
                             />
                             <Avatar.Fallback
-                                className="text-center size-full flex items-center justify-center bg-layer-3 text-xl relative pt-1 text-typography-2"
+                                className="text-center size-full flex items-center justify-center bg-layer-3 text-xl relative text-typography-2"
                                 delayMs={600}
                             >
                                 {(org_name || "O").charAt(0).toUpperCase()}
