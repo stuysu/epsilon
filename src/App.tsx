@@ -11,6 +11,7 @@ import { CssBaseline, styled } from "@mui/material";
 import { SnackbarProvider, MaterialDesignContent } from "notistack";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { OrgListProvider } from "./contexts/OrgListContext";
+import InvitationGate from "./components/InvitationGate";
 
 const SnackbarOverride = styled(MaterialDesignContent)(() => ({
     borderRadius: "10px",
@@ -76,9 +77,11 @@ const App = () => {
                     >
                         <BrowserRouter>
                             <UserProvider>
-                                <OrgListProvider>
-                                    <Pages />
-                                </OrgListProvider>
+                                <InvitationGate>
+                                    <OrgListProvider>
+                                        <Pages />
+                                    </OrgListProvider>
+                                </InvitationGate>
                             </UserProvider>
                         </BrowserRouter>
                     </SnackbarProvider>
