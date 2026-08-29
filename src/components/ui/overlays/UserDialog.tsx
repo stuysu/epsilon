@@ -14,17 +14,19 @@ export default function UserDialog({
     confirmText = "Confirm",
     cancelText = "Cancel",
     imageSrc,
+    showCancel = true,
 }: {
     title: string;
     description?: string;
     open: boolean;
     onClose: () => void;
     onCancel?: () => void;
-    onConfirm?: () => void;
+    onConfirm?: () => boolean | void | Promise<boolean | void>;
     children?: React.ReactNode;
     confirmText?: string;
     cancelText?: string;
     imageSrc?: string;
+    showCancel?: boolean;
 }) {
     const hasImage = Boolean(imageSrc);
 
@@ -67,7 +69,7 @@ export default function UserDialog({
                                     exit={{
                                         opacity: 0,
                                         y: 20,
-                                        scale: 0.5,
+                                        scale: 0.6,
                                         filter: "blur(20px)",
                                     }}
                                     transition={{
@@ -81,6 +83,7 @@ export default function UserDialog({
                                         <>
                                             <img
                                                 src={imageSrc}
+                                                alt=""
                                                 className={
                                                     "absolute w-32 -left-2 -top-14"
                                                 }
@@ -108,18 +111,23 @@ export default function UserDialog({
                                     <div className="h-12" />
 
                                     <div className="flex justify-end gap-3">
+                                        {showCancel && (
+                                            <AsyncButton
+                                                onClick={() => {
+                                                    onClose();
+                                                    onCancel?.();
+                                                }}
+                                            >
+                                                {cancelText}
+                                            </AsyncButton>
+                                        )}
                                         <AsyncButton
-                                            onClick={() => {
-                                                onClose();
-                                                onCancel?.();
-                                            }}
-                                        >
-                                            {cancelText}
-                                        </AsyncButton>
-                                        <AsyncButton
-                                            onClick={() => {
-                                                onClose();
-                                                onConfirm?.();
+                                            onClick={async () => {
+                                                const shouldClose =
+                                                    await onConfirm?.();
+                                                if (shouldClose !== false) {
+                                                    onClose();
+                                                }
                                             }}
                                             autoFocus
                                         >

@@ -1,10 +1,9 @@
 import { supabase } from "../../../../../lib/supabaseClient";
-import { Box } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useContext } from "react";
 import OrgContext from "../../../../../contexts/OrgContext";
 import OrgMember from "../../components/OrgMember";
-import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
+import ToggleChip from "../../../../../components/ui/input/ToggleChip";
 
 const PendingMember = ({
     id,
@@ -83,40 +82,29 @@ const PendingMember = ({
     };
 
     return (
-        <Box
-            sx={{
-                width: "100%",
-                display: "flex",
-                flexWrap: "nowrap",
-                alignItems: "center",
-            }}
-        >
-            <Box sx={{ width: "100%" }}>
-                <OrgMember
-                    email={email}
-                    picture={picture}
-                    role_name={"Pending Member"}
-                    first_name={first_name}
-                    last_name={last_name}
-                />
-            </Box>
-            <div className={"flex px-3"}>
-                <AsyncButton
-                    onClick={handleApprove}
-                    variant="contained"
-                    sx={{ height: "40px" }}
-                >
-                    Approve
-                </AsyncButton>
-                <AsyncButton
-                    onClick={handleReject}
-                    variant="contained"
-                    sx={{ height: "40px", marginLeft: "10px" }}
-                >
-                    Reject
-                </AsyncButton>
-            </div>
-        </Box>
+        <OrgMember
+            email={email}
+            picture={picture}
+            role_name="Pending Member"
+            first_name={first_name}
+            last_name={last_name}
+            actions={
+                <div className="flex gap-2">
+                    <ToggleChip
+                        title="Approve"
+                        variant="pill"
+                        onClick={() => void handleApprove()}
+                        className="!bg-accent !text-typography-1"
+                    />
+                    <ToggleChip
+                        title="Deny"
+                        variant="pill"
+                        onClick={() => void handleReject()}
+                        className="!bg-red !text-typography-1"
+                    />
+                </div>
+            }
+        />
     );
 };
 

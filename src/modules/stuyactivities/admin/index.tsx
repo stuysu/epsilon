@@ -17,6 +17,7 @@ import Valentines from "./pages/Valentines";
 import ApprovedValentines from "./pages/ApprovedValentines";
 import ContentUnavailable from "../../../components/ui/content/ContentUnavailable";
 import AddUser from "./pages/AddUser";
+import Reports from "./pages/Reports";
 
 const VALENTINES = false;
 
@@ -43,6 +44,12 @@ export const getLinks = (user: UserContextType) => {
             to: "/admin/strikes",
             label: "Strikes",
             icon: "bx-error",
+        },
+        {
+            to: "/admin/reports",
+            label: "Reports & Audits",
+            icon: "bx-shield-quarter",
+            permission: "REPORTS",
         },
         {
             to: "/admin/send-message",
@@ -120,6 +127,7 @@ const AdminRouter = () => {
                 <Route path="/approve-pending" Component={ApprovePending} />
                 <Route path="/approve-edit" Component={ApproveEdit} />
                 <Route path="/strikes" Component={Strikes} />
+                <Route path="/reports" Component={Reports} />
                 <Route path="/send-message" Component={SendMessage} />
                 <Route path="/announcements" Component={Announcements} />
                 <Route path="/rooms" Component={Rooms} />

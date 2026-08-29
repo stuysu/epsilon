@@ -114,10 +114,10 @@ const OrgBlock = ({
                     </div>
                 )}
             </div>
-            <div style={{ padding: 10, paddingTop: 10 }}>
+            <div className="m-2">
                 <h4
                     className={
-                        "h-[3lh] overflow-hidden text-ellipsis [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:3]"
+                        "h-[2lh] text-ellipsis line-clamp-2 mb-1"
                     }
                 >
                     {name}

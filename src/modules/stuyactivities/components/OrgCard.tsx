@@ -209,7 +209,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                     <div className="w-full mt-3.5">
                         <p
                             className={
-                                "overflow-hidden overflow-ellipsis whitespace-normal [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:4]"
+                                "overflow-ellipsis whitespace-normal line-clamp-4 min-h-[4lh]"
                             }
                         >
                             {organization.purpose}

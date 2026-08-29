@@ -143,8 +143,7 @@ const Support = () => {
                     iconColor="text-yellow"
                     title="Inviting New Members"
                     description="I can’t figure out how to invite new members to my Activity."
-                    content="To invite new members to your Activity, you can share the activity link. This link allows anyone with it to join your Activity.
-                You can also encourage them to visit the Epsilon website and search for your Activity in the catalog. In the future, you will be able to invite members with a one-time link that bypasses the need for approval."
+                    content="Activity administrators can open Personnel under Admin Tools and select Invite. Enter the email address of an existing Epsilon user and choose whether to send them an email. The user must accept or reject the invitation when they next sign in; accepting adds them without a separate approval request."
                 />
                 <Divider />
                 <HelpItem

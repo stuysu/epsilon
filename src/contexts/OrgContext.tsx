@@ -18,6 +18,7 @@ const OrgContext = React.createContext<OrgContextType>({
     state: "PENDING",
     joinable: false,
     join_instructions: "",
+    pinned_notice: "",
     memberships: [],
     meetings: [],
     posts: [],
