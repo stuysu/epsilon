@@ -41,8 +41,7 @@ const UserPreferences = () => {
                                 Tranquility Base Hotel & Casino
                             </h4>
                             <p className={"mb-3 text-left"}>
-                                Our default dark theme, perfect for a focused
-                                experience that's a little classy.
+                                Our default dark theme.
                             </p>
                             <img
                                 src={`${PUBLIC_URL}/symbols/darkmode.png`}
