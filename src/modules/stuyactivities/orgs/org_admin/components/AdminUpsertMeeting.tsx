@@ -16,6 +16,7 @@ import OrgContext from "../../../../../contexts/OrgContext";
 import dayjs, { Dayjs } from "dayjs";
 import { useSnackbar } from "notistack";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
+import { sortRooms } from "../../../../../utils/DataFormatters";
 
 const getDefaultStartTime = () => {
     return dayjs().startOf("day").hour(15).minute(35);
@@ -99,7 +100,7 @@ const AdminUpsertMeeting = ({
 
             setAllRooms((prev) => {
                 setLoading(false);
-                return data as Room[];
+                return (data as Room[]).sort(sortRooms);
             });
         };
 
@@ -161,7 +162,8 @@ const AdminUpsertMeeting = ({
                 (room) =>
                     !~filteredBookedRooms.findIndex(
                         (meta) => meta.room_id === room.id,
-                    ) && room.available_days.includes(days[startTime!.day()]) &&
+                    ) &&
+                    room.available_days.includes(days[startTime!.day()]) &&
                     !room.ais_days?.includes(days[startTime!.day()]),
             );
 
