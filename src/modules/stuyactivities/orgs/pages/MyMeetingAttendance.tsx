@@ -5,6 +5,7 @@ import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import UserContext from "../../../../contexts/UserContext";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
+import LoginGate from "../../../../components/ui/content/LoginGate";
 
 const MyMeetingAttendance = () => {
     const user = useContext(UserContext);
@@ -20,6 +21,7 @@ const MyMeetingAttendance = () => {
             setValid(false);
             return;
         }
+        if (!user.signed_in) return;
         const validateMeeting = async () => {
             const { data, error } = await supabase
                 .from("meetings")
@@ -57,7 +59,7 @@ const MyMeetingAttendance = () => {
             setMeeting(data);
         };
         validateMeeting();
-    }, [meetingId, enqueueSnackbar]);
+    }, [meetingId, user.signed_in, enqueueSnackbar]);
 
     if (!valid) {
         return (
@@ -101,69 +103,71 @@ const MyMeetingAttendance = () => {
     };
 
     return (
-        <Box>
-            <h1>{meeting?.title}</h1>
-            <Box
-                sx={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                    marginTop: "20px",
-                }}
-            >
-                <Card
+        <LoginGate page="mark your attendance">
+            <Box>
+                <h1>{meeting?.title}</h1>
+                <Box
                     sx={{
                         width: "100%",
-                        maxWidth: "400px",
-                        height: "300px",
-                        padding: "15px",
+                        display: "flex",
+                        justifyContent: "center",
+                        marginTop: "20px",
                     }}
                 >
-                    <Box
+                    <Card
                         sx={{
                             width: "100%",
-                            display: "flex",
-                            justifyContent: "center",
+                            maxWidth: "400px",
+                            height: "300px",
+                            padding: "15px",
                         }}
                     >
-                        <Avatar
-                            src={user.picture}
-                            alt={user.first_name + " " + user.last_name}
-                            sx={{ width: "100px", height: "100px" }}
+                        <Box
+                            sx={{
+                                width: "100%",
+                                display: "flex",
+                                justifyContent: "center",
+                            }}
                         >
-                            {user.first_name[0].toUpperCase()}
-                        </Avatar>
-                    </Box>
-                    <Box
-                        sx={{
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "center",
-                        }}
-                    >
-                        <h1>{user.first_name + " " + user.last_name}</h1>
-                    </Box>
-                    <Box
-                        sx={{
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "center",
-                        }}
-                    >
-                        <h2>Status: {isPresent ? "Present" : "Absent"}</h2>
-                    </Box>
-                    <AsyncButton
-                        onClick={markPresent}
-                        disabled={isPresent}
-                        sx={{ width: "100%" }}
-                        color="success"
-                        variant="contained"
-                    >
-                        Mark Myself Present
-                    </AsyncButton>
-                </Card>
+                            <Avatar
+                                src={user.picture}
+                                alt={user.first_name + " " + user.last_name}
+                                sx={{ width: "100px", height: "100px" }}
+                            >
+                                {user.first_name[0]?.toUpperCase()}
+                            </Avatar>
+                        </Box>
+                        <Box
+                            sx={{
+                                width: "100%",
+                                display: "flex",
+                                justifyContent: "center",
+                            }}
+                        >
+                            <h1>{user.first_name + " " + user.last_name}</h1>
+                        </Box>
+                        <Box
+                            sx={{
+                                width: "100%",
+                                display: "flex",
+                                justifyContent: "center",
+                            }}
+                        >
+                            <h2>Status: {isPresent ? "Present" : "Absent"}</h2>
+                        </Box>
+                        <AsyncButton
+                            onClick={markPresent}
+                            disabled={isPresent}
+                            sx={{ width: "100%" }}
+                            color="success"
+                            variant="contained"
+                        >
+                            Mark Myself Present
+                        </AsyncButton>
+                    </Card>
+                </Box>
             </Box>
-        </Box>
+        </LoginGate>
     );
 };
 
