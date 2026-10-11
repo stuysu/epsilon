@@ -34,8 +34,12 @@ const OrgMember = ({
                 "flex flex-row items-center justify-between flex-wrap bg-layer-2 pr-4 pl-3"
             }
         >
-            <div className={"h-16 w-fit flex gap-3 items-center"}>
-                <Avatar.Root className="w-10 h-10 rounded-md overflow-hidden">
+            <div
+                className={
+                    "h-16 w-fit max-w-full min-w-0 flex gap-3 items-center"
+                }
+            >
+                <Avatar.Root className="w-10 h-10 shrink-0 rounded-md overflow-hidden">
                     <Avatar.Image
                         className="size-full object-cover"
                         src={picture}
@@ -49,13 +53,19 @@ const OrgMember = ({
                     </Avatar.Fallback>
                 </Avatar.Root>
 
-                <div className={"flex flex-col"}>
-                    <h4>{`${first_name} ${last_name}`}</h4>
-                    <p>{<>{email}</>}</p>
+                <div className={"flex flex-col min-w-0"}>
+                    <h4
+                        className={"truncate"}
+                    >{`${first_name} ${last_name}`}</h4>
+                    <p className={"truncate"}>{<>{email}</>}</p>
                 </div>
             </div>
 
-            <div className={"my-3"}>
+            <div
+                className={
+                    "my-3 max-w-full [&>button]:max-w-full [&>button]:truncate"
+                }
+            >
                 <ToggleChip title={l1} selectable={false} />
             </div>
         </div>

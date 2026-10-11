@@ -168,8 +168,8 @@ const AdminMember = ({
             onDragEnd={onDragEnd}
             className="w-full flex flex-nowrap items-center h-fit"
         >
-            <div className={"w-full flex items-center bg-layer-2"}>
-                <div className={"w-full"}>
+            <div className={"w-full min-w-0 flex items-center bg-layer-2"}>
+                <div className={"w-full min-w-0"}>
                     <OrgMember
                         role={role}
                         role_name={role_name}
@@ -180,17 +180,25 @@ const AdminMember = ({
                         is_faculty={is_faculty}
                     />
                 </div>
-                {canDrag && (
-                    <div
-                        className={"px-1 cursor-grab touch-none"}
-                        onPointerDown={(e) => dragControls.start(e)}
-                    >
+                {/* always rendered so the rows line up when there is no handle */}
+                <div
+                    className={
+                        "w-6 sm:w-8 shrink-0 flex justify-center " +
+                        (canDrag ? "cursor-grab touch-none" : "")
+                    }
+                    onPointerDown={(e) => canDrag && dragControls.start(e)}
+                >
+                    {canDrag && (
                         <p>
                             <i className={"bx bx-menu bx-sm"}></i>
                         </p>
-                    </div>
-                )}
-                <div className={"px-3 flex w-24"}>
+                    )}
+                </div>
+                <div
+                    className={
+                        "px-1.5 sm:px-3 flex w-[4.5rem] sm:w-28 shrink-0"
+                    }
+                >
                     {(isCreator ||
                         role === "MEMBER" ||
                         role === "ADVISOR" ||
