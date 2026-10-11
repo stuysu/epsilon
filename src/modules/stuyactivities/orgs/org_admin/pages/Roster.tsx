@@ -54,10 +54,8 @@ const Roster = () => {
         userMember?.role === "CREATOR" || userMember?.role === "ADMIN";
 
     /* the creator can move anyone, admins can only move members and advisors */
-    const canReorder = (role?: Membership["role"]) =>
-        userMember?.role === "CREATOR" ||
-        (userMember?.role === "ADMIN" &&
-            (role === "MEMBER" || role === "ADVISOR"));
+    const canReorder =
+        userMember?.role === "CREATOR" || userMember?.role === "ADMIN";
 
     const roles: Membership["role"][] = [
         "CREATOR",
@@ -102,16 +100,12 @@ const Roster = () => {
 
         const orderings = ids.map((id, i) => ({ id, ordering_id: i }));
 
-        const results = await Promise.all(
-            orderings.map(({ id, ordering_id }) =>
-                supabase
-                    .from("memberships")
-                    .update({ ordering_id })
-                    .eq("id", id),
-            ),
-        );
+        const { error } = await supabase.rpc("reorder_memberships", {
+            org_id: organization.id,
+            membership_ids: ids,
+        });
 
-        if (results.some(({ error }) => error)) {
+        if (error) {
             enqueueSnackbar(
                 "Could not reorder members. Contact it@stuysu.org for support.",
                 { variant: "error" },
@@ -293,10 +287,7 @@ const Roster = () => {
                                     isCreator={userMember?.role === "CREATOR"}
                                     isAdmin={userMember?.role === "ADMIN"}
                                     is_faculty={member.is_faculty}
-                                    canDrag={
-                                        canReorder(member.role) &&
-                                        group.length > 1
-                                    }
+                                    canDrag={canReorder && group.length > 1}
                                     onDragEnd={() =>
                                         saveOrder(
                                             role,
