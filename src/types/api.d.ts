@@ -71,6 +71,7 @@ interface Membership {
     id: number;
     role: "MEMBER" | "ADVISOR" | "ADMIN" | "CREATOR";
     role_name?: string;
+    ordering_id?: number | null;
     active: boolean;
 }
 
