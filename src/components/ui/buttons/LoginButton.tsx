@@ -1,3 +1,4 @@
+import { useLocation } from "react-router-dom";
 import { supabase } from "../../../lib/supabaseClient";
 import { PUBLIC_URL } from "../../../config/constants";
 import "./UnauthenticatedButtons.css";
@@ -8,11 +9,13 @@ type LoginButtonProps = {
 };
 
 const LoginButton = ({ onMouseEnter, onMouseLeave }: LoginButtonProps) => {
+    const location = useLocation();
+
     const signInWithGoogle = async () => {
         const { error } = await supabase.auth.signInWithOAuth({
             provider: "google",
             options: {
-                redirectTo: PUBLIC_URL,
+                redirectTo: PUBLIC_URL + location.pathname + location.search,
             },
         });
         if (error) {
