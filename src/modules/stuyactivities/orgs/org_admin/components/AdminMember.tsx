@@ -1,4 +1,5 @@
 import { ChangeEvent, useContext, useState } from "react";
+import { Reorder, useDragControls } from "framer-motion";
 import UserContext from "../../../../../contexts/UserContext";
 
 import { MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
@@ -21,6 +22,8 @@ const AdminMember = ({
     isCreator, // referring to client user
     isAdmin, // referring to client user
     is_faculty,
+    canDrag,
+    onDragEnd,
 }: {
     id: number;
     userId: number;
@@ -33,11 +36,14 @@ const AdminMember = ({
     isCreator: boolean;
     isAdmin: boolean;
     is_faculty?: boolean;
+    onDragEnd: () => void;
+    canDrag: boolean;
 }) => {
     const user = useContext(UserContext);
     const organization = useContext(OrgContext);
 
     const { enqueueSnackbar } = useSnackbar();
+    const dragControls = useDragControls();
     const [editState, setEditState] = useState({
         id: -1,
         role: "",
@@ -154,7 +160,14 @@ const AdminMember = ({
     };
 
     return (
-        <div className="w-full flex flex-nowrap items-center h-fit">
+        <Reorder.Item
+            as="div"
+            value={id}
+            dragListener={false}
+            dragControls={dragControls}
+            onDragEnd={onDragEnd}
+            className="w-full flex flex-nowrap items-center h-fit"
+        >
             <div className={"w-full flex items-center bg-layer-2"}>
                 <div className={"w-full"}>
                     <OrgMember
@@ -167,6 +180,16 @@ const AdminMember = ({
                         is_faculty={is_faculty}
                     />
                 </div>
+                {canDrag && (
+                    <div
+                        className={"px-1 cursor-grab touch-none"}
+                        onPointerDown={(e) => dragControls.start(e)}
+                    >
+                        <p>
+                            <i className={"bx bx-menu bx-sm"}></i>
+                        </p>
+                    </div>
+                )}
                 <div className={"px-3 flex w-24"}>
                     {(isCreator ||
                         role === "MEMBER" ||
@@ -257,7 +280,7 @@ const AdminMember = ({
                     )}
                 </div>
             </UserDialog>
-        </div>
+        </Reorder.Item>
     );
 };
 

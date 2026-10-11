@@ -15,6 +15,21 @@ export const sortByRole = (
     return 1; // if member 1 is not greater and they are not the same, member2 is simply greater
 };
 
+/* sort by role, then by the order set by the org's admins (unordered members go last, in join order) */
+export const sortMembers = (
+    member1: Partial<Membership>,
+    member2: Partial<Membership>,
+) => {
+    const roleOrder = sortByRole(member1, member2);
+    if (roleOrder !== 0) return roleOrder;
+
+    const order1 = member1.ordering_id ?? Number.MAX_SAFE_INTEGER;
+    const order2 = member2.ordering_id ?? Number.MAX_SAFE_INTEGER;
+    if (order1 !== order2) return order1 - order2;
+
+    return (member1.id ?? 0) - (member2.id ?? 0);
+};
+
 export const capitalizeWords = (s: string) =>
     s
         .split(" ")

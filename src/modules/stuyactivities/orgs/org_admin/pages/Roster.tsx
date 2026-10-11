@@ -6,8 +6,9 @@ import { supabase } from "../../../../../lib/supabaseClient";
 import AdminMember from "../components/AdminMember";
 import { Box, TextField } from "@mui/material";
 import { Switch } from "radix-ui";
+import { Reorder } from "framer-motion";
 
-import { sortByRole } from "../../../../../utils/DataFormatters";
+import { sortMembers } from "../../../../../utils/DataFormatters";
 import { useSnackbar } from "notistack";
 import ItemList from "../../../../../components/ui/lists/ItemList";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
@@ -29,6 +30,7 @@ const Roster = () => {
 
     const members = organization.memberships
         .filter((member) => member.active)
+        .sort(sortMembers)
         .map((member) => {
             return {
                 first_name: member.users?.first_name,
@@ -50,6 +52,88 @@ const Roster = () => {
 
     const canToggleJoinable =
         userMember?.role === "CREATOR" || userMember?.role === "ADMIN";
+
+    /* the creator can move anyone, admins can only move members and advisors */
+    const canReorder = (role?: Membership["role"]) =>
+        userMember?.role === "CREATOR" ||
+        (userMember?.role === "ADMIN" &&
+            (role === "MEMBER" || role === "ADVISOR"));
+
+    const roles: Membership["role"][] = [
+        "CREATOR",
+        "ADMIN",
+        "ADVISOR",
+        "MEMBER",
+    ];
+
+    // membership ids in displayed order, so a member can be dragged before the order is saved
+    const [order, setOrder] = useState<number[]>([]);
+
+    useEffect(() => {
+        setOrder(members.map((member) => member.membershipId as number));
+    }, [organization.memberships]);
+
+    const membersById = new Map(
+        members.map((member) => [member.membershipId, member]),
+    );
+    const orderedMembers =
+        order.length === members.length &&
+        order.every((id) => membersById.has(id))
+            ? order.map((id) => membersById.get(id)!)
+            : members;
+
+    const idsOfRole = (list: typeof members, role: Membership["role"]) =>
+        list
+            .filter((member) => member.role === role)
+            .map((member) => member.membershipId as number);
+
+    const handleReorder = (role: Membership["role"], ids: number[]) => {
+        setOrder(
+            roles.flatMap((r) =>
+                r === role ? ids : idsOfRole(orderedMembers, r),
+            ),
+        );
+    };
+
+    // every member of the role gets an ordering_id matching the given order
+    const saveOrder = async (role: Membership["role"], ids: number[]) => {
+        const current = idsOfRole(members, role);
+        if (ids.every((id, i) => id === current[i])) return;
+
+        const orderings = ids.map((id, i) => ({ id, ordering_id: i }));
+
+        const results = await Promise.all(
+            orderings.map(({ id, ordering_id }) =>
+                supabase
+                    .from("memberships")
+                    .update({ ordering_id })
+                    .eq("id", id),
+            ),
+        );
+
+        if (results.some(({ error }) => error)) {
+            enqueueSnackbar(
+                "Could not reorder members. Contact it@stuysu.org for support.",
+                { variant: "error" },
+            );
+            setOrder(members.map((member) => member.membershipId as number));
+            return;
+        }
+
+        if (organization.setOrg) {
+            organization.setOrg({
+                ...organization,
+                memberships: organization.memberships.map((member) => {
+                    const ordering = orderings.find(
+                        ({ id }) => id === member.id,
+                    );
+                    return ordering
+                        ? { ...member, ordering_id: ordering.ordering_id }
+                        : member;
+                }),
+            });
+        }
+    };
 
     const toggleJoinable = async () => {
         if (!canToggleJoinable) {
@@ -179,24 +263,54 @@ const Roster = () => {
             </Box>
 
             <ItemList height={"auto"}>
-                {members
-                    ?.sort(sortByRole)
-                    .map((member, i) => (
-                        <AdminMember
-                            id={member.membershipId || -1}
-                            userId={member.userId || -1}
-                            first_name={member.first_name || "First"}
-                            last_name={member.last_name || "Last"}
-                            email={member.email || ""}
-                            picture={member.picture}
-                            role={member.role || "MEMBER"}
-                            role_name={member.role_name}
-                            isCreator={userMember?.role === "CREATOR"}
-                            isAdmin={userMember?.role === "ADMIN"}
-                            is_faculty={member.is_faculty}
-                            key={i}
-                        />
-                    ))}
+                {roles.map((role) => {
+                    const group = orderedMembers.filter(
+                        (member) => member.role === role,
+                    );
+                    if (!group.length) return null;
+
+                    return (
+                        <Reorder.Group
+                            as="div"
+                            axis="y"
+                            key={role}
+                            values={group.map(
+                                (member) => member.membershipId as number,
+                            )}
+                            onReorder={(ids) => handleReorder(role, ids)}
+                            className="flex flex-col gap-0.5"
+                        >
+                            {group.map((member) => (
+                                <AdminMember
+                                    id={member.membershipId || -1}
+                                    userId={member.userId || -1}
+                                    first_name={member.first_name || "First"}
+                                    last_name={member.last_name || "Last"}
+                                    email={member.email || ""}
+                                    picture={member.picture}
+                                    role={member.role || "MEMBER"}
+                                    role_name={member.role_name}
+                                    isCreator={userMember?.role === "CREATOR"}
+                                    isAdmin={userMember?.role === "ADMIN"}
+                                    is_faculty={member.is_faculty}
+                                    canDrag={
+                                        canReorder(member.role) &&
+                                        group.length > 1
+                                    }
+                                    onDragEnd={() =>
+                                        saveOrder(
+                                            role,
+                                            group.map(
+                                                (m) => m.membershipId as number,
+                                            ),
+                                        )
+                                    }
+                                    key={member.membershipId}
+                                />
+                            ))}
+                        </Reorder.Group>
+                    );
+                })}
             </ItemList>
         </Box>
     );

@@ -7,7 +7,7 @@ import { supabase } from "../../../../lib/supabaseClient";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import OrgMember from "../components/OrgMember";
 import OrgMeeting from "../components/OrgMeeting";
-import { sortByDate, sortByRole } from "../../../../utils/DataFormatters";
+import { sortByDate, sortMembers } from "../../../../utils/DataFormatters";
 import UserContext from "../../../../contexts/UserContext";
 import RelatedActivities from "./RelatedActivities";
 import OrgInspector from "../components/OrgInspector";
@@ -436,7 +436,7 @@ const Overview = () => {
                     ) : (
                         <div className={"flex flex-col gap-1"}>
                             {organization.memberships
-                                ?.sort(sortByRole)
+                                ?.sort(sortMembers)
                                 .map(
                                     (member, i) =>
                                         [
