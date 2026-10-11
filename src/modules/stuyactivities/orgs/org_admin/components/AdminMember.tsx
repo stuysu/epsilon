@@ -113,10 +113,22 @@ const AdminMember = ({
     };
 
     const handleSave = async () => {
-        const { error } = await supabase
-            .from("memberships")
-            .update({ role: editState.role, role_name: editState.role_name })
-            .eq("id", id);
+        // admins can't update other admins' rows, they can only change the role name
+        const adminEditingAdmin =
+            isAdmin && role === "ADMIN" && userId !== user.id;
+
+        const { error } = adminEditingAdmin
+            ? await supabase.rpc("set_membership_role_name", {
+                  membership_id: id,
+                  new_role_name: editState.role_name,
+              })
+            : await supabase
+                  .from("memberships")
+                  .update({
+                      role: editState.role,
+                      role_name: editState.role_name,
+                  })
+                  .eq("id", id);
 
         if (error) {
             enqueueSnackbar(
@@ -202,6 +214,7 @@ const AdminMember = ({
                     {(isCreator ||
                         role === "MEMBER" ||
                         role === "ADVISOR" ||
+                        (isAdmin && role === "ADMIN") ||
                         userId === user.id) && (
                         <div onClick={handleEdit}>
                             <p>
