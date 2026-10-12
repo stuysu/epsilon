@@ -24,9 +24,6 @@ const OrgBlock = ({
     force = false,
 }: Props) => {
     const [imgLoaded, setImgLoaded] = useState(false);
-
-    // a real link, so ctrl/middle click and "open in new tab" work.
-    // without a url (ex. pending approvals) it is a plain block and the parent handles the click
     const href = url ? `/${url.replace(/^\/+/, "")}` : undefined;
     const Root: React.ElementType = href ? (force ? "a" : Link) : "div";
     const rootProps = href ? (force ? { href } : { to: href }) : {};
