@@ -9,6 +9,7 @@ import ItemList from "../../../../../components/ui/lists/ItemList";
 import ContentUnavailable from "../../../../../components/ui/content/ContentUnavailable";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
 import UserDialog from "../../../../../components/ui/overlays/UserDialog";
+import CheckboxInput from "../../../../../components/ui/input/CheckboxInput";
 
 const JoinRequests = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -16,6 +17,8 @@ const JoinRequests = () => {
 
     const [confirmOpen, setConfirmOpen] = useState(false);
     const [approving, setApproving] = useState(false);
+    // everyone is selected by default, so only the ones taken out are tracked
+    const [unselectedIds, setUnselectedIds] = useState<number[]>([]);
     const pendingMembers = organization.memberships
         ?.filter((member) => !member.active)
         .map((member) => {
@@ -28,12 +31,31 @@ const JoinRequests = () => {
             };
         });
 
-    const handleApproveAll = async () => {
+    const selectedMembers = pendingMembers?.filter(
+        (member) => !unselectedIds.includes(member.membershipId as number),
+    );
+    const allSelected = selectedMembers?.length === pendingMembers?.length;
+
+    const toggleSelectAll = (selectAll: boolean) => {
+        setUnselectedIds(
+            selectAll
+                ? []
+                : pendingMembers.map((member) => member.membershipId as number),
+        );
+    };
+
+    const toggleMember = (id: number, selected: boolean) => {
+        setUnselectedIds((ids) =>
+            selected ? ids.filter((i) => i !== id) : [...ids, id],
+        );
+    };
+
+    const handleApproveSelected = async () => {
         setApproving(true);
 
         // one at a time, approve-member checks if the club should be unlocked after every approval
         const approvedIds: number[] = [];
-        for (const member of pendingMembers) {
+        for (const member of selectedMembers) {
             const { error } = await supabase.functions.invoke(
                 "approve-member",
                 { body: { member_id: member.membershipId } },
@@ -52,13 +74,13 @@ const JoinRequests = () => {
             });
         }
 
-        if (approvedIds.length === pendingMembers.length) {
+        if (approvedIds.length === selectedMembers.length) {
             enqueueSnackbar(`Approved ${approvedIds.length} members!`, {
                 variant: "success",
             });
         } else if (approvedIds.length) {
             enqueueSnackbar(
-                `Approved ${approvedIds.length} of ${pendingMembers.length} members. Contact it@stuysu.org if the rest keep failing.`,
+                `Approved ${approvedIds.length} of ${selectedMembers.length} members. Contact it@stuysu.org if the rest keep failing.`,
                 { variant: "warning" },
             );
         } else {
@@ -83,35 +105,59 @@ const JoinRequests = () => {
                     Review requests from students who want to join your
                     Activity. Approving a request adds them to your roster.
                 </p>
-
-                {pendingMembers?.length > 1 && (
-                    <div className={"mt-6"}>
-                        <AsyncButton
-                            onClick={() => setConfirmOpen(true)}
-                            disabled={approving}
-                        >
-                            <i className={"bx bx-check-double mr-2"}></i>
-                            {approving
-                                ? "Approving..."
-                                : `Approve All (${pendingMembers.length})`}
-                        </AsyncButton>
-                    </div>
-                )}
             </div>
 
             <UserDialog
                 open={confirmOpen}
-                title={`Approve all ${pendingMembers?.length} requests?`}
-                description={
-                    "Everyone waiting to join will be added to your roster and emailed that they were approved."
-                }
-                confirmText="Approve All"
-                onConfirm={handleApproveAll}
+                title={`Approve ${selectedMembers?.length} ${
+                    selectedMembers?.length === 1 ? "request" : "requests"
+                }?`}
+                description={`Everyone selected will be added to your roster and emailed that they were approved.${
+                    allSelected
+                        ? ""
+                        : ` The ${unselectedIds.length} you left out will stay pending.`
+                }`}
+                confirmText="Approve"
+                onConfirm={handleApproveSelected}
                 onClose={() => setConfirmOpen(false)}
             />
 
             {pendingMembers?.length > 0 ? (
                 <ItemList height={"auto"}>
+                    {pendingMembers.length > 1 && (
+                        <div
+                            className={
+                                "flex items-center gap-3 bg-layer-2 pl-3 pr-3 py-3"
+                            }
+                        >
+                            <CheckboxInput
+                                checked={
+                                    allSelected
+                                        ? true
+                                        : selectedMembers.length
+                                          ? "indeterminate"
+                                          : false
+                                }
+                                onChange={toggleSelectAll}
+                                label="Select all requests"
+                                disabled={approving}
+                            />
+                            <span className={"font-medium grow min-w-0"}>
+                                {allSelected
+                                    ? `All ${pendingMembers.length} selected`
+                                    : `${selectedMembers.length} of ${pendingMembers.length} selected`}
+                            </span>
+                            <AsyncButton
+                                onClick={() => setConfirmOpen(true)}
+                                disabled={approving || !selectedMembers.length}
+                                sx={{ height: "40px", flexShrink: 0 }}
+                            >
+                                {approving
+                                    ? "Approving..."
+                                    : `Approve (${selectedMembers.length})`}
+                            </AsyncButton>
+                        </div>
+                    )}
                     {pendingMembers?.map((member, i) => (
                         <PendingMember
                             id={member.membershipId || -1}
@@ -119,6 +165,20 @@ const JoinRequests = () => {
                             last_name={member.last_name}
                             email={member.email || "Undefined"}
                             picture={member.picture}
+                            selected={
+                                !unselectedIds.includes(
+                                    member.membershipId as number,
+                                )
+                            }
+                            onSelect={
+                                pendingMembers.length > 1
+                                    ? (selected) =>
+                                          toggleMember(
+                                              member.membershipId as number,
+                                              selected,
+                                          )
+                                    : undefined
+                            }
                             key={i}
                         />
                     ))}
