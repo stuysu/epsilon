@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { Skeleton } from "@mui/material";
 
 type Props = {
@@ -23,18 +23,17 @@ const OrgBlock = ({
     picture,
     force = false,
 }: Props) => {
-    const navigate = useNavigate();
     const [imgLoaded, setImgLoaded] = useState(false);
-
-    const handleClick = () => {
-        if (!url) return;
-        force ? (window.location.href = `/${url}`) : navigate(`/${url}`);
-    };
+    const href = url ? `/${url.replace(/^\/+/, "")}` : undefined;
+    const Root: React.ElementType = href ? (force ? "a" : Link) : "div";
+    const rootProps = href ? (force ? { href } : { to: href }) : {};
 
     return (
-        <div
-            className={"cursor-pointer flex flex-col w-44"}
-            onClick={url ? handleClick : undefined}
+        <Root
+            className={
+                "cursor-pointer flex flex-col w-44 no-underline text-inherit"
+            }
+            {...rootProps}
         >
             <div>
                 {picture ? (
@@ -126,7 +125,7 @@ const OrgBlock = ({
                     {role_name || formatCapitals(role || "")}
                 </p>
             </div>
-        </div>
+        </Root>
     );
 };
 
