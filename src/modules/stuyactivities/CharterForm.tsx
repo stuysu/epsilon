@@ -358,11 +358,9 @@ const CharterForm = () => {
                             sx={{ width: isMobile ? "100%" : "50%" }}
                         />
                         <FormTextField
-                            label="Url"
+                            label="URL Slug"
                             field="url"
-                            description={
-                                "https://epsilon.stuysu.org/<this is the part you are entering>\nExample: https://epsilon.stuysu.org/suit"
-                            }
+                            description="https://epsilon.stuysu.org/<this is the part you are entering>\nExample: https://epsilon.stuysu.org/suit"
                             required={OrgRequirements.url.required}
                             requirements={OrgRequirements.url.requirements}
                             sx={{
