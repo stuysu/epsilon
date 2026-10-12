@@ -3,7 +3,11 @@ import { Avatar, Box } from "@mui/material";
 import { useSnackbar } from "notistack";
 import FormTextField from "../../../../../components/ui/forms/FormTextField";
 import Divider from "../../../../../components/ui/Divider";
-import OrgRequirements from "../../../../../utils/OrgRequirements";
+import OrgRequirements, {
+    ORG_TAGS,
+} from "../../../../../utils/OrgRequirements";
+import FormTagSelect from "../../../../../components/ui/forms/FormTagSelect";
+import FormChipText from "../../../../../components/ui/forms/FormChipText";
 import orgFieldMap from "../../../../../utils/OrgFieldMap";
 import { supabase } from "../../../../../lib/supabaseClient";
 import { PUBLIC_URL } from "../../../../../config/constants";
@@ -122,6 +126,22 @@ const textFields = [
     "faculty_email",
 ];
 
+/* tags is an array and keywords is a comma separated string, so they need their own editors and comparison */
+const listFields = ["tags", "keywords"];
+
+const toList = (field: string, value: any): string[] => {
+    if (field === "keywords") {
+        return value ? String(value).split(",").filter(Boolean) : [];
+    }
+    return Array.isArray(value) ? value : [];
+};
+
+const fromList = (field: string, list: string[]) =>
+    field === "keywords" ? list.join(",") : list;
+
+const sameList = (a: string[], b: string[]) =>
+    a.length === b.length && a.every((value, i) => value === b[i]);
+
 const hiddenFields: string[] = [
     "id",
     "organization_id",
@@ -196,6 +216,19 @@ const OrgEditor = ({
                 existingEdit[field as keyof OrganizationEdit] ||
                 organization[field as keyof Organization];
 
+            if (listFields.includes(field)) {
+                if (
+                    !sameList(
+                        toList(field, editedValue),
+                        toList(field, originalValue),
+                    )
+                ) {
+                    atleastOneDiff = true;
+                    break;
+                }
+                continue;
+            }
+
             if (editedValue !== originalValue) {
                 atleastOneDiff = true;
                 break;
@@ -253,6 +286,22 @@ const OrgEditor = ({
         for (let key of Object.keys(existingEdit)) {
             let field = key as orgKey;
             if (hiddenFields.includes(field)) continue;
+
+            if (listFields.includes(field)) {
+                // an empty list is a real change (clearing it), so it can't use the || fallbacks below.
+                // keywords is sent as "" and tags as [], so they are not mistaken for "no change" (null)
+                const current = toList(
+                    field,
+                    editData[field] ?? organization[field],
+                );
+                const approved = toList(field, organization[field]);
+                payload[field] = sameList(current, approved)
+                    ? null
+                    : fromList(field, current);
+
+                if (payload[field] !== null) allNull = false;
+                continue;
+            }
 
             payload[field] = editData[field] || existingEdit[field] || null;
 
@@ -707,6 +756,114 @@ const OrgEditor = ({
                             }
                         />
                         {i < textFields.length - 1 && <Divider />}
+                    </Fragment>
+                );
+            })}
+            {listFields.map((field) => {
+                return (
+                    <Fragment key={field}>
+                        <Divider />
+                        <EditField
+                            field={field}
+                            pending={
+                                (existingEdit[
+                                    field as keyof OrganizationEdit
+                                ] !== null &&
+                                    existingEdit[
+                                        field as keyof OrganizationEdit
+                                    ] !== undefined) ||
+                                organization.state === "PENDING"
+                            }
+                            editing={editState[field]}
+                            onCancel={() => {
+                                // replace editData with the original value
+                                updateEdit(
+                                    field as keyof OrganizationEdit,
+                                    existingEdit[
+                                        field as keyof OrganizationEdit
+                                    ] ||
+                                        organization[
+                                            field as keyof Organization
+                                        ],
+                                );
+
+                                // remove self from the list of fields being edited and from validation
+                                setEditState((prevState) => {
+                                    const state = { ...prevState };
+                                    delete state[field];
+                                    return state;
+                                });
+                                setStatus((prevState) => {
+                                    const state = { ...prevState };
+                                    delete state[field];
+                                    return state;
+                                });
+                            }}
+                            onEdit={() =>
+                                setEditState({ ...editState, [field]: true })
+                            }
+                            defaultDisplay={
+                                <p className={"w-3/4"}>
+                                    {toList(
+                                        field,
+                                        editData[
+                                            field as keyof OrganizationEdit
+                                        ],
+                                    ).join(", ") || (
+                                        <em className="text-typography-3">
+                                            &lt;empty&gt;
+                                        </em>
+                                    )}
+                                </p>
+                            }
+                            editDisplay={
+                                field === "tags" ? (
+                                    <FormTagSelect
+                                        field={field}
+                                        label="Tags"
+                                        tags={ORG_TAGS}
+                                        description="Select up to 3 tags that best represent your Activity"
+                                        required={OrgRequirements.tags.required}
+                                        requirements={
+                                            OrgRequirements.tags.requirements
+                                        }
+                                        value={toList(field, editData.tags)}
+                                        onChange={(val) =>
+                                            updateEdit("tags", val)
+                                        }
+                                        changeStatus={changeStatus}
+                                        sx={{ width: "80%" }}
+                                    />
+                                ) : (
+                                    <Box sx={{ width: "80%" }}>
+                                        <FormChipText
+                                            field={field}
+                                            label="Keywords"
+                                            description="Up to 3 keywords that describe your Activity. They are not publicly visible but help your Activity show up in search results. Create a keyword using <ENTER> or <,>."
+                                            required={
+                                                OrgRequirements.keywords
+                                                    .required
+                                            }
+                                            requirements={
+                                                OrgRequirements.keywords
+                                                    .requirements
+                                            }
+                                            value={toList(
+                                                field,
+                                                editData.keywords,
+                                            )}
+                                            onChange={(val) =>
+                                                updateEdit(
+                                                    "keywords",
+                                                    fromList(field, val),
+                                                )
+                                            }
+                                            changeStatus={changeStatus}
+                                        />
+                                    </Box>
+                                )
+                            }
+                        />
                     </Fragment>
                 );
             })}

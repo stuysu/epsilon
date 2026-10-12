@@ -154,3 +154,18 @@ const OrgRequirements: OrgValidator = {
 };
 
 export default OrgRequirements;
+
+/* the tags an Activity can pick from (up to 3, see the tags requirement above) */
+export const ORG_TAGS = [
+    "Arts & Crafts",
+    "Academic & Professional",
+    "Club Sports & Recreational Games",
+    "Community Service & Volunteering",
+    "Cultural & Religious",
+    "Music",
+    "Public Speaking",
+    "STEM",
+    "Student Support & Government",
+    "Hobby & Special Interest",
+    "Publication",
+];
