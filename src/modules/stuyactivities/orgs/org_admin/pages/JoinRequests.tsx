@@ -10,13 +10,17 @@ import ContentUnavailable from "../../../../../components/ui/content/ContentUnav
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
 import UserDialog from "../../../../../components/ui/overlays/UserDialog";
 import CheckboxInput from "../../../../../components/ui/input/CheckboxInput";
+import { PUBLIC_URL } from "../../../../../config/constants";
 
 const JoinRequests = () => {
     const { enqueueSnackbar } = useSnackbar();
     const organization = useContext<OrgContextType>(OrgContext);
 
-    const [confirmOpen, setConfirmOpen] = useState(false);
-    const [approving, setApproving] = useState(false);
+    // which bulk action is waiting for confirmation / currently running
+    const [confirmAction, setConfirmAction] = useState<
+        "approve" | "reject" | null
+    >(null);
+    const [working, setWorking] = useState<"approve" | "reject" | null>(null);
     // everyone is selected by default, so only the ones taken out are tracked
     const [unselectedIds, setUnselectedIds] = useState<number[]>([]);
     const pendingMembers = organization.memberships
@@ -51,7 +55,7 @@ const JoinRequests = () => {
     };
 
     const handleApproveSelected = async () => {
-        setApproving(true);
+        setWorking("approve");
 
         // one at a time, approve-member checks if the club should be unlocked after every approval
         const approvedIds: number[] = [];
@@ -90,7 +94,48 @@ const JoinRequests = () => {
             );
         }
 
-        setApproving(false);
+        setWorking(null);
+    };
+
+    const handleRejectSelected = async () => {
+        setWorking("reject");
+
+        const ids = selectedMembers.map((member) => member.membershipId);
+        // RLS only returns the rows that were actually deleted
+        const { data, error } = await supabase
+            .from("memberships")
+            .delete()
+            .in("id", ids)
+            .select("id");
+
+        const rejectedIds = error ? [] : (data ?? []).map((row) => row.id);
+
+        if (rejectedIds.length && organization.setOrg) {
+            organization.setOrg({
+                ...organization,
+                memberships: organization.memberships.filter(
+                    (m) => !rejectedIds.includes(m.id as number),
+                ),
+            });
+        }
+
+        if (rejectedIds.length === selectedMembers.length) {
+            enqueueSnackbar(`Rejected ${rejectedIds.length} requests.`, {
+                variant: "success",
+            });
+        } else if (rejectedIds.length) {
+            enqueueSnackbar(
+                `Rejected ${rejectedIds.length} of ${selectedMembers.length} requests. Contact it@stuysu.org if the rest keep failing.`,
+                { variant: "warning" },
+            );
+        } else {
+            enqueueSnackbar(
+                "Error rejecting requests. Contact it@stuysu.org for support.",
+                { variant: "error" },
+            );
+        }
+
+        setWorking(null);
     };
 
     return (
@@ -108,18 +153,31 @@ const JoinRequests = () => {
             </div>
 
             <UserDialog
-                open={confirmOpen}
-                title={`Approve ${selectedMembers?.length} ${
-                    selectedMembers?.length === 1 ? "request" : "requests"
-                }?`}
-                description={`Everyone selected will be added to your roster and emailed that they were approved.${
+                open={confirmAction !== null}
+                imageSrc={
+                    confirmAction === "reject"
+                        ? `${PUBLIC_URL}/symbols/warning.png`
+                        : undefined
+                }
+                title={`${confirmAction === "reject" ? "Reject" : "Approve"} ${
+                    selectedMembers?.length
+                } ${selectedMembers?.length === 1 ? "request" : "requests"}?`}
+                description={`${
+                    confirmAction === "reject"
+                        ? "Everyone selected will be removed from your join requests. They can request to join again."
+                        : "Everyone selected will be added to your roster and emailed that they were approved."
+                }${
                     allSelected
                         ? ""
                         : ` The ${unselectedIds.length} you left out will stay pending.`
                 }`}
-                confirmText="Approve"
-                onConfirm={handleApproveSelected}
-                onClose={() => setConfirmOpen(false)}
+                confirmText={confirmAction === "reject" ? "Reject" : "Approve"}
+                onConfirm={
+                    confirmAction === "reject"
+                        ? handleRejectSelected
+                        : handleApproveSelected
+                }
+                onClose={() => setConfirmAction(null)}
             />
 
             {pendingMembers?.length > 0 ? (
@@ -127,7 +185,7 @@ const JoinRequests = () => {
                     {pendingMembers.length > 1 && (
                         <div
                             className={
-                                "flex items-center gap-3 bg-layer-2 pl-3 pr-3 py-3"
+                                "flex flex-wrap items-center gap-3 bg-layer-2 pl-3 pr-3 py-3"
                             }
                         >
                             <CheckboxInput
@@ -140,22 +198,49 @@ const JoinRequests = () => {
                                 }
                                 onChange={toggleSelectAll}
                                 label="Select all requests"
-                                disabled={approving}
+                                disabled={working !== null}
                             />
-                            <span className={"font-medium grow min-w-0"}>
+                            <span
+                                className={
+                                    "font-medium text-typography-1 grow min-w-0"
+                                }
+                            >
                                 {allSelected
                                     ? `All ${pendingMembers.length} selected`
                                     : `${selectedMembers.length} of ${pendingMembers.length} selected`}
                             </span>
-                            <AsyncButton
-                                onClick={() => setConfirmOpen(true)}
-                                disabled={approving || !selectedMembers.length}
-                                sx={{ height: "40px", flexShrink: 0 }}
-                            >
-                                {approving
-                                    ? "Approving..."
-                                    : `Approve (${selectedMembers.length})`}
-                            </AsyncButton>
+                            <div className={"flex gap-2 w-full sm:w-auto"}>
+                                <AsyncButton
+                                    onClick={() => setConfirmAction("approve")}
+                                    disabled={
+                                        working !== null ||
+                                        !selectedMembers.length
+                                    }
+                                    sx={{
+                                        height: "40px",
+                                        flexGrow: { xs: 1, sm: 0 },
+                                    }}
+                                >
+                                    {working === "approve"
+                                        ? "Approving..."
+                                        : `Approve (${selectedMembers.length})`}
+                                </AsyncButton>
+                                <AsyncButton
+                                    onClick={() => setConfirmAction("reject")}
+                                    disabled={
+                                        working !== null ||
+                                        !selectedMembers.length
+                                    }
+                                    sx={{
+                                        height: "40px",
+                                        flexGrow: { xs: 1, sm: 0 },
+                                    }}
+                                >
+                                    {working === "reject"
+                                        ? "Rejecting..."
+                                        : `Reject (${selectedMembers.length})`}
+                                </AsyncButton>
+                            </div>
                         </div>
                     )}
                     {pendingMembers?.map((member, i) => (
