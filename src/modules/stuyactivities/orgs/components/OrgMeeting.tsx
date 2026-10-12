@@ -47,24 +47,28 @@ const OrgMeeting = ({
     }
 
     return (
-        <div className={"w-full cursor-pointer"}>
-            <div
-                className="flex justify-between items-center bg-layer-2 transition-colors sm:hover:bg-layer-3 p-4"
-                onClick={() => setOpen(true)}
-            >
-                <div className={"w-full flex justify-between items-center"}>
+        <div className={"w-full"}>
+            <div className="flex justify-between items-center p-4">
+                <div
+                    className={
+                        "w-full flex justify-between items-center cursor-pointer bg-layer-2 transition-colors sm:hover:bg-layer-3"
+                    }
+                    onClick={() => setOpen(true)}
+                >
                     <div className="w-full pt-1">
                         <h4>{title}</h4>
                         <p>
                             {startTime} to {endTime}
                         </p>
-                        <p>
-                            {advisor?.trim() ? `Advisor: ${advisor}` : ""}
-                        </p>
+                        <p>{advisor?.trim() ? `Advisor: ${advisor}` : ""}</p>
                     </div>
                     <div className=" pointer-events-none flex gap-2 w-fit justify-end">
                         <ToggleChip
-                            title={room_name && !room_name.includes("Virtual") ? `Room ${room_name}` : "Virtual"}
+                            title={
+                                room_name && !room_name.includes("Virtual")
+                                    ? `Room ${room_name}`
+                                    : "Virtual"
+                            }
                             selectable={false}
                         ></ToggleChip>
                         {is_public ? (
