@@ -375,7 +375,7 @@ const CharterForm = () => {
                                       ? "Checking URL..."
                                       : formData.url && !urlError
                                         ? "URL is valid."
-                                        : "https://epsilon.stuysu.org/<this is the only part you are entering>\nExample: https://epsilon.stuysu.org/suit"
+                                        : "https://epsilon.stuysu.org/<this is the only part you are entering>"
                             }
                             onBlur={async (e: any) => {
                                 const url = e.target.value;
