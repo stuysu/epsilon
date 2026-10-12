@@ -12,8 +12,71 @@ import { sortMembers } from "../../../../../utils/DataFormatters";
 import { useSnackbar } from "notistack";
 import ItemList from "../../../../../components/ui/lists/ItemList";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
+import ToggleChip from "../../../../../components/ui/input/ToggleChip";
 
-const Roster = () => {
+/* a disabled text box with all the emails and a button to copy them */
+const EmailCopyBox = ({
+    label,
+    emails,
+}: {
+    label?: string;
+    emails: string;
+}) => {
+    const { enqueueSnackbar } = useSnackbar();
+
+    return (
+        <Box sx={{ width: "100%", marginBottom: "25px" }}>
+            {label && (
+                <p className={"font-medium text-typography-1 mt-2"}>{label}</p>
+            )}
+            <Box
+                sx={{
+                    width: "100%",
+                    display: "flex",
+                    flexWrap: "nowrap",
+                    alignItems: "center",
+                }}
+            >
+                <Box
+                    sx={{
+                        paddingTop: "8px",
+                        paddingBottom: "8px",
+                        width: "100%",
+                    }}
+                >
+                    <TextField
+                        disabled
+                        fullWidth
+                        value={emails}
+                        variant="outlined"
+                    />
+                </Box>
+                <Box sx={{ paddingLeft: "16px", width: "100px" }}>
+                    <AsyncButton
+                        onClick={async () => {
+                            try {
+                                await navigator.clipboard.writeText(emails);
+                                enqueueSnackbar("Copied emails to clipboard!", {
+                                    variant: "success",
+                                });
+                            } catch (error) {
+                                enqueueSnackbar(
+                                    "Failed to copy emails to clipboard. :( Try manually copying from the page.",
+                                    { variant: "error" },
+                                );
+                            }
+                        }}
+                    >
+                        Copy
+                    </AsyncButton>
+                </Box>
+            </Box>
+        </Box>
+    );
+};
+
+// readOnly: Clubs & Pubs admins can look at any roster and copy emails, but can't change it
+const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
     const { enqueueSnackbar } = useSnackbar();
 
     const user = useContext(UserContext);
@@ -45,6 +108,12 @@ const Roster = () => {
             };
         });
     const member_emails = members.map((member) => member.email).join(", ");
+    const leader_emails = members
+        .filter(
+            (member) => member.role === "CREATOR" || member.role === "ADMIN",
+        )
+        .map((member) => member.email)
+        .join(", ");
 
     const userMember = organization.memberships.find(
         (member) => member.users?.id === user.id,
@@ -175,86 +244,59 @@ const Roster = () => {
                 }
             >
                 <h1>Member Roster</h1>
-                <p className={"mb-6"}>
-                    See your members, manage them, or change your club's
-                    joinable status here. Sending invites to join is a feature
-                    in development.
-                </p>
+                {readOnly ? (
+                    <>
+                        <p className={"mb-6"}>
+                            You are viewing this roster as a Clubs & Pubs
+                            administrator. You can copy emails, but only this
+                            Activity's admins can change it.
+                        </p>
+                        <ToggleChip
+                            title={joinableState ? "Joinable" : "Private"}
+                            selectable={false}
+                        />
+                    </>
+                ) : (
+                    <>
+                        <p className={"mb-6"}>
+                            See your members, manage them, or change your club's
+                            joinable status here. Sending invites to join is a
+                            feature in development.
+                        </p>
 
-                <div
-                    style={{ marginBottom: 12 }}
-                    className="flex items-center gap-4"
-                >
-                    <div className="font-medium">
-                        {joinableState ? "Joinable" : "Private"}
-                    </div>
-                    <Switch.Root
-                        checked={joinableState}
-                        onCheckedChange={() => toggleJoinable()}
-                        disabled={!canToggleJoinable || toggling}
-                        className={
-                            "relative h-6 w-11 cursor-pointer rounded-full bg-layer-3 transition-colors " +
-                            "data-[state=checked]:bg-blue " +
-                            (!canToggleJoinable || toggling
-                                ? "opacity-50 cursor-not-allowed"
-                                : "")
-                        }
-                    >
-                        <Switch.Thumb className="sm:hover:scale-110 block h-5 w-5 translate-x-0.5 rounded-full bg-white/90 shadow transition-transform data-[state=checked]:translate-x-[22px] ease-in-out" />
-                    </Switch.Root>
-                </div>
+                        <div
+                            style={{ marginBottom: 12 }}
+                            className="flex items-center gap-4"
+                        >
+                            <div className="font-medium">
+                                {joinableState ? "Joinable" : "Private"}
+                            </div>
+                            <Switch.Root
+                                checked={joinableState}
+                                onCheckedChange={() => toggleJoinable()}
+                                disabled={!canToggleJoinable || toggling}
+                                className={
+                                    "relative h-6 w-11 cursor-pointer rounded-full bg-layer-3 transition-colors " +
+                                    "data-[state=checked]:bg-blue " +
+                                    (!canToggleJoinable || toggling
+                                        ? "opacity-50 cursor-not-allowed"
+                                        : "")
+                                }
+                            >
+                                <Switch.Thumb className="sm:hover:scale-110 block h-5 w-5 translate-x-0.5 rounded-full bg-white/90 shadow transition-transform data-[state=checked]:translate-x-[22px] ease-in-out" />
+                            </Switch.Root>
+                        </div>
 
-                <AsyncButton disabled={true}>
-                    <i className={"bx bx-send mr-2"}></i> Invites are coming
-                    soon!
-                </AsyncButton>
+                        <AsyncButton disabled={true}>
+                            <i className={"bx bx-send mr-2"}></i> Invites are
+                            coming soon!
+                        </AsyncButton>
+                    </>
+                )}
             </div>
 
-            <Box
-                sx={{
-                    width: "100%",
-                    display: "flex",
-                    flexWrap: "nowrap",
-                    alignItems: "center",
-                    marginBottom: "25px",
-                }}
-            >
-                <Box
-                    sx={{
-                        paddingTop: "8px",
-                        paddingBottom: "8px",
-                        width: "100%",
-                    }}
-                >
-                    <TextField
-                        disabled
-                        fullWidth
-                        value={member_emails}
-                        variant="outlined"
-                    />
-                </Box>
-                <Box sx={{ paddingLeft: "16px", width: "100px" }}>
-                    <AsyncButton
-                        onClick={async () => {
-                            try {
-                                await navigator.clipboard.writeText(
-                                    member_emails,
-                                );
-                                enqueueSnackbar("Copied emails to clipboard!", {
-                                    variant: "success",
-                                });
-                            } catch (error) {
-                                enqueueSnackbar(
-                                    "Failed to copy emails to clipboard. :( Try manually copying from the page.",
-                                    { variant: "error" },
-                                );
-                            }
-                        }}
-                    >
-                        Copy
-                    </AsyncButton>
-                </Box>
-            </Box>
+            <EmailCopyBox label="Club leaders" emails={leader_emails} />
+            <EmailCopyBox label="All members" emails={member_emails} />
 
             <ItemList height={"auto"}>
                 {roles.map((role) => {
@@ -287,7 +329,12 @@ const Roster = () => {
                                     isCreator={userMember?.role === "CREATOR"}
                                     isAdmin={userMember?.role === "ADMIN"}
                                     is_faculty={member.is_faculty}
-                                    canDrag={canReorder && group.length > 1}
+                                    readOnly={readOnly}
+                                    canDrag={
+                                        !readOnly &&
+                                        canReorder &&
+                                        group.length > 1
+                                    }
                                     onDragEnd={() =>
                                         saveOrder(
                                             role,

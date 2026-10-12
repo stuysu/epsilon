@@ -54,6 +54,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     ];
 
     const stuyActivitiesAdminLinks: LinkItem[] = [
+        { to: `${main}/admin/roster`, display: "Roster" },
         { to: `${main}/admin/messages`, display: "Messages" },
     ];
 

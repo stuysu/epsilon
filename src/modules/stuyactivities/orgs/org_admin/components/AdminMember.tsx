@@ -24,6 +24,7 @@ const AdminMember = ({
     is_faculty,
     canDrag,
     onDragEnd,
+    readOnly = false,
 }: {
     id: number;
     userId: number;
@@ -38,6 +39,7 @@ const AdminMember = ({
     is_faculty?: boolean;
     onDragEnd: () => void;
     canDrag: boolean;
+    readOnly?: boolean;
 }) => {
     const user = useContext(UserContext);
     const organization = useContext(OrgContext);
@@ -192,56 +194,64 @@ const AdminMember = ({
                         is_faculty={is_faculty}
                     />
                 </div>
-                {/* always rendered so the rows line up when there is no handle */}
-                <div
-                    className={
-                        "w-6 sm:w-8 shrink-0 flex justify-center " +
-                        (canDrag ? "cursor-grab touch-none" : "")
-                    }
-                    onPointerDown={(e) => canDrag && dragControls.start(e)}
-                >
-                    {canDrag && (
-                        <p>
-                            <i className={"bx bx-menu bx-sm"}></i>
-                        </p>
-                    )}
-                </div>
-                <div
-                    className={
-                        "px-1.5 sm:px-3 flex w-[4.5rem] sm:w-28 shrink-0"
-                    }
-                >
-                    {(isCreator ||
-                        role === "MEMBER" ||
-                        role === "ADVISOR" ||
-                        (isAdmin && role === "ADMIN") ||
-                        userId === user.id) && (
-                        <div onClick={handleEdit}>
-                            <p>
-                                <i
-                                    className={
-                                        "bx bx-pencil bx-sm sm:hover:opacity-75 cursor-pointer"
-                                    }
-                                ></i>
-                            </p>
-                        </div>
-                    )}
-
-                    {userId !== user.id &&
-                        (isCreator ||
-                            role === "MEMBER" ||
-                            role === "ADVISOR") && (
-                            <div onClick={() => setKickConfirmOpen(true)}>
+                {!readOnly && (
+                    <>
+                        {/* always rendered so the rows line up when there is no handle */}
+                        <div
+                            className={
+                                "w-6 sm:w-8 shrink-0 flex justify-center " +
+                                (canDrag ? "cursor-grab touch-none" : "")
+                            }
+                            onPointerDown={(e) =>
+                                canDrag && dragControls.start(e)
+                            }
+                        >
+                            {canDrag && (
                                 <p>
-                                    <i
-                                        className={
-                                            "bx bx-user-x bx-sm ml-3 text-red sm:hover:opacity-75 cursor-pointer"
-                                        }
-                                    ></i>
+                                    <i className={"bx bx-menu bx-sm"}></i>
                                 </p>
-                            </div>
-                        )}
-                </div>
+                            )}
+                        </div>
+                        <div
+                            className={
+                                "px-1.5 sm:px-3 flex w-[4.5rem] sm:w-28 shrink-0"
+                            }
+                        >
+                            {(isCreator ||
+                                role === "MEMBER" ||
+                                role === "ADVISOR" ||
+                                (isAdmin && role === "ADMIN") ||
+                                userId === user.id) && (
+                                <div onClick={handleEdit}>
+                                    <p>
+                                        <i
+                                            className={
+                                                "bx bx-pencil bx-sm sm:hover:opacity-75 cursor-pointer"
+                                            }
+                                        ></i>
+                                    </p>
+                                </div>
+                            )}
+
+                            {userId !== user.id &&
+                                (isCreator ||
+                                    role === "MEMBER" ||
+                                    role === "ADVISOR") && (
+                                    <div
+                                        onClick={() => setKickConfirmOpen(true)}
+                                    >
+                                        <p>
+                                            <i
+                                                className={
+                                                    "bx bx-user-x bx-sm ml-3 text-red sm:hover:opacity-75 cursor-pointer"
+                                                }
+                                            ></i>
+                                        </p>
+                                    </div>
+                                )}
+                        </div>
+                    </>
+                )}
             </div>
             <UserDialog
                 imageSrc={`${PUBLIC_URL}/symbols/warning.png`}
