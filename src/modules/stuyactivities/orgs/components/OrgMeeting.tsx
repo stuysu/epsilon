@@ -19,7 +19,7 @@ type Props = {
     isMobile?: boolean;
     onlyUpcoming?: boolean;
     onEdit?: () => void;
-    onDelete?: () => void;
+    onDelete?: (silentDelete: boolean) => void;
 };
 
 const OrgMeeting = ({
@@ -38,6 +38,7 @@ const OrgMeeting = ({
     onDelete,
 }: Props) => {
     const [open, setOpen] = useState(false);
+    const [confirmingDelete, setConfirmingDelete] = useState(false);
     let startTime = toNewYork(start_time).format("L LT");
     let endTime = toNewYork(end_time).format("LT");
     let today = toNewYork().startOf("day");
@@ -97,15 +98,50 @@ const OrgMeeting = ({
                             Edit
                         </AsyncButton>
                     )}
-                    {onDelete && (
-                        <AsyncButton
-                            variant="contained"
-                            onClick={onDelete}
-                            sx={{ marginLeft: "10px" }}
-                        >
-                            Delete
-                        </AsyncButton>
-                    )}
+                    {onDelete &&
+                        (confirmingDelete ? (
+                            <div
+                                className="ml-2 flex items-center gap-2"
+                                onClick={(e) => e.stopPropagation()}
+                            >
+                                <span className="text-sm text-text-1">
+                                    silent? (deletes either way)
+                                </span>
+                                <AsyncButton
+                                    variant="contained"
+                                    color="success"
+                                    onClick={() => {
+                                        setConfirmingDelete(false);
+                                        onDelete(true);
+                                    }}
+                                    sx={{ minWidth: 0, px: 1.5 }}
+                                >
+                                    yes
+                                </AsyncButton>
+                                <AsyncButton
+                                    variant="contained"
+                                    color="error"
+                                    onClick={() => {
+                                        setConfirmingDelete(false);
+                                        onDelete(false);
+                                    }}
+                                    sx={{ minWidth: 0, px: 1.5 }}
+                                >
+                                    no
+                                </AsyncButton>
+                            </div>
+                        ) : (
+                            <AsyncButton
+                                variant="contained"
+                                onClick={(e) => {
+                                    e.stopPropagation();
+                                    setConfirmingDelete(true);
+                                }}
+                                sx={{ marginLeft: "10px" }}
+                            >
+                                Delete
+                            </AsyncButton>
+                        ))}
                 </div>
             </div>
             <MeetingPreview

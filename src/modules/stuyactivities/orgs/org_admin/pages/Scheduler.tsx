@@ -16,7 +16,6 @@ const Scheduler = () => {
     const organization = useContext(OrgContext);
     const { enqueueSnackbar } = useSnackbar();
     const isMeetingMobile = useMediaQuery("(max-width: 1450px)");
-    const [silentDelete, setSilentDelete] = useState(false);
 
     const [editState, setEditState] = useState<{
         id: number | undefined;
@@ -85,17 +84,6 @@ const Scheduler = () => {
                     >
                         Create Meeting
                     </AsyncButton>
-                    <FormControlLabel
-                        control={
-                            <Switch
-                                checked={silentDelete}
-                                onChange={(event) =>
-                                    setSilentDelete(event.target.checked)
-                                }
-                            />
-                        }
-                        label="silent delete?"
-                    />
                 </div>
             </div>
             {(organization.meetings.length === 0 && (
@@ -137,7 +125,7 @@ const Scheduler = () => {
                                         editing: true,
                                     });
                                 }}
-                                onDelete={async () => {
+                                onDelete={async (silentDelete: boolean) => {
                                     let { error } =
                                         await supabase.functions.invoke(
                                             "delete-meeting",
@@ -166,8 +154,6 @@ const Scheduler = () => {
                                                 ),
                                         });
                                     }
-
-                                    setSilentDelete(false);
 
                                     enqueueSnackbar("Deleted Meeting!", {
                                         variant: "success",
