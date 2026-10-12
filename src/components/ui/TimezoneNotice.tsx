@@ -36,8 +36,7 @@ const TimezoneNotice = () => {
                     }
                 >
                     <p>
-                        Times on Epsilon are shown in New York time (Eastern
-                        Time), which is different from your device's time zone.
+                        Times on Epsilon are shown in New York time (EST) which is different from your device's time zone.
                     </p>
                 </div>
             </Alert>
