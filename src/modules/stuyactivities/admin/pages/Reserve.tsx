@@ -194,7 +194,7 @@ const Reserve = () => {
             return;
         }
 
-        if (roomsToReserve.length === 1 || !startTime || !endTime) {
+        if (!startTime || !endTime) {
             return forceReserve();
         }
 
@@ -209,11 +209,16 @@ const Reserve = () => {
             ? bookedRoomsRaw
             : [];
 
-        setConfirming({
-            meetings: bookedRooms.filter((meta) =>
-                selectedRoomIds.includes(meta.room_id),
-            ).length,
-        });
+        const conflicts = bookedRooms.filter((meta) =>
+            selectedRoomIds.includes(meta.room_id),
+        ).length;
+
+        /* a single room only needs confirming when it would cancel something */
+        if (roomsToReserve.length === 1 && !conflicts) {
+            return forceReserve();
+        }
+
+        setConfirming({ meetings: conflicts });
     };
 
     const forceReserve = async () => {
@@ -416,8 +421,11 @@ const Reserve = () => {
                         {confirming ? (
                             <div className="bg-layer-1 rounded-xl shadow-control p-4 mt-2">
                                 <p className="important">
-                                    Reserve {roomsToReserve.length} rooms for{" "}
-                                    {forceOrgName}?
+                                    Reserve{" "}
+                                    {roomsToReserve.length === 1
+                                        ? roomsToReserve[0].name
+                                        : `${roomsToReserve.length} rooms`}{" "}
+                                    for {forceOrgName}?
                                 </p>
                                 <p className="mt-1">
                                     {confirming.meetings
@@ -425,7 +433,11 @@ const Reserve = () => {
                                               confirming.meetings === 1
                                                   ? ""
                                                   : "s"
-                                          } in these rooms will be cancelled and their Activities will be emailed.`
+                                          } in ${
+                                              roomsToReserve.length === 1
+                                                  ? "this room"
+                                                  : "these rooms"
+                                          } will be cancelled and their Activities will be emailed.`
                                         : "No existing meetings in these rooms will be cancelled."}
                                 </p>
                                 <div className="flex gap-2 mt-3">
