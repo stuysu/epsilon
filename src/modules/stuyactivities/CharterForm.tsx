@@ -15,7 +15,7 @@ import FormChipText from "../../components/ui/forms/FormChipText";
 import FormTagSelect from "../../components/ui/forms/FormTagSelect";
 import FormCheckbox from "../../components/ui/forms/FormCheckbox";
 
-import OrgRequirements from "../../utils/OrgRequirements";
+import OrgRequirements, { ORG_TAGS } from "../../utils/OrgRequirements";
 
 import { PUBLIC_URL } from "../../config/constants";
 
@@ -436,19 +436,7 @@ const CharterForm = () => {
                         <FormTagSelect
                             field="tags"
                             label="Choose Tags"
-                            tags={[
-                                "Arts & Crafts",
-                                "Academic & Professional",
-                                "Club Sports & Recreational Games",
-                                "Community Service & Volunteering",
-                                "Cultural & Religious",
-                                "Music",
-                                "Public Speaking",
-                                "STEM",
-                                "Student Support & Government",
-                                "Hobby & Special Interest",
-                                "Publication",
-                            ]}
+                            tags={ORG_TAGS}
                             description="Select up to 3 tags that best represent your Activity"
                             required={OrgRequirements.tags.required}
                             requirements={OrgRequirements.tags.requirements}
