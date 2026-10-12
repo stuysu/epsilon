@@ -2,7 +2,6 @@ import {
     Box,
     Divider,
     FormControlLabel,
-    MenuItem,
     Switch,
     TextField,
 } from "@mui/material";
@@ -14,6 +13,7 @@ import { Dayjs } from "dayjs";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import SearchInput from "../../../../components/ui/input/SearchInput";
 import MeetingAttendanceCard from "../../orgs/org_admin/components/MeetingAttendanceCard";
+import RoomChecklist from "../components/RoomChecklist";
 import { isoToWallClock, wallClockToISO } from "../../../../utils/NewYorkTime";
 
 type ApiRoom = {
@@ -40,7 +40,13 @@ const Reserve = () => {
     /* force reservation data */
     const [forceOrgId, setForceOrgId] = useState<number | undefined>();
     const [forceOrgName, setForceOrgName] = useState<string | undefined>();
-    const [forceRoomId, setForceRoomId] = useState<number | undefined>();
+    const [selectedRoomIds, setSelectedRoomIds] = useState<number[]>([]);
+    const [confirming, setConfirming] = useState<{ meetings: number } | null>(
+        null,
+    );
+    const [failedRooms, setFailedRooms] = useState<
+        { name: string; message: string }[]
+    >([]);
     const [forceTitle, setForceTitle] = useState("");
     const [allRooms, setAllRooms] = useState<ApiRoom[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
@@ -139,10 +145,6 @@ const Reserve = () => {
 
         setAllRooms(roomData);
 
-        if (roomData.length) {
-            setForceRoomId(roomData[0].id);
-        }
-
         setLoading(false);
     };
 
@@ -180,36 +182,106 @@ const Reserve = () => {
         }
     }, [searchInput, allOrgs]);
 
-    const forceReserve = async () => {
-        const { error: reserveError } = await supabase.functions.invoke(
-            "force-reserve",
-            {
-                body: {
-                    room_id: forceRoomId,
-                    organization_id: forceOrgId,
-                    start_time: startTime && wallClockToISO(startTime),
-                    end_time: endTime && wallClockToISO(endTime),
-                    title: forceTitle.trim() || undefined,
-                },
-            },
-        );
+    const roomsToReserve = allRooms.filter((room) =>
+        selectedRoomIds.includes(room.id),
+    );
 
-        if (reserveError) {
-            const message = await reserveError.context?.text();
-            enqueueSnackbar(message || "Failed to force reserve room", {
-                variant: "error",
-            });
+    const startReservation = async () => {
+        setFailedRooms([]);
+
+        if (!roomsToReserve.length) {
+            enqueueSnackbar("Select at least one room.", { variant: "error" });
             return;
         }
 
-        enqueueSnackbar("Room reserved successfully", { variant: "success" });
+        if (!startTime || !endTime) {
+            return forceReserve();
+        }
+
+        const { data: bookedRoomsRaw } = await supabase.rpc(
+            "get_booked_rooms",
+            {
+                meeting_start: wallClockToISO(startTime),
+                meeting_end: wallClockToISO(endTime),
+            },
+        );
+        const bookedRooms: { room_id: number }[] = Array.isArray(bookedRoomsRaw)
+            ? bookedRoomsRaw
+            : [];
+
+        const conflicts = bookedRooms.filter((meta) =>
+            selectedRoomIds.includes(meta.room_id),
+        ).length;
+
+        /* a single room only needs confirming when it would cancel something */
+        if (roomsToReserve.length === 1 && !conflicts) {
+            return forceReserve();
+        }
+
+        setConfirming({ meetings: conflicts });
+    };
+
+    const forceReserve = async () => {
+        setConfirming(null);
+        setFailedRooms([]);
+
+        const failed: { id: number; name: string; message: string }[] = [];
+
+        for (const room of roomsToReserve) {
+            const { error: reserveError } = await supabase.functions.invoke(
+                "force-reserve",
+                {
+                    body: {
+                        room_id: room.id,
+                        organization_id: forceOrgId,
+                        start_time: startTime && wallClockToISO(startTime),
+                        end_time: endTime && wallClockToISO(endTime),
+                        title: forceTitle.trim() || undefined,
+                    },
+                },
+            );
+
+            if (reserveError) {
+                const message = await reserveError.context?.text();
+                failed.push({
+                    id: room.id,
+                    name: room.name,
+                    message: message || "Failed to force reserve room",
+                });
+            }
+        }
+
+        const reserved = roomsToReserve.length - failed.length;
+
+        if (reserved) {
+            enqueueSnackbar(
+                reserved === 1
+                    ? "Room reserved successfully"
+                    : `${reserved} rooms reserved successfully`,
+                { variant: "success" },
+            );
+        }
+
+        if (failed.length) {
+            enqueueSnackbar(
+                failed.length === 1
+                    ? "Failed to reserve 1 room"
+                    : `Failed to reserve ${failed.length} rooms`,
+                { variant: "error" },
+            );
+            setFailedRooms(failed);
+            setSelectedRoomIds(failed.map((room) => room.id));
+        }
 
         await fetchOrgMeetings();
 
-        /* reset state */
-        setForceTitle("");
-        setStartTime(getDefaultTime());
-        setEndTime(getDefaultTime());
+        if (!failed.length) {
+            /* reset state */
+            setForceTitle("");
+            setSelectedRoomIds([]);
+            setStartTime(getDefaultTime());
+            setEndTime(getDefaultTime());
+        }
     };
 
     return (
@@ -219,7 +291,7 @@ const Reserve = () => {
             <div className="my-4">
                 <h2>Force Reservation</h2>
                 <p className={"mb-3"}>
-                    Reserve a room for an organization manually.
+                    Reserve one or more rooms for an organization manually.
                 </p>
                 <SearchInput
                     placeholder="Search Activities..."
@@ -318,30 +390,6 @@ const Reserve = () => {
                                 value={endTime}
                                 onChange={setEndTime}
                             />
-                            <TextField
-                                value={!loading ? String(forceRoomId) : ""}
-                                label="Room"
-                                select
-                                onChange={(event) =>
-                                    setForceRoomId(
-                                        Number(event.target.value) || undefined,
-                                    )
-                                }
-                                sx={{
-                                    width: "30%",
-                                    height: "60px",
-                                    marginLeft: "10px",
-                                }}
-                            >
-                                {allRooms.map((room) => (
-                                    <MenuItem
-                                        key={room.id}
-                                        value={String(room.id)}
-                                    >
-                                        {room.name}
-                                    </MenuItem>
-                                ))}
-                            </TextField>
                             <FormControlLabel
                                 control={
                                     <Switch
@@ -360,13 +408,77 @@ const Reserve = () => {
                                 disabled={!endTime || !startTime}
                             ></FormControlLabel>
                         </Box>
-                        <AsyncButton
-                            onClick={forceReserve}
-                            sx={{ width: "100%", marginTop: "10px" }}
-                            variant="outlined"
-                        >
-                            Force Reservation
-                        </AsyncButton>
+                        {loading ? (
+                            <p className="my-4">Loading rooms...</p>
+                        ) : (
+                            <RoomChecklist
+                                rooms={allRooms}
+                                selected={selectedRoomIds}
+                                onChange={setSelectedRoomIds}
+                            />
+                        )}
+
+                        {confirming ? (
+                            <div className="bg-layer-1 rounded-xl shadow-control p-4 mt-2">
+                                <p className="important">
+                                    Reserve{" "}
+                                    {roomsToReserve.length === 1
+                                        ? roomsToReserve[0].name
+                                        : `${roomsToReserve.length} rooms`}{" "}
+                                    for {forceOrgName}?
+                                </p>
+                                <p className="mt-1">
+                                    {confirming.meetings
+                                        ? `${confirming.meetings} meeting${
+                                              confirming.meetings === 1
+                                                  ? ""
+                                                  : "s"
+                                          } in ${
+                                              roomsToReserve.length === 1
+                                                  ? "this room"
+                                                  : "these rooms"
+                                          } will be cancelled and their Activities will be emailed.`
+                                        : "No existing meetings in these rooms will be cancelled."}
+                                </p>
+                                <div className="flex gap-2 mt-3">
+                                    <AsyncButton
+                                        onClick={forceReserve}
+                                        variant="outlined"
+                                    >
+                                        Confirm Reservation
+                                    </AsyncButton>
+                                    <AsyncButton
+                                        onClick={() => setConfirming(null)}
+                                        variant="outlined"
+                                    >
+                                        Cancel
+                                    </AsyncButton>
+                                </div>
+                            </div>
+                        ) : (
+                            <AsyncButton
+                                onClick={startReservation}
+                                sx={{ width: "100%", marginTop: "10px" }}
+                                variant="outlined"
+                            >
+                                {roomsToReserve.length > 1
+                                    ? `Force Reservation (${roomsToReserve.length} rooms)`
+                                    : "Force Reservation"}
+                            </AsyncButton>
+                        )}
+
+                        {failedRooms.length > 0 && (
+                            <div className="bg-layer-1 rounded-xl shadow-control p-4 mt-3">
+                                <p className="important">
+                                    These rooms could not be reserved:
+                                </p>
+                                {failedRooms.map((room) => (
+                                    <p key={room.name} className="mt-1">
+                                        {room.name}: {room.message}
+                                    </p>
+                                ))}
+                            </div>
+                        )}
                     </div>
                 )}
 
