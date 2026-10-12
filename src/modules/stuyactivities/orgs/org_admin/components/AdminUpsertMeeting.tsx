@@ -17,13 +17,17 @@ import dayjs, { Dayjs } from "dayjs";
 import { useSnackbar } from "notistack";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
 import { sortRooms } from "../../../../../utils/DataFormatters";
+import {
+    isoToWallClock,
+    wallClockToISO,
+} from "../../../../../utils/NewYorkTime";
 
 const getDefaultStartTime = () => {
-    return dayjs().startOf("day").hour(15).minute(35);
+    return isoToWallClock().startOf("day").hour(15).minute(35);
 };
 
 const getDefaultEndTime = () => {
-    return dayjs().startOf("day").hour(17).minute(0);
+    return isoToWallClock().startOf("day").hour(17).minute(0);
 };
 
 /* TODO: block off rooms on days they are unavailable */
@@ -67,10 +71,10 @@ const AdminUpsertMeeting = ({
 
     /* date inputs */
     const [startTime, setStartTime] = useState<Dayjs | null>(
-        start ? dayjs(start) : getDefaultStartTime(),
+        start ? isoToWallClock(start) : getDefaultStartTime(),
     );
     const [endTime, setEndTime] = useState<Dayjs | null>(
-        end ? dayjs(end) : getDefaultEndTime(),
+        end ? isoToWallClock(end) : getDefaultEndTime(),
     );
 
     const [isPub, setIsPub] = useState(
@@ -122,8 +126,8 @@ const AdminUpsertMeeting = ({
 
             const { data: bookedRoomsRaw, error } = await supabase
                 .rpc("get_booked_rooms", {
-                    meeting_start: startTime.toISOString(),
-                    meeting_end: endTime.toISOString(),
+                    meeting_start: wallClockToISO(startTime),
+                    meeting_end: wallClockToISO(endTime),
                 })
                 .returns<RoomMeta[]>();
 
@@ -241,7 +245,11 @@ const AdminUpsertMeeting = ({
             return;
         }
 
-        if (endTime.isBefore(startTime)) {
+        /* compare real instants, the picker values are New York wall clock times */
+        const startInstant = dayjs(wallClockToISO(startTime));
+        const endInstant = dayjs(wallClockToISO(endTime));
+
+        if (endInstant.isBefore(startInstant)) {
             enqueueSnackbar(
                 "Meeting start time cannot be after meeting end time.",
                 { variant: "error" },
@@ -249,15 +257,14 @@ const AdminUpsertMeeting = ({
             return;
         }
 
-        if (endTime.diff(startTime, "minute") < 30) {
+        if (endInstant.diff(startInstant, "minute") < 30) {
             enqueueSnackbar("Meeting duration must be at least 30 minutes.", {
                 variant: "error",
             });
             return;
         }
 
-        const currentTime = dayjs();
-        if (startTime.isBefore(currentTime)) {
+        if (startInstant.isBefore(dayjs())) {
             enqueueSnackbar("Meeting cannot be scheduled in the past.", {
                 variant: "error",
             });
@@ -283,8 +290,8 @@ const AdminUpsertMeeting = ({
                     title: meetingTitle,
                     description: meetingDesc,
                     room_id: roomId || null,
-                    start_time: startTime.toISOString(),
-                    end_time: endTime.toISOString(),
+                    start_time: wallClockToISO(startTime),
+                    end_time: wallClockToISO(endTime),
                     is_public: isPub,
                     advisor: meetingAdvisor.trim(),
                 },
@@ -298,8 +305,8 @@ const AdminUpsertMeeting = ({
                     title: meetingTitle,
                     description: meetingDesc,
                     room_id: roomId || null,
-                    start_time: startTime.toISOString(),
-                    end_time: endTime.toISOString(),
+                    start_time: wallClockToISO(startTime),
+                    end_time: wallClockToISO(endTime),
                     is_public: isPub,
                     notify_faculty: notifyFaculty,
                     advisor: meetingAdvisor.trim(),

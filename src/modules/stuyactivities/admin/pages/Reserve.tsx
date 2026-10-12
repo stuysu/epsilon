@@ -10,10 +10,11 @@ import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
-import dayjs, { Dayjs } from "dayjs";
+import { Dayjs } from "dayjs";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import SearchInput from "../../../../components/ui/input/SearchInput";
 import MeetingAttendanceCard from "../../orgs/org_admin/components/MeetingAttendanceCard";
+import { isoToWallClock, wallClockToISO } from "../../../../utils/NewYorkTime";
 
 type ApiRoom = {
     id: number;
@@ -30,7 +31,7 @@ type Organization = {
 };
 
 const getDefaultTime = () => {
-    return dayjs().startOf("day").hour(15).minute(45);
+    return isoToWallClock().startOf("day").hour(15).minute(45);
 };
 
 const Reserve = () => {
@@ -108,8 +109,8 @@ const Reserve = () => {
                 };
                 const { data: bookedRoomsRaw, error } = await supabase
                     .rpc("get_booked_rooms", {
-                        meeting_start: startTime.toISOString(),
-                        meeting_end: endTime.toISOString(),
+                        meeting_start: wallClockToISO(startTime),
+                        meeting_end: wallClockToISO(endTime),
                     })
                     .returns<RoomMeta[]>();
                 const bookedRooms: RoomMeta[] = Array.isArray(bookedRoomsRaw)
@@ -186,8 +187,8 @@ const Reserve = () => {
                 body: {
                     room_id: forceRoomId,
                     organization_id: forceOrgId,
-                    start_time: startTime?.toISOString(),
-                    end_time: endTime?.toISOString(),
+                    start_time: startTime && wallClockToISO(startTime),
+                    end_time: endTime && wallClockToISO(endTime),
                     title: forceTitle.trim() || undefined,
                 },
             },

@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useRef, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import UserContext from "../../../../contexts/UserContext";
-import dayjs from "dayjs";
+import { toNewYork } from "../../../../utils/NewYorkTime";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import TextInput from "../../../../components/ui/input/TextInput";
 import { Avatar } from "radix-ui";
@@ -149,7 +149,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
             </p>
             <div className={"h-96 overflow-auto relative"} ref={chatBoxRef}>
                 {messages.map((message) => {
-                    let messageTime = dayjs(message.created_at);
+                    let messageTime = toNewYork(message.created_at);
                     let timeStr = `${messageTime.month() + 1}/${messageTime.date()}/${messageTime.year()}`;
                     return (
                         <article

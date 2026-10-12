@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import dayjs from "dayjs";
+import { toNewYork } from "../../../utils/NewYorkTime";
 import { daysOfWeek, monthNames } from "../../../utils/TimeStrings";
 import Divider from "../Divider";
 import ToggleChip from "../input/ToggleChip";
@@ -38,8 +38,8 @@ const MeetingPreview = ({
     advisor,
     onClose,
 }: Props) => {
-    const start = dayjs(startTime);
-    const end = dayjs(endTime);
+    const start = toNewYork(startTime);
+    const end = toNewYork(endTime);
 
     return (
         <Dialog.Root

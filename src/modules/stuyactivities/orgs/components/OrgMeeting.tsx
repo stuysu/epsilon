@@ -1,5 +1,5 @@
 import { useState } from "react";
-import dayjs from "dayjs";
+import { toNewYork } from "../../../../utils/NewYorkTime";
 
 import MeetingPreview from "../../../../components/ui/overlays/MeetingPreview";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
@@ -38,11 +38,11 @@ const OrgMeeting = ({
     onDelete,
 }: Props) => {
     const [open, setOpen] = useState(false);
-    let startTime = dayjs(start_time).format("L LT");
-    let endTime = dayjs(end_time).format("LT");
-    let today = dayjs().startOf("day");
+    let startTime = toNewYork(start_time).format("L LT");
+    let endTime = toNewYork(end_time).format("LT");
+    let today = toNewYork().startOf("day");
 
-    if (onlyUpcoming && today.isAfter(dayjs(start_time))) {
+    if (onlyUpcoming && today.isAfter(toNewYork(start_time))) {
         return <></>;
     }
 

@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import MeetingPreview from "../../../components/ui/overlays/MeetingPreview";
-import dayjs from "dayjs";
+import { toNewYork } from "../../../utils/NewYorkTime";
 import ToggleChip from "../../../components/ui/input/ToggleChip";
 import { monthNames } from "../../../utils/TimeStrings";
 import { Avatar } from "radix-ui";
@@ -33,7 +33,7 @@ const UpcomingMeeting = ({
 }) => {
     const [open, setOpen] = useState(false);
 
-    let start = dayjs(start_time);
+    let start = toNewYork(start_time);
 
     return (
         <div className={"w-full cursor-pointer"}>

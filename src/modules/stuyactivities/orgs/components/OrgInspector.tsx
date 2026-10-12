@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 import { supabase } from "../../../../lib/supabaseClient";
 import OrgContext from "../../../../contexts/OrgContext";
 import ItemList from "../../../../components/ui/lists/ItemList";
+import { toNewYork } from "../../../../utils/NewYorkTime";
 
 const OrgInspector = () => {
     const organization: OrgContextType = useContext(OrgContext);
@@ -88,9 +89,9 @@ const OrgInspector = () => {
                                         Strike {i + 1}
                                     </p>
                                     <p className={"important"}>
-                                        {new Date(
-                                            strike.created_at,
-                                        ).toLocaleDateString()}
+                                        {toNewYork(strike.created_at).format(
+                                            "L",
+                                        )}
                                     </p>
                                 </div>
                                 <p>{strike.reason}</p>
