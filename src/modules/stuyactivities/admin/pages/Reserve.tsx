@@ -40,6 +40,7 @@ const Reserve = () => {
     const [forceOrgId, setForceOrgId] = useState<number | undefined>();
     const [forceOrgName, setForceOrgName] = useState<string | undefined>();
     const [forceRoomId, setForceRoomId] = useState<number | undefined>();
+    const [forceTitle, setForceTitle] = useState("");
     const [allRooms, setAllRooms] = useState<ApiRoom[]>([]);
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -63,7 +64,7 @@ const Reserve = () => {
             .from("meetings")
             .select(`*, rooms(name)`)
             .eq("organization_id", forceOrgId)
-            .eq("title", "Reserved Meeting");
+            .eq("description", "This meeting was reserved by an admin.");
 
         if (meetingFetchError) {
             enqueueSnackbar("Failed to fetch meetings.", {
@@ -187,13 +188,16 @@ const Reserve = () => {
                     organization_id: forceOrgId,
                     start_time: startTime?.toISOString(),
                     end_time: endTime?.toISOString(),
+                    title: forceTitle.trim() || undefined,
                 },
             },
         );
 
         if (reserveError) {
             const message = await reserveError.context?.text();
-            enqueueSnackbar(message || "Failed to force reserve room", { variant: "error" });
+            enqueueSnackbar(message || "Failed to force reserve room", {
+                variant: "error",
+            });
             return;
         }
 
@@ -202,6 +206,7 @@ const Reserve = () => {
         await fetchOrgMeetings();
 
         /* reset state */
+        setForceTitle("");
         setStartTime(getDefaultTime());
         setEndTime(getDefaultTime());
     };
@@ -251,6 +256,21 @@ const Reserve = () => {
                         <h4 className={"py-4"}>
                             Force-reserving a meeting for {forceOrgName}
                         </h4>
+                        <TextField
+                            label="Title"
+                            placeholder="Reserved Meeting"
+                            helperText="Optional. Leave blank to use the default title."
+                            value={forceTitle}
+                            onChange={(event) =>
+                                setForceTitle(event.target.value)
+                            }
+                            inputProps={{ maxLength: 500 }}
+                            sx={{
+                                width: "100%",
+                                marginTop: "10px",
+                                marginBottom: "10px",
+                            }}
+                        />
                         <DatePicker
                             label="Meeting Day"
                             value={startTime}
