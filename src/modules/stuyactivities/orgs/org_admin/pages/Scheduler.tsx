@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import OrgContext from "../../../../../contexts/OrgContext";
 import AdminUpsertMeeting from "../components/AdminUpsertMeeting";
 
-import { useMediaQuery } from "@mui/material";
+import { FormControlLabel, Switch, useMediaQuery } from "@mui/material";
 import { supabase } from "../../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import OrgMeeting from "../../components/OrgMeeting";
@@ -16,6 +16,7 @@ const Scheduler = () => {
     const organization = useContext(OrgContext);
     const { enqueueSnackbar } = useSnackbar();
     const isMeetingMobile = useMediaQuery("(max-width: 1450px)");
+    const [silentDelete, setSilentDelete] = useState(false);
 
     const [editState, setEditState] = useState<{
         id: number | undefined;
@@ -65,24 +66,37 @@ const Scheduler = () => {
                     Meeting records must be kept up to date on Epsilon in order
                     to secure funding and avoid receiving strikes.
                 </p>
-                <AsyncButton
-                    onClick={() =>
-                        setEditState({
-                            id: undefined,
-                            title: undefined,
-                            description: undefined,
-                            start: undefined,
-                            end: undefined,
-                            room: undefined,
-                            isPublic: undefined,
-                            advisor: undefined,
-                            editing: true,
-                        })
-                    }
-                    variant="contained"
-                >
-                    Create Meeting
-                </AsyncButton>
+                <div className={"flex flex-wrap items-center gap-x-6 gap-y-2"}>
+                    <AsyncButton
+                        onClick={() =>
+                            setEditState({
+                                id: undefined,
+                                title: undefined,
+                                description: undefined,
+                                start: undefined,
+                                end: undefined,
+                                room: undefined,
+                                isPublic: undefined,
+                                advisor: undefined,
+                                editing: true,
+                            })
+                        }
+                        variant="contained"
+                    >
+                        Create Meeting
+                    </AsyncButton>
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={silentDelete}
+                                onChange={(event) =>
+                                    setSilentDelete(event.target.checked)
+                                }
+                            />
+                        }
+                        label="silent delete?"
+                    />
+                </div>
             </div>
             {(organization.meetings.length === 0 && (
                 <ContentUnavailable
@@ -130,6 +144,7 @@ const Scheduler = () => {
                                             {
                                                 body: {
                                                     id: meeting.id,
+                                                    silent: silentDelete,
                                                 },
                                             },
                                         );
@@ -151,6 +166,8 @@ const Scheduler = () => {
                                                 ),
                                         });
                                     }
+
+                                    setSilentDelete(false);
 
                                     enqueueSnackbar("Deleted Meeting!", {
                                         variant: "success",

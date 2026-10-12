@@ -1,4 +1,4 @@
-import { Box, TextField } from "@mui/material";
+import { Box, FormControlLabel, Switch, TextField } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
 
 import { supabase } from "../../../../../lib/supabaseClient";
@@ -24,6 +24,7 @@ const PostEditor = ({
     onCreate?: (newData: Post) => void;
 }) => {
     const { enqueueSnackbar } = useSnackbar();
+    const [silent, setSilent] = useState(false);
 
     let [postData, setPostData] = useState<Partial<Post>>({
         id: undefined,
@@ -67,6 +68,7 @@ const PostEditor = ({
             title: postData.title,
             description: postData.description,
             organization_id: orgId,
+            silent,
         };
 
         let { data, error } = await supabase.functions.invoke("create-post", {
@@ -81,6 +83,7 @@ const PostEditor = ({
         }
 
         // reset values
+        setSilent(false);
         setPostData({
             id: undefined,
             organizations: {
@@ -162,6 +165,21 @@ const PostEditor = ({
                     sx={{ marginTop: "10px" }}
                 />
             </Box>
+
+            {!content && (
+                <FormControlLabel
+                    control={
+                        <Switch
+                            checked={silent}
+                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                                setSilent(event.target.checked)
+                            }
+                        />
+                    }
+                    label="silent?"
+                    sx={{ marginBottom: "10px" }}
+                />
+            )}
 
             {content ? (
                 <>
