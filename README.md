@@ -52,6 +52,6 @@ A seperate platform for Arista members to manage their membership, post updates,
 
 - Typescript + React -> Netlify
 - Supabase = Postgres -> Docker -> Digital Ocean
-- [Epsilon Frontend](https://github.com/stuysu/epsilon/wiki/Frontend)
+- [Epsilon Frontend](https://github.com/stuysu/epsilon/wiki/Frontend) (this repo)
 - [Epsilon Backend](https://github.com/stuysu/epsilon-database)
 - [Epsilon Functions](https://github.com/stuysu/epsilon-functions)
