@@ -17,20 +17,15 @@ type CachedMeetings = {
 const Index = () => {
     const { enqueueSnackbar } = useSnackbar();
 
-    /* meetings for a given day */
-    /* cache after fetching once */
     const [cachedMeetings, setCachedMeetings] = useState<CachedMeetings>({});
     const [meetings, setMeetings] = useState<CalendarMeeting[]>([]);
 
-    /* month adjuster */
-    /* the picked day is a plain calendar date, read as a day in New York */
     const [time, setTime] = useState<Dayjs>(isoToWallClock().startOf("day"));
 
     const [currentMonth, setCurrentMonth] = useState<Date>(
         new Date(time.year(), time.month(), 1),
     );
 
-    /* days with meetings */
     const [loading, setLoading] = useState(false);
     const [highlightedDays, setHighlightedDays] = useState<number[]>([]);
 
