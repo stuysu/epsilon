@@ -140,10 +140,10 @@ const Roster = () => {
             return;
         }
         setToggling(true);
-        const { error } = await supabase
-            .from("organizations")
-            .update({ joinable: !joinableState })
-            .eq("id", organization.id);
+        const { error } = await supabase.rpc("set_organization_joinable", {
+            org_id: organization.id,
+            new_joinable: !joinableState,
+        });
 
         if (error) {
             enqueueSnackbar("Failed to update joinable state.", {
