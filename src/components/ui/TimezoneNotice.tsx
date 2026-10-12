@@ -4,7 +4,6 @@ import { usesNewYorkTime } from "../../utils/NewYorkTime";
 
 const STORAGE_KEY = "dismissedTimezoneNotice";
 
-/* meeting times are always shown in New York time, let people elsewhere know */
 const TimezoneNotice = () => {
     const [open, setOpen] = useState(() => {
         if (usesNewYorkTime()) return false;
