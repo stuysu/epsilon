@@ -4,6 +4,7 @@ import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeProvider";
 import UserProvider from "./contexts/UserProvider";
 import AlertDisplay from "./components/ui/AlertDisplay";
+import TimezoneNotice from "./components/ui/TimezoneNotice";
 import Pages from "./modules";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
@@ -63,6 +64,7 @@ const App = () => {
                 <ThemeProvider>
                     <CssBaseline />
                     <AlertDisplay />
+                    <TimezoneNotice />
                     <SnackbarProvider
                         Components={{
                             default: SnackbarOverride,

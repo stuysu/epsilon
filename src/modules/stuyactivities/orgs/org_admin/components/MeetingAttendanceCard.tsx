@@ -1,4 +1,5 @@
 import { useNavigate } from "react-router-dom";
+import { toNewYork } from "../../../../../utils/NewYorkTime";
 
 const MeetingAttendanceCard = ({
     title,
@@ -29,7 +30,7 @@ const MeetingAttendanceCard = ({
             onClick={() => handleClick()}
         >
             <h3>{title}</h3>
-            <p>{new Date(startTime).toLocaleString()}</p>
+            <p>{toNewYork(startTime).format("L LT")}</p>
             <p>Room: {room || "Virtual"}</p>
         </div>
     );

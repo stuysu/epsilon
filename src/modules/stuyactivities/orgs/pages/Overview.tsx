@@ -8,6 +8,7 @@ import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import OrgMember from "../components/OrgMember";
 import OrgMeeting from "../components/OrgMeeting";
 import { sortByDate, sortMembers } from "../../../../utils/DataFormatters";
+import { toNewYork } from "../../../../utils/NewYorkTime";
 import UserContext from "../../../../contexts/UserContext";
 import RelatedActivities from "./RelatedActivities";
 import OrgInspector from "../components/OrgInspector";
@@ -368,10 +369,12 @@ const Overview = () => {
                             <h1 className={"opacity-25"}>•</h1>
                             <div>
                                 <h3 className={"w-48 text-center"}>
-                                    {organization.meetings
-                                        ?.at(-1)
-                                        ?.start_time?.split("T")[0]
-                                        .replaceAll("-", "/") ?? "No Meetings"}
+                                    {organization.meetings?.at(-1)?.start_time
+                                        ? toNewYork(
+                                              organization.meetings.at(-1)!
+                                                  .start_time,
+                                          ).format("YYYY/MM/DD")
+                                        : "No Meetings"}
                                 </h3>
                                 <p className={"text-center"}>Last Meeting</p>
                             </div>

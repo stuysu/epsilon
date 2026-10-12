@@ -5,7 +5,7 @@ import React, { useContext, useState } from "react";
 import PostEditor from "../org_admin/components/PostEditor";
 import { useSnackbar } from "notistack";
 
-import dayjs from "dayjs";
+import { toNewYork } from "../../../../utils/NewYorkTime";
 import OrgContext from "../../../../contexts/OrgContext";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import { Avatar } from "radix-ui";
@@ -80,8 +80,8 @@ const OrgStreamPost = ({
 
     let isEdited = content.created_at !== content.updated_at;
     let postTime = isEdited
-        ? dayjs(content.updated_at)
-        : dayjs(content.created_at);
+        ? toNewYork(content.updated_at)
+        : toNewYork(content.created_at);
     let timeStr = `${postTime.month() + 1}/${postTime.date()}/${postTime.year()}`;
 
     return (

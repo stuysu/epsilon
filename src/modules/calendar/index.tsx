@@ -5,6 +5,7 @@ import { supabase } from "../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import { DayPicker } from "react-day-picker";
 import dayjs, { Dayjs } from "dayjs";
+import { isoToWallClock, wallClockToISO } from "../../utils/NewYorkTime";
 import DaySchedule from "./components/DaySchedule";
 import LoginGate from "../../components/ui/content/LoginGate";
 import { Helmet } from "react-helmet";
@@ -16,19 +17,15 @@ type CachedMeetings = {
 const Index = () => {
     const { enqueueSnackbar } = useSnackbar();
 
-    /* meetings for a given day */
-    /* cache after fetching once */
     const [cachedMeetings, setCachedMeetings] = useState<CachedMeetings>({});
     const [meetings, setMeetings] = useState<CalendarMeeting[]>([]);
 
-    /* month adjuster */
-    const [time, setTime] = useState<Dayjs>(dayjs());
+    const [time, setTime] = useState<Dayjs>(isoToWallClock().startOf("day"));
 
     const [currentMonth, setCurrentMonth] = useState<Date>(
         new Date(time.year(), time.month(), 1),
     );
 
-    /* days with meetings */
     const [loading, setLoading] = useState(false);
     const [highlightedDays, setHighlightedDays] = useState<number[]>([]);
 
@@ -63,8 +60,8 @@ const Index = () => {
             return setMeetings(cachedMeetings[dayString]);
         }
 
-        let dayStart = new Date(time.year(), time.month(), time.date());
-        let nextDayStart = new Date(time.year(), time.month(), time.date() + 1);
+        let dayStart = wallClockToISO(time.startOf("day"));
+        let nextDayStart = wallClockToISO(time.add(1, "day").startOf("day"));
 
         updateHighlightedDays(time.month(), time.year());
 
@@ -92,8 +89,8 @@ const Index = () => {
           advisor
         `,
                 )
-                .gte("start_time", dayStart.toISOString())
-                .lt("start_time", nextDayStart.toISOString());
+                .gte("start_time", dayStart)
+                .lt("start_time", nextDayStart);
 
             if (error || !data) {
                 return enqueueSnackbar(
@@ -128,6 +125,7 @@ const Index = () => {
                         mode="single"
                         month={currentMonth}
                         selected={time.toDate()}
+                        today={isoToWallClock().toDate()}
                         onSelect={(date) => {
                             if (!date) return;
                             setTime(dayjs(date));
