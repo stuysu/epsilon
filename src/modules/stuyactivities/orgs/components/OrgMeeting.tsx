@@ -98,7 +98,7 @@ const OrgMeeting = ({
                         (confirmingDelete ? (
                             <div className="flex items-center gap-2">
                                 <span className="text-sm text-text-1">
-                                    silent? (deletes either way)
+                                    silent?
                                 </span>
                                 <AsyncButton
                                     variant="contained"
@@ -107,9 +107,8 @@ const OrgMeeting = ({
                                         setConfirmingDelete(false);
                                         onDelete(true);
                                     }}
-                                    sx={{ minWidth: 0, px: 1.5 }}
                                 >
-                                    yes
+                                    Yes
                                 </AsyncButton>
                                 <AsyncButton
                                     variant="contained"
@@ -118,9 +117,8 @@ const OrgMeeting = ({
                                         setConfirmingDelete(false);
                                         onDelete(false);
                                     }}
-                                    sx={{ minWidth: 0, px: 1.5 }}
                                 >
-                                    no
+                                    No
                                 </AsyncButton>
                             </div>
                         ) : (
