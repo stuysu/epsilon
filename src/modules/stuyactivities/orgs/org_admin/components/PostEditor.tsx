@@ -180,18 +180,20 @@ const PostEditor = ({
                 </AsyncButton>
             )}{" "}
             {!content && (
-                <FormControlLabel
-                    control={
-                        <Switch
-                            checked={silent}
-                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                                setSilent(event.target.checked)
-                            }
-                        />
-                    }
-                    label="silent?"
-                    sx={{ marginBottom: "10px" }}
-                />
+                <div className="w-full flex justify-center">
+                    <FormControlLabel
+                        control={
+                            <Switch
+                                checked={silent}
+                                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                                    setSilent(event.target.checked)
+                                }
+                            />
+                        }
+                        label="silent?"
+                        sx={{ marginTop: "10px" }}
+                    />
+                </div>
             )}
         </div>
     );
