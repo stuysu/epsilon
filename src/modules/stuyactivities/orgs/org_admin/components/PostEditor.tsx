@@ -139,11 +139,7 @@ const PostEditor = ({
     };
 
     return (
-        <div
-            className={
-                "bg-layer-1 p-5 pl-7 pb-8 rounded-xl shadow-prominent"
-            }
-        >
+        <div className={"bg-layer-1 p-5 pl-7 pb-8 rounded-xl shadow-prominent"}>
             <h1>{content ? "Update Post" : "Create Post"}</h1>
             <Box sx={{ marginY: "10px" }}>
                 <TextField
@@ -165,22 +161,6 @@ const PostEditor = ({
                     sx={{ marginTop: "10px" }}
                 />
             </Box>
-
-            {!content && (
-                <FormControlLabel
-                    control={
-                        <Switch
-                            checked={silent}
-                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                                setSilent(event.target.checked)
-                            }
-                        />
-                    }
-                    label="silent?"
-                    sx={{ marginBottom: "10px" }}
-                />
-            )}
-
             {content ? (
                 <>
                     <AsyncButton onClick={savePost} variant="contained">
@@ -198,6 +178,20 @@ const PostEditor = ({
                 <AsyncButton onClick={createPost} variant="contained">
                     Create
                 </AsyncButton>
+            )}{" "}
+            {!content && (
+                <FormControlLabel
+                    control={
+                        <Switch
+                            checked={silent}
+                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                                setSilent(event.target.checked)
+                            }
+                        />
+                    }
+                    label="silent?"
+                    sx={{ marginBottom: "10px" }}
+                />
             )}
         </div>
     );
