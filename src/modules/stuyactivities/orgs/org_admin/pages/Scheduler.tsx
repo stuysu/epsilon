@@ -2,7 +2,7 @@ import React, { useContext, useEffect, useState } from "react";
 import OrgContext from "../../../../../contexts/OrgContext";
 import AdminUpsertMeeting from "../components/AdminUpsertMeeting";
 
-import { useMediaQuery } from "@mui/material";
+import { FormControlLabel, Switch, useMediaQuery } from "@mui/material";
 import { supabase } from "../../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import OrgMeeting from "../../components/OrgMeeting";
@@ -65,24 +65,26 @@ const Scheduler = () => {
                     Meeting records must be kept up to date on Epsilon in order
                     to secure funding and avoid receiving strikes.
                 </p>
-                <AsyncButton
-                    onClick={() =>
-                        setEditState({
-                            id: undefined,
-                            title: undefined,
-                            description: undefined,
-                            start: undefined,
-                            end: undefined,
-                            room: undefined,
-                            isPublic: undefined,
-                            advisor: undefined,
-                            editing: true,
-                        })
-                    }
-                    variant="contained"
-                >
-                    Create Meeting
-                </AsyncButton>
+                <div className={"flex flex-wrap items-center gap-x-6 gap-y-2"}>
+                    <AsyncButton
+                        onClick={() =>
+                            setEditState({
+                                id: undefined,
+                                title: undefined,
+                                description: undefined,
+                                start: undefined,
+                                end: undefined,
+                                room: undefined,
+                                isPublic: undefined,
+                                advisor: undefined,
+                                editing: true,
+                            })
+                        }
+                        variant="contained"
+                    >
+                        Create Meeting
+                    </AsyncButton>
+                </div>
             </div>
             {(organization.meetings.length === 0 && (
                 <ContentUnavailable
@@ -123,13 +125,14 @@ const Scheduler = () => {
                                         editing: true,
                                     });
                                 }}
-                                onDelete={async () => {
+                                onDelete={async (silentDelete: boolean) => {
                                     let { error } =
                                         await supabase.functions.invoke(
                                             "delete-meeting",
                                             {
                                                 body: {
                                                     id: meeting.id,
+                                                    silent: silentDelete,
                                                 },
                                             },
                                         );

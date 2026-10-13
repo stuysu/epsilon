@@ -82,6 +82,7 @@ const AdminUpsertMeeting = ({
     );
 
     const [notifyFaculty, setNotifyFaculty] = useState(false);
+    const [silent, setSilent] = useState(false);
 
     const [allRooms, setAllRooms] = useState<Room[]>([]);
     const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
@@ -294,6 +295,7 @@ const AdminUpsertMeeting = ({
                     end_time: wallClockToISO(endTime),
                     is_public: isPub,
                     advisor: meetingAdvisor.trim(),
+                    silent,
                 },
             });
         } else {
@@ -310,6 +312,7 @@ const AdminUpsertMeeting = ({
                     is_public: isPub,
                     notify_faculty: notifyFaculty,
                     advisor: meetingAdvisor.trim(),
+                    silent,
                 },
             });
         }
@@ -458,11 +461,24 @@ const AdminUpsertMeeting = ({
                     sx={{ marginTop: "10px" }}
                     label="is public?"
                 />
+                <FormControlLabel
+                    control={
+                        <Switch
+                            checked={silent}
+                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                                setSilent(event.target.checked)
+                            }
+                        />
+                    }
+                    sx={{ marginTop: "10px" }}
+                    label="silent?"
+                />
                 {!id && (
                     <FormControlLabel
                         control={
                             <Switch
                                 checked={notifyFaculty}
+                                disabled={silent}
                                 onChange={(
                                     event: ChangeEvent<HTMLInputElement>,
                                 ) => setNotifyFaculty(event.target.checked)}

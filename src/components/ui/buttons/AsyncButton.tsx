@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { ButtonProps } from "@mui/material/Button";
-import { ButtonBase, SxProps, Theme } from "@mui/material";
+import { ButtonBase, SxProps, Theme, useTheme } from "@mui/material";
 
 interface AsyncButtonProps extends ButtonProps {
     onClick?: (
@@ -18,6 +18,16 @@ const AsyncButton: React.FC<AsyncButtonProps> = ({
     ...props
 }) => {
     const [isLoading, setIsLoading] = useState(false);
+    const theme = useTheme();
+    const semanticColor =
+        props.color === "primary" ||
+        props.color === "secondary" ||
+        props.color === "error" ||
+        props.color === "info" ||
+        props.color === "success" ||
+        props.color === "warning"
+            ? props.color
+            : null;
 
     const handleClick = async (
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
@@ -46,8 +56,14 @@ const AsyncButton: React.FC<AsyncButtonProps> = ({
                 borderRadius: "11px",
                 backgroundColor: isPrimary
                     ? "var(--accent)"
-                    : "var(--layer-secondary)",
-                color: isPrimary ? "white" : "var(--text-primary)",
+                    : semanticColor
+                      ? theme.palette[semanticColor].main
+                      : "var(--layer-secondary)",
+                color: isPrimary
+                    ? "white"
+                    : semanticColor
+                      ? theme.palette[semanticColor].contrastText
+                      : "var(--text-primary)",
                 padding: "11px 20px 13px 20px",
                 fontSize: "14px",
                 opacity: isLoading || props.disabled ? 0.6 : 1,

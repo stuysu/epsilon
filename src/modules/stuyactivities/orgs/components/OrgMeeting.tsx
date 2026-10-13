@@ -19,7 +19,7 @@ type Props = {
     isMobile?: boolean;
     onlyUpcoming?: boolean;
     onEdit?: () => void;
-    onDelete?: () => void;
+    onDelete?: (silentDelete: boolean) => void;
 };
 
 const OrgMeeting = ({
@@ -38,6 +38,7 @@ const OrgMeeting = ({
     onDelete,
 }: Props) => {
     const [open, setOpen] = useState(false);
+    const [confirmingDelete, setConfirmingDelete] = useState(false);
     let startTime = toNewYork(start_time).format("L LT");
     let endTime = toNewYork(end_time).format("LT");
     let today = toNewYork().startOf("day");
@@ -47,61 +48,87 @@ const OrgMeeting = ({
     }
 
     return (
-        <div className={"w-full cursor-pointer"}>
-            <div
-                className="flex justify-between items-center bg-layer-2 transition-colors sm:hover:bg-layer-3 p-4"
-                onClick={() => setOpen(true)}
-            >
-                <div className={"w-full flex justify-between items-center"}>
-                    <div className="w-full pt-1">
-                        <h4>{title}</h4>
-                        <p>
-                            {startTime} to {endTime}
-                        </p>
-                        <p>
-                            {advisor?.trim() ? `Advisor: ${advisor}` : ""}
-                        </p>
-                    </div>
-                    <div className=" pointer-events-none flex gap-2 w-fit justify-end">
-                        <ToggleChip
-                            title={room_name && !room_name.includes("Virtual") ? `Room ${room_name}` : "Virtual"}
-                            selectable={false}
-                        ></ToggleChip>
-                        {is_public ? (
+        <div className={"w-full"}>
+            <div className="flex items-center bg-layer-2 transition-colors sm:hover:bg-layer-3">
+                <div
+                    className="flex-1 min-w-0 flex justify-between items-center p-4 cursor-pointer"
+                    onClick={() => setOpen(true)}
+                >
+                    <div className={"w-full flex justify-between items-center"}>
+                        <div className="w-full pt-1">
+                            <h4>{title}</h4>
+                            <p>
+                                {startTime} to {endTime}
+                            </p>
+                            <p>{advisor?.trim() ? `Advisor: ${advisor}` : ""}</p>
+                        </div>
+                        <div className=" pointer-events-none flex gap-2 w-fit justify-end">
                             <ToggleChip
-                                title={"Public"}
+                                title={
+                                    room_name && !room_name.includes("Virtual")
+                                        ? `Room ${room_name}`
+                                        : "Virtual"
+                                }
                                 selectable={false}
                             ></ToggleChip>
-                        ) : (
-                            <ToggleChip
-                                title={"Private"}
-                                selectable={false}
-                            ></ToggleChip>
-                        )}
+                            {is_public ? (
+                                <ToggleChip
+                                    title={"Public"}
+                                    selectable={false}
+                                ></ToggleChip>
+                            ) : (
+                                <ToggleChip
+                                    title={"Private"}
+                                    selectable={false}
+                                ></ToggleChip>
+                            )}
+                        </div>
                     </div>
                 </div>
-                <div className="flex">
+                <div className="relative z-10 flex items-center gap-2 shrink-0 pr-4">
                     {onEdit && (
                         <AsyncButton
                             variant="contained"
-                            onClick={(e) => {
-                                e.stopPropagation();
-                                onEdit();
-                            }}
-                            sx={{ marginLeft: "10px" }}
+                            onClick={onEdit}
                         >
                             Edit
                         </AsyncButton>
                     )}
-                    {onDelete && (
-                        <AsyncButton
-                            variant="contained"
-                            onClick={onDelete}
-                            sx={{ marginLeft: "10px" }}
-                        >
-                            Delete
-                        </AsyncButton>
-                    )}
+                    {onDelete &&
+                        (confirmingDelete ? (
+                            <div className="flex items-center gap-2">
+                                <span className="text-sm text-text-1">
+                                    silent?
+                                </span>
+                                <AsyncButton
+                                    variant="contained"
+                                    color="success"
+                                    onClick={() => {
+                                        setConfirmingDelete(false);
+                                        onDelete(true);
+                                    }}
+                                >
+                                    Yes
+                                </AsyncButton>
+                                <AsyncButton
+                                    variant="contained"
+                                    color="error"
+                                    onClick={() => {
+                                        setConfirmingDelete(false);
+                                        onDelete(false);
+                                    }}
+                                >
+                                    No
+                                </AsyncButton>
+                            </div>
+                        ) : (
+                            <AsyncButton
+                                variant="contained"
+                                onClick={() => setConfirmingDelete(true)}
+                            >
+                                Delete
+                            </AsyncButton>
+                        ))}
                 </div>
             </div>
             <MeetingPreview

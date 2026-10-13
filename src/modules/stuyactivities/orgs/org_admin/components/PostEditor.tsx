@@ -1,4 +1,4 @@
-import { Box, TextField } from "@mui/material";
+import { Box, FormControlLabel, Switch, TextField } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
 
 import { supabase } from "../../../../../lib/supabaseClient";
@@ -24,6 +24,7 @@ const PostEditor = ({
     onCreate?: (newData: Post) => void;
 }) => {
     const { enqueueSnackbar } = useSnackbar();
+    const [silent, setSilent] = useState(false);
 
     let [postData, setPostData] = useState<Partial<Post>>({
         id: undefined,
@@ -67,6 +68,7 @@ const PostEditor = ({
             title: postData.title,
             description: postData.description,
             organization_id: orgId,
+            silent,
         };
 
         let { data, error } = await supabase.functions.invoke("create-post", {
@@ -81,6 +83,7 @@ const PostEditor = ({
         }
 
         // reset values
+        setSilent(false);
         setPostData({
             id: undefined,
             organizations: {
@@ -136,11 +139,7 @@ const PostEditor = ({
     };
 
     return (
-        <div
-            className={
-                "bg-layer-1 p-5 pl-7 pb-8 rounded-xl shadow-prominent"
-            }
-        >
+        <div className={"bg-layer-1 p-5 pl-7 pb-8 rounded-xl shadow-prominent"}>
             <h1>{content ? "Update Post" : "Create Post"}</h1>
             <Box sx={{ marginY: "10px" }}>
                 <TextField
@@ -162,7 +161,6 @@ const PostEditor = ({
                     sx={{ marginTop: "10px" }}
                 />
             </Box>
-
             {content ? (
                 <>
                     <AsyncButton onClick={savePost} variant="contained">
@@ -180,6 +178,20 @@ const PostEditor = ({
                 <AsyncButton onClick={createPost} variant="contained">
                     Create
                 </AsyncButton>
+            )}{" "}
+            {!content && (
+                <FormControlLabel
+                    control={
+                        <Switch
+                            checked={silent}
+                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                                setSilent(event.target.checked)
+                            }
+                        />
+                    }
+                    label="silent?"
+                    sx={{ marginLeft: "10px", marginBottom: 0 }}
+                />
             )}
         </div>
     );
