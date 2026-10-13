@@ -1,5 +1,5 @@
 import Divider from "../../../../components/ui/Divider";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import AdminRoom from "../components/AdminRoom";
@@ -20,13 +20,71 @@ type Organization = {
     name: string;
 };
 
+type SortKey = "name" | "floor" | "approval" | "days";
+
+const compareNames = (a: ApiRoom, b: ApiRoom) =>
+    a.name.localeCompare(b.name, undefined, { numeric: true });
+
+const countDays = (room: ApiRoom) =>
+    room.available_days.split(", ").filter(Boolean).length;
+
+const comparators: Record<SortKey, (a: ApiRoom, b: ApiRoom) => number> = {
+    name: compareNames,
+    floor: (a, b) =>
+        (a.floor ?? Number.MAX_SAFE_INTEGER) -
+            (b.floor ?? Number.MAX_SAFE_INTEGER) || compareNames(a, b),
+    approval: (a, b) =>
+        Number(a.approval_required) - Number(b.approval_required) ||
+        compareNames(a, b),
+    days: (a, b) => countDays(a) - countDays(b) || compareNames(a, b),
+};
+
 const getDefaultTime = () => {
     return dayjs().startOf("day").hour(15).minute(45);
 };
 
 const Rooms = () => {
     const [rooms, setRooms] = useState<ApiRoom[]>([]);
+    const [sort, setSort] = useState<{ key: SortKey; ascending: boolean }>({
+        key: "floor",
+        ascending: true,
+    });
     const { enqueueSnackbar } = useSnackbar();
+
+    const sortedRooms = useMemo(() => {
+        const sorted = rooms.slice().sort(comparators[sort.key]);
+        return sort.ascending ? sorted : sorted.reverse();
+    }, [rooms, sort]);
+
+    const toggleSort = (key: SortKey) =>
+        setSort((prev) =>
+            prev.key === key
+                ? { key, ascending: !prev.ascending }
+                : { key, ascending: true },
+        );
+
+    const sortHeader = (key: SortKey, label: string, width: string) => (
+        <p
+            role="button"
+            tabIndex={0}
+            aria-label={`Sort by ${label}`}
+            className={`${width} cursor-pointer select-none sm:hover:text-typography-1`}
+            onClick={() => toggleSort(key)}
+            onKeyDown={(event) => {
+                if (event.key === "Enter" || event.key === " ") {
+                    event.preventDefault();
+                    toggleSort(key);
+                }
+            }}
+        >
+            {label}
+            <i
+                className={`bx ml-0.5 ${
+                    sort.ascending ? "bx-up-arrow-alt" : "bx-down-arrow-alt"
+                } ${sort.key === key ? "" : "opacity-0"}`}
+            />
+        </p>
+    );
 
     /* force reservation data */
     const [forceOrgId, setForceOrgId] = useState<number | undefined>();
@@ -51,7 +109,7 @@ const Rooms = () => {
 
     const fetchRooms = async (pageToFetch = 0) => {
         setLoading(true);
-        const pageSize = 10;
+        const pageSize = 1000;
         const from = pageToFetch * pageSize;
         const to = from + pageSize - 1;
 
@@ -186,16 +244,16 @@ const Rooms = () => {
                             "gap-3 text-center z-10 bg-bg py-3 flex justify-between border-b border-divider w-full"
                         }
                     >
-                        <p className={"w-52"}>Room Name</p>
-                        <p className={"w-16"}>Floor</p>
-                        <p className={"w-36"}>Requires Approval</p>
-                        <p className={"w-96"}>Available Days</p>
+                        {sortHeader("name", "Room Name", "w-52")}
+                        {sortHeader("floor", "Floor", "w-16")}
+                        {sortHeader("approval", "Requires Approval", "w-36")}
+                        {sortHeader("days", "Available Days", "w-96")}
                         <p className={"w-24 relative right-3"}>Actions</p>
                     </div>
 
                     <AdminRoom create onCreate={() => fetchRooms(0)} />
 
-                    {rooms.map((room) => (
+                    {sortedRooms.map((room) => (
                         <AdminRoom
                             key={room.id}
                             roomId={room.id}
