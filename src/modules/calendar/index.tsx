@@ -80,7 +80,7 @@ const Index = () => {
             id,
             name
           ),
-          organizations (
+          organizations!inner (
             id,
             url,
             name,
@@ -89,6 +89,7 @@ const Index = () => {
           advisor
         `,
                 )
+                .neq("organizations.url", "epsilon") // internal maintenance meetings
                 .gte("start_time", dayStart)
                 .lt("start_time", nextDayStart);
 
