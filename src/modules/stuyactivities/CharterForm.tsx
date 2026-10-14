@@ -1,6 +1,6 @@
 import { CSSProperties, useContext, useEffect, useState } from "react";
 
-import { Box, Typography, useMediaQuery } from "@mui/material";
+import { Box, Typography, useMediaQuery, InputAdornment } from "@mui/material";
 import MultiPageForm from "../../components/ui/forms/MultiPageForm";
 import FormPage from "../../components/ui/forms/FormPage";
 import FormTextField from "../../components/ui/forms/FormTextField";
@@ -375,8 +375,19 @@ const CharterForm = () => {
                                       ? "Checking URL..."
                                       : formData.url && !urlError
                                         ? "URL is valid."
-                                        : "https://epsilon.stuysu.org/<this is the only part you are entering>"
+                                        : undefined
                             }
+                            InputProps={{
+                                startAdornment: (
+                                    <InputAdornment position="start" sx={{ mr:0 }}>
+                                        https://epsilon.stuysu.org/
+                                    </InputAdornment>
+                                )
+                            }}
+                            inputProps={{
+                                pattern: urlPattern.source,
+                                style: { paddingLeft: "0px" },
+                            }}
                             onBlur={async (e: any) => {
                                 const url = e.target.value;
                                 if (url) await validateUrl(url);
@@ -392,7 +403,6 @@ const CharterForm = () => {
                                     );
                                 }
                             }}
-                            inputProps={{ pattern: urlPattern.source }}
                         />
                     </FormSection>
                     <FormSection
