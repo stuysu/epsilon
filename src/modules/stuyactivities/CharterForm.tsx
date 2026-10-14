@@ -403,7 +403,6 @@ const CharterForm = () => {
                                     );
                                 }
                             }}
-                            inputProps={{ pattern: urlPattern.source }}
                         />
                     </FormSection>
                     <FormSection
