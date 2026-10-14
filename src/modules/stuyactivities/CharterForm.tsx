@@ -379,10 +379,14 @@ const CharterForm = () => {
                             }
                             InputProps={{
                                 startAdornment: (
-                                    <InputAdornment position="start">
+                                    <InputAdornment position="start" sx={{ mr:0 }}>
                                         https://epsilon.stuysu.org/
                                     </InputAdornment>
                                 )
+                            }}
+                            InputProps {{
+                                pattern: urlPattern.source,
+                                style: { paddingLeft: "2px" },
                             }}
                             onBlur={async (e: any) => {
                                 const url = e.target.value;
