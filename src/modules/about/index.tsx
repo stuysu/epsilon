@@ -130,7 +130,7 @@ const Index = () => {
                     },
                     {
                         role: "programming",
-                        names: ["Mekot Sarder"],
+                        names: ["Mekot Sarder, Hana Fathony"],
                     },
                     { role: "management", names: ["Nathan Lai"] },
                 ],
