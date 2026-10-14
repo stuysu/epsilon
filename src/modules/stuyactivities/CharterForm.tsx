@@ -386,7 +386,7 @@ const CharterForm = () => {
                             }}
                             inputProps={{
                                 pattern: urlPattern.source,
-                                style: { paddingLeft: "2px" },
+                                style: { paddingLeft: "1px" },
                             }}
                             onBlur={async (e: any) => {
                                 const url = e.target.value;
