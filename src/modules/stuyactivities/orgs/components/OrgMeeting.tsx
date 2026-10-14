@@ -4,6 +4,7 @@ import { toNewYork } from "../../../../utils/NewYorkTime";
 import MeetingPreview from "../../../../components/ui/overlays/MeetingPreview";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import ToggleChip from "../../../../components/ui/input/ToggleChip";
+import UserDialog from "../../../../components/ui/overlays/UserDialog";
 
 type Props = {
     id?: number;
@@ -19,7 +20,7 @@ type Props = {
     isMobile?: boolean;
     onlyUpcoming?: boolean;
     onEdit?: () => void;
-    onDelete?: (silentDelete: boolean) => void;
+    onDelete?: (silentDelete: boolean) => void | Promise<unknown>;
 };
 
 const OrgMeeting = ({
@@ -39,6 +40,7 @@ const OrgMeeting = ({
 }: Props) => {
     const [open, setOpen] = useState(false);
     const [confirmingDelete, setConfirmingDelete] = useState(false);
+    const [deleting, setDeleting] = useState(false);
     let startTime = toNewYork(start_time).format("L LT");
     let endTime = toNewYork(end_time).format("LT");
     let today = toNewYork().startOf("day");
@@ -46,6 +48,15 @@ const OrgMeeting = ({
     if (onlyUpcoming && today.isAfter(toNewYork(start_time))) {
         return <></>;
     }
+
+    const deleteMeeting = async (silentDelete: boolean) => {
+        setDeleting(true);
+        try {
+            await onDelete?.(silentDelete);
+        } finally {
+            setDeleting(false);
+        }
+    };
 
     return (
         <div className={"w-full"}>
@@ -94,43 +105,27 @@ const OrgMeeting = ({
                             Edit
                         </AsyncButton>
                     )}
-                    {onDelete &&
-                        (confirmingDelete ? (
-                            <div className="flex items-center gap-2">
-                                <span className="text-sm text-text-1">
-                                    silent?
-                                </span>
-                                <AsyncButton
-                                    variant="contained"
-                                    color="success"
-                                    onClick={() => {
-                                        setConfirmingDelete(false);
-                                        onDelete(true);
-                                    }}
-                                >
-                                    Yes
-                                </AsyncButton>
-                                <AsyncButton
-                                    variant="contained"
-                                    color="error"
-                                    onClick={() => {
-                                        setConfirmingDelete(false);
-                                        onDelete(false);
-                                    }}
-                                >
-                                    No
-                                </AsyncButton>
-                            </div>
-                        ) : (
-                            <AsyncButton
-                                variant="contained"
-                                onClick={() => setConfirmingDelete(true)}
-                            >
-                                Delete
-                            </AsyncButton>
-                        ))}
+                    {onDelete && (
+                        <AsyncButton
+                            variant="contained"
+                            disabled={deleting}
+                            onClick={() => setConfirmingDelete(true)}
+                        >
+                            {deleting ? "Deleting..." : "Delete"}
+                        </AsyncButton>
+                    )}
                 </div>
             </div>
+            <UserDialog
+                title="Delete meeting?"
+                description={`"${title}" at ${startTime} will be deleted. Members of this club will be emailed.`}
+                open={confirmingDelete}
+                onClose={() => setConfirmingDelete(false)}
+                onConfirm={() => deleteMeeting(false)}
+                extraText="Delete silently"
+                onExtra={() => deleteMeeting(true)}
+                confirmText="Delete"
+            />
             <MeetingPreview
                 id={id}
                 title={title}

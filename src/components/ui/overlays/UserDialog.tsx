@@ -10,6 +10,8 @@ export default function UserDialog({
     onClose,
     onCancel,
     onConfirm,
+    extraText,
+    onExtra,
     children,
     confirmText = "Confirm",
     cancelText = "Cancel",
@@ -21,6 +23,8 @@ export default function UserDialog({
     onClose: () => void;
     onCancel?: () => void;
     onConfirm?: () => void;
+    extraText?: string;
+    onExtra?: () => void;
     children?: React.ReactNode;
     confirmText?: string;
     cancelText?: string;
@@ -116,6 +120,16 @@ export default function UserDialog({
                                         >
                                             {cancelText}
                                         </AsyncButton>
+                                        {extraText && (
+                                            <AsyncButton
+                                                onClick={() => {
+                                                    onClose();
+                                                    onExtra?.();
+                                                }}
+                                            >
+                                                {extraText}
+                                            </AsyncButton>
+                                        )}
                                         <AsyncButton
                                             onClick={() => {
                                                 onClose();
