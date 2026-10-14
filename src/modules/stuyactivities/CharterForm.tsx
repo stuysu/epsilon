@@ -384,7 +384,7 @@ const CharterForm = () => {
                                     </InputAdornment>
                                 )
                             }}
-                            InputProps {{
+                            inputProps={{
                                 pattern: urlPattern.source,
                                 style: { paddingLeft: "2px" },
                             }}
