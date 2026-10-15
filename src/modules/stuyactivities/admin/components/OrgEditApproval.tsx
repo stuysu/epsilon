@@ -105,8 +105,10 @@ const OrgEditApproval = ({
 
         if (error) {
             setButtonsDisabled(false);
+            const message = await error.context?.text();
             return enqueueSnackbar(
-                "Error updating organization. Contact it@stuysu.org for support.",
+                message ||
+                    "Error updating organization. Contact it@stuysu.org for support.",
                 { variant: "error" },
             );
         }
