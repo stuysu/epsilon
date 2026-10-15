@@ -64,9 +64,6 @@ const AdminUpsertMeeting = ({
     const [roomId, setRoomId] = useState(room_id);
     const [meetingAdvisor, setMeetingAdvisor] = useState(advisor || "");
 
-    /* hard coded constants to be changed later */
-    const advisorNeededRooms = ["503", "505", "507"];
-    const advisorNeededLowestFloor = 7;
     const [advisorNeeded, setAdvisorNeeded] = useState<boolean>(false);
 
     /* date inputs */
@@ -83,6 +80,7 @@ const AdminUpsertMeeting = ({
 
     const [notifyFaculty, setNotifyFaculty] = useState(false);
     const [silent, setSilent] = useState(false);
+    const advisorRoomBooking = advisorNeeded && (!id || roomId !== room_id);
 
     const [allRooms, setAllRooms] = useState<Room[]>([]);
     const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
@@ -192,11 +190,14 @@ const AdminUpsertMeeting = ({
 
     useEffect(() => {
         const checkAdvisorNeeded = async () => {
-            if (!roomId) return;
+            if (!roomId) {
+                setAdvisorNeeded(false);
+                return;
+            }
 
             const { data, error } = await supabase
                 .from("rooms")
-                .select("id, name, floor")
+                .select("id, approval_required")
                 .eq("id", roomId)
                 .single();
 
@@ -206,16 +207,7 @@ const AdminUpsertMeeting = ({
                 });
             }
 
-            const roomName = data.name?.toString();
-            const roomFloor = data.floor;
-
-            const needsAdvisorPrompt =
-                roomFloor >= advisorNeededLowestFloor ||
-                advisorNeededRooms.includes(roomName);
-
-            needsAdvisorPrompt
-                ? setAdvisorNeeded(true)
-                : setAdvisorNeeded(false);
+            setAdvisorNeeded(data.approval_required === true);
         };
 
         checkAdvisorNeeded();
@@ -294,6 +286,7 @@ const AdminUpsertMeeting = ({
                     start_time: wallClockToISO(startTime),
                     end_time: wallClockToISO(endTime),
                     is_public: isPub,
+                    notify_faculty: notifyFaculty || advisorRoomBooking,
                     advisor: meetingAdvisor.trim(),
                     silent,
                 },
@@ -310,7 +303,7 @@ const AdminUpsertMeeting = ({
                     start_time: wallClockToISO(startTime),
                     end_time: wallClockToISO(endTime),
                     is_public: isPub,
-                    notify_faculty: notifyFaculty,
+                    notify_faculty: notifyFaculty || advisorRoomBooking,
                     advisor: meetingAdvisor.trim(),
                     silent,
                 },
@@ -473,21 +466,23 @@ const AdminUpsertMeeting = ({
                     sx={{ marginTop: "10px" }}
                     label="silent?"
                 />
-                {!id && (
-                    <FormControlLabel
-                        control={
-                            <Switch
-                                checked={notifyFaculty}
-                                disabled={silent}
-                                onChange={(
-                                    event: ChangeEvent<HTMLInputElement>,
-                                ) => setNotifyFaculty(event.target.checked)}
-                            />
-                        }
-                        sx={{ marginTop: "10px" }}
-                        label="notify faculty?"
-                    />
-                )}
+                <FormControlLabel
+                    control={
+                        <Switch
+                            checked={notifyFaculty || advisorRoomBooking}
+                            disabled={advisorRoomBooking}
+                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                                setNotifyFaculty(event.target.checked)
+                            }
+                        />
+                    }
+                    sx={{ marginTop: "10px" }}
+                    label={
+                        advisorRoomBooking
+                            ? "notify faculty? (required for this room)"
+                            : "notify faculty?"
+                    }
+                />
             </DialogContent>
             <DialogActions>
                 <AsyncButton variant="contained" onClick={onClose}>
