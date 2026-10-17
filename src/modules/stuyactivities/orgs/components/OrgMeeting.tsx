@@ -65,7 +65,11 @@ const OrgMeeting = ({
                     className="flex-1 min-w-0 flex justify-between items-center p-4 cursor-pointer"
                     onClick={() => setOpen(true)}
                 >
-                    <div className={"w-full flex justify-between items-center"}>
+                    <div
+                        className={
+                            "w-full flex flex-col gap-2 sm:flex-row sm:justify-between sm:items-center"
+                        }
+                    >
                         <div className="w-full pt-1">
                             <h4>{title}</h4>
                             <p>
@@ -73,7 +77,7 @@ const OrgMeeting = ({
                             </p>
                             <p>{advisor?.trim() ? `Advisor: ${advisor}` : ""}</p>
                         </div>
-                        <div className=" pointer-events-none flex gap-2 w-fit justify-end">
+                        <div className="pointer-events-none flex flex-wrap gap-2 max-w-full [&>*]:max-w-full [&>*]:text-wrap sm:[&>*]:text-nowrap sm:w-fit sm:shrink sm:justify-end md:flex-nowrap md:shrink-0">
                             <ToggleChip
                                 title={
                                     room_name && !room_name.includes("Virtual")
@@ -96,7 +100,7 @@ const OrgMeeting = ({
                         </div>
                     </div>
                 </div>
-                <div className="relative z-10 flex items-center gap-2 shrink-0 pr-4">
+                <div className="relative z-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0 pr-4">
                     {onEdit && (
                         <AsyncButton
                             variant="contained"
