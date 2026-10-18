@@ -31,15 +31,23 @@ const Overview = () => {
     const [publicMemberCount, setPublicMemberCount] = useState<number>();
 
     useEffect(() => {
+        setPublicMemberCount(undefined);
         if (user.signed_in || organization.id < 0) return;
+
+        let cancelled = false;
 
         supabase
             .rpc("get_organization_member_counts", {
                 org_ids: [organization.id],
             })
-            .then(({ data }) => {
+            .then(({ data, error }) => {
+                if (cancelled || error) return;
                 setPublicMemberCount(Number(data?.[0]?.member_count ?? 0));
             });
+
+        return () => {
+            cancelled = true;
+        };
     }, [user.signed_in, organization.id]);
 
     const [leaveConfirmation, setLeaveConfirmation] = useState(false);

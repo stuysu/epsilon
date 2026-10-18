@@ -108,7 +108,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                 }
                             >
                                 <i className="bx bx-group bx-xs relative top-0.5 mr-1"></i>
-                                {organization.memberships?.length ?? 0}
+                                {organization.memberships?.length ?? "-"}
                             </p>
 
                             {/* Background avatar with blur effect */}
