@@ -102,11 +102,16 @@ const compareNames = (member1: SortableMember, member2: SortableMember) =>
     compareText(member1.first_name, member2.first_name) ||
     compareText(member1.last_name, member2.last_name);
 
-const compareJoinDates = (member1: SortableMember, member2: SortableMember) => {
+const compareJoinDates = (
+    member1: SortableMember,
+    member2: SortableMember,
+    newestFirst = false,
+) => {
     const time1 = member1.joined_at ? Date.parse(member1.joined_at) : NaN;
     const time2 = member2.joined_at ? Date.parse(member2.joined_at) : NaN;
     if (isNaN(time1) !== isNaN(time2)) return isNaN(time1) ? 1 : -1;
-    return time1 - time2 || 0;
+    const difference = time1 - time2 || 0;
+    return newestFirst ? -difference : difference;
 };
 
 export const sortMembersBy = <T>(
@@ -123,7 +128,7 @@ export const sortMembersBy = <T>(
         switch (sort) {
             case "joined-newest":
                 return (
-                    -compareJoinDates(member1, member2) ||
+                    compareJoinDates(member1, member2, true) ||
                     compareNames(member1, member2)
                 );
             case "joined-oldest":
