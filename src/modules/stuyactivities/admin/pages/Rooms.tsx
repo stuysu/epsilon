@@ -231,11 +231,11 @@ const Rooms = () => {
     };
 
     return (
-        <div className={"w-full p-4 sm:p-12 relative"}>
+        <div className={"w-full p-4 sm:px-8 sm:py-12 relative"}>
             <h1>Rooms</h1>
             <Divider />
 
-            <div className="h-full w-10 bg-gradient-to-r from-transparent to-bg absolute z-10 right-12 pointer-events-none"></div>
+            <div className="h-full w-10 bg-gradient-to-r from-transparent to-bg absolute z-10 right-8 pointer-events-none"></div>
 
             <div className="w-full overflow-scroll">
                 <div className={"min-w-fit flex mt-3 gap-3 flex-col w-full"}>
@@ -248,7 +248,7 @@ const Rooms = () => {
                         {sortHeader("floor", "Floor", "w-16")}
                         {sortHeader("approval", "Requires Approval", "w-36")}
                         {sortHeader("days", "Available Days", "w-96")}
-                        <p className={"w-24 relative right-3"}>Actions</p>
+                        <p className={"w-44"}>Actions</p>
                     </div>
 
                     <AdminRoom create onCreate={() => fetchRooms(0)} />

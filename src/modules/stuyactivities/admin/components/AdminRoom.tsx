@@ -9,6 +9,7 @@ import { useState } from "react";
 
 import { supabase } from "../../../../lib/supabaseClient";
 import UserDialog from "../../../../components/ui/overlays/UserDialog";
+import RoomGrants from "./RoomGrants";
 
 const AdminRoom = ({
     roomId,
@@ -52,6 +53,7 @@ const AdminRoom = ({
 
     const [roomAisDays, setRoomAisDays] = useState<string[]>(aisDays || []);
     const [aisExpanded, setAisExpanded] = useState(false);
+    const [clubsExpanded, setClubsExpanded] = useState(false);
 
     const [isChanged, setIsChanged] = useState(false);
     const [confirm, setConfirm] = useState(false);
@@ -224,20 +226,22 @@ const AdminRoom = ({
                     </FormGroup>
                 </FormControl>
 
-                <div className="flex items-center pr-2 w-24">
+                <div className="flex items-center justify-center gap-1 w-44">
                     {create ? (
                         <button
                             aria-label="Create room"
-                            className="h-9 w-9 grid place-items-center rounded-md sm:hover:bg-layer-2"
+                            title="Create room"
+                            className="h-10 w-10 grid place-items-center rounded-md sm:hover:bg-layer-2"
                             onClick={createRoom}
                         >
-                            <i className="bx bx-plus text-green text-xl" />
+                            <i className="bx bx-plus text-green text-2xl" />
                         </button>
                     ) : (
                         <>
                             <button
                                 aria-label="Toggle AIS days"
-                                className={`h-9 w-9 grid place-items-center rounded-md sm:hover:bg-layer-2 text-xs font-bold ${
+                                title="AIS days"
+                                className={`h-10 w-10 grid place-items-center rounded-md sm:hover:bg-layer-2 text-sm font-bold ${
                                     roomAisDays.length > 0 ? "text-red" : "text-typography-2"
                                 }`}
                                 onClick={() => setAisExpanded((prev) => !prev)}
@@ -245,23 +249,33 @@ const AdminRoom = ({
                                 AIS
                             </button>
                             <button
+                                aria-label="Toggle clubs"
+                                title="Special Access"
+                                className="h-10 w-10 grid place-items-center rounded-md sm:hover:bg-layer-2 text-typography-2"
+                                onClick={() => setClubsExpanded((prev) => !prev)}
+                            >
+                                <i className="bx bx-group text-2xl" />
+                            </button>
+                            <button
                                 aria-label="Save room"
+                                title="Save changes"
                                 disabled={!isChanged}
-                                className={`h-9 w-9 grid place-items-center rounded-md ${
+                                className={`h-10 w-10 grid place-items-center rounded-md ${
                                     isChanged
                                         ? "sm:hover:bg-layer-2"
                                         : "opacity-40 cursor-not-allowed"
                                 }`}
                                 onClick={saveRoom}
                             >
-                                <i className="bx bx-save text-typography-1 text-xl" />
+                                <i className="bx bx-save text-typography-1 text-2xl" />
                             </button>
                             <button
                                 aria-label="Delete room"
-                                className="h-9 w-9 grid place-items-center rounded-md sm:hover:bg-layer-2"
+                                title="Delete room"
+                                className="h-10 w-10 grid place-items-center rounded-md sm:hover:bg-layer-2"
                                 onClick={() => setConfirm(true)}
                             >
-                                <i className="bx bx-trash text-red text-xl" />
+                                <i className="bx bx-trash text-red text-2xl" />
                             </button>
                         </>
                     )}
@@ -297,6 +311,10 @@ const AdminRoom = ({
                         </FormGroup>
                     </FormControl>
                 </div>
+            )}
+
+            {clubsExpanded && !create && roomId !== undefined && (
+                <RoomGrants roomId={roomId} />
             )}
 
             <UserDialog

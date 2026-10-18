@@ -83,6 +83,9 @@ const AdminUpsertMeeting = ({
     const advisorRoomBooking = advisorNeeded && (!id || roomId !== room_id);
 
     const [allRooms, setAllRooms] = useState<Room[]>([]);
+    const [roomGrants, setRoomGrants] = useState<
+        { room_id: number; organization_id: number }[]
+    >([]);
     const [availableRooms, setAvailableRooms] = useState<Room[]>([]);
 
     // fixes select menu item bug where it is trying to map over undefined rooms
@@ -101,6 +104,19 @@ const AdminUpsertMeeting = ({
                 return;
             }
 
+            const { data: grantsData, error: grantsError } = await supabase
+                .from("room_grants")
+                .select("room_id, organization_id");
+
+            if (grantsError) {
+                enqueueSnackbar(
+                    "Error fetching rooms. Contact it@stuysu.org for support.",
+                    { variant: "error" },
+                );
+                return;
+            }
+
+            setRoomGrants(grantsData || []);
             setAllRooms((prev) => {
                 setLoading(false);
                 return (data as Room[]).sort(sortRooms);
@@ -161,14 +177,29 @@ const AdminUpsertMeeting = ({
                 "SATURDAY",
             ];
 
-            let availRooms = allRooms.filter(
-                (room) =>
-                    !~filteredBookedRooms.findIndex(
+            let availRooms = allRooms.filter((room) => {
+                if (
+                    ~filteredBookedRooms.findIndex(
                         (meta) => meta.room_id === room.id,
-                    ) &&
-                    room.available_days.includes(days[startTime!.day()]) &&
-                    !room.ais_days?.includes(days[startTime!.day()]),
-            );
+                    )
+                ) {
+                    return false;
+                }
+
+                const hasGrant = roomGrants.some(
+                    (grant) =>
+                        grant.room_id === room.id &&
+                        grant.organization_id === organization.id,
+                );
+
+                const day = days[startTime!.day()];
+                if (day === "SATURDAY" || day === "SUNDAY") return false;
+
+                return (
+                    (hasGrant || room.available_days.includes(day)) &&
+                    !room.ais_days?.includes(days[startTime!.day()])
+                );
+            });
 
             // check if the currently selected room id is no longer valid
             /* NOTE: if a meeting is invalid because of some update on the backend,
@@ -186,7 +217,16 @@ const AdminUpsertMeeting = ({
         };
 
         filterRooms();
-    }, [loading, id, roomId, startTime, endTime, enqueueSnackbar]);
+    }, [
+        loading,
+        id,
+        roomId,
+        startTime,
+        endTime,
+        enqueueSnackbar,
+        roomGrants,
+        organization.id,
+    ]);
 
     useEffect(() => {
         const checkAdvisorNeeded = async () => {
