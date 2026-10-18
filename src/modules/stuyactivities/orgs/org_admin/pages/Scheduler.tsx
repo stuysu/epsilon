@@ -1,5 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import OrgContext from "../../../../../contexts/OrgContext";
+import UserContext from "../../../../../contexts/UserContext";
 import AdminUpsertMeeting from "../components/AdminUpsertMeeting";
 
 import { FormControlLabel, Switch, useMediaQuery } from "@mui/material";
@@ -14,6 +15,7 @@ import ItemList from "../../../../../components/ui/lists/ItemList";
 
 const Scheduler = () => {
     const organization = useContext(OrgContext);
+    const user = useContext(UserContext);
     const { enqueueSnackbar } = useSnackbar();
     const isMeetingMobile = useMediaQuery("(max-width: 1450px)");
 
@@ -112,19 +114,26 @@ const Scheduler = () => {
                                 is_public={meeting.is_public}
                                 isMobile={isMeetingMobile}
                                 advisor={meeting.advisor}
-                                onEdit={() => {
-                                    setEditState({
-                                        id: meeting.id,
-                                        title: meeting.title,
-                                        description: meeting.description,
-                                        start: meeting.start_time,
-                                        end: meeting.end_time,
-                                        room: meeting.rooms?.id,
-                                        isPublic: meeting.is_public,
-                                        advisor: meeting.advisor,
-                                        editing: true,
-                                    });
-                                }}
+                                onEdit={
+                                    !user.admin &&
+                                    meeting.end_time &&
+                                    new Date(meeting.end_time) <= new Date()
+                                        ? undefined
+                                        : () => {
+                                              setEditState({
+                                                  id: meeting.id,
+                                                  title: meeting.title,
+                                                  description:
+                                                      meeting.description,
+                                                  start: meeting.start_time,
+                                                  end: meeting.end_time,
+                                                  room: meeting.rooms?.id,
+                                                  isPublic: meeting.is_public,
+                                                  advisor: meeting.advisor,
+                                                  editing: true,
+                                              });
+                                          }
+                                }
                                 onDelete={async (silentDelete: boolean) => {
                                     let { error } =
                                         await supabase.functions.invoke(
