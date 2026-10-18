@@ -8,11 +8,17 @@ import { Box, TextField } from "@mui/material";
 import { Switch } from "radix-ui";
 import { Reorder } from "framer-motion";
 
-import { sortMembers } from "../../../../../utils/DataFormatters";
+import {
+    MemberSort,
+    sortMembers,
+    sortMembersBy,
+} from "../../../../../utils/DataFormatters";
+import useMembershipJoinDates from "../../../../../utils/useMembershipJoinDates";
 import { useSnackbar } from "notistack";
 import ItemList from "../../../../../components/ui/lists/ItemList";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
 import ToggleChip from "../../../../../components/ui/input/ToggleChip";
+import SortSelect from "../../../../../components/ui/input/SortSelect";
 
 /* a disabled text box with all the emails and a button to copy them */
 const EmailCopyBox = ({
@@ -86,6 +92,11 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
         organization.joinable ?? false,
     );
     const [toggling, setToggling] = useState(false);
+    const [sort, setSort] = useState<MemberSort>("default");
+    const joinDates = useMembershipJoinDates(
+        organization.id,
+        organization.memberships.length,
+    );
 
     useEffect(() => {
         setJoinableState(organization.joinable ?? false);
@@ -149,6 +160,12 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
             ? order.map((id) => membersById.get(id)!)
             : members;
 
+    const sortedMembers = sortMembersBy(orderedMembers, sort, (member) => ({
+        first_name: member.first_name,
+        last_name: member.last_name,
+        joined_at: joinDates.get(member.membershipId as number),
+    }));
+
     const idsOfRole = (list: typeof members, role: Membership["role"]) =>
         list
             .filter((member) => member.role === role)
@@ -197,6 +214,30 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
             });
         }
     };
+
+    const renderMember = (
+        member: (typeof members)[number],
+        canDrag: boolean,
+        onDragEnd: () => void,
+    ) => (
+        <AdminMember
+            id={member.membershipId || -1}
+            userId={member.userId || -1}
+            first_name={member.first_name || "First"}
+            last_name={member.last_name || "Last"}
+            email={member.email || ""}
+            picture={member.picture}
+            role={member.role || "MEMBER"}
+            role_name={member.role_name}
+            isCreator={userMember?.role === "CREATOR"}
+            isAdmin={userMember?.role === "ADMIN"}
+            is_faculty={member.is_faculty}
+            readOnly={readOnly}
+            canDrag={canDrag}
+            onDragEnd={onDragEnd}
+            key={member.membershipId}
+        />
+    );
 
     const toggleJoinable = async () => {
         if (!canToggleJoinable) {
@@ -298,57 +339,61 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
             <EmailCopyBox label="Club leaders" emails={leader_emails} />
             <EmailCopyBox label="All members" emails={member_emails} />
 
-            <ItemList height={"auto"}>
-                {roles.map((role) => {
-                    const group = orderedMembers.filter(
-                        (member) => member.role === role,
-                    );
-                    if (!group.length) return null;
+            <SortSelect value={sort} onChange={setSort} />
 
-                    return (
-                        <Reorder.Group
-                            as="div"
-                            axis="y"
-                            key={role}
-                            values={group.map(
-                                (member) => member.membershipId as number,
-                            )}
-                            onReorder={(ids) => handleReorder(role, ids)}
-                            className="flex flex-col gap-0.5"
-                        >
-                            {group.map((member) => (
-                                <AdminMember
-                                    id={member.membershipId || -1}
-                                    userId={member.userId || -1}
-                                    first_name={member.first_name || "First"}
-                                    last_name={member.last_name || "Last"}
-                                    email={member.email || ""}
-                                    picture={member.picture}
-                                    role={member.role || "MEMBER"}
-                                    role_name={member.role_name}
-                                    isCreator={userMember?.role === "CREATOR"}
-                                    isAdmin={userMember?.role === "ADMIN"}
-                                    is_faculty={member.is_faculty}
-                                    readOnly={readOnly}
-                                    canDrag={
+            <ItemList height={"auto"}>
+                {sort === "default" ? (
+                    roles.map((role) => {
+                        const group = orderedMembers.filter(
+                            (member) => member.role === role,
+                        );
+                        if (!group.length) return null;
+
+                        return (
+                            <Reorder.Group
+                                as="div"
+                                axis="y"
+                                key={role}
+                                values={group.map(
+                                    (member) => member.membershipId as number,
+                                )}
+                                onReorder={(ids) => handleReorder(role, ids)}
+                                className="flex flex-col gap-0.5"
+                            >
+                                {group.map((member) =>
+                                    renderMember(
+                                        member,
                                         !readOnly &&
-                                        canReorder &&
-                                        group.length > 1
-                                    }
-                                    onDragEnd={() =>
-                                        saveOrder(
-                                            role,
-                                            group.map(
-                                                (m) => m.membershipId as number,
+                                            canReorder &&
+                                            group.length > 1,
+                                        () =>
+                                            saveOrder(
+                                                role,
+                                                group.map(
+                                                    (m) =>
+                                                        m.membershipId as number,
+                                                ),
                                             ),
-                                        )
-                                    }
-                                    key={member.membershipId}
-                                />
-                            ))}
-                        </Reorder.Group>
-                    );
-                })}
+                                    ),
+                                )}
+                            </Reorder.Group>
+                        );
+                    })
+                ) : (
+                    <Reorder.Group
+                        as="div"
+                        axis="y"
+                        values={sortedMembers.map(
+                            (member) => member.membershipId as number,
+                        )}
+                        onReorder={() => {}}
+                        className="flex flex-col gap-0.5"
+                    >
+                        {sortedMembers.map((member) =>
+                            renderMember(member, false, () => {}),
+                        )}
+                    </Reorder.Group>
+                )}
             </ItemList>
         </Box>
     );

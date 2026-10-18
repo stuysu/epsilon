@@ -73,6 +73,7 @@ interface Membership {
     role_name?: string;
     ordering_id?: number | null;
     active: boolean;
+    created_at?: string;
 }
 
 interface Room {

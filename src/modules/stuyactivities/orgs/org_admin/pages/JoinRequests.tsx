@@ -1,5 +1,7 @@
 import React, { useContext, useState } from "react";
 import OrgContext from "../../../../../contexts/OrgContext";
+import { MemberSort, sortMembersBy } from "../../../../../utils/DataFormatters";
+import useMembershipJoinDates from "../../../../../utils/useMembershipJoinDates";
 import { supabase } from "../../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 
@@ -10,6 +12,7 @@ import ContentUnavailable from "../../../../../components/ui/content/ContentUnav
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
 import UserDialog from "../../../../../components/ui/overlays/UserDialog";
 import CheckboxInput from "../../../../../components/ui/input/CheckboxInput";
+import SortSelect from "../../../../../components/ui/input/SortSelect";
 import { PUBLIC_URL } from "../../../../../config/constants";
 
 const JoinRequests = () => {
@@ -23,17 +26,30 @@ const JoinRequests = () => {
     const [working, setWorking] = useState<"approve" | "reject" | null>(null);
     // everyone is selected by default, so only the ones taken out are tracked
     const [unselectedIds, setUnselectedIds] = useState<number[]>([]);
-    const pendingMembers = organization.memberships
-        ?.filter((member) => !member.active)
-        .map((member) => {
-            return {
-                first_name: member.users?.first_name,
-                last_name: member.users?.last_name,
-                email: member.users?.email,
-                membershipId: member.id,
-                picture: member.users?.picture,
-            };
-        });
+    const [sort, setSort] = useState<MemberSort>("default");
+    const joinDates = useMembershipJoinDates(
+        organization.id,
+        organization.memberships?.length ?? 0,
+    );
+    const pendingMembers = sortMembersBy(
+        (organization.memberships ?? [])
+            .filter((member) => !member.active)
+            .map((member) => {
+                return {
+                    first_name: member.users?.first_name,
+                    last_name: member.users?.last_name,
+                    email: member.users?.email,
+                    membershipId: member.id,
+                    picture: member.users?.picture,
+                };
+            }),
+        sort,
+        (member) => ({
+            first_name: member.first_name,
+            last_name: member.last_name,
+            joined_at: joinDates.get(member.membershipId as number),
+        }),
+    );
 
     const selectedMembers = pendingMembers?.filter(
         (member) => !unselectedIds.includes(member.membershipId as number),
@@ -179,6 +195,10 @@ const JoinRequests = () => {
                 }
                 onClose={() => setConfirmAction(null)}
             />
+
+            {pendingMembers.length > 1 && (
+                <SortSelect value={sort} onChange={setSort} />
+            )}
 
             {pendingMembers?.length > 0 ? (
                 <ItemList height={"auto"}>

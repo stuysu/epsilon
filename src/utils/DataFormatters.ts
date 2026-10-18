@@ -73,3 +73,73 @@ export const sortRooms = (room1: Partial<Room>, room2: Partial<Room>) => {
         numeric: true,
     });
 };
+
+export type MemberSort =
+    | "default"
+    | "joined-newest"
+    | "joined-oldest"
+    | "first-name"
+    | "last-name";
+
+export const memberSortOptions: { value: MemberSort; label: string }[] = [
+    { value: "default", label: "Default order" },
+    { value: "joined-newest", label: "Join date (newest first)" },
+    { value: "joined-oldest", label: "Join date (oldest first)" },
+    { value: "first-name", label: "First name (A-Z)" },
+    { value: "last-name", label: "Last name (A-Z)" },
+];
+
+type SortableMember = {
+    first_name?: string;
+    last_name?: string;
+    joined_at?: string;
+};
+
+const compareText = (text1 = "", text2 = "") =>
+    text1.localeCompare(text2, undefined, { sensitivity: "base" });
+
+const compareNames = (member1: SortableMember, member2: SortableMember) =>
+    compareText(member1.first_name, member2.first_name) ||
+    compareText(member1.last_name, member2.last_name);
+
+const compareJoinDates = (member1: SortableMember, member2: SortableMember) => {
+    const time1 = member1.joined_at ? Date.parse(member1.joined_at) : NaN;
+    const time2 = member2.joined_at ? Date.parse(member2.joined_at) : NaN;
+    if (isNaN(time1) !== isNaN(time2)) return isNaN(time1) ? 1 : -1;
+    return time1 - time2 || 0;
+};
+
+export const sortMembersBy = <T>(
+    items: T[],
+    sort: MemberSort,
+    pick: (item: T) => SortableMember,
+) => {
+    if (sort === "default") return items;
+
+    return [...items].sort((item1, item2) => {
+        const member1 = pick(item1);
+        const member2 = pick(item2);
+
+        switch (sort) {
+            case "joined-newest":
+                return (
+                    -compareJoinDates(member1, member2) ||
+                    compareNames(member1, member2)
+                );
+            case "joined-oldest":
+                return (
+                    compareJoinDates(member1, member2) ||
+                    compareNames(member1, member2)
+                );
+            case "first-name":
+                return compareNames(member1, member2);
+            case "last-name":
+                return (
+                    compareText(member1.last_name, member2.last_name) ||
+                    compareText(member1.first_name, member2.first_name)
+                );
+            default:
+                return 0;
+        }
+    });
+};
