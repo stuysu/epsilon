@@ -66,6 +66,7 @@ const OrgBlock = ({
                                 style={{
                                     display: imgLoaded ? "block" : "none",
                                     height: "11rem",
+                                    width: "11rem",
                                     borderRadius: "15px",
                                     objectFit: "cover",
                                     opacity: "0.3",
@@ -86,6 +87,7 @@ const OrgBlock = ({
                                     bottom: "0px",
                                     zIndex: 10,
                                     height: "11rem",
+                                    width: "11rem",
                                     borderRadius: "15px",
                                     objectFit: "cover",
                                 }}
