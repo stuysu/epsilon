@@ -75,7 +75,7 @@ const RoomGrants = ({
             return;
         }
 
-        enqueueSnackbar(`Added ${org.name} to ${roomName || "this room"}`, {
+        enqueueSnackbar(`Bound ${org.name} to room ${roomName}`, {
             variant: "success",
         });
         setSearch("");
@@ -95,10 +95,9 @@ const RoomGrants = ({
             return;
         }
 
-        enqueueSnackbar(
-            `Removed ${orgName || "club"} from ${roomName || "this room"}`,
-            { variant: "success" },
-        );
+        enqueueSnackbar(`Unbound ${orgName} from room ${roomName}`, {
+            variant: "success",
+        });
         fetchGrants();
     };
 
