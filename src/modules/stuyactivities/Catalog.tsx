@@ -170,19 +170,22 @@ const Catalog = () => {
 
                 let counts = new Map<number, number>();
                 if (pageIds.length) {
-                    const { data: mems } = await supabase
-                        .from("memberships")
-                        .select("organization_id")
-                        .in("organization_id", pageIds)
-                        .eq("active", true);
+                    const { data: memberCounts } = await supabase.rpc(
+                        "get_organization_member_counts",
+                        { org_ids: pageIds },
+                    );
 
                     counts = new Map<number, number>();
-                    (mems ?? []).forEach((m: any) => {
-                        counts.set(
-                            m.organization_id,
-                            (counts.get(m.organization_id) ?? 0) + 1,
-                        );
-                    });
+                    (memberCounts ?? []).forEach(
+                        (c: {
+                            organization_id: number;
+                            member_count: number;
+                        }) =>
+                            counts.set(
+                                c.organization_id,
+                                Number(c.member_count),
+                            ),
+                    );
                 }
 
                 const pageWithMems = res.data.map((o) => {
