@@ -13,7 +13,13 @@ type OrgResult = {
     name: string;
 };
 
-const RoomGrants = ({ roomId }: { roomId: number }) => {
+const RoomGrants = ({
+    roomId,
+    roomName,
+}: {
+    roomId: number;
+    roomName?: string;
+}) => {
     const { enqueueSnackbar } = useSnackbar();
     const [grants, setGrants] = useState<Grant[]>([]);
     const [search, setSearch] = useState("");
@@ -69,12 +75,15 @@ const RoomGrants = ({ roomId }: { roomId: number }) => {
             return;
         }
 
+        enqueueSnackbar(`Added ${org.name} to ${roomName || "this room"}`, {
+            variant: "success",
+        });
         setSearch("");
         setResults([]);
         fetchGrants();
     };
 
-    const removeGrant = async (organizationId: number) => {
+    const removeGrant = async (organizationId: number, orgName?: string) => {
         const { error } = await supabase
             .from("room_grants")
             .delete()
@@ -86,6 +95,10 @@ const RoomGrants = ({ roomId }: { roomId: number }) => {
             return;
         }
 
+        enqueueSnackbar(
+            `Removed ${orgName || "club"} from ${roomName || "this room"}`,
+            { variant: "success" },
+        );
         fetchGrants();
     };
 
@@ -100,7 +113,12 @@ const RoomGrants = ({ roomId }: { roomId: number }) => {
                         key={grant.organization_id}
                         aria-label={`Remove ${grant.organizations?.name}`}
                         className="text-sm text-typography-2 bg-layer-2 shadow-control rounded-lg px-3 py-1 sm:hover:bg-layer-3"
-                        onClick={() => removeGrant(grant.organization_id)}
+                        onClick={() =>
+                            removeGrant(
+                                grant.organization_id,
+                                grant.organizations?.name,
+                            )
+                        }
                     >
                         {grant.organizations?.name}
                         <i className="bx bx-x ml-1 align-middle" />

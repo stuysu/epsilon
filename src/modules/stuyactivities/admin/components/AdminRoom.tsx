@@ -314,7 +314,7 @@ const AdminRoom = ({
             )}
 
             {clubsExpanded && !create && roomId !== undefined && (
-                <RoomGrants roomId={roomId} />
+                <RoomGrants roomId={roomId} roomName={roomName} />
             )}
 
             <UserDialog
