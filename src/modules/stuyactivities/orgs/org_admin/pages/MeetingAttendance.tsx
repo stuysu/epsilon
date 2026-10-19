@@ -5,9 +5,12 @@ import { useParams } from "react-router-dom";
 import { supabase } from "../../../../../lib/supabaseClient";
 import { PUBLIC_URL } from "../../../../../config/constants";
 import QRCode from "qrcode.react";
+import { LayoutGroup, motion } from "framer-motion";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
 import OrgMember from "../../components/OrgMember";
 import ItemList from "../../../../../components/ui/lists/ItemList";
+import SortSelect from "../../../../../components/ui/input/SortSelect";
+import { MemberSort, sortMembersBy } from "../../../../../utils/DataFormatters";
 
 const MeetingAttendance = () => {
     const { meetingId: meetingIdParam, orgUrl } = useParams();
@@ -15,6 +18,8 @@ const MeetingAttendance = () => {
 
     const { enqueueSnackbar } = useSnackbar();
     const [meeting, setMeeting] = useState<Meeting | undefined>();
+    const [sort, setSort] = useState<MemberSort>("default");
+    const [collapsed, setCollapsed] = useState<Record<string, boolean>>({});
 
     useEffect(() => {
         let isMounted = true;
@@ -30,6 +35,8 @@ const MeetingAttendance = () => {
           organizations!inner (
             id,
             memberships (
+              active,
+              created_at,
               users!inner (
                 id,
                 first_name,
@@ -132,6 +139,33 @@ const MeetingAttendance = () => {
         );
     };
 
+    const attendedUserIds = new Set(
+        (meeting?.attendance || []).map((attendance) => attendance.user_id),
+    );
+    const attendees = (meeting?.organizations?.memberships || [])
+        .filter((member) => member.active && member.users?.id != null)
+        .map((member) => ({
+            userId: member.users?.id as number,
+            firstName: member.users?.first_name || "",
+            lastName: member.users?.last_name || "",
+            picture: member.users?.picture,
+            email: member.users?.email,
+            joinedAt: member.created_at,
+            isPresent: attendedUserIds.has(member.users?.id as number),
+        }));
+    const sortAttendees = (list: typeof attendees) =>
+        sortMembersBy(list, sort, (member) => ({
+            first_name: member.firstName,
+            last_name: member.lastName,
+            joined_at: member.joinedAt,
+        }));
+    const presentMembers = sortAttendees(
+        attendees.filter((member) => member.isPresent),
+    );
+    const absentMembers = sortAttendees(
+        attendees.filter((member) => !member.isPresent),
+    );
+
     return (
         <Box>
             <h1>{meeting?.title}</h1>
@@ -169,51 +203,105 @@ const MeetingAttendance = () => {
                     />
                 </div>
             </div>
-            <ItemList height={"auto"}>
-                {meeting?.organizations?.memberships?.map((member) => {
-                    let userId = member.users?.id;
-                    let userName =
-                        member.users?.first_name +
-                        " " +
-                        member.users?.last_name;
-                    let userPicture = member.users?.picture;
-                    let userEmail = member.users?.email;
+            <SortSelect value={sort} onChange={setSort} />
 
-                    let isPresent = meeting?.attendance?.some(
-                        (attendance) => attendance.user_id === userId,
-                    );
-
-                    return (
-                        <div className={"flex items-center max-sm:flex-col"}>
-                            <div className={"w-full"}>
-                                <OrgMember
-                                    key={userId}
-                                    email={userEmail}
-                                    picture={userPicture}
-                                    role_name={isPresent ? "Present" : "Absent"}
-                                    first_name={userName}
-                                    last_name={String(userId).padStart(5, "0")}
+            <LayoutGroup>
+                {[
+                    {
+                        title: "Present",
+                        members: presentMembers,
+                        empty: "No one has been marked present yet.",
+                    },
+                    {
+                        title: "Absent",
+                        members: absentMembers,
+                        empty: "Everyone has been marked present.",
+                    },
+                ].map((section) => (
+                    <section key={section.title} className={"mb-8"}>
+                        <h3 className={"mb-3"}>
+                            <button
+                                type="button"
+                                aria-expanded={!collapsed[section.title]}
+                                onClick={() =>
+                                    setCollapsed((prev) => ({
+                                        ...prev,
+                                        [section.title]: !prev[section.title],
+                                    }))
+                                }
+                                className={
+                                    "flex items-center gap-2 cursor-pointer sm:hover:brightness-125"
+                                }
+                            >
+                                <i
+                                    className={`bx bx-chevron-down transition-transform ${
+                                        collapsed[section.title]
+                                            ? "-rotate-90"
+                                            : ""
+                                    }`}
                                 />
-                            </div>
-                            <div className={"w-48 px-4"}>
-                                <AsyncButton
-                                    isPrimary={!isPresent}
-                                    onClick={() =>
-                                        updateStatus(
-                                            userId,
-                                            member.users?.first_name,
-                                            member.users?.last_name,
-                                            isPresent,
-                                        )
-                                    }
-                                >
-                                    {isPresent ? "Mark Absent" : "Mark Present"}
-                                </AsyncButton>
-                            </div>
-                        </div>
-                    );
-                })}
-            </ItemList>
+                                <span>
+                                    {section.title}{" "}
+                                    <span className={"text-typography-2"}>
+                                        ({section.members.length})
+                                    </span>
+                                </span>
+                            </button>
+                        </h3>
+                        {collapsed[section.title] ? null : section.members
+                              .length ? (
+                            <ItemList height={"auto"}>
+                                {section.members.map((member) => (
+                                    <motion.div
+                                        layout
+                                        layoutId={`attendee-${member.userId}`}
+                                        transition={{ duration: 0.25 }}
+                                        key={member.userId}
+                                    >
+                                        <OrgMember
+                                            email={member.email}
+                                            picture={member.picture}
+                                            role_name={
+                                                member.isPresent
+                                                    ? "Present"
+                                                    : "Absent"
+                                            }
+                                            first_name={`${member.firstName} ${member.lastName}`}
+                                            last_name={String(
+                                                member.userId,
+                                            ).padStart(5, "0")}
+                                            action={
+                                                <AsyncButton
+                                                    isPrimary={
+                                                        !member.isPresent
+                                                    }
+                                                    sx={{ height: "40px" }}
+                                                    onClick={() =>
+                                                        updateStatus(
+                                                            member.userId,
+                                                            member.firstName,
+                                                            member.lastName,
+                                                            member.isPresent,
+                                                        )
+                                                    }
+                                                >
+                                                    {member.isPresent
+                                                        ? "Mark Absent"
+                                                        : "Mark Present"}
+                                                </AsyncButton>
+                                            }
+                                        />
+                                    </motion.div>
+                                ))}
+                            </ItemList>
+                        ) : (
+                            <p className={"bg-layer-2 p-4 text-typography-2"}>
+                                {section.empty}
+                            </p>
+                        )}
+                    </section>
+                ))}
+            </LayoutGroup>
         </Box>
     );
 };

@@ -1,3 +1,4 @@
+import { ReactNode } from "react";
 import { Avatar } from "radix-ui";
 import ToggleChip from "../../../../components/ui/input/ToggleChip";
 
@@ -9,6 +10,7 @@ type Props = {
     first_name?: User["first_name"];
     last_name?: User["last_name"];
     is_faculty?: User["is_faculty"];
+    action?: ReactNode;
 };
 
 const formatCapitals = (txt?: string) => {
@@ -24,6 +26,7 @@ const OrgMember = ({
     first_name,
     last_name,
     is_faculty,
+    action,
 }: Props) => {
     let l1 =
         role_name || formatCapitals(role) + (is_faculty ? " - Faculty" : "");
@@ -31,7 +34,8 @@ const OrgMember = ({
     return (
         <div
             className={
-                "flex flex-row items-center justify-between flex-wrap bg-layer-2 pr-4 pl-3"
+                "flex flex-row items-center justify-between bg-layer-2 pr-4 pl-3 " +
+                (action ? "flex-nowrap gap-3" : "flex-wrap")
             }
         >
             <div
@@ -63,10 +67,14 @@ const OrgMember = ({
 
             <div
                 className={
-                    "my-3 max-w-full [&>button]:max-w-full [&>button]:truncate"
+                    "my-3 max-w-full [&>button]:max-w-full [&>button]:truncate" +
+                    (action
+                        ? " shrink-0 flex flex-col items-end gap-2 sm:flex-row sm:items-center"
+                        : "")
                 }
             >
                 <ToggleChip title={l1} selectable={false} />
+                {action}
             </div>
         </div>
     );
