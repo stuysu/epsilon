@@ -28,6 +28,27 @@ const Overview = () => {
     const isMeetingMobile = useMediaQuery("(max-width: 1450px)");
 
     const [attemptingInteract, setAttemptingInteract] = useState(false);
+    const [publicMemberCount, setPublicMemberCount] = useState<number>();
+
+    useEffect(() => {
+        setPublicMemberCount(undefined);
+        if (user.signed_in || organization.id < 0) return;
+
+        let cancelled = false;
+
+        supabase
+            .rpc("get_organization_member_counts", {
+                org_ids: [organization.id],
+            })
+            .then(({ data, error }) => {
+                if (cancelled || error) return;
+                setPublicMemberCount(Number(data?.[0]?.member_count ?? 0));
+            });
+
+        return () => {
+            cancelled = true;
+        };
+    }, [user.signed_in, organization.id]);
 
     const [leaveConfirmation, setLeaveConfirmation] = useState(false);
     const [userLeave, setUserLeave] = useState(false);
@@ -316,21 +337,17 @@ const Overview = () => {
             <Divider />
             <div className={"max-w-full overflow-scroll scrollbar-none"}>
                 <div className={"flex flex-row mt-2 mb-6 items-center"}>
-                    {user.signed_in && (
-                        <>
-                            <div>
-                                <h3 className={"w-24 text-center"}>
-                                    {
-                                        organization.memberships.filter(
-                                            (member) => member.active,
-                                        ).length
-                                    }
-                                </h3>
-                                <p className={"text-center"}>Members</p>
-                            </div>
-                            <h1 className={"opacity-25"}>•</h1>
-                        </>
-                    )}
+                    <div>
+                        <h3 className={"w-24 text-center"}>
+                            {user.signed_in
+                                ? organization.memberships.filter(
+                                      (member) => member.active,
+                                  ).length
+                                : publicMemberCount ?? "-"}
+                        </h3>
+                        <p className={"text-center"}>Members</p>
+                    </div>
+                    <h1 className={"opacity-25"}>•</h1>
 
                     <div>
                         <h3 className={"w-40 text-center"}>
@@ -423,57 +440,42 @@ const Overview = () => {
                     title={"Activity Leaders"}
                     glow={"bg-red"}
                 >
-                    {!user.signed_in ? (
-                        <p className={"bg-layer-2 p-4"}>
-                            <i
-                                className={
-                                    "bx bx-user mr-2 bx-sm relative top-0.5"
-                                }
-                            ></i>
-                            <span className={"relative -top-1"}>
-                                {" "}
-                                Sign in to view the leaders of this
-                                organization.
-                            </span>
-                        </p>
-                    ) : (
-                        <div className={"flex flex-col gap-1"}>
-                            {organization.memberships
-                                ?.sort(sortMembers)
-                                .map(
-                                    (member, i) =>
-                                        [
-                                            "FACULTY",
-                                            "ADMIN",
-                                            "CREATOR",
-                                        ].includes(member.role || "") &&
-                                        member.active && (
-                                            <OrgMember
-                                                key={i}
-                                                role={member.role || "MEMBER"}
-                                                role_name={member.role_name}
-                                                email={
-                                                    member.users?.email ||
-                                                    "no email"
-                                                }
-                                                picture={member.users?.picture}
-                                                first_name={
-                                                    member.users?.first_name ||
-                                                    "First"
-                                                }
-                                                last_name={
-                                                    member.users?.last_name ||
-                                                    "Last"
-                                                }
-                                                is_faculty={
-                                                    member.users?.is_faculty ||
-                                                    false
-                                                }
-                                            />
-                                        ),
-                                )}
-                        </div>
-                    )}
+                    <div className={"flex flex-col gap-1"}>
+                        {organization.memberships
+                            ?.sort(sortMembers)
+                            .map(
+                                (member, i) =>
+                                    ["FACULTY", "ADMIN", "CREATOR"].includes(
+                                        member.role || "",
+                                    ) &&
+                                    member.active && (
+                                        <OrgMember
+                                            key={i}
+                                            role={member.role || "MEMBER"}
+                                            role_name={member.role_name}
+                                            email={
+                                                user.signed_in
+                                                    ? member.users?.email ||
+                                                      "no email"
+                                                    : undefined
+                                            }
+                                            picture={member.users?.picture}
+                                            first_name={
+                                                member.users?.first_name ||
+                                                "First"
+                                            }
+                                            last_name={
+                                                member.users?.last_name ||
+                                                "Last"
+                                            }
+                                            is_faculty={
+                                                member.users?.is_faculty ||
+                                                false
+                                            }
+                                        />
+                                    ),
+                            )}
+                    </div>
                 </OverviewList>
 
                 <OverviewList

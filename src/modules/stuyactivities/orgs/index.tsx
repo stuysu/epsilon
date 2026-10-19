@@ -62,6 +62,21 @@ const OrgRouter = () => {
 
     useEffect(() => {
         const getOrgData = async () => {
+            const {
+                data: { session },
+            } = await supabase.auth.getSession();
+            const memberFields = session
+                ? `id,
+                            first_name,
+                            last_name,
+                            email,
+                            picture,
+                            is_faculty`
+                : `id,
+                            first_name,
+                            last_name,
+                            picture`;
+
             const { data, error } = await supabase
                 .from("organizations")
                 .select(
@@ -93,12 +108,7 @@ const OrgRouter = () => {
                         ordering_id,
                         active,
                         users (
-                            id,
-                            first_name,
-                            last_name,
-                            email,
-                            picture,
-                            is_faculty
+                            ${memberFields}
                         )
                     ),
                     meetings (

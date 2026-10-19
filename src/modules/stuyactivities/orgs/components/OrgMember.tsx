@@ -61,7 +61,7 @@ const OrgMember = ({
                     <h4
                         className={"truncate"}
                     >{`${first_name} ${last_name}`}</h4>
-                    <p className={"truncate"}>{<>{email}</>}</p>
+                    {email && <p className={"truncate"}>{email}</p>}
                 </div>
             </div>
 
