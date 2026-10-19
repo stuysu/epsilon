@@ -122,7 +122,7 @@ const OrgMeeting = ({
             </div>
             <UserDialog
                 title="Delete meeting?"
-                description={`"${title}" at ${startTime} will be deleted. Members of this club will be emailed.`}
+                description={`"${title}" at ${startTime} will be deleted. Members of this club will be emailed.\n\nDeleting is irreversible and attendance will be removed.`}
                 open={confirmingDelete}
                 onClose={() => setConfirmingDelete(false)}
                 onConfirm={() => deleteMeeting(false)}

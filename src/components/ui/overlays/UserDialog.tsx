@@ -101,7 +101,9 @@ export default function UserDialog({
 
                                     {description && (
                                         <Dialog.Description>
-                                            <p>{description}</p>
+                                            <p className="whitespace-pre-line">
+                                                {description}
+                                            </p>
                                         </Dialog.Description>
                                     )}
 

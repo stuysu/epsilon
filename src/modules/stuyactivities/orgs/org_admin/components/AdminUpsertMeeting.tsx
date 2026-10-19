@@ -13,6 +13,7 @@ import {
 import { DatePicker, TimePicker } from "@mui/x-date-pickers";
 import { supabase } from "../../../../../lib/supabaseClient";
 import OrgContext from "../../../../../contexts/OrgContext";
+import UserContext from "../../../../../contexts/UserContext";
 import dayjs, { Dayjs } from "dayjs";
 import { useSnackbar } from "notistack";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
@@ -58,6 +59,7 @@ const AdminUpsertMeeting = ({
 }) => {
     const { enqueueSnackbar } = useSnackbar();
     const organization = useContext(OrgContext);
+    const user = useContext(UserContext);
 
     const [meetingTitle, setMeetingTitle] = useState(title || "");
     const [meetingDesc, setMeetingDesc] = useState(description || "");
@@ -297,7 +299,17 @@ const AdminUpsertMeeting = ({
             return;
         }
 
-        if (startInstant.isBefore(dayjs())) {
+        const keepsStartOfRunningMeeting =
+            !!id &&
+            !!start &&
+            startInstant.isSame(dayjs(start)) &&
+            endInstant.isAfter(dayjs());
+
+        if (
+            !user.admin &&
+            !keepsStartOfRunningMeeting &&
+            startInstant.isBefore(dayjs())
+        ) {
             enqueueSnackbar("Meeting cannot be scheduled in the past.", {
                 variant: "error",
             });
