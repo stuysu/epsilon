@@ -8,7 +8,7 @@ const Arista = () => {
     const theme = useContext(ThemeContext);
 
     return (
-        <section className={"min-h-screen p-12"}>
+        <section className={"min-h-screen p-12 mx-auto max-w-[1800px]"}>
             <Helmet>
                 <title>Arista - Epsilon</title>
                 <meta
@@ -17,13 +17,9 @@ const Arista = () => {
                 />
             </Helmet>
 
-            <div
-                className={
-                    "flex sm:flex-row flex-col items-start justify-start gap-10"
-                }
-            >
+            <div className={"flex flex-col items-start justify-start gap-10"}>
                 <motion.div
-                    className={"w-3/4"}
+                    className={"w-full"}
                     initial={{
                         opacity: 0,
                         y: 10,
@@ -42,16 +38,37 @@ const Arista = () => {
                         delay: 0.5,
                     }}
                 >
-                    <img
-                        className={"object-fill w-full"}
-                        src={`${PUBLIC_URL}/media/arista.png`}
-                        alt="Arista"
-                    ></img>
+                    <div className={"relative"}>
+                        <img
+                            className={
+                                "absolute inset-0 w-full h-full aspect-[3/2] object-cover sm:aspect-[2/1] md:aspect-auto rounded-2xl opacity-30 blur-3xl scale-105 pointer-events-none"
+                            }
+                            src={`${PUBLIC_URL}/media/arista-open-house-fall-2026.jpg`}
+                            alt=""
+                            aria-hidden="true"
+                        />
+                        <img
+                            className={
+                                "relative w-full h-auto aspect-[3/2] object-cover sm:aspect-[2/1] md:aspect-auto rounded-2xl shadow-prominent"
+                            }
+                            src={`${PUBLIC_URL}/media/arista-open-house-fall-2026.jpg`}
+                            width={2600}
+                            height={763}
+                            alt="Arista members at the Fall 2026 Open House"
+                        ></img>
+                    </div>
+                    <p className={"mt-3 opacity-65"}>
+                        Fall 2026 Open House · Photo by Anders Zernike
+                    </p>
                 </motion.div>
 
-                <div className={"flex flex-col gap-5 items-start w-full"}>
+                <div
+                    className={
+                        "grid grid-cols-1 gap-5 w-full md:grid-cols-[auto_minmax(0,1fr)] md:items-start md:gap-12 lg:gap-16"
+                    }
+                >
                     <motion.div
-                        className={"max-w-xl relative"}
+                        className={"relative"}
                         initial={{
                             opacity: 0,
                             y: 10,
@@ -72,14 +89,14 @@ const Arista = () => {
                     >
                         <img
                             src={`${PUBLIC_URL}/taglines/arista.svg`}
-                            className={`w-80 h-auto ${
+                            className={`w-80 md:w-56 lg:w-72 xl:w-80 2xl:w-[26rem] h-auto ${
                                 theme.effectiveMode === "light" ? "invert" : ""
                             }`}
                             alt="Arista is Stuyvesant High School’s premier honor society."
                         />
                         <img
                             src={`${PUBLIC_URL}/taglines/arista.svg`}
-                            className={`w-80 h-auto top-0 absolute blur-2xl ${
+                            className={`w-80 md:w-56 lg:w-72 xl:w-80 2xl:w-[26rem] h-auto top-0 absolute blur-2xl ${
                                 theme.effectiveMode === "light" ? "invert" : ""
                             }`}
                             alt=""
@@ -87,7 +104,7 @@ const Arista = () => {
                         />
                     </motion.div>
                     <motion.div
-                        className={"max-w-xl"}
+                        className={"max-w-xl xl:max-w-2xl 2xl:max-w-3xl"}
                         initial={{
                             opacity: 0,
                             y: 10,
@@ -106,7 +123,7 @@ const Arista = () => {
                             delay: 1.1,
                         }}
                     >
-                        <p>
+                        <p className={"xl:text-lg 2xl:text-xl"}>
                             I’ve learned, over time, to enjoy helping others and
                             to find a sense of pride and fulfillment in doing
                             so. I hope you, too, will develop this muscle in the
@@ -122,36 +139,27 @@ const Arista = () => {
                             someone else.
                         </p>
                         <br />
-                        <p className={"opacity-65"}>
-                            Eric Ferencz, Faculty Advisor
+                        <p className={"opacity-65 xl:text-lg 2xl:text-xl"}>
+                            Eric Ferencz, Faculty Advisor (2023–2025)
                         </p>
+                        <a
+                            href={"https://stuyarista.org/"}
+                            target={"_blank"}
+                            rel={"noopener noreferrer"}
+                            className={
+                                "group mt-8 inline-flex w-full sm:w-auto items-center justify-center gap-3 rounded-[13px] bg-layer-1 px-8 py-4 text-lg font-bold text-typography-1 no-underline shadow-control transition-colors sm:hover:bg-layer-2 xl:text-xl"
+                            }
+                        >
+                            Visit Arista Now
+                            <i
+                                className={
+                                    "bx bx-right-arrow-alt text-2xl text-beige transition-transform sm:group-hover:translate-x-1"
+                                }
+                            ></i>
+                        </a>
                     </motion.div>
                 </div>
             </div>
-            <a
-                href={"https://stuyarista.org/"}
-                className={"no-underline"}
-                target={"_blank"}
-            >
-                <div
-                    className={
-                        "flex mt-20 w-full py-3 px-6 border-divider border justify-between sm:hover:bg-divider transition-colors"
-                    }
-                >
-                    <h1
-                        className={
-                            "font-light text-xl sm:text-8xl text-typography-1"
-                        }
-                    >
-                        Visit Arista Now
-                    </h1>
-                    <i
-                        className={
-                            "relative top-2 bx bx-chevron-right text-xl sm:text-8xl text-typography-1"
-                        }
-                    ></i>
-                </div>
-            </a>
         </section>
     );
 };
