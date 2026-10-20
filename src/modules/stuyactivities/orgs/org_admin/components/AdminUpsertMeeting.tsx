@@ -17,6 +17,9 @@ import UserContext from "../../../../../contexts/UserContext";
 import dayjs, { Dayjs } from "dayjs";
 import { useSnackbar } from "notistack";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
+import FacultySelect, {
+    FacultyOption,
+} from "../../../../../components/ui/input/FacultySelect";
 import { sortRooms } from "../../../../../utils/DataFormatters";
 import {
     isoToWallClock,
@@ -84,6 +87,51 @@ const AdminUpsertMeeting = ({
     const [silent, setSilent] = useState(false);
     const advisorRoomBooking = advisorNeeded && (!id || roomId !== room_id);
 
+    const [faculty, setFaculty] = useState<
+        (FacultyOption & { firstName: string; lastName: string })[]
+    >([]);
+    const [facultyLoaded, setFacultyLoaded] = useState(false);
+    const [facultyFailed, setFacultyFailed] = useState(false);
+    const [advisorTouched, setAdvisorTouched] = useState(false);
+    const unregisteredAdvisor =
+        facultyLoaded &&
+        meetingAdvisor !== "" &&
+        !faculty.some((member) => member.name === meetingAdvisor);
+    const advisorInvalid =
+        advisorNeeded &&
+        (meetingAdvisor.trim() === "" || !facultyLoaded || unregisteredAdvisor);
+    const clubAdvisorIds = new Set(
+        (organization.memberships || [])
+            .filter((member) => member.role === "ADVISOR" && member.active)
+            .map((member) => member.users?.id),
+    );
+    const sortedFaculty = [...faculty].sort(
+        (a, b) =>
+            a.lastName.localeCompare(b.lastName, undefined, {
+                sensitivity: "base",
+            }) ||
+            a.firstName.localeCompare(b.firstName, undefined, {
+                sensitivity: "base",
+            }),
+    );
+    const groupedFaculty: FacultyOption[] = sortedFaculty.some((member) =>
+        clubAdvisorIds.has(member.id),
+    )
+        ? [
+              ...sortedFaculty
+                  .filter((member) => clubAdvisorIds.has(member.id))
+                  .map((member) => ({
+                      ...member,
+                      group: "Advisors of this club",
+                  })),
+              ...sortedFaculty
+                  .filter((member) => !clubAdvisorIds.has(member.id))
+                  .map((member) => ({ ...member, group: "All faculty" })),
+          ]
+        : sortedFaculty;
+    const advisorOptions: FacultyOption[] = unregisteredAdvisor
+        ? [{ id: -1, name: meetingAdvisor, email: "" }, ...groupedFaculty]
+        : groupedFaculty;
     const [allRooms, setAllRooms] = useState<Room[]>([]);
     const [roomGrants, setRoomGrants] = useState<
         { room_id: number; organization_id: number }[]
@@ -127,6 +175,41 @@ const AdminUpsertMeeting = ({
 
         fetchRooms();
     }, []);
+
+    useEffect(() => {
+        const fetchFaculty = async () => {
+            const { data, error } = await supabase
+                .from("users")
+                .select("id, first_name, last_name, email")
+                .eq("is_faculty", true)
+                .order("last_name")
+                .returns<
+                    Pick<User, "id" | "first_name" | "last_name" | "email">[]
+                >();
+
+            if (error || !data) {
+                setFacultyFailed(true);
+                enqueueSnackbar(
+                    "Error fetching faculty. Contact it@stuysu.org for support.",
+                    { variant: "error" },
+                );
+                return;
+            }
+
+            setFaculty(
+                data.map((user) => ({
+                    id: user.id,
+                    name: `${user.first_name} ${user.last_name}`.trim(),
+                    email: user.email,
+                    firstName: user.first_name,
+                    lastName: user.last_name,
+                })),
+            );
+            setFacultyLoaded(true);
+        };
+
+        fetchFaculty();
+    }, [enqueueSnackbar]);
 
     useEffect(() => {
         const filterRooms = async () => {
@@ -316,9 +399,20 @@ const AdminUpsertMeeting = ({
             return;
         }
 
-        if (advisorNeeded && !meetingAdvisor.trim()) {
+        if (advisorNeeded && !facultyLoaded) {
             enqueueSnackbar(
-                "Meeting in this room requires a faculty advisor.",
+                facultyFailed
+                    ? "The faculty list could not be loaded, so this room cannot be booked right now. Reopen this window to try again."
+                    : "The faculty list is still loading. Try again in a moment.",
+                { variant: "error" },
+            );
+            return;
+        }
+
+        if (advisorInvalid) {
+            setAdvisorTouched(true);
+            enqueueSnackbar(
+                "Meeting in this room requires a faculty advisor. Choose one from the list.",
                 {
                     variant: "error",
                 },
@@ -426,13 +520,26 @@ const AdminUpsertMeeting = ({
                     </TextField>
                 </Box>
 
-                <TextField
-                    value={meetingAdvisor}
-                    onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        setMeetingAdvisor(event.target.value)
-                    }
+                <FacultySelect
                     label="Faculty Advisor Present"
-                    fullWidth
+                    options={advisorOptions}
+                    value={meetingAdvisor}
+                    onChange={setMeetingAdvisor}
+                    required={advisorNeeded}
+                    error={advisorTouched && advisorInvalid}
+                    helperText={
+                        advisorTouched && advisorInvalid && facultyLoaded
+                            ? "Choose a faculty advisor from the list."
+                            : advisorNeeded && facultyFailed
+                              ? "The faculty list could not be loaded."
+                              : advisorNeeded && !facultyLoaded
+                                ? "Loading the faculty list..."
+                                : unregisteredAdvisor
+                                  ? "This advisor is not a registered faculty member. Choose one from the list."
+                                  : advisorNeeded
+                                    ? "A faculty advisor is required for this room."
+                                    : undefined
+                    }
                 />
 
                 <TextField
