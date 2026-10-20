@@ -182,6 +182,15 @@ export default function FacultySelect({
                         onKeyDown={handleKeyDown}
                         placeholder="Search faculty by name or email"
                         aria-label="Search faculty"
+                        role="combobox"
+                        aria-expanded={open}
+                        aria-controls={listId}
+                        aria-autocomplete="list"
+                        aria-activedescendant={
+                            entries[highlighted]
+                                ? `${listId}-${entries[highlighted].key}`
+                                : undefined
+                        }
                         className="w-full h-12 px-4 bg-transparent text-base text-[color:var(--fs-text)] placeholder:text-[color:var(--fs-muted)] border-b border-[color:var(--fs-divider)] outline-0"
                     />
                     <ul
@@ -211,6 +220,7 @@ export default function FacultySelect({
                                             </li>
                                         )}
                                         <li
+                                            id={`${listId}-${entry.key}`}
                                             role="option"
                                             data-index={index}
                                             aria-selected={selected}

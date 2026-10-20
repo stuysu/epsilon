@@ -91,13 +91,15 @@ const AdminUpsertMeeting = ({
         (FacultyOption & { firstName: string; lastName: string })[]
     >([]);
     const [facultyLoaded, setFacultyLoaded] = useState(false);
+    const [facultyFailed, setFacultyFailed] = useState(false);
     const [advisorTouched, setAdvisorTouched] = useState(false);
     const unregisteredAdvisor =
         facultyLoaded &&
         meetingAdvisor !== "" &&
         !faculty.some((member) => member.name === meetingAdvisor);
     const advisorInvalid =
-        advisorNeeded && (meetingAdvisor.trim() === "" || unregisteredAdvisor);
+        advisorNeeded &&
+        (meetingAdvisor.trim() === "" || !facultyLoaded || unregisteredAdvisor);
     const clubAdvisorIds = new Set(
         (organization.memberships || [])
             .filter((member) => member.role === "ADVISOR" && member.active)
@@ -186,6 +188,7 @@ const AdminUpsertMeeting = ({
                 >();
 
             if (error || !data) {
+                setFacultyFailed(true);
                 enqueueSnackbar(
                     "Error fetching faculty. Contact it@stuysu.org for support.",
                     { variant: "error" },
@@ -396,6 +399,16 @@ const AdminUpsertMeeting = ({
             return;
         }
 
+        if (advisorNeeded && !facultyLoaded) {
+            enqueueSnackbar(
+                facultyFailed
+                    ? "The faculty list could not be loaded, so this room cannot be booked right now. Reopen this window to try again."
+                    : "The faculty list is still loading. Try again in a moment.",
+                { variant: "error" },
+            );
+            return;
+        }
+
         if (advisorInvalid) {
             setAdvisorTouched(true);
             enqueueSnackbar(
@@ -515,13 +528,17 @@ const AdminUpsertMeeting = ({
                     required={advisorNeeded}
                     error={advisorTouched && advisorInvalid}
                     helperText={
-                        advisorTouched && advisorInvalid
+                        advisorTouched && advisorInvalid && facultyLoaded
                             ? "Choose a faculty advisor from the list."
-                            : unregisteredAdvisor
-                              ? "This advisor is not a registered faculty member. Choose one from the list."
-                              : advisorNeeded
-                                ? "A faculty advisor is required for this room."
-                                : undefined
+                            : advisorNeeded && facultyFailed
+                              ? "The faculty list could not be loaded."
+                              : advisorNeeded && !facultyLoaded
+                                ? "Loading the faculty list..."
+                                : unregisteredAdvisor
+                                  ? "This advisor is not a registered faculty member. Choose one from the list."
+                                  : advisorNeeded
+                                    ? "A faculty advisor is required for this room."
+                                    : undefined
                     }
                 />
 
