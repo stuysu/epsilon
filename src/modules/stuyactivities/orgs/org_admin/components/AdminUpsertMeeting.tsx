@@ -105,6 +105,13 @@ const AdminUpsertMeeting = ({
             .filter((member) => member.role === "ADVISOR" && member.active)
             .map((member) => member.users?.id),
     );
+    const charterAdvisorEmail = (organization.faculty_email || "")
+        .trim()
+        .toLowerCase();
+    const isClubAdvisor = (member: { id: number; email: string }) =>
+        clubAdvisorIds.has(member.id) ||
+        (charterAdvisorEmail !== "" &&
+            member.email?.trim().toLowerCase() === charterAdvisorEmail);
     const sortedFaculty = [...faculty].sort(
         (a, b) =>
             a.lastName.localeCompare(b.lastName, undefined, {
@@ -115,17 +122,17 @@ const AdminUpsertMeeting = ({
             }),
     );
     const groupedFaculty: FacultyOption[] = sortedFaculty.some((member) =>
-        clubAdvisorIds.has(member.id),
+        isClubAdvisor(member),
     )
         ? [
               ...sortedFaculty
-                  .filter((member) => clubAdvisorIds.has(member.id))
+                  .filter((member) => isClubAdvisor(member))
                   .map((member) => ({
                       ...member,
                       group: "Advisors of this club",
                   })),
               ...sortedFaculty
-                  .filter((member) => !clubAdvisorIds.has(member.id))
+                  .filter((member) => !isClubAdvisor(member))
                   .map((member) => ({ ...member, group: "All faculty" })),
           ]
         : sortedFaculty;
