@@ -5,6 +5,7 @@ import { monthNames } from "../../../utils/TimeStrings";
 import React, { useEffect, useState } from "react";
 import ContentUnavailable from "../../../components/ui/content/ContentUnavailable";
 import UpcomingMeeting from "../../home/components/UpcomingMeeting";
+import { sortRooms } from "../../../utils/DataFormatters";
 
 type Props = {
     day: Dayjs;
@@ -21,31 +22,26 @@ function compareTimes(a: CalendarMeeting, b: CalendarMeeting) {
     return 0;
 }
 
-const getRoomNameKey = (roomName?: string) => {
-    if (!roomName) return { isVirtualOrUnknown: true, normalized: "" };
-    const name = String(roomName).trim();
-    if (/^virtual$/i.test(name) || /virtual/i.test(name)) {
-        // if room is virtual, send to bottom
-        return { isVirtualOrUnknown: true, normalized: "" };
-    }
-    return { isVirtualOrUnknown: false, normalized: name.toLowerCase() };
-};
+/* virtual meetings and meetings without a room are listed after the rest */
+const isVirtualOrUnknown = (roomName?: string) =>
+    !roomName || /virtual/i.test(roomName.trim());
 
-const compareByRoomNameThenTime = (a: CalendarMeeting, b: CalendarMeeting) => {
-    const ra = getRoomNameKey(a.rooms?.name);
-    const rb = getRoomNameKey(b.rooms?.name);
+/* rooms in order (reversed when descending), earliest meeting first within a room */
+export const sortMeetingsByRoom = (
+    meetings: CalendarMeeting[],
+    descending: boolean,
+) => {
+    const inRooms = meetings.filter((m) => !isVirtualOrUnknown(m.rooms?.name));
+    const virtual = meetings.filter((m) => isVirtualOrUnknown(m.rooms?.name));
 
-    if (ra.isVirtualOrUnknown && rb.isVirtualOrUnknown) {
+    inRooms.sort((a, b) => {
+        const byRoom = sortRooms(a.rooms, b.rooms);
+        if (byRoom) return descending ? -byRoom : byRoom;
         return compareTimes(a, b);
-    }
+    });
+    virtual.sort(compareTimes);
 
-    if (ra.isVirtualOrUnknown) return 1;
-    if (rb.isVirtualOrUnknown) return -1;
-
-    const cmp = ra.normalized.localeCompare(rb.normalized);
-    if (cmp !== 0) return cmp;
-
-    return compareTimes(a, b);
+    return [...inRooms, ...virtual];
 };
 
 /* Schedule of meetings for a given day */
@@ -67,28 +63,10 @@ const DaySchedule = ({ day, meetings }: Props) => {
 
     const toggleSort = () => setSortDesc((s) => !s);
 
-    const sortedMeetings = React.useMemo(() => {
-        const copy = meetings.slice();
-
-        const keyed = copy.map((m) => ({
-            m,
-            key: getRoomNameKey(m.rooms?.name),
-        }));
-
-        const virtualItems = keyed
-            .filter((k) => k.key.isVirtualOrUnknown)
-            .map((k) => k.m);
-        const nonVirtualItems = keyed
-            .filter((k) => !k.key.isVirtualOrUnknown)
-            .map((k) => k.m);
-
-        nonVirtualItems.sort(compareByRoomNameThenTime);
-        if (sortDesc) nonVirtualItems.reverse();
-
-        virtualItems.sort(compareTimes);
-
-        return [...nonVirtualItems, ...virtualItems];
-    }, [meetings, sortDesc]);
+    const sortedMeetings = React.useMemo(
+        () => sortMeetingsByRoom(meetings, sortDesc),
+        [meetings, sortDesc],
+    );
 
     return (
         <div className={"bg-layer-1 rounded-xl shadow-prominent p-1"}>

@@ -22,6 +22,7 @@ type CalendarMeeting = {
     rooms: {
         id: number;
         name: string;
+        floor?: number;
     };
     organizations: {
         id: number;

@@ -78,7 +78,8 @@ const Index = () => {
           end_time,
           rooms (
             id,
-            name
+            name,
+            floor
           ),
           organizations!inner (
             id,
