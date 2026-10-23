@@ -1,10 +1,13 @@
 import { Avatar, Box, Skeleton } from "@mui/material";
 import { PUBLIC_URL } from "../../../config/constants";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
+import UserContext from "../../../contexts/UserContext";
 import { Link } from "react-router-dom";
 
 const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
     const [imgLoaded, setImgLoaded] = useState(false);
+
+    const user: UserContextType = useContext(UserContext);
 
     return (
         <article
@@ -102,14 +105,16 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                 }}
                             ></Box>
 
-                            <p
-                                className={
-                                    "absolute top-12 right-0 text-typography-2 bg-layer-2 px-2 py-1 rounded-md important shadow-control"
-                                }
-                            >
-                                <i className="bx bx-group bx-xs relative top-0.5 mr-1"></i>
-                                {organization.memberships?.length ?? "-"}
-                            </p>
+                            {user.signed_in && (
+                                <p
+                                    className={
+                                        "absolute top-12 right-0 text-typography-2 bg-layer-2 px-2 py-1 rounded-md important shadow-control"
+                                    }
+                                >
+                                    <i className="bx bx-group bx-xs relative top-0.5 mr-1"></i>
+                                    {organization.memberships?.length ?? 0}
+                                </p>
+                            )}
 
                             {/* Background avatar with blur effect */}
                             <Avatar

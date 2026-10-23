@@ -168,32 +168,24 @@ const Catalog = () => {
                     .map((o) => o.id)
                     .filter(Boolean) as number[];
 
-                let counts: Map<number, number> | undefined = new Map();
+                let counts = new Map<number, number>();
                 if (pageIds.length) {
-                    const { data: memberCounts, error: countsError } =
-                        await supabase.rpc("get_organization_member_counts", {
-                            org_ids: pageIds,
-                        });
+                    const { data: mems } = await supabase
+                        .from("memberships")
+                        .select("organization_id")
+                        .in("organization_id", pageIds)
+                        .eq("active", true);
 
-                    if (countsError) {
-                        counts = undefined;
-                    } else {
-                        (memberCounts ?? []).forEach(
-                            (c: {
-                                organization_id: number;
-                                member_count: number;
-                            }) =>
-                                counts?.set(
-                                    c.organization_id,
-                                    Number(c.member_count),
-                                ),
+                    counts = new Map<number, number>();
+                    (mems ?? []).forEach((m: any) => {
+                        counts.set(
+                            m.organization_id,
+                            (counts.get(m.organization_id) ?? 0) + 1,
                         );
-                    }
+                    });
                 }
 
                 const pageWithMems = res.data.map((o) => {
-                    if (!counts) return o;
-
                     const count = counts.get(o.id as number) ?? 0;
                     const fakeMemberships = Array.from(
                         { length: count },
