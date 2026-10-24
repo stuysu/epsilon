@@ -112,7 +112,7 @@ const AlertDisplay = () => {
             </Alert>
 
             <Popover
-                sx={{ 
+                sx={{
                     pointerEvents: 'none',
                     zIndex: 9999,
                 }}
@@ -138,16 +138,16 @@ const AlertDisplay = () => {
                             pointerEvents: 'auto'
                         }
                     },
-                }}  
+                }}
             >
-                
-                    <Button 
-                        sx={{ 
+
+                    <Button
+                        sx={{
                             size: 'small',
                             color: 'var(--text-primary)',
                             px: 2,
                             textTransform: "none"
-                        }} 
+                        }}
                         onClick={handleDoNotRemindAgain}>
                         Do not remind me again
                     </Button>
