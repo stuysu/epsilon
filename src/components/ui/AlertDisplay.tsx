@@ -27,7 +27,7 @@ const AlertDisplay = () => {
                 )
                     setOpen(true);
             } catch (e) {
-                // log error for debugging
+                    // log error for debugging
                 console.error(e);
             }
         };
@@ -40,13 +40,22 @@ const AlertDisplay = () => {
         };
     }, []);
 
+    const handleCloseClick = (event: React.SyntheticEvent<Element, Event>) => {
+        if (anchorEl) handleClose();
+        if (travelTime.current) {
+            clearTimeout(travelTime.current);
+            travelTime.current = null;
+        }
+        setAnchorEl(event.currentTarget as HTMLButtonElement);
+    }
+
     const handleClose = () => {
         setOpen(false);
         setAnchorEl(null);
-    };
+    }
 
     const handleDoNotRemindAgain = () => {
-        if (data && data.message) sessionStorage.setItem("dismissedAlert", data.message);
+        if (data && data.message) localStorage.setItem("dismissedAlert", data.message);
         setOpen(false);
         setAnchorEl(null);
     };
@@ -89,7 +98,7 @@ const AlertDisplay = () => {
                 sx={{ borderRadius: "10px" }}
                 severity={data.severity}
                 variant="filled"
-                onClose={data.severity === "error" ? undefined : handleClose}
+                onClose={handleCloseClick}
                 componentsProps={{
                     closeButton: {
                         onMouseEnter: handleMouseEnter,
@@ -120,6 +129,7 @@ const AlertDisplay = () => {
                     vertical: 'top',
                     horizontal: 'center',
                 }}
+                disableRestoreFocus
                 slotProps={{
                     paper: {
                         onMouseEnter: handlePopoverEnter,
