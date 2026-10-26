@@ -6,6 +6,7 @@ import { toNewYork } from "../../../../utils/NewYorkTime";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import TextInput from "../../../../components/ui/input/TextInput";
 import { Avatar } from "radix-ui";
+import { MarkupDisplayer, MarkupEditor } from "../../../../components/MarkupUtil";
 
 type OrgMessage = {
     id: number;
@@ -187,8 +188,8 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                             <div
                                 className={"relative p-4 bg-layer-2 rounded-lg"}
                             >
-                                <p className={"text-wrap overflow-scroll"}>
-                                    {message.content}
+                                <p className={"text-wrap overflow-none"}>
+                                    <MarkupDisplayer text={message.content} />
                                 </p>
 
                                 {message.users.id === user.id && (
@@ -207,7 +208,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                 })}
             </div>
             <div className={"w-full flex items-center mt-2 gap-4"}>
-                <TextInput value={message} onChange={(e) => setMessage(e)} />
+                <MarkupEditor callback={setMessage} defaultText="Message.." />
                 <AsyncButton
                     variant="contained"
                     sx={{ width: "10%" }}

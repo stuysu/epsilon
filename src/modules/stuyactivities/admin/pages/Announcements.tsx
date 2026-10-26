@@ -3,7 +3,7 @@ import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
-import DisplayLinks from "../../../../components/DisplayLinks";
+import { MarkupDisplayer, MarkupEditor } from "../../../../components/MarkupUtil";
 
 const Announcements = () => {
     let [content, setContent] = useState("");
@@ -85,20 +85,7 @@ const Announcements = () => {
             </p>
             <div className={"w-full flex sm:flex-row flex-col gap-5"}>
                 <div className={"w-full sm:w-2/3"}>
-                    <TextField
-                        sx={{ width: "100%" }}
-                        multiline
-                        rows={3}
-                        value={content}
-                        label="Content"
-                        onChange={(e) => setContent(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter" && e.ctrlKey) {
-                                e.preventDefault();
-                                createAnnouncement();
-                            }
-                        }}
-                    />
+                    <MarkupEditor callback={ setContent } defaultText="Content"/>
                     <AsyncButton
                         sx={{ width: "100%", marginTop: "10px" }}
                         variant="contained"
@@ -130,7 +117,7 @@ const Announcements = () => {
                                             alignItems: "center",
                                         }}
                                     >
-                                        <DisplayLinks
+                                        <MarkupDisplayer
                                             text={announcement.content}
                                         />
                                         <AsyncButton

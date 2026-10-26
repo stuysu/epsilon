@@ -9,7 +9,7 @@ import { toNewYork } from "../../../../utils/NewYorkTime";
 import OrgContext from "../../../../contexts/OrgContext";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import { Avatar } from "radix-ui";
-import DisplayLinks from "../../../../components/DisplayLinks";
+import { MarkupDisplayer } from "../../../../components/MarkupUtil";
 
 /* This post component will serve as both the org_admin and member post. depending on role, differeing functionality */
 const OrgStreamPost = ({
@@ -121,20 +121,21 @@ const OrgStreamPost = ({
             ></div>
 
             <div className={"bg-layer-2 p-4 rounded-lg h-fit"}>
-                <h3
+                <div
                     className={
-                        "mb-4 max-h-[2lh] overflow-ellipsis overflow-hidden [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]"
+                        "f mb-4 max-h-[2lh] overflow-ellipsis overflow-hidden [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]"
                     }
+                    style={{fontSize: "1.5rem"}}
                 >
-                    {content.title}
-                </h3>
+                    <MarkupDisplayer text={content.title} />
+                </div>
 
                 <div
                     className={
                         "w-full overflow-y-scroll relative min-h-full max-h-[8lh]"
                     }
                 >
-                    <DisplayLinks text={content.description} />
+                    <MarkupDisplayer text={content.description} />
                 </div>
 
                 <div className="absolute top-5 right-5">

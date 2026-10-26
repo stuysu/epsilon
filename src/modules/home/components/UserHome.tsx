@@ -14,6 +14,7 @@ import DisplayLinks from "../../../components/DisplayLinks";
 import { useNavigate } from "react-router-dom";
 import ItemList from "../../../components/ui/lists/ItemList";
 import { Scrollbars } from "react-custom-scrollbars-2";
+import { MarkupDisplayer } from "../../../components/MarkupUtil";
 
 const currentHour = new Date().getHours();
 const timeGreeting =
@@ -317,7 +318,7 @@ const UserHome = () => {
                                                 key={i}
                                                 className={"p-4 bg-layer-2"}
                                             >
-                                                <DisplayLinks
+                                                <MarkupDisplayer
                                                     text={announcement.content}
                                                 />
                                             </div>

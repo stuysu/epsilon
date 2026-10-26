@@ -4,6 +4,7 @@ import { ChangeEvent, useEffect, useState } from "react";
 import { supabase } from "../../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
+import { MarkupEditor } from "../../../../../components/MarkupUtil";
 
 /* if content is null, then it is creating post */
 const PostEditor = ({
@@ -44,15 +45,6 @@ const PostEditor = ({
             setPostData(content);
         }
     }, [content]);
-
-    const onChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
-
-        setPostData({
-            ...postData,
-            [name]: value,
-        });
-    };
 
     const createPost = async () => {
         if (!postData.title) {
@@ -142,24 +134,34 @@ const PostEditor = ({
         <div className={"bg-layer-1 p-5 pl-7 pb-8 rounded-xl shadow-prominent"}>
             <h1>{content ? "Update Post" : "Create Post"}</h1>
             <Box sx={{ marginY: "10px" }}>
-                <TextField
-                    value={postData["title"]}
-                    name={"title"}
-                    label="Title"
-                    onChange={onChange}
-                    fullWidth
+                <div style={{
+                    marginBottom: "1rem"
+                }}>
+                <MarkupEditor
+                    callback={(value) => {
+                        setPostData({
+                            ...postData,
+                            title: value,
+                        });
+                        
+                    }}
+                    defaultText="Title"
+                    insertText={content?.title}
                 />
-
-                <TextField
-                    value={postData["description"]}
-                    name={"description"}
-                    label="Description"
-                    onChange={onChange}
-                    fullWidth
-                    multiline
-                    rows={7}
-                    sx={{ marginTop: "10px" }}
+                </div>
+                
+                <MarkupEditor
+                    callback={(value) => {
+                        setPostData({
+                            ...postData,
+                            description: value,
+                        });
+                    }}
+                    editableClassName="description"
+                    defaultText="Description"
+                    insertText={content?.description}
                 />
+                
             </Box>
             {content ? (
                 <>

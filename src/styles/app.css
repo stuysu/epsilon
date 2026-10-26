@@ -222,3 +222,39 @@
     width: 0;
     height: 0;
 }
+
+.description {
+    /* move this only to the description editor */
+    min-height: 10rem !important;
+}
+.mdxeditor {
+    width: 100%;
+    
+    border-bottom-left-radius: 0.6rem;
+    border-bottom-right-radius: 0.6rem;
+}
+
+.mdxeditor-toolbar {
+    border-radius: 0 !important;
+}
+
+[data-theme="light"] .mdxeditor {
+    background-color: white !important;
+}
+
+[data-theme="light"] .mdxeditor-toolbar {
+    background-color: var(--layer-tertiary) !important;
+}
+
+[data-theme="dark"] .mdxeditor,
+[data-theme="dark-hc"] .mdxeditor {
+    background-color: var(--layer-secondary);
+}
+
+[data-theme="orange"] .mdxeditor {
+    background-color: var(--layer-primary);
+}
+
+[data-theme="orange"] .mdxeditor-toolbar {
+    background-color: var(--text-secondary);
+}
