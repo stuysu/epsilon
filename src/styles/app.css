@@ -230,8 +230,9 @@
 .mdxeditor {
     width: 100%;
     
-    border-bottom-left-radius: 0.6rem;
-    border-bottom-right-radius: 0.6rem;
+    border-bottom-left-radius: 0.6rem !important;
+    border-bottom-right-radius: 0.6rem !important;
+    overflow: hidden;
 }
 
 .mdxeditor-toolbar {
@@ -251,10 +252,55 @@
     background-color: var(--layer-secondary);
 }
 
+[data-theme="dark"] .mdxeditor-toolbar,
+[data-theme="dark-hc"] .mdxeditor-toolbar {
+    background-color: var(--layer-tertiary);
+}
+
 [data-theme="orange"] .mdxeditor {
     background-color: var(--layer-primary);
 }
 
+[data-theme="orange"] .mdxeditor-root-contenteditable {
+    background-color: var(--layer-secondary);
+}
+
 [data-theme="orange"] .mdxeditor-toolbar {
     background-color: var(--text-secondary);
+}
+
+/* disclaimer: this is not the best way to do this. 
+I used inspect and applied the styling based on how the elements were nested.
+
+MDX allows you to supply classes and style them and 
+offers some preconfigured css names to style specific things. */
+
+/* tool bar icons */
+[data-theme="dark"] .mdxeditor-toolbar button svg,
+[data-theme="dark-hc"] .mdxeditor-toolbar button svg {
+    fill: white !important;
+    color: white !important;
+}
+
+/* top row icons in table */
+[data-theme="dark"] .mdxeditor thead tr th button,
+[data-theme="dark-hc"] .mdxeditor thead tr th button {
+    color: lightgrey !important;
+}
+
+/* first icon in the column of icons  */
+[data-theme="dark"] .mdxeditor tbody tr th button,
+[data-theme="dark-hc"] .mdxeditor tbody tr th button {
+    color: lightgrey !important;
+}
+
+/* folowing icons in the column of table icons */
+[data-theme="dark"] .mdxeditor tr td button,
+[data-theme="dark-hc"] .mdxeditor tr td button {
+    color: lightgrey !important;
+}
+
+/* zindex fix */
+.mdxeditor-popup-container {
+    z-index: 100 !important;
 }
