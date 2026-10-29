@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, { Ref, useContext, useEffect, useRef, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import UserContext from "../../../../contexts/UserContext";
@@ -7,6 +7,7 @@ import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import TextInput from "../../../../components/ui/input/TextInput";
 import { Avatar } from "radix-ui";
 import { MarkupDisplayer, MarkupEditor } from "../../../../components/MarkupUtil";
+import { MDXEditorMethods } from "@mdxeditor/editor";
 
 type OrgMessage = {
     id: number;
@@ -25,6 +26,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
     const [messages, setMessages] = useState<OrgMessage[]>([]);
     const [message, setMessage] = useState("");
     const { enqueueSnackbar } = useSnackbar();
+    const meRef = useRef<MDXEditorMethods>(null);
 
     const chatBoxRef = useRef<HTMLDivElement>(null);
 
@@ -104,6 +106,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
         }
 
         setMessage("");
+        meRef.current?.setMarkdown("");
         let newMessages = [
             ...messages,
             {
@@ -208,7 +211,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                 })}
             </div>
             <div className={"w-full flex items-center mt-2 gap-4"}>
-                <MarkupEditor callback={setMessage} defaultText="Message.." />
+                <MarkupEditor passedRef={meRef as Ref<MDXEditorMethods>} callback={setMessage} defaultText="Message.." />
                 <AsyncButton
                     variant="contained"
                     sx={{ width: "10%" }}

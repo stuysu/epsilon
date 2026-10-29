@@ -1,14 +1,16 @@
 import { Box, Card, TextField, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef, Ref} from "react";
 import { supabase } from "../../../../lib/supabaseClient";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import { MarkupDisplayer, MarkupEditor } from "../../../../components/MarkupUtil";
+import { MDXEditorMethods } from "@mdxeditor/editor";
 
 const Announcements = () => {
     let [content, setContent] = useState("");
     let { enqueueSnackbar } = useSnackbar();
     let [announcements, setAnnouncements] = useState<Announcement[]>([]);
+    const meRef = useRef<MDXEditorMethods>(null);
     const [visibleAnnouncements, setVisibleAnnouncements] = useState(3);
 
     useEffect(() => {
@@ -56,6 +58,7 @@ const Announcements = () => {
         }
 
         setContent("");
+        meRef.current?.setMarkdown("");
         setAnnouncements((prev) => [data, ...prev]);
     };
 
@@ -85,7 +88,7 @@ const Announcements = () => {
             </p>
             <div className={"w-full flex sm:flex-row flex-col gap-5"}>
                 <div className={"w-full sm:w-2/3"}>
-                    <MarkupEditor callback={ setContent } defaultText="Content"/>
+                    <MarkupEditor callback={ setContent } passedRef={meRef as Ref<MDXEditorMethods>} defaultText="Content"/>
                     <AsyncButton
                         sx={{ width: "100%", marginTop: "10px" }}
                         variant="contained"

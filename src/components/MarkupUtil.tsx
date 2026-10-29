@@ -1,40 +1,84 @@
-import { MDXEditor, headingsPlugin, linkPlugin, linkDialogPlugin, toolbarPlugin, tablePlugin, BlockTypeSelect, BoldItalicUnderlineToggles, CreateLink, InsertTable, } from "@mdxeditor/editor";
+import { MDXEditor, headingsPlugin, linkPlugin, linkDialogPlugin, toolbarPlugin, tablePlugin, listsPlugin, BlockTypeSelect, BoldItalicUnderlineToggles, CreateLink, InsertTable, HighlightToggle, ListsToggle, StrikeThroughSupSubToggles, UndoRedo, MDXEditorMethods } from "@mdxeditor/editor";
 import Markdown from "markdown-to-jsx";
-import { ReactNode, useContext, useEffect } from "react";
+import { ReactNode, Ref, useContext, useEffect } from "react";
 import '@mdxeditor/editor/style.css';
 
-export function MarkupEditor({ callback, editableClassName = "", defaultText = "", insertText = "" }: { callback: (value: string) => void, editableClassName?: string, defaultText?: string, insertText?: string }) {
+export function MarkupEditor({ callback, editableClassName = "", defaultText = "", insertText = "", passedRef }: { callback: (value: string) => void, editableClassName?: string, defaultText?: string, insertText?: string, passedRef?: Ref<MDXEditorMethods> }) {
     return (
-        <>
-            <MDXEditor
-                plugins={[
-                    headingsPlugin(),
-                    linkPlugin(),
-                    linkDialogPlugin(),
-                    tablePlugin(),
+        passedRef !== undefined ?
+            <>
+                <MDXEditor
+                    plugins={[
+                        headingsPlugin(),
+                        linkPlugin(),
+                        linkDialogPlugin(),
+                        tablePlugin(),
+                        listsPlugin(),
 
-                    toolbarPlugin(
-                        {
-                            toolbarContents: () => {
-                                return (<>
-                                    <BlockTypeSelect />
-                                    <BoldItalicUnderlineToggles />
-                                    <CreateLink />
-                                    <InsertTable />
-                                </>)
+                        toolbarPlugin(
+                            {
+                                toolbarContents: () => {
+                                    return (<>
+                                        <BlockTypeSelect />
+                                        <BoldItalicUnderlineToggles />
+                                        <CreateLink />
+                                        <InsertTable />
+                                        <HighlightToggle />
+                                        <ListsToggle options={["check"]} />
+                                        <StrikeThroughSupSubToggles />
+                                        <UndoRedo />
+                                    </>)
+                                }
                             }
-                        }
-                    )]}
-                markdown={insertText}
-                onChange={(current) => callback(current)}
+                        )]}
+                    markdown={insertText}
+                    onChange={(current) => callback(current)}
+                    ref={passedRef}
 
 
-                /* need to store in optional parameters and apply here */
-                placeholder={defaultText}
-                contentEditableClassName={editableClassName}
-            //for special cases such as bigger boxes ^
-            />
-        </>
+                    /* need to store in optional parameters and apply here */
+                    placeholder={defaultText}
+                    contentEditableClassName={editableClassName}
+                //for special cases such as bigger boxes ^
+                />
+            </>
+            :
+            <>
+                <MDXEditor
+                    plugins={[
+                        headingsPlugin(),
+                        linkPlugin(),
+                        linkDialogPlugin(),
+                        tablePlugin(),
+                        listsPlugin(),
+
+                        toolbarPlugin(
+                            {
+                                toolbarContents: () => {
+                                    return (<>
+                                        <BlockTypeSelect />
+                                        <BoldItalicUnderlineToggles />
+                                        <CreateLink />
+                                        <InsertTable />
+                                        <HighlightToggle />
+                                        <ListsToggle options={["check"]} />
+                                        <StrikeThroughSupSubToggles />
+                                        <UndoRedo />
+                                    </>)
+                                }
+                            }
+                        )]}
+                    markdown={insertText}
+                    onChange={(current) => callback(current)}
+
+
+
+                    /* need to store in optional parameters and apply here */
+                    placeholder={defaultText}
+                    contentEditableClassName={editableClassName}
+                //for special cases such as bigger boxes ^
+                />
+            </>
     );
 }
 

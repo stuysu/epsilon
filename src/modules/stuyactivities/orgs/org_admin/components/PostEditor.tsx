@@ -1,10 +1,11 @@
 import { Box, FormControlLabel, Switch, TextField } from "@mui/material";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, Ref, useEffect, useRef, useState } from "react";
 
 import { supabase } from "../../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
 import { MarkupEditor } from "../../../../../components/MarkupUtil";
+import { MDXEditorMethods } from "@mdxeditor/editor";
 
 /* if content is null, then it is creating post */
 const PostEditor = ({
@@ -26,6 +27,8 @@ const PostEditor = ({
 }) => {
     const { enqueueSnackbar } = useSnackbar();
     const [silent, setSilent] = useState(false);
+    const meRefTitle = useRef<MDXEditorMethods>(null);
+    const meRefDesc = useRef<MDXEditorMethods>(null);
 
     let [postData, setPostData] = useState<Partial<Post>>({
         id: undefined,
@@ -89,6 +92,9 @@ const PostEditor = ({
             updated_at: undefined,
         });
 
+        meRefTitle.current?.setMarkdown("");
+        meRefDesc.current?.setMarkdown("");
+
         data.organizations = {
             id: orgId,
             name: orgName,
@@ -145,6 +151,7 @@ const PostEditor = ({
                         });
                         
                     }}
+                    passedRef={meRefTitle as Ref<MDXEditorMethods>}
                     defaultText="Title"
                     insertText={content?.title}
                 />
@@ -157,6 +164,7 @@ const PostEditor = ({
                             description: value,
                         });
                     }}
+                    passedRef={meRefDesc as Ref<MDXEditorMethods>}
                     editableClassName="description"
                     defaultText="Description"
                     insertText={content?.description}

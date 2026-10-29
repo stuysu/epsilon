@@ -304,3 +304,16 @@ offers some preconfigured css names to style specific things. */
 .mdxeditor-popup-container {
     z-index: 100 !important;
 }
+
+/* .mdxeditor thead tr th {
+    text-align: center !important;
+}
+
+.mdxeditor tbody tr td {
+    text-align: center !important;
+} */
+
+.mdxeditor-root-contenteditable ul li {
+    color: var(--text-secondary) !important;
+    margin-left: 2rem;
+}
