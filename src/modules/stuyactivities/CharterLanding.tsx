@@ -104,13 +104,13 @@ const CharterLanding = () => {
                             ></div>
 
                             <div className={"relative min-h-28 max-w-72"}>
-                                <h2
+                                <div
                                     className={
                                         "as-h1 absolute bottom-28 font-bold text-6xl text-beige"
                                     }
                                 >
                                     1
-                                </h2>
+                                </div>
                                 <h2
                                     className={
                                         "as-h1 font-['instrument-serif'] font-normal text-beige"
@@ -214,13 +214,13 @@ const CharterLanding = () => {
                                 >
                                     Get Approved Quickly and Listed on Epsilon!
                                 </h2>
-                                <h2
+                                <div
                                     className={
                                         "as-h1 absolute bottom-28 font-bold text-6xl text-beige"
                                     }
                                 >
                                     2
-                                </h2>
+                                </div>
                             </div>
                             <p>
                                 Upon the successful submission of your charter,

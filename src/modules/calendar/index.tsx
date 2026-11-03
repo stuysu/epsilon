@@ -118,6 +118,7 @@ const Index = () => {
                 />
             </Helmet>
             <LoginGate sx={{ width: "100%" }} page={"view the calendar"}>
+                <h1 className="sr-only">Calendar</h1>
                 <div
                     className={
                         "m-4 sm:m-12 flex items-start gap-8 min-h-screen max-md:flex-col"

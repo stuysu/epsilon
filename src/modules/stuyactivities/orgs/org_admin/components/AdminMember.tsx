@@ -288,6 +288,7 @@ const AdminMember = ({
                             role !== "CREATOR" &&
                             userId !== user.id)) && (
                         <SelectField
+                            label="Role"
                             fullWidth
                             value={editState.role}
                             onChange={handleSelect}

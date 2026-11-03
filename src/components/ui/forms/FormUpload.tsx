@@ -34,6 +34,8 @@ const FormUpload = ({
     status,
     changeStatus,
     sx,
+    className,
+    style,
     ...paperProps
 }: Props &
     Omit<HTMLAttributes<HTMLDivElement>, "onChange"> & {
@@ -80,7 +82,7 @@ const FormUpload = ({
     return (
         <div
             {...paperProps}
-            className="bg-layer-3 shadow-control"
+            className={`bg-layer-3 shadow-control ${className ?? ""}`}
             style={{
                 width: "100%",
                 height: hasFile ? "220px" : "100px",
@@ -90,6 +92,7 @@ const FormUpload = ({
                 flexWrap: "wrap",
                 position: "relative",
                 ...sx,
+                ...style,
             }}
         >
             <div

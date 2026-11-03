@@ -123,6 +123,7 @@ const DaySchedule = ({ day, meetings }: Props) => {
                     ))
                 ) : (
                     <ContentUnavailable
+                        headingLevel="h2"
                         title={"Nothing to See!"}
                         description={`There are no public events taking place on ${monthNames[day.month()]} ${day.date()}.`}
                     ></ContentUnavailable>

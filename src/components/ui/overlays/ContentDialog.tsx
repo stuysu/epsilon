@@ -1,6 +1,6 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { AnimatePresence, motion } from "framer-motion";
-import React from "react";
+import React, { useRef } from "react";
 
 /* A dialog for forms that manage their own actions, unlike UserDialog which closes on confirm. */
 export default function ContentDialog({
@@ -16,6 +16,8 @@ export default function ContentDialog({
     actions?: React.ReactNode;
     children: React.ReactNode;
 }) {
+    const openerRef = useRef<HTMLElement | null>(null);
+
     return (
         <Dialog.Root
             open={open}
@@ -40,6 +42,16 @@ export default function ContentDialog({
                             <Dialog.Content
                                 asChild
                                 aria-describedby={undefined}
+                                onOpenAutoFocus={() => {
+                                    // there is no Dialog.Trigger, so remember what opened the dialog
+                                    openerRef.current =
+                                        document.activeElement as HTMLElement | null;
+                                }}
+                                onCloseAutoFocus={(event) => {
+                                    event.preventDefault();
+                                    if (openerRef.current?.isConnected)
+                                        openerRef.current.focus();
+                                }}
                             >
                                 <motion.div
                                     className="relative flex max-h-[90vh] w-[min(600px,92vw)] flex-col rounded-2xl border border-divider bg-layer-1 shadow-2xl"

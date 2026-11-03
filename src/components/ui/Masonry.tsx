@@ -30,7 +30,7 @@ const Masonry = ({
             .forEach((item) => {
                 const column = heights.indexOf(Math.min(...heights));
                 item.style.order = String(column + 1);
-                heights[column] += item.offsetHeight + gap;
+                heights[column] += item.getBoundingClientRect().height + gap;
             });
         container.style.height = `${Math.ceil(Math.max(...heights))}px`;
     };

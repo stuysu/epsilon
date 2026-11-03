@@ -44,7 +44,7 @@ const SelectField = ({
             style={sx}
         >
             <Select.Root
-                value={value || undefined}
+                value={value ?? ""}
                 onValueChange={onChange}
                 open={open}
                 onOpenChange={setOpen}
