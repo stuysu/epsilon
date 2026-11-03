@@ -19,6 +19,11 @@ export const STUY_ACTIVITIES_PATHS = [
 export const isStuyActivitiesPath = (pathname: string) =>
     STUY_ACTIVITIES_PATHS.some((p) => pathname.startsWith(p));
 
+export const isOpportunitiesPath = (pathname: string) =>
+    pathname === "/opportunities" || pathname.startsWith("/opportunities/");
+
+export const OPPORTUNITY_SUBMISSION_URL = "https://forms.gle/FnXCKhnEmKHepwqU7";
+
 export const topNavItems = [
     { label: "Home", path: "/", icon: "bx bx-home-alt", external: false },
     {
@@ -47,10 +52,9 @@ export const topNavItems = [
     },
     {
         label: "Opportunities",
-        url: "https://opportunities.stuysu.org",
-        path: "/none",
+        path: "/opportunities",
         icon: "bx bx-glasses",
-        external: true,
+        external: false,
     },
     {
         label: "SU Apply",
