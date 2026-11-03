@@ -158,7 +158,7 @@ const Index = () => {
                             day_button:
                                 "sm:w-10 sm:h-10 w-8 h-8 grid place-items-center rounded-md transition-colors sm:hover:bg-layer-2",
                             selected:
-                                "bg-accent text-typography-1 rounded-md pointer-events-none",
+                                "bg-accent text-white rounded-md pointer-events-none",
                             outside: "opacity-50 pointer-events-none",
                             today: "important rounded-md",
                         }}
@@ -172,7 +172,7 @@ const Index = () => {
                         }}
                         modifiersClassNames={{
                             hasMeetings:
-                                'relative after:content-[""] after:left-1/2 after:absolute after:-translate-x-1/2 after:bottom-1 after:w-1 after:h-1 after:rounded-full after:bg-yellow',
+                                'relative after:content-[""] after:left-1/2 after:absolute after:-translate-x-1/2 after:bottom-1 after:w-1 after:h-1 after:rounded-full after:bg-yellow data-[selected]:after:bg-white',
                         }}
                     />
 

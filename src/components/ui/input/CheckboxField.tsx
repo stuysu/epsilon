@@ -5,6 +5,8 @@ type CheckboxFieldProps = {
     checked: boolean;
     onChange: (checked: boolean) => void;
     label: ReactNode;
+    // a fuller name for screen readers when the visible label is ambiguous
+    ariaLabel?: string;
     disabled?: boolean;
 };
 
@@ -12,6 +14,7 @@ const CheckboxField = ({
     checked,
     onChange,
     label,
+    ariaLabel,
     disabled,
 }: CheckboxFieldProps) => (
     <label
@@ -21,7 +24,7 @@ const CheckboxField = ({
             checked={checked}
             onChange={onChange}
             disabled={disabled}
-            label={typeof label === "string" ? label : ""}
+            label={ariaLabel ?? (typeof label === "string" ? label : "")}
         />
         <span className="text-typography-1">{label}</span>
     </label>

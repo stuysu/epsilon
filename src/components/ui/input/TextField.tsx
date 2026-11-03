@@ -5,6 +5,7 @@ import {
     InputHTMLAttributes,
     ReactNode,
     Ref,
+    useId,
     useState,
 } from "react";
 import OutlinedField from "./OutlinedField";
@@ -54,6 +55,7 @@ const TextField = ({
 }: TextFieldProps) => {
     const [focused, setFocused] = useState(false);
     const [typed, setTyped] = useState(Boolean(defaultValue));
+    const helperId = useId();
 
     const filled =
         value === undefined ? typed : value !== null && String(value) !== "";
@@ -61,6 +63,10 @@ const TextField = ({
     const sharedProps = {
         "aria-label": typeof label === "string" ? label : undefined,
         ...props,
+        // screen readers read the hint along with the field
+        "aria-describedby": helperText
+            ? [props["aria-describedby"], helperId].filter(Boolean).join(" ")
+            : props["aria-describedby"],
         ref: inputRef,
         required,
         disabled,
@@ -89,7 +95,7 @@ const TextField = ({
             disabled={disabled}
             focused={focused}
             shrink={focused || filled || Boolean(startAdornment)}
-            helperText={helperText}
+            helperText={helperText && <span id={helperId}>{helperText}</span>}
             fullWidth={fullWidth}
             className={className}
             style={{ ...sx, ...style }}

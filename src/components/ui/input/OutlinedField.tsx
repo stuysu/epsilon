@@ -14,15 +14,16 @@ type OutlinedFieldProps = {
     children: ReactNode;
 };
 
+// the resting border is the only outline a field has, so it reaches 3:1
 const borderColor = (error?: boolean, focused?: boolean) => {
     if (error) return "border-[#d32f2f] scheme-dark:border-[#f44336]";
-    if (focused) return "border-[#1976d2] scheme-dark:border-[#90caf9]";
-    return "border-black/25 group-hover:border-black/90 scheme-dark:border-white/25 scheme-dark:group-hover:border-white";
+    if (focused) return "border-[#1565c0] scheme-dark:border-[#90caf9]";
+    return "border-black/50 group-hover:border-black/90 scheme-dark:border-white/45 scheme-dark:group-hover:border-white";
 };
 
 const labelColor = (error?: boolean, focused?: boolean) => {
     if (error) return "text-[#d32f2f] scheme-dark:text-[#f44336]";
-    if (focused) return "text-[#1976d2] scheme-dark:text-[#90caf9]";
+    if (focused) return "text-[#1565c0] scheme-dark:text-[#90caf9]";
     return "text-black/60 scheme-dark:text-white/70";
 };
 

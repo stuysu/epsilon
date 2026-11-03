@@ -7,7 +7,7 @@ type SkeletonProps = {
 
 const Skeleton = ({ className = "", style }: SkeletonProps) => (
     <div
-        className={`animate-pulse bg-typography-3/20 ${className}`}
+        className={`motion-safe:animate-pulse bg-typography-3/20 ${className}`}
         style={style}
     />
 );

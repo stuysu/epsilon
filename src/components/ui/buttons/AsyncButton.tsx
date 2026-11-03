@@ -37,11 +37,21 @@ const AsyncButton: React.FC<AsyncButtonProps> = ({
 }) => {
     const [isLoading, setIsLoading] = useState(false);
     const isDisabled = isLoading || disabled;
+    // focus moves to the page body when a focused button becomes disabled,
+    // so a busy button only reports itself as disabled
+    const busyProps = isLoading
+        ? { "aria-disabled": true, "aria-busy": true }
+        : {};
     const semanticColor = color ? semanticColors[color] : undefined;
 
     const handleClick = async (
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
     ) => {
+        // a busy submit button must not submit its form a second time
+        if (isLoading) {
+            e.preventDefault();
+            return;
+        }
         setIsLoading(true);
         try {
             if (onClick) {
@@ -57,6 +67,9 @@ const AsyncButton: React.FC<AsyncButtonProps> = ({
 
     const buttonClassName = [
         "relative inline-flex select-none items-center justify-center rounded-[11px] px-5 pb-[13px] pt-[11px] align-middle text-[14px] outline-none transition-[filter,transform] [font-family:inter-variable] [font-variation-settings:'wght'_700]",
+        // an outline, since the inline box-shadow would hide a ring; the label
+        // variant wraps a hidden file input, so it shows the input's focus
+        "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-typography-1",
         isDisabled
             ? "pointer-events-none cursor-default opacity-60"
             : "cursor-pointer hover:brightness-125 active:scale-[98%]",
@@ -91,6 +104,7 @@ const AsyncButton: React.FC<AsyncButtonProps> = ({
                 className={buttonClassName}
                 style={buttonStyle}
                 aria-disabled={isDisabled}
+                aria-busy={isLoading || labelProps["aria-busy"] || undefined}
             >
                 {content}
             </label>
@@ -103,7 +117,8 @@ const AsyncButton: React.FC<AsyncButtonProps> = ({
             type={type || "button"}
             className={buttonClassName}
             style={buttonStyle}
-            disabled={isDisabled}
+            disabled={disabled}
+            {...busyProps}
             onClick={(event) => void handleClick(event)}
         >
             {content}
