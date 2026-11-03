@@ -5,6 +5,7 @@ import { supabase } from "../../../../lib/supabaseClient";
 import OrgContext from "../../../../contexts/OrgContext";
 import ItemList from "../../../../components/ui/lists/ItemList";
 import { toNewYork } from "../../../../utils/NewYorkTime";
+import { getSocialLinks } from "../../../../utils/SocialLinks";
 
 const OrgInspector = () => {
     const organization: OrgContextType = useContext(OrgContext);
@@ -12,9 +13,7 @@ const OrgInspector = () => {
     const [strikes, setStrikes] = useState<Strike[]>([]);
 
     const isAuditPage = location.pathname.includes("/audit");
-    const socialLinks = (organization.socials ?? "")
-        .split(/\s+/)
-        .filter(isHttpUrl);
+    const socialLinks = getSocialLinks(organization.socials);
 
     useEffect(() => {
         if (!isAuditPage) return;
@@ -104,16 +103,6 @@ const OrgInspector = () => {
         </div>
     );
 };
-
-/* only keep links the browser can actually open (ex. https://example.com:abc can't) */
-function isHttpUrl(value: string): boolean {
-    try {
-        const { protocol } = new URL(value);
-        return protocol === "http:" || protocol === "https:";
-    } catch {
-        return false;
-    }
-}
 
 function getHostname(url: string): string {
     try {

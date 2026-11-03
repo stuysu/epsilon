@@ -69,6 +69,7 @@ const OrgRequirements: OrgValidator = {
         required: false,
         requirements: {
             maxChar: 100,
+            links: true,
         },
     },
     picture: {
