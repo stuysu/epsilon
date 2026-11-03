@@ -24,12 +24,11 @@ const TimezoneNotice = () => {
     if (!open) return <></>;
     return (
         <div className={"z-[9999] relative w-full p-4 bg-bg"}>
-            <AlertBanner severity="info" onClose={handleClose}>
-                <div
-                    className={
-                        "relative top-0.5 invert brightness-200 *:text-[var(--text-primary)]"
-                    }
-                >
+            {/* shown on every page load, so it shouldn't interrupt a screen reader */}
+            <AlertBanner severity="info" live="polite" onClose={handleClose}>
+                {/* the message takes the banner's own text colour, which is
+                    chosen to read on each severity in every theme */}
+                <div className="relative top-0.5 [&_a]:text-inherit [&_a]:underline [&_p]:text-inherit">
                     <p>
                         Times on Epsilon are shown in New York time (EST) which
                         is different from your device's time zone.

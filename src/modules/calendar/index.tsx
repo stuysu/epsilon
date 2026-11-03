@@ -156,7 +156,7 @@ const Index = () => {
                             weekday: "font-normal text-typography-2",
                             day: "p-0 text-center text-typography-1",
                             day_button:
-                                "sm:w-10 sm:h-10 w-8 h-8 grid place-items-center rounded-md transition-colors sm:hover:bg-layer-2",
+                                "sm:w-10 sm:h-10 w-8 h-8 grid place-items-center rounded-md transition-colors sm:hover:bg-layer-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1",
                             selected:
                                 "bg-accent text-white rounded-md pointer-events-none",
                             outside: "opacity-50 pointer-events-none",

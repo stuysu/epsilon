@@ -4,7 +4,7 @@ export type AlertSeverity = "success" | "info" | "warning" | "error";
 
 const severityStyles: Record<AlertSeverity, { color: string; icon: string }> = {
     success: {
-        color: "bg-[#2e7d32] scheme-dark:bg-[#388e3c]",
+        color: "bg-[#2e7d32] scheme-dark:bg-[#43a047]",
         icon: "bx-check-circle",
     },
     // light schemes use white text and dark schemes near-black, both at 4.5:1 or more

@@ -55,11 +55,9 @@ const AlertDisplay = () => {
                 severity={data.severity}
                 onClose={data.severity === "error" ? undefined : handleClose}
             >
-                <div
-                    className={
-                        "relative top-0.5 invert brightness-200 *:text-[var(--text-primary)]"
-                    }
-                >
+                {/* the message takes the banner's own text colour, which is
+                    chosen to read on each severity in every theme */}
+                <div className="relative top-0.5 [&_a]:text-inherit [&_a]:underline [&_p]:text-inherit">
                     <DisplayLinks text={data.message} />
                 </div>
             </AlertBanner>

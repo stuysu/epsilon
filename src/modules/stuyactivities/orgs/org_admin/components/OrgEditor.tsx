@@ -601,7 +601,8 @@ const OrgEditor = ({
                                     ? (editPicture as File).webkitRelativePath
                                     : ""
                             }
-                            hidden
+                            // visually hidden but focusable, so the upload works from a keyboard
+                            className="sr-only"
                         />
                     </AsyncButton>
                     <AsyncButton

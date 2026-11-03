@@ -45,7 +45,8 @@ export default function SearchInput({
                 text-typography-1
                 important
               placeholder:text-typography-2
-              [[data-theme=orange]_&]:placeholder:text-typography-1
+              [[data-theme=dark-hc]_&]:placeholder:text-typography-3
+              [[data-theme=orange]_&]:placeholder:text-[#6a4a3f]
               bg-layer-1
               hover:bg-layer-2
               focus:bg-layer-3

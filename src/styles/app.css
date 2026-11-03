@@ -23,13 +23,17 @@
        to the bottom, so keep a focused control from scrolling in behind them.
        The page scrolls inside a custom scroll area, so the margin goes on the
        controls themselves rather than only on the scrolling element. */
-    @media (max-width: 640px) {
+    /* below Tailwind's sm breakpoint, which starts at 640px */
+    @media (max-width: 639.98px) {
         html {
             scroll-padding-top: 3.5rem;
             scroll-padding-bottom: 4.5rem;
         }
 
-        :where(a, button, input, select, textarea, [tabindex]) {
+        /* options scroll inside their own short lists, so they are left out */
+        :where(a, button, input, select, textarea, [tabindex]):not(
+                [role="option"]
+            ) {
             scroll-margin-top: 3.5rem;
             scroll-margin-bottom: 4.5rem;
         }
@@ -208,8 +212,9 @@
         --blue: #ff7043;
         --green: #ff8a65;
         /* yellow, red and beige are used as text and behind white text, so
-           they are deep shades that pass 4.5:1 on these warm layers */
-        --yellow: #6f4b00;
+           they are deep shades that pass 4.5:1 on these warm layers and on
+           the orange navigation bar */
+        --yellow: #664400;
         --red: #b23209;
         --beige: #6b5200;
 
