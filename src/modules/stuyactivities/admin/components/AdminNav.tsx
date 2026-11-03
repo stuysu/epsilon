@@ -4,7 +4,7 @@ import React from "react";
 
 const AdminNav = ({ links }: { links: Link[] }) => {
     return (
-        <div className="relative max-sm:mt-[0.7rem] sm:pl-9 max-w-screen overflow-x-scroll mt-4 bg-blurDark backdrop-blur-xl border-y-divider border-y z-40">
+        <div className="max-[1099px]:[mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)] relative max-sm:mt-[0.7rem] sm:pl-9 max-w-screen overflow-x-scroll mt-4 bg-blurDark backdrop-blur-xl border-y-divider border-y z-40">
             <RouteTabs tabs={links} />
         </div>
     );

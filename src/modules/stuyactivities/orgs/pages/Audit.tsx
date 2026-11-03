@@ -13,6 +13,7 @@ const Audit = () => {
 
     return (
         <LoginGate page="audit this activity">
+            <h1 className="sr-only">Audit</h1>
             <section className={"mt-2"}>
                 <div className={"xl:hidden mb-10 w-full"}>
                     <OrgInspector />

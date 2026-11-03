@@ -84,6 +84,7 @@ export default function UserDialog({
                                     {hasImage && (
                                         <>
                                             <img
+                                                alt=""
                                                 src={imageSrc}
                                                 className={
                                                     "absolute w-32 -left-2 -top-14"

@@ -1,5 +1,4 @@
 import { Fragment, ReactNode, useCallback, useEffect, useState } from "react";
-import { Avatar, Box } from "@mui/material";
 import { useSnackbar } from "notistack";
 import FormTextField from "../../../../../components/ui/forms/FormTextField";
 import Divider from "../../../../../components/ui/Divider";
@@ -13,6 +12,7 @@ import { supabase } from "../../../../../lib/supabaseClient";
 import { PUBLIC_URL } from "../../../../../config/constants";
 import { useNavigate } from "react-router-dom";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
+import Avatar from "../../../../../components/ui/Avatar";
 
 type Props = {
     organization: Partial<Organization>; // Make organization a prop to allow component to become reusable
@@ -58,56 +58,33 @@ const EditField = ({
                     {pending ? "Pending" : "Approved"}
                 </p>
             </div>
-            <Box
-                sx={{
-                    width: "100%",
-                    display: "flex",
-                    flexWrap: "nowrap",
-                    padding: "10px 0",
-                    position: "relative",
-                    minHeight: "100px",
-                }}
-            >
+            <div className="w-full flex flex-nowrap py-2.5 relative min-h-[100px]">
                 {editing ? (
                     <>
                         {editDisplay}
-                        <Box
-                            sx={{
-                                width: "15%",
-                                position: "absolute",
-                                right: "20px",
-                            }}
-                        >
+                        <div className="w-[15%] absolute right-[20px]">
                             <AsyncButton
                                 onClick={onCancel}
-                                variant="contained"
                                 sx={{ width: "100%" }}
                             >
                                 Cancel
                             </AsyncButton>
-                        </Box>
+                        </div>
                     </>
                 ) : (
                     <>
                         {defaultDisplay}
-                        <Box
-                            sx={{
-                                width: "60px",
-                                position: "absolute",
-                                right: "20px",
-                            }}
-                        >
+                        <div className="w-[60px] absolute right-[20px]">
                             <AsyncButton
                                 onClick={onEdit}
-                                variant="contained"
                                 sx={{ width: "100%" }}
                             >
                                 Edit
                             </AsyncButton>
-                        </Box>
+                        </div>
                     </>
                 )}
-            </Box>
+            </div>
         </>
     );
 };
@@ -580,18 +557,10 @@ const OrgEditor = ({
                     {pendingPicture ? "Pending" : "Approved"}
                 </p>
             </div>
-            <Box
-                sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    padding: "10px 0",
-                    marginBottom: "20px",
-                }}
-            >
+            <div className="flex items-center justify-between py-2.5 mb-5">
                 <Avatar
                     src={putPicture}
-                    sx={{
+                    style={{
                         width: "170px",
                         height: "170px",
                         borderRadius: "25px",
@@ -601,19 +570,8 @@ const OrgEditor = ({
                 >
                     {(organization.name || "O").slice(0, 1).toUpperCase()}
                 </Avatar>
-                <Box
-                    sx={{
-                        width: "200px",
-                        display: "flex",
-                        flexDirection: "column",
-                        paddingRight: "20px",
-                    }}
-                >
-                    <AsyncButton
-                        variant="contained"
-                        component="label"
-                        sx={{ width: "100%" }}
-                    >
+                <div className="w-[200px] flex flex-col pr-5">
+                    <AsyncButton component="label" sx={{ width: "100%" }}>
                         Upload Avatar
                         <input
                             type="file"
@@ -647,7 +605,6 @@ const OrgEditor = ({
                         />
                     </AsyncButton>
                     <AsyncButton
-                        variant="contained"
                         sx={{ marginTop: "10px", width: "100%" }}
                         onClick={() => {
                             if (!oldPicture) {
@@ -662,7 +619,6 @@ const OrgEditor = ({
                     </AsyncButton>
                     {editPicture !== undefined && organization.picture && (
                         <AsyncButton
-                            variant="contained"
                             sx={{ marginTop: "10px", width: "100%" }}
                             onClick={async () => {
                                 setEditPicture(undefined);
@@ -671,8 +627,8 @@ const OrgEditor = ({
                             Reset Image
                         </AsyncButton>
                     )}
-                </Box>
-            </Box>
+                </div>
+            </div>
             <Divider />
             {textFields.map((field, i) => {
                 return (
@@ -719,7 +675,7 @@ const OrgEditor = ({
                                 setEditState({ ...editState, [field]: true })
                             }
                             defaultDisplay={
-                                <p className={"w-3/4"}>
+                                <p className={"w-3/4 break-words"}>
                                     {editData[
                                         field as keyof OrganizationEdit
                                     ] || (
@@ -803,7 +759,7 @@ const OrgEditor = ({
                                 setEditState({ ...editState, [field]: true })
                             }
                             defaultDisplay={
-                                <p className={"w-3/4"}>
+                                <p className={"w-3/4 break-words"}>
                                     {toList(
                                         field,
                                         editData[
@@ -835,7 +791,7 @@ const OrgEditor = ({
                                         sx={{ width: "80%" }}
                                     />
                                 ) : (
-                                    <Box sx={{ width: "80%" }}>
+                                    <div className="w-[80%]">
                                         <FormChipText
                                             field={field}
                                             label="Keywords"
@@ -860,25 +816,15 @@ const OrgEditor = ({
                                             }
                                             changeStatus={changeStatus}
                                         />
-                                    </Box>
+                                    </div>
                                 )
                             }
                         />
                     </Fragment>
                 );
             })}
-            <Box
-                sx={{
-                    width: "100%",
-                    marginTop: "20px",
-                    padding: "20px",
-                    display: "flex",
-                    flexDirection: "row-reverse",
-                    flexWrap: "nowrap",
-                }}
-            >
+            <div className="w-full mt-5 p-5 flex flex-row-reverse flex-nowrap">
                 <AsyncButton
-                    variant="contained"
                     isPrimary
                     disabled={!savable}
                     onClick={saveChanges}
@@ -886,14 +832,10 @@ const OrgEditor = ({
                 >
                     Submit Changes for Review
                 </AsyncButton>
-                <AsyncButton
-                    variant="contained"
-                    disabled={allNull}
-                    onClick={deleteEdit}
-                >
+                <AsyncButton disabled={allNull} onClick={deleteEdit}>
                     Delete Edit
                 </AsyncButton>
-            </Box>
+            </div>
         </div>
     );
 };

@@ -2,13 +2,14 @@ import { ChangeEvent, useContext, useState } from "react";
 import { Reorder, useDragControls } from "framer-motion";
 import UserContext from "../../../../../contexts/UserContext";
 
-import { MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import { supabase } from "../../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import OrgMember from "../../components/OrgMember";
 import OrgContext from "../../../../../contexts/OrgContext";
 import UserDialog from "../../../../../components/ui/overlays/UserDialog";
 import { PUBLIC_URL } from "../../../../../config/constants";
+import SelectField from "../../../../../components/ui/input/SelectField";
+import TextField from "../../../../../components/ui/input/TextField";
 
 const AdminMember = ({
     id,
@@ -91,10 +92,10 @@ const AdminMember = ({
         enqueueSnackbar("Member kicked!", { variant: "success" });
     };
 
-    const handleSelect = (event: SelectChangeEvent) => {
+    const handleSelect = (role: string) => {
         setEditState({
             ...editState,
-            role: event.target.value,
+            role,
         });
     };
 
@@ -286,28 +287,18 @@ const AdminMember = ({
                             role !== "ADMIN" &&
                             role !== "CREATOR" &&
                             userId !== user.id)) && (
-                        <Select
+                        <SelectField
+                            fullWidth
                             value={editState.role}
                             onChange={handleSelect}
-                            displayEmpty
-                            MenuProps={{
-                                disablePortal: true,
-                                anchorOrigin: {
-                                    vertical: "center",
-                                    horizontal: "left",
-                                },
-                                PaperProps: {
-                                    sx: { mt: "-180px", ml: "-12vw" },
-                                },
-                            }}
-                            // Temporary fix for menu being off center. migrate to radix.
-                        >
-                            <MenuItem value={"MEMBER"}>Member</MenuItem>
-                            <MenuItem value={"ADVISOR"}>Advisor</MenuItem>
-                            {isCreator && (
-                                <MenuItem value={"ADMIN"}>Admin</MenuItem>
-                            )}
-                        </Select>
+                            options={[
+                                { value: "MEMBER", label: "Member" },
+                                { value: "ADVISOR", label: "Advisor" },
+                                ...(isCreator
+                                    ? [{ value: "ADMIN", label: "Admin" }]
+                                    : []),
+                            ]}
+                        />
                     )}
                 </div>
             </UserDialog>

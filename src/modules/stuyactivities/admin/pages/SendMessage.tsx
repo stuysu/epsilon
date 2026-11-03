@@ -1,4 +1,3 @@
-import { Box, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
@@ -78,16 +77,9 @@ const SendMessage = () => {
                     ))}
                 </div>
             ) : null}
-            <Box
-                sx={{
-                    marginTop: "20px",
-                    width: "100%",
-                    justifyContent: "center",
-                    padding: "20px",
-                }}
-            >
+            <div className="mt-5 w-full justify-center p-5">
                 {orgId && <OrgChat organization_id={orgId} />}
-            </Box>
+            </div>
         </div>
     );
 };

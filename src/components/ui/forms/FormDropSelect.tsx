@@ -1,13 +1,6 @@
 import { useEffect } from "react";
-import {
-    FormControl,
-    FormHelperText,
-    InputLabel,
-    MenuItem,
-    Select,
-    SelectChangeEvent,
-    SelectProps,
-} from "@mui/material";
+import { CSSProperties, ReactNode } from "react";
+import SelectField from "../input/SelectField";
 
 type SelectType = {
     id: string;
@@ -26,6 +19,8 @@ type Props = {
     };
     changeStatus?: (field: string, newValue: boolean) => void;
     selections: SelectType[];
+    label?: ReactNode;
+    sx?: CSSProperties;
 };
 
 const FormDropSelect = ({
@@ -37,8 +32,9 @@ const FormDropSelect = ({
     status,
     changeStatus,
     selections,
-    ...selectProps
-}: Props & SelectProps) => {
+    label,
+    sx,
+}: Props) => {
     useEffect(() => {
         const validate = (targetValue?: string) => {
             if (!targetValue) targetValue = "";
@@ -57,32 +53,22 @@ const FormDropSelect = ({
         validate(value);
     }, [required, field, value, changeStatus]);
 
-    const selectionChanged = (event: SelectChangeEvent<unknown>) => {
-        if (!onChange) return;
-
-        onChange(event.target.value as string);
-    };
-
     return (
-        <FormControl fullWidth required={required}>
-            <InputLabel>{selectProps.label}</InputLabel>
-            <Select
-                onChange={(e) => selectionChanged(e)}
-                value={value || ""}
-                {...selectProps}
-            >
-                {selections.map((select, i) => (
-                    <MenuItem key={`${i}-${select.id}`} value={select.id}>
-                        {select.display}
-                    </MenuItem>
-                ))}
-            </Select>
-            <FormHelperText>
-                {description
-                    ?.split("\n")
-                    .map((line, i) => <div key={i}>{line}</div>)}
-            </FormHelperText>
-        </FormControl>
+        <SelectField
+            fullWidth
+            label={label}
+            required={required}
+            sx={sx}
+            value={value || ""}
+            onChange={onChange}
+            options={selections.map((select) => ({
+                value: select.id,
+                label: select.display,
+            }))}
+            helperText={description
+                ?.split("\n")
+                .map((line, i) => <div key={i}>{line}</div>)}
+        />
     );
 };
 

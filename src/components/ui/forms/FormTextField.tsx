@@ -1,5 +1,5 @@
 import { ChangeEvent, useEffect } from "react";
-import { TextField, TextFieldProps } from "@mui/material";
+import TextField, { TextFieldProps } from "../input/TextField";
 
 type Requirements = {
     minChar?: number;
@@ -37,7 +37,7 @@ const FormTextField = ({
     changeStatus,
     hideHelper,
     ...textFieldProps
-}: Props & TextFieldProps) => {
+}: Props & Omit<TextFieldProps, "value" | "onChange">) => {
     useEffect(() => {
         const validate = (targetValue?: string) => {
             if (!targetValue) targetValue = "";

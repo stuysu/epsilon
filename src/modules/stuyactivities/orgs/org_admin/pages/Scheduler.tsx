@@ -3,7 +3,7 @@ import OrgContext from "../../../../../contexts/OrgContext";
 import UserContext from "../../../../../contexts/UserContext";
 import AdminUpsertMeeting from "../components/AdminUpsertMeeting";
 
-import { FormControlLabel, Switch, useMediaQuery } from "@mui/material";
+import useMediaQuery from "../../../../../utils/useMediaQuery";
 import { supabase } from "../../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import OrgMeeting from "../../components/OrgMeeting";
@@ -82,7 +82,6 @@ const Scheduler = () => {
                                 editing: true,
                             })
                         }
-                        variant="contained"
                     >
                         Create Meeting
                     </AsyncButton>

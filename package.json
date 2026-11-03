@@ -3,24 +3,11 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
-        "@emotion/react": "^11.14.0",
-        "@emotion/styled": "^11.14.1",
         "@lottiefiles/dotlottie-react": "^0.17.4",
-        "@mui/lab": "^5.0.0-alpha.170",
-        "@mui/material": "^5.15.7",
-        "@mui/types": "^7.2.13",
-        "@mui/x-date-pickers": "^6.19.4",
-        "@radix-ui/react-tabs": "^1.2.1",
-        "@supabase/auth-ui-react": "^0.4.7",
-        "@supabase/auth-ui-shared": "^0.1.8",
         "@supabase/supabase-js": "^2.118.0",
-        "@testing-library/jest-dom": "^5.17.0",
-        "@testing-library/react": "^13.4.0",
-        "@testing-library/user-event": "^13.5.0",
-        "@types/jest": "^27.5.2",
-        "@types/node": "^16.18.79",
         "@types/react": "^18.2.52",
         "@types/react-dom": "^18.2.18",
+        "@types/react-transition-group": "^4.4.10",
         "dayjs": "^1.11.23",
         "framer-motion": "^12.12.1",
         "notistack": "^3.0.2",
@@ -28,49 +15,35 @@
         "radix-ui": "^1.8.1",
         "react": "^18.2.0",
         "react-custom-scrollbars-2": "^4.5.0",
-        "react-datepicker": "^8.5.0",
         "react-day-picker": "^9.8.1",
         "react-dom": "^18.2.0",
         "react-helmet": "^6.1.0",
-        "react-measure": "^2.5.2",
-        "react-multi-carousel": "^2.8.6",
-        "react-router-dom": "^6.22.0",
-        "react-scripts": "^5.0.1",
+        "react-router-dom": "^7.18.5",
         "react-transition-group": "^4.4.5",
         "tailwindcss": "^3.4.13",
-        "typescript": "^4.9.5",
+        "typescript": "~5.5.4",
         "web-vitals": "^2.1.4"
     },
     "scripts": {
-        "start": "react-scripts start",
-        "build": "react-scripts build",
-        "test": "react-scripts test",
-        "eject": "react-scripts eject",
-        "prettier": "npx prettier . --write --tab-width 4"
-    },
-    "eslintConfig": {
-        "extends": [
-            "react-app",
-            "react-app/jest"
-        ]
-    },
-    "browserslist": {
-        "production": [
-            ">0.2%",
-            "not dead",
-            "not op_mini all"
-        ],
-        "development": [
-            "last 1 chrome version",
-            "last 1 firefox version",
-            "last 1 safari version"
-        ]
+        "start": "vite",
+        "build": "tsc --noEmit && vite build",
+        "preview": "vite preview",
+        "test": "vitest run",
+        "lint": "eslint src"
     },
     "devDependencies": {
-        "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+        "@testing-library/dom": "^10.4.2",
+        "@testing-library/react": "^14.3.1",
+        "@types/node": "^22.20.5",
         "@types/react-helmet": "^6.1.11",
-        "@types/react-measure": "^2.0.12",
+        "@vitejs/plugin-react": "^4.7.0",
+        "autoprefixer": "^10.6.2",
+        "eslint": "^9.39.5",
+        "eslint-plugin-react-hooks": "^5.2.0",
+        "jsdom": "^29.1.1",
         "prettier": "^3.3.2",
-        "supabase": "^1.142.2"
+        "typescript-eslint": "^8.72.1",
+        "vite": "^6.4.5",
+        "vitest": "^4.1.12"
     }
 }

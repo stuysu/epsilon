@@ -1,9 +1,4 @@
-import {
-    Checkbox,
-    FormControlLabel,
-    FormGroup,
-    FormHelperText,
-} from "@mui/material";
+import CheckboxField from "../input/CheckboxField";
 
 type Props = {
     field: string;
@@ -16,27 +11,21 @@ type Props = {
 /* no requirements or validation, default value in form should be false. */
 const FormCheckbox = ({ label, value, description, onChange }: Props) => {
     return (
-        <FormGroup>
-            <FormControlLabel
-                control={
-                    <Checkbox
-                        checked={value}
-                        onChange={(e) => {
-                            if (onChange) onChange(e.target.checked);
-                        }}
-                    />
-                }
-                label={label}
+        <div className="flex flex-col">
+            <CheckboxField
+                checked={Boolean(value)}
+                onChange={(checked) => onChange?.(checked)}
+                label={label ?? ""}
             />
-            <FormHelperText>
-                {description?.split("\n").map((line) => (
-                    <>
+            <p className="mt-[3px] text-[0.75rem] leading-[1.66] text-black/60 scheme-dark:text-white/70">
+                {description?.split("\n").map((line, i) => (
+                    <span key={i}>
                         {line}
                         <br />
-                    </>
+                    </span>
                 ))}
-            </FormHelperText>
-        </FormGroup>
+            </p>
+        </div>
     );
 };
 

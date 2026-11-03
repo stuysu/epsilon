@@ -1,4 +1,3 @@
-import { Box } from "@mui/material";
 import React, { useContext, useEffect, useState } from "react";
 import { supabase } from "../../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
@@ -66,14 +65,8 @@ const AttendanceOverview = () => {
                         </p>
                     </div>
 
-                    <Box sx={{ width: "100%" }}>
-                        <Box
-                            sx={{
-                                width: "100%",
-                                display: "flex",
-                                flexWrap: "wrap",
-                            }}
-                        >
+                    <div className="w-full">
+                        <div className="w-full flex flex-wrap">
                             {meetings.map((meeting) => (
                                 <MeetingAttendanceCard
                                     key={meeting.id}
@@ -84,8 +77,8 @@ const AttendanceOverview = () => {
                                     clickable={true}
                                 />
                             ))}
-                        </Box>
-                    </Box>
+                        </div>
+                    </div>
                 </div>
             )}
         </LoginGate>

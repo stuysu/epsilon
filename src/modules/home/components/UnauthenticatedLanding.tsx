@@ -10,6 +10,7 @@ const UnauthenticatedLanding = () => {
 
     return (
         <main className={"bg-[#0e0e0e] h-screen unauth-landing"}>
+            <h1 className="sr-only">Epsilon</h1>
             <div
                 style={{
                     position: "fixed",

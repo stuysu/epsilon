@@ -317,6 +317,7 @@ const Index = () => {
 
     return (
         <div className="pb-0">
+            <h1 className="sr-only">About Epsilon</h1>
             <Helmet>
                 <title>About - Epsilon</title>
                 <meta

@@ -9,6 +9,7 @@ const Arista = () => {
 
     return (
         <section className={"min-h-screen p-12 mx-auto max-w-[1800px]"}>
+            <h1 className="sr-only">Arista</h1>
             <Helmet>
                 <title>Arista - Epsilon</title>
                 <meta

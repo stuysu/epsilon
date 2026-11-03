@@ -2,18 +2,12 @@ import AsyncButton from "../../components/ui/buttons/AsyncButton";
 import { useContext, useEffect, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
 import { enqueueSnackbar } from "notistack";
-import {
-    Box,
-    Checkbox,
-    Divider,
-    FormControlLabel,
-    TextField,
-    Typography,
-} from "@mui/material";
 import UserContext from "../../contexts/UserContext";
 import ValentineDisplay from "./components/ValentineDisplay";
 import { useNavigate } from "react-router-dom";
 import Loading from "../../components/ui/content/Loading";
+import CheckboxField from "../../components/ui/input/CheckboxField";
+import TextField from "../../components/ui/input/TextField";
 
 // from https://catppuccin.com/palette
 const colors = [
@@ -67,15 +61,9 @@ const Create = () => {
 
     return (
         <>
-            <Box
-                sx={{
-                    display: "flex",
-                    width: "80%",
-                    justifyContent: "center",
-                }}
-            >
+            <div className="flex w-[80%] justify-center">
                 <TextField
-                    content={receiverEmail}
+                    value={receiverEmail}
                     onChange={(e) => setReceiverEmail(e.target.value)}
                     sx={{
                         marginRight: "2rem",
@@ -114,9 +102,9 @@ const Create = () => {
                 >
                     Select Recipient
                 </AsyncButton>
-            </Box>
+            </div>
             <TextField
-                content={message}
+                value={message}
                 onChange={(e) => setMessage(e.target.value)}
                 sx={{
                     width: "80%",
@@ -128,51 +116,32 @@ const Create = () => {
                 multiline
                 label="Message"
             />
-            <Typography variant="body2">
+            <p className="text-[0.875rem] leading-[1.43]">
                 All messages are monitored for abuse. User identities may be
                 disclosed.
-            </Typography>
-            <Box
-                sx={{
-                    width: "70%",
-                    display: "flex",
-                    marginTop: "1rem",
-                    justifyContent: "center",
-                }}
-            >
+            </p>
+            <div className="w-[70%] flex flex-wrap mt-4 justify-center">
                 {colors.map((color) => (
-                    <Box
+                    <div
                         key={color}
-                        sx={{
-                            width: "2em",
-                            height: "2em",
-                            margin: ".5em",
-                            borderRadius: "2em",
-                            cursor: "pointer",
+                        className="shrink-0 w-[2em] h-[2em] m-[.5em] rounded-[2em] cursor-pointer text-black content-center"
+                        style={{
                             backgroundColor: color,
-                            color: "black",
-                            alignContent: "center",
                             borderColor: "#ffffff",
                             borderWidth: background === color ? "4px" : 0,
                         }}
                         onClick={() => setBackground(color)}
                     />
                 ))}
-            </Box>
-            <FormControlLabel
-                control={
-                    <Checkbox
-                        checked={showSender}
-                        onChange={(e) => {
-                            setShowSender(e.target.checked);
-                        }}
-                    />
-                }
+            </div>
+            <CheckboxField
+                checked={showSender}
+                onChange={setShowSender}
                 label="Signature at Bottom"
             />
-            <Box sx={{ margin: "1rem 0", width: "80vw" }}>
-                <Divider />
-            </Box>
+            <div className="my-4 w-[80vw]">
+                <hr className="border-divider" />
+            </div>
             <h4>Preview</h4>
             <ValentineDisplay
                 valentine={{
@@ -184,9 +153,9 @@ const Create = () => {
                     background,
                 }}
             />
-            <Box sx={{ margin: "1rem 0", width: "80vw" }}>
-                <Divider />
-            </Box>
+            <div className="my-4 w-[80vw]">
+                <hr className="border-divider" />
+            </div>
             <AsyncButton
                 onClick={async () => {
                     setLoading(true);

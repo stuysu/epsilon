@@ -5,6 +5,14 @@
 @tailwind components;
 @tailwind utilities;
 
+/* headline look for text that is not the page's main heading */
+@layer components {
+    .as-h1 {
+        @apply font-display text-[2.1rem] leading-[2.1rem] my-2 text-[color:var(--text-primary)];
+        font-weight: 700;
+    }
+}
+
 @layer base {
     /* Text Styles */
     html {
@@ -12,7 +20,14 @@
     }
 
     body {
-        @apply font-sans text-[0.9rem] leading-[1.2rem] text-[color:var(--text-secondary)];
+        @apply font-sans text-base leading-normal;
+        color: rgba(0, 0, 0, 0.87);
+        background-color: #fff;
+    }
+
+    [data-scheme="dark"] body {
+        color: #fff;
+        background-color: #121212;
     }
 
     h1 {

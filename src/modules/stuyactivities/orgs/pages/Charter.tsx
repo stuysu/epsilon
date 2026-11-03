@@ -17,6 +17,7 @@ const Charter = () => {
                 "max-w-3xl flex flex-col mt-2 gap-4 mb-10 max-sm:mt-10 max-sm:mx-4"
             }
         >
+            <h1 className="sr-only">Charter</h1>
             <h3 className={"font-['instrument-serif'] text-beige"}>
                 <i className={"bx bx-info-circle relative top-0.5 mr-2"}></i>
                 What is this Activity?

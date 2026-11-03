@@ -11,8 +11,6 @@ import {
     useState,
 } from "react";
 
-import { Box } from "@mui/material";
-
 import FormSection from "./FormSection";
 import FormRender from "./FormRender";
 import AsyncButton from "../buttons/AsyncButton";
@@ -39,7 +37,7 @@ type FormStatus = {
     };
 };
 
-const FormPage = <T extends unknown>({
+const FormPage = <T,>({
     title,
     value,
     children,
@@ -136,30 +134,14 @@ const FormPage = <T extends unknown>({
     };
 
     return (
-        <Box
-            sx={{
-                height: "100%",
-                maxWidth: "1000px",
-                width: "100%",
-                padding: "50px",
-            }}
-        >
+        <div className="h-full max-w-[1000px] w-full p-[50px]">
             <h3>{title}</h3>
             <div className={`mt-5`}>{parseChildren(children)}</div>
-            <Box
-                sx={{
-                    height: "10%",
-                    width: "100%",
-                    marginTop: "20px",
-                    display: "flex",
-                    flexWrap: "wrap",
-                }}
-            >
+            <div className="h-[10%] w-full mt-5 flex flex-wrap">
                 <div className={`w-full flex justify-end gap-5 mt-5`}>
                     {!first && (
                         <AsyncButton
                             onClick={onBack}
-                            variant="contained"
                             sx={{ width: "150px", height: "40px" }}
                         >
                             Back
@@ -168,7 +150,6 @@ const FormPage = <T extends unknown>({
                     {last ? (
                         <AsyncButton
                             onClick={onSubmit}
-                            variant="contained"
                             disabled={!valid}
                             sx={{ width: "150px", height: "40px" }}
                         >
@@ -177,7 +158,6 @@ const FormPage = <T extends unknown>({
                     ) : (
                         <AsyncButton
                             onClick={onNext}
-                            variant="contained"
                             disabled={
                                 !valid || (checkRequired && !checkCompleted)
                             }
@@ -187,8 +167,8 @@ const FormPage = <T extends unknown>({
                         </AsyncButton>
                     )}
                 </div>
-            </Box>
-        </Box>
+            </div>
+        </div>
     );
 };
 

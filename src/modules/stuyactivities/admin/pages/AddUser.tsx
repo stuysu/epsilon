@@ -4,7 +4,7 @@ import { enqueueSnackbar } from "notistack";
 import FormPage from "../../../../components/ui/forms/FormPage";
 import MultiPageForm from "../../../../components/ui/forms/MultiPageForm";
 import FormSection from "../../../../components/ui/forms/FormSection";
-import { Typography, useMediaQuery } from "@mui/material";
+import useMediaQuery from "../../../../utils/useMediaQuery";
 import FormTextField from "../../../../components/ui/forms/FormTextField";
 import OrgRequirements from "../../../../utils/OrgRequirements";
 import FormCheckbox from "../../../../components/ui/forms/FormCheckbox";

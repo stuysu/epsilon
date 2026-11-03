@@ -1,8 +1,16 @@
-import { Stack, useMediaQuery } from "@mui/material";
 import React, { FC, useContext } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import UserContext from "../../../contexts/UserContext";
 import { isStuyActivitiesPath } from "../../../config/routes";
+import useMediaQuery from "../../../utils/useMediaQuery";
+
+const STUY_ACTIVITIES_ITEMS = [
+    { label: "Catalog", path: "/stuyactivities" },
+    { label: "Charter", path: "/charter" },
+    { label: "Regulations", path: "/rules" },
+    { label: "Archives", path: "/archives" },
+    { label: "Support", path: "/activities-support" },
+];
 
 const SubNavBar: FC = () => {
     const user = useContext(UserContext);
@@ -15,7 +23,7 @@ const SubNavBar: FC = () => {
 
     return (
         <div
-            className="max-sm:pb-3"
+            className="max-sm:pb-3 max-[1099px]:[mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)]"
             style={{
                 overflowX: "scroll",
                 scrollbarWidth: "none",
@@ -31,23 +39,12 @@ const SubNavBar: FC = () => {
                 backdropFilter: isMobile ? "blur(30px)" : undefined,
             }}
         >
-            <Stack
-                direction="row"
-                spacing={3}
-                ml={isMobile ? "1rem" : "3rem"}
-                mt={isMobile ? 1.5 : 2}
-                position="relative"
-                zIndex={2}
+            <div
+                className={`relative z-[2] flex flex-row gap-6 ${
+                    isMobile ? "ml-4 mt-3" : "ml-12 mt-4"
+                }`}
             >
-                {(
-                    [
-                        { label: "Catalog", path: "/stuyactivities" },
-                        { label: "Charter", path: "/charter" },
-                        { label: "Regulations", path: "/rules" },
-                        { label: "Archives", path: "/archives" },
-                        { label: "Support", path: "/activities-support" },
-                    ] as const
-                ).map(({ label, path }) => (
+                {STUY_ACTIVITIES_ITEMS.map(({ label, path }) => (
                     <p
                         key={path}
                         className="cursor-pointer transition-opacity whitespace-nowrap important text-typography-1"
@@ -72,7 +69,7 @@ const SubNavBar: FC = () => {
                     </div>
                 )}
                 <div className="min-w-4" />
-            </Stack>
+            </div>
         </div>
     );
 };

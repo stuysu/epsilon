@@ -104,20 +104,20 @@ const CharterLanding = () => {
                             ></div>
 
                             <div className={"relative min-h-28 max-w-72"}>
-                                <h1
+                                <h2
                                     className={
-                                        "absolute bottom-28 font-bold text-6xl text-beige"
+                                        "as-h1 absolute bottom-28 font-bold text-6xl text-beige"
                                     }
                                 >
                                     1
-                                </h1>
-                                <h1
+                                </h2>
+                                <h2
                                     className={
-                                        "font-['instrument-serif'] font-normal text-beige"
+                                        "as-h1 font-['instrument-serif'] font-normal text-beige"
                                     }
                                 >
                                     Submit Your Charter Application Online
-                                </h1>
+                                </h2>
                             </div>
                             <p>
                                 Prior to initiating the chartering process, you
@@ -207,20 +207,20 @@ const CharterLanding = () => {
                                 }}
                             ></div>
                             <div className={"relative min-h-28 max-w-72"}>
-                                <h1
+                                <h2
                                     className={
-                                        "font-['instrument-serif'] font-normal text-beige"
+                                        "as-h1 font-['instrument-serif'] font-normal text-beige"
                                     }
                                 >
                                     Get Approved Quickly and Listed on Epsilon!
-                                </h1>
-                                <h1
+                                </h2>
+                                <h2
                                     className={
-                                        "absolute bottom-28 font-bold text-6xl text-beige"
+                                        "as-h1 absolute bottom-28 font-bold text-6xl text-beige"
                                     }
                                 >
                                     2
-                                </h1>
+                                </h2>
                             </div>
                             <p>
                                 Upon the successful submission of your charter,

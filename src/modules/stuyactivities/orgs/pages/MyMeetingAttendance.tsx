@@ -1,4 +1,3 @@
-import { Avatar, Box, Card } from "@mui/material";
 import { useContext, useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { supabase } from "../../../../lib/supabaseClient";
@@ -6,6 +5,7 @@ import { useSnackbar } from "notistack";
 import UserContext from "../../../../contexts/UserContext";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import LoginGate from "../../../../components/ui/content/LoginGate";
+import Avatar from "../../../../components/ui/Avatar";
 
 const MyMeetingAttendance = () => {
     const user = useContext(UserContext);
@@ -63,9 +63,9 @@ const MyMeetingAttendance = () => {
 
     if (!valid) {
         return (
-            <Box>
+            <div>
                 <h1>Invalid meeting ID</h1>
-            </Box>
+            </div>
         );
     }
 
@@ -104,69 +104,44 @@ const MyMeetingAttendance = () => {
 
     return (
         <LoginGate page="mark your attendance">
-            <Box>
+            <div>
                 <h1>{meeting?.title}</h1>
-                <Box
-                    sx={{
-                        width: "100%",
-                        display: "flex",
-                        justifyContent: "center",
-                        marginTop: "20px",
-                    }}
-                >
-                    <Card
-                        sx={{
+                <div className="w-full flex justify-center mt-5">
+                    <div
+                        className="rounded bg-layer-2 shadow-control"
+                        style={{
                             width: "100%",
                             maxWidth: "400px",
                             height: "300px",
                             padding: "15px",
                         }}
                     >
-                        <Box
-                            sx={{
-                                width: "100%",
-                                display: "flex",
-                                justifyContent: "center",
-                            }}
-                        >
+                        <div className="w-full flex justify-center">
                             <Avatar
                                 src={user.picture}
                                 alt={user.first_name + " " + user.last_name}
-                                sx={{ width: "100px", height: "100px" }}
+                                style={{ width: "100px", height: "100px" }}
                             >
                                 {user.first_name[0]?.toUpperCase()}
                             </Avatar>
-                        </Box>
-                        <Box
-                            sx={{
-                                width: "100%",
-                                display: "flex",
-                                justifyContent: "center",
-                            }}
-                        >
+                        </div>
+                        <div className="w-full flex justify-center">
                             <h1>{user.first_name + " " + user.last_name}</h1>
-                        </Box>
-                        <Box
-                            sx={{
-                                width: "100%",
-                                display: "flex",
-                                justifyContent: "center",
-                            }}
-                        >
+                        </div>
+                        <div className="w-full flex justify-center">
                             <h2>Status: {isPresent ? "Present" : "Absent"}</h2>
-                        </Box>
+                        </div>
                         <AsyncButton
                             onClick={markPresent}
                             disabled={isPresent}
                             sx={{ width: "100%" }}
                             color="success"
-                            variant="contained"
                         >
                             Mark Myself Present
                         </AsyncButton>
-                    </Card>
-                </Box>
-            </Box>
+                    </div>
+                </div>
+            </div>
         </LoginGate>
     );
 };

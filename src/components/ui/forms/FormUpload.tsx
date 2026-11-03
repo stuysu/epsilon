@@ -1,6 +1,5 @@
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent, CSSProperties, HTMLAttributes, useEffect } from "react";
 
-import { Box, Paper, PaperProps } from "@mui/material";
 import { useSnackbar } from "notistack";
 import AsyncButton from "../buttons/AsyncButton";
 
@@ -34,8 +33,12 @@ const FormUpload = ({
     onChange,
     status,
     changeStatus,
+    sx,
     ...paperProps
-}: Props & PaperProps) => {
+}: Props &
+    Omit<HTMLAttributes<HTMLDivElement>, "onChange"> & {
+        sx?: CSSProperties;
+    }) => {
     const { enqueueSnackbar } = useSnackbar();
 
     useEffect(() => {
@@ -75,10 +78,10 @@ const FormUpload = ({
     };
 
     return (
-        <Paper
+        <div
             {...paperProps}
-            elevation={5}
-            sx={{
+            className="bg-layer-3 shadow-control"
+            style={{
                 width: "100%",
                 height: hasFile ? "220px" : "100px",
                 borderRadius: "7px",
@@ -86,19 +89,14 @@ const FormUpload = ({
                 display: "flex",
                 flexWrap: "wrap",
                 position: "relative",
-                ...paperProps.sx,
+                ...sx,
             }}
         >
-            <Box
-                sx={{
-                    width: hasFile ? "100px" : "100%",
-                    height: "100%",
-                    position: "relative",
-                    padding: "10px",
-                }}
+            <div
+                className="h-full relative p-2.5"
+                style={{ width: hasFile ? "100px" : "100%" }}
             >
                 <AsyncButton
-                    variant="contained"
                     component="label"
                     sx={{ width: "100%", height: hasFile ? "auto" : "100%" }}
                 >
@@ -121,7 +119,6 @@ const FormUpload = ({
                 {hasFile && (
                     <AsyncButton
                         onClick={() => onChange?.(undefined)}
-                        variant="contained"
                         sx={{
                             position: "absolute",
                             bottom: "10px",
@@ -131,17 +128,9 @@ const FormUpload = ({
                         Remove
                     </AsyncButton>
                 )}
-            </Box>
+            </div>
             {preview && hasFile && (
-                <Box
-                    sx={{
-                        width: "200px",
-                        height: "200px",
-                        borderRadius: "100%",
-                        position: "absolute",
-                        right: "20px",
-                    }}
-                >
+                <div className="w-[200px] h-[200px] rounded-[100%] absolute right-[20px]">
                     <img
                         alt={`${value?.name || "Empty File"}`}
                         src={value ? URL.createObjectURL(value) : ""}
@@ -151,9 +140,9 @@ const FormUpload = ({
                             height: "200px",
                         }}
                     />
-                </Box>
+                </div>
             )}
-        </Paper>
+        </div>
     );
 };
 

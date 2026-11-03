@@ -1,4 +1,3 @@
-import { Avatar, Box, Stack, useMediaQuery } from "@mui/material";
 import React, {
     CSSProperties,
     FC,
@@ -16,6 +15,8 @@ import { ThemeContext } from "../../../contexts/ThemeProvider";
 import { PUBLIC_URL } from "../../../config/constants";
 import { isStuyActivitiesPath, topNavItems } from "../../../config/routes";
 import Divider from "../Divider";
+import Avatar from "../Avatar";
+import useMediaQuery from "../../../utils/useMediaQuery";
 
 const linkStyle: CSSProperties = {
     color: "inherit",
@@ -184,7 +185,7 @@ const NavBar: FC = () => {
     }, [updateUnderline, isMobile]);
 
     if (!user?.signed_in && location.pathname === "/")
-        return <Box height={20} />;
+        return <div className="h-5" />;
 
     return (
         <nav>
@@ -295,9 +296,9 @@ const NavBar: FC = () => {
             />
 
             {/* Top items — logo & user dropdown menu */}
-            <Box sx={topStyle}>
+            <div style={topStyle}>
                 {/* Logo / Wordmark */}
-                <Box sx={titleStyle}>
+                <div style={titleStyle}>
                     <span
                         style={{ ...linkStyle, cursor: "pointer" }}
                         onClick={() => navigate("/")}
@@ -314,7 +315,7 @@ const NavBar: FC = () => {
                             }}
                         />
                     </span>
-                </Box>
+                </div>
 
                 {/* User dropdown */}
                 <div className="max-sm:hidden pointer-events-auto relative flex flex-row justify-end top-1 right-0">
@@ -405,16 +406,12 @@ const NavBar: FC = () => {
                         )}
                     </div>
                 </div>
-            </Box>
+            </div>
 
             {/* Top-level tabs */}
-            <Box
+            <div
                 onMouseLeave={() => setIsHovered(false)}
-                overflow={"scroll"}
-                sx={{
-                    scrollbarWidth: "none",
-                    "&::-webkit-scrollbar": { display: "none" },
-                }}
+                className="max-[1099px]:[mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)] overflow-scroll [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             >
                 {/* colorful backdrop */}
                 {theme.effectiveMode === "dark" && (
@@ -426,20 +423,11 @@ const NavBar: FC = () => {
                     />
                 )}
 
-                <Stack
+                <div
                     ref={containerRef}
-                    direction="row"
-                    spacing={3}
-                    sx={{
-                        zIndex: 40,
-                        fontSize: 20,
-                        fontVariationSettings: "'wght' 700",
-                        position: "relative",
-                        ml: isMobile ? "1.5rem" : "3rem",
-                        mr: isMobile ? "0.5rem" : "3rem",
-                        mt: isMobile ? 1.8 : 3,
-                        mb: isMobile ? 1.5 : 0,
-                    }}
+                    className={`relative z-40 flex flex-row gap-6 text-[20px] [font-variation-settings:'wght'_700] ${
+                        isMobile ? "mb-3 ml-6 mr-2 mt-[14.4px]" : "mx-12 mt-6"
+                    }`}
                 >
                     {itemsToRender.map((item, index) => (
                         <div
@@ -505,14 +493,14 @@ const NavBar: FC = () => {
                         <div
                             className="absolute bottom-0 h-px bg-typography-1 pointer-events-none transition-[left,width] duration-300"
                             style={{
-                                left: optionUnderline.left - 23,
+                                left: optionUnderline.left + 1,
                                 width: optionUnderline.width,
                             }}
                         />
                     )}
                     <div className={"max-sm:hidden min-w-3"}></div>
-                </Stack>
-            </Box>
+                </div>
+            </div>
 
             {/* Divider under main nav */}
             <div

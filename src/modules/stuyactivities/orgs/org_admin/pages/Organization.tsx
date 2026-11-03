@@ -7,7 +7,6 @@ import OrgContext from "../../../../../contexts/OrgContext";
 import OrgEditor from "../components/OrgEditor";
 
 import { useSnackbar } from "notistack";
-import { Box } from "@mui/material";
 
 const Organization = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -62,7 +61,7 @@ const Organization = () => {
     }, [organization, enqueueSnackbar]);
 
     return (
-        <Box sx={{ width: "100%" }}>
+        <div className="w-full">
             <div
                 className={
                     "bg-layer-1 p-5 pl-7 pb-8 rounded-xl mb-10 mt-2 shadow-prominent"
@@ -80,7 +79,7 @@ const Organization = () => {
                 existingEdit={pendingEdit}
                 setPendingEdit={setPendingEdit}
             />
-        </Box>
+        </div>
     );
 };
 

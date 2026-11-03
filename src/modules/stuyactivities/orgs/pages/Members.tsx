@@ -54,6 +54,7 @@ const Members = () => {
     return (
         <LoginGate page="view members">
             <section className="w-full mt-2 mb-10">
+                <h1 className="sr-only">Members</h1>
                 <div className="flex flex-col sm:flex-row sm:gap-3">
                     <SearchInput
                         placeholder="Search members by name or email..."

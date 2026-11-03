@@ -1,5 +1,5 @@
-import { Autocomplete, Chip, SxProps, TextField } from "@mui/material";
-import { SyntheticEvent, useEffect } from "react";
+import { CSSProperties, useEffect } from "react";
+import TagField from "../input/TagField";
 import { useSnackbar } from "notistack";
 
 type Requirements = {
@@ -20,7 +20,7 @@ type Props = {
     };
     changeStatus?: (field: string, newStatus: boolean) => void;
     label?: string;
-    sx?: SxProps;
+    sx?: CSSProperties;
 };
 
 const FormTagSelect = ({
@@ -55,7 +55,7 @@ const FormTagSelect = ({
         validate(value);
     }, [changeStatus, field, required, value]);
 
-    const valueChanged = (event: SyntheticEvent, newValue: string[]) => {
+    const valueChanged = (newValue: string[]) => {
         if (
             requirements?.maxSelect &&
             newValue.length > requirements.maxSelect
@@ -72,30 +72,18 @@ const FormTagSelect = ({
     };
 
     return (
-        <Autocomplete
-            multiple
+        <TagField
+            label={label}
             sx={sx}
-            onChange={valueChanged}
             value={value}
+            onChange={valueChanged}
             options={tags}
-            renderTags={(value, props) => {
-                return value.map((option, index) => (
-                    <Chip label={option} {...props({ index })} />
-                ));
-            }}
-            renderInput={(params) => (
-                <TextField
-                    label={label}
-                    value={undefined}
-                    {...params}
-                    helperText={description?.split("\n").map((line, i) => (
-                        <span key={i}>
-                            {line}
-                            <br />
-                        </span>
-                    ))}
-                />
-            )}
+            helperText={description?.split("\n").map((line, i) => (
+                <span key={i}>
+                    {line}
+                    <br />
+                </span>
+            ))}
         />
     );
 };

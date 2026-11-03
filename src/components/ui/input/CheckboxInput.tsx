@@ -24,6 +24,8 @@ const CheckboxInput = ({
                 // invisible padding so the tap target is ~44px without changing the look
                 "before:absolute before:-inset-[10px] before:content-[''] " +
                 "data-[state=checked]:bg-blue data-[state=indeterminate]:bg-blue " +
+                // keeps an empty box visible on dark rows
+                "data-[state=unchecked]:ring-1 data-[state=unchecked]:ring-inset data-[state=unchecked]:ring-typography-3 " +
                 (disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer")
             }
         >

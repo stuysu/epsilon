@@ -1,4 +1,3 @@
-import { Avatar } from "@mui/material";
 import { supabase } from "../../../../lib/supabaseClient";
 
 import { useSnackbar } from "notistack";
@@ -7,6 +6,7 @@ import OrgChat from "./OrgChat";
 import { useState } from "react";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import Divider from "../../../../components/ui/Divider";
+import Avatar from "../../../../components/ui/Avatar";
 
 const OrgApproval = ({
     onBack,
@@ -65,15 +65,10 @@ const OrgApproval = ({
                     New Charter: {org.name}
                 </h1>
                 <div>
-                    <AsyncButton
-                        variant="contained"
-                        onClick={onBack}
-                        sx={{ marginRight: "10px" }}
-                    >
+                    <AsyncButton onClick={onBack} sx={{ marginRight: "10px" }}>
                         Back
                     </AsyncButton>
                     <AsyncButton
-                        variant="contained"
                         onClick={approve}
                         color="success"
                         sx={{ marginRight: "10px" }}
@@ -83,7 +78,6 @@ const OrgApproval = ({
                         Approve Activity & Publish
                     </AsyncButton>
                     <AsyncButton
-                        variant="contained"
                         onClick={reject}
                         color="secondary"
                         sx={{ marginRight: "10px" }}
@@ -109,7 +103,7 @@ const OrgApproval = ({
                         <Avatar
                             src={org.picture}
                             alt={org.name}
-                            sx={{
+                            style={{
                                 width: "150px",
                                 height: "150px",
                                 borderRadius: "15px",

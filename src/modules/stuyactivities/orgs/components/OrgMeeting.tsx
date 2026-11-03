@@ -103,7 +103,6 @@ const OrgMeeting = ({
                 <div className="relative z-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0 pr-4">
                     {onEdit && (
                         <AsyncButton
-                            variant="contained"
                             onClick={onEdit}
                         >
                             Edit
@@ -111,7 +110,6 @@ const OrgMeeting = ({
                     )}
                     {onDelete && (
                         <AsyncButton
-                            variant="contained"
                             disabled={deleting}
                             onClick={() => setConfirmingDelete(true)}
                         >

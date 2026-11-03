@@ -47,7 +47,7 @@ const Vote = () => {
                                     ))}
                                 </h1>
 
-                                <h1 className="max-sm:pt-4 max-lg:mt-14 md:text-8xl text-4xl text-center max-sm:leading-9 font-light relative z-10">
+                                <h2 className="as-h1 max-sm:pt-4 max-lg:mt-14 md:text-8xl text-4xl text-center max-sm:leading-9 font-light relative z-10">
                                     {title.split(" ").map((word, i) => (
                                         <motion.span
                                             key={i}
@@ -71,7 +71,7 @@ const Vote = () => {
                                             {word}
                                         </motion.span>
                                     ))}
-                                </h1>
+                                </h2>
                             </div>
                         </div>
                         <p className={"text-white/70 mx-3 text-center"}>

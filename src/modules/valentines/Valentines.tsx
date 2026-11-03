@@ -1,4 +1,3 @@
-import { Box, Divider, Typography } from "@mui/material";
 import ValentineDisplay from "./components/ValentineDisplay";
 import { useContext, useEffect, useState } from "react";
 import { Valentine } from "./ValentineType";
@@ -76,10 +75,10 @@ const Valentines = () => {
         <>
             {deadline && deadline < new Date() && (
                 <>
-                    <Typography variant="h2">
+                    <h2 className="text-[3.75rem] leading-[1.2]">
                         {`${receivedValentines.length} Valentine${receivedValentines.length === 1 ? "" : "s"} Received`}
-                    </Typography>
-                    <Box sx={{ marginTop: "1rem" }}>
+                    </h2>
+                    <div className="mt-4">
                         {receivedValentines.map((valentine) => (
                             <ValentineDisplay
                                 key={valentine.id}
@@ -87,23 +86,19 @@ const Valentines = () => {
                                 mini
                             />
                         ))}
-                    </Box>
-                    <Box sx={{ margin: "1rem 0", width: "80vw" }}>
-                        <Divider />
-                    </Box>
+                    </div>
+                    <div className="my-4 w-[80vw]">
+                        <hr className="border-divider" />
+                    </div>
                 </>
             )}
-            <Typography variant="h2">
+            <h2 className="text-[3.75rem] leading-[1.2]">
                 {`${sentValentines.length} Valentine${sentValentines.length === 1 ? "" : "s"} Sent`}
-            </Typography>
+            </h2>
             {sentValentines.map((valentine) => (
-                <Box
+                <div
                     key={valentine.id}
-                    sx={{
-                        display: "flex",
-                        justifyContent: "center",
-                        width: "100vw",
-                    }}
+                    className="flex justify-center w-[100vw]"
                 >
                     <ValentineDisplay
                         valentine={valentine}
@@ -114,7 +109,7 @@ const Valentines = () => {
                                 : undefined
                         }
                     />
-                </Box>
+                </div>
             ))}
             {deadline && deadline > new Date() && (
                 <AsyncButton onClick={() => navigate("create")}>

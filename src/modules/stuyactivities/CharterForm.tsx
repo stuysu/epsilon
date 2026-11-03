@@ -1,6 +1,6 @@
 import { CSSProperties, useContext, useEffect, useState } from "react";
 
-import { Box, Typography, useMediaQuery, InputAdornment } from "@mui/material";
+import useMediaQuery from "../../utils/useMediaQuery";
 import MultiPageForm from "../../components/ui/forms/MultiPageForm";
 import FormPage from "../../components/ui/forms/FormPage";
 import FormTextField from "../../components/ui/forms/FormTextField";
@@ -284,19 +284,16 @@ const CharterForm = () => {
     };
     if (!eligible)
         return (
-            <Box
-                sx={{
-                    width: "100%",
-                }}
-            >
-                <Typography align="center" variant="h3">
+            <div className="w-full">
+                <h3 className="text-center text-[3rem] leading-[1.167]">
                     You may not submit a second charter if you already have one
                     pending.
-                </Typography>
-            </Box>
+                </h3>
+            </div>
         );
     return (
         <LoginGate page={"charter an Activity"}>
+            <h1 className="sr-only">Charter an Activity</h1>
             <Helmet>
                 <meta name="robots" content="noindex" />
             </Helmet>
@@ -377,17 +374,8 @@ const CharterForm = () => {
                                         ? "URL is valid."
                                         : undefined
                             }
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start" sx={{ mr:0 }}>
-                                        https://epsilon.stuysu.org/
-                                    </InputAdornment>
-                                )
-                            }}
-                            inputProps={{
-                                pattern: urlPattern.source,
-                                style: { paddingLeft: "0px" },
-                            }}
+                            startAdornment="https://epsilon.stuysu.org/"
+                            pattern={urlPattern.source}
                             onBlur={async (e: any) => {
                                 const url = e.target.value;
                                 if (url) await validateUrl(url);
@@ -621,11 +609,11 @@ const CharterForm = () => {
                             description="Check this box if so."
                         />
                     </FormSection>
-                    <Typography sx={{ marginTop: "1rem" }}>
+                    <p className="mt-4">
                         If you have additional information to share about your
                         club, please use the "Messages" feature in your club
                         admin panel.
-                    </Typography>
+                    </p>
                 </FormPage>
             </MultiPageForm>
         </LoginGate>

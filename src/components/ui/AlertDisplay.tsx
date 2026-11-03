@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import Alert from "@mui/material/Alert";
+import AlertBanner from "./AlertBanner";
 import DisplayLinks from "../DisplayLinks";
 
 type AlertInfo = {
@@ -51,16 +51,18 @@ const AlertDisplay = () => {
         return <></>;
     return (
         <div className={"z-[9999] relative w-full p-4 bg-bg"}>
-            <Alert
-                sx={{ borderRadius: "10px" }}
+            <AlertBanner
                 severity={data.severity}
-                variant="filled"
                 onClose={data.severity === "error" ? undefined : handleClose}
             >
-                <div className={"relative top-0.5 invert brightness-200 *:text-[var(--text-primary)]"}>
+                <div
+                    className={
+                        "relative top-0.5 invert brightness-200 *:text-[var(--text-primary)]"
+                    }
+                >
                     <DisplayLinks text={data.message} />
                 </div>
-            </Alert>
+            </AlertBanner>
         </div>
     );
 };

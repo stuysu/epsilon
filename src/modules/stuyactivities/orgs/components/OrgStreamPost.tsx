@@ -140,15 +140,11 @@ const OrgStreamPost = ({
                 <div className="absolute top-5 right-5">
                     {editable && (
                         <>
-                            <AsyncButton
-                                onClick={deletePost}
-                                variant="contained"
-                            >
+                            <AsyncButton onClick={deletePost}>
                                 Delete
                             </AsyncButton>
                             <AsyncButton
                                 onClick={() => setEditing(true)}
-                                variant="contained"
                                 sx={{ marginLeft: "10px" }}
                             >
                                 Edit
