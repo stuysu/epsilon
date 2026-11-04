@@ -127,6 +127,35 @@ const SECTION_DESCRIPTIONS: Record<Category, string> = {
         "These medals celebrate the ones who contribute to the Stuy community.",
 };
 
+// Kept outside Profiles: a component declared inside it would be a new type on
+// every render, replacing the buttons and losing keyboard focus after a dialog.
+const MedalGrid = ({
+    items,
+    onSelect,
+}: {
+    items: Medal[];
+    onSelect: (medal: Medal) => void;
+}) => (
+    <div className="flex flex-wrap bg-layer-1 rounded-xl overflow-hidden shadow-prominent">
+        {items.map((m) => (
+            <button
+                key={m.key}
+                type="button"
+                onClick={() => onSelect(m)}
+                className="w-48 max-sm:w-32 overflow-hidden sm:sm:hover:bg-layer-2 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1"
+                aria-label={m.title}
+                title={m.title}
+            >
+                <img
+                    alt={m.title}
+                    src={m.img}
+                    className="cursor-pointer select-none"
+                />
+            </button>
+        ))}
+    </div>
+);
+
 const Profiles = () => {
     const user = useContext(UserContext);
     const [fourDigitId, setFourDigitId] = useState<number | null>(null);
@@ -158,27 +187,6 @@ const Profiles = () => {
         setDialogOpen(false);
         setActiveMedal(null);
     };
-
-    const MedalGrid = ({ items }: { items: Medal[] }) => (
-        <div className="flex flex-wrap bg-layer-1 rounded-xl overflow-hidden shadow-prominent">
-            {items.map((m) => (
-                <button
-                    key={m.key}
-                    type="button"
-                    onClick={() => openMedalDialog(m)}
-                    className="w-48 max-sm:w-32 overflow-hidden sm:sm:hover:bg-layer-2 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1"
-                    aria-label={m.title}
-                    title={m.title}
-                >
-                    <img
-                        alt={m.title}
-                        src={m.img}
-                        className="cursor-pointer select-none"
-                    />
-                </button>
-            ))}
-        </div>
-    );
 
     return (
         <LoginGate sx={{ width: "100%" }}>
@@ -240,7 +248,10 @@ const Profiles = () => {
                             <p className="mb-4">
                                 {SECTION_DESCRIPTIONS[section]}
                             </p>
-                            <MedalGrid items={items} />
+                            <MedalGrid
+                                items={items}
+                                onSelect={openMedalDialog}
+                            />
                             {idx !== SECTIONS.length - 1 && (
                                 <Divider className="my-6" />
                             )}

@@ -32,6 +32,7 @@ const LIVE_ROLES = {
 type AlertBannerProps = {
     severity?: AlertSeverity;
     onClose?: () => void;
+    // defaults to interrupting only for warnings and errors
     live?: keyof typeof LIVE_ROLES;
     children: ReactNode;
 };
@@ -39,14 +40,19 @@ type AlertBannerProps = {
 const AlertBanner = ({
     severity = "info",
     onClose,
-    live = "assertive",
+    live,
     children,
 }: AlertBannerProps) => {
+    const announce =
+        live ??
+        (severity === "warning" || severity === "error"
+            ? "assertive"
+            : "polite");
     const { color, icon } = severityStyles[severity] ?? severityStyles.info;
 
     return (
         <div
-            role={LIVE_ROLES[live]}
+            role={LIVE_ROLES[announce]}
             className={`flex items-start gap-3 rounded-[10px] px-4 py-1.5 text-white scheme-dark:text-black/90 ${color}`}
         >
             <i

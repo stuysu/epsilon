@@ -209,7 +209,8 @@
 
         /* burnt orange: white text on it, and it as link text, reach 4.5:1 */
         --accent: #ad4200;
-        --accent-text: #ad4200;
+        /* deeper than the fill, so links also pass on the orange cards */
+        --accent-text: #8f3600;
 
         --text-primary: #4e342e;
         /* deep enough for the orange navigation bar as well as the layers */
