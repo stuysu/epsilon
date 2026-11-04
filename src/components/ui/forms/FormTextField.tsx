@@ -1,4 +1,4 @@
-import { ChangeEvent, useEffect } from "react";
+import { ChangeEvent, Fragment, useEffect } from "react";
 import TextField, { TextFieldProps } from "../input/TextField";
 
 type Requirements = {
@@ -182,11 +182,11 @@ const FormTextField = ({
             helperText={
                 !hideHelper && (
                     <>
-                        {description?.split("\n").map((line) => (
-                            <>
+                        {description?.split("\n").map((line, index) => (
+                            <Fragment key={index}>
                                 {line}
                                 <br />
-                            </>
+                            </Fragment>
                         ))}
                         {helperText}
                     </>

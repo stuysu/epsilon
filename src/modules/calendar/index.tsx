@@ -141,7 +141,9 @@ const Index = () => {
                                 month.getFullYear(),
                             );
                         }}
-                        showOutsideDays
+                        // other months' days aren't shown: they couldn't be chosen,
+                        // and dimmed they read as unavailable yet were announced as
+                        // working buttons
                         weekStartsOn={1}
                         classNames={{
                             month_grid: "max-sm:scale-125 origin-top-left",

@@ -138,7 +138,7 @@ const Support = () => {
                 <Divider />
                 <HelpItem
                     icon="bx-question-mark"
-                    iconColor="text-pink-500"
+                    iconColor="text-pink-500 scheme-light:text-pink-700"
                     title="Understanding Statuses"
                     description="Learn about the different Activity statuses and their impacts."
                     content="Pending Activities are yet to be approved by the Clubs & Pubs department and are not publicly visible.
@@ -150,7 +150,7 @@ const Support = () => {
                 <Divider />
                 <HelpItem
                     icon="bx-pencil"
-                    iconColor="text-orange-400"
+                    iconColor="text-orange-400 scheme-light:text-orange-700"
                     title="Charter Edits Pending"
                     description="I edited my Charter, but the changes have not been reflected on the Activity page."
                     content="Edit requests to existing charters need to be reviewed and approved by the Clubs & Pubs team before the changes appear on the Activity page. These approvals typically happen on a set day each week."

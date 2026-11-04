@@ -88,7 +88,9 @@ const CharterForm = () => {
 
     const [urlError, setUrlError] = useState<string>("");
     const [checkingUrl, setCheckingUrl] = useState<boolean>(false);
-    const urlPattern = /^[a-zA-Z0-9_-]+$/;
+    // the hyphen is escaped, since browsers read the HTML pattern attribute
+    // with the v flag, which rejects an unescaped one in a class
+    const urlPattern = /^[a-zA-Z0-9_\-]+$/;
 
     const validateUrl = async (url: string) => {
         if (

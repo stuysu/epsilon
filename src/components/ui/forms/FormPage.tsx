@@ -98,15 +98,19 @@ const FormPage = <T,>({
                 if (child.type === FormSection) {
                     let parsedChildren = parseChildren(child.props.children);
                     childs.push(
-                        <FormSection {...child.props}>
+                        <FormSection key={index} {...child.props}>
                             {parsedChildren}
                         </FormSection>,
                     );
                     return;
                 }
 
-                if (child.type === FormRender) {
-                    childs.push(child);
+                // plain HTML elements and FormRender take no form props
+                if (
+                    child.type === FormRender ||
+                    typeof child.type === "string"
+                ) {
+                    childs.push(cloneElement(child, { key: index }));
                     return;
                 }
 

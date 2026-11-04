@@ -37,7 +37,7 @@ const Archives = () => {
                             "https://docs.google.com/spreadsheets/d/1enQNUbduXRY0pGyngbRjpYma4LVkJdep3jh66iL_EWs/edit?usp=sharing"
                         }
                         target="_blank"
-                        className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex justify-center no-underline gap-4 sm:hover:bg-layer-3 shadow-control"
+                        className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex justify-center no-underline gap-4 sm:hover:bg-layer-3 shadow-control focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1"
                     >
                         <div>
                             <h2
@@ -55,7 +55,7 @@ const Archives = () => {
                             "https://docs.google.com/spreadsheets/d/1URqnVM9avoD5_oRvBzQXI1ghq4oWRLWMps58cvNCLc0/edit?usp=sharing"
                         }
                         target="_blank"
-                        className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex justify-center no-underline gap-4 sm:hover:bg-layer-3 shadow-control"
+                        className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex justify-center no-underline gap-4 sm:hover:bg-layer-3 shadow-control focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1"
                     >
                         <div>
                             <h2
@@ -73,7 +73,7 @@ const Archives = () => {
                             "https://docs.google.com/spreadsheets/d/1TyFnEPhY3gM-yRJKYDJkQSfHC6OsvC5ftkkoahjVcCU/edit?gid=485693778#gid=485693778"
                         }
                         target="_blank"
-                        className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex justify-center no-underline gap-4 sm:hover:bg-layer-3 shadow-control"
+                        className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex justify-center no-underline gap-4 sm:hover:bg-layer-3 shadow-control focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1"
                     >
                         <div>
                             <h2

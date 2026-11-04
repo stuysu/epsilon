@@ -34,7 +34,7 @@ const Avatar = ({
             className={`flex h-full w-full items-center justify-center ${
                 style?.backgroundColor
                     ? ""
-                    : "bg-[#bdbdbd] text-white scheme-dark:bg-[#757575] scheme-dark:text-[#121212]"
+                    : "bg-[#757575] text-white scheme-dark:text-[#121212]"
             }`}
         >
             {children ?? <i className="bx bxs-user text-[1.5rem]" />}
