@@ -78,10 +78,13 @@ const Vote = () => {
                             We're working on integrating voting services into
                             Epsilon. For now, visit
                         </p>
+                        {/* this block is black in every theme, so the link keeps a
+                            light blue rather than the theme's link colour */}
                         <a
                             href={"https://vote.stuysu.org"}
-                            className={"important mt-3"}
+                            className={"important mt-3 text-[#5c9dff]"}
                             target={"_blank"}
+                            rel={"noopener noreferrer"}
                         >
                             <i
                                 className={

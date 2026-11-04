@@ -51,6 +51,10 @@ export default function SearchInput({
               hover:bg-layer-2
               focus:bg-layer-3
               outline-0
+              focus-visible:outline
+              focus-visible:outline-2
+              focus-visible:outline-offset-2
+              focus-visible:outline-typography-1
               shadow-control
               ${trailing ? "pr-12" : ""}
               ${inputClassName}`}

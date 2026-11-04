@@ -11,7 +11,7 @@ import { supabase } from "../../../lib/supabaseClient";
 import UpcomingMeeting from "./UpcomingMeeting";
 import OrgStreamPost from "../../stuyactivities/orgs/components/OrgStreamPost";
 import DisplayLinks from "../../../components/DisplayLinks";
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import ItemList from "../../../components/ui/lists/ItemList";
 import { Scrollbars } from "react-custom-scrollbars-2";
 
@@ -41,7 +41,6 @@ type meetingType = {
 };
 
 const UserHome = () => {
-    const navigate = useNavigate();
     const user = React.useContext(UserContext);
     const { enqueueSnackbar } = useSnackbar();
 
@@ -226,13 +225,19 @@ const UserHome = () => {
                                 );
                             return null;
                         })}
-                        <div
-                            className="cursor-pointer flex items-center justify-center flex-col w-44 h-44 rounded-xl sm:hover:opacity-75 transition-opacity border-accent border-dashed border"
-                            onClick={() => navigate(`/stuyactivities`)}
+                        {/* a link, so the keyboard reaches it; hover shades the
+                            tile rather than fading its text */}
+                        <Link
+                            to="/stuyactivities"
+                            // the outline is inset, since the scroller clips outside the tile
+                            className="flex items-center justify-center flex-col w-44 h-44 rounded-xl no-underline transition-colors sm:hover:bg-layer-1 border-accent border-dashed border focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-typography-1"
                         >
-                            <i className="bx bx-md bx-plus-circle mb-5 text-accent"></i>
+                            <i
+                                className="bx bx-md bx-plus-circle mb-5 text-accent"
+                                aria-hidden="true"
+                            ></i>
                             <p className="text-accent">Join an Activity!</p>
-                        </div>
+                        </Link>
                     </Scrollbars>
                 </div>
                 <div className="w-full max-w-3xl flex flex-col gap-14 max-sm:mt-6">
@@ -281,6 +286,7 @@ const UserHome = () => {
                             justify-center
                             max-sm:translate-y-7
                             sm:group-hover:translate-y-7
+                            sm:group-focus-within:translate-y-7
                             transition-transform
                             w-[92%]
                             z-[1]
@@ -343,6 +349,7 @@ const UserHome = () => {
                             justify-center
                             max-sm:translate-y-7
                             sm:group-hover:translate-y-7
+                            sm:group-focus-within:translate-y-7
                             transition-transform
                             w-[92%]
                             z-[1]
@@ -350,18 +357,31 @@ const UserHome = () => {
                             bg-layer-1
                             shadow-control"
                         >
-                            <p
-                                className={
+                            {/* a real button, so it works from a keyboard; once
+                                there is nothing more it reports itself unavailable
+                                but stays focusable, so focus isn't dropped */}
+                            <button
+                                type="button"
+                                aria-disabled={
                                     announcements.length <= visibleAnnouncements
-                                        ? "opacity-50 pt-4 important"
-                                        : "pt-4 cursor-pointer sm:hover:opacity-75 transition-colors important"
                                 }
-                                onClick={() =>
-                                    setVisibleAnnouncements((prev) => prev + 3)
-                                }
+                                // only the label dims, so the focus outline keeps its
+                                // contrast; the gap above is a margin, so the outline
+                                // isn't drawn under the list
+                                className="group/more text important mt-4 text-left cursor-pointer rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 aria-disabled:cursor-default"
+                                onClick={() => {
+                                    if (
+                                        announcements.length <=
+                                        visibleAnnouncements
+                                    )
+                                        return;
+                                    setVisibleAnnouncements((prev) => prev + 3);
+                                }}
                             >
-                                View More Announcements
-                            </p>
+                                <span className="transition-opacity sm:group-hover/more:underline group-aria-disabled/more:opacity-50 sm:group-aria-disabled/more:group-hover/more:no-underline">
+                                    View More Announcements
+                                </span>
+                            </button>
                         </div>
                     </div>
 

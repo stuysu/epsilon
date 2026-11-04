@@ -159,7 +159,7 @@ const AdminRoom = ({
             <div className="gap-3 flex h-12 justify-between w-full items-center">
                 <input
                     value={roomName || ""}
-                    className="text text-typography-1 w-52 rounded-md px-3 h-9 bg-layer-1 outline-none"
+                    className="text text-typography-1 w-52 rounded-md px-3 h-9 bg-layer-1 outline-none placeholder:text-typography-2 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1"
                     placeholder="Room name"
                     onChange={(e) => {
                         setRoomName(e.target.value);
@@ -169,7 +169,7 @@ const AdminRoom = ({
 
                 <input
                     value={roomFloor ?? ""}
-                    className="text text-typography-1 rounded-md px-3 w-16 h-9 bg-layer-1 outline-none"
+                    className="text text-typography-1 rounded-md px-3 w-16 h-9 bg-layer-1 outline-none placeholder:text-typography-2 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1"
                     placeholder="Floor"
                     inputMode="numeric"
                     onChange={(e) => {

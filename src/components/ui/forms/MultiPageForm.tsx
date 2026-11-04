@@ -91,7 +91,7 @@ const MultiPageForm = <T,>({
                                 className={`flex h-6 w-6 shrink-0 items-center justify-center rounded-full text-[0.75rem] ${
                                     i <= page
                                         ? "bg-[#1976d2] text-white scheme-dark:bg-[#90caf9] scheme-dark:text-black/90"
-                                        : "bg-black/40 text-white scheme-dark:bg-white/50 scheme-dark:text-black/90"
+                                        : "bg-black/60 text-white scheme-dark:bg-white/50 scheme-dark:text-black/90"
                                 }`}
                             >
                                 {i < page ? (

@@ -58,7 +58,7 @@ const Arista = () => {
                             alt="Arista members at the Fall 2026 Open House"
                         ></img>
                     </div>
-                    <p className={"mt-3 opacity-65"}>
+                    <p className={"mt-3 text-typography-2"}>
                         Fall 2026 Open House · Photo by Anders Zernike
                     </p>
                 </motion.div>
@@ -140,7 +140,11 @@ const Arista = () => {
                             someone else.
                         </p>
                         <br />
-                        <p className={"opacity-65 xl:text-lg 2xl:text-xl"}>
+                        <p
+                            className={
+                                "text-typography-2 xl:text-lg 2xl:text-xl"
+                            }
+                        >
                             Eric Ferencz, Faculty Advisor (2023–2025)
                         </p>
                         <a

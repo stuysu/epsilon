@@ -84,7 +84,7 @@ const CharterForm = () => {
     const { enqueueSnackbar } = useSnackbar();
 
     const [formData, setFormData] = useState<FormType>(emptyForm);
-    const isMobile = useMediaQuery("(max-width: 640px)");
+    const isMobile = useMediaQuery("not all and (min-width: 640px)");
 
     const [urlError, setUrlError] = useState<string>("");
     const [checkingUrl, setCheckingUrl] = useState<boolean>(false);

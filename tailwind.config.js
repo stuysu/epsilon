@@ -17,6 +17,10 @@ module.exports = {
                 lineSeparator:
                     "linear-gradient(to right, var(--divider) 0%, var(--highlight) 25%, var(--divider) 100%)",
             },
+            // text-accent uses a lighter shade in dark themes than bg-accent
+            textColor: {
+                accent: "var(--accent-text)",
+            },
             colors: {
                 bg: "var(--bg-main)",
 

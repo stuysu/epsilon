@@ -348,7 +348,11 @@ const Catalog = () => {
                     {!loadingInitial && !searchState.more && (
                         <div>
                             {approvedOrgs.length === 0 ? (
-                                <h3 className={"text-center pt-40 opacity-70"}>
+                                <h3
+                                    className={
+                                        "text-center pt-40 text-typography-2"
+                                    }
+                                >
                                     <i className={"bx bx-search bx-md m-5"}></i>
                                     <br />
                                     No Results

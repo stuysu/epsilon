@@ -79,7 +79,7 @@ const DaySchedule = ({ day, meetings }: Props) => {
                         aria-label={`Sort meetings by room name ${sortDesc ? "descending" : "ascending"}`}
                         title={`Sort ${sortDesc ? "descending" : "ascending"}`}
                         className={
-                            "px-2 py-1 rounded bg-transparent hover:bg-layer-2 focus:outline-none flex items-center"
+                            "px-2 py-1 rounded bg-transparent hover:bg-layer-2 focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1 flex items-center"
                         }
                     >
                         <span className="font-semibold text-base">Room</span>

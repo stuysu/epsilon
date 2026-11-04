@@ -17,21 +17,39 @@ const HelpItem = ({
     content?: string;
 }) => {
     const [expanded, setExpanded] = React.useState(false);
+    const panelId = React.useId();
     return (
+        // The whole card toggles for a mouse; for the keyboard and screen
+        // readers the title is a button inside its heading, and a key press on
+        // it bubbles up to this same handler.
         <div
-            className={"flex flex-row items-start gap-3 my-4 cursor-pointer"}
-            onClick={() => setExpanded((prev) => !prev)}
+            className={`flex flex-row items-start gap-3 my-4 ${content ? "cursor-pointer" : ""}`}
+            onClick={content ? () => setExpanded((prev) => !prev) : undefined}
         >
             <i
                 className={`bx ${icon} max-sm:hidden bx-lg relative top-2.5 ${iconColor}`}
             ></i>
             <div>
-                <h3 className="mt-3">{title}</h3>
+                <h3 className="mt-3">
+                    {content ? (
+                        <button
+                            type="button"
+                            aria-expanded={expanded}
+                            aria-controls={panelId}
+                            className="text-left [font:inherit] [color:inherit] rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                        >
+                            {title}
+                        </button>
+                    ) : (
+                        title
+                    )}
+                </h3>
                 <p className="mb-3">{description}</p>
                 <AnimatePresence initial={false}>
                     {content && expanded && (
                         <motion.div
                             key="content"
+                            id={panelId}
                             initial={{
                                 opacity: 0,
                                 height: 0,

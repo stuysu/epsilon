@@ -72,7 +72,7 @@
     }
 
     h5 {
-        @apply text-[0.8rem] leading-[2rem] text-[color:var(--text-tertiary)] uppercase;
+        @apply text-[0.8rem] leading-[2rem] text-[color:var(--text-secondary)] uppercase;
         font-variation-settings: "wght" 700;
     }
 
@@ -83,7 +83,7 @@
     }
 
     a {
-        @apply text-[color:var(--accent)] underline;
+        @apply text-[color:var(--accent-text)] underline;
     }
 
     .important {
@@ -103,6 +103,9 @@
         --layer-tertiary: #5353534c;
 
         --accent: #3788ffcc;
+        /* the accent as text (links and the like) is lighter, since the fill
+           behind white text has to stay deep */
+        --accent-text: #5c9dff;
 
         --text-primary: #e8e8e8cc;
         --text-secondary: #aeaeaecc;
@@ -137,6 +140,7 @@
 
         /* opaque and a little deeper, so white text on it reaches 4.5:1 */
         --accent: #0058e0;
+        --accent-text: #0058e0;
 
         --text-primary: #000000cc;
         --text-secondary: #3d3d3dcc;
@@ -146,7 +150,7 @@
         --green: #33762f;
         /* dark amber, since yellow is mostly used as text */
         --yellow: #835800;
-        --red: #d31300;
+        --red: #c41200;
         /* deep enough for small text, as on the catalog's submission card */
         --beige: #6e5b3f;
 
@@ -171,6 +175,7 @@
         --layer-tertiary: #262626;
 
         --accent: #bb2c00;
+        --accent-text: #ff6e40;
 
         --text-primary: #ffffff;
         --text-secondary: #f5f5f5;
@@ -204,13 +209,18 @@
 
         /* burnt orange: white text on it, and it as link text, reach 4.5:1 */
         --accent: #ad4200;
+        --accent-text: #ad4200;
 
         --text-primary: #4e342e;
-        --text-secondary: #6d4c41;
+        /* deep enough for the orange navigation bar as well as the layers */
+        --text-secondary: #634439;
         --text-tertiary: #8d6e63;
 
-        --blue: #ff7043;
-        --green: #ff8a65;
+        /* deep enough to fill a checkbox behind a white tick and to stand
+           out from the page; green stays a green, distinct from red, and also
+           works as small text */
+        --blue: #c43e00;
+        --green: #356018;
         /* yellow, red and beige are used as text and behind white text, so
            they are deep shades that pass 4.5:1 on these warm layers and on
            the orange navigation bar */

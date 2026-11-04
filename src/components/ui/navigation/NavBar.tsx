@@ -17,6 +17,7 @@ import { isStuyActivitiesPath, topNavItems } from "../../../config/routes";
 import Divider from "../Divider";
 import Avatar from "../Avatar";
 import useMediaQuery from "../../../utils/useMediaQuery";
+import revealOnKeyboardFocus from "../../../utils/revealOnKeyboardFocus";
 
 const linkStyle: CSSProperties = {
     color: "inherit",
@@ -24,6 +25,131 @@ const linkStyle: CSSProperties = {
 };
 
 type TopNavItem = (typeof topNavItems)[number];
+
+// The nav is built from divs and paragraphs, so give each clickable one the
+// role, focus and keys of the control it stands for. Hidden menus pass
+// focusable = false so their items are skipped by the Tab key.
+const pressable = (
+    onPress: () => void,
+    { role = "button", focusable = true } = {},
+) => ({
+    role,
+    tabIndex: focusable ? 0 : -1,
+    onClick: onPress,
+    onKeyDown: (event: React.KeyboardEvent) => {
+        if (event.key === "Enter" || (role === "button" && event.key === " ")) {
+            event.preventDefault();
+            onPress();
+        }
+    },
+});
+
+// The first focusable element after `anchor` in the page, skipping `skip`
+const nextFocusableAfter = (
+    anchor: HTMLElement | null,
+    skip: HTMLElement | null,
+) => {
+    if (!anchor) return null;
+    const focusables = Array.from(
+        document.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled]), input:not([disabled]), select:not([disabled]), textarea:not([disabled]), summary, [contenteditable="true"], [tabindex]',
+        ),
+    ).filter(
+        (element) =>
+            !skip?.contains(element) &&
+            element.tabIndex >= 0 &&
+            // rendered, including fixed-position controls (offsetParent is null for those)
+            element.getClientRects().length > 0,
+    );
+    return focusables.find(
+        (element) =>
+            anchor.compareDocumentPosition(element) &
+                Node.DOCUMENT_POSITION_FOLLOWING && !anchor.contains(element),
+    );
+};
+
+// Menus close on Escape, handing focus back to their button, and once focus
+// moves anywhere else, so a keyboard user never leaves one open behind them.
+const useMenuDismiss = (
+    open: boolean,
+    close: () => void,
+    menuRef: React.RefObject<HTMLElement>,
+    triggerRef: React.RefObject<HTMLElement>,
+    { focusFirstItem = false } = {},
+) => {
+    useEffect(() => {
+        if (!open) return;
+        // a menu placed before its button in the page would otherwise be
+        // reached only by tabbing backwards
+        if (focusFirstItem) {
+            menuRef.current
+                ?.querySelector<HTMLElement>('[tabindex="0"]')
+                ?.focus();
+        }
+        const onKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") {
+                close();
+                triggerRef.current?.focus();
+                return;
+            }
+            if (!focusFirstItem || event.key !== "Tab") return;
+            // This menu sits before its button in the page, so Tab is steered
+            // to behave as if it came right after the button.
+            const items = Array.from(
+                menuRef.current?.querySelectorAll<HTMLElement>(
+                    '[tabindex="0"]',
+                ) ?? [],
+            );
+            const active = document.activeElement;
+            const trigger = triggerRef.current;
+            let target: HTMLElement | null | undefined;
+            if (!event.shiftKey && active === trigger) target = items[0];
+            if (event.shiftKey && active === items[0]) target = trigger;
+            if (!event.shiftKey && active === items[items.length - 1]) {
+                target = nextFocusableAfter(trigger, menuRef.current);
+                close();
+            }
+            if (target) {
+                event.preventDefault();
+                target.focus();
+            }
+        };
+        const onFocusIn = (event: FocusEvent) => {
+            const target = event.target as Node;
+            if (
+                !menuRef.current?.contains(target) &&
+                !triggerRef.current?.contains(target)
+            ) {
+                close();
+            }
+        };
+        document.addEventListener("keydown", onKeyDown);
+        document.addEventListener("focusin", onFocusIn);
+        const menu = menuRef.current;
+        const trigger = triggerRef.current;
+        return () => {
+            document.removeEventListener("keydown", onKeyDown);
+            document.removeEventListener("focusin", onFocusIn);
+            // closing after an item was chosen would leave focus on a hidden item
+            if (menu?.contains(document.activeElement)) trigger?.focus();
+        };
+    }, [open, close, menuRef, triggerRef, focusFirstItem]);
+};
+
+const FOCUS_RING =
+    "rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1";
+// marks the current page under a phone tab's icon (also when it's in "More")
+const CURRENT_BAR =
+    "after:absolute after:-bottom-2 after:left-1/2 after:h-0.5 after:w-3 after:-translate-x-1/2 after:rounded-full after:bg-typography-1 after:content-['']";
+
+// the underline under the current page's label in the menus
+const CURRENT_LABEL = "underline decoration-2 underline-offset-4";
+// pages reached from the phone "More" menu's Account section
+const ACCOUNT_PATHS = ["/profile", "/preferences", "/communications"];
+
+// for the tabs, whose scroller clips anything drawn below them
+const FOCUS_RING_INSET =
+    "rounded focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1";
 
 const NavBar: FC = () => {
     const user = useContext(UserContext);
@@ -34,7 +160,7 @@ const NavBar: FC = () => {
     const navigate = useNavigate();
 
     const theme = useContext(ThemeContext);
-    const isMobile = useMediaQuery("(max-width: 640px)");
+    const isMobile = useMediaQuery("not all and (min-width: 640px)");
 
     const itemsToRender = React.useMemo(
         () => (isMobile ? topNavItems.slice(0, 4) : topNavItems),
@@ -82,6 +208,26 @@ const NavBar: FC = () => {
     const dotsRef = useRef<HTMLDivElement | null>(null);
 
     const [moreOpen, setMoreOpen] = useState(false);
+    const moreMenuRef = useRef<HTMLDivElement | null>(null);
+    const moreTriggerRef = useRef<HTMLDivElement | null>(null);
+    const drawerRef = useRef<HTMLDivElement | null>(null);
+    const drawerTriggerRef = useRef<HTMLDivElement | null>(null);
+    const closeMore = React.useCallback(() => setMoreOpen(false), []);
+    const closeDrawer = React.useCallback(() => setDrawerOpen(false), []);
+    useMenuDismiss(moreOpen, closeMore, moreMenuRef, moreTriggerRef, {
+        focusFirstItem: true,
+    });
+    useMenuDismiss(drawerOpen, closeDrawer, drawerRef, drawerTriggerRef);
+
+    // the hover backdrop covers the page, so Escape clears it too
+    useEffect(() => {
+        if (!isHovered) return;
+        const onKeyDown = (event: KeyboardEvent) => {
+            if (event.key === "Escape") setIsHovered(false);
+        };
+        document.addEventListener("keydown", onKeyDown);
+        return () => document.removeEventListener("keydown", onKeyDown);
+    }, [isHovered]);
 
     useEffect(() => {
         itemRefs.current = new Array(itemsToRender.length);
@@ -168,7 +314,7 @@ const NavBar: FC = () => {
     }, [location.pathname, isOrgPage, isMobile, itemsToRender]);
 
     useLayoutEffect(() => {
-        let raf = requestAnimationFrame(updateUnderline);
+        const raf = requestAnimationFrame(updateUnderline);
 
         const onResize = () => requestAnimationFrame(updateUnderline);
         const onPageShow = () => requestAnimationFrame(updateUnderline);
@@ -188,9 +334,11 @@ const NavBar: FC = () => {
         return <div className="h-5" />;
 
     return (
-        <nav>
+        <nav aria-label="Main">
             {/* Mobile nav toolbox */}
             <div
+                ref={moreMenuRef}
+                id="nav-more-menu"
                 className={`transform-gpu z-50 fixed left-2 right-2 bottom-16 rounded-lg bg-bg
     shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)]
     transition-all duration-200 ${
@@ -199,25 +347,44 @@ const NavBar: FC = () => {
             : "pointer-events-none opacity-0 translate-y-1"
     }`}
             >
-                <div className="px-6 py-4">
+                <div className="px-6 py-4" aria-hidden={!moreOpen}>
                     {/* overflow nav */}
                     <h5>More Tools</h5>
                     {overflowItems.map((item, idx) => (
                         <div
                             key={`${item.path}-overflow-${idx}`}
-                            className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 sm:hover:text-typography-1 transition-colors"
-                            onClick={() => {
-                                if (item.external && (item as any).url) {
-                                    window.open((item as any).url!, "_blank");
-                                } else {
-                                    navigate(item.path);
-                                }
-                                setMoreOpen(false);
-                                setTimeout(() => setIsHovered(false), 300);
-                            }}
+                            aria-current={
+                                isPageOptnActive(item) ? "page" : undefined
+                            }
+                            // the current page is brighter and underlined here too
+                            className={`flex items-center gap-2 py-1 cursor-pointer sm:hover:text-typography-1 transition-colors ${FOCUS_RING} ${
+                                isPageOptnActive(item)
+                                    ? "text-typography-1"
+                                    : "text-typography-2"
+                            }`}
+                            {...pressable(
+                                () => {
+                                    if (item.external && (item as any).url) {
+                                        window.open(
+                                            (item as any).url!,
+                                            "_blank",
+                                            "noopener",
+                                        );
+                                    } else {
+                                        navigate(item.path);
+                                    }
+                                    setMoreOpen(false);
+                                    setTimeout(() => setIsHovered(false), 300);
+                                },
+                                { role: "link", focusable: moreOpen },
+                            )}
                         >
-                            <i className={item.icon} />
-                            <span className="important">{item.label}</span>
+                            <i className={item.icon} aria-hidden="true" />
+                            <span
+                                className={`important ${isPageOptnActive(item) ? CURRENT_LABEL : ""}`}
+                            >
+                                {item.label}
+                            </span>
                         </div>
                     ))}
 
@@ -228,60 +395,124 @@ const NavBar: FC = () => {
                     {user?.signed_in ? (
                         <>
                             <div
-                                className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 sm:hover:text-typography-1 transition-colors"
-                                onClick={() => {
-                                    navigate("/profile");
-                                    setMoreOpen(false);
-                                }}
+                                aria-current={
+                                    location.pathname === "/profile"
+                                        ? "page"
+                                        : undefined
+                                }
+                                className={`flex items-center gap-2 py-1 cursor-pointer sm:hover:text-typography-1 transition-colors ${FOCUS_RING} ${
+                                    location.pathname === "/profile"
+                                        ? "text-typography-1"
+                                        : "text-typography-2"
+                                }`}
+                                {...pressable(
+                                    () => {
+                                        navigate("/profile");
+                                        setMoreOpen(false);
+                                    },
+                                    { role: "link", focusable: moreOpen },
+                                )}
                             >
-                                <i className="bx bx-id-card" />
-                                <span className="important">Profile</span>
+                                <i
+                                    className="bx bx-id-card"
+                                    aria-hidden="true"
+                                />
+                                <span
+                                    className={`important ${location.pathname === "/profile" ? CURRENT_LABEL : ""}`}
+                                >
+                                    Profile
+                                </span>
                             </div>
 
                             <div
-                                className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 sm:hover:text-typography-1 transition-colors"
-                                onClick={() => {
-                                    navigate("/preferences");
-                                    setMoreOpen(false);
-                                }}
+                                aria-current={
+                                    location.pathname === "/preferences"
+                                        ? "page"
+                                        : undefined
+                                }
+                                className={`flex items-center gap-2 py-1 cursor-pointer sm:hover:text-typography-1 transition-colors ${FOCUS_RING} ${
+                                    location.pathname === "/preferences"
+                                        ? "text-typography-1"
+                                        : "text-typography-2"
+                                }`}
+                                {...pressable(
+                                    () => {
+                                        navigate("/preferences");
+                                        setMoreOpen(false);
+                                    },
+                                    { role: "link", focusable: moreOpen },
+                                )}
                             >
-                                <i className="bx bx-slider" />
-                                <span className="important">Preferences</span>
+                                <i
+                                    className="bx bx-slider"
+                                    aria-hidden="true"
+                                />
+                                <span
+                                    className={`important ${location.pathname === "/preferences" ? CURRENT_LABEL : ""}`}
+                                >
+                                    Preferences
+                                </span>
                             </div>
 
                             <div
-                                className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 sm:hover:text-typography-1 transition-colors"
-                                onClick={() => {
-                                    navigate("/communications");
-                                    setMoreOpen(false);
-                                }}
+                                aria-current={
+                                    location.pathname === "/communications"
+                                        ? "page"
+                                        : undefined
+                                }
+                                className={`flex items-center gap-2 py-1 cursor-pointer sm:hover:text-typography-1 transition-colors ${FOCUS_RING} ${
+                                    location.pathname === "/communications"
+                                        ? "text-typography-1"
+                                        : "text-typography-2"
+                                }`}
+                                {...pressable(
+                                    () => {
+                                        navigate("/communications");
+                                        setMoreOpen(false);
+                                    },
+                                    { role: "link", focusable: moreOpen },
+                                )}
                             >
-                                <i className="bx bx-envelope" />
-                                <span className="important">
+                                <i
+                                    className="bx bx-envelope"
+                                    aria-hidden="true"
+                                />
+                                <span
+                                    className={`important ${location.pathname === "/communications" ? CURRENT_LABEL : ""}`}
+                                >
                                     Communications
                                 </span>
                             </div>
 
                             <div
-                                className="flex items-center gap-2 py-1 cursor-pointer text-red sm:hover:brightness-90 transition-[filter,color]"
-                                onClick={() => {
-                                    signOut();
-                                    setMoreOpen(false);
-                                }}
+                                className={`flex items-center gap-2 py-1 cursor-pointer text-red sm:hover:brightness-90 transition-[filter,color] ${FOCUS_RING}`}
+                                {...pressable(
+                                    () => {
+                                        signOut();
+                                        setMoreOpen(false);
+                                    },
+                                    { focusable: moreOpen },
+                                )}
                             >
-                                <i className="bx bx-log-out" />
+                                <i
+                                    className="bx bx-log-out"
+                                    aria-hidden="true"
+                                />
                                 <span className="important">Sign Out</span>
                             </div>
                         </>
                     ) : (
                         <div
-                            className="flex items-center gap-2 py-1 cursor-pointer text-typography-2 sm:hover:text-typography-1 transition-colors"
-                            onClick={() => {
-                                navigate("/");
-                                setMoreOpen(false);
-                            }}
+                            className={`flex items-center gap-2 py-1 cursor-pointer text-typography-2 sm:hover:text-typography-1 transition-colors ${FOCUS_RING}`}
+                            {...pressable(
+                                () => {
+                                    navigate("/");
+                                    setMoreOpen(false);
+                                },
+                                { role: "link", focusable: moreOpen },
+                            )}
                         >
-                            <i className="bx bx-log-in" />
+                            <i className="bx bx-log-in" aria-hidden="true" />
                             <span className="important">Sign In</span>
                         </div>
                     )}
@@ -301,7 +532,8 @@ const NavBar: FC = () => {
                 <div style={titleStyle}>
                     <span
                         style={{ ...linkStyle, cursor: "pointer" }}
-                        onClick={() => navigate("/")}
+                        className={FOCUS_RING}
+                        {...pressable(() => navigate("/"), { role: "link" })}
                     >
                         <img
                             src={wordmarkSrc}
@@ -320,8 +552,11 @@ const NavBar: FC = () => {
                 {/* User dropdown */}
                 <div className="max-sm:hidden pointer-events-auto relative flex flex-row justify-end top-1 right-0">
                     <div
-                        className="flex cursor-pointer flex-row items-center justify-center gap-2 rounded-lg bg-layer-1 pl-1.5 pr-1.5 shadow-control h-10"
-                        onClick={() => setDrawerOpen(!drawerOpen)}
+                        ref={drawerTriggerRef}
+                        className={`flex cursor-pointer flex-row items-center justify-center gap-2 rounded-lg bg-layer-1 pl-1.5 pr-1.5 shadow-control h-10 ${FOCUS_RING}`}
+                        aria-expanded={drawerOpen}
+                        aria-controls="nav-user-menu"
+                        {...pressable(() => setDrawerOpen(!drawerOpen))}
                     >
                         <Avatar
                             style={{ width: 30, height: 30, borderRadius: 4 }}
@@ -336,25 +571,33 @@ const NavBar: FC = () => {
                             className={`text-typography-2 bx bx-chevron-down bx-sm inline-block pr-1 transition-transform duration-200 ${
                                 drawerOpen ? "bx-flip-vertical" : ""
                             }`}
+                            aria-hidden="true"
                         />
                     </div>
 
                     {/* User Drawer */}
                     <div
+                        ref={drawerRef}
+                        id="nav-user-menu"
                         className={`absolute top-14 bottom-auto right-auto
                         z-50 flex w-72 flex-col gap-2 rounded-xl bg-blurDark p-5
+                        [[data-theme=orange]_&]:bg-bg
                         backdrop-blur-xl shadow-prominent
                         transition-all duration-300 ${
                             drawerOpen
                                 ? "translate-y-0 opacity-100"
                                 : "pointer-events-none sm:-translate-y-3 translate-y-3 opacity-0"
                         }`}
+                        aria-hidden={!drawerOpen}
                     >
                         {!user?.signed_in ? (
                             <p
                                 style={{ fontVariationSettings: "'wght' 700" }}
-                                className="cursor-pointer transition-colors sm:hover:text-typography-3"
-                                onClick={() => navigate("/")}
+                                className={`cursor-pointer transition-colors sm:hover:text-typography-3 ${FOCUS_RING}`}
+                                {...pressable(() => navigate("/"), {
+                                    role: "link",
+                                    focusable: drawerOpen,
+                                })}
                             >
                                 <i
                                     className={
@@ -369,8 +612,11 @@ const NavBar: FC = () => {
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
-                                    className="cursor-pointer transition-colors sm:hover:text-typography-3"
-                                    onClick={() => navigate("/profile")}
+                                    className={`cursor-pointer transition-colors sm:hover:text-typography-3 ${FOCUS_RING}`}
+                                    {...pressable(() => navigate("/profile"), {
+                                        role: "link",
+                                        focusable: drawerOpen,
+                                    })}
                                 >
                                     Profile
                                 </p>
@@ -378,8 +624,14 @@ const NavBar: FC = () => {
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
-                                    className="cursor-pointer transition-colors sm:hover:text-typography-3"
-                                    onClick={() => navigate("/preferences")}
+                                    className={`cursor-pointer transition-colors sm:hover:text-typography-3 ${FOCUS_RING}`}
+                                    {...pressable(
+                                        () => navigate("/preferences"),
+                                        {
+                                            role: "link",
+                                            focusable: drawerOpen,
+                                        },
+                                    )}
                                 >
                                     Preferences
                                 </p>
@@ -387,8 +639,14 @@ const NavBar: FC = () => {
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
-                                    className="cursor-pointer transition-colors sm:hover:text-typography-3"
-                                    onClick={() => navigate("/communications")}
+                                    className={`cursor-pointer transition-colors sm:hover:text-typography-3 ${FOCUS_RING}`}
+                                    {...pressable(
+                                        () => navigate("/communications"),
+                                        {
+                                            role: "link",
+                                            focusable: drawerOpen,
+                                        },
+                                    )}
                                 >
                                     Communications
                                 </p>
@@ -397,8 +655,10 @@ const NavBar: FC = () => {
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
-                                    className="cursor-pointer transition-[filter] text-red sm:hover:brightness-75"
-                                    onClick={signOut}
+                                    className={`cursor-pointer transition-[filter] text-red sm:hover:brightness-75 ${FOCUS_RING}`}
+                                    {...pressable(signOut, {
+                                        focusable: drawerOpen,
+                                    })}
                                 >
                                     Sign Out
                                 </p>
@@ -411,7 +671,9 @@ const NavBar: FC = () => {
             {/* Top-level tabs */}
             <div
                 onMouseLeave={() => setIsHovered(false)}
-                className="max-[1099px]:[mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)] overflow-scroll [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                // its own layer above the hover backdrop, since the fade's mask would
+                // otherwise sink the tabs under it and swallow clicks
+                className="relative z-[41] scroll-pe-10 sm:max-[1099px]:[mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)] overflow-scroll [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             >
                 {/* colorful backdrop */}
                 {theme.effectiveMode === "dark" && (
@@ -435,26 +697,56 @@ const NavBar: FC = () => {
                             ref={(el) => {
                                 if (el) itemRefs.current[index] = el;
                             }}
-                            className={`max-sm:w-full text-nowrap flex items-start flex-nowrap cursor-pointer transition-colors ${
+                            // the scroller clips below the tabs, so the outline is drawn inside
+                            className={`group/tab max-sm:w-full text-nowrap flex items-start flex-nowrap cursor-pointer transition-colors ${FOCUS_RING_INSET} max-sm:focus-visible:!outline-none ${
                                 isPageOptnActive(item)
                                     ? "text-typography-1"
-                                    : "max-sm:opacity-75 sm:sm:hover:text-typography-1 text-typography-3"
+                                    : "sm:hover:text-typography-1 text-typography-2"
                             }`}
                             onMouseEnter={() => setIsHovered(true)}
-                            onClick={() => {
-                                if (item.external && (item as any).url) {
-                                    window.open((item as any).url!, "_blank");
-                                } else {
-                                    navigate(item.path);
-                                }
-                                setTimeout(() => setIsHovered(false), 300);
-                                requestAnimationFrame(updateUnderline);
-                            }}
+                            // browsers leave a partly visible tab where it is, so
+                            // bring it clear of the faded edge
+                            onFocus={revealOnKeyboardFocus}
+                            // the label is hidden on phones, so name the link here
+                            aria-label={item.label}
+                            aria-current={
+                                isPageOptnActive(item) ? "page" : undefined
+                            }
+                            {...pressable(
+                                () => {
+                                    if (item.external && (item as any).url) {
+                                        window.open(
+                                            (item as any).url!,
+                                            "_blank",
+                                            "noopener",
+                                        );
+                                    } else {
+                                        navigate(item.path);
+                                    }
+                                    setTimeout(() => setIsHovered(false), 300);
+                                    requestAnimationFrame(updateUnderline);
+                                },
+                                { role: "link" },
+                            )}
                             style={{ position: "relative" }}
                         >
-                            <i className={`${item.icon} max-sm:hidden`}></i>
-                            <div className={"sm:hidden w-10"}>
-                                <i className={`${item.icon} scale-125`}></i>
+                            <i
+                                className={`${item.icon} max-sm:hidden`}
+                                aria-hidden="true"
+                            ></i>
+                            {/* phones have no sliding underline, so a bar marks
+                                the current page as well as its brighter colour */}
+                            <div
+                                // on phones the focus ring and current-page bar sit on
+                                // this icon slot rather than the stretched tab
+                                className={`sm:hidden relative w-10 flex justify-center rounded max-sm:group-focus-visible/tab:outline max-sm:group-focus-visible/tab:outline-2 max-sm:group-focus-visible/tab:outline-offset-2 max-sm:group-focus-visible/tab:outline-typography-1 ${
+                                    isPageOptnActive(item) ? CURRENT_BAR : ""
+                                }`}
+                            >
+                                <i
+                                    className={`${item.icon} scale-125`}
+                                    aria-hidden="true"
+                                ></i>
                             </div>
                             {!isMobile && (
                                 <span
@@ -474,15 +766,25 @@ const NavBar: FC = () => {
                     {isMobile && overflowItems.length > 0 && (
                         <div ref={dotsRef} className="relative">
                             <div
-                                onClick={() => setMoreOpen((v) => !v)}
-                                className="w-10"
+                                ref={moreTriggerRef}
+                                className={`relative w-10 flex justify-center ${FOCUS_RING_INSET} ${
+                                    overflowItems.some(isPageOptnActive) ||
+                                    ACCOUNT_PATHS.includes(location.pathname)
+                                        ? CURRENT_BAR
+                                        : ""
+                                }`}
+                                aria-label="More"
+                                aria-expanded={moreOpen}
+                                aria-controls="nav-more-menu"
+                                {...pressable(() => setMoreOpen((v) => !v))}
                             >
                                 <i
                                     className={`bx bx-dots-horizontal-rounded scale-150 ${
                                         moreOpen
-                                            ? "opacity-100 text-typography-1"
-                                            : "opacity-75 text-typography-2"
+                                            ? "text-typography-1"
+                                            : "text-typography-2"
                                     }`}
+                                    aria-hidden="true"
                                 ></i>
                             </div>
                         </div>
