@@ -6,6 +6,7 @@ import Divider from "../../../../../components/ui/Divider";
 import OrgRequirements, {
     ORG_TAGS,
 } from "../../../../../utils/OrgRequirements";
+import { getInvalidSocials } from "../../../../../utils/SocialLinks";
 import FormTagSelect from "../../../../../components/ui/forms/FormTagSelect";
 import FormChipText from "../../../../../components/ui/forms/FormChipText";
 import orgFieldMap from "../../../../../utils/OrgFieldMap";
@@ -192,6 +193,15 @@ const OrgEditor = ({
     const navigate = useNavigate();
 
     useEffect(() => {
+        /* the field already shows which links are wrong */
+        if (
+            "socials" in editState &&
+            getInvalidSocials(editData.socials).length > 0
+        ) {
+            setSavable(false);
+            return;
+        }
+
         /* check if picture is saved before terminating if no other fields are saved */
 
         if (editPicture !== undefined && editPicture !== oldPicture) {

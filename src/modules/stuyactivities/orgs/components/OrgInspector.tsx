@@ -5,6 +5,7 @@ import { supabase } from "../../../../lib/supabaseClient";
 import OrgContext from "../../../../contexts/OrgContext";
 import ItemList from "../../../../components/ui/lists/ItemList";
 import { toNewYork } from "../../../../utils/NewYorkTime";
+import { getSocialLinks } from "../../../../utils/SocialLinks";
 
 const OrgInspector = () => {
     const organization: OrgContextType = useContext(OrgContext);
@@ -12,6 +13,7 @@ const OrgInspector = () => {
     const [strikes, setStrikes] = useState<Strike[]>([]);
 
     const isAuditPage = location.pathname.includes("/audit");
+    const socialLinks = getSocialLinks(organization.socials);
 
     useEffect(() => {
         if (!isAuditPage) return;
@@ -29,12 +31,15 @@ const OrgInspector = () => {
         <div className={"relative xl:w-[300px] xl:ml-10 xl:mr-[3rem]"}>
             {!isAuditPage ? (
                 <ItemList height={"auto"} title={"Links"}>
-                    {organization.socials &&
-                    organization.socials
-                        .split(" ")
-                        .some((social) => social.startsWith("http")) ? (
-                        organization.socials.split(" ").map((social, i) =>
-                            social.startsWith("http") ? (
+                    {socialLinks.length > 0 ? (
+                        socialLinks.map((social, i) => {
+                            const platform = getPlatform(social);
+                            const path = social.replace(
+                                /^https?:\/\/[^/]+\/?/i,
+                                "",
+                            );
+
+                            return (
                                 <Link
                                     key={i}
                                     href={social}
@@ -48,21 +53,16 @@ const OrgInspector = () => {
                                         }
                                     >
                                         <p className="important">
-                                            {getPlatform(social)
-                                                .charAt(0)
-                                                .toUpperCase() +
-                                                getPlatform(social).slice(1)}
+                                            {platform.charAt(0).toUpperCase() +
+                                                platform.slice(1)}
                                         </p>
                                         <p className="text-nowrap overflow-hiden text-ellipsis">
-                                            {social.replace(
-                                                /^https?:\/\/[^\/]+\/?/,
-                                                "",
-                                            )}
+                                            {path || getHostname(social)}
                                         </p>
                                     </div>
                                 </Link>
-                            ) : null,
-                        )
+                            );
+                        })
                     ) : (
                         <p className={"mx-4 mb-3.5"}>No Links Provided</p>
                     )}
@@ -104,9 +104,16 @@ const OrgInspector = () => {
     );
 };
 
+function getHostname(url: string): string {
+    try {
+        return new URL(url).hostname.replace(/^www\./, "");
+    } catch {
+        return url;
+    }
+}
+
 function getPlatform(url: string): string {
-    const { hostname } = new URL(url);
-    const clamp = hostname.replace(/^www\./, "");
+    const clamp = getHostname(url);
     return clamp.endsWith(".com") ? clamp.slice(0, -4) : clamp;
 }
 
