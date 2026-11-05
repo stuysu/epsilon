@@ -1,9 +1,11 @@
 import { Box, FormControlLabel, Switch, TextField } from "@mui/material";
-import { ChangeEvent, useEffect, useState } from "react";
+import { ChangeEvent, Ref, useEffect, useRef, useState } from "react";
 
 import { supabase } from "../../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
+import { MarkupEditor } from "../../../../../components/MarkupUtil";
+import { MDXEditorMethods } from "@mdxeditor/editor";
 
 /* if content is null, then it is creating post */
 const PostEditor = ({
@@ -25,6 +27,8 @@ const PostEditor = ({
 }) => {
     const { enqueueSnackbar } = useSnackbar();
     const [silent, setSilent] = useState(false);
+    const meRefTitle = useRef<MDXEditorMethods>(null);
+    const meRefDesc = useRef<MDXEditorMethods>(null);
 
     let [postData, setPostData] = useState<Partial<Post>>({
         id: undefined,
@@ -44,15 +48,6 @@ const PostEditor = ({
             setPostData(content);
         }
     }, [content]);
-
-    const onChange = (event: ChangeEvent<HTMLInputElement>) => {
-        const { name, value } = event.target;
-
-        setPostData({
-            ...postData,
-            [name]: value,
-        });
-    };
 
     const createPost = async () => {
         if (!postData.title) {
@@ -96,6 +91,9 @@ const PostEditor = ({
             created_at: undefined,
             updated_at: undefined,
         });
+
+        meRefTitle.current?.setMarkdown("");
+        meRefDesc.current?.setMarkdown("");
 
         data.organizations = {
             id: orgId,
@@ -142,24 +140,36 @@ const PostEditor = ({
         <div className={"bg-layer-1 p-5 pl-7 pb-8 rounded-xl shadow-prominent"}>
             <h1>{content ? "Update Post" : "Create Post"}</h1>
             <Box sx={{ marginY: "10px" }}>
-                <TextField
-                    value={postData["title"]}
-                    name={"title"}
-                    label="Title"
-                    onChange={onChange}
-                    fullWidth
+                <div style={{
+                    marginBottom: "1rem"
+                }}>
+                <MarkupEditor
+                    callback={(value) => {
+                        setPostData({
+                            ...postData,
+                            title: value,
+                        });
+
+                    }}
+                    passedRef={meRefTitle as Ref<MDXEditorMethods>}
+                    defaultText="Title"
+                    insertText={content?.title}
+                />
+                </div>
+
+                <MarkupEditor
+                    callback={(value) => {
+                        setPostData({
+                            ...postData,
+                            description: value,
+                        });
+                    }}
+                    passedRef={meRefDesc as Ref<MDXEditorMethods>}
+                    editableClassName="description"
+                    defaultText="Description"
+                    insertText={content?.description}
                 />
 
-                <TextField
-                    value={postData["description"]}
-                    name={"description"}
-                    label="Description"
-                    onChange={onChange}
-                    fullWidth
-                    multiline
-                    rows={7}
-                    sx={{ marginTop: "10px" }}
-                />
             </Box>
             {content ? (
                 <>
