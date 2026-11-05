@@ -6,7 +6,6 @@ import { supabase } from "../../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 
 import PendingMember from "../components/PendingMember";
-import { Box } from "@mui/material";
 import ItemList from "../../../../../components/ui/lists/ItemList";
 import ContentUnavailable from "../../../../../components/ui/content/ContentUnavailable";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
@@ -155,7 +154,7 @@ const JoinRequests = () => {
     };
 
     return (
-        <Box sx={{ width: "100%", minHeight: "70vh" }}>
+        <div className="w-full min-h-[70vh]">
             <div
                 className={
                     "bg-layer-1 p-5 pl-7 pb-8 rounded-xl mb-10 mt-2 shadow-prominent"
@@ -236,10 +235,7 @@ const JoinRequests = () => {
                                         working !== null ||
                                         !selectedMembers.length
                                     }
-                                    sx={{
-                                        height: "40px",
-                                        flexGrow: { xs: 1, sm: 0 },
-                                    }}
+                                    className="h-10 grow sm:grow-0"
                                 >
                                     {working === "approve"
                                         ? "Approving..."
@@ -251,10 +247,7 @@ const JoinRequests = () => {
                                         working !== null ||
                                         !selectedMembers.length
                                     }
-                                    sx={{
-                                        height: "40px",
-                                        flexGrow: { xs: 1, sm: 0 },
-                                    }}
+                                    className="h-10 grow sm:grow-0"
                                 >
                                     {working === "reject"
                                         ? "Rejecting..."
@@ -290,13 +283,14 @@ const JoinRequests = () => {
                 </ItemList>
             ) : (
                 <ContentUnavailable
+                    headingLevel="h2"
                     title="No Join Requests"
                     iconColor="text-red"
                     icon="bx-user-x"
                     description="When people request to join your Activity, you'll see them here."
                 ></ContentUnavailable>
             )}
-        </Box>
+        </div>
     );
 };
 

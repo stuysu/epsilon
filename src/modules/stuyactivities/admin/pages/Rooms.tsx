@@ -260,9 +260,9 @@ const Rooms = () => {
                             name={room.name}
                             floor={room.floor as number}
                             availableDays={
-                                room.available_days.split(
-                                    ", ",
-                                ) as Room["available_days"]
+                                room.available_days
+                                    .split(", ")
+                                    .filter(Boolean) as Room["available_days"]
                             }
                             comments={room.comments}
                             approvalRequired={room.approval_required}

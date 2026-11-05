@@ -151,7 +151,7 @@ const Pages = () => {
                         </div>
                         <p
                             className={
-                                "opacity-50 w-72 text-right max-sm:text-center"
+                                "w-72 text-right text-typography-2 max-sm:text-center"
                             }
                         >
                             MMXXIV

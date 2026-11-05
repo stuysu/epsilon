@@ -118,6 +118,7 @@ const Index = () => {
                 />
             </Helmet>
             <LoginGate sx={{ width: "100%" }} page={"view the calendar"}>
+                <h1 className="sr-only">Calendar</h1>
                 <div
                     className={
                         "m-4 sm:m-12 flex items-start gap-8 min-h-screen max-md:flex-col"
@@ -140,7 +141,9 @@ const Index = () => {
                                 month.getFullYear(),
                             );
                         }}
-                        showOutsideDays
+                        // other months' days aren't shown: they couldn't be chosen,
+                        // and dimmed they read as unavailable yet were announced as
+                        // working buttons
                         weekStartsOn={1}
                         classNames={{
                             month_grid: "max-sm:scale-125 origin-top-left",
@@ -155,9 +158,9 @@ const Index = () => {
                             weekday: "font-normal text-typography-2",
                             day: "p-0 text-center text-typography-1",
                             day_button:
-                                "sm:w-10 sm:h-10 w-8 h-8 grid place-items-center rounded-md transition-colors sm:hover:bg-layer-2",
+                                "sm:w-10 sm:h-10 w-8 h-8 grid place-items-center rounded-md transition-colors sm:hover:bg-layer-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1",
                             selected:
-                                "bg-accent text-typography-1 rounded-md pointer-events-none",
+                                "bg-accent text-white rounded-md pointer-events-none",
                             outside: "opacity-50 pointer-events-none",
                             today: "important rounded-md",
                         }}
@@ -171,7 +174,7 @@ const Index = () => {
                         }}
                         modifiersClassNames={{
                             hasMeetings:
-                                'relative after:content-[""] after:left-1/2 after:absolute after:-translate-x-1/2 after:bottom-1 after:w-1 after:h-1 after:rounded-full after:bg-yellow',
+                                'relative after:content-[""] after:left-1/2 after:absolute after:-translate-x-1/2 after:bottom-1 after:w-1 after:h-1 after:rounded-full after:bg-yellow data-[selected]:after:bg-white',
                         }}
                     />
 

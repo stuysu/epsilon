@@ -1,5 +1,4 @@
 import { useContext, useEffect, useState } from "react";
-import { Link } from "@mui/material";
 import { useLocation } from "react-router-dom";
 import { supabase } from "../../../../lib/supabaseClient";
 import OrgContext from "../../../../contexts/OrgContext";
@@ -40,12 +39,12 @@ const OrgInspector = () => {
                             );
 
                             return (
-                                <Link
+                                <a
                                     key={i}
                                     href={social}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    underline="none"
+                                    className="no-underline"
                                 >
                                     <div
                                         className={
@@ -56,11 +55,11 @@ const OrgInspector = () => {
                                             {platform.charAt(0).toUpperCase() +
                                                 platform.slice(1)}
                                         </p>
-                                        <p className="text-nowrap overflow-hiden text-ellipsis">
+                                        <p className="text-nowrap overflow-hidden text-ellipsis">
                                             {path || getHostname(social)}
                                         </p>
                                     </div>
-                                </Link>
+                                </a>
                             );
                         })
                     ) : (

@@ -1,4 +1,3 @@
-import { Box } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
@@ -167,7 +166,7 @@ const MeetingAttendance = () => {
     );
 
     return (
-        <Box>
+        <div>
             <h1>{meeting?.title}</h1>
 
             <div className={"w-full flex gap-5 max-md:flex-col mb-6"}>
@@ -302,7 +301,7 @@ const MeetingAttendance = () => {
                     </section>
                 ))}
             </LayoutGroup>
-        </Box>
+        </div>
     );
 };
 

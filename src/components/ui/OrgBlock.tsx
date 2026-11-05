@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { Skeleton } from "@mui/material";
+import Skeleton from "./Skeleton";
 
 type Props = {
     name?: Organization["name"];
@@ -39,12 +39,7 @@ const OrgBlock = ({
                 {picture ? (
                     <>
                         {!imgLoaded && (
-                            <Skeleton
-                                variant="rectangular"
-                                width={"11rem"}
-                                height={"11rem"}
-                                sx={{ borderRadius: "15px" }}
-                            />
+                            <Skeleton className="h-44 w-44 rounded-[15px]" />
                         )}
                         <div
                             className={"relative"}
@@ -109,9 +104,9 @@ const OrgBlock = ({
                             justifyContent: "center",
                         }}
                     >
-                        <h1 className="text-9xl font-light">
+                        <div className="as-h1 text-9xl font-light">
                             {name?.charAt(0).toUpperCase()}
-                        </h1>
+                        </div>
                     </div>
                 )}
             </div>

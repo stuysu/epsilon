@@ -1,5 +1,5 @@
-import { ChangeEvent, useEffect } from "react";
-import { TextField, TextFieldProps } from "@mui/material";
+import { ChangeEvent, Fragment, useEffect } from "react";
+import TextField, { TextFieldProps } from "../input/TextField";
 import { getInvalidSocials } from "../../../utils/SocialLinks";
 
 type Requirements = {
@@ -39,7 +39,7 @@ const FormTextField = ({
     changeStatus,
     hideHelper,
     ...textFieldProps
-}: Props & TextFieldProps) => {
+}: Props & Omit<TextFieldProps, "value" | "onChange">) => {
     useEffect(() => {
         const validate = (targetValue?: string) => {
             if (!targetValue) targetValue = "";
@@ -197,11 +197,11 @@ const FormTextField = ({
             helperText={
                 !hideHelper && (
                     <>
-                        {description?.split("\n").map((line) => (
-                            <>
+                        {description?.split("\n").map((line, index) => (
+                            <Fragment key={index}>
                                 {line}
                                 <br />
-                            </>
+                            </Fragment>
                         ))}
                         {helperText}
                         {invalidLinks.length > 0 && (

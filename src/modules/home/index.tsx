@@ -5,13 +5,12 @@ import UserContext from "../../contexts/UserContext";
 /* Index Pages */
 import UnauthenticatedLanding from "./components/UnauthenticatedLanding";
 import UserHome from "./components/UserHome";
-import { Box } from "@mui/material";
 
 const Index = () => {
     const user: UserContextType = useContext(UserContext);
 
     return (
-        <Box sx={{ width: "100%" }}>
+        <div className="w-full">
             <Helmet>
                 <title>Home - Epsilon</title>
                 <meta
@@ -20,7 +19,7 @@ const Index = () => {
                 />
             </Helmet>
             {user.signed_in ? <UserHome /> : <UnauthenticatedLanding />}
-        </Box>
+        </div>
     );
 };
 

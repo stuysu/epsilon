@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import OrgContext from "../../../../contexts/OrgContext";
-import { useMediaQuery } from "@mui/material";
+import useMediaQuery from "../../../../utils/useMediaQuery";
 
 import OrgMeeting from "../components/OrgMeeting";
 import { sortByDate } from "../../../../utils/DataFormatters";

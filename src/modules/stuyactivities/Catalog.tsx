@@ -1,13 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 import { supabase } from "../../lib/supabaseClient";
-import { Box, Skeleton, useMediaQuery } from "@mui/material";
-import { Masonry } from "@mui/lab";
+import useMediaQuery from "../../utils/useMediaQuery";
 import { motion } from "framer-motion";
 import { useSnackbar } from "notistack";
 import { Helmet } from "react-helmet";
 
 import OrgCard from "./components/OrgCard";
 import SearchFilter from "./components/SearchFilter";
+import Masonry from "../../components/ui/Masonry";
+import Skeleton from "../../components/ui/Skeleton";
 
 type SearchState = {
     orgs: Partial<Organization>[];
@@ -246,20 +247,14 @@ const Catalog = () => {
     const SkeletonGrid = ({ count }: { count: number }) => (
         <div className="flex gap-4 flex-wrap">
             {Array.from({ length: count }).map((_, i) => (
-                <Skeleton
-                    key={i}
-                    animation="wave"
-                    height={445}
-                    sx={{ borderRadius: "20px" }}
-                    className="flex-1"
-                    variant="rounded"
-                />
+                <Skeleton key={i} className="h-[445px] flex-1 rounded-[20px]" />
             ))}
         </div>
     );
 
     return (
         <section className={"flex relative flex-wrap"}>
+            <h1 className="sr-only">StuyActivities Catalog</h1>
             <Helmet>
                 <title>StuyActivities Catalog - Epsilon</title>
                 <meta
@@ -276,12 +271,11 @@ const Catalog = () => {
                 onChange={setSearchParams}
             />
 
-            <Box
-                sx={{
+            <div
+                className="relative pb-[20vh]"
+                style={{
                     width: isOne || isTwoWrap ? "100%" : isTwo ? "70%" : "75%",
-                    paddingX: isOne ? "1rem" : "2rem",
-                    position: "relative",
-                    paddingBottom: "20vh",
+                    paddingInline: isOne ? "1rem" : "2rem",
                 }}
             >
                 <div className="[overflow-anchor:none]">
@@ -291,7 +285,11 @@ const Catalog = () => {
                             <SkeletonGrid count={columns} />
                         </div>
                     ) : (
-                        <Masonry columns={columns} spacing={isOne ? 0 : 2}>
+                        <Masonry
+                            columns={columns}
+                            gap={isOne ? 0 : 16}
+                            className={isOne ? "" : "pr-4"}
+                        >
                             {searchState.orgs.map((org, i) => (
                                 <div key={(org as any).id ?? `ghost-${i}`}>
                                     <motion.div
@@ -350,7 +348,11 @@ const Catalog = () => {
                     {!loadingInitial && !searchState.more && (
                         <div>
                             {approvedOrgs.length === 0 ? (
-                                <h3 className={"text-center pt-40 opacity-70"}>
+                                <h3
+                                    className={
+                                        "text-center pt-40 text-typography-2"
+                                    }
+                                >
                                     <i className={"bx bx-search bx-md m-5"}></i>
                                     <br />
                                     No Results
@@ -364,7 +366,7 @@ const Catalog = () => {
                         </div>
                     )}
                 </div>
-            </Box>
+            </div>
         </section>
     );
 };

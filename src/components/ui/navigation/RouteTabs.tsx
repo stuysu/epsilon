@@ -34,7 +34,7 @@ const RouteTabs = ({ tabs }: Props) => {
                         key={tab.to}
                         value={tab.to}
                         className={
-                            "flex-col flex items-center text important p-2 data-[state=active]:text-yellow text-typography-3"
+                            "group flex-col flex items-center text important p-2 data-[state=active]:text-yellow text-typography-2"
                         }
                     >
                         {tab.icon && (
@@ -44,7 +44,9 @@ const RouteTabs = ({ tabs }: Props) => {
                                     aria-hidden="true"
                                     title={tab.label}
                                 />
-                                <span className={"text-nowrap"}>
+                                {/* the selected tab's label is underlined as well as
+                                    yellow, so colour isn't the only sign of it */}
+                                <span className="text-nowrap group-data-[state=active]:underline group-data-[state=active]:decoration-2 group-data-[state=active]:underline-offset-4">
                                     {tab.label}
                                 </span>
                             </div>
@@ -54,7 +56,9 @@ const RouteTabs = ({ tabs }: Props) => {
             </Tabs.List>
 
             {tabs.map((tab) => (
-                <Tabs.Content key={tab.to} value={tab.to} />
+                // the routes render the content, so these empty panels stay out
+                // of the tab order
+                <Tabs.Content key={tab.to} value={tab.to} tabIndex={-1} />
             ))}
         </Tabs.Root>
     );

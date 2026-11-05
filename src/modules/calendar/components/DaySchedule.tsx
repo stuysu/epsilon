@@ -1,4 +1,3 @@
-import { Stack } from "@mui/material";
 import { motion } from "framer-motion";
 import { Dayjs } from "dayjs";
 import { monthNames } from "../../../utils/TimeStrings";
@@ -80,7 +79,7 @@ const DaySchedule = ({ day, meetings }: Props) => {
                         aria-label={`Sort meetings by room name ${sortDesc ? "descending" : "ascending"}`}
                         title={`Sort ${sortDesc ? "descending" : "ascending"}`}
                         className={
-                            "px-2 py-1 rounded bg-transparent hover:bg-layer-2 focus:outline-none flex items-center"
+                            "px-2 py-1 rounded bg-transparent hover:bg-layer-2 focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1 flex items-center"
                         }
                     >
                         <span className="font-semibold text-base">Room</span>
@@ -101,13 +100,9 @@ const DaySchedule = ({ day, meetings }: Props) => {
                 </div>
             </div>
 
-            <Stack
-                component={motion.div}
+            <motion.div
                 layout
-                direction="column"
-                spacing={0.3}
-                borderRadius={2}
-                overflow="hidden"
+                className="flex flex-col gap-[2.4px] overflow-hidden rounded-lg"
             >
                 {sortedMeetings.length ? (
                     sortedMeetings.map((meeting, i) => (
@@ -128,11 +123,12 @@ const DaySchedule = ({ day, meetings }: Props) => {
                     ))
                 ) : (
                     <ContentUnavailable
+                        headingLevel="h2"
                         title={"Nothing to See!"}
                         description={`There are no public events taking place on ${monthNames[day.month()]} ${day.date()}.`}
                     ></ContentUnavailable>
                 )}
-            </Stack>
+            </motion.div>
         </div>
     );
 };

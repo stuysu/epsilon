@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 
-import { Avatar } from "@mui/material";
 import Divider from "../../../../components/ui/Divider";
 
 import { supabase } from "../../../../lib/supabaseClient";
@@ -8,6 +7,7 @@ import { useSnackbar } from "notistack";
 import OrgChat from "./OrgChat";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import orgFieldMap from "../../../../utils/OrgFieldMap";
+import Avatar from "../../../../components/ui/Avatar";
 
 type EditKey = keyof EditType;
 
@@ -152,15 +152,10 @@ const OrgEditApproval = ({
                     {edit.organization_name}
                 </h1>
                 <div className={"flex flex-row w-min"}>
-                    <AsyncButton
-                        variant="contained"
-                        onClick={onBack}
-                        sx={{ marginRight: "10px" }}
-                    >
+                    <AsyncButton onClick={onBack} sx={{ marginRight: "10px" }}>
                         Back
                     </AsyncButton>
                     <AsyncButton
-                        variant="contained"
                         onClick={approve}
                         color="success"
                         sx={{ marginRight: "10px" }}
@@ -169,7 +164,6 @@ const OrgEditApproval = ({
                         Approve
                     </AsyncButton>
                     <AsyncButton
-                        variant="contained"
                         onClick={reject}
                         color="secondary"
                         sx={{ marginRight: "10px" }}

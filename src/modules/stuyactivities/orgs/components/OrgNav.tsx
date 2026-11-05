@@ -1,5 +1,4 @@
 import React, { useContext, useState } from "react";
-import { List } from "@mui/material";
 import OrgContext from "../../../../contexts/OrgContext";
 import { useLocation, useNavigate } from "react-router-dom";
 import UserContext from "../../../../contexts/UserContext";
@@ -67,7 +66,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const [menuOpen, setMenuOpen] = useState(false);
 
     const renderDesktopList = (links: LinkItem[]) => (
-        <List sx={{ width: "100%" }}>
+        <div className="w-full py-2">
             {links.map((linkData, i) => (
                 <div
                     key={i}
@@ -90,7 +89,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     </p>
                 </div>
             ))}
-        </List>
+        </div>
     );
 
     const renderMobileButtons = (links: LinkItem[]) =>
@@ -112,6 +111,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
             <>
                 {/* Need to fix this later */}
                 <button
+                    aria-label="Open menu"
                     className={`z-[5001] fixed cursor-pointer transition-colors text-typography-2 sm:hover:text-typography-1 mr-4 top-4 right-0`}
                     onClick={() => setMenuOpen(true)}
                 >

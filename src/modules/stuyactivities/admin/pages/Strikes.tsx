@@ -1,4 +1,3 @@
-import { Box, Card, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import Divider from "../../../../components/ui/Divider";
 import { supabase } from "../../../../lib/supabaseClient";
@@ -6,6 +5,7 @@ import { useSnackbar } from "notistack";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import SearchInput from "../../../../components/ui/input/SearchInput";
 import UserDialog from "../../../../components/ui/overlays/UserDialog";
+import TextField from "../../../../components/ui/input/TextField";
 
 const Strikes = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -171,22 +171,8 @@ const Strikes = () => {
                     <div className={"my-10"}>
                         <Divider />
                     </div>
-                    <Box
-                        sx={{
-                            width: "100%",
-                            display: "flex",
-                            justifyContent: "center",
-                            flexWrap: "wrap",
-                        }}
-                    >
-                        <Box
-                            sx={{
-                                width: "500px",
-                                display: "flex",
-                                justifyContent: "center",
-                                flexWrap: "wrap",
-                            }}
-                        >
+                    <div className="w-full flex justify-center flex-wrap">
+                        <div className="w-[500px] flex justify-center flex-wrap">
                             <h3 className={"mb-6"}>
                                 Issue Strike to {orgName}
                             </h3>
@@ -200,34 +186,19 @@ const Strikes = () => {
                             />
                             <AsyncButton
                                 onClick={issueStrike}
-                                variant="contained"
                                 sx={{ width: "100%", marginTop: "10px" }}
                             >
                                 Issue
                             </AsyncButton>
-                        </Box>
-                    </Box>
+                        </div>
+                    </div>
 
-                    <Box
-                        sx={{
-                            marginTop: "10px",
-                            width: "100%",
-                            display: "flex",
-                            flexWrap: "wrap",
-                            justifyContent: "center",
-                        }}
-                    >
+                    <div className="mt-2.5 w-full flex flex-wrap justify-center">
                         {orgStrikes.map((strike, i) => (
-                            <Box
-                                sx={{
-                                    width: "100%",
-                                    display: "flex",
-                                    justifyContent: "center",
-                                }}
-                                key={i}
-                            >
-                                <Card
-                                    sx={{
+                            <div className="w-full flex justify-center" key={i}>
+                                <div
+                                    className="rounded bg-layer-2 shadow-control"
+                                    style={{
                                         width: "500px",
                                         padding: "20px",
                                         marginTop: "10px",
@@ -244,10 +215,10 @@ const Strikes = () => {
                                     >
                                         Delete
                                     </AsyncButton>
-                                </Card>
-                            </Box>
+                                </div>
+                            </div>
                         ))}
-                    </Box>
+                    </div>
 
                     <UserDialog
                         title="Delete this strike?"

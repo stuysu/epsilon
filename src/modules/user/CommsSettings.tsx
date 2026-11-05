@@ -170,6 +170,7 @@ const CommsSettings = () => {
                                     </div>
                                 </div>
                                 <Switch.Root
+                                    aria-label={`Notifications for ${membership.organization_name}`}
                                     checked={membership.allow_notifications}
                                     onCheckedChange={() =>
                                         handleToggle(

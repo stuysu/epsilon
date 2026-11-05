@@ -1,7 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { AnimatePresence, motion } from "framer-motion";
 import AsyncButton from "../buttons/AsyncButton";
-import React from "react";
+import React, { useRef } from "react";
 
 export default function UserDialog({
     title,
@@ -31,6 +31,15 @@ export default function UserDialog({
     imageSrc?: string;
 }) {
     const hasImage = Boolean(imageSrc);
+    const openerRef = useRef<HTMLElement | null>(null);
+    const wasOpen = useRef(false);
+    // there is no Dialog.Trigger, so remember what opened the dialog. This runs
+    // while rendering because the Confirm button's autoFocus moves focus before
+    // any effect or Radix callback would see the opener.
+    if (open && !wasOpen.current) {
+        openerRef.current = document.activeElement as HTMLElement | null;
+    }
+    wasOpen.current = open;
 
     return (
         <Dialog.Root
@@ -39,7 +48,16 @@ export default function UserDialog({
                 if (!v) onClose();
             }}
         >
-            <AnimatePresence mode="wait">
+            <AnimatePresence
+                mode="wait"
+                // the dialog stays mounted while it animates out, so focus goes
+                // back to its opener once that finishes
+                onExitComplete={() => {
+                    if (openerRef.current?.isConnected)
+                        openerRef.current.focus();
+                    openerRef.current = null;
+                }}
+            >
                 {open && (
                     <Dialog.Portal forceMount>
                         <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -53,7 +71,13 @@ export default function UserDialog({
                                 />
                             </Dialog.Overlay>
 
-                            <Dialog.Content asChild>
+                            <Dialog.Content
+                                asChild
+                                // focus is handed back in onExitComplete instead
+                                onCloseAutoFocus={(event) =>
+                                    event.preventDefault()
+                                }
+                            >
                                 <motion.div
                                     className="relative w-[min(480px,92vw)] rounded-2xl bg-layer-1 p-6 shadow-2xl border border-divider"
                                     initial={{
@@ -84,6 +108,7 @@ export default function UserDialog({
                                     {hasImage && (
                                         <>
                                             <img
+                                                alt=""
                                                 src={imageSrc}
                                                 className={
                                                     "absolute w-32 -left-2 -top-14"

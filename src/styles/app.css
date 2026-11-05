@@ -5,14 +5,49 @@
 @tailwind components;
 @tailwind utilities;
 
+/* headline look for text that is not the page's main heading */
+@layer components {
+    .as-h1 {
+        @apply font-display text-[2.1rem] leading-[2.1rem] my-2 text-[color:var(--text-primary)];
+        font-weight: 700;
+    }
+}
+
 @layer base {
     /* Text Styles */
     html {
         font-size: 16px;
     }
 
+    /* On phones the sub navigation is fixed to the top and the main navigation
+       to the bottom, so keep a focused control from scrolling in behind them.
+       The page scrolls inside a custom scroll area, so the margin goes on the
+       controls themselves rather than only on the scrolling element. */
+    /* below Tailwind's sm breakpoint, which starts at 640px */
+    @media (max-width: 639.98px) {
+        html {
+            scroll-padding-top: 3.5rem;
+            scroll-padding-bottom: 4.5rem;
+        }
+
+        /* options scroll inside their own short lists, so they are left out */
+        :where(a, button, input, select, textarea, [tabindex]):not(
+                [role="option"]
+            ) {
+            scroll-margin-top: 3.5rem;
+            scroll-margin-bottom: 4.5rem;
+        }
+    }
+
     body {
-        @apply font-sans text-[0.9rem] leading-[1.2rem] text-[color:var(--text-secondary)];
+        @apply font-sans text-base leading-normal;
+        color: rgba(0, 0, 0, 0.87);
+        background-color: #fff;
+    }
+
+    [data-scheme="dark"] body {
+        color: #fff;
+        background-color: #121212;
     }
 
     h1 {
@@ -37,7 +72,7 @@
     }
 
     h5 {
-        @apply text-[0.8rem] leading-[2rem] text-[color:var(--text-tertiary)] uppercase;
+        @apply text-[0.8rem] leading-[2rem] text-[color:var(--text-secondary)] uppercase;
         font-variation-settings: "wght" 700;
     }
 
@@ -48,7 +83,7 @@
     }
 
     a {
-        @apply text-[color:var(--accent)] underline;
+        @apply text-[color:var(--accent-text)] underline;
     }
 
     .important {
@@ -68,6 +103,9 @@
         --layer-tertiary: #5353534c;
 
         --accent: #3788ffcc;
+        /* the accent as text (links and the like) is lighter, since the fill
+           behind white text has to stay deep */
+        --accent-text: #5c9dff;
 
         --text-primary: #e8e8e8cc;
         --text-secondary: #aeaeaecc;
@@ -100,17 +138,21 @@
         --layer-secondary: #d6d6d680;
         --layer-tertiary: #c4c4c466;
 
-        --accent: #0068ffcc;
+        /* opaque and a little deeper, so white text on it reaches 4.5:1 */
+        --accent: #0058e0;
+        --accent-text: #0058e0;
 
         --text-primary: #000000cc;
-        --text-secondary: #4b4b4bcc;
+        --text-secondary: #3d3d3dcc;
         --text-tertiary: #595959cc;
 
         --blue: #395be9;
         --green: #33762f;
-        --yellow: #dd9700;
-        --red: #d31300;
-        --beige: #8b7355;
+        /* dark amber, since yellow is mostly used as text */
+        --yellow: #835800;
+        --red: #c41200;
+        /* deep enough for small text, as on the catalog's submission card */
+        --beige: #6e5b3f;
 
         --divider: #a9a9a94d;
         --highlight: #a9a9a94d;
@@ -133,6 +175,7 @@
         --layer-tertiary: #262626;
 
         --accent: #bb2c00;
+        --accent-text: #ff6e40;
 
         --text-primary: #ffffff;
         --text-secondary: #f5f5f5;
@@ -164,17 +207,27 @@
         --layer-secondary: #ffcc80;
         --layer-tertiary: #ffb74d;
 
-        --accent: #ff6f00;
+        /* burnt orange: white text on it, and it as link text, reach 4.5:1 */
+        --accent: #ad4200;
+        /* deeper than the fill, so links also pass on the orange cards */
+        --accent-text: #8f3600;
 
         --text-primary: #4e342e;
-        --text-secondary: #6d4c41;
+        /* deep enough for the orange navigation bar as well as the layers */
+        --text-secondary: #634439;
         --text-tertiary: #8d6e63;
 
-        --blue: #ff7043;
-        --green: #ff8a65;
-        --yellow: #ffb300;
-        --red: #e64a19;
-        --beige: #bd9200;
+        /* deep enough to fill a checkbox behind a white tick and to stand
+           out from the page; green stays a green, distinct from red, and also
+           works as small text */
+        --blue: #c43e00;
+        --green: #356018;
+        /* yellow, red and beige are used as text and behind white text, so
+           they are deep shades that pass 4.5:1 on these warm layers and on
+           the orange navigation bar */
+        --yellow: #664400;
+        --red: #b23209;
+        --beige: #6b5200;
 
         --divider: #ffcc80;
         --highlight: #ffcc80;

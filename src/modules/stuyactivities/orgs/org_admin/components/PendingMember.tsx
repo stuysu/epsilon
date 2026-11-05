@@ -1,5 +1,5 @@
 import { supabase } from "../../../../../lib/supabaseClient";
-import { Box } from "@mui/material";
+
 import { useSnackbar } from "notistack";
 import { useContext } from "react";
 import OrgContext from "../../../../../contexts/OrgContext";
@@ -88,14 +88,7 @@ const PendingMember = ({
     };
 
     return (
-        <Box
-            sx={{
-                width: "100%",
-                display: "flex",
-                flexWrap: "nowrap",
-                alignItems: "center",
-            }}
-        >
+        <div className="w-full flex flex-nowrap items-center">
             {onSelect && (
                 <div
                     className={
@@ -109,7 +102,7 @@ const PendingMember = ({
                     />
                 </div>
             )}
-            <Box sx={{ width: "100%", minWidth: 0 }}>
+            <div className="w-full min-w-[0px]">
                 <OrgMember
                     email={email}
                     picture={picture}
@@ -117,7 +110,7 @@ const PendingMember = ({
                     first_name={first_name}
                     last_name={last_name}
                 />
-            </Box>
+            </div>
             <div
                 className={
                     "flex items-center gap-2 px-3 shrink-0 self-stretch bg-layer-2"
@@ -125,12 +118,7 @@ const PendingMember = ({
             >
                 <AsyncButton
                     onClick={handleApprove}
-                    variant="contained"
-                    sx={{
-                        height: "40px",
-                        minWidth: 0,
-                        padding: { xs: "0 10px", sm: "11px 20px 13px 20px" },
-                    }}
+                    className="h-10 min-w-0 !px-2.5 !py-0 sm:!px-5 sm:!pb-[13px] sm:!pt-[11px]"
                     aria-label="Approve"
                 >
                     <i className={"bx bx-check bx-sm sm:hidden"}></i>
@@ -138,19 +126,14 @@ const PendingMember = ({
                 </AsyncButton>
                 <AsyncButton
                     onClick={handleReject}
-                    variant="contained"
-                    sx={{
-                        height: "40px",
-                        minWidth: 0,
-                        padding: { xs: "0 10px", sm: "11px 20px 13px 20px" },
-                    }}
+                    className="h-10 min-w-0 !px-2.5 !py-0 sm:!px-5 sm:!pb-[13px] sm:!pt-[11px]"
                     aria-label="Reject"
                 >
                     <i className={"bx bx-x bx-sm sm:hidden"}></i>
                     <span className={"hidden sm:inline"}>Reject</span>
                 </AsyncButton>
             </div>
-        </Box>
+        </div>
     );
 };
 

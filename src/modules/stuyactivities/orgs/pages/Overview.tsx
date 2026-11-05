@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import OrgContext from "../../../../contexts/OrgContext";
-import { Avatar, useMediaQuery } from "@mui/material";
+import useMediaQuery from "../../../../utils/useMediaQuery";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../../../lib/supabaseClient";
@@ -18,6 +18,7 @@ import OverviewList from "../../../../components/ui/lists/OverviewList";
 import UserDialog from "../../../../components/ui/overlays/UserDialog";
 import { PUBLIC_URL } from "../../../../config/constants";
 import DisplayLinks from "../../../../components/DisplayLinks";
+import Avatar from "../../../../components/ui/Avatar";
 
 const Overview = () => {
     const navigate = useNavigate();
@@ -206,7 +207,7 @@ const Overview = () => {
                     ></div>
                     <Avatar
                         src={organization.picture || ""}
-                        sx={{
+                        style={{
                             width: "240px",
                             height: "240px",
                             borderRadius: "25px",
@@ -219,7 +220,7 @@ const Overview = () => {
                     />
                     <Avatar
                         src={organization.picture || ""}
-                        sx={{
+                        style={{
                             width: "240px",
                             height: "240px",
                             backgroundColor: "var(--layer-primary)",
@@ -232,9 +233,13 @@ const Overview = () => {
                         }}
                         alt={`organization ${organization.name}`}
                     >
-                        <h1 className={"text-[200px] font-light opacity-70"}>
+                        <div
+                            className={
+                                "as-h1 text-[200px] font-light opacity-70"
+                            }
+                        >
                             {organization.name.charAt(0).toUpperCase()}
-                        </h1>
+                        </div>
                     </Avatar>
                 </div>
 
@@ -282,7 +287,6 @@ const Overview = () => {
                         }
                     >
                         <AsyncButton
-                            variant="contained"
                             onClick={handleInteract}
                             disabled={disabled || attemptingInteract}
                             sx={{
@@ -328,7 +332,7 @@ const Overview = () => {
                                 </h3>
                                 <p className={"text-center"}>Members</p>
                             </div>
-                            <h1 className={"opacity-25"}>•</h1>
+                            <div className={"as-h1 opacity-25"}>•</div>
                         </>
                     )}
 
@@ -348,7 +352,7 @@ const Overview = () => {
                         </p>
                     </div>
 
-                    <h1 className={"opacity-25"}>•</h1>
+                    <div className={"as-h1 opacity-25"}>•</div>
 
                     <div>
                         <h3 className={"w-32 text-center"}>
@@ -366,7 +370,7 @@ const Overview = () => {
 
                     {user.signed_in && (
                         <>
-                            <h1 className={"opacity-25"}>•</h1>
+                            <div className={"as-h1 opacity-25"}>•</div>
                             <div>
                                 <h3 className={"w-48 text-center"}>
                                     {organization.meetings?.at(-1)?.start_time

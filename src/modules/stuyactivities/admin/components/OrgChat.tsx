@@ -208,11 +208,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
             </div>
             <div className={"w-full flex items-center mt-2 gap-4"}>
                 <TextInput value={message} onChange={(e) => setMessage(e)} />
-                <AsyncButton
-                    variant="contained"
-                    sx={{ width: "10%" }}
-                    onClick={sendMessage}
-                >
+                <AsyncButton sx={{ width: "10%" }} onClick={sendMessage}>
                     Send
                 </AsyncButton>
             </div>

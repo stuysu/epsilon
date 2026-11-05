@@ -13,6 +13,7 @@ const Audit = () => {
 
     return (
         <LoginGate page="audit this activity">
+            <h1 className="sr-only">Audit</h1>
             <section className={"mt-2"}>
                 <div className={"xl:hidden mb-10 w-full"}>
                     <OrgInspector />
@@ -49,6 +50,7 @@ const Audit = () => {
                     <ContentUnavailable
                         icon="bx-calendar-x"
                         iconColor="text-yellow"
+                        headingLevel="h2"
                         title="No Meeting Records"
                         description="This Activity has not yet held any meetings. Meeting records and audit results will be displayed here when they become available."
                     />

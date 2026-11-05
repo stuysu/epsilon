@@ -129,10 +129,18 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 }; // user in our own user table
                 let isAdmin = false;
                 /* CHECK PERMISSIONS */
-                if (data && data[0].permissions[0]?.permission === "ADMIN") {
+                if (
+                    data &&
+                    data[0].permissions.some(
+                        (p: { permission: string }) => p.permission === "ADMIN",
+                    )
+                ) {
                     isAdmin = true;
                 }
-                const permission = data[0].permissions[0]?.permission;
+                // a user can hold several permissions, and ADMIN outranks the rest
+                const permission = isAdmin
+                    ? "ADMIN"
+                    : data[0].permissions[0]?.permission;
 
                 if (!user.picture) {
                     /* get google pfp and update */
@@ -150,11 +158,11 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                             { variant: "error" },
                         );
                         setLoading(false);
+                    } else {
+                        enqueueSnackbar("Profile Picture Updated!", {
+                            variant: "success",
+                        });
                     }
-
-                    enqueueSnackbar("Profile Picture Updated!", {
-                        variant: "success",
-                    });
                 }
 
                 /*
