@@ -149,14 +149,14 @@ const PostEditor = ({
                             ...postData,
                             title: value,
                         });
-                        
+
                     }}
                     passedRef={meRefTitle as Ref<MDXEditorMethods>}
                     defaultText="Title"
                     insertText={content?.title}
                 />
                 </div>
-                
+
                 <MarkupEditor
                     callback={(value) => {
                         setPostData({
@@ -169,7 +169,7 @@ const PostEditor = ({
                     defaultText="Description"
                     insertText={content?.description}
                 />
-                
+
             </Box>
             {content ? (
                 <>
