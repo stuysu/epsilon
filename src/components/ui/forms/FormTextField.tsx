@@ -1,5 +1,6 @@
 import { ChangeEvent, Fragment, useEffect } from "react";
 import TextField, { TextFieldProps } from "../input/TextField";
+import { getInvalidSocials } from "../../../utils/SocialLinks";
 
 type Requirements = {
     minChar?: number;
@@ -9,6 +10,7 @@ type Requirements = {
     disableSpaces?: boolean /* replace spaces with dashes */;
     onlyAlpha?: boolean;
     lowercase?: boolean;
+    links?: boolean /* space separated web links */;
 };
 
 type Props = {
@@ -62,6 +64,14 @@ const FormTextField = ({
                 if (
                     requirements.minWords &&
                     targetValue.trim().split(" ").length < requirements.minWords
+                ) {
+                    changeStatus(field, false);
+                    return;
+                }
+
+                if (
+                    requirements.links &&
+                    getInvalidSocials(targetValue).length > 0
                 ) {
                     changeStatus(field, false);
                     return;
@@ -173,10 +183,15 @@ const FormTextField = ({
             helperText += `, at ${value?.trim().split(" ").length || 0}.`;
     }
 
+    const invalidLinks = requirements?.links ? getInvalidSocials(value) : [];
+
     return (
         <TextField
             required={required}
-            error={required && status && !!value && !status.value}
+            error={
+                (required && status && !!value && !status.value) ||
+                invalidLinks.length > 0
+            }
             onChange={textChanged}
             value={value}
             helperText={
@@ -189,6 +204,12 @@ const FormTextField = ({
                             </Fragment>
                         ))}
                         {helperText}
+                        {invalidLinks.length > 0 && (
+                            <>
+                                <br />
+                                Not a valid link: {invalidLinks.join(", ")}
+                            </>
+                        )}
                     </>
                 )
             }

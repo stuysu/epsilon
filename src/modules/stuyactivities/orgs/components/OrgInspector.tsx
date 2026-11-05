@@ -4,6 +4,7 @@ import { supabase } from "../../../../lib/supabaseClient";
 import OrgContext from "../../../../contexts/OrgContext";
 import ItemList from "../../../../components/ui/lists/ItemList";
 import { toNewYork } from "../../../../utils/NewYorkTime";
+import { getSocialLinks } from "../../../../utils/SocialLinks";
 
 const OrgInspector = () => {
     const organization: OrgContextType = useContext(OrgContext);
@@ -11,9 +12,7 @@ const OrgInspector = () => {
     const [strikes, setStrikes] = useState<Strike[]>([]);
 
     const isAuditPage = location.pathname.includes("/audit");
-    const socialLinks = (organization.socials ?? "")
-        .split(/\s+/)
-        .filter((social) => /^https?:\/\/\S+/i.test(social));
+    const socialLinks = getSocialLinks(organization.socials);
 
     useEffect(() => {
         if (!isAuditPage) return;
