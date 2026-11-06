@@ -25,8 +25,8 @@ const OrgAdminRouter = () => {
 
     const isOrgAdmin =
         !!membership &&
-        (membership.role === "CREATOR" ||
-            (membership.role === "ADMIN" && membership.active));
+        (membership.role === "CREATOR" || membership.role === "ADMIN") &&
+        membership.active;
 
     const isStuyActivitiesAdmin = Boolean(user.permission);
 

@@ -91,14 +91,19 @@ const Members = () => {
                             </motion.div>
                         ))}
                     </AnimatePresence>
-                    {filteredMembers.length === 0 && search.trim() && (
-                        <p
-                            role="status"
-                            className="px-4 py-6 text-center text-typography-2"
-                        >
-                            No members match “{search.trim()}”
-                        </p>
-                    )}
+                    {/* always rendered so screen readers announce the change */}
+                    <p
+                        role="status"
+                        className={
+                            filteredMembers.length === 0 && search.trim()
+                                ? "px-4 py-6 text-center text-typography-2"
+                                : "sr-only"
+                        }
+                    >
+                        {filteredMembers.length === 0 && search.trim()
+                            ? `No members match “${search.trim()}”`
+                            : ""}
+                    </p>
                 </ItemList>
             </section>
         </LoginGate>

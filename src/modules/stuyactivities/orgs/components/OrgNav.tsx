@@ -24,7 +24,8 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
         organization.memberships?.some(
             (m) =>
                 m.users?.id === user.id &&
-                (m.role === "CREATOR" || (m.role === "ADMIN" && m.active)),
+                (m.role === "CREATOR" || m.role === "ADMIN") &&
+                m.active,
         ) ?? false;
 
     const isStuyActivitiesAdmin = Boolean(user.permission);

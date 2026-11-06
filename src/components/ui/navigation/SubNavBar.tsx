@@ -29,7 +29,9 @@ const SubNavBar: FC = () => {
     return (
         <nav
             aria-label="StuyActivities"
-            className="max-sm:pb-3 scroll-pe-10 max-[1099px]:[mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)]"
+            // the scroller clips its content: pb-1 leaves room for the focus
+            // outline and -mb-1 cancels it out so the layout doesn't move
+            className="pb-1 -mb-1 max-sm:mb-0 max-sm:pb-3 scroll-pe-10 max-[1099px]:[mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)]"
             style={{
                 overflowX: "scroll",
                 scrollbarWidth: "none",
