@@ -10,6 +10,14 @@ import SearchFilter from "./components/SearchFilter";
 import Masonry from "../../components/ui/Masonry";
 import Skeleton from "../../components/ui/Skeleton";
 
+/* builds a quoted PostgREST ilike value that matches `text` literally:
+LIKE wildcards are escaped first, then the value is double-quoted so commas,
+parentheses and dots can't break out of the .or() filter */
+const ilikeContains = (text: string) => {
+    const pattern = `%${text.replace(/[\\%_]/g, "\\$&")}%`;
+    return `"${pattern.replace(/["\\]/g, "\\$&")}"`;
+};
+
 type SearchState = {
     orgs: Partial<Organization>[];
     offset: number;
@@ -122,7 +130,8 @@ const Catalog = () => {
                 const extra = clauses.length
                     ? `,and(${clauses.join(",")})`
                     : "";
-                const catalogQuery = `and(or(name.ilike.%${debouncedSearchParams.name}%,keywords.ilike.%${debouncedSearchParams.name}%)${extra})`;
+                const nameValue = ilikeContains(debouncedSearchParams.name);
+                const catalogQuery = `and(or(name.ilike.${nameValue},keywords.ilike.${nameValue})${extra})`;
 
                 ({ data: orgData, error: orgError } = await supabase
                     .from("organizations")

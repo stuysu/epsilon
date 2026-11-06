@@ -51,15 +51,11 @@ const Valentines = () => {
             setDeadline(deadline);
             if (currentDate < deadline) return;
 
-            const { data, error } = await supabase
-                .from("valentinesmessages")
-                .select(
-                    "id,sender,receiver,show_sender,message,background,verified_by,verified_at",
-                )
-                .eq("receiver", user.id)
-                .not("verified_by", "is", null)
-                .not("verified_at", "is", null)
-                .returns<Valentine[]>();
+            // Recipients can't read the table directly. This returns only
+            // approved messages, and sender is null unless show_sender is true.
+            const { data, error } = await supabase.rpc(
+                "get_received_valentines",
+            );
             if (error) {
                 console.error("Error fetching received messages:", error);
                 enqueueSnackbar("Failed to load Valentines", {
@@ -67,7 +63,7 @@ const Valentines = () => {
                 });
                 return;
             }
-            setReceivedValentines(data);
+            setReceivedValentines((data ?? []) as Valentine[]);
         };
         f();
     }, []);

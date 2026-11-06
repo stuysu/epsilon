@@ -96,7 +96,7 @@ const MeetingPreview = ({
                                 >
                                     <div className="relative pt-3 px-6 flex items-center justify-between">
                                         <Dialog.Title className="flex gap-3">
-                                            <Avatar.Root className="max-w-8 max-h-8 block rounded-md overflow-hidden">
+                                            <Avatar.Root className="size-8 shrink-0 block rounded-md overflow-hidden">
                                                 <Avatar.Image
                                                     className="size-full object-cover"
                                                     src={organizationPicture}

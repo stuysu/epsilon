@@ -19,6 +19,7 @@ import UserDialog from "../../../../components/ui/overlays/UserDialog";
 import { PUBLIC_URL } from "../../../../config/constants";
 import DisplayLinks from "../../../../components/DisplayLinks";
 import Avatar from "../../../../components/ui/Avatar";
+import pressable from "../../../../utils/pressable";
 
 const Overview = () => {
     const navigate = useNavigate();
@@ -152,7 +153,12 @@ const Overview = () => {
                     ),
                 });
             }
-            enqueueSnackbar("Left organization!", { variant: "success" });
+            enqueueSnackbar(
+                membership?.active
+                    ? "Left organization!"
+                    : "Join request cancelled.",
+                { variant: "success" },
+            );
         };
 
         if (userLeave) {
@@ -175,6 +181,16 @@ const Overview = () => {
             </div>
         );
     }
+
+    // meetings aren't sorted and include upcoming ones
+    const lastMeetingStart = (organization.meetings ?? [])
+        .map((m) => m.start_time)
+        .filter((t): t is string => !!t && new Date(t).getTime() < Date.now())
+        .reduce<string | undefined>(
+            (latest, t) =>
+                !latest || new Date(t) > new Date(latest) ? t : latest,
+            undefined,
+        );
 
     const handleUserLeave = () => {
         setLeaveConfirmation(false);
@@ -274,7 +290,10 @@ const Overview = () => {
                         >
                             <p
                                 className="h-[4lh] overflow-hidden text-ellipsis [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:4]"
-                                onClick={() => navigate("./charter")}
+                                {...pressable(() => navigate("./charter"), {
+                                    role: "link",
+                                })}
+                                aria-label={`${organization.purpose || "No purpose given"}. Read the full charter`}
                             >
                                 {organization.purpose || "None"}
                             </p>
@@ -311,6 +330,12 @@ const Overview = () => {
                             description={`Are you sure you want to leave (or cancel your join request to) this organization? You will have to request to join again.`}
                             onConfirm={handleUserLeave}
                             onClose={handleUserStay}
+                            confirmText={
+                                isActive
+                                    ? `Leave ${organization.name}`
+                                    : "Cancel request"
+                            }
+                            cancelText={isActive ? "Cancel" : "Keep request"}
                             open={leaveConfirmation}
                         />
                     </div>
@@ -318,7 +343,11 @@ const Overview = () => {
             </div>
 
             <Divider />
-            <div className={"max-w-full overflow-scroll scrollbar-none"}>
+            <div
+                className={
+                    "max-w-full overflow-scroll scrollbar-none scroll-pe-10 max-sm:[mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)]"
+                }
+            >
                 <div className={"flex flex-row mt-2 mb-6 items-center"}>
                     {user.signed_in && (
                         <>
@@ -343,12 +372,14 @@ const Overview = () => {
                         </h3>
                         <p className={"text-center"}>
                             Activity Status
-                            <i
+                            <button
+                                type="button"
                                 className={
                                     "bx bx-info-circle relative top-px ml-1 cursor-help sm:hover:brightness-200"
                                 }
+                                aria-label="What does Activity Status mean?"
                                 onClick={() => navigate(`/activities-support`)}
-                            ></i>
+                            ></button>
                         </p>
                     </div>
 
@@ -373,12 +404,11 @@ const Overview = () => {
                             <div className={"as-h1 opacity-25"}>•</div>
                             <div>
                                 <h3 className={"w-48 text-center"}>
-                                    {organization.meetings?.at(-1)?.start_time
-                                        ? toNewYork(
-                                              organization.meetings.at(-1)!
-                                                  .start_time,
-                                          ).format("YYYY/MM/DD")
-                                        : "No Meetings"}
+                                    {lastMeetingStart
+                                        ? toNewYork(lastMeetingStart).format(
+                                              "YYYY/MM/DD",
+                                          )
+                                        : "None Yet"}
                                 </h3>
                                 <p className={"text-center"}>Last Meeting</p>
                             </div>
@@ -549,7 +579,7 @@ const Overview = () => {
                                         end_time={meeting.end_time}
                                         is_public={meeting.is_public}
                                         room_name={meeting.rooms?.name}
-                                        advisor={meeting.advisor || "None"}
+                                        advisor={meeting.advisor}
                                         org_name={organization.name}
                                         org_picture={organization.picture || ""}
                                         isMobile={isMeetingMobile}
