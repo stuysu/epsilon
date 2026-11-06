@@ -142,9 +142,9 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                     ? "ADMIN"
                     : data[0].permissions[0]?.permission;
 
-                if (!user.picture) {
-                    /* get google pfp and update */
-                    const avatarURL = supabaseUser.user_metadata.avatar_url;
+                /* get google pfp and update; password logins have none */
+                const avatarURL = supabaseUser.user_metadata.avatar_url;
+                if (!user.picture && avatarURL) {
                     user.picture = avatarURL;
 
                     const { error: profileUpdateError } = await supabase.rpc(

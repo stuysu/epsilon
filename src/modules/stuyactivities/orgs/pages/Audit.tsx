@@ -40,8 +40,7 @@ const Audit = () => {
                                     advisor={meeting.advisor || "None"}
                                     org_name={organization.name || "No Org"}
                                     org_picture={
-                                        organization.picture ||
-                                        "https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png"
+                                        organization.picture || undefined
                                     }
                                 />
                             ))}

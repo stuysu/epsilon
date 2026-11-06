@@ -205,8 +205,11 @@ const Profiles = () => {
                     {user.is_faculty ? (
                         <i
                             className={
-                                "text-green-600 bx bx-check-shield relative top-0.5 left-1"
+                                "text-green bx bx-check-shield relative top-0.5 left-1"
                             }
+                            role="img"
+                            aria-label="Faculty"
+                            title="Faculty"
                         />
                     ) : (
                         ""
