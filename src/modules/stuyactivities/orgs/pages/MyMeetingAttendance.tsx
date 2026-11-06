@@ -17,7 +17,7 @@ import { toNewYork, usesNewYorkTime } from "../../../../utils/NewYorkTime";
  * in the database, which enforce the same window.
  */
 const CHECK_IN_OPENS_MINUTES_BEFORE = 15;
-const CHECK_IN_CLOSES_MINUTES_AFTER = 0;
+const CHECK_IN_CLOSES_MINUTES_AFTER = 15;
 
 /* e.g. "Thursday, November 6 at 3:45 PM" */
 const formatWhen = (value: ReturnType<typeof toNewYork>) =>
