@@ -13,11 +13,10 @@ const STUY_ACTIVITIES_ITEMS = [
     { label: "Support", path: "/activities-support" },
 ];
 
-// matches the paragraph text these links used to be, without the link underline
-// the current page is underlined as well as brighter, so it isn't shown by
-// brightness alone
+// matches the paragraph text these links used to be, without the link underline;
+// the current page is shown brighter, as before
 const ITEM_CLASS =
-    "important whitespace-nowrap rounded text-[0.9rem] leading-[1.2rem] no-underline aria-[current=page]:underline aria-[current=page]:decoration-2 aria-[current=page]:underline-offset-4 transition-opacity focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1";
+    "important whitespace-nowrap rounded text-[0.9rem] leading-[1.2rem] no-underline transition-opacity focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1";
 
 const SubNavBar: FC = () => {
     const user = useContext(UserContext);
@@ -30,9 +29,7 @@ const SubNavBar: FC = () => {
     return (
         <nav
             aria-label="StuyActivities"
-            // the scroller clips its content, so room is left below for the
-            // current page's underline and the focus outline
-            className="pb-2 max-sm:pb-3 scroll-pe-10 max-[1099px]:[mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)]"
+            className="max-sm:pb-3 scroll-pe-10 max-[1099px]:[mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)]"
             style={{
                 overflowX: "scroll",
                 scrollbarWidth: "none",
@@ -83,16 +80,13 @@ const SubNavBar: FC = () => {
                                 ? "page"
                                 : undefined
                         }
-                        // the underline goes under the words, not the icon
-                        className={`${ITEM_CLASS} group inline-flex gap-1 text-yellow aria-[current=page]:no-underline`}
+                        className={`${ITEM_CLASS} inline-flex gap-1 text-yellow`}
                     >
                         <i
-                            className="bx bx-shield pt-px text-base"
+                            className="bx bx-shield text-base leading-[1.2rem]"
                             aria-hidden="true"
                         />
-                        <span className="group-aria-[current=page]:underline group-aria-[current=page]:decoration-2 group-aria-[current=page]:underline-offset-4">
-                            Admin Panel
-                        </span>
+                        <span>Admin Panel</span>
                     </Link>
                 )}
                 <div className="min-w-4" />
