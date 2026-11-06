@@ -47,7 +47,7 @@
         "vitest": "^4.1.12"
     },
     "engines": {
-        "node": ">=20"
+        "node": "^22.13.0 || >=24.0.0"
     },
     "overrides": {
         "@typescript-eslint/typescript-estree": {

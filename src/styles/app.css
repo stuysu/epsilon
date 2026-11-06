@@ -216,7 +216,7 @@
         /* deep enough for the orange navigation bar as well as the layers */
         --text-secondary: #634439;
         /* deep enough for small text on every orange layer */
-        --text-tertiary: #70554b;
+        --text-tertiary: #664b41;
 
         /* deep enough to fill a checkbox behind a white tick and to stand
            out from the page; green stays a green, distinct from red, and also
@@ -278,11 +278,11 @@
         --semantic-secondary-text: #fff;
         --semantic-error: #d32f2f;
         --semantic-error-text: #fff;
-        --semantic-info: #0288d1;
+        --semantic-info: #0277bd;
         --semantic-info-text: #fff;
         --semantic-success: #2e7d32;
         --semantic-success-text: #fff;
-        --semantic-warning: #ed6c02;
+        --semantic-warning: #b54d00;
         --semantic-warning-text: #fff;
     }
 
