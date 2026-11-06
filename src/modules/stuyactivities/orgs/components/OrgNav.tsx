@@ -1,4 +1,5 @@
 import React, { useContext, useState } from "react";
+import { createPortal } from "react-dom";
 import OrgContext from "../../../../contexts/OrgContext";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import UserContext from "../../../../contexts/UserContext";
@@ -107,10 +108,13 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     if (isMobile) {
         return (
             <>
-                {/* Need to fix this later */}
+                {/* phones: top corner (their nav bar is at the bottom);
+                    tablets: in the page, clear of the header and user menu */}
                 <button
                     aria-label="Open menu"
-                    className={`z-[5001] fixed cursor-pointer transition-colors text-typography-2 sm:hover:text-typography-1 mr-4 top-4 right-0`}
+                    aria-haspopup="dialog"
+                    aria-expanded={menuOpen}
+                    className={`cursor-pointer transition-colors text-typography-2 sm:hover:text-typography-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1 max-sm:z-[5001] max-sm:fixed max-sm:mr-4 max-sm:top-4 max-sm:right-0 sm:flex sm:items-center sm:gap-1 sm:mr-4 sm:rounded-lg sm:bg-layer-2 sm:shadow-control sm:pl-1 sm:pr-3 sm:py-1.5`}
                     onClick={() => setMenuOpen(true)}
                 >
                     <span
@@ -121,39 +125,48 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                         }}
                     >
                         <i
-                            className={"bx bx-menu bx-sm relative bottom-1.5"}
+                            className={
+                                "bx bx-menu bx-sm relative bottom-1.5 sm:bottom-0 sm:top-0.5"
+                            }
                         ></i>
                     </span>
+                    <span className="max-sm:hidden important">Menu</span>
                 </button>
 
-                {menuOpen && (
-                    <div className="z-[5002] overflow-scroll pb-10 -mx-5 fixed inset-0 flex flex-col items-center justify-start bg-blurDark backdrop-blur-3xl">
-                        <button
-                            className="absolute top-4 right-14 text-3xl text-typography-1 font-bold"
-                            onClick={() => setMenuOpen(false)}
-                            aria-label="Close menu"
-                        >
-                            <i
-                                className={
-                                    "bx bx-x bx-sm relative -right-5 bottom-1.5"
-                                }
-                            ></i>
-                        </button>
+                {menuOpen &&
+                    // rendered at the body so the page's sticky column
+                    // can't put it under the site header
+                    createPortal(
+                        <div className="z-[5002] overflow-scroll pb-10 -mx-5 fixed inset-0 flex flex-col items-center justify-start bg-blurDark backdrop-blur-3xl">
+                            <button
+                                className="absolute top-4 right-14 text-3xl text-typography-1 font-bold"
+                                onClick={() => setMenuOpen(false)}
+                                aria-label="Close menu"
+                            >
+                                <i
+                                    className={
+                                        "bx bx-x bx-sm relative -right-5 bottom-1.5"
+                                    }
+                                ></i>
+                            </button>
 
-                        <div className="flex flex-col gap-1.5 w-full p-16">
-                            <h5 className={"px-3"}>About</h5>
+                            <div className="flex flex-col gap-1.5 w-full p-16">
+                                <h5 className={"px-3"}>About</h5>
 
-                            {renderMobileButtons(navLinks)}
+                                {renderMobileButtons(navLinks)}
 
-                            {adminLinks.length > 0 && (
-                                <>
-                                    <h5 className={"mt-6 px-3"}>Admin Tools</h5>
-                                    {renderMobileButtons(adminLinks)}
-                                </>
-                            )}
-                        </div>
-                    </div>
-                )}
+                                {adminLinks.length > 0 && (
+                                    <>
+                                        <h5 className={"mt-6 px-3"}>
+                                            Admin Tools
+                                        </h5>
+                                        {renderMobileButtons(adminLinks)}
+                                    </>
+                                )}
+                            </div>
+                        </div>,
+                        document.body,
+                    )}
             </>
         );
     }
