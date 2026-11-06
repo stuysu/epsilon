@@ -9,8 +9,15 @@ import LoginGate from "../../../../components/ui/content/LoginGate";
 import Avatar from "../../../../components/ui/Avatar";
 import { toNewYork, usesNewYorkTime } from "../../../../utils/NewYorkTime";
 
-/* members can check themselves in from this long before the meeting starts until it ends */
+/*
+ * Self check-in window. Members can mark themselves present from
+ * CHECK_IN_OPENS_MINUTES_BEFORE minutes before the meeting starts until
+ * CHECK_IN_CLOSES_MINUTES_AFTER minutes after it ends.
+ * Keep in sync with attendance_checkin_opens_before() / attendance_checkin_closes_after()
+ * in the database, which enforce the same window.
+ */
 const CHECK_IN_OPENS_MINUTES_BEFORE = 15;
+const CHECK_IN_CLOSES_MINUTES_AFTER = 0;
 
 /* e.g. "Thursday, November 6 at 3:45 PM" */
 const formatWhen = (value: ReturnType<typeof toNewYork>) =>
@@ -100,7 +107,8 @@ const MyMeetingAttendance = () => {
     const end = meeting ? toNewYork(meeting.end_time) : undefined;
     const opens = start?.subtract(CHECK_IN_OPENS_MINUTES_BEFORE, "minute");
     const notOpenYet = !!opens && now < opens.valueOf();
-    const closed = !!end && now > end.valueOf();
+    const closes = end?.add(CHECK_IN_CLOSES_MINUTES_AFTER, "minute");
+    const closed = !!closes && now > closes.valueOf();
     const canCheckIn = !!meeting && !notOpenYet && !closed;
     const timezoneNote = usesNewYorkTime() ? "" : " (New York time)";
 
@@ -165,8 +173,8 @@ const MyMeetingAttendance = () => {
     if (meeting && !isPresent) {
         if (notOpenYet && opens) {
             checkInMessage = `Check-in opens ${formatWhen(opens)}${timezoneNote}.`;
-        } else if (closed && end) {
-            checkInMessage = `Check-in closed when the meeting ended, ${formatWhen(end)}${timezoneNote}.`;
+        } else if (closed && closes) {
+            checkInMessage = `Check-in closed ${formatWhen(closes)}${timezoneNote}.`;
         }
     }
 
