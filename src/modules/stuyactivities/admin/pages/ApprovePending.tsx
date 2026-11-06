@@ -91,14 +91,19 @@ const ApprovePending = () => {
             <h1>Pending Organizations</h1>
             <Divider />
             <div className={"flex mt-8 gap-3 flex-wrap"}>
-                {pendingOrgs.map((org, i) => (
-                    <div onClick={() => setView(org)}>
+                {pendingOrgs.map((org) => (
+                    <button
+                        type="button"
+                        key={org.id}
+                        onClick={() => setView(org)}
+                        className="rounded-xl text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                    >
                         <OrgBlock
                             name={org.name}
                             role_name={org.id?.toFixed()}
                             picture={org.picture || ""}
                         />
-                    </div>
+                    </button>
                 ))}
             </div>
         </div>

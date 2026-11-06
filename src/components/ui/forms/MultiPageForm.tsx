@@ -39,7 +39,7 @@ const MultiPageForm = <T,>({
     const [steps, setSteps] = useState<string[]>([]);
 
     useEffect(() => {
-        let s = Children.map(children, (child, index) => {
+        const s = Children.map(children, (child) => {
             if (isValidElement(child) && child.type === FormPage) {
                 return child.props.title || "No Title";
             }
@@ -57,8 +57,8 @@ const MultiPageForm = <T,>({
 
     const formPage = Children.map(children, (child, index) => {
         if (isValidElement(child) && index === page) {
-            let first = index === 0;
-            let last = index === Children.count(children) - 1;
+            const first = index === 0;
+            const last = index === Children.count(children) - 1;
 
             return cloneElement(child as ReactElement<any>, {
                 value,

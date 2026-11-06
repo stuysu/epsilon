@@ -11,15 +11,15 @@ import TextField from "../../components/ui/input/TextField";
 
 // from https://catppuccin.com/palette
 const colors = [
-    "#ffffff",
-    "#f4b8e4",
-    "#e78284",
-    "#f5a97f",
-    "#e5c890",
-    "#a6d189",
-    "#99d1db",
-    "#7dc4e4",
-    "#ca9ee6",
+    { value: "#ffffff", name: "White" },
+    { value: "#f4b8e4", name: "Pink" },
+    { value: "#e78284", name: "Red" },
+    { value: "#f5a97f", name: "Peach" },
+    { value: "#e5c890", name: "Yellow" },
+    { value: "#a6d189", name: "Green" },
+    { value: "#99d1db", name: "Teal" },
+    { value: "#7dc4e4", name: "Blue" },
+    { value: "#ca9ee6", name: "Purple" },
 ];
 
 const Create = () => {
@@ -121,10 +121,13 @@ const Create = () => {
                 disclosed.
             </p>
             <div className="w-[70%] flex flex-wrap mt-4 justify-center">
-                {colors.map((color) => (
-                    <div
+                {colors.map(({ value: color, name }) => (
+                    <button
+                        type="button"
                         key={color}
-                        className="shrink-0 w-[2em] h-[2em] m-[.5em] rounded-[2em] cursor-pointer text-black content-center"
+                        aria-label={`${name} background`}
+                        aria-pressed={background === color}
+                        className="shrink-0 w-[2em] h-[2em] m-[.5em] rounded-[2em] cursor-pointer text-black content-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
                         style={{
                             backgroundColor: color,
                             borderColor: "#ffffff",

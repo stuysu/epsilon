@@ -27,7 +27,7 @@ const PostEditor = ({
     const { enqueueSnackbar } = useSnackbar();
     const [silent, setSilent] = useState(false);
 
-    let [postData, setPostData] = useState<Partial<Post>>({
+    const [postData, setPostData] = useState<Partial<Post>>({
         id: undefined,
         organizations: {
             id: orgId,
@@ -65,14 +65,14 @@ const PostEditor = ({
             });
         }
 
-        let payload = {
+        const payload = {
             title: postData.title,
             description: postData.description,
             organization_id: orgId,
             silent,
         };
 
-        let { data, error } = await supabase.functions.invoke("create-post", {
+        const { data, error } = await supabase.functions.invoke("create-post", {
             body: payload,
         });
 
@@ -109,13 +109,13 @@ const PostEditor = ({
     };
 
     const savePost = async () => {
-        let payload = {
+        const payload = {
             title: postData.title,
             description: postData.description,
         };
 
         // There is no need for .limits(1) since id is primary_key/unique
-        let { data, error } = await supabase
+        const { data, error } = await supabase
             .from("posts")
             .update(payload)
             .eq("id", postData.id)

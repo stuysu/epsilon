@@ -4,6 +4,7 @@ import { toNewYork } from "../../../utils/NewYorkTime";
 import ToggleChip from "../../../components/ui/input/ToggleChip";
 import { monthNames } from "../../../utils/TimeStrings";
 import { Avatar } from "radix-ui";
+import pressable from "../../../utils/pressable";
 
 const UpcomingMeeting = ({
     id,
@@ -33,13 +34,14 @@ const UpcomingMeeting = ({
 }) => {
     const [open, setOpen] = useState(false);
 
-    let start = toNewYork(start_time);
+    const start = toNewYork(start_time);
 
     return (
         <div className={"w-full cursor-pointer"}>
             <div
-                className="overflow-scroll scrollbar-none flex max-lg:flex-col max-lg:items-start gap-2 justify-between items-center bg-layer-2 transition-colors sm:hover:bg-layer-3 p-4"
-                onClick={() => setOpen(true)}
+                className="overflow-scroll scrollbar-none flex max-lg:flex-col max-lg:items-start gap-2 justify-between items-center bg-layer-2 transition-colors sm:hover:bg-layer-3 p-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 focus-visible:-outline-offset-2"
+                aria-haspopup="dialog"
+                {...pressable(() => setOpen(true))}
             >
                 <div className="relative flex gap-3">
                     <div

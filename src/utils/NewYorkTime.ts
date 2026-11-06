@@ -1,9 +1,12 @@
 import dayjs, { Dayjs } from "dayjs";
 import utc from "dayjs/plugin/utc";
 import timezone from "dayjs/plugin/timezone";
+import localizedFormat from "dayjs/plugin/localizedFormat";
 
 dayjs.extend(utc);
 dayjs.extend(timezone);
+/* for the "L" and "LT" formats used to show meeting dates and times */
+dayjs.extend(localizedFormat);
 
 export const SCHOOL_TIMEZONE = "America/New_York";
 

@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import OrgContext from "../../../../../contexts/OrgContext";
 import UserContext from "../../../../../contexts/UserContext";
 import AdminUpsertMeeting from "../components/AdminUpsertMeeting";
@@ -134,7 +134,7 @@ const Scheduler = () => {
                                           }
                                 }
                                 onDelete={async (silentDelete: boolean) => {
-                                    let { error } =
+                                    const { error } =
                                         await supabase.functions.invoke(
                                             "delete-meeting",
                                             {

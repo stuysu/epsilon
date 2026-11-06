@@ -1,13 +1,14 @@
 import React, { CSSProperties, useState } from "react";
 
-const semanticColors: Record<string, { background: string; text: string }> = {
-    primary: { background: "#90caf9", text: "rgba(0, 0, 0, 0.87)" },
-    secondary: { background: "#ce93d8", text: "rgba(0, 0, 0, 0.87)" },
-    error: { background: "#f44336", text: "#fff" },
-    info: { background: "#29b6f6", text: "rgba(0, 0, 0, 0.87)" },
-    success: { background: "#66bb6a", text: "rgba(0, 0, 0, 0.87)" },
-    warning: { background: "#ffa726", text: "rgba(0, 0, 0, 0.87)" },
-};
+/* the colors are CSS variables in app.css, so they follow the light or dark scheme */
+const SEMANTIC_COLORS = [
+    "primary",
+    "secondary",
+    "error",
+    "info",
+    "success",
+    "warning",
+];
 
 type AsyncButtonProps = Omit<
     React.ButtonHTMLAttributes<HTMLButtonElement>,
@@ -42,7 +43,13 @@ const AsyncButton: React.FC<AsyncButtonProps> = ({
     const busyProps = isLoading
         ? { "aria-disabled": true, "aria-busy": true }
         : {};
-    const semanticColor = color ? semanticColors[color] : undefined;
+    const semanticColor =
+        color && SEMANTIC_COLORS.includes(color)
+            ? {
+                  background: `var(--semantic-${color})`,
+                  text: `var(--semantic-${color}-text)`,
+              }
+            : undefined;
 
     const handleClick = async (
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>,

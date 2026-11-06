@@ -37,7 +37,6 @@ const Organization = () => {
         faculty_email: undefined,
     });
 
-    // eslint-disable-next-line
     useEffect(() => {
         const fetchEdits = async () => {
             const { data, error } = await supabase

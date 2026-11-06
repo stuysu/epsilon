@@ -83,12 +83,18 @@ const UnauthenticatedLanding = () => {
                     <CatalogButton />
                 </div>
             </section>
-            <img
-                src={`${PUBLIC_URL}/icons/stuysu.png`}
-                alt="Stuyvesant Student Union"
-                onClick={() => window.open("https://stuysu.org", "_blank")}
-                className="cursor-pointer relative bottom-12 left-1/2 transform -translate-x-1/2 w-14 h-14 object-cover"
-            />
+            <a
+                href="https://stuysu.org"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="block w-fit relative bottom-12 left-1/2 transform -translate-x-1/2 rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+            >
+                <img
+                    src={`${PUBLIC_URL}/icons/stuysu.png`}
+                    alt="Stuyvesant Student Union"
+                    className="w-14 h-14 object-cover"
+                />
+            </a>
         </main>
     );
 };

@@ -40,10 +40,10 @@ const PendingMember = ({
             return;
         }
 
-        let memberIndex = organization.memberships.findIndex(
+        const memberIndex = organization.memberships.findIndex(
             (m) => m.id === id,
         );
-        let memberData = organization.memberships[memberIndex];
+        const memberData = organization.memberships[memberIndex];
 
         memberData.active = true;
 

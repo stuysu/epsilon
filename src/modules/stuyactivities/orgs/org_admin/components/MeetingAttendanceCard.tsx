@@ -1,5 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import { toNewYork } from "../../../../../utils/NewYorkTime";
+import pressable from "../../../../../utils/pressable";
 
 const MeetingAttendanceCard = ({
     title,
@@ -25,9 +26,9 @@ const MeetingAttendanceCard = ({
     return (
         <div
             className={
-                "transition-colors bg-layer-1 w-full mb-6 p-6 rounded-xl shadow-control cursor-pointer sm:hover:bg-layer-2"
+                "transition-colors bg-layer-1 w-full mb-6 p-6 rounded-xl shadow-control cursor-pointer sm:hover:bg-layer-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
             }
-            onClick={() => handleClick()}
+            {...(clickable ? pressable(handleClick, { role: "link" }) : {})}
         >
             <h3>{title}</h3>
             <p>{toNewYork(startTime).format("L LT")}</p>

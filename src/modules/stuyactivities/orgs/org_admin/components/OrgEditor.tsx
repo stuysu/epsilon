@@ -187,7 +187,7 @@ const OrgEditor = ({
         }
 
         /* check if there is anything to save, if not, terminate */
-        let editedFields: string[] = Object.keys(editState);
+        const editedFields: string[] = Object.keys(editState);
         if (!editedFields.length) {
             setSavable(false);
             return;
@@ -195,11 +195,11 @@ const OrgEditor = ({
 
         /* check if the edited fields are different from the original */
         let atleastOneDiff = false;
-        for (let field of editedFields) {
+        for (const field of editedFields) {
             if (hiddenFields.includes(field)) continue;
 
-            let editedValue = editData[field as keyof OrganizationEdit];
-            let originalValue =
+            const editedValue = editData[field as keyof OrganizationEdit];
+            const originalValue =
                 existingEdit[field as keyof OrganizationEdit] ||
                 organization[field as keyof Organization];
 
@@ -237,11 +237,11 @@ const OrgEditor = ({
     useEffect(() => {
         // replace undefined fields with organization
 
-        let baseData: OrganizationEdit = {};
+        const baseData: OrganizationEdit = {};
 
-        for (let key of Object.keys(existingEdit)) {
+        for (const key of Object.keys(existingEdit)) {
             // typescript crying
-            let editField = key as keyof OrganizationEdit;
+            const editField = key as keyof OrganizationEdit;
             if (hiddenFields.includes(editField)) continue;
 
             if (
@@ -267,11 +267,11 @@ const OrgEditor = ({
             return;
         }
 
-        let payload: any = {};
+        const payload: any = {};
 
         let allNull = true;
-        for (let key of Object.keys(existingEdit)) {
-            let field = key as orgKey;
+        for (const key of Object.keys(existingEdit)) {
+            const field = key as orgKey;
             if (hiddenFields.includes(field)) continue;
 
             if (listFields.includes(field)) {
@@ -303,7 +303,7 @@ const OrgEditor = ({
                 }
             } else if (Array.isArray(payload[field])) {
                 let diff = false;
-                let oldValue = organization[field] as any[];
+                const oldValue = organization[field] as any[];
 
                 if (payload[field].length !== oldValue.length) {
                     diff = true;
@@ -346,9 +346,9 @@ const OrgEditor = ({
             // picture is different, but needs to be uploaded first
             /* Note: any indication of the picture failing to upload will kill the entire org edit process */
 
-            let filePath = `org-pictures/${organization.id}/${Date.now()}-${organization.url}-profile${(editPicture as File)!.name.split(".").pop()}`;
+            const filePath = `org-pictures/${organization.id}/${Date.now()}-${organization.url}-profile${(editPicture as File)!.name.split(".").pop()}`;
 
-            let { data: storageData, error: storageError } =
+            const { data: storageData, error: storageError } =
                 await supabase.storage
                     .from("public-files")
                     .upload(filePath, editPicture!);
@@ -360,7 +360,7 @@ const OrgEditor = ({
                 );
             }
 
-            let { data: urlData } = await supabase.storage
+            const { data: urlData } = await supabase.storage
                 .from("public-files")
                 .getPublicUrl(filePath);
 
@@ -378,7 +378,7 @@ const OrgEditor = ({
         if (allNull) {
             // delete the existing organization edit if it exists
             if (existingEdit.id) {
-                let { error: deleteError } = await supabase
+                const { error: deleteError } = await supabase
                     .from("organizationedits")
                     .delete()
                     .eq("organization_id", organization.id);
@@ -451,7 +451,7 @@ const OrgEditor = ({
             /* PENDING ORGANIZATION SHOULD JUST BE ALLOWED TO UPDATE */
 
             // filter out null fields
-            for (let key of Object.keys(payload)) {
+            for (const key of Object.keys(payload)) {
                 if (payload[key] === null) {
                     delete payload[key];
                 }
@@ -501,7 +501,7 @@ const OrgEditor = ({
 
     const deleteEdit = async () => {
         if (existingEdit.id) {
-            let { error: deleteError } = await supabase
+            const { error: deleteError } = await supabase
                 .from("organizationedits")
                 .delete()
                 .eq("organization_id", organization.id);

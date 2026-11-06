@@ -13,9 +13,9 @@ const ApproveEdit = () => {
 
     useEffect(() => {
         const fetchPendingEdits = async () => {
-            let pEdits: EditType[] = [];
+            const pEdits: EditType[] = [];
 
-            let { data, error } = await supabase
+            const { data, error } = await supabase
                 .from("organizationedits")
                 .select();
 
@@ -26,13 +26,13 @@ const ApproveEdit = () => {
                 );
             }
 
-            let orgIds = [];
-            for (let edit of data as OrganizationEdit[]) {
+            const orgIds = [];
+            for (const edit of data as OrganizationEdit[]) {
                 orgIds.push(edit.organization_id);
             }
 
             /* get name and picture from corresponding organization */
-            let { data: odata, error: oerror } = await supabase
+            const { data: odata, error: oerror } = await supabase
                 .from("organizations")
                 .select(
                     `
@@ -50,7 +50,7 @@ const ApproveEdit = () => {
                 );
             }
 
-            for (let edit of data as OrganizationEdit[]) {
+            for (const edit of data as OrganizationEdit[]) {
                 let meta = odata.find((o) => o.id === edit.organization_id);
                 if (!meta) {
                     meta = {
@@ -101,15 +101,20 @@ const ApproveEdit = () => {
             <h1>Approve Edits</h1>
             <Divider />
             <div className={"flex mt-8 gap-3 flex-wrap"}>
-                {pendingEdits.map((edit, i) => {
+                {pendingEdits.map((edit) => {
                     return (
-                        <div onClick={() => setView(edit)}>
+                        <button
+                            type="button"
+                            key={edit.id}
+                            onClick={() => setView(edit)}
+                            className="rounded-xl text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                        >
                             <OrgBlock
                                 name={edit.organization_name}
                                 role_name={"Pending"}
                                 picture={edit.organization_picture || ""}
                             />
-                        </div>
+                        </button>
                     );
                 })}
             </div>

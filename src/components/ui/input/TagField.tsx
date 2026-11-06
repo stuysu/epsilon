@@ -2,6 +2,8 @@ import {
     CSSProperties,
     KeyboardEvent,
     ReactNode,
+    useEffect,
+    useId,
     useRef,
     useState,
 } from "react";
@@ -28,14 +30,27 @@ const TagField = ({
     const [inputValue, setInputValue] = useState("");
     const [focused, setFocused] = useState(false);
     const [highlighted, setHighlighted] = useState(0);
+    /* Escape hides the list until the user types or presses an arrow key */
+    const [dismissed, setDismissed] = useState(false);
     const inputRef = useRef<HTMLInputElement>(null);
+    const listId = useId();
+    const optionId = (i: number) => `${listId}-option-${i}`;
 
     const matches = (options ?? []).filter(
         (option) =>
             !value.includes(option) &&
             option.toLowerCase().includes(inputValue.trim().toLowerCase()),
     );
-    const showOptions = focused && Boolean(options) && matches.length > 0;
+    const showOptions =
+        focused && !dismissed && Boolean(options) && matches.length > 0;
+
+    /* keep the option chosen with the arrow keys in view */
+    useEffect(() => {
+        if (!showOptions) return;
+        document
+            .getElementById(optionId(highlighted))
+            ?.scrollIntoView?.({ block: "nearest" });
+    });
 
     const add = (tag: string) => {
         setInputValue("");
@@ -46,6 +61,20 @@ const TagField = ({
     const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
         if (event.key === "Backspace" && !inputValue && value.length) {
             onChange?.(value.slice(0, -1));
+            return;
+        }
+
+        if (showOptions && event.key === "Escape") {
+            event.preventDefault();
+            setDismissed(true);
+            return;
+        }
+        if (
+            dismissed &&
+            (event.key === "ArrowDown" || event.key === "ArrowUp")
+        ) {
+            event.preventDefault();
+            setDismissed(false);
             return;
         }
 
@@ -109,15 +138,22 @@ const TagField = ({
                     value={inputValue}
                     role={options ? "combobox" : undefined}
                     aria-expanded={options ? showOptions : undefined}
+                    aria-autocomplete={options ? "list" : undefined}
+                    aria-controls={showOptions ? listId : undefined}
+                    aria-activedescendant={
+                        showOptions ? optionId(highlighted) : undefined
+                    }
                     aria-label={typeof label === "string" ? label : undefined}
                     onChange={(event) => {
                         setInputValue(event.target.value);
                         setHighlighted(0);
+                        setDismissed(false);
                     }}
                     onKeyDown={handleKeyDown}
                     onFocus={() => setFocused(true)}
                     onBlur={() => {
                         setFocused(false);
+                        setDismissed(false);
                         if (!options && inputValue.trim()) {
                             add(inputValue.trim());
                         }
@@ -143,12 +179,15 @@ const TagField = ({
             </div>
             {showOptions && (
                 <ul
+                    id={listId}
                     role="listbox"
+                    aria-label={typeof label === "string" ? label : undefined}
                     className="absolute left-0 right-0 top-full z-50 mt-1.5 max-h-64 overflow-y-auto rounded-xl border border-divider bg-bg p-1 shadow-2xl"
                 >
                     {matches.map((option, i) => (
                         <li
                             key={option}
+                            id={optionId(i)}
                             role="option"
                             aria-selected={i === highlighted}
                             // keeps focus in the input so the click lands before onBlur closes the list

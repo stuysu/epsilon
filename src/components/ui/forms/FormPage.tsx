@@ -56,7 +56,7 @@ const FormPage = <T,>({
 
     useEffect(() => {
         const isValid = (): boolean => {
-            for (let stat of Object.values(status)) {
+            for (const stat of Object.values(status)) {
                 if (!stat.value) return false;
             }
 
@@ -91,12 +91,12 @@ const FormPage = <T,>({
     );
 
     const parseChildren = (c: ReactNode) => {
-        let childs: ReactNode[] = [];
+        const childs: ReactNode[] = [];
 
         Children.map(c, (child, index) => {
             if (isValidElement(child)) {
                 if (child.type === FormSection) {
-                    let parsedChildren = parseChildren(child.props.children);
+                    const parsedChildren = parseChildren(child.props.children);
                     childs.push(
                         <FormSection key={index} {...child.props}>
                             {parsedChildren}
@@ -114,10 +114,10 @@ const FormPage = <T,>({
                     return;
                 }
 
-                let childField = child.props.field as keyof T;
-                let childValue = value?.[childField];
+                const childField = child.props.field as keyof T;
+                const childValue = value?.[childField];
 
-                let childProps: { [field: string]: any } = {
+                const childProps: { [field: string]: any } = {
                     key: index,
                     value: childValue,
                     onChange: (newValue: any) =>

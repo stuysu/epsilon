@@ -52,7 +52,7 @@ const EmailCopyBox = ({
                                 enqueueSnackbar("Copied emails to clipboard!", {
                                     variant: "success",
                                 });
-                            } catch (error) {
+                            } catch {
                                 enqueueSnackbar(
                                     "Failed to copy emails to clipboard. :( Try manually copying from the page.",
                                     { variant: "error" },

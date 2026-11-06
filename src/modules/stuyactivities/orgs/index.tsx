@@ -29,6 +29,7 @@ import { useSnackbar } from "notistack";
 import useMediaQuery from "../../../utils/useMediaQuery";
 import OrgInspector from "./components/OrgInspector";
 import MyMeetingAttendance from "./pages/MyMeetingAttendance";
+import pressable from "../../../utils/pressable";
 
 const OrgRouter = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -197,9 +198,14 @@ const OrgRouter = () => {
                         >
                             <p
                                 className={
-                                    "important relative -left-px sm:hover:text-typography-1 cursor-pointer"
+                                    "important relative -left-px sm:hover:text-typography-1 cursor-pointer rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
                                 }
-                                onClick={() => navigate("/stuyactivities")}
+                                {...pressable(
+                                    () => navigate("/stuyactivities"),
+                                    {
+                                        role: "link",
+                                    },
+                                )}
                             >
                                 <i
                                     className={

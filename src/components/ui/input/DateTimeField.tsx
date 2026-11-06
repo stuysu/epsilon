@@ -1,4 +1,11 @@
-import { CSSProperties, ReactNode, useEffect, useRef, useState } from "react";
+import {
+    CSSProperties,
+    KeyboardEvent,
+    ReactNode,
+    useEffect,
+    useRef,
+    useState,
+} from "react";
 import { Popover } from "radix-ui";
 import dayjs, { Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
@@ -113,6 +120,46 @@ const Calendar = ({
         month.date(i + 1),
     );
 
+    /*
+    the days are one tab stop, moved with the arrow keys (a week with up and
+    down, a month with Page Up and Page Down, a year with Shift)
+    */
+    const [active, setActive] = useState(selected ?? today);
+    const tabStop = active.isSame(month, "month") ? active : month;
+    const gridRef = useRef<HTMLDivElement>(null);
+    const moved = useRef(false);
+
+    useEffect(() => {
+        if (!moved.current) return;
+        moved.current = false;
+        gridRef.current
+            ?.querySelector<HTMLButtonElement>('[tabindex="0"]')
+            ?.focus();
+    }, [active]);
+
+    const moveTo = (day: Dayjs) => {
+        moved.current = true;
+        setActive(day);
+        if (!day.isSame(month, "month")) setMonth(day.startOf("month"));
+    };
+
+    const handleKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        const unit = event.shiftKey ? "year" : "month";
+        const next = {
+            ArrowLeft: () => tabStop.subtract(1, "day"),
+            ArrowRight: () => tabStop.add(1, "day"),
+            ArrowUp: () => tabStop.subtract(1, "week"),
+            ArrowDown: () => tabStop.add(1, "week"),
+            Home: () => tabStop.startOf("week"),
+            End: () => tabStop.endOf("week").startOf("day"),
+            PageUp: () => tabStop.subtract(1, unit),
+            PageDown: () => tabStop.add(1, unit),
+        }[event.key];
+        if (!next) return;
+        event.preventDefault();
+        moveTo(next());
+    };
+
     return (
         <div className="w-[296px] p-3">
             <div className="mb-2 flex items-center justify-between">
@@ -136,7 +183,13 @@ const Calendar = ({
                     <i className="bx bx-chevron-right text-[20px]" />
                 </button>
             </div>
-            <div className="grid grid-cols-7 justify-items-center gap-y-0.5">
+            <div
+                ref={gridRef}
+                role="group"
+                aria-label={month.format("MMMM YYYY")}
+                onKeyDown={handleKeyDown}
+                className="grid grid-cols-7 justify-items-center gap-y-0.5"
+            >
                 {WEEKDAYS.map((day, i) => (
                     <span
                         key={i}
@@ -156,6 +209,7 @@ const Calendar = ({
                             type="button"
                             aria-label={day.format("MMMM D, YYYY")}
                             aria-pressed={Boolean(isSelected)}
+                            tabIndex={day.isSame(tabStop, "day") ? 0 : -1}
                             onClick={() => onSelect(day)}
                             className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${
                                 isSelected

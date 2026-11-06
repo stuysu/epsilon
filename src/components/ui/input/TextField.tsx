@@ -5,7 +5,10 @@ import {
     InputHTMLAttributes,
     ReactNode,
     Ref,
+    useCallback,
     useId,
+    useLayoutEffect,
+    useRef,
     useState,
 } from "react";
 import OutlinedField from "./OutlinedField";
@@ -56,6 +59,25 @@ const TextField = ({
     const [focused, setFocused] = useState(false);
     const [typed, setTyped] = useState(Boolean(defaultValue));
     const helperId = useId();
+    const textareaRef = useRef<HTMLTextAreaElement | null>(null);
+
+    /* a multiline field without a set number of rows grows with its text */
+    const autoGrow = multiline && rows === undefined;
+    const fitToText = useCallback(() => {
+        const textarea = textareaRef.current;
+        if (!autoGrow || !textarea) return;
+        textarea.style.height = "auto";
+        textarea.style.height = `${textarea.scrollHeight}px`;
+    }, [autoGrow]);
+    useLayoutEffect(fitToText, [fitToText, value]);
+
+    const setTextareaRef = (element: HTMLTextAreaElement | null) => {
+        textareaRef.current = element;
+        if (typeof inputRef === "function") inputRef(element);
+        else if (inputRef) {
+            (inputRef as { current: unknown }).current = element;
+        }
+    };
 
     const filled =
         value === undefined ? typed : value !== null && String(value) !== "";
@@ -76,6 +98,7 @@ const TextField = ({
         onChange: (event: ChangeEvent<any>) => {
             setTyped(Boolean(event.target.value));
             onChange?.(event);
+            fitToText();
         },
         onFocus: (event: FocusEvent<any>) => {
             setFocused(true);
@@ -109,8 +132,9 @@ const TextField = ({
                 {multiline ? (
                     <textarea
                         {...sharedProps}
-                        rows={rows}
-                        className={`${inputClass} resize-none`}
+                        ref={setTextareaRef}
+                        rows={rows ?? 1}
+                        className={`${inputClass} resize-none ${autoGrow ? "overflow-hidden" : ""}`}
                     />
                 ) : (
                     <input {...sharedProps} className={inputClass} />

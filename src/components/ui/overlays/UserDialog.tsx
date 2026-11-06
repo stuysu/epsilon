@@ -2,6 +2,7 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { AnimatePresence, motion } from "framer-motion";
 import AsyncButton from "../buttons/AsyncButton";
 import React, { useRef } from "react";
+import keepOpenOnToast from "./keepOpenOnToast";
 
 export default function UserDialog({
     title,
@@ -73,6 +74,7 @@ export default function UserDialog({
 
                             <Dialog.Content
                                 asChild
+                                onInteractOutside={keepOpenOnToast}
                                 // focus is handed back in onExitComplete instead
                                 onCloseAutoFocus={(event) =>
                                     event.preventDefault()

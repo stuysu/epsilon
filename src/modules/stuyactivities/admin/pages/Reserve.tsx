@@ -2,7 +2,7 @@ import {
     DateField,
     TimeField,
 } from "../../../../components/ui/input/DateTimeField";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import { Dayjs } from "dayjs";
@@ -118,6 +118,17 @@ const Reserve = () => {
                         meeting_end: wallClockToISO(endTime),
                     })
                     .returns<RoomMeta[]>();
+                if (error) {
+                    // without this, every room would look free; clear the
+                    // list so rooms loaded earlier can't stay selectable
+                    enqueueSnackbar(
+                        "Couldn't check which rooms are booked. Contact it@stuysu.org for support.",
+                        { variant: "error" },
+                    );
+                    setAllRooms([]);
+                    setSelectedRoomIds([]);
+                    return;
+                }
                 const bookedRooms: RoomMeta[] = Array.isArray(bookedRoomsRaw)
                     ? bookedRoomsRaw
                     : [];
@@ -197,13 +208,22 @@ const Reserve = () => {
             return forceReserve();
         }
 
-        const { data: bookedRoomsRaw } = await supabase.rpc(
+        const { data: bookedRoomsRaw, error: bookedError } = await supabase.rpc(
             "get_booked_rooms",
             {
                 meeting_start: wallClockToISO(startTime),
                 meeting_end: wallClockToISO(endTime),
             },
         );
+        if (bookedError) {
+            // treating a failed lookup as "nothing booked" could cancel a
+            // meeting without asking first
+            enqueueSnackbar(
+                "Couldn't check which rooms are booked, so nothing was reserved. Contact it@stuysu.org for support.",
+                { variant: "error" },
+            );
+            return;
+        }
         const bookedRooms: { room_id: number; meeting_id: number }[] =
             Array.isArray(bookedRoomsRaw) ? bookedRoomsRaw : [];
 
@@ -211,7 +231,7 @@ const Reserve = () => {
             selectedRoomIds.includes(meta.room_id),
         );
 
-        const { data: heldMeetings } = selectedBooked.length
+        const { data: heldMeetings, error: heldError } = selectedBooked.length
             ? await supabase
                   .from("meetings")
                   .select("id, room_id, organizations!inner(state)")
@@ -220,7 +240,15 @@ const Reserve = () => {
                       selectedBooked.map((meta) => meta.meeting_id),
                   )
                   .eq("organizations.state", "ADMIN")
-            : { data: [] };
+            : { data: [], error: null };
+
+        if (heldError) {
+            enqueueSnackbar(
+                "Couldn't check the booked meetings, so nothing was reserved. Contact it@stuysu.org for support.",
+                { variant: "error" },
+            );
+            return;
+        }
 
         const heldRoomIds = Array.from(
             new Set((heldMeetings || []).map((meeting) => meeting.room_id)),

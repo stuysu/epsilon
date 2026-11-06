@@ -195,7 +195,7 @@ const CharterForm = () => {
     }, [formData, submitting]);
 
     const createActivity = async () => {
-        let body = {
+        const body = {
             name: formData.name,
             url: formData.url.toLowerCase(),
             socials: formData.socials,
@@ -218,7 +218,7 @@ const CharterForm = () => {
             faculty_email: formData.faculty_email,
         };
 
-        let { data: orgCreateData, error: orgCreateError } =
+        const { data: orgCreateData, error: orgCreateError } =
             await supabase.functions.invoke("create-organization", { body });
 
         if (orgCreateError || !orgCreateData) {
@@ -231,13 +231,13 @@ const CharterForm = () => {
                 variant: "error",
             });
         }
-        let orgId = orgCreateData.id;
+        const orgId = orgCreateData.id;
 
         /* Create picture if organization is successfully created */
         /* convert picture to url */
         if (formData.picture) {
-            let filePath = `org-pictures/${orgId}/${Date.now()}-${formData.url}-profile${formData.picture.name.split(".").pop()}`;
-            let { data: storageData, error: storageError } =
+            const filePath = `org-pictures/${orgId}/${Date.now()}-${formData.url}-profile${formData.picture.name.split(".").pop()}`;
+            const { data: storageData, error: storageError } =
                 await supabase.storage
                     .from("public-files")
                     .upload(filePath, formData.picture);
@@ -251,7 +251,7 @@ const CharterForm = () => {
                 );
             }
 
-            let { data: urlData } = await supabase.storage
+            const { data: urlData } = await supabase.storage
                 .from("public-files")
                 .getPublicUrl(filePath);
 
@@ -265,7 +265,7 @@ const CharterForm = () => {
                 );
             }
 
-            let { error: updateUrlError } = await supabase
+            const { error: updateUrlError } = await supabase
                 .from("organizations")
                 .update({ picture: urlData.publicUrl })
                 .eq("id", orgId);
@@ -287,7 +287,7 @@ const CharterForm = () => {
     if (!eligible)
         return (
             <div className="w-full">
-                <h3 className="text-center text-[3rem] leading-[1.167]">
+                <h3 className="m-0 text-center font-sans text-[3rem] leading-[1.167] text-[color:inherit] [font-variation-settings:'wght'_400]">
                     You may not submit a second charter if you already have one
                     pending.
                 </h3>
