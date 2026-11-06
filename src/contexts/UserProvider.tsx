@@ -94,7 +94,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 if (!Array.isArray(data) || data?.length === 0) {
                     // user is not in our public.users table. notify
                     enqueueSnackbar(
-                        "Please sign in with your stuy.edu account. If you are an incoming freshmen, wait until" +
+                        "Please sign in with your stuy.edu account. If you are an incoming freshman, wait until" +
                             " later. For more assistance, contact it@stuysu.org",
                         { variant: "error" },
                     );

@@ -35,18 +35,19 @@ const Index = () => {
             year,
         });
 
-        if (!data) {
-            setHighlightedDays([]);
-            setLoading(false);
-            return;
-        }
-
         if (error) {
             enqueueSnackbar("Error fetching meeting days", {
                 variant: "error",
             });
 
             setHighlightedDays([]);
+            setLoading(false);
+            return;
+        }
+
+        if (!data) {
+            setHighlightedDays([]);
+            setLoading(false);
             return;
         }
 
@@ -175,7 +176,7 @@ const Index = () => {
                         }}
                         modifiersClassNames={{
                             hasMeetings:
-                                'relative after:content-[""] after:left-1/2 after:absolute after:-translate-x-1/2 after:bottom-1 after:w-1 after:h-1 after:rounded-full after:bg-yellow data-[selected]:after:bg-white',
+                                'relative after:content-[""] after:left-1/2 after:absolute after:-translate-x-1/2 after:bottom-1 after:w-1 after:h-1 after:rounded-full after:bg-yellow scheme-light:after:size-1.5 scheme-light:after:bg-[#6b4700] data-[selected]:after:bg-white scheme-light:data-[selected]:after:bg-white',
                         }}
                     />
 

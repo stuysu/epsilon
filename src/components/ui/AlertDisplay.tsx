@@ -13,8 +13,11 @@ const AlertDisplay = () => {
     const [data, setData] = useState<AlertInfo | null>(null);
     useEffect(() => {
         const fetchAlert = async () => {
-            const res = await fetch("https://alert.stuysu.org");
-            if (res.status === 404) return;
+            // the alert service being down shouldn't surface as an error
+            const res = await fetch("https://alert.stuysu.org").catch(
+                () => null,
+            );
+            if (!res || res.status === 404) return;
             try {
                 const alertData = (await res.json()) as AlertInfo;
                 setData(alertData);
