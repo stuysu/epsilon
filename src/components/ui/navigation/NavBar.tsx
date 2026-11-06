@@ -128,8 +128,6 @@ const FOCUS_RING =
 const CURRENT_BAR =
     "after:absolute after:-bottom-2 after:left-1/2 after:h-0.5 after:w-3 after:-translate-x-1/2 after:rounded-full after:bg-typography-1 after:content-['']";
 
-// the underline under the current page's label in the menus
-const CURRENT_LABEL = "underline decoration-2 underline-offset-4";
 // pages reached from the phone "More" menu's Account section
 const ACCOUNT_PATHS = ["/profile", "/preferences", "/communications"];
 
@@ -347,7 +345,7 @@ const NavBar: FC = () => {
                             aria-current={
                                 isPageOptnActive(item) ? "page" : undefined
                             }
-                            // the current page is brighter and underlined here too
+                            // the current page is brighter
                             className={`flex items-center gap-2 py-1 cursor-pointer sm:hover:text-typography-1 transition-colors ${FOCUS_RING} ${
                                 isPageOptnActive(item)
                                     ? "text-typography-1"
@@ -371,11 +369,7 @@ const NavBar: FC = () => {
                             )}
                         >
                             <i className={item.icon} aria-hidden="true" />
-                            <span
-                                className={`important ${isPageOptnActive(item) ? CURRENT_LABEL : ""}`}
-                            >
-                                {item.label}
-                            </span>
+                            <span className="important">{item.label}</span>
                         </div>
                     ))}
 
@@ -408,11 +402,7 @@ const NavBar: FC = () => {
                                     className="bx bx-id-card"
                                     aria-hidden="true"
                                 />
-                                <span
-                                    className={`important ${location.pathname === "/profile" ? CURRENT_LABEL : ""}`}
-                                >
-                                    Profile
-                                </span>
+                                <span className="important">Profile</span>
                             </div>
 
                             <div
@@ -438,11 +428,7 @@ const NavBar: FC = () => {
                                     className="bx bx-slider"
                                     aria-hidden="true"
                                 />
-                                <span
-                                    className={`important ${location.pathname === "/preferences" ? CURRENT_LABEL : ""}`}
-                                >
-                                    Preferences
-                                </span>
+                                <span className="important">Preferences</span>
                             </div>
 
                             <div
@@ -468,9 +454,7 @@ const NavBar: FC = () => {
                                     className="bx bx-envelope"
                                     aria-hidden="true"
                                 />
-                                <span
-                                    className={`important ${location.pathname === "/communications" ? CURRENT_LABEL : ""}`}
-                                >
+                                <span className="important">
                                     Communications
                                 </span>
                             </div>

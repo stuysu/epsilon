@@ -44,11 +44,7 @@ const RouteTabs = ({ tabs }: Props) => {
                                     aria-hidden="true"
                                     title={tab.label}
                                 />
-                                {/* the selected tab's label is underlined as well as
-                                    yellow, so colour isn't the only sign of it */}
-                                <span className="text-nowrap group-data-[state=active]:underline group-data-[state=active]:decoration-2 group-data-[state=active]:underline-offset-4">
-                                    {tab.label}
-                                </span>
+                                <span className="text-nowrap">{tab.label}</span>
                             </div>
                         )}
                     </Tabs.Trigger>
