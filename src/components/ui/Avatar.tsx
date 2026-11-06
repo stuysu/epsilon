@@ -30,7 +30,9 @@ const Avatar = ({
                 if (status === "loaded") onLoad?.();
             }}
         />
+        {/* with a picture, wait a moment so the placeholder doesn't flash before it loads */}
         <RadixAvatar.Fallback
+            delayMs={src ? 600 : undefined}
             className={`flex h-full w-full items-center justify-center ${
                 style?.backgroundColor
                     ? ""

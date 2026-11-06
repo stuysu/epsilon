@@ -1,6 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { AnimatePresence, motion } from "framer-motion";
 import React, { useRef } from "react";
+import keepOpenOnToast from "./keepOpenOnToast";
 
 /* A dialog for forms that manage their own actions, unlike UserDialog which closes on confirm. */
 export default function ContentDialog({
@@ -42,6 +43,7 @@ export default function ContentDialog({
                             <Dialog.Content
                                 asChild
                                 aria-describedby={undefined}
+                                onInteractOutside={keepOpenOnToast}
                                 onOpenAutoFocus={() => {
                                     // there is no Dialog.Trigger, so remember what opened the dialog
                                     openerRef.current =

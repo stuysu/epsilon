@@ -74,8 +74,11 @@ const MemberGroup = ({ role, names }: { role: string; names: string[] }) => {
             <div
                 className={"flex flex-col w-80 text-center sm:text-left mt-1.5"}
             >
-                {names.map((name, index) => (
-                    <h2 className={"-mt-3 text-white/75 relative top-0.5"}>
+                {names.map((name) => (
+                    <h2
+                        key={name}
+                        className={"-mt-3 text-white/75 relative top-0.5"}
+                    >
                         {name}
                     </h2>
                 ))}

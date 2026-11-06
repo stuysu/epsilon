@@ -29,7 +29,6 @@ const FormDropSelect = ({
     description,
     required,
     onChange,
-    status,
     changeStatus,
     selections,
     label,

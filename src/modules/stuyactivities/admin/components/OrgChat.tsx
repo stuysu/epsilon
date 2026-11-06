@@ -103,7 +103,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
         }
 
         setMessage("");
-        let newMessages = [
+        const newMessages = [
             ...messages,
             {
                 id: data.id,
@@ -149,8 +149,8 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
             </p>
             <div className={"h-96 overflow-auto relative"} ref={chatBoxRef}>
                 {messages.map((message) => {
-                    let messageTime = toNewYork(message.created_at);
-                    let timeStr = `${messageTime.month() + 1}/${messageTime.date()}/${messageTime.year()}`;
+                    const messageTime = toNewYork(message.created_at);
+                    const timeStr = `${messageTime.month() + 1}/${messageTime.date()}/${messageTime.year()}`;
                     return (
                         <article
                             key={message.id}
@@ -192,14 +192,16 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                                 </p>
 
                                 {message.users.id === user.id && (
-                                    <div
+                                    <button
+                                        type="button"
+                                        aria-label="Delete message"
                                         className={
-                                            "absolute right-3 top-3.5 bx bx-trash bx-sm text-red cursor-pointer sm:hover:opacity-75 transition-opacity"
+                                            "absolute right-3 top-3.5 bx bx-trash bx-sm text-red cursor-pointer sm:hover:opacity-75 transition-opacity rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
                                         }
                                         onClick={() =>
                                             deleteMessage(message.id)
                                         }
-                                    ></div>
+                                    ></button>
                                 )}
                             </div>
                         </article>

@@ -215,7 +215,8 @@
         --text-primary: #4e342e;
         /* deep enough for the orange navigation bar as well as the layers */
         --text-secondary: #634439;
-        --text-tertiary: #8d6e63;
+        /* deep enough for small text on every orange layer */
+        --text-tertiary: #70554b;
 
         /* deep enough to fill a checkbox behind a white tick and to stand
            out from the page; green stays a green, distinct from red, and also
@@ -252,6 +253,37 @@
     [data-theme="orange"] h5,
     [data-theme="orange"] p {
         font-family: "Georgia", "instrument-serif", serif !important;
+    }
+
+    /* AsyncButton's color prop, with the colors MUI's palette used in each scheme */
+    :root {
+        --semantic-primary: #90caf9;
+        --semantic-primary-text: rgba(0, 0, 0, 0.87);
+        --semantic-secondary: #ce93d8;
+        --semantic-secondary-text: rgba(0, 0, 0, 0.87);
+        --semantic-error: #f44336;
+        --semantic-error-text: #fff;
+        --semantic-info: #29b6f6;
+        --semantic-info-text: rgba(0, 0, 0, 0.87);
+        --semantic-success: #66bb6a;
+        --semantic-success-text: rgba(0, 0, 0, 0.87);
+        --semantic-warning: #ffa726;
+        --semantic-warning-text: rgba(0, 0, 0, 0.87);
+    }
+
+    :root[data-scheme="light"] {
+        --semantic-primary: #1976d2;
+        --semantic-primary-text: #fff;
+        --semantic-secondary: #9c27b0;
+        --semantic-secondary-text: #fff;
+        --semantic-error: #d32f2f;
+        --semantic-error-text: #fff;
+        --semantic-info: #0288d1;
+        --semantic-info-text: #fff;
+        --semantic-success: #2e7d32;
+        --semantic-success-text: #fff;
+        --semantic-warning: #ed6c02;
+        --semantic-warning-text: #fff;
     }
 
     /* Effective color-scheme exposure: Light or Dark natured theme */

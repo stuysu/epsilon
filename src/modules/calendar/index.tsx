@@ -55,13 +55,13 @@ const Index = () => {
     };
 
     useEffect(() => {
-        let dayString = `${time.year()}/${time.month()}/${time.date()}`;
+        const dayString = `${time.year()}/${time.month()}/${time.date()}`;
         if (cachedMeetings[dayString]) {
             return setMeetings(cachedMeetings[dayString]);
         }
 
-        let dayStart = wallClockToISO(time.startOf("day"));
-        let nextDayStart = wallClockToISO(time.add(1, "day").startOf("day"));
+        const dayStart = wallClockToISO(time.startOf("day"));
+        const nextDayStart = wallClockToISO(time.add(1, "day").startOf("day"));
 
         updateHighlightedDays(time.month(), time.year());
 
@@ -145,12 +145,13 @@ const Index = () => {
                         // and dimmed they read as unavailable yet were announced as
                         // working buttons
                         weekStartsOn={1}
+                        // the arrows are drawn at 24px, so a larger invisible area takes the tap
                         classNames={{
                             month_grid: "max-sm:scale-125 origin-top-left",
                             button_previous:
-                                "fill-typography-1 z-10 relative sm:hover:bg-layer-2 rounded-full",
+                                "fill-typography-1 z-10 relative sm:hover:bg-layer-2 rounded-full before:absolute before:-inset-1.5 before:content-['']",
                             button_next:
-                                "fill-typography-1 z-10 relative sm:hover:bg-layer-2 rounded-full",
+                                "fill-typography-1 z-10 relative sm:hover:bg-layer-2 rounded-full before:absolute before:-inset-1.5 before:content-['']",
                             root: "max-sm:pb-16 p-5 rounded-xl p-3 bg-layer-1 shadow-control relative max-md:w-full",
                             nav: "absolute flex gap-2 ml-16 right-5 top-3.5",
                             month_caption:

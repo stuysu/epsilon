@@ -1,6 +1,6 @@
 import React, { useContext, useState } from "react";
 import OrgContext from "../../../../contexts/OrgContext";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import UserContext from "../../../../contexts/UserContext";
 
 type LinkItem = { to: string; display: string };
@@ -68,15 +68,13 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const renderDesktopList = (links: LinkItem[]) => (
         <div className="w-full py-2">
             {links.map((linkData, i) => (
-                <div
+                <Link
                     key={i}
-                    style={{
-                        height: `30px`,
-                        display: "flex",
-                        alignItems: "center",
-                        cursor: "pointer",
-                    }}
-                    onClick={() => navigate(linkData.to)}
+                    to={linkData.to}
+                    aria-current={
+                        location.pathname === linkData.to ? "page" : undefined
+                    }
+                    className="flex h-[30px] w-fit items-center rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
                 >
                     <p
                         className={`important cursor-pointer ${
@@ -87,7 +85,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     >
                         {linkData.display}
                     </p>
-                </div>
+                </Link>
             ))}
         </div>
     );

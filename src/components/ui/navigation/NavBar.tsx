@@ -13,6 +13,7 @@ import UserContext from "../../../contexts/UserContext";
 import { useSnackbar } from "notistack";
 import { ThemeContext } from "../../../contexts/ThemeProvider";
 import { PUBLIC_URL } from "../../../config/constants";
+import pressable from "../../../utils/pressable";
 import { isStuyActivitiesPath, topNavItems } from "../../../config/routes";
 import Divider from "../Divider";
 import Avatar from "../Avatar";
@@ -26,23 +27,8 @@ const linkStyle: CSSProperties = {
 
 type TopNavItem = (typeof topNavItems)[number];
 
-// The nav is built from divs and paragraphs, so give each clickable one the
-// role, focus and keys of the control it stands for. Hidden menus pass
-// focusable = false so their items are skipped by the Tab key.
-const pressable = (
-    onPress: () => void,
-    { role = "button", focusable = true } = {},
-) => ({
-    role,
-    tabIndex: focusable ? 0 : -1,
-    onClick: onPress,
-    onKeyDown: (event: React.KeyboardEvent) => {
-        if (event.key === "Enter" || (role === "button" && event.key === " ")) {
-            event.preventDefault();
-            onPress();
-        }
-    },
-});
+// The nav is built from divs and paragraphs, so each clickable one gets the
+// role, focus and keys of the control it stands for (see utils/pressable).
 
 // The first focusable element after `anchor` in the page, skipping `skip`
 const nextFocusableAfter = (
@@ -146,6 +132,11 @@ const CURRENT_BAR =
 const CURRENT_LABEL = "underline decoration-2 underline-offset-4";
 // pages reached from the phone "More" menu's Account section
 const ACCOUNT_PATHS = ["/profile", "/preferences", "/communications"];
+
+// the phone tabs are only as tall as their icons, so their tap area reaches
+// the top and bottom of the 46px bar (13px each way still fits inside it)
+const PHONE_TAP_AREA =
+    "max-sm:before:absolute max-sm:before:inset-x-0 max-sm:before:-inset-y-[13px] max-sm:before:content-['']";
 
 // for the tabs, whose scroller clips anything drawn below them
 const FOCUS_RING_INSET =
@@ -698,7 +689,7 @@ const NavBar: FC = () => {
                                 if (el) itemRefs.current[index] = el;
                             }}
                             // the scroller clips below the tabs, so the outline is drawn inside
-                            className={`group/tab max-sm:w-full text-nowrap flex items-start flex-nowrap cursor-pointer transition-colors ${FOCUS_RING_INSET} max-sm:focus-visible:!outline-none ${
+                            className={`group/tab max-sm:w-full text-nowrap flex items-start flex-nowrap cursor-pointer transition-colors ${FOCUS_RING_INSET} ${PHONE_TAP_AREA} max-sm:focus-visible:!outline-none ${
                                 isPageOptnActive(item)
                                     ? "text-typography-1"
                                     : "sm:hover:text-typography-1 text-typography-2"
@@ -767,7 +758,7 @@ const NavBar: FC = () => {
                         <div ref={dotsRef} className="relative">
                             <div
                                 ref={moreTriggerRef}
-                                className={`relative w-10 flex justify-center ${FOCUS_RING_INSET} ${
+                                className={`relative w-10 flex justify-center ${FOCUS_RING_INSET} ${PHONE_TAP_AREA} ${
                                     overflowItems.some(isPageOptnActive) ||
                                     ACCOUNT_PATHS.includes(location.pathname)
                                         ? CURRENT_BAR

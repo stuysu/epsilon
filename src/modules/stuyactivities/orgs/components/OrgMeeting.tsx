@@ -5,6 +5,7 @@ import MeetingPreview from "../../../../components/ui/overlays/MeetingPreview";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import ToggleChip from "../../../../components/ui/input/ToggleChip";
 import UserDialog from "../../../../components/ui/overlays/UserDialog";
+import pressable from "../../../../utils/pressable";
 
 type Props = {
     id?: number;
@@ -41,9 +42,9 @@ const OrgMeeting = ({
     const [open, setOpen] = useState(false);
     const [confirmingDelete, setConfirmingDelete] = useState(false);
     const [deleting, setDeleting] = useState(false);
-    let startTime = toNewYork(start_time).format("L LT");
-    let endTime = toNewYork(end_time).format("LT");
-    let today = toNewYork().startOf("day");
+    const startTime = toNewYork(start_time).format("L LT");
+    const endTime = toNewYork(end_time).format("LT");
+    const today = toNewYork().startOf("day");
 
     if (onlyUpcoming && today.isAfter(toNewYork(start_time))) {
         return <></>;
@@ -62,8 +63,9 @@ const OrgMeeting = ({
         <div className={"w-full"}>
             <div className="flex items-center bg-layer-2 transition-colors sm:hover:bg-layer-3">
                 <div
-                    className="flex-1 min-w-0 flex justify-between items-center p-4 cursor-pointer"
-                    onClick={() => setOpen(true)}
+                    className="flex-1 min-w-0 flex justify-between items-center p-4 cursor-pointer focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 focus-visible:-outline-offset-2"
+                    aria-haspopup="dialog"
+                    {...pressable(() => setOpen(true))}
                 >
                     <div
                         className={
@@ -75,7 +77,9 @@ const OrgMeeting = ({
                             <p>
                                 {startTime} to {endTime}
                             </p>
-                            <p>{advisor?.trim() ? `Advisor: ${advisor}` : ""}</p>
+                            <p>
+                                {advisor?.trim() ? `Advisor: ${advisor}` : ""}
+                            </p>
                         </div>
                         <div className="pointer-events-none flex flex-wrap gap-2 max-w-full [&>*]:max-w-full [&>*]:text-wrap sm:[&>*]:text-nowrap sm:w-fit sm:shrink sm:justify-end md:flex-nowrap md:shrink-0">
                             <ToggleChip
@@ -101,13 +105,7 @@ const OrgMeeting = ({
                     </div>
                 </div>
                 <div className="relative z-10 flex flex-col sm:flex-row items-stretch sm:items-center gap-2 shrink-0 pr-4">
-                    {onEdit && (
-                        <AsyncButton
-                            onClick={onEdit}
-                        >
-                            Edit
-                        </AsyncButton>
-                    )}
+                    {onEdit && <AsyncButton onClick={onEdit}>Edit</AsyncButton>}
                     {onDelete && (
                         <AsyncButton
                             disabled={deleting}

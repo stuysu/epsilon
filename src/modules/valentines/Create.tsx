@@ -122,9 +122,12 @@ const Create = () => {
             </p>
             <div className="w-[70%] flex flex-wrap mt-4 justify-center">
                 {colors.map((color) => (
-                    <div
+                    <button
+                        type="button"
                         key={color}
-                        className="shrink-0 w-[2em] h-[2em] m-[.5em] rounded-[2em] cursor-pointer text-black content-center"
+                        aria-label={`Background ${color}`}
+                        aria-pressed={background === color}
+                        className="shrink-0 w-[2em] h-[2em] m-[.5em] rounded-[2em] cursor-pointer text-black content-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
                         style={{
                             backgroundColor: color,
                             borderColor: "#ffffff",

@@ -142,7 +142,7 @@ const AdminMember = ({
         }
 
         if (organization.setOrg) {
-            let existingMemberIndex = organization.memberships.findIndex(
+            const existingMemberIndex = organization.memberships.findIndex(
                 (m) => m.id === id,
             );
             if (!~existingMemberIndex) {
@@ -154,7 +154,8 @@ const AdminMember = ({
                 return;
             }
 
-            let existingMember = organization.memberships[existingMemberIndex];
+            const existingMember =
+                organization.memberships[existingMemberIndex];
 
             organization.setOrg({
                 ...organization,
@@ -223,32 +224,40 @@ const AdminMember = ({
                                 role === "ADVISOR" ||
                                 (isAdmin && role === "ADMIN") ||
                                 userId === user.id) && (
-                                <div onClick={handleEdit}>
-                                    <p>
-                                        <i
-                                            className={
-                                                "bx bx-pencil bx-sm sm:hover:opacity-75 cursor-pointer"
-                                            }
-                                        ></i>
-                                    </p>
-                                </div>
+                                <button
+                                    type="button"
+                                    onClick={handleEdit}
+                                    aria-label={`Edit ${first_name} ${last_name}`}
+                                    title="Edit member"
+                                    className="flex rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                                >
+                                    <i
+                                        className={
+                                            "bx bx-pencil bx-sm sm:hover:opacity-75 cursor-pointer"
+                                        }
+                                        aria-hidden="true"
+                                    ></i>
+                                </button>
                             )}
 
                             {userId !== user.id &&
                                 (isCreator ||
                                     role === "MEMBER" ||
                                     role === "ADVISOR") && (
-                                    <div
+                                    <button
+                                        type="button"
                                         onClick={() => setKickConfirmOpen(true)}
+                                        aria-label={`Remove ${first_name} ${last_name}`}
+                                        title="Remove member"
+                                        className="ml-3 flex rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
                                     >
-                                        <p>
-                                            <i
-                                                className={
-                                                    "bx bx-user-x bx-sm ml-3 text-red sm:hover:opacity-75 cursor-pointer"
-                                                }
-                                            ></i>
-                                        </p>
-                                    </div>
+                                        <i
+                                            className={
+                                                "bx bx-user-x bx-sm text-red sm:hover:opacity-75 cursor-pointer"
+                                            }
+                                            aria-hidden="true"
+                                        ></i>
+                                    </button>
                                 )}
                         </div>
                     </>

@@ -38,8 +38,14 @@ const AddUser = () => {
 
         if (userCreateError) {
             console.error("Supabase function error:", userCreateError);
-            const message =
-                userCreateError.message || "Contact it@stuysu.org for support.";
+            // the function explains what went wrong (like "User already exists") in its response
+            let message = "Contact it@stuysu.org for support.";
+            try {
+                const body = await userCreateError.context?.json();
+                if (body?.error) message = body.error;
+            } catch {
+                // no readable response, so keep the generic message
+            }
             return enqueueSnackbar(message, { variant: "error" });
         }
         enqueueSnackbar("User created successfully", { variant: "success" });
@@ -81,10 +87,10 @@ const AddUser = () => {
                             field="last_name"
                             required={OrgRequirements.name.required}
                             requirements={OrgRequirements.name.requirements}
+                            // beside the first name on phones too, so no top margin there
                             sx={{
-                                marginLeft: isMobile ? "" : "20px",
-                                marginTop: isMobile ? "20px" : "",
-                                width: isMobile ? "50%" : "25%",
+                                marginLeft: isMobile ? "12px" : "20px",
+                                width: isMobile ? "calc(50% - 12px)" : "25%",
                             }}
                         />
                         <FormTextField

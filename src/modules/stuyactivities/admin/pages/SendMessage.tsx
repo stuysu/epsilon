@@ -2,7 +2,6 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import OrgChat from "../components/OrgChat";
-import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import SearchInput from "../../../../components/ui/input/SearchInput";
 import Divider from "../../../../components/ui/Divider";
 

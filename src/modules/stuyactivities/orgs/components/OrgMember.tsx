@@ -28,7 +28,7 @@ const OrgMember = ({
     is_faculty,
     action,
 }: Props) => {
-    let l1 =
+    const l1 =
         role_name || formatCapitals(role) + (is_faculty ? " - Faculty" : "");
 
     return (

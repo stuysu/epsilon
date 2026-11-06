@@ -51,7 +51,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
             if (authData.data?.session?.user) {
                 // fetch user profile
                 const supabaseUser = authData.data.session.user; // user stored in auth.user table
-                let { data, error } = await supabase
+                const { data, error } = await supabase
                     .from("users")
                     .select(
                         `
@@ -103,7 +103,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 }
 
                 let grade;
-                let d = new Date();
+                const d = new Date();
 
                 if (!data[0].is_faculty && data[0].grad_year) {
                     if (d.getMonth() < 8) {
@@ -144,10 +144,10 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
                 if (!user.picture) {
                     /* get google pfp and update */
-                    let avatarURL = supabaseUser.user_metadata.avatar_url;
+                    const avatarURL = supabaseUser.user_metadata.avatar_url;
                     user.picture = avatarURL;
 
-                    let { error: profileUpdateError } = await supabase.rpc(
+                    const { error: profileUpdateError } = await supabase.rpc(
                         "update_profile_picture",
                         { profile_url: avatarURL },
                     );

@@ -6,9 +6,9 @@ import DisplayLinks from "../../../../components/DisplayLinks";
 import TextField from "../../../../components/ui/input/TextField";
 
 const Announcements = () => {
-    let [content, setContent] = useState("");
-    let { enqueueSnackbar } = useSnackbar();
-    let [announcements, setAnnouncements] = useState<Announcement[]>([]);
+    const [content, setContent] = useState("");
+    const { enqueueSnackbar } = useSnackbar();
+    const [announcements, setAnnouncements] = useState<Announcement[]>([]);
     const [visibleAnnouncements, setVisibleAnnouncements] = useState(3);
 
     useEffect(() => {

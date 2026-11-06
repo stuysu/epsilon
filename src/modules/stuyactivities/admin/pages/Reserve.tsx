@@ -2,7 +2,7 @@ import {
     DateField,
     TimeField,
 } from "../../../../components/ui/input/DateTimeField";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import { Dayjs } from "dayjs";
@@ -118,6 +118,14 @@ const Reserve = () => {
                         meeting_end: wallClockToISO(endTime),
                     })
                     .returns<RoomMeta[]>();
+                if (error) {
+                    // without this, every room would look free
+                    enqueueSnackbar(
+                        "Couldn't check which rooms are booked. Contact it@stuysu.org for support.",
+                        { variant: "error" },
+                    );
+                    return;
+                }
                 const bookedRooms: RoomMeta[] = Array.isArray(bookedRoomsRaw)
                     ? bookedRoomsRaw
                     : [];

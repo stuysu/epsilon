@@ -147,7 +147,7 @@ const AdminUpsertMeeting = ({
     /* Filtering out rooms that are taken for that day */
     useEffect(() => {
         const fetchRooms = async () => {
-            let { data, error } = await supabase.from("rooms").select();
+            const { data, error } = await supabase.from("rooms").select();
 
             if (error || !data) {
                 enqueueSnackbar(
@@ -170,7 +170,7 @@ const AdminUpsertMeeting = ({
             }
 
             setRoomGrants(grantsData || []);
-            setAllRooms((prev) => {
+            setAllRooms(() => {
                 setLoading(false);
                 return (data as Room[]).sort(sortRooms);
             });
@@ -265,7 +265,7 @@ const AdminUpsertMeeting = ({
                 "SATURDAY",
             ];
 
-            let availRooms = allRooms.filter((room) => {
+            const availRooms = allRooms.filter((room) => {
                 if (
                     ~filteredBookedRooms.findIndex(
                         (meta) => meta.room_id === room.id,

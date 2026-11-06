@@ -27,9 +27,7 @@ const FormCheckSelect = ({
     value,
     label,
     required,
-    description,
     onChange,
-    status,
     changeStatus,
     selections,
 }: Props) => {
@@ -46,7 +44,7 @@ const FormCheckSelect = ({
         validate(value);
     }, [required, field, value, changeStatus]);
 
-    let checked: string[] = value || [];
+    const checked: string[] = value || [];
 
     const checkboxUpdate = (newSelections: string[]) => {
         if (!onChange) return;

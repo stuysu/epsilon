@@ -14,7 +14,10 @@ const LoginButton = ({ onMouseEnter, onMouseLeave }: LoginButtonProps) => {
         const { error } = await supabase.auth.signInWithOAuth({
             provider: "google",
             options: {
-                redirectTo: window.location.origin + location.pathname + location.search,
+                redirectTo:
+                    window.location.origin +
+                    location.pathname +
+                    location.search,
             },
         });
         if (error) {
