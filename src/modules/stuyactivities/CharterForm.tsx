@@ -22,6 +22,7 @@ import { PUBLIC_URL } from "../../config/constants";
 import LoginGate from "../../components/ui/content/LoginGate";
 import UserContext from "../../contexts/UserContext";
 import { Helmet } from "react-helmet";
+import { functionErrorText } from "../../utils/FunctionErrors";
 
 type FormType = {
     name: string;
@@ -222,7 +223,7 @@ const CharterForm = () => {
             await supabase.functions.invoke("create-organization", { body });
 
         if (orgCreateError || !orgCreateData) {
-            const error = await orgCreateError?.context.text();
+            const error = await functionErrorText(orgCreateError);
             let message = "Contact it@stuysu.org for support.";
             if (error) {
                 message = error;

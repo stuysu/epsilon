@@ -94,7 +94,19 @@ const PickerField = ({
                 align="start"
                 sideOffset={6}
                 collisionPadding={12}
-                onOpenAutoFocus={(event) => event.preventDefault()}
+                onOpenAutoFocus={(event) => {
+                    /* move focus to the selected day/time (or the first
+                       option) so the arrow keys work right away */
+                    event.preventDefault();
+                    const content = event.target as HTMLElement;
+                    const target =
+                        content.querySelector<HTMLElement>('[tabindex="0"]') ??
+                        content.querySelector<HTMLElement>(
+                            '[aria-pressed="true"]',
+                        ) ??
+                        content.querySelector<HTMLElement>("button");
+                    target?.focus({ preventScroll: true });
+                }}
                 className="z-[1400] rounded-xl border border-divider bg-bg shadow-2xl outline-none"
             >
                 {children}

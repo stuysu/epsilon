@@ -7,6 +7,10 @@ import { useState } from "react";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import Divider from "../../../../components/ui/Divider";
 import Avatar from "../../../../components/ui/Avatar";
+import {
+    functionErrorStatus,
+    functionErrorText,
+} from "../../../../utils/FunctionErrors";
 
 const OrgApproval = ({
     onBack,
@@ -28,10 +32,16 @@ const OrgApproval = ({
 
         if (error) {
             setButtonsDisabled(false);
-            return enqueueSnackbar(
-                "Error approving organization. Contact it@stuysu.org for support.",
+            enqueueSnackbar(
+                (await functionErrorText(error)) ||
+                    "Error approving organization. Contact it@stuysu.org for support.",
                 { variant: "error" },
             );
+            /* someone else already approved or rejected it: refresh the list */
+            if ([404, 409].includes(functionErrorStatus(error) ?? 0)) {
+                onDecision();
+            }
+            return;
         }
 
         enqueueSnackbar("Organization approved!", { variant: "success" });
@@ -47,10 +57,16 @@ const OrgApproval = ({
         );
         if (error) {
             setButtonsDisabled(false);
-            return enqueueSnackbar(
-                "Error rejecting organization. Contact it@stuysu.org for support.",
+            enqueueSnackbar(
+                (await functionErrorText(error)) ||
+                    "Error rejecting organization. Contact it@stuysu.org for support.",
                 { variant: "error" },
             );
+            /* someone else already approved or rejected it: refresh the list */
+            if ([404, 409].includes(functionErrorStatus(error) ?? 0)) {
+                onDecision();
+            }
+            return;
         }
 
         enqueueSnackbar("Organization rejected!", { variant: "success" });

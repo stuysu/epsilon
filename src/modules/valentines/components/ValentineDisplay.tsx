@@ -5,6 +5,7 @@ import { enqueueSnackbar } from "notistack";
 import { useContext, useEffect, useState } from "react";
 import UserContext from "../../../contexts/UserContext";
 import TextField from "../../../components/ui/input/TextField";
+import { functionErrorText } from "../../../utils/FunctionErrors";
 
 interface ValentineInput {
     valentine: Valentine;
@@ -131,7 +132,9 @@ const AdminButton = ({
                 { body: { message_id: valentine.id, reason } },
             );
             if (error) {
-                const errorMessage = await error.context.text();
+                const errorMessage =
+                    (await functionErrorText(error)) ||
+                    `Could not ${mode} valentine.`;
                 enqueueSnackbar(`${errorMessage}`, { variant: "error" });
                 return;
             }
