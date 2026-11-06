@@ -217,7 +217,9 @@ const Profiles = () => {
                 </h1>
 
                 <p className={"mt-6 font-mono"}>
-                    Grade: {user.grade ? `${user.grade}th` : "N/A"}
+                    {user.is_faculty
+                        ? "Role: Faculty"
+                        : `Grade: ${user.grade ? `${user.grade}th` : "N/A"}`}
                 </p>
                 <Divider />
                 <p className={"font-mono"}>Email: {user.email || "No Email"}</p>
