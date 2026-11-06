@@ -24,7 +24,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
         organization.memberships?.some(
             (m) =>
                 m.users?.id === user.id &&
-                (m.role === "ADMIN" || m.role === "CREATOR"),
+                (m.role === "CREATOR" || (m.role === "ADMIN" && m.active)),
         ) ?? false;
 
     const isStuyActivitiesAdmin = Boolean(user.permission);
@@ -75,7 +75,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     aria-current={
                         location.pathname === linkData.to ? "page" : undefined
                     }
-                    className="flex h-[30px] w-fit items-center rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                    className="flex h-[30px] w-fit items-center rounded no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
                 >
                     <p
                         className={`important cursor-pointer ${
