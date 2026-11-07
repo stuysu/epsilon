@@ -6,6 +6,7 @@ import {
     useEffect,
     useMemo,
     useState,
+    useRef,
 } from "react";
 import { useSnackbar } from "notistack";
 import { supabase } from "../../lib/supabaseClient";
@@ -196,8 +197,11 @@ export const OpportunitiesProvider = ({
         [user.grade, aboutYou],
     );
 
+    const latestLoad = useRef(0);
     const load = useCallback(
-        async (isCurrent: () => boolean = () => true) => {
+        async (isWanted: () => boolean = () => true) => {
+            const call = ++latestLoad.current;
+            const isCurrent = () => call === latestLoad.current && isWanted();
             setLoading(true);
             setFailed(false);
 

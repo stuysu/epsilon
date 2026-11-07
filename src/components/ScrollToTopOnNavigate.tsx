@@ -2,10 +2,37 @@ import { RefObject, useEffect, useLayoutEffect, useRef } from "react";
 import { useLocation, useNavigationType } from "react-router-dom";
 import { Scrollbars } from "react-custom-scrollbars-2";
 
-// a page may still be filling in when Back lands on it
-const RESTORE_TRIES = 30;
+// a page may still be loading when Back lands on it
+const RESTORE_MS = 5000;
 // enough for any Back a person would press
 const KEPT_POSITIONS = 100;
+
+// any of these means the user is scrolling themselves
+const USER_SCROLL = ["wheel", "touchstart", "keydown", "pointerdown"];
+
+// keeps scrolling to target until the page is tall enough, or the user scrolls
+const restore = (box: Scrollbars, target: number) => {
+    const started = performance.now();
+    let frame = 0;
+    const stop = () => {
+        cancelAnimationFrame(frame);
+        for (const type of USER_SCROLL) window.removeEventListener(type, stop);
+    };
+    const step = () => {
+        box.scrollTop(target);
+        const reachable = box.getScrollHeight() - box.getClientHeight();
+        if (reachable >= target || performance.now() - started > RESTORE_MS) {
+            stop();
+        } else {
+            frame = requestAnimationFrame(step);
+        }
+    };
+    for (const type of USER_SCROLL) {
+        window.addEventListener(type, stop, { passive: true });
+    }
+    step();
+    return stop;
+};
 
 // the site scrolls in one Scrollbars box, so reset or restore it on navigation
 const ScrollToTopOnNavigate = ({
@@ -41,32 +68,20 @@ const ScrollToTopOnNavigate = ({
         if (key === previous.key) return;
         last.current = { pathname, key };
 
+        const box = scrollbars.current;
+        if (!box) return;
+        const target = positions.current.get(key);
+        if (navigationType === "POP" && target !== undefined) {
+            return restore(box, target);
+        }
+
         // a search or filter change replaces the entry but stays on the page
         if (pathname === previous.pathname) {
             const kept = positions.current.get(previous.key);
             if (kept !== undefined) positions.current.set(key, kept);
             return;
         }
-
-        const box = scrollbars.current;
-        if (!box) return;
-        const target = positions.current.get(key);
-        if (navigationType !== "POP" || target === undefined) {
-            box.scrollToTop();
-            return;
-        }
-
-        let tries = 0;
-        let frame = 0;
-        const restore = () => {
-            box.scrollTop(target);
-            const reachable = box.getScrollHeight() - box.getClientHeight();
-            if (reachable < target && ++tries < RESTORE_TRIES) {
-                frame = requestAnimationFrame(restore);
-            }
-        };
-        restore();
-        return () => cancelAnimationFrame(frame);
+        box.scrollToTop();
     }, [pathname, key, navigationType, scrollbars]);
 
     return null;

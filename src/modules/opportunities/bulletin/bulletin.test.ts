@@ -175,6 +175,7 @@ describe("parseCost", () => {
         ["$10–20", 10, 20],
         ["Pay what you can", null, null],
         ["Various", null, null],
+        ["Up to $3,000,000,000", null, null],
     ])("reads %s", (text, min, max) => {
         expect(parseCost(text)).toEqual({ min, max });
     });
@@ -889,6 +890,19 @@ describe("admin edits", () => {
         expect(relinked).toMatchObject({
             title: "Science Program (Fixed)",
             keptEdits: ["Deadline", "Title"],
+        });
+    });
+
+    it("keeps a value changed in review when unlinked", () => {
+        const [linked] = buildReview([makeEntry()], [edited]);
+        const unlinked = moveAdminEdits(
+            { ...linked, title: "Typed In Review", existingId: null },
+            edited,
+            undefined,
+        );
+        expect(unlinked).toMatchObject({
+            title: "Typed In Review",
+            deadline: makeEntry().deadline,
         });
     });
 

@@ -125,6 +125,8 @@ const AMOUNT = /\$\s*(\d{1,3}(?:,\d{3})+(?:\.\d+)?|\d+(?:\.\d+)?)/g;
 // what can sit between two prices of one spread, optionally after a note in brackets
 const PRICE_SEPARATOR = /^\s*(\([^)]*\)\s*)?(-|–|—|to|or|and|&|;|,)\s*$/i;
 
+const MAX_COST = 2_147_483_647;
+
 export const parseCost = (text: string | null) => {
     if (!text) return { min: null, max: null };
     if (/^\s*free\b/i.test(text)) return { min: 0, max: 0 };
@@ -156,6 +158,8 @@ export const parseCost = (text: string | null) => {
     }
     // "Up to $500" can cost anything below that
     const upTo = /\bup to\s*$/i.test(priced.slice(0, amounts[0].index));
+    // past what the database stores, so likely a misread
+    if (Math.max(...prices) > MAX_COST) return { min: null, max: null };
     return {
         min: upTo ? 0 : Math.min(...prices),
         max: Math.max(...prices),

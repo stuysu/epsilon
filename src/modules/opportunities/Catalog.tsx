@@ -169,6 +169,7 @@ const Catalog = () => {
                     type="button"
                     id="catalog-filters-toggle"
                     aria-expanded={filtersOpen}
+                    aria-controls="catalog-filters"
                     onClick={() => setFiltersOpen(!filtersOpen)}
                     className="mb-4 flex w-full cursor-pointer items-center justify-between rounded-xl bg-layer-1 px-4 py-2 text-typography-1 shadow-control lg:hidden"
                 >
@@ -178,7 +179,10 @@ const Catalog = () => {
                         aria-hidden="true"
                     />
                 </button>
-                <div className={filtersOpen ? "" : "max-lg:hidden"}>
+                <div
+                    id="catalog-filters"
+                    className={filtersOpen ? "" : "max-lg:hidden"}
+                >
                     <FilterPanel
                         filters={filters}
                         onChange={setFilters}

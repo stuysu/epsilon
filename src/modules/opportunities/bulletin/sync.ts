@@ -256,11 +256,17 @@ export const moveAdminEdits = (
     let restored: ReviewEntry = { ...entry, keptEdits: [] };
     previous?.edited_fields.forEach((field) => {
         if (!EDITED_FIELDS[field]) return;
-        const keys = Object.keys(EDITED_FIELDS[field][1](previous));
+        const copied = EDITED_FIELDS[field][1](previous);
+        // a value changed in this review stays
+        const untouched = Object.entries(copied).filter(
+            ([key, value]) =>
+                JSON.stringify(value) ===
+                JSON.stringify(entry[key as keyof ParsedEntry]),
+        );
         restored = {
             ...restored,
             ...Object.fromEntries(
-                keys.map((key) => [
+                untouched.map(([key]) => [
                     key,
                     entry.bulletinValues[key as keyof ParsedEntry],
                 ]),

@@ -23,7 +23,7 @@ const Discover = () => {
         navigate(
             trimmed
                 ? `/opportunities/catalog?q=${encodeURIComponent(trimmed)}`
-                : "/opportunities/catalog",
+                : "/opportunities/catalog?all=1",
         );
     };
 

@@ -28,7 +28,8 @@ const Detail = () => {
     const { loading, failed, opportunities, savedIds, setSaved, student } =
         useOpportunities();
 
-    if (loading) {
+    // a reload keeps the page, so an open editor isn't lost
+    if (loading && !opportunities.length) {
         return (
             <main>
                 <Loading />
@@ -172,15 +173,12 @@ const Detail = () => {
                             </h2>
                             <ul className="flex flex-col gap-1">
                                 {otherLinks.map((link) => (
-                                    <li
-                                        key={link}
-                                        className="relative min-w-0 truncate py-0.5 text-sm"
-                                    >
+                                    <li key={link} className="min-w-0 text-sm">
                                         <a
                                             href={link}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="text-accent underline scheme-dark:text-typography-1"
+                                            className="relative block truncate py-0.5 text-accent underline scheme-dark:text-typography-1"
                                         >
                                             {link}
                                             <span className="sr-only">
