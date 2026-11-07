@@ -1,8 +1,9 @@
-import { useEffect, useState, useRef, MouseEvent } from "react";
+import { useEffect, useState, useRef } from "react";
 import Alert from "@mui/material/Alert";
-import Popover from '@mui/material/Popover';
+import Popper from '@mui/material/Popper';
 import Button from '@mui/material/Button';
 import DisplayLinks from "../DisplayLinks";
+import { Paper } from "@mui/material";
 
 type AlertInfo = {
     message: string;
@@ -12,18 +13,24 @@ type AlertInfo = {
 
 const AlertDisplay = () => {
     const [open, setOpen] = useState(false);
+    const [sessionDismissed, setSessionDismissed] = useState(false);
     const [data, setData] = useState<AlertInfo | null>(null);
     const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
     const travelTime = useRef<NodeJS.Timeout | null>(null);
+    const openTimeout = useRef<NodeJS.Timeout | null>(null);
+    const isError = data?.severity === "error";
+    const isOpen = Boolean(anchorEl);
     useEffect(() => {
         const fetchAlert = async () => {
+            // USE Alert.json FOR TESTING PURPOSES, DONT PUSH TO PROD BEFORE REVERTING BACK TO ALERT.STUYSU.ORG
             const res = await fetch("https://alert.stuysu.org");
             if (res.status === 404) return;
             try {
                 const alertData = (await res.json()) as AlertInfo;
                 setData(alertData);
                 if (
-                    sessionStorage.getItem("dismissedAlert") !== alertData.message
+                    localStorage.getItem("dismissedAlert") !== alertData.message
+                    
                 )
                     setOpen(true);
             } catch (e) {
@@ -36,55 +43,69 @@ const AlertDisplay = () => {
         return () => {
             setOpen(false);
             setData(null);
-            if (travelTime.current) clearTimeout(travelTime.current);
+            if (openTimeout.current) { clearTimeout(openTimeout.current); }
+            if (travelTime.current) { clearTimeout(travelTime.current); }
         };
     }, []);
 
     const handleCloseClick = (event: React.SyntheticEvent<Element, Event>) => {
-        if (anchorEl) handleClose();
-        if (travelTime.current) {
-            clearTimeout(travelTime.current);
-            travelTime.current = null;
-        }
-        setAnchorEl(event.currentTarget as HTMLButtonElement);
-    }
-
-    const handleClose = () => {
-        setOpen(false);
+        if (openTimeout.current) { clearTimeout(openTimeout.current); }
+        if (travelTime.current) { clearTimeout(travelTime.current); }
+        setSessionDismissed(true);
         setAnchorEl(null);
     }
 
     const handleDoNotRemindAgain = () => {
-        if (data && data.message) localStorage.setItem("dismissedAlert", data.message);
+        if (data && data.message) { localStorage.setItem("dismissedAlert", data.message); }
         setOpen(false);
         setAnchorEl(null);
     };
 
     const handleMouseEnter = (event: React.MouseEvent<HTMLButtonElement>) => {
+        const t = event.currentTarget;
         if (travelTime.current) {
             clearTimeout(travelTime.current);
             travelTime.current = null;
         }
-        setAnchorEl(event.currentTarget);
+        if (openTimeout.current) {
+            clearTimeout(openTimeout.current);
+        }
+        openTimeout.current = setTimeout(() => {
+            setAnchorEl(t);
+        }, 150);
     };
 
     const handleMouseLeave = () => {
+        if (openTimeout.current) {
+            clearTimeout(openTimeout.current);
+            openTimeout.current = null;
+        }
         travelTime.current = setTimeout(() => {
             setAnchorEl(null);
-        }, 200);
+        }, 150);
     };
 
-    const handlePopoverEnter = () => {
+    const handleTouchEnd = (event: React.TouchEvent<HTMLButtonElement>) => {
+        event.preventDefault();
+        if (openTimeout.current) {
+            clearTimeout(openTimeout.current);
+            openTimeout.current = null;
+        }
+        if (anchorEl === event.currentTarget) { setAnchorEl(null); }
+        else { setAnchorEl(event.currentTarget); }
+        
+        if (isOpen) { setSessionDismissed(true);}
+    }
+
+    const handlePopperEnter = () => {
         if (travelTime.current) {
             clearTimeout(travelTime.current);
             travelTime.current = null;
         }
-        setAnchorEl(anchorEl);
-    };
-
-    const isOpen = Boolean(anchorEl);
+    }
 
     if (
+        sessionDismissed ||
         !open ||
         !data ||
         !data.message ||
@@ -98,11 +119,13 @@ const AlertDisplay = () => {
                 sx={{ borderRadius: "10px" }}
                 severity={data.severity}
                 variant="filled"
-                onClose={handleCloseClick}
-                componentsProps={{
+                {... isError ? { action: null } : { onClose: handleCloseClick }}
+                componentsProps={isError ? undefined : {
                     closeButton: {
+                        title: "",
                         onMouseEnter: handleMouseEnter,
                         onMouseLeave: handleMouseLeave,
+                        onTouchEnd: handleTouchEnd,
                     },
                 }}
             >
@@ -111,47 +134,34 @@ const AlertDisplay = () => {
                 </div>
             </Alert>
 
-            <Popover
+            {!isError && <Popper
                 sx={{
-                    pointerEvents: 'none',
                     zIndex: 9999,
                 }}
                 open={isOpen}
                 anchorEl={anchorEl}
-                onClose={() => {
-                    setAnchorEl(null);
-                }}
-                anchorOrigin={{
-                    vertical: 'bottom',
-                    horizontal: 'right',
-                }}
-                transformOrigin={{
-                    vertical: 'top',
-                    horizontal: 'center',
-                }}
-                disableRestoreFocus
-                slotProps={{
-                    paper: {
-                        onMouseEnter: handlePopoverEnter,
-                        onMouseLeave: handleMouseLeave,
-                        sx: {
-                            pointerEvents: 'auto'
-                        }
-                    },
-                }}
+                placement="bottom-end"
+                disablePortal
             >
-
+                <Paper
+                    onMouseEnter={handlePopperEnter}
+                    onMouseLeave={handleMouseLeave}
+                    sx={{
+                        pointerEvents: "auto",
+                        backgroundColor: "background.paper",
+                        opacity: 1
+                    }}>
                     <Button
                         sx={{
-                            size: 'small',
-                            color: 'var(--text-primary)',
-                            px: 2,
-                            textTransform: "none"
+                            textTransform: "none",
+                            color: "var(--text-primary)",
+                            px: 1.5,
                         }}
                         onClick={handleDoNotRemindAgain}>
                         Do not remind me again
                     </Button>
-            </Popover>
+                </Paper>
+            </Popper>}
         </div>
     );
 };
