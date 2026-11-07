@@ -80,7 +80,7 @@ const Detail = () => {
                     event.preventDefault();
                     navigate(-1);
                 }}
-                className="inline-flex items-center gap-1 self-start text-sm text-typography-2 no-underline hover:text-typography-1"
+                className="inline-flex items-center gap-1 self-start py-1 text-sm text-typography-2 no-underline hover:text-typography-1"
             >
                 <i className="bx bx-chevron-left" aria-hidden="true" />
                 {backTo.label}

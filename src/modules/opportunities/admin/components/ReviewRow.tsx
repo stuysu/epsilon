@@ -13,7 +13,7 @@ type ReviewRowProps = {
 
 const CHANGE_LABELS = { new: "New", changed: "Changed", unchanged: null };
 const RENAME_BUTTON =
-    "cursor-pointer rounded-lg bg-layer-2 px-2 text-typography-1 shadow-control hover:bg-layer-3";
+    "cursor-pointer rounded-lg bg-layer-2 px-2 py-0.5 text-typography-1 shadow-control hover:bg-layer-3";
 
 const ReviewRow = ({
     entry,
