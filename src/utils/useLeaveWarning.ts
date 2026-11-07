@@ -4,7 +4,11 @@ import { useEffect } from "react";
 const useLeaveWarning = (active: boolean) => {
     useEffect(() => {
         if (!active) return;
-        const warn = (event: BeforeUnloadEvent) => event.preventDefault();
+        const warn = (event: BeforeUnloadEvent) => {
+            event.preventDefault();
+            // older browsers only prompt when this is set
+            event.returnValue = "";
+        };
         window.addEventListener("beforeunload", warn);
         return () => window.removeEventListener("beforeunload", warn);
     }, [active]);

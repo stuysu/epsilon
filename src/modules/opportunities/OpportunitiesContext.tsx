@@ -70,12 +70,14 @@ const toOpportunity = ({
         .sort((a, b) => a.position - b.position),
 });
 
-// sensitive, so it stays in this browser
-const ABOUT_YOU_KEY = "opportunities-about-you";
+// sensitive, so it stays in this browser, kept apart per account
+const aboutYouKey = (userId: number) => `opportunities-about-you:${userId}`;
 
-const readAboutYou = (): string[] | null => {
+const readAboutYou = (userId: number): string[] | null => {
     try {
-        const value = JSON.parse(localStorage.getItem(ABOUT_YOU_KEY) ?? "null");
+        const value = JSON.parse(
+            localStorage.getItem(aboutYouKey(userId)) ?? "null",
+        );
         return Array.isArray(value)
             ? value.filter((v): v is string => typeof v === "string")
             : null;
@@ -84,10 +86,10 @@ const readAboutYou = (): string[] | null => {
     }
 };
 
-const writeAboutYou = (groups: string[] | null) => {
+const writeAboutYou = (userId: number, groups: string[] | null) => {
     try {
-        if (groups === null) localStorage.removeItem(ABOUT_YOU_KEY);
-        else localStorage.setItem(ABOUT_YOU_KEY, JSON.stringify(groups));
+        if (groups === null) localStorage.removeItem(aboutYouKey(userId));
+        else localStorage.setItem(aboutYouKey(userId), JSON.stringify(groups));
     } catch {}
 };
 
@@ -173,12 +175,21 @@ export const OpportunitiesProvider = ({
     const [savedIds, setSavedIds] = useState<Set<number>>(new Set());
     const [catalogFilters, setCatalogFilters] =
         useState<OpportunityFilters>(DEFAULT_FILTERS);
-    const [aboutYou, setAboutYouState] = useState(readAboutYou);
+    const [aboutYou, setAboutYouState] = useState(() => readAboutYou(user.id));
+    const [aboutYouFor, setAboutYouFor] = useState(user.id);
+    // another account signed in, so its own choices apply
+    if (aboutYouFor !== user.id) {
+        setAboutYouFor(user.id);
+        setAboutYouState(readAboutYou(user.id));
+    }
 
-    const setAboutYou = useCallback((groups: string[] | null) => {
-        setAboutYouState(groups);
-        writeAboutYou(groups);
-    }, []);
+    const setAboutYou = useCallback(
+        (groups: string[] | null) => {
+            setAboutYouState(groups);
+            writeAboutYou(user.id, groups);
+        },
+        [user.id],
+    );
 
     const student = useMemo(
         () => ({ grade: user.grade, groups: aboutYou }),
