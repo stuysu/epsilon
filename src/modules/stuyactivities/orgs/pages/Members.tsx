@@ -45,11 +45,15 @@ const Members = () => {
         }));
     }, [organization.memberships, search, sort, joinDates]);
 
+    const showNoMatch = filteredMembers.length === 0 && !!search.trim();
+
+    /* re-measure when the "no match" message appears or goes away too,
+       since the member count alone stays at 0 */
     useLayoutEffect(() => {
         if (contentRef.current) {
             setBoxHeight(contentRef.current.scrollHeight);
         }
-    }, [filteredMembers.length]);
+    }, [filteredMembers.length, showNoMatch]);
 
     return (
         <LoginGate page="view members">
@@ -95,12 +99,12 @@ const Members = () => {
                     <p
                         role="status"
                         className={
-                            filteredMembers.length === 0 && search.trim()
+                            showNoMatch
                                 ? "px-4 py-6 text-center text-typography-2"
                                 : "sr-only"
                         }
                     >
-                        {filteredMembers.length === 0 && search.trim()
+                        {showNoMatch
                             ? `No members match “${search.trim()}”`
                             : ""}
                     </p>
