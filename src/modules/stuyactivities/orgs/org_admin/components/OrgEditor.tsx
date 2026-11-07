@@ -90,6 +90,8 @@ const EditField = ({
     );
 };
 
+const URL_PATTERN = /^[a-zA-Z0-9_\-]+$/;
+
 // too lazy to write them all out, use array.map to write it faster
 const textFields = [
     "name",
@@ -166,10 +168,47 @@ const OrgEditor = ({
     /* validation */
     const [savable, setSavable] = useState(false);
 
+    const [urlError, setUrlError] = useState("");
+    const [checkingUrl, setCheckingUrl] = useState(false);
+
+    const validateUrl = async (url: string) => {
+        const { minChar, maxChar } = OrgRequirements.url.requirements ?? {};
+        if (url.length < minChar || url.length > maxChar) {
+            setUrlError(
+                `URL ending must be between ${minChar} and ${maxChar} characters long`,
+            );
+            return;
+        }
+        if (!URL_PATTERN.test(url)) {
+            setUrlError(
+                "URL can only contain letters, numbers, dashes, and underscores.",
+            );
+            return;
+        }
+        setUrlError("");
+        if (url.toLowerCase() === organization.url?.toLowerCase()) return;
+        setCheckingUrl(true);
+        const { data, error } = await supabase
+            .from("organizations")
+            .select("id")
+            .eq("url", url.toLowerCase());
+        setCheckingUrl(false);
+        if (error) {
+            setUrlError("Error checking URL.");
+        } else if (data && data.length > 0) {
+            setUrlError("This URL is already in use.");
+        }
+    };
+
     /* redirection */
     const navigate = useNavigate();
 
     useEffect(() => {
+        if ("url" in editState && (urlError || checkingUrl)) {
+            setSavable(false);
+            return;
+        }
+
         /* the field already shows which links are wrong */
         if (
             "socials" in editState &&
@@ -224,6 +263,8 @@ const OrgEditor = ({
 
         setSavable(atleastOneDiff);
     }, [
+        urlError,
+        checkingUrl,
         status,
         existingEdit,
         editState,
@@ -668,6 +709,8 @@ const OrgEditor = ({
                                         ],
                                 );
 
+                                if (field === "url") setUrlError("");
+
                                 // remove self from list of fields being edited
                                 setEditState((prevState) => {
                                     const state = { ...prevState };
@@ -689,7 +732,15 @@ const OrgEditor = ({
                                 <p className={"w-3/4 break-words"}>
                                     {editData[
                                         field as keyof OrganizationEdit
-                                    ] || (
+                                    ] ? (
+                                        field === "url" ? (
+                                            `https://epsilon.stuysu.org/${editData.url}`
+                                        ) : (
+                                            editData[
+                                                field as keyof OrganizationEdit
+                                            ]
+                                        )
+                                    ) : (
                                         <em className="text-typography-3">
                                             &lt;empty&gt;
                                         </em>
@@ -697,29 +748,65 @@ const OrgEditor = ({
                                 </p>
                             }
                             editDisplay={
-                                <FormTextField
-                                    sx={{ width: "80%" }}
-                                    label={orgFieldMap(field)}
-                                    field={field}
-                                    onChange={(val) =>
-                                        updateEdit(
-                                            field as keyof OrganizationEdit,
-                                            val,
-                                        )
-                                    }
-                                    value={
-                                        editData[
-                                            field as keyof OrganizationEdit
-                                        ]
-                                    }
-                                    required={OrgRequirements[field].required}
-                                    requirements={
-                                        OrgRequirements[field].requirements
-                                    }
-                                    changeStatus={changeStatus}
-                                    multiline
-                                    rows={4}
-                                />
+                                field === "url" ? (
+                                    <FormTextField
+                                        sx={{ width: "80%" }}
+                                        label="URL Slug"
+                                        field="url"
+                                        onChange={(val) => {
+                                            updateEdit("url", val);
+                                            setUrlError("");
+                                        }}
+                                        onBlur={(e) => {
+                                            if (e.target.value)
+                                                validateUrl(e.target.value);
+                                        }}
+                                        value={editData.url}
+                                        required={OrgRequirements.url.required}
+                                        requirements={
+                                            OrgRequirements.url.requirements
+                                        }
+                                        changeStatus={changeStatus}
+                                        error={!!urlError}
+                                        helperText={
+                                            urlError
+                                                ? urlError
+                                                : checkingUrl
+                                                  ? "Checking URL..."
+                                                  : editData.url
+                                                    ? "URL is valid."
+                                                    : undefined
+                                        }
+                                        startAdornment="https://epsilon.stuysu.org/"
+                                        pattern={URL_PATTERN.source}
+                                    />
+                                ) : (
+                                    <FormTextField
+                                        sx={{ width: "80%" }}
+                                        label={orgFieldMap(field)}
+                                        field={field}
+                                        onChange={(val) =>
+                                            updateEdit(
+                                                field as keyof OrganizationEdit,
+                                                val,
+                                            )
+                                        }
+                                        value={
+                                            editData[
+                                                field as keyof OrganizationEdit
+                                            ]
+                                        }
+                                        required={
+                                            OrgRequirements[field].required
+                                        }
+                                        requirements={
+                                            OrgRequirements[field].requirements
+                                        }
+                                        changeStatus={changeStatus}
+                                        multiline
+                                        rows={4}
+                                    />
+                                )
                             }
                         />
                         {i < textFields.length - 1 && <Divider />}
