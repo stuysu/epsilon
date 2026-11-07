@@ -28,8 +28,6 @@ const commitmentLevels = ["NONE", "LOW", "MEDIUM", "HIGH"];
 
 const meetingDays = ["MONDAY", "TUESDAY", "WEDNESDAY", "THURSDAY", "FRIDAY"];
 
-const onlyAlpha = /[^a-z0-9 ]/gi;
-
 const SearchFilter = ({
     value,
     onChange,
@@ -57,10 +55,7 @@ const SearchFilter = ({
             <SearchInput
                 placeholder="Find Activities..."
                 value={value.name}
-                onChange={(val) => {
-                    const clean = val.replace(onlyAlpha, "");
-                    onChange({ ...value, name: clean });
-                }}
+                onChange={(val) => onChange({ ...value, name: val })}
             />
 
             <div className={"w-full mt-6"}>
