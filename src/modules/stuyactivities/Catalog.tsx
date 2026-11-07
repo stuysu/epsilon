@@ -18,6 +18,17 @@ const ilikeContains = (text: string) => {
     return `"${pattern.replace(/["\\]/g, "\\$&")}"`;
 };
 
+/* lowercases and drops punctuation the same way the database's
+organization_search_text() does: . ' ’ are removed and any other run of
+symbols or spaces becomes one space, so "U.N." finds "Model UN" and
+"math_club" finds "Math Club" */
+const cleanSearch = (text: string) =>
+    text
+        .toLowerCase()
+        .replace(/[.'’]/g, "")
+        .replace(/[^\p{L}\p{N}]+/gu, " ")
+        .trim();
+
 type SearchState = {
     orgs: Partial<Organization>[];
     offset: number;
@@ -49,7 +60,20 @@ const Catalog = () => {
     const [debouncedSearchParams, setDebouncedSearchParams] =
         useState(searchParams);
     useEffect(() => {
-        const t = setTimeout(() => setDebouncedSearchParams(searchParams), 500);
+        /* typing only punctuation (e.g. the dots in "U.N.") doesn't change
+           the cleaned search, so keep the old params and don't reload */
+        const t = setTimeout(
+            () =>
+                setDebouncedSearchParams((prev) =>
+                    cleanSearch(prev.name) === cleanSearch(searchParams.name) &&
+                    prev.tags === searchParams.tags &&
+                    prev.meetingDays === searchParams.meetingDays &&
+                    prev.commitmentLevels === searchParams.commitmentLevels
+                        ? prev
+                        : searchParams,
+                ),
+            500,
+        );
         return () => clearTimeout(t);
     }, [searchParams]);
 
@@ -84,8 +108,10 @@ const Catalog = () => {
             let orgData: Partial<Organization>[] | null;
             let orgError: any;
 
+            const search = cleanSearch(debouncedSearchParams.name);
+
             const noFilters =
-                !debouncedSearchParams.name.length &&
+                !search.length &&
                 !debouncedSearchParams.meetingDays.length &&
                 !debouncedSearchParams.commitmentLevels.length &&
                 !debouncedSearchParams.tags.length;
@@ -130,8 +156,7 @@ const Catalog = () => {
                 const extra = clauses.length
                     ? `,and(${clauses.join(",")})`
                     : "";
-                const nameValue = ilikeContains(debouncedSearchParams.name);
-                const catalogQuery = `and(or(name.ilike.${nameValue},keywords.ilike.${nameValue})${extra})`;
+                const catalogQuery = `and(search_text.ilike.${ilikeContains(search)}${extra})`;
 
                 ({ data: orgData, error: orgError } = await supabase
                     .from("organizations")
@@ -139,6 +164,9 @@ const Catalog = () => {
                     .neq("state", "PENDING")
                     .neq("state", "PUNISHED")
                     .or(catalogQuery)
+                    /* a fixed order so paging never repeats or skips a club */
+                    .order("name")
+                    .order("id")
                     .range(originalOffset, originalOffset + querySize - 1));
             }
 
