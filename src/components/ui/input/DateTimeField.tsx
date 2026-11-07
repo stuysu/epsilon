@@ -278,10 +278,12 @@ const TimeColumn = ({
     }, []);
 
     /* one Tab stop per column (the selected option, else the first);
-       the arrow keys, Home and End move within the column */
-    const tabStop = options.some((option) => option.value === selected)
+       the arrow keys, Home and End move it within the column */
+    const defaultStop = options.some((option) => option.value === selected)
         ? selected
         : options[0]?.value;
+    const [tabStop, setTabStop] = useState(defaultStop);
+    useEffect(() => setTabStop(defaultStop), [defaultStop]);
 
     const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
         const buttons = Array.from(
@@ -301,8 +303,7 @@ const TimeColumn = ({
                       : null;
         if (next === null) return;
         event.preventDefault();
-        buttons[index].tabIndex = -1;
-        buttons[next].tabIndex = 0;
+        setTabStop(options[next].value);
         buttons[next].focus();
     };
 

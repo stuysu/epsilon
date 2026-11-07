@@ -33,7 +33,7 @@ const Members = () => {
                 const name =
                     `${member.users?.first_name ?? ""} ${member.users?.last_name ?? ""}`.toLowerCase();
                 const email = member.users?.email?.toLowerCase() ?? "";
-                const query = search.toLowerCase();
+                const query = search.trim().toLowerCase();
                 return name.includes(query) || email.includes(query);
             })
             .sort(sortMembers);
@@ -47,12 +47,17 @@ const Members = () => {
 
     const showNoMatch = filteredMembers.length === 0 && !!search.trim();
 
-    /* re-measure when the "no match" message appears or goes away too,
-       since the member count alone stays at 0 */
+    /* follow the list's real height, including after removed rows finish
+       fading out and when the "no match" message appears or wraps */
     useLayoutEffect(() => {
-        if (contentRef.current) {
-            setBoxHeight(contentRef.current.scrollHeight);
-        }
+        const content = contentRef.current;
+        if (!content) return;
+        const measure = () => setBoxHeight(content.scrollHeight);
+        measure();
+        const observer = new ResizeObserver(measure);
+        observer.observe(content);
+        return () => observer.disconnect();
+        // re-run on these too, in case the list mounts after the first render
     }, [filteredMembers.length, showNoMatch]);
 
     return (

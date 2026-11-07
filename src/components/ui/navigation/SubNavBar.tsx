@@ -32,9 +32,9 @@ const SubNavBar: FC = () => {
     return (
         <nav
             aria-label="StuyActivities"
-            // the scroller clips its content: pb-1 leaves room for the focus
-            // outline and -mb-1 cancels it out so the layout doesn't move
-            className="pb-1 -mb-1 max-sm:mb-0 max-sm:pb-3 scroll-pe-10 max-[1099px]:[mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)]"
+            // the scroller clips its content: pb-2 leaves room for the focus
+            // outline and -mb-2 cancels it out so the layout doesn't move
+            className="pb-2 -mb-2 max-sm:mb-0 max-sm:pb-3 scroll-pe-10 max-[1099px]:[mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)]"
             style={{
                 overflowX: "scroll",
                 scrollbarWidth: "none",
@@ -80,11 +80,11 @@ const SubNavBar: FC = () => {
                         onFocus={revealOnKeyboardFocus}
                         // /admin opens on one of its sub-pages
                         aria-current={isAdminPage ? "page" : undefined}
-                        // a thin bar under it marks the admin pages; the
-                        // padding is offset by the margin so nothing moves
+                        // a thin bar under it marks the admin pages; it is
+                        // drawn outside the box so nothing moves
                         className={`${ITEM_CLASS} inline-flex gap-1 text-yellow ${
                             isAdminPage
-                                ? "-mb-[3px] pb-[3px] shadow-[inset_0_-2px_0_currentColor]"
+                                ? "relative after:absolute after:inset-x-0 after:-bottom-[3px] after:h-0.5 after:bg-current"
                                 : ""
                         }`}
                     >
