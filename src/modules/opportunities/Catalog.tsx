@@ -1,9 +1,8 @@
-import { useContext, useLayoutEffect, useMemo, useState } from "react";
+import { useLayoutEffect, useMemo, useState } from "react";
 import { Helmet } from "react-helmet";
 import { useSearchParams } from "react-router-dom";
 import AsyncButton from "../../components/ui/buttons/AsyncButton";
 import ContentUnavailable from "../../components/ui/content/ContentUnavailable";
-import UserContext from "../../contexts/UserContext";
 import FilterPanel from "./components/FilterPanel";
 import OpportunityList, {
     OpportunityListSkeleton,
@@ -20,22 +19,20 @@ import {
 const COST_STEP = 100;
 
 const Catalog = () => {
-    const user = useContext(UserContext);
     const {
         loading,
         failed,
         opportunities,
         categories,
         eligibilities,
+        student,
         catalogFilters: filters,
         setCatalogFilters: setFilters,
     } = useOpportunities();
     const [searchParams, setSearchParams] = useSearchParams();
     const [filtersOpen, setFiltersOpen] = useState(false);
 
-    // A link from Discover (?q= or ?category=) starts a fresh search. Without
-    // one, the filters from the last visit stay, so Back from a listing works.
-    // before paint, so the last visit's search never flashes
+    // a ?q= or ?category= link starts a fresh search; otherwise the last filters stay
     useLayoutEffect(() => {
         const query = searchParams.get("q");
         const category = Number(searchParams.get("category"));
@@ -79,10 +76,10 @@ const Catalog = () => {
                 },
                 categories,
                 eligibilities,
-                user.grade,
+                student,
                 getTodayEastern(),
             ),
-        [opportunities, filters, categories, eligibilities, user.grade],
+        [opportunities, filters, categories, eligibilities, student],
     );
 
     if (failed) {

@@ -2,7 +2,7 @@ import { useId, useState } from "react";
 import CheckboxField from "../../../components/ui/input/CheckboxField";
 import TextField from "../../../components/ui/input/TextField";
 import { getSafeLinks } from "../bulletin/normalize";
-import { EntryPatch, ReviewEntry } from "../bulletin/sync";
+import { ReviewEntry, ReviewPatch } from "../bulletin/sync";
 import { OpportunityCategory, OpportunityEligibility } from "../types";
 import { toggleValue } from "../utils";
 
@@ -10,10 +10,12 @@ type ReviewRowProps = {
     entry: ReviewEntry;
     categories: OpportunityCategory[];
     eligibilities: OpportunityEligibility[];
-    onChange: (patch: EntryPatch) => void;
+    onChange: (patch: ReviewPatch) => void;
 };
 
 const CHANGE_LABELS = { new: "New", changed: "Changed", unchanged: null };
+const RENAME_BUTTON =
+    "cursor-pointer rounded-lg bg-layer-2 px-2 text-typography-1 shadow-control hover:bg-layer-3";
 
 const ReviewRow = ({
     entry,
@@ -26,6 +28,41 @@ const ReviewRow = ({
     // keep half-typed addresses in the box and only store the valid ones
     const [linkText, setLinkText] = useState(entry.links.join("\n"));
     const changeLabel = CHANGE_LABELS[entry.change];
+    const rename = entry.renameCandidate;
+    const linked = rename !== null && entry.existingId === rename.id;
+
+    // a tag is either required or preferred, never both
+    const toggleTag = (
+        name: string,
+        field: "eligibilityTags" | "preferredTags",
+    ) => {
+        const other =
+            field === "eligibilityTags" ? "preferredTags" : "eligibilityTags";
+        onChange({
+            [field]: toggleValue(entry[field], name),
+            [other]: entry[other].filter((tag) => tag !== name),
+        });
+    };
+
+    const tagFieldset = (
+        legend: string,
+        field: "eligibilityTags" | "preferredTags",
+    ) => (
+        <fieldset>
+            <legend className="mb-1 text-sm text-typography-2">{legend}</legend>
+            <div className="flex flex-wrap">
+                {eligibilities.map((eligibility) => (
+                    <CheckboxField
+                        key={eligibility.id}
+                        label={eligibility.name}
+                        ariaLabel={`${legend}: ${eligibility.name}`}
+                        checked={entry[field].includes(eligibility.name)}
+                        onChange={() => toggleTag(eligibility.name, field)}
+                    />
+                ))}
+            </div>
+        </fieldset>
+    );
 
     const textField = (
         label: string,
@@ -48,8 +85,7 @@ const ReviewRow = ({
 
     return (
         <li
-            // a dashed outline marks an excluded row, since fading it would make
-            // its text and controls too faint to read
+            // dashed rather than faded, so its text stays readable
             className={`rounded-xl bg-layer-1 shadow-control ${entry.include ? "" : "border border-dashed border-typography-3"}`}
         >
             <div className="flex items-start gap-3 p-4">
@@ -76,6 +112,59 @@ const ReviewRow = ({
                         <p className="text-sm text-typography-2">
                             Updated: {entry.changedFields.join(", ")}
                         </p>
+                    )}
+                    {rename && (
+                        <div
+                            className={`flex flex-wrap items-center gap-2 pt-1 text-sm ${
+                                entry.renameSettled
+                                    ? "text-typography-2"
+                                    : "text-yellow"
+                            }`}
+                        >
+                            <i
+                                className="bx bx-git-compare pt-0.5"
+                                aria-hidden="true"
+                            />
+                            {entry.renameSettled
+                                ? linked
+                                    ? `Renamed from "${rename.title}"`
+                                    : `Not a rename of "${rename.title}"`
+                                : linked
+                                  ? `Linked as a rename of "${rename.title}"`
+                                  : `May be a rename of "${rename.title}"`}
+                            {(!entry.renameSettled || !linked) && (
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        onChange({
+                                            existingId: rename.id,
+                                            renameSettled: true,
+                                        })
+                                    }
+                                    className={RENAME_BUTTON}
+                                >
+                                    {linked
+                                        ? "Keep Linked"
+                                        : "Same Opportunity"}
+                                </button>
+                            )}
+                            {(!entry.renameSettled || linked) && (
+                                <button
+                                    type="button"
+                                    onClick={() =>
+                                        onChange({
+                                            existingId: null,
+                                            renameSettled: true,
+                                        })
+                                    }
+                                    className={RENAME_BUTTON}
+                                >
+                                    {linked && entry.renameSettled
+                                        ? "Unlink"
+                                        : "Not the Same"}
+                                </button>
+                            )}
+                        </div>
                     )}
                     {entry.warnings.length > 0 && (
                         <p className="flex flex-wrap gap-1.5 pt-1 text-sm text-yellow">
@@ -190,30 +279,11 @@ const ReviewRow = ({
                             ))}
                         </div>
                     </fieldset>
-                    <fieldset>
-                        <legend className="mb-1 text-sm text-typography-2">
-                            Only eligible for (leave empty if open to everyone)
-                        </legend>
-                        <div className="flex flex-wrap">
-                            {eligibilities.map((eligibility) => (
-                                <CheckboxField
-                                    key={eligibility.id}
-                                    label={eligibility.name}
-                                    checked={entry.eligibilityTags.includes(
-                                        eligibility.name,
-                                    )}
-                                    onChange={() =>
-                                        onChange({
-                                            eligibilityTags: toggleValue(
-                                                entry.eligibilityTags,
-                                                eligibility.name,
-                                            ),
-                                        })
-                                    }
-                                />
-                            ))}
-                        </div>
-                    </fieldset>
+                    {tagFieldset(
+                        "Who can apply (leave empty if open to everyone)",
+                        "eligibilityTags",
+                    )}
+                    {tagFieldset("Especially for", "preferredTags")}
                 </div>
             )}
         </li>

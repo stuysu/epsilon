@@ -13,16 +13,13 @@ const MONTHS = [
     "nov",
     "dec",
 ];
-// "November 7", "Nov. 7th, 2026", "September18" and the range "November 1-15".
-// Only whole month names count, so "Junior 3" or "mayor 12" is not a date.
+// whole month names only, so "mayor 12" is not a date
 const DATE_PATTERN = new RegExp(
     String.raw`\b(${MONTH_NAMES})\.?\s*(\d{1,2})(?:st|nd|rd|th)?(?!\d)(?:\s*[–—-]\s*(\d{1,2})(?:st|nd|rd|th)?(?![\d:]))?(?:\s*,?\s*(\d{4}))?`,
     "gi",
 );
 export const MS_PER_DAY = 24 * 60 * 60 * 1000;
-// A yearless date is read as falling between this many days before the
-// bulletin and a year after that, so "December 20" in a January issue is the
-// December just past and "March 1" in an October issue is next March.
+// how far before the bulletin a yearless date can fall
 const PAST_DATE_GRACE_DAYS = 60;
 
 export const cleanText = (text: string) =>
@@ -33,7 +30,7 @@ export const cleanText = (text: string) =>
         .replace(/([a-z]) - ([a-z])/g, "$1-$2")
         .trim();
 
-// Accents are folded, so "Café" and "Cafe" match, and letters in any script count.
+// accents are folded, so "Café" matches "Cafe"
 export const getTitleKey = (title: string) =>
     title
         .normalize("NFKD")
@@ -52,7 +49,6 @@ const toIsoDate = (year: number, monthIndex: number, day: number) => {
 
 type FoundDate = { iso: string; start: number; end: number };
 
-// Bulletins usually leave out the year, so it comes from the publication date.
 const matchDates = (text: string, publishedOn: string): FoundDate[] => {
     const published = Date.parse(publishedOn);
     const publishedYear = new Date(published).getUTCFullYear();
@@ -88,19 +84,17 @@ const matchDates = (text: string, publishedOn: string): FoundDate[] => {
     return found;
 };
 
-// Finds every date in a line of text.
 export const findDates = (text: string, publishedOn: string) =>
     matchDates(text, publishedOn).map((date) => date.iso);
 
 const ROLLING = /^\s*(open until|ongoing)|\brolling\b/i;
-// "Open until December 1" and "Rolling basis (apply by January 12)" still end
+// "Open until December 1" still ends
 const ROLLING_UNTIL = new RegExp(
     String.raw`\b(?:rolling(?:\s+(?:basis|admissions?))?|open|ongoing)\s*[(,]?\s*(?:apply\s+)?(?:until|through|thru|by)\s+(?:${MONTH_NAMES})\b`,
     "i",
 );
 
-// "Rolling Basis", and also "October 2, then Rolling Basis": applications stay
-// open after any date, so it must not be archived on that date.
+// rolling text stays open after any date in it
 export const isRollingText = (text: string | null) =>
     text !== null && ROLLING.test(text) && !ROLLING_UNTIL.test(text);
 
@@ -108,8 +102,7 @@ export const isRollingText = (text: string | null) =>
 const SUPPORTING_MATERIAL =
     /^[^.;]{0,40}?\b(recommendations?|references?|transcripts?|letters? of)\b/i;
 
-// Several dates usually mean priority and final rounds. Using the latest keeps
-// an opportunity open until its last chance to apply.
+// several dates usually mean rounds, so use the last chance to apply
 export const parseDeadline = (text: string | null, publishedOn: string) => {
     if (!text || isRollingText(text)) return null;
     const dates = matchDates(text, publishedOn);
@@ -147,8 +140,7 @@ export const parseCost = (text: string | null) => {
     const toDollars = (match: RegExpMatchArray) =>
         Math.round(Number(match[1].replace(/,/g, "")));
 
-    // "$500 - $1,500" and "$800 or $5,150" are a spread of prices, while
-    // "$4,390/course + $100 application fee" is one price plus a fee
+    // a spread of prices, unless the second is a fee
     const prices = [toDollars(amounts[0])];
     for (let i = 1; i < amounts.length; i++) {
         const previousEnd =
@@ -183,15 +175,13 @@ const GRADE_RANGE = new RegExp(
     String.raw`\b${GRADE_TOKEN}\s*(?:-|–|—|to|through|thru)\s*${GRADE_TOKEN}\b`,
     "gi",
 );
-// "9th grade and up", "Juniors and above" and "grade 10+" run through 12th grade
+// "and up" and "10+" run through 12th grade
 const GRADE_AND_UP = new RegExp(
     String.raw`\b${GRADE_TOKEN}(?:\s*grad(?:e|es|ers))?\s*(?:\+|(?:and|or)\s+(?:up|above|older|higher|beyond)\b)`,
     "gi",
 );
-// "ages 14-18", "16 and older" and "17+" are ages, never grades
 const AGE_PHRASE =
     /\bage[sd]?\s*\d{1,2}(?:\s*(?:-|–|—|to|through|and|or)\s*\d{1,2})?|\b\d{1,2}\s*(?:\+|and (?:up|older)|or older|years? old)/gi;
-// numbers that can't be grades: dates, years, times, prices and GPAs
 const OTHER_NUMBERS = [
     DATE_PATTERN,
     /\b\d{4}\b/g,
@@ -215,15 +205,20 @@ const GROUP_PATTERNS: [string, RegExp][] = [
     ],
 ];
 
-// Grades 9 to 12 named in the text, including every grade inside a range
-// such as "grades 9-12", "sophomores-seniors" or "10th grade and up".
-const readGrades = (text: string) => {
-    const cleaned = OTHER_NUMBERS.reduce(
+// grades 9 to 12, including every grade inside a range
+const stripOtherNumbers = (text: string) =>
+    OTHER_NUMBERS.reduce(
         (current, pattern) => current.replace(pattern, " "),
         text,
     );
+
+// context is the whole sentence when text is only part of it
+const readGrades = (text: string, context = text) => {
+    const cleaned = stripOtherNumbers(text);
     // a bare number is only a grade when the text talks about grades
-    const numbersAreGrades = /\bgrad(e|es|ers)\b/i.test(cleaned);
+    const numbersAreGrades = /\bgrad(e|es|ers)\b/i.test(
+        stripOtherNumbers(context),
+    );
     const toGrade = (token: string) => {
         const word = GRADE_WORDS.find(([pattern]) => pattern.test(token));
         if (word) return word[1];
@@ -256,47 +251,64 @@ const readGrades = (text: string) => {
     return [...grades].filter((g) => g >= 9 && g <= 12).sort((a, b) => a - b);
 };
 
-// Only "All students", "All high school students" and the like, with no limit after it
 const OPEN_TO_ALL =
     /^\s*all\s+(?:(?:nyc|current|interested|high[- ]?school|stuyvesant|public[- ]school)\s+)*(?:students|high[- ]?schoolers|teens)\s*(?:(?:may|can) apply|are (?:welcome|eligible))?\s*[.!]?\s*$/i;
 
-// "All students" is open to everyone, but "All juniors", "All girls" and
-// "All students 15 and older" are not.
+// "All students" is open to everyone, "All juniors" is not
 export const isOpenToAll = (text: string) =>
     text.split(";").every((part) => OPEN_TO_ALL.test(part));
 
-// "Seniors preferred" or "priority to juniors" still lets anyone apply
 const PREFERENCE =
-    /\b(priority|preferred|preference|prefer|encouraged|especially|ideally)\b/i;
+    /\b(priority|preferred|preference|prefer|encouraged|especially|ideally|focus)\b/i;
 
-// Reads tags from the bulletin's eligibility sentence. It stays cautious: a
-// wrong grade tag would tell a student they are ineligible when they are not.
+const readTags = (text: string, context: string) => [
+    ...readGrades(text, context).map((grade) => GRADE_TAGS[grade - 9]),
+    ...GROUP_PATTERNS.filter(([, pattern]) => pattern.test(text)).map(
+        ([tag]) => tag,
+    ),
+];
+
+// Required tags limit who can apply; preferred ones never make anyone ineligible.
 export const parseEligibilityTags = (text: string | null) => {
-    if (!text) return { tags: [] as string[], unclear: false };
+    const none = { tags: [] as string[], preferredTags: [] as string[] };
+    if (!text) return { ...none, unclear: false };
 
-    // "rising juniors" are current sophomores, exclusions invert the meaning,
-    // and a preference is not a limit, so an admin decides these
-    const unclear =
-        /\brising\b|\b(not|except|excluding)\b/i.test(text) ||
-        PREFERENCE.test(text);
-    if (unclear) return { tags: [], unclear: true };
+    // "rising juniors" are current sophomores, and exclusions invert the meaning
+    if (/\brising\b|\b(not|except|excluding)\b/i.test(text)) {
+        return { ...none, unclear: true };
+    }
 
-    // "all may apply" means nothing named is required
     const welcomesEveryone =
         /\ball (students )?(may|can) apply\b|\ball are welcome\b|\bopen to all\b/i.test(
             text,
         );
-    if (welcomesEveryone) return { tags: [], unclear: false };
+    const hasPreference = PREFERENCE.test(text);
+    if (!hasPreference) {
+        return {
+            tags: welcomesEveryone ? [] : readTags(text, text),
+            preferredTags: [],
+            unclear: false,
+        };
+    }
 
-    const tags = readGrades(text).map((grade) => GRADE_TAGS[grade - 9]);
-    GROUP_PATTERNS.forEach(([tag, pattern]) => {
-        if (pattern.test(text)) tags.push(tag);
+    const tags = new Set<string>();
+    const preferredTags = new Set<string>();
+    text.split(/[;.,]|\b(?=with\b|but\b)/i).forEach((part) => {
+        const preferred = welcomesEveryone || PREFERENCE.test(part);
+        readTags(part, text).forEach((tag) =>
+            (preferred ? preferredTags : tags).add(tag),
+        );
     });
-    return { tags, unclear: false };
+    tags.forEach((tag) => preferredTags.delete(tag));
+    // the split is a guess, so an admin checks it
+    return {
+        tags: [...tags],
+        preferredTags: [...preferredTags],
+        unclear: true,
+    };
 };
 
-// Keeps unique web links. The address must really start with http(s)://, the
-// same rule the database applies, since "https:example.com" also parses.
+// must really start with http(s)://, like the database requires
 export const getSafeLinks = (links: string[]) => {
     const safe: string[] = [];
     links.forEach((link) => {

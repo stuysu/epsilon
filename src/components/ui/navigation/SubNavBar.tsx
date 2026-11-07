@@ -44,7 +44,7 @@ const SubNavBar: FC = () => {
 
     const items: { label: string; path: string; external?: boolean }[] =
         isOnOpportunitiesPage ? OPPORTUNITIES_ITEMS : STUY_ACTIVITIES_ITEMS;
-    // only full admins publish bulletins, while any permission opens the activities panel
+    // only full admins publish bulletins
     const adminPath = isOnOpportunitiesPage ? "/opportunities/admin" : "/admin";
     const adminLink = isOnOpportunitiesPage
         ? user.permission === "ADMIN" && {

@@ -1,10 +1,8 @@
-import { useContext } from "react";
 import { Helmet } from "react-helmet";
 import { Link, useParams } from "react-router-dom";
 import AsyncButton from "../../components/ui/buttons/AsyncButton";
 import Loading from "../../components/ui/content/Loading";
 import ContentUnavailable from "../../components/ui/content/ContentUnavailable";
-import UserContext from "../../contexts/UserContext";
 import { getSafeLinks } from "./bulletin/normalize";
 import EligibilityLine from "./components/EligibilityLine";
 import OpportunityDetails from "./components/OpportunityDetails";
@@ -14,8 +12,7 @@ import { getStatus, getTodayEastern } from "./utils";
 
 const Detail = () => {
     const { id } = useParams();
-    const user = useContext(UserContext);
-    const { loading, failed, opportunities, savedIds, setSaved } =
+    const { loading, failed, opportunities, savedIds, setSaved, student } =
         useOpportunities();
 
     if (loading) {
@@ -53,7 +50,7 @@ const Detail = () => {
         );
     }
 
-    const status = getStatus(opportunity, user.grade, getTodayEastern());
+    const status = getStatus(opportunity, student, getTodayEastern());
     const [mainLink, ...otherLinks] = getSafeLinks(opportunity.links);
     const isSaved = savedIds.has(opportunity.id);
 

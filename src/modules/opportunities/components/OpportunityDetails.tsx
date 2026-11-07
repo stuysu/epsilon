@@ -10,7 +10,7 @@ const OpportunityDetails = ({
     opportunity,
     full = false,
 }: OpportunityDetailsProps) => {
-    // the icons are decorative, so each row also says what it is to screen readers
+    // the icons are decorative, so each row is named for screen readers
     const rows = [
         { icon: "bx-calendar", label: "Dates", text: opportunity.date_text },
         { icon: "bx-map", label: "Location", text: opportunity.location },

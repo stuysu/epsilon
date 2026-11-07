@@ -13,6 +13,7 @@ import {
 import {
     BulletinFormatError,
     BulletinLine,
+    getEntryWarnings,
     parseBulletin,
     ParsedEntry,
 } from "./parse";
@@ -243,10 +244,18 @@ describe("parseEligibilityTags", () => {
         expect(tags("Juniors and above")).toEqual(["Junior", "Senior"]);
     });
 
-    it("leaves a preference for an admin to tag", () => {
+    it("reads a preference as preferred, for an admin to check", () => {
         expect(
             parseEligibilityTags("All students; priority to seniors"),
-        ).toEqual({ tags: [], unclear: true });
+        ).toEqual({ tags: [], preferredTags: ["Senior"], unclear: true });
+        expect(
+            parseEligibilityTags("Juniors and seniors; priority for girls"),
+        ).toEqual({
+            tags: ["Junior", "Senior"],
+            preferredTags: ["Female"],
+            unclear: true,
+        });
+        expect(parseEligibilityTags("Seniors preferred").tags).toEqual([]);
     });
 
     it("does not read dates, years or times as grades", () => {
@@ -262,6 +271,7 @@ describe("parseEligibilityTags", () => {
     it("marks wording it cannot safely tag", () => {
         expect(parseEligibilityTags("Rising juniors and seniors")).toEqual({
             tags: [],
+            preferredTags: [],
             unclear: true,
         });
         expect(parseEligibilityTags("Not open to seniors").unclear).toBe(true);
@@ -699,6 +709,7 @@ const makeEntry = (overrides: Partial<ParsedEntry> = {}): ParsedEntry => ({
     deadlineText: "November 7",
     eligibilityText: "All students",
     eligibilityTags: [],
+    preferredTags: [],
     eligibilityUnclear: false,
     links: ["https://example.com"],
     label: null,
@@ -987,5 +998,199 @@ describe("fixing titles and dates in review", () => {
             "2026-10-30",
         );
         expect(reworded.deadline).toBe("2026-12-15");
+    });
+});
+
+describe("reworded titles", () => {
+    const old = makeExisting({
+        id: 20,
+        title: "Summer Science Program 2026",
+        title_key: "summerscienceprogram2026",
+        links: ["https://example.org/ssp/apply"],
+    });
+
+    it("links a reworded entry that shares a unique link", () => {
+        const [entry] = buildReview(
+            [
+                makeEntry({
+                    title: "SSP: Summer Research",
+                    titleKey: "sspsummerresearch",
+                    links: ["https://www.example.org/ssp/apply/"],
+                }),
+            ],
+            [old],
+        );
+        expect(entry.existingId).toBe(20);
+        expect(entry.renameCandidate).toEqual({
+            id: 20,
+            title: "Summer Science Program 2026",
+        });
+        expect(entry.change).toBe("changed");
+    });
+
+    it("links a close title in the same category", () => {
+        const [entry] = buildReview(
+            [
+                makeEntry({
+                    title: "Summer Science Program 2027",
+                    titleKey: "summerscienceprogram2027",
+                    links: [],
+                }),
+            ],
+            [old],
+        );
+        expect(entry.existingId).toBe(20);
+    });
+
+    it("only suggests a weaker match", () => {
+        const [entry] = buildReview(
+            [
+                makeEntry({
+                    title: "Summer Science Camp",
+                    titleKey: "summersciencecamp",
+                    links: [],
+                    categories: ["Other"],
+                }),
+            ],
+            [old],
+        );
+        expect(entry.existingId).toBeNull();
+        expect(entry.renameCandidate?.id).toBe(20);
+    });
+
+    it("ignores links that other listings share", () => {
+        const shared = "https://example.org/programs/list";
+        const [entry] = buildReview(
+            [
+                makeEntry({
+                    title: "Robotics Team",
+                    titleKey: "roboticsteam",
+                    links: [shared],
+                }),
+            ],
+            [
+                makeExisting({
+                    id: 1,
+                    title: "Chess Club",
+                    title_key: "chessclub",
+                    links: [shared],
+                }),
+                makeExisting({
+                    id: 2,
+                    title: "Poetry Night",
+                    title_key: "poetrynight",
+                    links: [shared],
+                }),
+            ],
+        );
+        expect(entry.renameCandidate).toBeNull();
+        expect(entry.existingId).toBeNull();
+    });
+
+    it("never pairs a listing that kept its title", () => {
+        const [same, other] = buildReview(
+            [
+                makeEntry({ title: old.title, titleKey: old.title_key }),
+                makeEntry({
+                    title: "Summer Science Program 2027",
+                    titleKey: "summerscienceprogram2027",
+                }),
+            ],
+            [old],
+        );
+        expect(same.existingId).toBe(20);
+        expect(other.existingId).toBeNull();
+        expect(other.renameCandidate).toBeNull();
+    });
+
+    it("keeps a linked rename off the no-longer-listed list", () => {
+        const review = buildReview(
+            [
+                makeEntry({
+                    title: "Summer Science Program 2027",
+                    titleKey: "summerscienceprogram2027",
+                }),
+            ],
+            [old],
+        );
+        expect(
+            findNoLongerListed(review, [old], {
+                issue: "9L",
+                publishedOn: "2026-11-06",
+                isLong: true,
+            }),
+        ).toEqual([]);
+    });
+});
+
+describe("preferred tags in review", () => {
+    it("sends only tags that are not also required", () => {
+        const [entry] = toImportEntries(
+            [
+                makeEntry({
+                    eligibilityTags: ["Senior"],
+                    preferredTags: ["Senior", "Female"],
+                }),
+            ],
+            [category(2, "Academic Programs")],
+            [
+                { id: 4, name: "Senior", grade: 12, position: 4 },
+                { id: 5, name: "Female", grade: null, position: 5 },
+            ],
+        );
+        expect(entry.eligibility_ids).toEqual([4]);
+        expect(entry.preferred_eligibility_ids).toEqual([5]);
+    });
+
+    it("settles unclear wording once preferred tags are picked", () => {
+        const entry = applyEntryPatch(
+            makeEntry({ eligibilityUnclear: true }),
+            { preferredTags: ["Female"] },
+            "2026-11-06",
+        );
+        expect(entry.eligibilityUnclear).toBe(false);
+        expect(entry.warnings).not.toContain("Check eligibility tags");
+    });
+});
+
+describe("missing deadlines", () => {
+    const warningsFor = (overrides: Partial<ParsedEntry>) =>
+        getEntryWarnings(
+            makeEntry({ deadline: null, deadlineText: null, ...overrides }),
+        );
+
+    it("does not flag a listing that has no deadline at all", () => {
+        expect(warningsFor({})).toEqual([]);
+    });
+
+    it("flags deadline wording elsewhere in the listing", () => {
+        expect(
+            warningsFor({ description: "Applications are due by March 3." }),
+        ).toEqual(["Deadline may be in the listing"]);
+        expect(warningsFor({ dateText: "Registration closes May 1" })).toEqual([
+            "Deadline may be in the listing",
+        ]);
+    });
+});
+
+describe("publishing renames", () => {
+    it("refuses two entries that update the same row", () => {
+        const problems = findPublishProblems(
+            [
+                { ...makeEntry(), existingId: 9 },
+                {
+                    ...makeEntry({
+                        title: "Science Program II",
+                        titleKey: "scienceprogramii",
+                    }),
+                    existingId: 9,
+                },
+            ],
+            [category(2, "Academic Programs")],
+            [makeExisting()],
+        );
+        expect(problems).toEqual([
+            'Two entries update "Science Program". Unlink one of them.',
+        ]);
     });
 });

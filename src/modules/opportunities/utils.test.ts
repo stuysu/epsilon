@@ -10,28 +10,34 @@ import {
 import {
     Opportunity,
     OpportunityCategory,
-    OpportunityEligibility,
+    OpportunityTag,
+    Student,
 } from "./types";
 
 const TODAY = "2026-11-02";
+const asGrade = (grade: number): Student => ({ grade, groups: null });
+const JUNIOR = asGrade(11);
 
-const junior: OpportunityEligibility = {
+const junior: OpportunityTag = {
     id: 3,
     name: "Junior",
     grade: 11,
     position: 3,
+    preferred: false,
 };
-const senior: OpportunityEligibility = {
+const senior: OpportunityTag = {
     id: 4,
     name: "Senior",
     grade: 12,
     position: 4,
+    preferred: false,
 };
-const aid: OpportunityEligibility = {
+const aid: OpportunityTag = {
     id: 9,
     name: "Needs Financial Aid",
     grade: null,
     position: 9,
+    preferred: false,
 };
 const eligibilities = [junior, senior, aid];
 
@@ -74,14 +80,14 @@ const make = (overrides: Partial<Opportunity> = {}): Opportunity => ({
 const run = (
     opportunities: Opportunity[],
     filters: Partial<typeof DEFAULT_FILTERS> = {},
-    grade = 11,
+    student = JUNIOR,
 ) =>
     filterOpportunities(
         opportunities,
         { ...DEFAULT_FILTERS, ...filters },
         categories,
         eligibilities,
-        grade,
+        student,
         TODAY,
     ).map((o) => o.id);
 
@@ -97,53 +103,75 @@ describe("isIneligible", () => {
     const seniorsOnly = make({ eligibilities: [senior] });
 
     it("flags grades outside the tagged ones", () => {
-        expect(isIneligible(seniorsOnly, 11)).toBe(true);
-        expect(isIneligible(seniorsOnly, 12)).toBe(false);
+        expect(isIneligible(seniorsOnly, asGrade(11))).toBe(true);
+        expect(isIneligible(seniorsOnly, asGrade(12))).toBe(false);
     });
 
     it("never flags faculty or users with no grade", () => {
-        expect(isIneligible(seniorsOnly, 0)).toBe(false);
-        expect(isIneligible(seniorsOnly, -1)).toBe(false);
+        expect(isIneligible(seniorsOnly, asGrade(0))).toBe(false);
+        expect(isIneligible(seniorsOnly, asGrade(-1))).toBe(false);
     });
 
-    it("ignores group tags, which Epsilon cannot check", () => {
-        expect(isIneligible(make({ eligibilities: [aid] }), 11)).toBe(false);
+    it("checks group tags only once About You is filled in", () => {
+        const aidOnly = make({ eligibilities: [aid] });
+        expect(isIneligible(aidOnly, JUNIOR)).toBe(false);
+        expect(isIneligible(aidOnly, { grade: 11, groups: [] })).toBe(true);
+        expect(
+            isIneligible(aidOnly, {
+                grade: 11,
+                groups: ["Needs Financial Aid"],
+            }),
+        ).toBe(false);
+    });
+
+    it("never flags a preferred tag", () => {
+        const preferred = make({
+            eligibilities: [
+                { ...senior, preferred: true },
+                { ...aid, preferred: true },
+            ],
+        });
+        expect(isIneligible(preferred, { grade: 11, groups: [] })).toBe(false);
     });
 });
 
 describe("getStatus", () => {
     it("treats a deadline as open through its whole day", () => {
-        const status = getStatus(make({ deadline: TODAY }), 11, TODAY);
+        const status = getStatus(make({ deadline: TODAY }), JUNIOR, TODAY);
         expect(status.label).toBe("Apply by November 2");
         expect(status.tone).toBe("urgent");
     });
 
     it("archives once the deadline has passed", () => {
-        const status = getStatus(make({ deadline: "2026-11-01" }), 11, TODAY);
+        const status = getStatus(
+            make({ deadline: "2026-11-01" }),
+            JUNIOR,
+            TODAY,
+        );
         expect(status.label).toBe("Archived");
         expect(status.struck).toBe(true);
     });
 
     it("shows rolling and far-off deadlines as neutral", () => {
-        expect(getStatus(make(), 11, TODAY).label).toBe("Rolling Basis");
+        expect(getStatus(make(), JUNIOR, TODAY).label).toBe("Rolling Basis");
         expect(
-            getStatus(make({ deadline: "2027-03-01" }), 11, TODAY).tone,
+            getStatus(make({ deadline: "2027-03-01" }), JUNIOR, TODAY).tone,
         ).toBe("neutral");
     });
 
     it("does not call an unknown deadline rolling", () => {
-        expect(getStatus(make({ deadline_text: "TBD" }), 11, TODAY).label).toBe(
-            "Deadline: TBD",
-        );
-        expect(getStatus(make({ deadline_text: null }), 11, TODAY).label).toBe(
-            "Check deadline",
-        );
+        expect(
+            getStatus(make({ deadline_text: "TBD" }), JUNIOR, TODAY).label,
+        ).toBe("Deadline: TBD");
+        expect(
+            getStatus(make({ deadline_text: null }), JUNIOR, TODAY).label,
+        ).toBe("Check deadline");
     });
 
     it("puts ineligible ahead of archived", () => {
         const status = getStatus(
             make({ archived: true, eligibilities: [senior] }),
-            11,
+            JUNIOR,
             TODAY,
         );
         expect(status.label).toBe("Ineligible");
@@ -185,6 +213,15 @@ describe("filterOpportunities", () => {
         ];
         expect(run(list, { eligibilityIds: [3] }).sort()).toEqual([1, 3]);
         expect(run(list, { eligibilityIds: [9] })).toEqual([3]);
+    });
+
+    it("counts a preferred group for a group filter, but not as a grade limit", () => {
+        const list = [
+            make({ id: 1, eligibilities: [{ ...aid, preferred: true }] }),
+            make({ id: 2, eligibilities: [{ ...senior, preferred: true }] }),
+        ];
+        expect(run(list, { eligibilityIds: [9] })).toEqual([1]);
+        expect(run(list, { eligibilityIds: [3] }).sort()).toEqual([1, 2]);
     });
 
     it("hides ineligible opportunities only when asked", () => {

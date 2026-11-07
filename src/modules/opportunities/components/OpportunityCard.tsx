@@ -1,6 +1,5 @@
-import { useContext } from "react";
 import { Link } from "react-router-dom";
-import UserContext from "../../../contexts/UserContext";
+import { useOpportunities } from "../OpportunitiesContext";
 import { Opportunity } from "../types";
 import { getStatus, getTodayEastern } from "../utils";
 import EligibilityLine from "./EligibilityLine";
@@ -12,8 +11,8 @@ type OpportunityCardProps = {
 };
 
 const OpportunityCard = ({ opportunity }: OpportunityCardProps) => {
-    const user = useContext(UserContext);
-    const status = getStatus(opportunity, user.grade, getTodayEastern());
+    const { student } = useOpportunities();
+    const status = getStatus(opportunity, student, getTodayEastern());
     const [mainCategory, ...otherCategories] = opportunity.categories;
     // "New" or "Deadline Today" means nothing once the listing has ended
     const label = status.struck ? null : opportunity.bulletin_label;

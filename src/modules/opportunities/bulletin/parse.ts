@@ -19,7 +19,7 @@ export type BulletinLine = {
 export type BulletinMeta = {
     issue: string;
     publishedOn: string;
-    // Only the Long version lists everything, so only it can tell us what ended.
+    // only a Long issue lists everything
     isLong: boolean;
 };
 
@@ -36,6 +36,7 @@ export type ParsedEntry = {
     deadlineText: string | null;
     eligibilityText: string | null;
     eligibilityTags: string[];
+    preferredTags: string[];
     eligibilityUnclear: boolean;
     links: string[];
     label: string | null;
@@ -77,17 +78,14 @@ const FIELD_LABELS: Record<string, LineField> = {
     deadline: "deadline",
     deadlines: "deadline",
 };
-// Other short Title Case labels are read by their last word, so "Priority
-// Deadline:" is a deadline, "Event Date(s):" a date and "Submission Link:" a link.
+// other Title Case labels are read by their last word
 const FIELD_SUFFIXES: [RegExp, LineField][] = [
     [/deadlines?$/, "deadline"],
     [/dates?$/, "date"],
     [/links?$/, "link"],
 ];
-// "Grade 12 Application Link" is the longest seen
 const MAX_SUFFIX_LABEL_WORDS = 4;
-// A suffix label needs a value it could hold, so a title such as "Science
-// Fair Dates: Spring Edition" isn't read as a field.
+// a suffix label needs a value it could hold
 const SUFFIX_VALUES: Record<LineField, RegExp> = {
     deadline: /\d|rolling|tb[ad]|various|varies|ongoing|open|soon/i,
     date: /\d|various|varies|tb[ad]|ongoing|weekly|daily|weekends?|(mon|tues|wednes|thurs|fri|satur|sun)days?/i,
@@ -97,7 +95,7 @@ const SUFFIX_VALUES: Record<LineField, RegExp> = {
     cost: /./,
 };
 
-// Ordered from most to least specific, since "STEM" also heads its subsections.
+// most specific first, since "STEM" also heads its subsections
 const CATEGORY_HEADINGS: [RegExp, string][] = [
     [/^events of interest/, "Events of Interest"],
     [/^academic/, "Academic Programs"],
@@ -116,9 +114,7 @@ const CATEGORY_HEADINGS: [RegExp, string][] = [
     [/^scholarships?/, "Scholarships"],
 ];
 
-// Status labels vary week to week ("Early Deadline Approaching", "Next Session
-// Approaching", "Event Today", "Deadline Extended"), sometimes typed without
-// spaces, but they are built from these words. Anything else is a title.
+// status labels vary week to week but are built from these words
 const STATUS_WORDS = [
     "event",
     "events",
@@ -167,16 +163,15 @@ const STATUS_ENDINGS = [
 const STATUS_PHRASE = new RegExp(
     `^(?:${STATUS_WORDS.join("|")})*(?:${STATUS_ENDINGS.join("|")})$`,
 );
-// Combined labels such as "Information sessions today & tomorrow" or
-// "Deadline Extended/Approaching" are checked part by part.
+// combined labels are checked part by part
 const isStatusLabel = (raw: string) =>
     raw
         .toLowerCase()
         .split(/\s*(?:&|\/|\band\b)\s*/)
         .every((part) => STATUS_PHRASE.test(part.replace(/\s+/g, "")));
-// A label tacked onto the end: "Riverside Dance – Audition Approaching"
+// a label at the end of a title
 const TRAILING_LABEL = /\s*(?::|\s[–—-])\s*([A-Za-z][A-Za-z &/]{0,48})$/;
-// "1- " or "3-New:", but not "3-D Printing" or "2026-2027 Teen Project"
+// "3-New:", but not "3-D Printing"
 const NUMBER_PREFIX = /^\d{1,2}\s*[–—-](?:\s+|(?=[A-Z][a-z]))/;
 const WEEKDAY = /^(mon|tues|wednes|thurs|fri|satur|sun)days?\b/i;
 const MAX_TITLE_LENGTH = 140;
@@ -237,7 +232,7 @@ const toLabelText = (raw: string) => {
     return "Coming Up";
 };
 
-// Splits prefixes such as "Updated: Events Approaching: City Library Talks" off a line.
+// splits label prefixes off a line
 const stripStatus = (text: string) => {
     let rest = text;
     let label: string | null = null;
@@ -275,19 +270,18 @@ const looksLikeSentence = (text: string) =>
     text.length > MAX_TITLE_LENGTH ||
     hasFewCapitals(text);
 
-// A real title opens with a capital or number; "(Priority 2)" or "- Register
-// by Friday" in the same bold font continues whatever came before it.
+// a real title opens with a capital or number
 const startsLikeTitle = (text: string) => /^[A-Z0-9]/.test(text);
 
-// "Cohort)" or "28, 30, and more)" closes a bracket from the line above it.
+// closes a bracket from the line above
 const closesBracket = (text: string) =>
     (text.match(/\)/g)?.length ?? 0) > (text.match(/\(/g)?.length ?? 0);
 
-// A wrapped piece of a long web address, such as "0Ygt…/viewform"
+// a wrapped piece of a long web address
 const looksLikeAddressPiece = (text: string) =>
     !/\s/.test(text) && /[/=?&_.-]/.test(text);
 
-// Bold schedules such as "Tuesdays, 4:00 - 5:00 PM" sit inside a listing.
+// bold schedules sit inside a listing
 const looksLikeSchedule = (text: string) =>
     WEEKDAY.test(text) || /\b\d{1,2}:\d{2}\b/.test(text);
 
@@ -329,6 +323,9 @@ const readMeta = (lines: BulletinLine[]): BulletinMeta => {
     };
 };
 
+const DEADLINE_HINT =
+    /\b(deadlines?|apply by|due (by|on)|register by|registration|submit(ted)? by|applications? (are )?(due|close))\b/i;
+
 export const getEntryWarnings = (
     entry: Omit<ParsedEntry, "warnings" | "include">,
 ) => {
@@ -344,11 +341,15 @@ export const getEntryWarnings = (
     if (!hasDetails) warnings.push("No details found");
     if (!entry.links.length) warnings.push("No link found");
     if (!entry.deadlineText) {
-        warnings.push("No deadline found");
+        // most listings with no deadline field have none at all
+        const hint = [entry.dateText, entry.description].some((text) =>
+            DEADLINE_HINT.test(text ?? ""),
+        );
+        if (hint) warnings.push("Deadline may be in the listing");
     } else if (!entry.deadline && !isRollingText(entry.deadlineText)) {
         warnings.push("Deadline has no date");
     }
-    if (entry.eligibilityUnclear) warnings.push("Eligibility needs tags");
+    if (entry.eligibilityUnclear) warnings.push("Check eligibility tags");
     if (entry.title.length < 6 || looksLikeSentence(entry.title)) {
         warnings.push("Title looks wrong");
     }
@@ -368,15 +369,11 @@ const unwrapLink = (link: string) => {
     return link;
 };
 
-// "apply-bronfman" and "applybronfman" are the same site, since a printed
-// address can lose a hyphen where it wraps
+// a printed address can lose a hyphen where it wraps
 const siteOf = (link: string) =>
     new URL(link).hostname.replace(/^www\./, "").replace(/-/g, "");
 
-// The PDF's link targets survive addresses that wrap across lines, but now
-// and then one points somewhere other than the printed address. The printed
-// site comes first, and a target elsewhere is kept after it, since either
-// could be the right one.
+// the printed site comes first; a link target elsewhere is kept after it
 const chooseLinks = (draft: Draft) => {
     const printed = getSafeLinks(
         draft.linkTexts.map((text) =>
@@ -435,6 +432,7 @@ const finishEntry = (draft: Draft, publishedOn: string): ParsedEntry => {
         deadlineText,
         eligibilityText,
         eligibilityTags: eligibility.tags,
+        preferredTags: eligibility.preferredTags,
         eligibilityUnclear: eligibility.unclear,
         links,
         label: draft.label ?? (trailing ? toLabelText(trailing[1]) : null),
@@ -488,6 +486,7 @@ const mergeDuplicates = (entries: ParsedEntry[], publishedOn: string) => {
             costMax: cost.max,
             deadline: parseDeadline(merged.deadlineText, publishedOn),
             eligibilityTags: eligibility.tags,
+            preferredTags: eligibility.preferredTags,
             eligibilityUnclear: eligibility.unclear,
         };
         byKey.set(entry.titleKey, {
@@ -498,16 +497,14 @@ const mergeDuplicates = (entries: ParsedEntry[], publishedOn: string) => {
     return [...byKey.values()];
 };
 
-// "RETURN TO TOP" links, and ordinal suffixes such as "th" set as tiny text
-// ordinal suffixes such as "th" set as tiny text
+// "RETURN TO TOP" links and tiny ordinal suffixes such as "th"
 const isPageChrome = ({ text, size }: BulletinLine) =>
     size < 11 && /^(st|nd|rd|th|\s)+$/i.test(text);
 
-// "RETURN TO TOP" closes a section, and the general notes after it belong to
-// no listing
+// "RETURN TO TOP" ends a section; notes after it belong to no listing
 const isSectionEnd = ({ text }: BulletinLine) => /^return to top/i.test(text);
 
-// Extends the field's latest value, since wrapped lines continue it.
+// wrapped lines continue the latest value
 const appendToField = (draft: Draft, field: FieldName, text: string) => {
     const values = (draft.fields[field] ??= []);
     if (values.length) values[values.length - 1] += ` ${text}`;
@@ -530,8 +527,7 @@ const addField = (
     }
 };
 
-// Bold text inside a quoted description, which can run over several lines.
-// Quotes are often never closed, so the first field line ends one.
+// bold text inside a quoted description; quotes are often never closed
 const isInsideQuote = (draft: Draft) => {
     if (Object.keys(draft.fields).length || draft.linkTexts.length) {
         return false;
@@ -552,9 +548,7 @@ const placeBoldLine = (
     if (draft.lastField === "link" && looksLikeAddressPiece(text)) {
         return "address piece";
     }
-    // "Info session registration:" or "More events:" just above a web address.
-    // A Title Case line there, such as "List of Tutoring Opportunities:", is a
-    // listing of its own.
+    // a label just above a web address, unless it is a Title Case listing
     const isSentenceCase = text
         .split(/\s+/)
         .slice(1)
@@ -589,7 +583,7 @@ const addEmphasis = (draft: Draft, text: string, line: BulletinLine) => {
     draft.titleOpen = false;
     draft.annotatedLinks.push(...line.links);
     const field = draft.lastField;
-    // a bracket that wraps from a field line, as in "(Priority 2), and June 7"
+    // a bracket that wraps from a field line
     if (
         field &&
         field !== "link" &&

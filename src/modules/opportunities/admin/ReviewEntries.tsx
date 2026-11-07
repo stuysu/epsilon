@@ -1,5 +1,5 @@
 import { KeyboardEvent, useState } from "react";
-import { EntryPatch, ReviewEntry } from "../bulletin/sync";
+import { ReviewEntry, ReviewPatch } from "../bulletin/sync";
 import { OpportunityCategory, OpportunityEligibility } from "../types";
 import ReviewRow from "./ReviewRow";
 
@@ -15,7 +15,12 @@ const VIEW_LABELS: Record<ReviewView, string> = {
 const VIEWS = Object.keys(VIEW_LABELS) as ReviewView[];
 
 const matchesView = (entry: ReviewEntry, view: ReviewView) => {
-    if (view === "attention") return entry.include && entry.warnings.length > 0;
+    if (view === "attention") {
+        const unsettledRename = entry.renameCandidate && !entry.renameSettled;
+        return (
+            entry.include && (entry.warnings.length > 0 || !!unsettledRename)
+        );
+    }
     if (view === "new") return entry.change === "new";
     if (view === "changed") return entry.change === "changed";
     if (view === "notIncluded") return !entry.include;
@@ -26,7 +31,7 @@ type ReviewEntriesProps = {
     entries: ReviewEntry[];
     categories: OpportunityCategory[];
     eligibilities: OpportunityEligibility[];
-    onChange: (index: number, patch: EntryPatch) => void;
+    onChange: (index: number, patch: ReviewPatch) => void;
 };
 
 const ReviewEntries = ({
@@ -36,7 +41,7 @@ const ReviewEntries = ({
     onChange,
 }: ReviewEntriesProps) => {
     const [view, setView] = useState<ReviewView>("attention");
-    // A row being edited stays put, even once its fix takes it out of this view.
+    // a row being edited stays even once its fix moves it out of this view
     const [editedIndexes, setEditedIndexes] = useState<number[]>([]);
 
     const changeView = (next: ReviewView) => {
@@ -44,7 +49,7 @@ const ReviewEntries = ({
         setEditedIndexes([]);
     };
 
-    const editEntry = (index: number, patch: EntryPatch) => {
+    const editEntry = (index: number, patch: ReviewPatch) => {
         setEditedIndexes((current) =>
             current.includes(index) ? current : [...current, index],
         );

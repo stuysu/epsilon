@@ -7,6 +7,7 @@ import {
     OpportunityEligibility,
     OpportunityFilters,
     OpportunityStatus,
+    Student,
 } from "./types";
 
 export const DEFAULT_FILTERS: OpportunityFilters = {
@@ -23,7 +24,7 @@ export const DEFAULT_FILTERS: OpportunityFilters = {
 const URGENT_DAYS = 14;
 const SHORT_DEADLINE_TEXT = 24;
 
-// Deadlines end at 23:59:59 Eastern, so compare against the date in New York.
+// deadlines end at midnight in New York
 export const getTodayEastern = (now?: Date) =>
     toNewYork(now).format("YYYY-MM-DD");
 
@@ -42,26 +43,33 @@ export const isArchived = (opportunity: Opportunity, today: string) =>
     opportunity.archived ||
     (opportunity.deadline !== null && opportunity.deadline < today);
 
-// Only grade can be checked automatically. Epsilon does not store group-based
-// traits such as financial need, so those remain filters students choose.
-export const isIneligible = (opportunity: Opportunity, grade: number) => {
-    if (grade < 9 || grade > 12) return false;
-    const grades = opportunity.eligibilities.flatMap((e) =>
-        e.grade === null ? [] : [e.grade],
-    );
-    return grades.length > 0 && !grades.includes(grade);
+const requiredTags = (opportunity: Opportunity) =>
+    opportunity.eligibilities.filter((e) => !e.preferred);
+
+// any one required grade, and any one required group, is enough
+export const isIneligible = (opportunity: Opportunity, student: Student) => {
+    const required = requiredTags(opportunity);
+    const grades = required.flatMap((e) => (e.grade === null ? [] : [e.grade]));
+    const groups = required.filter((e) => e.grade === null);
+    const hasGrade = student.grade >= 9 && student.grade <= 12;
+    const wrongGrade =
+        hasGrade && grades.length > 0 && !grades.includes(student.grade);
+    const wrongGroup =
+        student.groups !== null &&
+        groups.length > 0 &&
+        !groups.some((e) => student.groups!.includes(e.name));
+    return wrongGrade || wrongGroup;
 };
 
 export const getCostLabel = ({ cost_text }: Opportunity) =>
     cost_text ?? "Check description";
 
-// dates here are plain calendar days, such as "2026-11-07"
 export const formatDate = (date: string, { withYear = false } = {}) =>
     dayjs(date).format(withYear ? "MMMM D, YYYY" : "MMMM D");
 
 export const getStatus = (
     opportunity: Opportunity,
-    grade: number,
+    student: Student,
     today: string,
 ): OpportunityStatus => {
     const neutral = (label: string, icon: string): OpportunityStatus => ({
@@ -71,7 +79,7 @@ export const getStatus = (
         struck: false,
     });
 
-    if (isIneligible(opportunity, grade)) {
+    if (isIneligible(opportunity, student)) {
         return {
             label: "Ineligible",
             icon: "bx-x-circle",
@@ -119,7 +127,7 @@ const matchesCategories = (
     const selected = new Set(categoryIds);
     return opportunity.categories.some((category) => {
         if (selected.has(category.id)) return true;
-        // Selecting a main category includes everything filed under it.
+        // a main category includes its subcategories
         const parent = categories.find((c) => c.id === category.parent_id);
         return parent !== undefined && selected.has(parent.id);
     });
@@ -134,16 +142,16 @@ const matchesEligibilities = (
     const selectedGrades = selected.filter((e) => e.grade !== null);
     const selectedGroups = selected.filter((e) => e.grade === null);
     const tagIds = new Set(opportunity.eligibilities.map((e) => e.id));
-    const hasGradeTags = opportunity.eligibilities.some(
-        (e) => e.grade !== null,
+    const requiredGradeIds = new Set(
+        requiredTags(opportunity)
+            .filter((e) => e.grade !== null)
+            .map((e) => e.id),
     );
 
-    // An opportunity with no grade tags is open to every grade.
     const gradeMatches =
         !selectedGrades.length ||
-        !hasGradeTags ||
-        selectedGrades.some((e) => tagIds.has(e.id));
-    // A group filter only shows opportunities aimed at that group.
+        !requiredGradeIds.size ||
+        selectedGrades.some((e) => requiredGradeIds.has(e.id));
     const groupMatches =
         !selectedGroups.length || selectedGroups.some((e) => tagIds.has(e.id));
 
@@ -195,7 +203,7 @@ const compareOpportunities = (
         Number(isArchived(a, today)) - Number(isArchived(b, today));
     if (archivedOrder !== 0) return archivedOrder;
     if (sort === "newest") return b.created_at.localeCompare(a.created_at);
-    // Dated opportunities first, soonest deadline on top, then undated ones.
+    // soonest deadline first, then undated ones
     if (a.deadline === b.deadline) return a.title.localeCompare(b.title);
     if (a.deadline === null) return 1;
     if (b.deadline === null) return -1;
@@ -213,7 +221,7 @@ export const filterOpportunities = (
     filters: OpportunityFilters,
     categories: OpportunityCategory[],
     eligibilities: OpportunityEligibility[],
-    grade: number,
+    student: Student,
     today: string,
 ) =>
     sortOpportunities(
@@ -238,7 +246,7 @@ export const filterOpportunities = (
                     eligibilities,
                 ) &&
                 matchesCost(opportunity, filters.costRange) &&
-                (filters.showIneligible || !isIneligible(opportunity, grade))
+                (filters.showIneligible || !isIneligible(opportunity, student))
             );
         }),
         filters.sort,

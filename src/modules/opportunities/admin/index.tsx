@@ -12,11 +12,11 @@ import {
     adoptExistingMatch,
     applyEntryPatch,
     buildReview,
-    EntryPatch,
     findNoLongerListed,
     findPublishProblems,
     refreshChange,
     ReviewEntry,
+    ReviewPatch,
     toImportEntries,
 } from "../bulletin/sync";
 import { useOpportunities } from "../OpportunitiesContext";
@@ -27,11 +27,10 @@ import ReviewEntries from "./ReviewEntries";
 import ReviewHeader from "./ReviewHeader";
 
 const MAX_FILE_BYTES = 25 * 1024 * 1024;
-// Postgres code for errors the import function raises on purpose, whose
-// messages are written for admins
+// errors the import raises on purpose, written for admins
 const IMPORT_ERROR_CODE = "P0001";
 
-// Where keyboard focus goes after an upload or publish, so the result is read out
+// focused after an upload or publish, so the result is read out
 type FocusTarget =
     | "bulletin-review"
     | "bulletin-read-error"
@@ -111,7 +110,7 @@ const Admin = () => {
         const file = event.target.files?.[0];
         // let the same file be chosen again after fixing a problem
         event.target.value = "";
-        // the picker stays enabled so it keeps focus, but one PDF at a time
+        // one PDF at a time
         if (!file || progress !== null) return;
 
         setReadError(null);
@@ -157,27 +156,39 @@ const Admin = () => {
         }
     };
 
-    const updateEntry = (index: number, patch: EntryPatch) => {
+    const updateEntry = (index: number, patch: ReviewPatch) => {
         setReview((current) => {
             if (!current) return current;
             const entries = [...current.entries];
-            const patched = applyEntryPatch(
-                entries[index],
-                patch,
-                current.meta.publishedOn,
-            );
+            const { existingId, renameSettled, ...fields } = patch;
+            const patched = {
+                ...applyEntryPatch(
+                    entries[index],
+                    fields,
+                    current.meta.publishedOn,
+                ),
+                ...(existingId !== undefined && { existingId }),
+                ...(renameSettled !== undefined && { renameSettled }),
+            };
             entries[index] = refreshChange(
                 adoptExistingMatch(patched, opportunities, entries),
                 opportunities,
             );
+            const noLongerListed = findNoLongerListed(
+                entries,
+                opportunities,
+                current.meta,
+            );
+            const newlyUnlisted = noLongerListed
+                .map((o) => o.id)
+                .filter(
+                    (id) => !current.noLongerListed.some((o) => o.id === id),
+                );
             return {
                 ...current,
                 entries,
-                noLongerListed: findNoLongerListed(
-                    entries,
-                    opportunities,
-                    current.meta,
-                ),
+                noLongerListed,
+                archiveIds: [...current.archiveIds, ...newlyUnlisted],
             };
         });
     };
@@ -188,8 +199,7 @@ const Admin = () => {
     const publish = async () => {
         if (!review) return;
 
-        // Including an entry again takes it off the no-longer-listed list, but
-        // its id stays in archiveIds, so only archive what is still listed there.
+        // re-included entries leave the list but stay in archiveIds
         const archiveIds = review.noLongerListed
             .map((o) => o.id)
             .filter((id) => review.archiveIds.includes(id));

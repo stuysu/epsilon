@@ -1,7 +1,7 @@
 import { extractBulletinLines } from "./extract";
 import { parseBulletin } from "./parse";
 
-// pdf.js is large, so it only loads when an admin actually opens a bulletin.
+// pdf.js is large, so it loads only when needed
 export const readBulletinFile = async (
     file: File,
     onProgress?: (done: number, total: number) => void,

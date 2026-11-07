@@ -16,6 +16,8 @@ import {
     OpportunityCategory,
     OpportunityEligibility,
     OpportunityFilters,
+    OpportunityTag,
+    Student,
 } from "./types";
 import { DEFAULT_FILTERS } from "./utils";
 
@@ -37,16 +39,58 @@ const OPPORTUNITY_COLUMNS = `
     archived,
     created_at,
     categories:opportunity_categories (id, name, parent_id, position),
-    eligibilities:opportunity_eligibilities (id, name, grade, position)
+    eligibility_links:opportunity_eligibility_links (
+        preferred,
+        eligibility:opportunity_eligibilities (id, name, grade, position)
+    )
 `;
 
-// The server can cap how many rows one request returns, so the catalog,
-// which only grows, is read in pages.
+type OpportunityRow = Omit<Opportunity, "eligibilities"> & {
+    eligibility_links: {
+        preferred: boolean;
+        eligibility: OpportunityEligibility;
+    }[];
+};
+
+const toOpportunity = ({
+    eligibility_links,
+    ...row
+}: OpportunityRow): Opportunity => ({
+    ...row,
+    eligibilities: eligibility_links
+        .map(
+            ({ preferred, eligibility }): OpportunityTag => ({
+                ...eligibility,
+                preferred,
+            }),
+        )
+        .sort((a, b) => a.position - b.position),
+});
+
+// sensitive, so it stays in this browser
+const ABOUT_YOU_KEY = "opportunities-about-you";
+
+const readAboutYou = (): string[] | null => {
+    try {
+        const value = JSON.parse(localStorage.getItem(ABOUT_YOU_KEY) ?? "null");
+        return Array.isArray(value)
+            ? value.filter((v): v is string => typeof v === "string")
+            : null;
+    } catch {
+        return null;
+    }
+};
+
+const writeAboutYou = (groups: string[] | null) => {
+    try {
+        if (groups === null) localStorage.removeItem(ABOUT_YOU_KEY);
+        else localStorage.setItem(ABOUT_YOU_KEY, JSON.stringify(groups));
+    } catch {}
+};
+
+// the server can cap rows per request, so the catalog is read in pages
 const PAGE_SIZE = 1000;
 
-// Each page starts after the last id seen and the loop runs until a page
-// comes back empty, so a server cap below PAGE_SIZE or a row deleted mid-way
-// can't drop rows.
 const fetchAllOpportunities = async () => {
     const rows: Opportunity[] = [];
     let lastId = 0;
@@ -59,9 +103,9 @@ const fetchAllOpportunities = async () => {
             .limit(PAGE_SIZE);
         if (error) return { data: null, error };
         // stop on an empty page, or one with nothing new if the filter was ignored
-        const page = (data as unknown as Opportunity[]).filter(
-            (row) => row.id > lastId,
-        );
+        const page = (data as unknown as OpportunityRow[])
+            .filter((row) => row.id > lastId)
+            .map(toOpportunity);
         if (!page.length) return { data: rows, error: null };
         rows.push(...page);
         lastId = Math.max(...page.map((row) => row.id));
@@ -77,6 +121,8 @@ type OpportunitiesContextType = {
     latestBulletin: OpportunityBulletin | null;
     savedIds: Set<number>;
     setSaved: (opportunityId: number, saved: boolean) => Promise<void>;
+    student: Student;
+    setAboutYou: (groups: string[] | null) => void;
     reload: () => Promise<void>;
     // kept here so the catalog's filters survive a visit to a detail page
     catalogFilters: OpportunityFilters;
@@ -92,6 +138,8 @@ const OpportunitiesContext = createContext<OpportunitiesContextType>({
     latestBulletin: null,
     savedIds: new Set(),
     setSaved: async () => undefined,
+    student: { grade: 0, groups: null },
+    setAboutYou: () => undefined,
     reload: async () => undefined,
     catalogFilters: DEFAULT_FILTERS,
     setCatalogFilters: () => undefined,
@@ -119,6 +167,17 @@ export const OpportunitiesProvider = ({
     const [savedIds, setSavedIds] = useState<Set<number>>(new Set());
     const [catalogFilters, setCatalogFilters] =
         useState<OpportunityFilters>(DEFAULT_FILTERS);
+    const [aboutYou, setAboutYouState] = useState(readAboutYou);
+
+    const setAboutYou = useCallback((groups: string[] | null) => {
+        setAboutYouState(groups);
+        writeAboutYou(groups);
+    }, []);
+
+    const student = useMemo(
+        () => ({ grade: user.grade, groups: aboutYou }),
+        [user.grade, aboutYou],
+    );
 
     const load = useCallback(
         async (isCurrent: () => boolean = () => true) => {
@@ -231,6 +290,8 @@ export const OpportunitiesProvider = ({
             latestBulletin,
             savedIds,
             setSaved,
+            student,
+            setAboutYou,
             reload,
             catalogFilters,
             setCatalogFilters,
@@ -244,6 +305,8 @@ export const OpportunitiesProvider = ({
             latestBulletin,
             savedIds,
             setSaved,
+            student,
+            setAboutYou,
             reload,
             catalogFilters,
         ],

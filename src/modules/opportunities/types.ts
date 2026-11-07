@@ -12,6 +12,12 @@ export type OpportunityEligibility = {
     position: number;
 };
 
+// preferred tags say who it is especially for, not who can apply
+export type OpportunityTag = OpportunityEligibility & { preferred: boolean };
+
+// groups is null until the student fills in About You
+export type Student = { grade: number; groups: string[] | null };
+
 export type OpportunityBulletin = {
     id: number;
     issue: string;
@@ -38,7 +44,7 @@ export type Opportunity = {
     archived: boolean;
     created_at: string;
     categories: OpportunityCategory[];
-    eligibilities: OpportunityEligibility[];
+    eligibilities: OpportunityTag[];
 };
 
 export type OpportunityFilters = {
@@ -48,7 +54,7 @@ export type OpportunityFilters = {
     categoryIds: number[];
     eligibilityIds: number[];
     showIneligible: boolean;
-    // null means the full range, so unpriced opportunities are never hidden by default
+    // null is the full range, so unpriced ones show by default
     costRange: [number, number] | null;
     sort: "deadline" | "newest";
 };

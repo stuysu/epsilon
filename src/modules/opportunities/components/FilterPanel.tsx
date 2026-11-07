@@ -9,6 +9,7 @@ import {
     OpportunityFilters,
 } from "../types";
 import { DEFAULT_FILTERS, toggleValue } from "../utils";
+import { useOpportunities } from "../OpportunitiesContext";
 
 type FilterPanelProps = {
     filters: OpportunityFilters;
@@ -35,6 +36,53 @@ const FilterGroup = ({ title, action, children }: FilterGroupProps) => (
         {children}
     </section>
 );
+
+// not a filter, so Reset leaves it alone
+const AboutYou = ({ groups }: { groups: OpportunityEligibility[] }) => {
+    const { student, setAboutYou } = useOpportunities();
+    const chosen = student.groups;
+
+    const toggle = (name: string) => {
+        const next = toggleValue(chosen ?? [], name);
+        setAboutYou(next.length ? next : null);
+    };
+
+    return (
+        <FilterGroup
+            title="About You"
+            action={
+                chosen !== null && (
+                    <button
+                        type="button"
+                        onClick={() => setAboutYou(null)}
+                        className="cursor-pointer rounded text-sm text-typography-2 hover:text-typography-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                    >
+                        Clear
+                    </button>
+                )
+            }
+        >
+            <p className="text-sm text-typography-2">
+                Marks what you can&apos;t apply for. Saved only on this device.
+            </p>
+            <div className="flex flex-wrap gap-2">
+                {groups.map((group) => (
+                    <ToggleChip
+                        key={group.id}
+                        title={group.name}
+                        selected={chosen?.includes(group.name) ?? false}
+                        onChange={() => toggle(group.name)}
+                    />
+                ))}
+                <ToggleChip
+                    title="None of these"
+                    selected={chosen !== null && chosen.length === 0}
+                    onChange={(selected) => setAboutYou(selected ? [] : null)}
+                />
+            </div>
+        </FilterGroup>
+    );
+};
 
 type CategoryRowProps = {
     category: OpportunityCategory;
@@ -290,6 +338,10 @@ const FilterPanel = ({
                         ))}
                     </div>
                 </FilterGroup>
+
+                <AboutYou
+                    groups={eligibilities.filter((e) => e.grade === null)}
+                />
 
                 <FilterGroup
                     title="Eligibility"
