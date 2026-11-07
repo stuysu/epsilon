@@ -4,10 +4,15 @@ import { Link, useNavigate } from "react-router-dom";
 import SearchInput from "../../components/ui/input/SearchInput";
 import { OPPORTUNITY_SUBMISSION_URL } from "../../config/routes";
 import { useOpportunities } from "./OpportunitiesContext";
+import { getStatus, getTodayEastern } from "./utils";
+
+const SEARCH_LINK_CLASS =
+    "cursor-pointer rounded py-1 text-xs text-typography-2 underline hover:text-typography-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 disabled:cursor-default disabled:opacity-50";
 
 const Discover = () => {
     const navigate = useNavigate();
-    const { categories } = useOpportunities();
+    const { loading, failed, opportunities, categories, student } =
+        useOpportunities();
     const [query, setQuery] = useState("");
 
     const onSearch = (event: FormEvent) => {
@@ -20,66 +25,127 @@ const Discover = () => {
         );
     };
 
+    const today = getTodayEastern();
+    // only listings the student can still apply for
+    const active = opportunities.filter(
+        (o) => !getStatus(o, student, today).struck,
+    );
+    const openRandom = () => {
+        const pick = active[Math.floor(Math.random() * active.length)];
+        if (pick) navigate(`/opportunities/${pick.id}`);
+    };
+
     return (
-        <main>
+        <main className="relative overflow-x-clip">
             <Helmet>
                 <title>Opportunities - Epsilon</title>
             </Helmet>
 
-            <section className="flex flex-col items-center border-b border-divider px-4 pb-16 pt-20 max-sm:pt-24">
-                <h1 className="mb-14 text-center font-display text-7xl font-bold uppercase leading-none tracking-tight text-transparent [background-image:linear-gradient(90deg,var(--text-primary)_0%,#f6c1ff_50%,#a855f7_100%)] scheme-light:[background-image:linear-gradient(90deg,var(--text-primary)_0%,#9333ea_50%,#6b21a8_100%)] [background-clip:text] [-webkit-background-clip:text] max-sm:text-5xl">
-                    Find Your
-                    <br />
-                    Calling
+            <section className="relative flex flex-col items-center px-4 pb-10 pt-[clamp(3rem,16dvh-5rem,9rem)] max-sm:pt-32">
+                {/* darkened like the design's photo */}
+                <div
+                    aria-hidden="true"
+                    className="absolute inset-x-0 -top-[2.2rem] bottom-0 bg-[url('/media/opportunities-hero.webp')] bg-cover bg-[center_35%] brightness-[0.25] contrast-[0.75] saturate-[0.9] [mask-image:linear-gradient(to_bottom,black_72%,transparent)] scheme-light:opacity-30 scheme-light:brightness-100"
+                />
+                <h1 className="relative mb-[clamp(3.5rem,20dvh-4rem,9.5rem)] text-center font-['epsilon-geometric','neue-haas-grotesk-display',sans-serif] font-medium uppercase leading-[0.8] text-transparent [-webkit-background-clip:text] [background-clip:text] [background-image:linear-gradient(95deg,#f3fbef_0%,#fbe9e4_30%,#ffa3ec_62%,#c46cff_100%)] [font-variation-settings:normal] scheme-light:[background-image:linear-gradient(95deg,var(--text-primary)_0%,#9333ea_60%,#6b21a8_100%)] max-sm:mb-28">
+                    <span className="block text-[4.8rem] max-sm:text-[3.4rem]">
+                        Find Your
+                    </span>{" "}
+                    <span className="block text-[6.4rem] max-sm:text-[4.55rem]">
+                        Calling
+                    </span>
                 </h1>
 
                 <form
                     role="search"
                     onSubmit={onSearch}
-                    className="w-full max-w-2xl"
+                    className="relative w-full max-w-[52rem]"
                 >
                     <SearchInput
-                        placeholder="Find opportunities..."
+                        placeholder="Find Opportunities..."
                         aria-label="Search opportunities"
                         value={query}
                         onChange={setQuery}
+                        containerClassName="mb-3"
                     />
+                    <div className="flex flex-wrap gap-x-3 gap-y-1 pl-10">
+                        <Link
+                            to="/opportunities/catalog?all=1"
+                            className={SEARCH_LINK_CLASS}
+                        >
+                            Browse All
+                        </Link>
+                        <button
+                            type="button"
+                            onClick={openRandom}
+                            disabled={loading || !active.length}
+                            className={SEARCH_LINK_CLASS}
+                        >
+                            Random Opportunity
+                        </button>
+                    </div>
                 </form>
+            </section>
 
-                <div className="flex w-full max-w-2xl flex-wrap justify-center gap-2">
+            <div className="mx-auto w-full max-w-[59rem] px-14 pb-12 max-sm:px-4">
+                {failed && (
+                    <p role="alert" className="text-sm text-typography-2">
+                        Opportunities could not load. Refresh the page to try
+                        again.
+                    </p>
+                )}
+                <div className="relative flex flex-wrap gap-2">
                     {categories
                         .filter((category) => category.parent_id === null)
                         .map((category) => (
                             <Link
                                 key={category.id}
                                 to={`/opportunities/catalog?category=${category.id}`}
-                                className="max-w-full rounded-lg bg-layer-2 px-3 py-1 text-center text-sm text-typography-1 no-underline shadow-control transition-colors hover:bg-layer-3"
+                                className="max-w-full rounded-lg bg-layer-2 px-3 pb-[0.35rem] pt-1 text-sm text-typography-2 no-underline shadow-control transition-colors hover:bg-layer-3 hover:text-typography-1"
                             >
                                 {category.name}
                             </Link>
                         ))}
                 </div>
-            </section>
+            </div>
 
-            <section className="mx-auto max-w-3xl px-6 py-16">
-                <p className="mb-8 font-serif text-5xl leading-tight text-beige max-sm:text-3xl">
-                    The <em>largest</em> compendium of opportunities for
-                    Stuyvesant students to learn, grow, and explore.
-                </p>
-                <p className="text-sm text-typography-2">
-                    Running a program for high school students? Share it with
-                    Stuyvesant through{" "}
-                    <a
-                        href={OPPORTUNITY_SUBMISSION_URL}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="text-accent underline scheme-dark:text-typography-1"
-                    >
-                        Submit an Opportunity
-                    </a>
-                    .
-                </p>
-            </section>
+            {/* clips the box so it never runs into the footer */}
+            <div className="overflow-hidden">
+                <section className="mx-auto flex min-h-[calc(100dvh-2rem)] w-full max-w-[59rem] flex-col px-14 pb-6 pt-16 max-lg:min-h-0 max-sm:px-4 max-sm:pb-16">
+                    <p className="text-justify font-serif text-[clamp(2.25rem,6vw,5.4rem)] leading-[0.95] tracking-[-0.02em] text-transparent [background-image:linear-gradient(180deg,#fff6e0_0%,#c9a86a_45%,#7a5f30_100%)] scheme-light:[background-image:linear-gradient(180deg,#7a5f30_0%,#5c4520_100%)] [background-clip:text] [-webkit-background-clip:text] max-sm:text-left">
+                        The <em>largest</em> compendium of opportunities for
+                        Stuyvesant students to learn, grow, and explore.
+                    </p>
+                    {/* fills the room under the tagline */}
+                    <div className="relative flex-1 lg:min-h-[20rem]">
+                        <p className="relative z-10 mt-14 max-w-md text-sm text-typography-2">
+                            If you&apos;re an organization or business looking
+                            to advertise opportunities for students, fill out
+                            this{" "}
+                            <a
+                                href={OPPORTUNITY_SUBMISSION_URL}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="text-accent underline"
+                            >
+                                submission form
+                                <span className="sr-only">
+                                    {" "}
+                                    (opens in a new tab)
+                                </span>
+                            </a>
+                            .
+                        </p>
+                        <img
+                            src="/media/opportunities-box.webp"
+                            alt=""
+                            width={700}
+                            height={393}
+                            className="pointer-events-none absolute bottom-0 right-[max(-14rem,calc(29.5rem-50vw))] h-full max-h-[min(34rem,40vw)] w-auto max-w-none max-lg:hidden"
+                        />
+                    </div>
+                </section>
+            </div>
         </main>
     );
 };

@@ -14,17 +14,20 @@ import {
     buildReview,
     findNoLongerListed,
     findPublishProblems,
+    moveAdminEdits,
     refreshChange,
     ReviewEntry,
     ReviewPatch,
+    suggestArchive,
     toImportEntries,
 } from "../bulletin/sync";
+import useLeaveWarning from "../../../utils/useLeaveWarning";
 import { useOpportunities } from "../OpportunitiesContext";
 import { Opportunity } from "../types";
-import { formatDate, pluralize } from "../utils";
-import NoLongerListed from "./NoLongerListed";
-import ReviewEntries from "./ReviewEntries";
-import ReviewHeader from "./ReviewHeader";
+import { formatDate, getTodayEastern, pluralize } from "../utils";
+import NoLongerListed from "./components/NoLongerListed";
+import ReviewEntries from "./components/ReviewEntries";
+import ReviewHeader from "./components/ReviewHeader";
 
 const MAX_FILE_BYTES = 25 * 1024 * 1024;
 // errors the import raises on purpose, written for admins
@@ -42,6 +45,10 @@ type ReviewState = {
     entries: ReviewEntry[];
     noLongerListed: Opportunity[];
     archiveIds: number[];
+    // every one listed so far, so a choice survives it leaving and coming back
+    shownIds: number[];
+    // the rows it was compared against, kept even if the page reloads them
+    baseline: Opportunity[];
 };
 
 const Admin = () => {
@@ -50,7 +57,6 @@ const Admin = () => {
     const {
         loading,
         failed,
-        opportunities,
         categories,
         eligibilities,
         latestBulletin,
@@ -64,6 +70,7 @@ const Admin = () => {
         null,
     );
     const [focusTarget, setFocusTarget] = useState<FocusTarget | null>(null);
+    useLeaveWarning(review !== null);
 
     useEffect(() => {
         if (!focusTarget) return;
@@ -74,9 +81,13 @@ const Admin = () => {
     const publishProblems = useMemo(
         () =>
             review
-                ? findPublishProblems(review.entries, categories, opportunities)
+                ? findPublishProblems(
+                      review.entries,
+                      categories,
+                      review.baseline,
+                  )
                 : [],
-        [review, categories, opportunities],
+        [review, categories],
     );
 
     if (user.permission !== "ADMIN") {
@@ -110,7 +121,6 @@ const Admin = () => {
         const file = event.target.files?.[0];
         // let the same file be chosen again after fixing a problem
         event.target.value = "";
-        // one PDF at a time
         if (!file || progress !== null) return;
 
         setReadError(null);
@@ -131,17 +141,24 @@ const Admin = () => {
                     setProgress(`Reading page ${done} of ${total}...`);
                 },
             );
+            // compare against the latest rows, not the ones loaded with the page
+            setProgress("Checking the current catalog...");
+            const latest = await reload();
+            if (!latest) return;
+            const reviewEntries = buildReview(entries, latest);
             const noLongerListed = findNoLongerListed(
-                entries,
-                opportunities,
+                reviewEntries,
+                latest,
                 meta,
             );
             setReview({
                 meta,
                 fileName: file.name,
-                entries: buildReview(entries, opportunities),
+                entries: reviewEntries,
                 noLongerListed,
-                archiveIds: noLongerListed.map((o) => o.id),
+                archiveIds: suggestArchive(noLongerListed, getTodayEastern()),
+                shownIds: noLongerListed.map((o) => o.id),
+                baseline: latest,
             });
             setFocusTarget("bulletin-review");
         } catch (error) {
@@ -170,25 +187,36 @@ const Admin = () => {
                 ...(existingId !== undefined && { existingId }),
                 ...(renameSettled !== undefined && { renameSettled }),
             };
-            entries[index] = refreshChange(
-                adoptExistingMatch(patched, opportunities, entries),
-                opportunities,
-            );
+            const previousId = entries[index].existingId;
+            const baseline = current.baseline;
+            let next = adoptExistingMatch(patched, baseline, entries);
+            if (next.existingId !== previousId) {
+                const byId = (id: number | null) =>
+                    baseline.find((o) => o.id === id);
+                next = moveAdminEdits(
+                    next,
+                    byId(previousId),
+                    byId(next.existingId),
+                );
+            }
+            entries[index] = refreshChange(next, baseline);
             const noLongerListed = findNoLongerListed(
                 entries,
-                opportunities,
+                baseline,
                 current.meta,
             );
-            const newlyUnlisted = noLongerListed
-                .map((o) => o.id)
-                .filter(
-                    (id) => !current.noLongerListed.some((o) => o.id === id),
-                );
+            const firstShown = noLongerListed.filter(
+                (o) => !current.shownIds.includes(o.id),
+            );
             return {
                 ...current,
                 entries,
                 noLongerListed,
-                archiveIds: [...current.archiveIds, ...newlyUnlisted],
+                archiveIds: [
+                    ...current.archiveIds,
+                    ...suggestArchive(firstShown, getTodayEastern()),
+                ],
+                shownIds: [...current.shownIds, ...firstShown.map((o) => o.id)],
             };
         });
     };
@@ -207,6 +235,7 @@ const Admin = () => {
             review.entries,
             categories,
             eligibilities,
+            review.baseline,
         );
 
         const { error } = await supabase.rpc("import_opportunity_bulletin", {
@@ -260,7 +289,7 @@ const Admin = () => {
 
             {publishedSummary && (
                 <div id="bulletin-published" tabIndex={-1}>
-                    {/* focus moves here, which reads it out, so it needn't be live too */}
+                    {/* focus moves here, so it needn't be live */}
                     <AlertBanner
                         severity="success"
                         live="off"
@@ -273,7 +302,7 @@ const Admin = () => {
                 </div>
             )}
 
-            <section className="flex flex-wrap items-center gap-4 rounded-2xl bg-layer-1 p-6 shadow-control">
+            <section className="flex flex-wrap items-center gap-4 rounded-2xl bg-layer-1 p-6 shadow-control max-sm:p-4">
                 <AsyncButton
                     component="label"
                     isPrimary
@@ -286,14 +315,23 @@ const Admin = () => {
                         accept="application/pdf,.pdf"
                         className="sr-only"
                         disabled={loading}
+                        onClick={(event) => {
+                            if (
+                                review &&
+                                !window.confirm(
+                                    "Choose another PDF? This review and its changes will be lost.",
+                                )
+                            ) {
+                                event.preventDefault();
+                            }
+                        }}
                         onChange={onFileChosen}
                     />
                 </AsyncButton>
-                <p className="text-sm text-typography-2">
-                    {progress ??
-                        "Use the Long version. Nothing goes live until you publish."}
-                </p>
-                {/* page-by-page progress would be too chatty to read out */}
+                {progress && (
+                    <p className="text-sm text-typography-2">{progress}</p>
+                )}
+                {/* per-page progress would be too chatty */}
                 <p role="status" className="sr-only">
                     {progress ? "Reading the bulletin PDF." : ""}
                 </p>
@@ -316,6 +354,12 @@ const Admin = () => {
                         isOlderIssue={isOlderIssue}
                         onPublish={publish}
                     />
+                    <ReviewEntries
+                        entries={review.entries}
+                        categories={categories}
+                        eligibilities={eligibilities}
+                        onChange={updateEntry}
+                    />
                     {review.noLongerListed.length > 0 && (
                         <NoLongerListed
                             opportunities={review.noLongerListed}
@@ -323,12 +367,6 @@ const Admin = () => {
                             onChange={setArchiveIds}
                         />
                     )}
-                    <ReviewEntries
-                        entries={review.entries}
-                        categories={categories}
-                        eligibilities={eligibilities}
-                        onChange={updateEntry}
-                    />
                 </>
             )}
         </main>

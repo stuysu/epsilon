@@ -81,6 +81,14 @@ const TextField = ({
 
     const filled =
         value === undefined ? typed : value !== null && String(value) !== "";
+    // the browser always shows a format like mm/dd/yyyy in these
+    const showsFormat = [
+        "date",
+        "time",
+        "datetime-local",
+        "month",
+        "week",
+    ].includes(props.type ?? "");
 
     const sharedProps = {
         "aria-label": typeof label === "string" ? label : undefined,
@@ -117,7 +125,7 @@ const TextField = ({
             error={error}
             disabled={disabled}
             focused={focused}
-            shrink={focused || filled || Boolean(startAdornment)}
+            shrink={focused || filled || showsFormat || Boolean(startAdornment)}
             helperText={helperText && <span id={helperId}>{helperText}</span>}
             fullWidth={fullWidth}
             className={className}

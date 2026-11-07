@@ -8,7 +8,7 @@ import {
     OpportunityEligibility,
     OpportunityFilters,
 } from "../types";
-import { DEFAULT_FILTERS, toggleValue } from "../utils";
+import { toggleValue } from "../utils";
 import { useOpportunities } from "../OpportunitiesContext";
 
 type FilterPanelProps = {
@@ -63,7 +63,7 @@ const AboutYou = ({ groups }: { groups: OpportunityEligibility[] }) => {
             }
         >
             <p className="text-sm text-typography-2">
-                Marks what you can&apos;t apply for. Saved only on this device.
+                Pick any that describe you.
             </p>
             <div className="flex flex-wrap gap-2">
                 {groups.map((group) => (
@@ -83,6 +83,29 @@ const AboutYou = ({ groups }: { groups: OpportunityEligibility[] }) => {
         </FilterGroup>
     );
 };
+
+type SubcategoryOptionProps = {
+    label: string;
+    checked: boolean;
+    onChange: () => void;
+};
+
+const SubcategoryOption = ({
+    label,
+    checked,
+    onChange,
+}: SubcategoryOptionProps) => (
+    <button
+        type="button"
+        role="checkbox"
+        aria-checked={checked}
+        onClick={onChange}
+        className="flex cursor-pointer items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-sm text-typography-1 outline-0 hover:bg-layer-3 focus-visible:bg-layer-3"
+    >
+        {label}
+        {checked && <i className="bx bx-check" aria-hidden="true" />}
+    </button>
+);
 
 type CategoryRowProps = {
     category: OpportunityCategory;
@@ -107,7 +130,7 @@ const CategoryRow = ({
     const allSelected = selectedIds.includes(category.id);
     const pressed = allSelected || selectedSubs.length > 0;
     const headingId = useId();
-    // the name includes the count shown on the button, so voice control matches it
+    // matches the button's visible count for voice control
     const triggerLabel = `${category.name} subcategories${
         selectedSubs.length
             ? `, ${selectedSubs.length} of ${subcategories.length} selected`
@@ -148,7 +171,7 @@ const CategoryRow = ({
                 <Popover.Root>
                     <Popover.Trigger
                         aria-label={triggerLabel}
-                        // a taller invisible hit area, short of the rows above and below
+                        // a taller hit area, short of the rows around it
                         className="relative flex cursor-pointer items-center gap-1 px-2 py-1 text-sm after:absolute after:-inset-y-[7px] after:left-0 after:-right-1 after:content-['']"
                     >
                         {selectedSubs.length > 0 &&
@@ -162,15 +185,16 @@ const CategoryRow = ({
                             sideOffset={8}
                             collisionPadding={16}
                             aria-labelledby={headingId}
-                            className="z-50 flex w-56 flex-col gap-1 rounded-xl border border-divider bg-bg p-3 shadow-prominent"
+                            className="z-50 flex w-60 flex-col rounded-xl border border-divider bg-bg p-1 shadow-2xl"
                         >
                             <p
                                 id={headingId}
-                                className="important text-sm text-typography-2"
+                                className="px-3 pb-1 pt-2 text-sm text-typography-2"
                             >
-                                Filter {category.name}
+                                Filter Sub-Categories
                             </p>
-                            <CheckboxField
+                            <SubcategoryOption
+                                label={`All ${category.name} Items`}
                                 checked={allSelected}
                                 onChange={() =>
                                     onChange(
@@ -179,14 +203,13 @@ const CategoryRow = ({
                                             : [...withoutFamily, category.id],
                                     )
                                 }
-                                label={`All ${category.name}`}
                             />
                             {subcategories.map((sub) => (
-                                <CheckboxField
+                                <SubcategoryOption
                                     key={sub.id}
+                                    label={sub.name}
                                     checked={selectedIds.includes(sub.id)}
                                     onChange={() => toggleSub(sub.id)}
-                                    label={sub.name}
                                 />
                             ))}
                         </Popover.Content>
@@ -224,22 +247,13 @@ const FilterPanel = ({
         <div className="flex flex-col">
             <SearchInput
                 id="opportunity-search"
-                placeholder="Search anything..."
+                placeholder="Search Anything..."
                 aria-label="Search opportunities"
                 value={filters.query}
                 onChange={(query) => update({ query })}
-                inputClassName="pr-20"
+                inputClassName="pr-12"
                 trailing={
                     <div className="absolute right-1 top-1/2 z-10 flex -translate-y-1/2">
-                        <button
-                            type="button"
-                            aria-label="Reset all filters"
-                            title="Reset all filters"
-                            onClick={() => onChange(DEFAULT_FILTERS)}
-                            className="flex h-10 w-9 cursor-pointer items-center justify-center rounded-lg text-typography-2 hover:text-typography-1"
-                        >
-                            <i className="bx bx-reset" aria-hidden="true" />
-                        </button>
                         <button
                             type="button"
                             aria-label={sortLabel}
@@ -344,14 +358,14 @@ const FilterPanel = ({
                 />
 
                 <FilterGroup
-                    title="Eligibility"
+                    title="Open To"
                     action={
                         <CheckboxField
                             checked={filters.showIneligible}
                             onChange={(showIneligible) =>
                                 update({ showIneligible })
                             }
-                            label="Show ineligible"
+                            label="Show Ineligible"
                         />
                     }
                 >
@@ -406,7 +420,7 @@ const FilterPanel = ({
                             <Slider.Track className="relative h-1 grow rounded-full bg-layer-3">
                                 <Slider.Range className="absolute h-full rounded-full bg-accent" />
                             </Slider.Track>
-                            {/* each thumb's hit area reaches 24px past its 16px dot */}
+                            {/* thumb hit areas reach 24px past the dot */}
                             <Slider.Thumb
                                 aria-label="Minimum cost"
                                 aria-valuetext={formatDollars(draftCost[0])}

@@ -1,6 +1,6 @@
 import { KeyboardEvent, useState } from "react";
-import { ReviewEntry, ReviewPatch } from "../bulletin/sync";
-import { OpportunityCategory, OpportunityEligibility } from "../types";
+import { ReviewEntry, ReviewPatch } from "../../bulletin/sync";
+import { OpportunityCategory, OpportunityEligibility } from "../../types";
 import ReviewRow from "./ReviewRow";
 
 type ReviewView = "attention" | "new" | "changed" | "notIncluded" | "all";
@@ -41,7 +41,7 @@ const ReviewEntries = ({
     onChange,
 }: ReviewEntriesProps) => {
     const [view, setView] = useState<ReviewView>("attention");
-    // a row being edited stays even once its fix moves it out of this view
+    // the row being edited stays in view
     const [editedIndexes, setEditedIndexes] = useState<number[]>([]);
 
     const changeView = (next: ReviewView) => {
@@ -56,7 +56,6 @@ const ReviewEntries = ({
         onChange(index, patch);
     };
 
-    // arrow keys move between views, as in any radio group
     const onViewKeyDown = (event: KeyboardEvent<HTMLButtonElement>) => {
         const step = {
             ArrowRight: 1,

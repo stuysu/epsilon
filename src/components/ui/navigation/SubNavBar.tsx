@@ -22,7 +22,7 @@ const OPPORTUNITIES_ITEMS = [
     { label: "Catalog", path: "/opportunities/catalog" },
     { label: "My Opportunities", path: "/opportunities/saved" },
     {
-        label: "Submit an Opportunity",
+        label: "Advertise",
         path: OPPORTUNITY_SUBMISSION_URL,
         external: true,
     },
@@ -101,6 +101,10 @@ const SubNavBar: FC = () => {
                             className={className}
                         >
                             {label}
+                            <span className="sr-only">
+                                {" "}
+                                (opens in a new tab)
+                            </span>
                         </a>
                     ) : (
                         <Link

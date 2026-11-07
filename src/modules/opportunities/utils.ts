@@ -16,7 +16,7 @@ export const DEFAULT_FILTERS: OpportunityFilters = {
     deadlines: [],
     categoryIds: [],
     eligibilityIds: [],
-    showIneligible: true,
+    showIneligible: false,
     costRange: null,
     sort: "deadline",
 };
@@ -97,7 +97,10 @@ export const getStatus = (
     }
     if (opportunity.deadline) {
         return {
-            label: `Apply by ${formatDate(opportunity.deadline)}`,
+            label:
+                opportunity.deadline === today
+                    ? "Due Today"
+                    : `Apply by ${formatDate(opportunity.deadline)}`,
             icon: "bx-time-five",
             tone:
                 daysUntil(opportunity.deadline, today) <= URGENT_DAYS
@@ -172,10 +175,13 @@ const matchesDeadline = (
     today: string,
 ) => {
     if (!deadlines.length) return true;
-    if (isRollingText(opportunity.deadline_text)) {
-        return deadlines.includes("rolling");
+    // a set date wins over rolling wording, as in getStatus
+    if (!opportunity.deadline) {
+        return (
+            deadlines.includes("rolling") &&
+            isRollingText(opportunity.deadline_text)
+        );
     }
-    if (!opportunity.deadline) return false;
     const days = daysUntil(opportunity.deadline, today);
     return deadlines.includes("week") && days >= 0 && days <= 7;
 };
@@ -203,7 +209,6 @@ const compareOpportunities = (
         Number(isArchived(a, today)) - Number(isArchived(b, today));
     if (archivedOrder !== 0) return archivedOrder;
     if (sort === "newest") return b.created_at.localeCompare(a.created_at);
-    // soonest deadline first, then undated ones
     if (a.deadline === b.deadline) return a.title.localeCompare(b.title);
     if (a.deadline === null) return 1;
     if (b.deadline === null) return -1;

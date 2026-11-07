@@ -1,8 +1,8 @@
-import AlertBanner from "../../../components/ui/AlertBanner";
-import AsyncButton from "../../../components/ui/buttons/AsyncButton";
-import { BulletinMeta } from "../bulletin/parse";
-import { ReviewEntry } from "../bulletin/sync";
-import { formatDate, pluralize } from "../utils";
+import AlertBanner from "../../../../components/ui/AlertBanner";
+import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
+import { BulletinMeta } from "../../bulletin/parse";
+import { ReviewEntry } from "../../bulletin/sync";
+import { formatDate, pluralize } from "../../utils";
 
 type ReviewHeaderProps = {
     meta: BulletinMeta;
@@ -27,7 +27,7 @@ const ReviewHeader = ({
         <>
             <header className="flex flex-wrap items-start justify-between gap-4">
                 <div>
-                    {/* focused once the PDF is read, so the review is announced */}
+                    {/* focused once the PDF is read */}
                     <h2 id="bulletin-review" tabIndex={-1} className="mb-1">
                         Review Bulletin #{meta.issue}
                     </h2>

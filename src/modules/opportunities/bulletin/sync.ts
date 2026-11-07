@@ -21,6 +21,10 @@ export type ReviewEntry = ParsedEntry & {
     // a catalog row this entry may be a reworded copy of
     renameCandidate: { id: number; title: string } | null;
     renameSettled: boolean;
+    // admin edits that differ from this bulletin, kept over it
+    keptEdits: string[];
+    // the entry as read, to fall back on when it's linked to another row
+    bulletinValues: ParsedEntry;
     tagsChosenByHand: boolean;
     deadlineChosenByHand: boolean;
 };
@@ -169,6 +173,104 @@ export const findRenames = (
     return renames;
 };
 
+const tagNames = (existing: Opportunity, preferred: boolean) =>
+    existing.eligibilities
+        .filter((e) => e.preferred === preferred)
+        .map((e) => e.name);
+
+// title_key is left as the bulletin's, so the next bulletin still matches
+const EDITED_FIELDS: Record<
+    string,
+    [string, (existing: Opportunity) => Partial<ParsedEntry>]
+> = {
+    title: ["Title", (o) => ({ title: o.title })],
+    description: ["Description", (o) => ({ description: o.description })],
+    date_text: ["Dates", (o) => ({ dateText: o.date_text })],
+    location: ["Location", (o) => ({ location: o.location })],
+    cost_text: [
+        "Cost",
+        (o) => ({
+            costText: o.cost_text,
+            costMin: o.cost_min,
+            costMax: o.cost_max,
+        }),
+    ],
+    deadline: [
+        "Deadline",
+        (o) => ({ deadline: o.deadline, deadlineText: o.deadline_text }),
+    ],
+    eligibility_text: [
+        "Eligibility",
+        (o) => ({ eligibilityText: o.eligibility_text }),
+    ],
+    links: ["Links", (o) => ({ links: o.links })],
+    categories: [
+        "Categories",
+        (o) => ({ categories: o.categories.map((c) => c.name) }),
+    ],
+    eligibilities: [
+        "Eligibility tags",
+        (o) => ({
+            eligibilityTags: tagNames(o, false),
+            preferredTags: tagNames(o, true),
+            eligibilityUnclear: false,
+        }),
+    ],
+};
+
+export const keepAdminEdits = <T extends ParsedEntry>(
+    entry: T,
+    existing: Opportunity | undefined,
+): T & { keptEdits: string[] } => {
+    const keptEdits: string[] = [];
+    let next = { ...entry };
+    existing?.edited_fields.forEach((field) => {
+        if (!EDITED_FIELDS[field]) return;
+        const [label, read] = EDITED_FIELDS[field];
+        const kept = read(existing);
+        const differs = Object.entries(kept).some(
+            ([key, value]) =>
+                JSON.stringify(value) !==
+                JSON.stringify(next[key as keyof ParsedEntry]),
+        );
+        if (differs) keptEdits.push(label);
+        next = { ...next, ...kept };
+    });
+    if (keptEdits.length) next.warnings = getEntryWarnings(next);
+    return { ...next, keptEdits };
+};
+
+// an admin's own deadline or tags shouldn't be re-read from edited wording
+export const chosenByHand = (existing: Opportunity | undefined) => ({
+    tagsChosenByHand:
+        existing?.edited_fields.includes("eligibilities") ?? false,
+    deadlineChosenByHand: existing?.edited_fields.includes("deadline") ?? false,
+});
+
+// after a link or unlink, drop the old row's edits and keep the new row's
+export const moveAdminEdits = (
+    entry: ReviewEntry,
+    previous: Opportunity | undefined,
+    next: Opportunity | undefined,
+): ReviewEntry => {
+    let restored: ReviewEntry = { ...entry, keptEdits: [] };
+    previous?.edited_fields.forEach((field) => {
+        if (!EDITED_FIELDS[field]) return;
+        const keys = Object.keys(EDITED_FIELDS[field][1](previous));
+        restored = {
+            ...restored,
+            ...Object.fromEntries(
+                keys.map((key) => [
+                    key,
+                    entry.bulletinValues[key as keyof ParsedEntry],
+                ]),
+            ),
+        };
+    });
+    restored.warnings = getEntryWarnings(restored);
+    return { ...keepAdminEdits(restored, next), ...chosenByHand(next) };
+};
+
 // title is the match key, so ids and saved lists carry over week to week
 export const buildReview = (
     entries: ParsedEntry[],
@@ -187,16 +289,17 @@ export const buildReview = (
         const rename = renames.get(entry);
         const match =
             matches[i] ?? (rename?.sure ? rename.opportunity : undefined);
+        const kept = keepAdminEdits(entry, match);
         return {
-            ...entry,
-            ...describeChange(entry, match),
+            ...kept,
+            ...describeChange(kept, match),
+            ...chosenByHand(match),
             existingId: match?.id ?? null,
             renameCandidate: rename
                 ? { id: rename.opportunity.id, title: rename.opportunity.title }
                 : null,
             renameSettled: false,
-            tagsChosenByHand: false,
-            deadlineChosenByHand: false,
+            bulletinValues: entry,
         };
     });
 };
@@ -239,11 +342,21 @@ export const findNoLongerListed = (
     const listedKeys = new Set(included.map((e) => e.titleKey));
     // a renamed entry still lists the row it updates
     const listedIds = new Set(included.map((e) => e.existingId));
+    // an admin who restored one has decided to keep it
     return existing.filter(
         (o) =>
-            !o.archived && !listedKeys.has(o.title_key) && !listedIds.has(o.id),
+            !o.archived &&
+            !o.edited_fields.includes("archived") &&
+            !listedKeys.has(o.title_key) &&
+            !listedIds.has(o.id),
     );
 };
+
+// one still open by its deadline may have been left out by mistake
+export const suggestArchive = (unlisted: Opportunity[], today: string) =>
+    unlisted
+        .filter((o) => o.deadline === null || o.deadline < today)
+        .map((o) => o.id);
 
 export type EntryPatch = Partial<
     Pick<
@@ -319,7 +432,7 @@ export const findPublishProblems = (
     included.forEach((entry) => {
         const other = existingByKey.get(entry.titleKey);
         if (!entry.titleKey) {
-            problems.push("An included opportunity has no title.");
+            problems.push("An opportunity has no title.");
         } else if (seen.has(entry.titleKey)) {
             problems.push(`"${entry.title}" is listed twice.`);
         } else if (other && other.id !== (entry.existingId ?? null)) {
@@ -353,6 +466,8 @@ export const toImportEntries = (
     entries: (ParsedEntry & { existingId?: number | null })[],
     categories: OpportunityCategory[],
     eligibilities: OpportunityEligibility[],
+    // the rows the review was built from, so the import can spot later edits
+    existing: Opportunity[] = [],
 ) => {
     const idsFor = (names: string[], options: { id: number; name: string }[]) =>
         options.filter((o) => names.includes(o.name)).map((o) => o.id);
@@ -361,6 +476,9 @@ export const toImportEntries = (
         .filter((entry) => entry.include)
         .map((entry) => ({
             id: entry.existingId ?? null,
+            edited_at:
+                existing.find((o) => o.id === entry.existingId)?.edited_at ??
+                null,
             title: entry.title.trim(),
             title_key: entry.titleKey,
             description: entry.description,

@@ -42,6 +42,11 @@ export type Opportunity = {
     links: string[];
     bulletin_label: string | null;
     archived: boolean;
+    // changed by an admin, so the review keeps them over the bulletin's
+    edited_fields: string[];
+    edited_at: string | null;
+    // any change, so an edit can tell it started from old data
+    updated_at: string;
     created_at: string;
     categories: OpportunityCategory[];
     eligibilities: OpportunityTag[];
@@ -54,7 +59,7 @@ export type OpportunityFilters = {
     categoryIds: number[];
     eligibilityIds: number[];
     showIneligible: boolean;
-    // null is the full range, so unpriced ones show by default
+    // null is the full range; unpriced ones always show
     costRange: [number, number] | null;
     sort: "deadline" | "newest";
 };

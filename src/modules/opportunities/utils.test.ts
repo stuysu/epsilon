@@ -71,6 +71,9 @@ const make = (overrides: Partial<Opportunity> = {}): Opportunity => ({
     links: [],
     bulletin_label: null,
     archived: false,
+    edited_fields: [],
+    edited_at: null,
+    updated_at: "2026-01-01T00:00:00Z",
     created_at: "2026-01-01T00:00:00Z",
     categories: [],
     eligibilities: [],
@@ -138,7 +141,7 @@ describe("isIneligible", () => {
 describe("getStatus", () => {
     it("treats a deadline as open through its whole day", () => {
         const status = getStatus(make({ deadline: TODAY }), JUNIOR, TODAY);
-        expect(status.label).toBe("Apply by November 2");
+        expect(status.label).toBe("Due Today");
         expect(status.tone).toBe("urgent");
     });
 
@@ -224,13 +227,13 @@ describe("filterOpportunities", () => {
         expect(run(list, { eligibilityIds: [3] }).sort()).toEqual([1, 2]);
     });
 
-    it("hides ineligible opportunities only when asked", () => {
+    it("hides ineligible opportunities unless asked to show them", () => {
         const list = [
             make({ id: 1, eligibilities: [senior] }),
             make({ id: 2 }),
         ];
-        expect(run(list).sort()).toEqual([1, 2]);
-        expect(run(list, { showIneligible: false })).toEqual([2]);
+        expect(run(list)).toEqual([2]);
+        expect(run(list, { showIneligible: true }).sort()).toEqual([1, 2]);
     });
 
     it("matches cost ranges and always shows unpriced ones", () => {
@@ -254,6 +257,14 @@ describe("filterOpportunities", () => {
         expect(run(list, { statuses: ["archived"] })).toEqual([4]);
         expect(run(list, { deadlines: ["week"] })).toEqual([1]);
         expect(run(list, { deadlines: ["rolling"] }).sort()).toEqual([3, 4]);
+    });
+
+    it("treats rolling wording with a set date as dated", () => {
+        const list = [
+            make({ id: 1, deadline: "2026-11-05", deadline_text: "Rolling" }),
+        ];
+        expect(run(list, { deadlines: ["week"] })).toEqual([1]);
+        expect(run(list, { deadlines: ["rolling"] })).toEqual([]);
     });
 
     it("sorts soonest first, then undated, with archived last", () => {

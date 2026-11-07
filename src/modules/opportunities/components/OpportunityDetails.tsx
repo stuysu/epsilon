@@ -46,7 +46,9 @@ const OpportunityDetails = ({
                                 aria-hidden="true"
                             />
                             <span className="sr-only">{label}:</span>
-                            {text}
+                            <span className="min-w-0 [overflow-wrap:anywhere]">
+                                {text}
+                            </span>
                         </li>
                     ),
             )}

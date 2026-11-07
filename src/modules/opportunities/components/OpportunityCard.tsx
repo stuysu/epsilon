@@ -1,4 +1,4 @@
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { useOpportunities } from "../OpportunitiesContext";
 import { Opportunity } from "../types";
 import { getStatus, getTodayEastern } from "../utils";
@@ -12,21 +12,23 @@ type OpportunityCardProps = {
 
 const OpportunityCard = ({ opportunity }: OpportunityCardProps) => {
     const { student } = useOpportunities();
+    const { pathname } = useLocation();
     const status = getStatus(opportunity, student, getTodayEastern());
     const [mainCategory, ...otherCategories] = opportunity.categories;
     // "New" or "Deadline Today" means nothing once the listing has ended
     const label = status.struck ? null : opportunity.bulletin_label;
 
     return (
-        <article className="relative flex flex-col gap-3 rounded-2xl bg-layer-1 p-6 shadow-prominent transition-colors sm:hover:bg-layer-2">
+        <article className="relative flex flex-col gap-3 rounded-2xl [overflow-wrap:anywhere] bg-layer-1 p-6 shadow-prominent transition-colors sm:hover:bg-layer-2">
             {/* the badge drops below a long title on narrow phones */}
             <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
                 <h2
-                    className={`min-w-0 break-words text-xl font-semibold ${status.struck ? "line-through text-typography-2" : ""}`}
+                    className={`min-w-0 break-words text-xl font-semibold ${status.struck ? "text-typography-2 line-through" : "text-typography-1"}`}
                 >
                     {/* the link covers the whole card */}
                     <Link
                         to={`/opportunities/${opportunity.id}`}
+                        state={{ from: pathname }}
                         className="text-inherit no-underline after:absolute after:inset-0 after:rounded-2xl after:content-['']"
                     >
                         {opportunity.title}

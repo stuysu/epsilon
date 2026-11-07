@@ -11,14 +11,15 @@ import { getTodayEastern, sortOpportunities } from "./utils";
 const Saved = () => {
     const { loading, failed, opportunities, savedIds } = useOpportunities();
 
+    const today = getTodayEastern();
     const saved = useMemo(
         () =>
             sortOpportunities(
                 opportunities.filter((o) => savedIds.has(o.id)),
                 "deadline",
-                getTodayEastern(),
+                today,
             ),
-        [opportunities, savedIds],
+        [opportunities, savedIds, today],
     );
 
     if (failed) {

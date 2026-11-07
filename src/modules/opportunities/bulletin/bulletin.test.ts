@@ -22,6 +22,8 @@ import {
     applyEntryPatch,
     buildReview,
     findNoLongerListed,
+    suggestArchive,
+    moveAdminEdits,
     findPublishProblems,
     toImportEntries,
 } from "./sync";
@@ -743,6 +745,9 @@ const makeExisting = (overrides: Partial<Opportunity> = {}): Opportunity => ({
     links: ["https://example.com"],
     bulletin_label: null,
     archived: false,
+    edited_fields: [],
+    edited_at: null,
+    updated_at: "2026-01-01T00:00:00Z",
     created_at: "2026-01-01T00:00:00Z",
     categories: [category(2, "Academic Programs")],
     eligibilities: [],
@@ -777,6 +782,135 @@ describe("buildReview", () => {
             "changed",
         ]);
         expect(review[2].changedFields).toEqual(["Deadline"]);
+    });
+});
+
+describe("admin edits", () => {
+    const edited = makeExisting({
+        title: "Science Program (Fixed)",
+        deadline: "2026-11-20",
+        deadline_text: "November 20",
+        edited_fields: ["deadline", "title"],
+        eligibilities: [],
+    });
+
+    it("keeps edited fields over the bulletin and still matches it", () => {
+        const [entry] = buildReview(
+            [makeEntry({ description: "New description" })],
+            [edited],
+        );
+        expect(entry).toMatchObject({
+            existingId: 9,
+            title: "Science Program (Fixed)",
+            titleKey: "scienceprogram",
+            deadline: "2026-11-20",
+            deadlineText: "November 20",
+            description: "New description",
+            keptEdits: ["Deadline", "Title"],
+            changedFields: ["Description"],
+        });
+    });
+
+    it("only reports edits the bulletin disagrees with", () => {
+        const [entry] = buildReview(
+            [
+                makeEntry({
+                    title: "Science Program (Fixed)",
+                    deadline: "2026-11-20",
+                    deadlineText: "November 20",
+                }),
+            ],
+            [edited],
+        );
+        expect(entry.keptEdits).toEqual([]);
+        expect(entry.change).toBe("unchanged");
+    });
+
+    it("keeps edited tags and settles unclear eligibility", () => {
+        const [entry] = buildReview(
+            [
+                makeEntry({
+                    eligibilityTags: ["Junior"],
+                    eligibilityUnclear: true,
+                }),
+            ],
+            [
+                makeExisting({
+                    edited_fields: ["eligibilities"],
+                    eligibilities: [
+                        {
+                            id: 4,
+                            name: "Senior",
+                            grade: 12,
+                            position: 4,
+                            preferred: true,
+                        },
+                    ],
+                }),
+            ],
+        );
+        expect(entry).toMatchObject({
+            eligibilityTags: [],
+            preferredTags: ["Senior"],
+            eligibilityUnclear: false,
+            keptEdits: ["Eligibility tags"],
+        });
+    });
+
+    it("treats an edited deadline as chosen by hand", () => {
+        const [entry] = buildReview([makeEntry()], [edited]);
+        expect(entry.deadlineChosenByHand).toBe(true);
+        expect(entry.tagsChosenByHand).toBe(false);
+    });
+
+    it("drops kept edits when unlinked, and keeps the new row's when linked", () => {
+        const [linked] = buildReview(
+            [makeEntry({ description: "New description" })],
+            [edited],
+        );
+        const unlinked = moveAdminEdits(
+            { ...linked, existingId: null },
+            edited,
+            undefined,
+        );
+        expect(unlinked).toMatchObject({
+            title: makeEntry().title,
+            deadline: makeEntry().deadline,
+            description: "New description",
+            keptEdits: [],
+            deadlineChosenByHand: false,
+        });
+
+        const relinked = moveAdminEdits(
+            { ...unlinked, existingId: 9 },
+            undefined,
+            edited,
+        );
+        expect(relinked).toMatchObject({
+            title: "Science Program (Fixed)",
+            keptEdits: ["Deadline", "Title"],
+        });
+    });
+
+    it("doesn't suggest archiving one an admin restored", () => {
+        expect(
+            findNoLongerListed(
+                [],
+                [makeExisting({ edited_fields: ["archived"] })],
+                { issue: "12L", publishedOn: "2026-10-30", isLong: true },
+            ),
+        ).toEqual([]);
+    });
+});
+
+describe("suggestArchive", () => {
+    it("leaves ones still open by their deadline unchecked", () => {
+        const unlisted = [
+            makeExisting({ id: 1, deadline: "2026-11-06" }),
+            makeExisting({ id: 2, deadline: "2026-11-07" }),
+            makeExisting({ id: 3, deadline: null }),
+        ];
+        expect(suggestArchive(unlisted, "2026-11-07")).toEqual([1, 3]);
     });
 });
 
@@ -1004,8 +1138,8 @@ describe("fixing titles and dates in review", () => {
 describe("reworded titles", () => {
     const old = makeExisting({
         id: 20,
-        title: "Summer Science Program 2026",
-        title_key: "summerscienceprogram2026",
+        title: "Harborview Science Camp 2026",
+        title_key: "harborviewsciencecamp2026",
         links: ["https://example.org/ssp/apply"],
     });
 
@@ -1013,8 +1147,8 @@ describe("reworded titles", () => {
         const [entry] = buildReview(
             [
                 makeEntry({
-                    title: "Summer Science Program: Research Track",
-                    titleKey: "summerscienceprogramresearchtrack",
+                    title: "Harborview Science Camp: Research Track",
+                    titleKey: "harborviewsciencecampresearchtrack",
                     links: ["https://www.example.org/ssp/apply/"],
                 }),
             ],
@@ -1023,7 +1157,7 @@ describe("reworded titles", () => {
         expect(entry.existingId).toBe(20);
         expect(entry.renameCandidate).toEqual({
             id: 20,
-            title: "Summer Science Program 2026",
+            title: "Harborview Science Camp 2026",
         });
         expect(entry.change).toBe("changed");
     });
@@ -1032,8 +1166,8 @@ describe("reworded titles", () => {
         const [entry] = buildReview(
             [
                 makeEntry({
-                    title: "Summer Science Program 2027",
-                    titleKey: "summerscienceprogram2027",
+                    title: "Harborview Science Camp 2027",
+                    titleKey: "harborviewsciencecamp2027",
                     links: [],
                 }),
             ],
@@ -1058,22 +1192,22 @@ describe("reworded titles", () => {
     });
 
     it("ignores titles that only share common words", () => {
-        const splash = (id: number, school: string) =>
+        const teachDay = (id: number, school: string) =>
             makeExisting({
                 id,
-                title: `Splash at ${school} University`,
-                title_key: `splashat${school.toLowerCase()}university`,
+                title: `Teach Day at ${school} College`,
+                title_key: `teachdayat${school.toLowerCase()}college`,
                 links: [],
             });
         const [entry] = buildReview(
             [
                 makeEntry({
-                    title: "Splash at Princeton University",
-                    titleKey: "splashatprincetonuniversity",
+                    title: "Teach Day at Maple College",
+                    titleKey: "teachdayatmaplecollege",
                     links: [],
                 }),
             ],
-            [splash(1, "Stanford"), splash(2, "Cornell"), splash(3, "Brown")],
+            [teachDay(1, "Birch"), teachDay(2, "Cedar"), teachDay(3, "Willow")],
         );
         expect(entry.renameCandidate).toBeNull();
     });
@@ -1112,8 +1246,8 @@ describe("reworded titles", () => {
             [
                 makeEntry({ title: old.title, titleKey: old.title_key }),
                 makeEntry({
-                    title: "Summer Science Program 2027",
-                    titleKey: "summerscienceprogram2027",
+                    title: "Harborview Science Camp 2027",
+                    titleKey: "harborviewsciencecamp2027",
                 }),
             ],
             [old],
@@ -1127,8 +1261,8 @@ describe("reworded titles", () => {
         const review = buildReview(
             [
                 makeEntry({
-                    title: "Summer Science Program 2027",
-                    titleKey: "summerscienceprogram2027",
+                    title: "Harborview Science Camp 2027",
+                    titleKey: "harborviewsciencecamp2027",
                 }),
             ],
             [old],

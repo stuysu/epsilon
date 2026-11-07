@@ -1,4 +1,4 @@
-import { useLayoutEffect, useMemo, useState } from "react";
+import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
 import { Helmet } from "react-helmet";
 import { useSearchParams } from "react-router-dom";
 import AsyncButton from "../../components/ui/buttons/AsyncButton";
@@ -31,12 +31,35 @@ const Catalog = () => {
     } = useOpportunities();
     const [searchParams, setSearchParams] = useSearchParams();
     const [filtersOpen, setFiltersOpen] = useState(false);
+    const asideRef = useRef<HTMLElement>(null);
 
-    // a ?q= or ?category= link starts a fresh search; otherwise the last filters stay
+    // ends the filters at the window's bottom
+    useEffect(() => {
+        const aside = asideRef.current;
+        if (!aside) return;
+        const fit = () => {
+            const room =
+                window.innerHeight - aside.getBoundingClientRect().top - 24;
+            aside.style.setProperty("--filters-height", `${room}px`);
+        };
+        fit();
+        // the page scrolls in an inner box
+        document.addEventListener("scroll", fit, {
+            capture: true,
+            passive: true,
+        });
+        window.addEventListener("resize", fit);
+        return () => {
+            document.removeEventListener("scroll", fit, { capture: true });
+            window.removeEventListener("resize", fit);
+        };
+    }, []);
+
+    // a link from Discover starts a fresh search
     useLayoutEffect(() => {
         const query = searchParams.get("q");
         const category = Number(searchParams.get("category"));
-        if (query === null && !category) return;
+        if (query === null && !category && !searchParams.has("all")) return;
         setFilters({
             ...DEFAULT_FILTERS,
             query: query ?? "",
@@ -45,9 +68,12 @@ const Catalog = () => {
         setSearchParams({}, { replace: true });
     }, [searchParams, setFilters, setSearchParams]);
 
+    const filtered =
+        JSON.stringify(filters) !== JSON.stringify(DEFAULT_FILTERS);
+
     const resetFilters = () => {
         setFilters(DEFAULT_FILTERS);
-        // on narrow screens the filter panel may be closed, and its search hidden
+        // on narrow screens the search may be hidden
         const search = document.getElementById("opportunity-search");
         const target = search?.offsetParent
             ? search
@@ -63,13 +89,14 @@ const Catalog = () => {
         return Math.ceil(highest / COST_STEP) * COST_STEP;
     }, [opportunities]);
 
+    const today = getTodayEastern();
     const results = useMemo(
         () =>
             filterOpportunities(
                 opportunities,
                 {
                     ...filters,
-                    // an old or mistyped ?category= link shouldn't hide everything
+                    // ignore unknown ?category= ids
                     categoryIds: filters.categoryIds.filter((id) =>
                         categories.some((category) => category.id === id),
                     ),
@@ -77,9 +104,9 @@ const Catalog = () => {
                 categories,
                 eligibilities,
                 student,
-                getTodayEastern(),
+                today,
             ),
-        [opportunities, filters, categories, eligibilities, student],
+        [opportunities, filters, categories, eligibilities, student, today],
     );
 
     if (failed) {
@@ -96,13 +123,17 @@ const Catalog = () => {
     }
 
     return (
-        <main className="mx-auto grid w-full max-w-[1500px] grid-cols-1 items-start gap-8 px-12 pt-8 max-sm:px-4 max-sm:pt-14 lg:grid-cols-[18rem_minmax(0,1fr)] xl:grid-cols-[18rem_minmax(0,1fr)_16rem]">
+        <main className="mx-auto grid w-full max-w-[1500px] grid-cols-1 items-start gap-x-8 gap-y-4 px-12 lg:gap-y-8 pt-8 max-sm:px-4 max-sm:pt-14 lg:grid-cols-[18rem_minmax(0,1fr)] xl:grid-cols-[18rem_minmax(0,1fr)_16rem]">
             <Helmet>
                 <title>Opportunities Catalog - Epsilon</title>
             </Helmet>
             <h1 className="sr-only">Opportunities Catalog</h1>
 
-            <aside className="lg:sticky lg:top-6">
+            {/* scrolls on its own; padding keeps focus rings unclipped */}
+            <aside
+                ref={asideRef}
+                className="lg:sticky lg:top-6 lg:-mx-2 lg:max-h-[var(--filters-height,calc(100dvh-3rem))] lg:overflow-y-auto lg:overscroll-contain lg:px-2 lg:pb-6 lg:pt-1 lg:[scrollbar-width:thin]"
+            >
                 <h2 className="sr-only">Filters</h2>
                 <button
                     type="button"
@@ -129,15 +160,26 @@ const Catalog = () => {
             </aside>
 
             <section aria-label="Opportunities" aria-busy={loading}>
-                <p role="status" className="mb-3 text-sm text-typography-2">
-                    {loading
-                        ? ""
-                        : pluralize(
-                              results.length,
-                              "opportunity",
-                              "opportunities",
-                          )}
-                </p>
+                <div className="mb-3 flex items-center gap-3 text-sm text-typography-2">
+                    <p role="status">
+                        {loading
+                            ? ""
+                            : pluralize(
+                                  results.length,
+                                  "opportunity",
+                                  "opportunities",
+                              )}
+                    </p>
+                    {!loading && filtered && results.length > 0 && (
+                        <button
+                            type="button"
+                            onClick={resetFilters}
+                            className="cursor-pointer rounded underline hover:text-typography-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                        >
+                            Reset Filters
+                        </button>
+                    )}
+                </div>
                 {loading ? (
                     <OpportunityListSkeleton />
                 ) : results.length ? (
@@ -173,8 +215,9 @@ const Catalog = () => {
                     Submit an Opportunity
                 </span>
                 <span className="text-sm text-typography-2">
-                    Share a program with Stuyvesant students
+                    Advertise your opportunity now!
                 </span>
+                <span className="sr-only"> (opens in a new tab)</span>
             </a>
         </main>
     );

@@ -17,17 +17,19 @@ const TagList = ({
     highlight: boolean;
 }) => (
     <p
-        className={`flex flex-wrap items-center gap-1 text-sm ${
-            highlight ? "text-yellow" : "text-typography-2"
+        className={`flex flex-wrap items-center gap-1 text-[0.8125rem] font-bold ${
+            highlight
+                ? "text-yellow scheme-dark:text-[#facb49]"
+                : "text-typography-2"
         }`}
     >
         {label}
         {tags.map((tag) => (
             <span
                 key={tag.id}
-                className={`rounded px-1.5 text-sm ${
+                className={`rounded-[3px] px-1 ${
                     highlight
-                        ? "bg-yellow text-black scheme-light:text-white"
+                        ? "bg-yellow text-black scheme-light:text-white scheme-dark:bg-[#facb49] scheme-dark:text-[#0e0e0e]"
                         : "bg-layer-2 text-typography-2"
                 }`}
             >
@@ -44,9 +46,13 @@ const EligibilityLine = ({ opportunity }: EligibilityLineProps) => {
     const preferred = eligibilities.filter((tag) => tag.preferred);
 
     if (!required.length && !preferred.length) {
-        // ages and GPAs have no tag, so show any limit in the bulletin's words
+        // ages and GPAs have no tag, so show the bulletin's words
         if (!text || isOpenToAll(text)) return null;
-        return <p className="text-sm text-typography-2">Eligibility: {text}</p>;
+        return (
+            <p className="text-sm text-typography-2 [overflow-wrap:anywhere]">
+                Eligibility: {text}
+            </p>
+        );
     }
 
     return (

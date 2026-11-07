@@ -37,6 +37,9 @@ const OPPORTUNITY_COLUMNS = `
     links,
     bulletin_label,
     archived,
+    edited_fields,
+    edited_at,
+    updated_at,
     created_at,
     categories:opportunity_categories (id, name, parent_id, position),
     eligibility_links:opportunity_eligibility_links (
@@ -102,7 +105,7 @@ const fetchAllOpportunities = async () => {
             .order("id")
             .limit(PAGE_SIZE);
         if (error) return { data: null, error };
-        // stop on an empty page, or one with nothing new if the filter was ignored
+        // stop on an empty page or one with nothing new
         const page = (data as unknown as OpportunityRow[])
             .filter((row) => row.id > lastId)
             .map(toOpportunity);
@@ -121,10 +124,12 @@ type OpportunitiesContextType = {
     latestBulletin: OpportunityBulletin | null;
     savedIds: Set<number>;
     setSaved: (opportunityId: number, saved: boolean) => Promise<void>;
+    refreshOpportunity: (opportunityId: number) => Promise<boolean>;
     student: Student;
     setAboutYou: (groups: string[] | null) => void;
-    reload: () => Promise<void>;
-    // kept here so the catalog's filters survive a visit to a detail page
+    // resolves to the fresh list, or null if it could not load
+    reload: () => Promise<Opportunity[] | null>;
+    // kept here so filters survive a visit to a detail page
     catalogFilters: OpportunityFilters;
     setCatalogFilters: (filters: OpportunityFilters) => void;
 };
@@ -138,9 +143,10 @@ const OpportunitiesContext = createContext<OpportunitiesContextType>({
     latestBulletin: null,
     savedIds: new Set(),
     setSaved: async () => undefined,
+    refreshOpportunity: async () => false,
     student: { grade: 0, groups: null },
     setAboutYou: () => undefined,
-    reload: async () => undefined,
+    reload: async () => null,
     catalogFilters: DEFAULT_FILTERS,
     setCatalogFilters: () => undefined,
 });
@@ -213,7 +219,7 @@ export const OpportunitiesProvider = ({
                     .eq("user_id", user.id),
             ]);
 
-            if (!isCurrent()) return;
+            if (!isCurrent()) return null;
 
             if (
                 opportunityRes.error ||
@@ -224,15 +230,17 @@ export const OpportunitiesProvider = ({
             ) {
                 setFailed(true);
                 setLoading(false);
-                return;
+                return null;
             }
 
-            setOpportunities(opportunityRes.data ?? []);
+            const fresh = opportunityRes.data ?? [];
+            setOpportunities(fresh);
             setCategories(categoryRes.data);
             setEligibilities(eligibilityRes.data);
             setLatestBulletin(bulletinRes.data[0] ?? null);
             setSavedIds(new Set(savedRes.data.map((s) => s.opportunity_id)));
             setLoading(false);
+            return fresh;
         },
         [user.id],
     );
@@ -280,6 +288,20 @@ export const OpportunitiesProvider = ({
 
     const reload = useCallback(() => load(), [load]);
 
+    const refreshOpportunity = useCallback(async (opportunityId: number) => {
+        const { data, error } = await supabase
+            .from("opportunities")
+            .select(OPPORTUNITY_COLUMNS)
+            .eq("id", opportunityId)
+            .single();
+        if (error) return false;
+        const updated = toOpportunity(data as unknown as OpportunityRow);
+        setOpportunities((current) =>
+            current.map((o) => (o.id === updated.id ? updated : o)),
+        );
+        return true;
+    }, []);
+
     const value = useMemo(
         () => ({
             loading,
@@ -290,6 +312,7 @@ export const OpportunitiesProvider = ({
             latestBulletin,
             savedIds,
             setSaved,
+            refreshOpportunity,
             student,
             setAboutYou,
             reload,
@@ -305,6 +328,7 @@ export const OpportunitiesProvider = ({
             latestBulletin,
             savedIds,
             setSaved,
+            refreshOpportunity,
             student,
             setAboutYou,
             reload,
