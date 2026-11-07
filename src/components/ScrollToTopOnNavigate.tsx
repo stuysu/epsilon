@@ -4,6 +4,8 @@ import { Scrollbars } from "react-custom-scrollbars-2";
 
 // a page may still be filling in when Back lands on it
 const RESTORE_TRIES = 30;
+// enough for any Back a person would press
+const KEPT_POSITIONS = 100;
 
 // the site scrolls in one Scrollbars box, so reset or restore it on navigation
 const ScrollToTopOnNavigate = ({
@@ -21,8 +23,14 @@ const ScrollToTopOnNavigate = ({
         const view = (scrollbars.current as { view?: HTMLElement } | null)
             ?.view;
         if (!view) return;
-        const save = () =>
-            positions.current.set(last.current.key, view.scrollTop);
+        const save = () => {
+            const kept = positions.current;
+            kept.delete(last.current.key);
+            kept.set(last.current.key, view.scrollTop);
+            if (kept.size > KEPT_POSITIONS) {
+                kept.delete(kept.keys().next().value!);
+            }
+        };
         view.addEventListener("scroll", save, { passive: true });
         return () => view.removeEventListener("scroll", save);
     }, [scrollbars]);

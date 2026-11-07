@@ -67,8 +67,18 @@ const Catalog = () => {
         setSearchParams({}, { replace: true });
     }, [searchParams, setFilters, setSearchParams]);
 
+    // ignore unknown ?category= ids
+    const activeFilters = useMemo(
+        () => ({
+            ...filters,
+            categoryIds: filters.categoryIds.filter((id) =>
+                categories.some((category) => category.id === id),
+            ),
+        }),
+        [filters, categories],
+    );
     const filtered =
-        JSON.stringify(filters) !== JSON.stringify(DEFAULT_FILTERS);
+        JSON.stringify(activeFilters) !== JSON.stringify(DEFAULT_FILTERS);
 
     const resetFilters = () => {
         setFilters(DEFAULT_FILTERS);
@@ -93,19 +103,20 @@ const Catalog = () => {
         () =>
             filterOpportunities(
                 opportunities,
-                {
-                    ...filters,
-                    // ignore unknown ?category= ids
-                    categoryIds: filters.categoryIds.filter((id) =>
-                        categories.some((category) => category.id === id),
-                    ),
-                },
+                activeFilters,
                 categories,
                 eligibilities,
                 student,
                 today,
             ),
-        [opportunities, filters, categories, eligibilities, student, today],
+        [
+            opportunities,
+            activeFilters,
+            categories,
+            eligibilities,
+            student,
+            today,
+        ],
     );
 
     if (failed) {
@@ -122,7 +133,7 @@ const Catalog = () => {
     }
 
     return (
-        <main className="mx-auto grid w-full max-w-[1500px] grid-cols-1 items-start gap-x-8 gap-y-4 px-12 lg:gap-y-8 pt-8 max-sm:px-4 max-sm:pt-14 lg:grid-cols-[18rem_minmax(0,1fr)]">
+        <main className="mx-auto grid w-full max-w-[82rem] grid-cols-1 items-start gap-x-8 gap-y-4 px-12 lg:gap-y-8 pt-8 max-sm:px-4 max-sm:pt-14 lg:grid-cols-[18rem_minmax(0,1fr)]">
             <Helmet>
                 <title>Opportunities Catalog - Epsilon</title>
             </Helmet>

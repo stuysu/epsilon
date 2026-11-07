@@ -162,6 +162,15 @@ describe("getStatus", () => {
         ).toBe("neutral");
     });
 
+    it("adds the year to a deadline in another year", () => {
+        expect(
+            getStatus(make({ deadline: "2026-12-01" }), JUNIOR, TODAY).label,
+        ).toBe("Apply by December 1");
+        expect(
+            getStatus(make({ deadline: "2027-03-01" }), JUNIOR, TODAY).label,
+        ).toBe("Apply by March 1, 2027");
+    });
+
     it("does not call an unknown deadline rolling", () => {
         expect(
             getStatus(make({ deadline_text: "TBD" }), JUNIOR, TODAY).label,

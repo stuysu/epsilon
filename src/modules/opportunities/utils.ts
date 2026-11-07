@@ -100,7 +100,11 @@ export const getStatus = (
             label:
                 opportunity.deadline === today
                     ? "Due Today"
-                    : `Apply by ${formatDate(opportunity.deadline)}`,
+                    : `Apply by ${formatDate(opportunity.deadline, {
+                          withYear:
+                              opportunity.deadline.slice(0, 4) !==
+                              today.slice(0, 4),
+                      })}`,
             icon: "bx-time-five",
             tone:
                 daysUntil(opportunity.deadline, today) <= URGENT_DAYS

@@ -7,7 +7,7 @@ import { useOpportunities } from "./OpportunitiesContext";
 import { getStatus, getTodayEastern } from "./utils";
 
 const SEARCH_LINK_CLASS =
-    "group flex cursor-pointer items-center gap-1.5 rounded py-1 text-sm font-medium text-typography-1 no-underline opacity-80 transition-opacity hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 disabled:cursor-wait disabled:opacity-60";
+    "group flex cursor-pointer items-center gap-1.5 rounded py-1 text-sm font-medium text-typography-1 no-underline opacity-80 transition-opacity hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 disabled:cursor-wait disabled:opacity-60 disabled:hover:opacity-60";
 const SEARCH_LINK_ICON =
     "bx text-base transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none";
 
