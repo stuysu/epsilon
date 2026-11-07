@@ -1,16 +1,9 @@
 import { ChangeEvent, useContext, useEffect, useState } from "react";
+import ContentDialog from "../../../../../components/ui/overlays/ContentDialog";
 import {
-    Box,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    FormControlLabel,
-    MenuItem,
-    Switch,
-    TextField,
-} from "@mui/material";
-import { DatePicker, TimePicker } from "@mui/x-date-pickers";
+    DateField,
+    TimeField,
+} from "../../../../../components/ui/input/DateTimeField";
 import { supabase } from "../../../../../lib/supabaseClient";
 import OrgContext from "../../../../../contexts/OrgContext";
 import UserContext from "../../../../../contexts/UserContext";
@@ -25,6 +18,10 @@ import {
     isoToWallClock,
     wallClockToISO,
 } from "../../../../../utils/NewYorkTime";
+import SelectField from "../../../../../components/ui/input/SelectField";
+import SwitchField from "../../../../../components/ui/input/SwitchField";
+import TextField from "../../../../../components/ui/input/TextField";
+import { functionErrorText } from "../../../../../utils/FunctionErrors";
 
 const getDefaultStartTime = () => {
     return isoToWallClock().startOf("day").hour(15).minute(35);
@@ -151,7 +148,7 @@ const AdminUpsertMeeting = ({
     /* Filtering out rooms that are taken for that day */
     useEffect(() => {
         const fetchRooms = async () => {
-            let { data, error } = await supabase.from("rooms").select();
+            const { data, error } = await supabase.from("rooms").select();
 
             if (error || !data) {
                 enqueueSnackbar(
@@ -174,7 +171,7 @@ const AdminUpsertMeeting = ({
             }
 
             setRoomGrants(grantsData || []);
-            setAllRooms((prev) => {
+            setAllRooms(() => {
                 setLoading(false);
                 return (data as Room[]).sort(sortRooms);
             });
@@ -269,7 +266,7 @@ const AdminUpsertMeeting = ({
                 "SATURDAY",
             ];
 
-            let availRooms = allRooms.filter((room) => {
+            const availRooms = allRooms.filter((room) => {
                 if (
                     ~filteredBookedRooms.findIndex(
                         (meta) => meta.room_id === room.id,
@@ -351,7 +348,6 @@ const AdminUpsertMeeting = ({
         let isInsert = false;
 
         if (!meetingTitle || !meetingTitle.length) {
-            console.log(meetingTitle);
             enqueueSnackbar("Missing meeting title.", { variant: "error" });
             return;
         }
@@ -463,7 +459,7 @@ const AdminUpsertMeeting = ({
             });
         }
         if (supabaseReturn.error) {
-            const error = await supabaseReturn.error?.context.text();
+            const error = await functionErrorText(supabaseReturn.error);
             let message = "Contact it@stuysu.org for support.";
             if (error) {
                 message = error;
@@ -485,180 +481,140 @@ const AdminUpsertMeeting = ({
     };
 
     return (
-        <Dialog open={open} onClose={onClose}>
-            <DialogTitle>{id ? "Update" : "Create"} Meeting</DialogTitle>
-            <DialogContent>
-                <Box
-                    sx={{
-                        width: "100%",
-                        display: "flex",
-                        flexWrap: "nowrap",
-                        alignItems: "center",
-                        height: "80px",
-                    }}
-                >
-                    <TextField
-                        value={meetingTitle}
-                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                            setMeetingTitle(event.target.value)
-                        }
-                        label="Title"
-                        sx={{ width: "100%", height: "60px" }}
-                    />
-                    <TextField
-                        value={!loading ? String(roomId) : ""}
-                        label="Room"
-                        select
-                        onChange={(event) =>
-                            setRoomId(Number(event.target.value) || undefined)
-                        }
-                        sx={{
-                            width: "30%",
-                            height: "60px",
-                            marginLeft: "10px",
-                        }}
-                    >
-                        <MenuItem value={"undefined"}>Virtual</MenuItem>
-                        {availableRooms.map((room) => (
-                            <MenuItem key={room.id} value={String(room.id)}>
-                                {room.name}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                </Box>
-
-                <FacultySelect
-                    label="Faculty Advisor Present"
-                    options={advisorOptions}
-                    value={meetingAdvisor}
-                    onChange={setMeetingAdvisor}
-                    required={advisorNeeded}
-                    error={advisorTouched && advisorInvalid}
-                    helperText={
-                        advisorTouched && advisorInvalid && facultyLoaded
-                            ? "Choose a faculty advisor from the list."
-                            : advisorNeeded && facultyFailed
-                              ? "The faculty list could not be loaded."
-                              : advisorNeeded && !facultyLoaded
-                                ? "Loading the faculty list..."
-                                : unregisteredAdvisor
-                                  ? "This advisor is not a registered faculty member. Choose one from the list."
-                                  : advisorNeeded
-                                    ? "A faculty advisor is required for this room."
-                                    : undefined
-                    }
-                />
-
+        <ContentDialog
+            open={open}
+            onClose={onClose}
+            title={`${id ? "Update" : "Create"} Meeting`}
+            actions={
+                <>
+                    <AsyncButton onClick={onClose}>Cancel</AsyncButton>
+                    <AsyncButton onClick={handleSave}>Save</AsyncButton>
+                </>
+            }
+        >
+            <div className="w-full flex flex-nowrap items-center h-[80px]">
                 <TextField
-                    value={meetingDesc}
+                    value={meetingTitle}
                     onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        setMeetingDesc(event.target.value)
+                        setMeetingTitle(event.target.value)
                     }
-                    label="Description"
-                    fullWidth
-                    multiline
-                    rows={4}
-                    sx={{ mt: 2 }}
+                    label="Title"
+                    sx={{ width: "100%", height: "60px" }}
                 />
+                <SelectField
+                    value={!loading ? String(roomId) : ""}
+                    label="Room"
+                    onChange={(next) => setRoomId(Number(next) || undefined)}
+                    options={[
+                        { value: "undefined", label: "Virtual" },
+                        ...availableRooms.map((room) => ({
+                            value: String(room.id),
+                            label: room.name,
+                        })),
+                    ]}
+                    sx={{
+                        width: "30%",
+                        minWidth: "120px",
+                        height: "60px",
+                        marginLeft: "10px",
+                    }}
+                />
+            </div>
 
-                <DatePicker
-                    label="Meeting Day"
+            <FacultySelect
+                label="Faculty Advisor Present"
+                options={advisorOptions}
+                value={meetingAdvisor}
+                onChange={setMeetingAdvisor}
+                required={advisorNeeded}
+                error={advisorTouched && advisorInvalid}
+                helperText={
+                    advisorTouched && advisorInvalid && facultyLoaded
+                        ? "Choose a faculty advisor from the list."
+                        : advisorNeeded && facultyFailed
+                          ? "The faculty list could not be loaded."
+                          : advisorNeeded && !facultyLoaded
+                            ? "Loading the faculty list..."
+                            : unregisteredAdvisor
+                              ? "This advisor is not a registered faculty member. Choose one from the list."
+                              : advisorNeeded
+                                ? "A faculty advisor is required for this room."
+                                : undefined
+                }
+            />
+
+            <TextField
+                value={meetingDesc}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                    setMeetingDesc(event.target.value)
+                }
+                label="Description"
+                fullWidth
+                multiline
+                rows={4}
+                sx={{ marginTop: "16px" }}
+            />
+
+            <DateField
+                label="Meeting Day"
+                value={startTime}
+                onChange={(newStartTime) => {
+                    if (!newStartTime) return;
+
+                    setStartTime(newStartTime);
+
+                    // also change day of end time
+                    if (!endTime) {
+                        setEndTime(newStartTime);
+                    } else {
+                        setEndTime(
+                            endTime
+                                ?.year(newStartTime.year())
+                                .month(newStartTime.month())
+                                .date(newStartTime.date()),
+                        );
+                    }
+                }}
+                sx={{
+                    width: "100%",
+                    marginTop: "10px",
+                    marginBottom: "10px",
+                }}
+            />
+            <div className="w-full flex flex-nowrap items-center">
+                <TimeField
+                    label="Start"
                     value={startTime}
-                    onChange={(newStartTime) => {
-                        if (!newStartTime) return;
+                    onChange={setStartTime}
+                    sx={{ marginRight: "10px" }}
+                />
 
-                        setStartTime(newStartTime);
-
-                        // also change day of end time
-                        if (!endTime) {
-                            setEndTime(newStartTime);
-                        } else {
-                            setEndTime(
-                                endTime
-                                    ?.year(newStartTime.year())
-                                    .month(newStartTime.month())
-                                    .date(newStartTime.date()),
-                            );
-                        }
-                    }}
-                    sx={{
-                        width: "100%",
-                        marginTop: "10px",
-                        marginBottom: "10px",
-                    }}
-                />
-                <Box
-                    sx={{
-                        width: "100%",
-                        display: "flex",
-                        flexWrap: "nowrap",
-                        alignItems: "center",
-                    }}
-                >
-                    <TimePicker
-                        label="Start"
-                        value={startTime}
-                        onChange={setStartTime}
-                        sx={{ marginRight: "10px" }}
-                    />
-
-                    <TimePicker
-                        label="End"
-                        value={endTime}
-                        onChange={setEndTime}
-                    />
-                </Box>
-                <FormControlLabel
-                    control={
-                        <Switch
-                            checked={isPub}
-                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                                setIsPub(event.target.checked)
-                            }
-                        />
-                    }
-                    sx={{ marginTop: "10px" }}
-                    label="is public?"
-                />
-                <FormControlLabel
-                    control={
-                        <Switch
-                            checked={silent}
-                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                                setSilent(event.target.checked)
-                            }
-                        />
-                    }
-                    sx={{ marginTop: "10px" }}
-                    label="silent?"
-                />
-                <FormControlLabel
-                    control={
-                        <Switch
-                            checked={notifyFaculty || advisorRoomBooking}
-                            disabled={advisorRoomBooking}
-                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                                setNotifyFaculty(event.target.checked)
-                            }
-                        />
-                    }
-                    sx={{ marginTop: "10px" }}
-                    label={
-                        advisorRoomBooking
-                            ? "notify faculty? (required for this room)"
-                            : "notify faculty?"
-                    }
-                />
-            </DialogContent>
-            <DialogActions>
-                <AsyncButton variant="contained" onClick={onClose}>
-                    Cancel
-                </AsyncButton>
-                <AsyncButton variant="contained" onClick={handleSave}>
-                    Save
-                </AsyncButton>
-            </DialogActions>
-        </Dialog>
+                <TimeField label="End" value={endTime} onChange={setEndTime} />
+            </div>
+            <SwitchField
+                checked={isPub}
+                onChange={setIsPub}
+                className="mt-2.5"
+                label="is public?"
+            />
+            <SwitchField
+                checked={silent}
+                onChange={setSilent}
+                className="mt-2.5"
+                label="silent?"
+            />
+            <SwitchField
+                checked={notifyFaculty || advisorRoomBooking}
+                disabled={advisorRoomBooking}
+                onChange={setNotifyFaculty}
+                className="mt-2.5"
+                label={
+                    advisorRoomBooking
+                        ? "notify faculty? (required for this room)"
+                        : "notify faculty?"
+                }
+            />
+        </ContentDialog>
     );
 };
 

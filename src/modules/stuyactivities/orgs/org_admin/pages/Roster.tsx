@@ -4,7 +4,6 @@ import UserContext from "../../../../../contexts/UserContext";
 import { supabase } from "../../../../../lib/supabaseClient";
 
 import AdminMember from "../components/AdminMember";
-import { Box, TextField } from "@mui/material";
 import { Switch } from "radix-ui";
 import { Reorder } from "framer-motion";
 
@@ -19,6 +18,7 @@ import ItemList from "../../../../../components/ui/lists/ItemList";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
 import ToggleChip from "../../../../../components/ui/input/ToggleChip";
 import SortSelect from "../../../../../components/ui/input/SortSelect";
+import TextField from "../../../../../components/ui/input/TextField";
 
 /* a disabled text box with all the emails and a button to copy them */
 const EmailCopyBox = ({
@@ -31,33 +31,20 @@ const EmailCopyBox = ({
     const { enqueueSnackbar } = useSnackbar();
 
     return (
-        <Box sx={{ width: "100%", marginBottom: "25px" }}>
+        <div className="w-full mb-[25px]">
             {label && (
                 <p className={"font-medium text-typography-1 mt-2"}>{label}</p>
             )}
-            <Box
-                sx={{
-                    width: "100%",
-                    display: "flex",
-                    flexWrap: "nowrap",
-                    alignItems: "center",
-                }}
-            >
-                <Box
-                    sx={{
-                        paddingTop: "8px",
-                        paddingBottom: "8px",
-                        width: "100%",
-                    }}
-                >
+            <div className="w-full flex flex-nowrap items-center">
+                <div className="pt-2 pb-2 w-full">
                     <TextField
+                        aria-label={label}
                         disabled
                         fullWidth
                         value={emails}
-                        variant="outlined"
                     />
-                </Box>
-                <Box sx={{ paddingLeft: "16px", width: "100px" }}>
+                </div>
+                <div className="pl-4 w-[100px]">
                     <AsyncButton
                         onClick={async () => {
                             try {
@@ -65,7 +52,7 @@ const EmailCopyBox = ({
                                 enqueueSnackbar("Copied emails to clipboard!", {
                                     variant: "success",
                                 });
-                            } catch (error) {
+                            } catch {
                                 enqueueSnackbar(
                                     "Failed to copy emails to clipboard. :( Try manually copying from the page.",
                                     { variant: "error" },
@@ -75,9 +62,9 @@ const EmailCopyBox = ({
                     >
                         Copy
                     </AsyncButton>
-                </Box>
-            </Box>
-        </Box>
+                </div>
+            </div>
+        </div>
     );
 };
 
@@ -278,7 +265,7 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
     };
 
     return (
-        <Box sx={{ width: "100%" }}>
+        <div className="w-full">
             <div
                 className={
                     "bg-layer-1 p-5 pl-7 pb-8 rounded-xl mb-10 mt-2 shadow-prominent"
@@ -313,6 +300,7 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
                                 {joinableState ? "Joinable" : "Private"}
                             </div>
                             <Switch.Root
+                                aria-label="Joinable"
                                 checked={joinableState}
                                 onCheckedChange={() => toggleJoinable()}
                                 disabled={!canToggleJoinable || toggling}
@@ -395,7 +383,7 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
                     </Reorder.Group>
                 )}
             </ItemList>
-        </Box>
+        </div>
     );
 };
 

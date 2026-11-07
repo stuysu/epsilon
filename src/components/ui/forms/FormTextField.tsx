@@ -1,5 +1,7 @@
-import { ChangeEvent, useEffect } from "react";
-import { TextField, TextFieldProps } from "@mui/material";
+import { ChangeEvent, Fragment, useEffect } from "react";
+import TextField, { TextFieldProps } from "../input/TextField";
+import { getInvalidSocials } from "../../../utils/SocialLinks";
+import { limitWords, wordCount } from "../../../utils/WordCount";
 
 type Requirements = {
     minChar?: number;
@@ -9,6 +11,7 @@ type Requirements = {
     disableSpaces?: boolean /* replace spaces with dashes */;
     onlyAlpha?: boolean;
     lowercase?: boolean;
+    links?: boolean /* space separated web links */;
 };
 
 type Props = {
@@ -37,7 +40,7 @@ const FormTextField = ({
     changeStatus,
     hideHelper,
     ...textFieldProps
-}: Props & TextFieldProps) => {
+}: Props & Omit<TextFieldProps, "value" | "onChange">) => {
     useEffect(() => {
         const validate = (targetValue?: string) => {
             if (!targetValue) targetValue = "";
@@ -61,7 +64,15 @@ const FormTextField = ({
                 // does not work with onlyAlpha
                 if (
                     requirements.minWords &&
-                    targetValue.trim().split(" ").length < requirements.minWords
+                    wordCount(targetValue) < requirements.minWords
+                ) {
+                    changeStatus(field, false);
+                    return;
+                }
+
+                if (
+                    requirements.links &&
+                    getInvalidSocials(targetValue).length > 0
                 ) {
                     changeStatus(field, false);
                     return;
@@ -89,14 +100,9 @@ const FormTextField = ({
         }
         if (
             requirements?.maxWords &&
-            targetValue.replace(/  +/g, " ").split(" ").length >
-                requirements.maxWords
+            wordCount(targetValue) > requirements.maxWords
         ) {
-            targetValue = targetValue
-                .replace(/  +/g, " ")
-                .split(" ")
-                .slice(0, requirements.maxWords)
-                .join(" ");
+            targetValue = limitWords(targetValue, requirements.maxWords);
         }
 
         if (requirements?.disableSpaces && targetValue.indexOf(" ") !== -1) {
@@ -169,26 +175,36 @@ const FormTextField = ({
             helperText += ` max ${requirements.maxWords} Words`;
         }
 
-        if (countWords)
-            helperText += `, at ${value?.trim().split(" ").length || 0}.`;
+        if (countWords) helperText += `, at ${wordCount(value)}.`;
     }
+
+    const invalidLinks = requirements?.links ? getInvalidSocials(value) : [];
 
     return (
         <TextField
             required={required}
-            error={required && status && !!value && !status.value}
+            error={
+                (required && status && !!value && !status.value) ||
+                invalidLinks.length > 0
+            }
             onChange={textChanged}
             value={value}
             helperText={
                 !hideHelper && (
                     <>
-                        {description?.split("\n").map((line) => (
-                            <>
+                        {description?.split("\n").map((line, index) => (
+                            <Fragment key={index}>
                                 {line}
                                 <br />
-                            </>
+                            </Fragment>
                         ))}
                         {helperText}
+                        {invalidLinks.length > 0 && (
+                            <>
+                                <br />
+                                Not a valid link: {invalidLinks.join(", ")}
+                            </>
+                        )}
                     </>
                 )
             }

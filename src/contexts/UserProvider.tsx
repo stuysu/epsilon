@@ -51,7 +51,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
             if (authData.data?.session?.user) {
                 // fetch user profile
                 const supabaseUser = authData.data.session.user; // user stored in auth.user table
-                let { data, error } = await supabase
+                const { data, error } = await supabase
                     .from("users")
                     .select(
                         `
@@ -94,7 +94,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 if (!Array.isArray(data) || data?.length === 0) {
                     // user is not in our public.users table. notify
                     enqueueSnackbar(
-                        "Please sign in with your stuy.edu account. If you are an incoming freshmen, wait until" +
+                        "Please sign in with your stuy.edu account. If you are an incoming freshman, wait until" +
                             " later. For more assistance, contact it@stuysu.org",
                         { variant: "error" },
                     );
@@ -103,7 +103,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 }
 
                 let grade;
-                let d = new Date();
+                const d = new Date();
 
                 if (!data[0].is_faculty && data[0].grad_year) {
                     if (d.getMonth() < 8) {
@@ -129,17 +129,25 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 }; // user in our own user table
                 let isAdmin = false;
                 /* CHECK PERMISSIONS */
-                if (data && data[0].permissions[0]?.permission === "ADMIN") {
+                if (
+                    data &&
+                    data[0].permissions.some(
+                        (p: { permission: string }) => p.permission === "ADMIN",
+                    )
+                ) {
                     isAdmin = true;
                 }
-                const permission = data[0].permissions[0]?.permission;
+                // a user can hold several permissions, and ADMIN outranks the rest
+                const permission = isAdmin
+                    ? "ADMIN"
+                    : data[0].permissions[0]?.permission;
 
-                if (!user.picture) {
-                    /* get google pfp and update */
-                    let avatarURL = supabaseUser.user_metadata.avatar_url;
+                /* get google pfp and update; password logins have none */
+                const avatarURL = supabaseUser.user_metadata.avatar_url;
+                if (!user.picture && avatarURL) {
                     user.picture = avatarURL;
 
-                    let { error: profileUpdateError } = await supabase.rpc(
+                    const { error: profileUpdateError } = await supabase.rpc(
                         "update_profile_picture",
                         { profile_url: avatarURL },
                     );
@@ -150,11 +158,11 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                             { variant: "error" },
                         );
                         setLoading(false);
+                    } else {
+                        enqueueSnackbar("Profile Picture Updated!", {
+                            variant: "success",
+                        });
                     }
-
-                    enqueueSnackbar("Profile Picture Updated!", {
-                        variant: "success",
-                    });
                 }
 
                 /*

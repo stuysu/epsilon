@@ -28,14 +28,13 @@ const OrgMember = ({
     is_faculty,
     action,
 }: Props) => {
-    let l1 =
-        role_name || formatCapitals(role) + (is_faculty ? " - Faculty" : "");
+    const l1 =
+        (role_name || formatCapitals(role)) + (is_faculty ? " - Faculty" : "");
 
     return (
         <div
             className={
-                "flex flex-row items-center justify-between bg-layer-2 pr-4 pl-3 " +
-                (action ? "flex-nowrap gap-3" : "flex-wrap")
+                "flex flex-row flex-nowrap items-center justify-between gap-3 bg-layer-2 pr-4 pl-3"
             }
         >
             <div
@@ -70,7 +69,8 @@ const OrgMember = ({
                     "my-3 max-w-full [&>button]:max-w-full [&>button]:truncate" +
                     (action
                         ? " shrink-0 flex flex-col items-end gap-2 sm:flex-row sm:items-center"
-                        : "")
+                        : /* keep the chip beside the name on phones; long roles truncate instead of wrapping */
+                          " shrink-0 min-w-0 max-sm:max-w-[50%]")
                 }
             >
                 <ToggleChip title={l1} selectable={false} />

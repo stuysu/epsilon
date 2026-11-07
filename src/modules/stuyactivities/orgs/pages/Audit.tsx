@@ -13,6 +13,7 @@ const Audit = () => {
 
     return (
         <LoginGate page="audit this activity">
+            <h1 className="sr-only">Audit</h1>
             <section className={"mt-2"}>
                 <div className={"xl:hidden mb-10 w-full"}>
                     <OrgInspector />
@@ -36,11 +37,10 @@ const Audit = () => {
                                     end_time={meeting.end_time || ""}
                                     is_public={meeting.is_public || false}
                                     room_name={meeting.rooms?.name || "Virtual"}
-                                    advisor={meeting.advisor || "None"}
+                                    advisor={meeting.advisor}
                                     org_name={organization.name || "No Org"}
                                     org_picture={
-                                        organization.picture ||
-                                        "https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png"
+                                        organization.picture || undefined
                                     }
                                 />
                             ))}
@@ -49,6 +49,7 @@ const Audit = () => {
                     <ContentUnavailable
                         icon="bx-calendar-x"
                         iconColor="text-yellow"
+                        headingLevel="h2"
                         title="No Meeting Records"
                         description="This Activity has not yet held any meetings. Meeting records and audit results will be displayed here when they become available."
                     />

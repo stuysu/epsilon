@@ -1,20 +1,21 @@
 import { Valentine } from "../ValentineType";
-import { Box, Divider, TextField } from "@mui/material";
 import AsyncButton from "../../../components/ui/buttons/AsyncButton";
 import { supabase } from "../../../lib/supabaseClient";
 import { enqueueSnackbar } from "notistack";
 import { useContext, useEffect, useState } from "react";
 import UserContext from "../../../contexts/UserContext";
+import TextField from "../../../components/ui/input/TextField";
+import { functionErrorText } from "../../../utils/FunctionErrors";
 
 interface ValentineInput {
     valentine: Valentine;
     admin?: boolean;
-    refresh?: Function;
+    refresh?: () => void;
     mini?: boolean;
 }
 
 interface ValentineDisplayInput extends ValentineInput {
-    toggle?: Function;
+    toggle?: () => void;
 }
 
 const ValentineCard = ({
@@ -63,50 +64,33 @@ const ValentineCard = ({
     }, [isSender, valentine.show_sender, valentine.sender, valentine.receiver]);
 
     return (
-        <Box
-            sx={{
-                display: "flex",
-                alignItems: "center",
-                flexDirection: "column",
-            }}
-        >
+        <div className="flex items-center flex-col">
             {receiver && (
                 <p style={{ paddingBottom: ".5rem" }}> To {receiver} </p>
             )}
             {/* backup background */}
-            <Box sx={{ backgroundColor: "white" }}>
-                <Box
-                    sx={{
-                        color: "black",
-                        borderRadius: "1rem",
-                        m: 1,
-                        backgroundColor: valentine.background,
-                        width: "20em",
-                        height: "30em",
-                        padding: "1rem",
-                        overflowY: "scroll",
-                        whiteSpace: "pre-wrap",
-                    }}
+            <div className="bg-white">
+                <div
+                    className="text-black rounded-[1rem] m-2 w-[20em] h-[30em] p-4 overflow-y-scroll whitespace-pre-wrap"
+                    style={{ backgroundColor: valentine.background }}
                 >
                     <p className={"text-black"}>{valentine.message}</p>
                     {sender && (
                         <>
                             <p>{"\n"}</p>
-                            <Divider
-                                sx={{ color: "black", marginBottom: ".75rem" }}
-                            />
+                            <hr className="mb-3 border-divider" />
                             <p style={{ fontStyle: "italic" }}>{sender}</p>
                         </>
                     )}
-                </Box>
-            </Box>
+                </div>
+            </div>
             <Buttons
                 valentine={valentine}
                 refresh={refresh}
                 admin={admin}
                 toggle={toggle}
             />
-        </Box>
+        </div>
     );
 };
 
@@ -139,7 +123,7 @@ const AdminButton = ({
     valentine: Valentine;
     mode: "approve" | "reject";
     reason?: string;
-    refresh?: Function;
+    refresh?: () => void;
 }) => (
     <AsyncButton
         onClick={async () => {
@@ -148,7 +132,9 @@ const AdminButton = ({
                 { body: { message_id: valentine.id, reason } },
             );
             if (error) {
-                const errorMessage = await error.context.text();
+                const errorMessage =
+                    (await functionErrorText(error)) ||
+                    `Could not ${mode} valentine.`;
                 enqueueSnackbar(`${errorMessage}`, { variant: "error" });
                 return;
             }
@@ -174,12 +160,10 @@ const Buttons = ({
     const user = useContext(UserContext);
     const isSender = valentine.id > 0 && user.id === valentine.sender;
     return (
-        <Box
-            sx={{
-                display: "flex",
+        <div
+            className="flex"
+            style={{
                 paddingTop: mini ? 0 : "1.25rem",
-                // paddingRight: mini && org_admin ? "1rem" : 0,
-                // paddingBottom: mini ? 0 : "2rem",
                 width: mini ? undefined : isSender ? "42rem" : "35rem",
                 justifyContent:
                     refresh && (admin || isSender) ? "space-between" : "center",
@@ -192,7 +176,7 @@ const Buttons = ({
             )}
             {refresh && isSender && (
                 <>
-                    {mini && <Box sx={{ marginLeft: ".75rem" }} />}
+                    {mini && <div className="ml-[.75rem]" />}
                     <AsyncButton
                         onClick={async () => {
                             const { error } = await supabase
@@ -218,7 +202,7 @@ const Buttons = ({
             {refresh && admin && (
                 <>
                     {mini ? (
-                        <Box sx={{ marginLeft: ".75rem" }} />
+                        <div className="ml-[.75rem]" />
                     ) : (
                         <>
                             <TextField
@@ -233,7 +217,7 @@ const Buttons = ({
                         refresh={refresh}
                         mode="approve"
                     />
-                    {mini && <Box sx={{ marginLeft: ".75rem" }} />}
+                    {mini && <div className="ml-[.75rem]" />}
                     <AdminButton
                         valentine={valentine}
                         refresh={refresh}
@@ -242,7 +226,7 @@ const Buttons = ({
                     />
                 </>
             )}
-        </Box>
+        </div>
     );
 };
 

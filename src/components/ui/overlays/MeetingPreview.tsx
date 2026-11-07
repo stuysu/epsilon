@@ -7,6 +7,7 @@ import { Avatar } from "radix-ui";
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import DisplayLinks from "../../DisplayLinks";
+import keepOpenOnToast from "./keepOpenOnToast";
 
 type Props = {
     id?: number;
@@ -62,7 +63,10 @@ const MeetingPreview = ({
                                 />
                             </Dialog.Overlay>
 
-                            <Dialog.Content asChild>
+                            <Dialog.Content
+                                asChild
+                                onInteractOutside={keepOpenOnToast}
+                            >
                                 <motion.div
                                     className="relative w-[min(720px,92vw)] rounded-2xl bg-layer-1 p-0 shadow-2xl border border-divider"
                                     initial={{
@@ -92,7 +96,7 @@ const MeetingPreview = ({
                                 >
                                     <div className="relative pt-3 px-6 flex items-center justify-between">
                                         <Dialog.Title className="flex gap-3">
-                                            <Avatar.Root className="max-w-8 max-h-8 block rounded-md overflow-hidden">
+                                            <Avatar.Root className="size-8 shrink-0 block rounded-md overflow-hidden">
                                                 <Avatar.Image
                                                     className="size-full object-cover"
                                                     src={organizationPicture}

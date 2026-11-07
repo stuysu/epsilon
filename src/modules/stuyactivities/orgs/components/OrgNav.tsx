@@ -1,7 +1,7 @@
 import React, { useContext, useState } from "react";
-import { List } from "@mui/material";
+import * as Dialog from "@radix-ui/react-dialog";
 import OrgContext from "../../../../contexts/OrgContext";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import UserContext from "../../../../contexts/UserContext";
 
 type LinkItem = { to: string; display: string };
@@ -24,7 +24,8 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
         organization.memberships?.some(
             (m) =>
                 m.users?.id === user.id &&
-                (m.role === "ADMIN" || m.role === "CREATOR"),
+                (m.role === "CREATOR" || m.role === "ADMIN") &&
+                m.active,
         ) ?? false;
 
     const isStuyActivitiesAdmin = Boolean(user.permission);
@@ -67,17 +68,15 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const [menuOpen, setMenuOpen] = useState(false);
 
     const renderDesktopList = (links: LinkItem[]) => (
-        <List sx={{ width: "100%" }}>
+        <div className="w-full py-2">
             {links.map((linkData, i) => (
-                <div
+                <Link
                     key={i}
-                    style={{
-                        height: `30px`,
-                        display: "flex",
-                        alignItems: "center",
-                        cursor: "pointer",
-                    }}
-                    onClick={() => navigate(linkData.to)}
+                    to={linkData.to}
+                    aria-current={
+                        location.pathname === linkData.to ? "page" : undefined
+                    }
+                    className="flex h-[30px] w-fit items-center rounded no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
                 >
                     <p
                         className={`important cursor-pointer ${
@@ -88,9 +87,9 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     >
                         {linkData.display}
                     </p>
-                </div>
+                </Link>
             ))}
-        </List>
+        </div>
     );
 
     const renderMobileButtons = (links: LinkItem[]) =>
@@ -110,52 +109,70 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     if (isMobile) {
         return (
             <>
-                {/* Need to fix this later */}
-                <button
-                    className={`z-[5001] fixed cursor-pointer transition-colors text-typography-2 sm:hover:text-typography-1 mr-4 top-4 right-0`}
-                    onClick={() => setMenuOpen(true)}
-                >
-                    <span
-                        style={{
-                            fontVariationSettings: "'wght' 700",
-                            marginLeft: 3,
-                            position: "relative",
-                        }}
-                    >
-                        <i
-                            className={"bx bx-menu bx-sm relative bottom-1.5"}
-                        ></i>
-                    </span>
-                </button>
-
-                {menuOpen && (
-                    <div className="z-[5002] overflow-scroll pb-10 -mx-5 fixed inset-0 flex flex-col items-center justify-start bg-blurDark backdrop-blur-3xl">
+                {/* a real dialog: focus moves in and stays in, Escape
+                    closes it, and focus returns to the Menu button.
+                    The button sits in the top corner on phones (their nav
+                    bar is at the bottom) and in the page on tablets */}
+                <Dialog.Root open={menuOpen} onOpenChange={setMenuOpen}>
+                    <Dialog.Trigger asChild>
                         <button
-                            className="absolute top-4 right-14 text-3xl text-typography-1 font-bold"
-                            onClick={() => setMenuOpen(false)}
-                            aria-label="Close menu"
+                            aria-label="Open menu"
+                            className={`cursor-pointer transition-colors text-typography-2 sm:hover:text-typography-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1 max-sm:z-[5001] max-sm:fixed max-sm:mr-4 max-sm:top-4 max-sm:right-0 sm:flex sm:items-center sm:gap-1 sm:mr-4 sm:rounded-lg sm:bg-layer-2 sm:shadow-control sm:pl-1 sm:pr-3 sm:py-1.5`}
                         >
-                            <i
-                                className={
-                                    "bx bx-x bx-sm relative -right-5 bottom-1.5"
-                                }
-                            ></i>
+                            <span
+                                style={{
+                                    fontVariationSettings: "'wght' 700",
+                                    marginLeft: 3,
+                                    position: "relative",
+                                }}
+                            >
+                                <i
+                                    className={
+                                        "bx bx-menu bx-sm relative bottom-1.5 sm:bottom-0 sm:top-0.5"
+                                    }
+                                ></i>
+                            </span>
+                            <span className="max-sm:hidden important">
+                                Menu
+                            </span>
                         </button>
+                    </Dialog.Trigger>
+                    <Dialog.Portal>
+                        <Dialog.Content
+                            aria-describedby={undefined}
+                            className="z-[5002] overflow-scroll pb-10 -mx-5 fixed inset-0 flex flex-col items-center justify-start bg-blurDark backdrop-blur-3xl outline-none"
+                        >
+                            <Dialog.Title className="sr-only">
+                                {organization.name} menu
+                            </Dialog.Title>
+                            <Dialog.Close
+                                className="absolute top-4 right-14 text-3xl text-typography-1 font-bold"
+                                aria-label="Close menu"
+                            >
+                                <i
+                                    className={
+                                        "bx bx-x bx-sm relative -right-5 bottom-1.5"
+                                    }
+                                ></i>
+                            </Dialog.Close>
 
-                        <div className="flex flex-col gap-1.5 w-full p-16">
-                            <h5 className={"px-3"}>About</h5>
+                            <div className="flex flex-col gap-1.5 w-full p-16">
+                                <h5 className={"px-3"}>About</h5>
 
-                            {renderMobileButtons(navLinks)}
+                                {renderMobileButtons(navLinks)}
 
-                            {adminLinks.length > 0 && (
-                                <>
-                                    <h5 className={"mt-6 px-3"}>Admin Tools</h5>
-                                    {renderMobileButtons(adminLinks)}
-                                </>
-                            )}
-                        </div>
-                    </div>
-                )}
+                                {adminLinks.length > 0 && (
+                                    <>
+                                        <h5 className={"mt-6 px-3"}>
+                                            Admin Tools
+                                        </h5>
+                                        {renderMobileButtons(adminLinks)}
+                                    </>
+                                )}
+                            </div>
+                        </Dialog.Content>
+                    </Dialog.Portal>
+                </Dialog.Root>
             </>
         );
     }

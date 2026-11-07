@@ -1,14 +1,14 @@
-import { Box, Card, TextField, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import DisplayLinks from "../../../../components/DisplayLinks";
+import TextField from "../../../../components/ui/input/TextField";
 
 const Announcements = () => {
-    let [content, setContent] = useState("");
-    let { enqueueSnackbar } = useSnackbar();
-    let [announcements, setAnnouncements] = useState<Announcement[]>([]);
+    const [content, setContent] = useState("");
+    const { enqueueSnackbar } = useSnackbar();
+    const [announcements, setAnnouncements] = useState<Announcement[]>([]);
     const [visibleAnnouncements, setVisibleAnnouncements] = useState(3);
 
     useEffect(() => {
@@ -101,7 +101,6 @@ const Announcements = () => {
                     />
                     <AsyncButton
                         sx={{ width: "100%", marginTop: "10px" }}
-                        variant="contained"
                         onClick={createAnnouncement}
                     >
                         Create
@@ -112,17 +111,13 @@ const Announcements = () => {
                         .slice(0, visibleAnnouncements)
                         .map((announcement, i) => {
                             return (
-                                <Box
+                                <div
                                     key={i}
-                                    sx={{
-                                        width: "100%",
-                                        display: "flex",
-                                        flexWrap: "wrap",
-                                        justifyContent: "center",
-                                    }}
+                                    className="w-full flex flex-wrap justify-center"
                                 >
-                                    <Card
-                                        sx={{
+                                    <div
+                                        className="rounded bg-layer-2 shadow-control"
+                                        style={{
                                             maxWidth: "600px",
                                             width: "100%",
                                             display: "flex",
@@ -144,32 +139,23 @@ const Announcements = () => {
                                                 marginLeft: "20px",
                                                 height: "40px",
                                             }}
-                                            variant="contained"
                                         >
                                             Delete
                                         </AsyncButton>
-                                    </Card>
-                                </Box>
+                                    </div>
+                                </div>
                             );
                         })}
                     {visibleAnnouncements < announcements.length && (
-                        <Box
-                            sx={{
-                                width: "100%",
-                                display: "flex",
-                                justifyContent: "center",
-                                marginTop: "10px",
-                            }}
-                        >
+                        <div className="w-full flex justify-center mt-2.5">
                             <AsyncButton
-                                variant="contained"
                                 onClick={() =>
                                     setVisibleAnnouncements((prev) => prev + 3)
                                 }
                             >
                                 Show More
                             </AsyncButton>
-                        </Box>
+                        </div>
                     )}
                 </div>
             </div>

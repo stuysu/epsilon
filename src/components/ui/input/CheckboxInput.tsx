@@ -24,10 +24,13 @@ const CheckboxInput = ({
                 // invisible padding so the tap target is ~44px without changing the look
                 "before:absolute before:-inset-[10px] before:content-[''] " +
                 "data-[state=checked]:bg-blue data-[state=indeterminate]:bg-blue " +
+                // keeps an empty box visible on dark rows
+                "data-[state=unchecked]:ring-1 data-[state=unchecked]:ring-inset data-[state=unchecked]:ring-typography-2 " +
                 (disabled ? "opacity-50 cursor-not-allowed" : "cursor-pointer")
             }
         >
-            <Checkbox.Indicator className="text-white flex items-center justify-center">
+            {/* the tick is dark on the light blue of the high contrast theme */}
+            <Checkbox.Indicator className="text-white [[data-theme=dark-hc]_&]:text-black flex items-center justify-center">
                 <i
                     className={`bx ${
                         checked === "indeterminate" ? "bx-minus" : "bx-check"

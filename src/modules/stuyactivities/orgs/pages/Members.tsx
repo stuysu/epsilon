@@ -33,7 +33,7 @@ const Members = () => {
                 const name =
                     `${member.users?.first_name ?? ""} ${member.users?.last_name ?? ""}`.toLowerCase();
                 const email = member.users?.email?.toLowerCase() ?? "";
-                const query = search.toLowerCase();
+                const query = search.trim().toLowerCase();
                 return name.includes(query) || email.includes(query);
             })
             .sort(sortMembers);
@@ -45,15 +45,25 @@ const Members = () => {
         }));
     }, [organization.memberships, search, sort, joinDates]);
 
+    const showNoMatch = filteredMembers.length === 0 && !!search.trim();
+
+    /* follow the list's real height, including after removed rows finish
+       fading out and when the "no match" message appears or wraps */
     useLayoutEffect(() => {
-        if (contentRef.current) {
-            setBoxHeight(contentRef.current.scrollHeight);
-        }
-    }, [filteredMembers.length]);
+        const content = contentRef.current;
+        if (!content) return;
+        const measure = () => setBoxHeight(content.scrollHeight);
+        measure();
+        const observer = new ResizeObserver(measure);
+        observer.observe(content);
+        return () => observer.disconnect();
+        // re-run on these too, in case the list mounts after the first render
+    }, [filteredMembers.length, showNoMatch]);
 
     return (
         <LoginGate page="view members">
             <section className="w-full mt-2 mb-10">
+                <h1 className="sr-only">Members</h1>
                 <div className="flex flex-col sm:flex-row sm:gap-3">
                     <SearchInput
                         placeholder="Search members by name or email..."
@@ -76,10 +86,7 @@ const Members = () => {
                                     role={member.role || "MEMBER"}
                                     role_name={member.role_name}
                                     email={member.users?.email || "no email"}
-                                    picture={
-                                        member.users?.picture ||
-                                        "https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png"
-                                    }
+                                    picture={member.users?.picture || undefined}
                                     first_name={
                                         member.users?.first_name || "First"
                                     }
@@ -93,6 +100,19 @@ const Members = () => {
                             </motion.div>
                         ))}
                     </AnimatePresence>
+                    {/* always rendered so screen readers announce the change */}
+                    <p
+                        role="status"
+                        className={
+                            showNoMatch
+                                ? "px-4 py-6 text-center text-typography-2"
+                                : "sr-only"
+                        }
+                    >
+                        {showNoMatch
+                            ? `No members match “${search.trim()}”`
+                            : ""}
+                    </p>
                 </ItemList>
             </section>
         </LoginGate>

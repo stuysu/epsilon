@@ -1,6 +1,6 @@
 import { CSSProperties, useContext, useEffect, useState } from "react";
 
-import { Box, Typography, useMediaQuery, InputAdornment } from "@mui/material";
+import useMediaQuery from "../../utils/useMediaQuery";
 import MultiPageForm from "../../components/ui/forms/MultiPageForm";
 import FormPage from "../../components/ui/forms/FormPage";
 import FormTextField from "../../components/ui/forms/FormTextField";
@@ -22,6 +22,7 @@ import { PUBLIC_URL } from "../../config/constants";
 import LoginGate from "../../components/ui/content/LoginGate";
 import UserContext from "../../contexts/UserContext";
 import { Helmet } from "react-helmet";
+import { functionErrorText } from "../../utils/FunctionErrors";
 
 type FormType = {
     name: string;
@@ -84,11 +85,13 @@ const CharterForm = () => {
     const { enqueueSnackbar } = useSnackbar();
 
     const [formData, setFormData] = useState<FormType>(emptyForm);
-    const isMobile = useMediaQuery("(max-width: 640px)");
+    const isMobile = useMediaQuery("not all and (min-width: 640px)");
 
     const [urlError, setUrlError] = useState<string>("");
     const [checkingUrl, setCheckingUrl] = useState<boolean>(false);
-    const urlPattern = /^[a-zA-Z0-9_-]+$/;
+    // the hyphen is escaped, since browsers read the HTML pattern attribute
+    // with the v flag, which rejects an unescaped one in a class
+    const urlPattern = /^[a-zA-Z0-9_\-]+$/;
 
     const validateUrl = async (url: string) => {
         if (
@@ -193,7 +196,7 @@ const CharterForm = () => {
     }, [formData, submitting]);
 
     const createActivity = async () => {
-        let body = {
+        const body = {
             name: formData.name,
             url: formData.url.toLowerCase(),
             socials: formData.socials,
@@ -216,11 +219,11 @@ const CharterForm = () => {
             faculty_email: formData.faculty_email,
         };
 
-        let { data: orgCreateData, error: orgCreateError } =
+        const { data: orgCreateData, error: orgCreateError } =
             await supabase.functions.invoke("create-organization", { body });
 
         if (orgCreateError || !orgCreateData) {
-            const error = await orgCreateError?.context.text();
+            const error = await functionErrorText(orgCreateError);
             let message = "Contact it@stuysu.org for support.";
             if (error) {
                 message = error;
@@ -229,13 +232,13 @@ const CharterForm = () => {
                 variant: "error",
             });
         }
-        let orgId = orgCreateData.id;
+        const orgId = orgCreateData.id;
 
         /* Create picture if organization is successfully created */
         /* convert picture to url */
         if (formData.picture) {
-            let filePath = `org-pictures/${orgId}/${Date.now()}-${formData.url}-profile${formData.picture.name.split(".").pop()}`;
-            let { data: storageData, error: storageError } =
+            const filePath = `org-pictures/${orgId}/${Date.now()}-${formData.url}-profile${formData.picture.name.split(".").pop()}`;
+            const { data: storageData, error: storageError } =
                 await supabase.storage
                     .from("public-files")
                     .upload(filePath, formData.picture);
@@ -249,7 +252,7 @@ const CharterForm = () => {
                 );
             }
 
-            let { data: urlData } = await supabase.storage
+            const { data: urlData } = await supabase.storage
                 .from("public-files")
                 .getPublicUrl(filePath);
 
@@ -263,7 +266,7 @@ const CharterForm = () => {
                 );
             }
 
-            let { error: updateUrlError } = await supabase
+            const { error: updateUrlError } = await supabase
                 .from("organizations")
                 .update({ picture: urlData.publicUrl })
                 .eq("id", orgId);
@@ -284,19 +287,16 @@ const CharterForm = () => {
     };
     if (!eligible)
         return (
-            <Box
-                sx={{
-                    width: "100%",
-                }}
-            >
-                <Typography align="center" variant="h3">
+            <div className="w-full">
+                <h3 className="m-0 text-center font-sans text-[3rem] leading-[1.167] text-[color:inherit] [font-variation-settings:'wght'_400]">
                     You may not submit a second charter if you already have one
                     pending.
-                </Typography>
-            </Box>
+                </h3>
+            </div>
         );
     return (
         <LoginGate page={"charter an Activity"}>
+            <h1 className="sr-only">Charter an Activity</h1>
             <Helmet>
                 <meta name="robots" content="noindex" />
             </Helmet>
@@ -377,17 +377,8 @@ const CharterForm = () => {
                                         ? "URL is valid."
                                         : undefined
                             }
-                            InputProps={{
-                                startAdornment: (
-                                    <InputAdornment position="start" sx={{ mr:0 }}>
-                                        https://epsilon.stuysu.org/
-                                    </InputAdornment>
-                                )
-                            }}
-                            inputProps={{
-                                pattern: urlPattern.source,
-                                style: { paddingLeft: "0px" },
-                            }}
+                            startAdornment="https://epsilon.stuysu.org/"
+                            pattern={urlPattern.source}
                             onBlur={async (e: any) => {
                                 const url = e.target.value;
                                 if (url) await validateUrl(url);
@@ -621,11 +612,11 @@ const CharterForm = () => {
                             description="Check this box if so."
                         />
                     </FormSection>
-                    <Typography sx={{ marginTop: "1rem" }}>
+                    <p className="mt-4">
                         If you have additional information to share about your
                         club, please use the "Messages" feature in your club
                         admin panel.
-                    </Typography>
+                    </p>
                 </FormPage>
             </MultiPageForm>
         </LoginGate>

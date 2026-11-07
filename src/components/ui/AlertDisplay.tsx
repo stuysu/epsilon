@@ -22,9 +22,12 @@ const AlertDisplay = () => {
     const isOpen = Boolean(anchorEl);
     useEffect(() => {
         const fetchAlert = async () => {
-            // USE Alert.json FOR TESTING PURPOSES, DONT PUSH TO PROD BEFORE REVERTING BACK TO https://alert.stuysu.org
-            const res = await fetch("https://alert.stuysu.org");
-            if (res.status === 404) return;
+            // the alert service being down shouldn't surface as an error
+          // use Alert.json for testing purposes, dont push to prod before reverting to https://alert.stuysu.org
+            const res = await fetch("https://alert.stuysu.org").catch(
+                () => null,
+            );
+            if (!res || res.status === 404) return;
             try {
                 const alertData = (await res.json()) as AlertInfo;
                 setData(alertData);
@@ -116,8 +119,7 @@ const AlertDisplay = () => {
         return <></>;
     return (
         <div className={"z-[9999] relative w-full p-4 bg-bg"}>
-            <Alert
-                sx={{ borderRadius: "10px" }}
+            <AlertBanner
                 severity={data.severity}
                 variant="filled"
                 {... isError ? { action: null } : { onClose: handleCloseClick }}
@@ -130,7 +132,9 @@ const AlertDisplay = () => {
                     },
                 }}
             >
-                <div className={"relative top-0.5 invert brightness-200 *:text-[var(--text-primary)]"}>
+                {/* the message takes the banner's own text colour, which is
+                    chosen to read on each severity in every theme */}
+                <div className="relative top-0.5 [&_a]:text-inherit [&_a]:underline [&_p]:text-inherit">
                     <DisplayLinks text={data.message} />
                 </div>
             </Alert>

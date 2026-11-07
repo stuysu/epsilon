@@ -1,6 +1,6 @@
 /** @type {import('tailwindcss').Config} */
 module.exports = {
-    content: ["./public/**/*.html", "./src/**/*.{js,jsx,ts,tsx}"],
+    content: ["./index.html", "./src/**/*.{js,jsx,ts,tsx}"],
     theme: {
         fontFamily: {
             sans: ["inter-variable", "system-ui", "sans-serif"],
@@ -16,6 +16,10 @@ module.exports = {
             backgroundImage: {
                 lineSeparator:
                     "linear-gradient(to right, var(--divider) 0%, var(--highlight) 25%, var(--divider) 100%)",
+            },
+            // text-accent uses a lighter shade in dark themes than bg-accent
+            textColor: {
+                accent: "var(--accent-text)",
             },
             colors: {
                 bg: "var(--bg-main)",

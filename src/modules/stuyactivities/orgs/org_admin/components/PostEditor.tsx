@@ -1,9 +1,10 @@
-import { Box, FormControlLabel, Switch, TextField } from "@mui/material";
 import { ChangeEvent, useEffect, useState } from "react";
 
 import { supabase } from "../../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
+import SwitchField from "../../../../../components/ui/input/SwitchField";
+import TextField from "../../../../../components/ui/input/TextField";
 
 /* if content is null, then it is creating post */
 const PostEditor = ({
@@ -26,7 +27,7 @@ const PostEditor = ({
     const { enqueueSnackbar } = useSnackbar();
     const [silent, setSilent] = useState(false);
 
-    let [postData, setPostData] = useState<Partial<Post>>({
+    const [postData, setPostData] = useState<Partial<Post>>({
         id: undefined,
         organizations: {
             id: orgId,
@@ -64,14 +65,14 @@ const PostEditor = ({
             });
         }
 
-        let payload = {
+        const payload = {
             title: postData.title,
             description: postData.description,
             organization_id: orgId,
             silent,
         };
 
-        let { data, error } = await supabase.functions.invoke("create-post", {
+        const { data, error } = await supabase.functions.invoke("create-post", {
             body: payload,
         });
 
@@ -108,13 +109,13 @@ const PostEditor = ({
     };
 
     const savePost = async () => {
-        let payload = {
+        const payload = {
             title: postData.title,
             description: postData.description,
         };
 
         // There is no need for .limits(1) since id is primary_key/unique
-        let { data, error } = await supabase
+        const { data, error } = await supabase
             .from("posts")
             .update(payload)
             .eq("id", postData.id)
@@ -141,7 +142,7 @@ const PostEditor = ({
     return (
         <div className={"bg-layer-1 p-5 pl-7 pb-8 rounded-xl shadow-prominent"}>
             <h1>{content ? "Update Post" : "Create Post"}</h1>
-            <Box sx={{ marginY: "10px" }}>
+            <div className="my-2.5">
                 <TextField
                     value={postData["title"]}
                     name={"title"}
@@ -160,37 +161,23 @@ const PostEditor = ({
                     rows={7}
                     sx={{ marginTop: "10px" }}
                 />
-            </Box>
+            </div>
             {content ? (
                 <>
-                    <AsyncButton onClick={savePost} variant="contained">
-                        Save
-                    </AsyncButton>
-                    <AsyncButton
-                        onClick={onCancel}
-                        variant="contained"
-                        sx={{ marginLeft: "10px" }}
-                    >
+                    <AsyncButton onClick={savePost}>Save</AsyncButton>
+                    <AsyncButton onClick={onCancel} sx={{ marginLeft: "10px" }}>
                         Cancel
                     </AsyncButton>
                 </>
             ) : (
-                <AsyncButton onClick={createPost} variant="contained">
-                    Create
-                </AsyncButton>
+                <AsyncButton onClick={createPost}>Create</AsyncButton>
             )}{" "}
             {!content && (
-                <FormControlLabel
-                    control={
-                        <Switch
-                            checked={silent}
-                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                                setSilent(event.target.checked)
-                            }
-                        />
-                    }
+                <SwitchField
+                    checked={silent}
+                    onChange={setSilent}
                     label="silent?"
-                    sx={{ marginLeft: "10px", marginBottom: 0 }}
+                    style={{ marginLeft: "10px" }}
                 />
             )}
         </div>

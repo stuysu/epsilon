@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 import OrgContext from "../../../../contexts/OrgContext";
-import { useMediaQuery } from "@mui/material";
+import useMediaQuery from "../../../../utils/useMediaQuery";
 
 import OrgMeeting from "../components/OrgMeeting";
 import { sortByDate } from "../../../../utils/DataFormatters";
@@ -38,12 +38,9 @@ const Meetings = () => {
                                 end_time={meeting.end_time || ""}
                                 is_public={meeting.is_public || false}
                                 room_name={meeting.rooms?.name || "Virtual"}
-                                advisor={meeting.advisor || "None"}
+                                advisor={meeting.advisor}
                                 org_name={organization.name || "No Org"}
-                                org_picture={
-                                    organization.picture ||
-                                    "https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png"
-                                }
+                                org_picture={organization.picture || undefined}
                                 isMobile={isMobile}
                                 onlyUpcoming
                             />

@@ -26,7 +26,7 @@ const OrgStreamPost = ({
     const organization = useContext(OrgContext);
 
     const deletePost = async () => {
-        let { error } = await supabase
+        const { error } = await supabase
             .from("posts")
             .delete()
             .eq("id", content.id);
@@ -51,7 +51,7 @@ const OrgStreamPost = ({
                 orgPicture={content.organizations?.picture as string}
                 onCancel={() => setEditing(false)}
                 onSave={(newData) => {
-                    let postIndex = organization.posts.findIndex(
+                    const postIndex = organization.posts.findIndex(
                         (p) => p.id === newData.id,
                     );
 
@@ -78,11 +78,11 @@ const OrgStreamPost = ({
         );
     }
 
-    let isEdited = content.created_at !== content.updated_at;
-    let postTime = isEdited
+    const isEdited = content.created_at !== content.updated_at;
+    const postTime = isEdited
         ? toNewYork(content.updated_at)
         : toNewYork(content.created_at);
-    let timeStr = `${postTime.month() + 1}/${postTime.date()}/${postTime.year()}`;
+    const timeStr = `${postTime.month() + 1}/${postTime.date()}/${postTime.year()}`;
 
     return (
         <article className="w-full relative p-1 rounded-xl h-fit max-h-96 border-none shadow-prominent bg-layer-1">
@@ -140,15 +140,11 @@ const OrgStreamPost = ({
                 <div className="absolute top-5 right-5">
                     {editable && (
                         <>
-                            <AsyncButton
-                                onClick={deletePost}
-                                variant="contained"
-                            >
+                            <AsyncButton onClick={deletePost}>
                                 Delete
                             </AsyncButton>
                             <AsyncButton
                                 onClick={() => setEditing(true)}
-                                variant="contained"
                                 sx={{ marginLeft: "10px" }}
                             >
                                 Edit

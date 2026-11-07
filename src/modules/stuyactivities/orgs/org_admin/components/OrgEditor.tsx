@@ -1,11 +1,11 @@
 import { Fragment, ReactNode, useCallback, useEffect, useState } from "react";
-import { Avatar, Box } from "@mui/material";
 import { useSnackbar } from "notistack";
 import FormTextField from "../../../../../components/ui/forms/FormTextField";
 import Divider from "../../../../../components/ui/Divider";
 import OrgRequirements, {
     ORG_TAGS,
 } from "../../../../../utils/OrgRequirements";
+import { getInvalidSocials } from "../../../../../utils/SocialLinks";
 import FormTagSelect from "../../../../../components/ui/forms/FormTagSelect";
 import FormChipText from "../../../../../components/ui/forms/FormChipText";
 import orgFieldMap from "../../../../../utils/OrgFieldMap";
@@ -13,6 +13,7 @@ import { supabase } from "../../../../../lib/supabaseClient";
 import { PUBLIC_URL } from "../../../../../config/constants";
 import { useNavigate } from "react-router-dom";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
+import Avatar from "../../../../../components/ui/Avatar";
 
 type Props = {
     organization: Partial<Organization>; // Make organization a prop to allow component to become reusable
@@ -58,59 +59,38 @@ const EditField = ({
                     {pending ? "Pending" : "Approved"}
                 </p>
             </div>
-            <Box
-                sx={{
-                    width: "100%",
-                    display: "flex",
-                    flexWrap: "nowrap",
-                    padding: "10px 0",
-                    position: "relative",
-                    minHeight: "100px",
-                }}
-            >
+            <div className="w-full flex flex-nowrap py-2.5 relative min-h-[100px]">
                 {editing ? (
                     <>
                         {editDisplay}
-                        <Box
-                            sx={{
-                                width: "15%",
-                                position: "absolute",
-                                right: "20px",
-                            }}
-                        >
+                        <div className="w-[15%] absolute right-[20px]">
                             <AsyncButton
                                 onClick={onCancel}
-                                variant="contained"
                                 sx={{ width: "100%" }}
                             >
                                 Cancel
                             </AsyncButton>
-                        </Box>
+                        </div>
                     </>
                 ) : (
                     <>
                         {defaultDisplay}
-                        <Box
-                            sx={{
-                                width: "60px",
-                                position: "absolute",
-                                right: "20px",
-                            }}
-                        >
+                        <div className="w-[60px] absolute right-[20px]">
                             <AsyncButton
                                 onClick={onEdit}
-                                variant="contained"
                                 sx={{ width: "100%" }}
                             >
                                 Edit
                             </AsyncButton>
-                        </Box>
+                        </div>
                     </>
                 )}
-            </Box>
+            </div>
         </>
     );
 };
+
+const URL_PATTERN = /^[a-zA-Z0-9_\-]+$/;
 
 // too lazy to write them all out, use array.map to write it faster
 const textFields = [
@@ -188,10 +168,56 @@ const OrgEditor = ({
     /* validation */
     const [savable, setSavable] = useState(false);
 
+    const [urlError, setUrlError] = useState("");
+    const [checkingUrl, setCheckingUrl] = useState(false);
+
+    const validateUrl = async (url: string) => {
+        const { minChar, maxChar } = OrgRequirements.url.requirements ?? {};
+        if (url.length < minChar || url.length > maxChar) {
+            setUrlError(
+                `URL ending must be between ${minChar} and ${maxChar} characters long`,
+            );
+            return;
+        }
+        if (!URL_PATTERN.test(url)) {
+            setUrlError(
+                "URL can only contain letters, numbers, dashes, and underscores.",
+            );
+            return;
+        }
+        setUrlError("");
+        if (url.toLowerCase() === organization.url?.toLowerCase()) return;
+        setCheckingUrl(true);
+        const { data, error } = await supabase
+            .from("organizations")
+            .select("id")
+            .eq("url", url.toLowerCase());
+        setCheckingUrl(false);
+        if (error) {
+            setUrlError("Error checking URL.");
+        } else if (data && data.length > 0) {
+            setUrlError("This URL is already in use.");
+        }
+    };
+
     /* redirection */
     const navigate = useNavigate();
 
     useEffect(() => {
+        if ("url" in editState && (urlError || checkingUrl)) {
+            setSavable(false);
+            return;
+        }
+
+        /* the field already shows which links are wrong */
+        if (
+            "socials" in editState &&
+            getInvalidSocials(editData.socials).length > 0
+        ) {
+            setSavable(false);
+            return;
+        }
+
         /* check if picture is saved before terminating if no other fields are saved */
 
         if (editPicture !== undefined && editPicture !== oldPicture) {
@@ -200,7 +226,7 @@ const OrgEditor = ({
         }
 
         /* check if there is anything to save, if not, terminate */
-        let editedFields: string[] = Object.keys(editState);
+        const editedFields: string[] = Object.keys(editState);
         if (!editedFields.length) {
             setSavable(false);
             return;
@@ -208,11 +234,11 @@ const OrgEditor = ({
 
         /* check if the edited fields are different from the original */
         let atleastOneDiff = false;
-        for (let field of editedFields) {
+        for (const field of editedFields) {
             if (hiddenFields.includes(field)) continue;
 
-            let editedValue = editData[field as keyof OrganizationEdit];
-            let originalValue =
+            const editedValue = editData[field as keyof OrganizationEdit];
+            const originalValue =
                 existingEdit[field as keyof OrganizationEdit] ||
                 organization[field as keyof Organization];
 
@@ -237,6 +263,8 @@ const OrgEditor = ({
 
         setSavable(atleastOneDiff);
     }, [
+        urlError,
+        checkingUrl,
         status,
         existingEdit,
         editState,
@@ -250,11 +278,11 @@ const OrgEditor = ({
     useEffect(() => {
         // replace undefined fields with organization
 
-        let baseData: OrganizationEdit = {};
+        const baseData: OrganizationEdit = {};
 
-        for (let key of Object.keys(existingEdit)) {
+        for (const key of Object.keys(existingEdit)) {
             // typescript crying
-            let editField = key as keyof OrganizationEdit;
+            const editField = key as keyof OrganizationEdit;
             if (hiddenFields.includes(editField)) continue;
 
             if (
@@ -280,11 +308,11 @@ const OrgEditor = ({
             return;
         }
 
-        let payload: any = {};
+        const payload: any = {};
 
         let allNull = true;
-        for (let key of Object.keys(existingEdit)) {
-            let field = key as orgKey;
+        for (const key of Object.keys(existingEdit)) {
+            const field = key as orgKey;
             if (hiddenFields.includes(field)) continue;
 
             if (listFields.includes(field)) {
@@ -316,7 +344,7 @@ const OrgEditor = ({
                 }
             } else if (Array.isArray(payload[field])) {
                 let diff = false;
-                let oldValue = organization[field] as any[];
+                const oldValue = organization[field] as any[];
 
                 if (payload[field].length !== oldValue.length) {
                     diff = true;
@@ -359,9 +387,9 @@ const OrgEditor = ({
             // picture is different, but needs to be uploaded first
             /* Note: any indication of the picture failing to upload will kill the entire org edit process */
 
-            let filePath = `org-pictures/${organization.id}/${Date.now()}-${organization.url}-profile${(editPicture as File)!.name.split(".").pop()}`;
+            const filePath = `org-pictures/${organization.id}/${Date.now()}-${organization.url}-profile${(editPicture as File)!.name.split(".").pop()}`;
 
-            let { data: storageData, error: storageError } =
+            const { data: storageData, error: storageError } =
                 await supabase.storage
                     .from("public-files")
                     .upload(filePath, editPicture!);
@@ -373,7 +401,7 @@ const OrgEditor = ({
                 );
             }
 
-            let { data: urlData } = await supabase.storage
+            const { data: urlData } = await supabase.storage
                 .from("public-files")
                 .getPublicUrl(filePath);
 
@@ -391,7 +419,7 @@ const OrgEditor = ({
         if (allNull) {
             // delete the existing organization edit if it exists
             if (existingEdit.id) {
-                let { error: deleteError } = await supabase
+                const { error: deleteError } = await supabase
                     .from("organizationedits")
                     .delete()
                     .eq("organization_id", organization.id);
@@ -464,7 +492,7 @@ const OrgEditor = ({
             /* PENDING ORGANIZATION SHOULD JUST BE ALLOWED TO UPDATE */
 
             // filter out null fields
-            for (let key of Object.keys(payload)) {
+            for (const key of Object.keys(payload)) {
                 if (payload[key] === null) {
                     delete payload[key];
                 }
@@ -514,7 +542,7 @@ const OrgEditor = ({
 
     const deleteEdit = async () => {
         if (existingEdit.id) {
-            let { error: deleteError } = await supabase
+            const { error: deleteError } = await supabase
                 .from("organizationedits")
                 .delete()
                 .eq("organization_id", organization.id);
@@ -580,18 +608,10 @@ const OrgEditor = ({
                     {pendingPicture ? "Pending" : "Approved"}
                 </p>
             </div>
-            <Box
-                sx={{
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "space-between",
-                    padding: "10px 0",
-                    marginBottom: "20px",
-                }}
-            >
+            <div className="flex items-center justify-between py-2.5 mb-5">
                 <Avatar
                     src={putPicture}
-                    sx={{
+                    style={{
                         width: "170px",
                         height: "170px",
                         borderRadius: "25px",
@@ -601,19 +621,8 @@ const OrgEditor = ({
                 >
                     {(organization.name || "O").slice(0, 1).toUpperCase()}
                 </Avatar>
-                <Box
-                    sx={{
-                        width: "200px",
-                        display: "flex",
-                        flexDirection: "column",
-                        paddingRight: "20px",
-                    }}
-                >
-                    <AsyncButton
-                        variant="contained"
-                        component="label"
-                        sx={{ width: "100%" }}
-                    >
+                <div className="w-[200px] flex flex-col pr-5">
+                    <AsyncButton component="label" sx={{ width: "100%" }}>
                         Upload Avatar
                         <input
                             type="file"
@@ -643,11 +652,11 @@ const OrgEditor = ({
                                     ? (editPicture as File).webkitRelativePath
                                     : ""
                             }
-                            hidden
+                            // visually hidden but focusable, so the upload works from a keyboard
+                            className="sr-only"
                         />
                     </AsyncButton>
                     <AsyncButton
-                        variant="contained"
                         sx={{ marginTop: "10px", width: "100%" }}
                         onClick={() => {
                             if (!oldPicture) {
@@ -662,7 +671,6 @@ const OrgEditor = ({
                     </AsyncButton>
                     {editPicture !== undefined && organization.picture && (
                         <AsyncButton
-                            variant="contained"
                             sx={{ marginTop: "10px", width: "100%" }}
                             onClick={async () => {
                                 setEditPicture(undefined);
@@ -671,8 +679,8 @@ const OrgEditor = ({
                             Reset Image
                         </AsyncButton>
                     )}
-                </Box>
-            </Box>
+                </div>
+            </div>
             <Divider />
             {textFields.map((field, i) => {
                 return (
@@ -701,6 +709,8 @@ const OrgEditor = ({
                                         ],
                                 );
 
+                                if (field === "url") setUrlError("");
+
                                 // remove self from list of fields being edited
                                 setEditState((prevState) => {
                                     const state = { ...prevState };
@@ -719,10 +729,18 @@ const OrgEditor = ({
                                 setEditState({ ...editState, [field]: true })
                             }
                             defaultDisplay={
-                                <p className={"w-3/4"}>
+                                <p className={"w-3/4 break-words"}>
                                     {editData[
                                         field as keyof OrganizationEdit
-                                    ] || (
+                                    ] ? (
+                                        field === "url" ? (
+                                            `https://epsilon.stuysu.org/${editData.url}`
+                                        ) : (
+                                            editData[
+                                                field as keyof OrganizationEdit
+                                            ]
+                                        )
+                                    ) : (
                                         <em className="text-typography-3">
                                             &lt;empty&gt;
                                         </em>
@@ -730,29 +748,65 @@ const OrgEditor = ({
                                 </p>
                             }
                             editDisplay={
-                                <FormTextField
-                                    sx={{ width: "80%" }}
-                                    label={orgFieldMap(field)}
-                                    field={field}
-                                    onChange={(val) =>
-                                        updateEdit(
-                                            field as keyof OrganizationEdit,
-                                            val,
-                                        )
-                                    }
-                                    value={
-                                        editData[
-                                            field as keyof OrganizationEdit
-                                        ]
-                                    }
-                                    required={OrgRequirements[field].required}
-                                    requirements={
-                                        OrgRequirements[field].requirements
-                                    }
-                                    changeStatus={changeStatus}
-                                    multiline
-                                    rows={4}
-                                />
+                                field === "url" ? (
+                                    <FormTextField
+                                        sx={{ width: "80%" }}
+                                        label="URL Slug"
+                                        field="url"
+                                        onChange={(val) => {
+                                            updateEdit("url", val);
+                                            setUrlError("");
+                                        }}
+                                        onBlur={(e) => {
+                                            if (e.target.value)
+                                                validateUrl(e.target.value);
+                                        }}
+                                        value={editData.url}
+                                        required={OrgRequirements.url.required}
+                                        requirements={
+                                            OrgRequirements.url.requirements
+                                        }
+                                        changeStatus={changeStatus}
+                                        error={!!urlError}
+                                        helperText={
+                                            urlError
+                                                ? urlError
+                                                : checkingUrl
+                                                  ? "Checking URL..."
+                                                  : editData.url
+                                                    ? "URL is valid."
+                                                    : undefined
+                                        }
+                                        startAdornment="https://epsilon.stuysu.org/"
+                                        pattern={URL_PATTERN.source}
+                                    />
+                                ) : (
+                                    <FormTextField
+                                        sx={{ width: "80%" }}
+                                        label={orgFieldMap(field)}
+                                        field={field}
+                                        onChange={(val) =>
+                                            updateEdit(
+                                                field as keyof OrganizationEdit,
+                                                val,
+                                            )
+                                        }
+                                        value={
+                                            editData[
+                                                field as keyof OrganizationEdit
+                                            ]
+                                        }
+                                        required={
+                                            OrgRequirements[field].required
+                                        }
+                                        requirements={
+                                            OrgRequirements[field].requirements
+                                        }
+                                        changeStatus={changeStatus}
+                                        multiline
+                                        rows={4}
+                                    />
+                                )
                             }
                         />
                         {i < textFields.length - 1 && <Divider />}
@@ -803,7 +857,7 @@ const OrgEditor = ({
                                 setEditState({ ...editState, [field]: true })
                             }
                             defaultDisplay={
-                                <p className={"w-3/4"}>
+                                <p className={"w-3/4 break-words"}>
                                     {toList(
                                         field,
                                         editData[
@@ -835,7 +889,7 @@ const OrgEditor = ({
                                         sx={{ width: "80%" }}
                                     />
                                 ) : (
-                                    <Box sx={{ width: "80%" }}>
+                                    <div className="w-[80%]">
                                         <FormChipText
                                             field={field}
                                             label="Keywords"
@@ -860,25 +914,15 @@ const OrgEditor = ({
                                             }
                                             changeStatus={changeStatus}
                                         />
-                                    </Box>
+                                    </div>
                                 )
                             }
                         />
                     </Fragment>
                 );
             })}
-            <Box
-                sx={{
-                    width: "100%",
-                    marginTop: "20px",
-                    padding: "20px",
-                    display: "flex",
-                    flexDirection: "row-reverse",
-                    flexWrap: "nowrap",
-                }}
-            >
+            <div className="w-full mt-5 p-5 flex flex-row-reverse flex-nowrap">
                 <AsyncButton
-                    variant="contained"
                     isPrimary
                     disabled={!savable}
                     onClick={saveChanges}
@@ -886,14 +930,10 @@ const OrgEditor = ({
                 >
                     Submit Changes for Review
                 </AsyncButton>
-                <AsyncButton
-                    variant="contained"
-                    disabled={allNull}
-                    onClick={deleteEdit}
-                >
+                <AsyncButton disabled={allNull} onClick={deleteEdit}>
                     Delete Edit
                 </AsyncButton>
-            </Box>
+            </div>
         </div>
     );
 };

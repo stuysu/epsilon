@@ -1,6 +1,5 @@
-import { useEffect, useState } from "react";
+import { Fragment, useEffect, useState } from "react";
 
-import { Avatar } from "@mui/material";
 import Divider from "../../../../components/ui/Divider";
 
 import { supabase } from "../../../../lib/supabaseClient";
@@ -8,6 +7,11 @@ import { useSnackbar } from "notistack";
 import OrgChat from "./OrgChat";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import orgFieldMap from "../../../../utils/OrgFieldMap";
+import Avatar from "../../../../components/ui/Avatar";
+import {
+    functionErrorStatus,
+    functionErrorText,
+} from "../../../../utils/FunctionErrors";
 
 type EditKey = keyof EditType;
 
@@ -44,15 +48,15 @@ const OrgEditApproval = ({
     const { enqueueSnackbar } = useSnackbar();
 
     /* fetch current org data to compare to */
-    let [currentOrg, setCurrentOrg] = useState<Partial<Organization>>({});
+    const [currentOrg, setCurrentOrg] = useState<Partial<Organization>>({});
     const [buttonsDisabled, setButtonsDisabled] = useState(false);
-    let [fields, setChangedFields] = useState<string[]>([]);
+    const [fields, setChangedFields] = useState<string[]>([]);
 
     useEffect(() => {
         /* find not null fields */
-        let changedFields: string[] = [];
-        for (let key of Object.keys(edit)) {
-            let field: EditKey = key as EditKey;
+        const changedFields: string[] = [];
+        for (const key of Object.keys(edit)) {
+            const field: EditKey = key as EditKey;
             if (!editFields.includes(field)) continue;
 
             if (edit[field] !== null) {
@@ -60,10 +64,10 @@ const OrgEditApproval = ({
             }
         }
 
-        let qs = changedFields.join(",\n");
+        const qs = changedFields.join(",\n");
 
         const fetchCurrentOrg = async () => {
-            let { data, error } = await supabase
+            const { data, error } = await supabase
                 .from("organizations")
                 .select(qs)
                 .eq("id", edit.organization_id);
@@ -85,9 +89,9 @@ const OrgEditApproval = ({
     const approve = async () => {
         setButtonsDisabled(true);
         let error;
-        let updatedFields: any = {};
+        const updatedFields: any = {};
 
-        for (let field of fields) {
+        for (const field of fields) {
             updatedFields[field] = edit[field as EditKey];
         }
 
@@ -105,12 +109,15 @@ const OrgEditApproval = ({
 
         if (error) {
             setButtonsDisabled(false);
-            const message = await error.context?.text();
-            return enqueueSnackbar(
+            const message = await functionErrorText(error);
+            enqueueSnackbar(
                 message ||
                     "Error updating organization. Contact it@stuysu.org for support.",
                 { variant: "error" },
             );
+            /* already handled by someone else: refresh the list */
+            if (functionErrorStatus(error) === 404) onApprove();
+            return;
         }
 
         setButtonsDisabled(false);
@@ -133,10 +140,14 @@ const OrgEditApproval = ({
 
         if (error) {
             setButtonsDisabled(false);
-            return enqueueSnackbar(
-                "Error deleting organization edit. Contact it@stuysu.org for support.",
+            enqueueSnackbar(
+                (await functionErrorText(error)) ||
+                    "Error deleting organization edit. Contact it@stuysu.org for support.",
                 { variant: "error" },
             );
+            /* already handled by someone else: refresh the list */
+            if (functionErrorStatus(error) === 404) onReject();
+            return;
         }
 
         setButtonsDisabled(false);
@@ -152,15 +163,10 @@ const OrgEditApproval = ({
                     {edit.organization_name}
                 </h1>
                 <div className={"flex flex-row w-min"}>
-                    <AsyncButton
-                        variant="contained"
-                        onClick={onBack}
-                        sx={{ marginRight: "10px" }}
-                    >
+                    <AsyncButton onClick={onBack} sx={{ marginRight: "10px" }}>
                         Back
                     </AsyncButton>
                     <AsyncButton
-                        variant="contained"
                         onClick={approve}
                         color="success"
                         sx={{ marginRight: "10px" }}
@@ -169,7 +175,6 @@ const OrgEditApproval = ({
                         Approve
                     </AsyncButton>
                     <AsyncButton
-                        variant="contained"
                         onClick={reject}
                         color="secondary"
                         sx={{ marginRight: "10px" }}
@@ -181,12 +186,12 @@ const OrgEditApproval = ({
             </div>
             <div className={"flex flex-col sm:flex-row gap-10"}>
                 <div className={"w-full flex flex-col gap-2"}>
-                    {fields.map((field, i) => {
-                        let f2: EditKey = field as EditKey;
+                    {fields.map((field) => {
+                        const f2: EditKey = field as EditKey;
 
                         if (f2 === "picture") {
                             return (
-                                <>
+                                <Fragment key={field}>
                                     <h4 className={"capitalize"}>
                                         {field}{" "}
                                         <i className={"bx bx-refresh"}></i>
@@ -207,19 +212,19 @@ const OrgEditApproval = ({
                                             .toUpperCase()}
                                     </Avatar>
                                     <Divider />
-                                </>
+                                </Fragment>
                             );
                         }
 
                         return (
-                            <>
+                            <Fragment key={field}>
                                 <h4>
                                     {orgFieldMap(field)}{" "}
                                     <i className={"bx bx-refresh"}></i>
                                 </h4>
                                 <p>{`"${edit[f2]}"`}</p>
                                 <Divider />
-                            </>
+                            </Fragment>
                         );
                     })}
                 </div>

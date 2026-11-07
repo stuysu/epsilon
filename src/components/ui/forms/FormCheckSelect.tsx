@@ -1,14 +1,6 @@
 import { useEffect } from "react";
 
-import {
-    Checkbox,
-    CheckboxProps,
-    FormControl,
-    FormControlLabel,
-    FormGroup,
-    FormHelperText,
-    FormLabel,
-} from "@mui/material";
+import CheckboxField from "../input/CheckboxField";
 
 type SelectType = {
     id: string;
@@ -35,13 +27,10 @@ const FormCheckSelect = ({
     value,
     label,
     required,
-    description,
     onChange,
-    status,
     changeStatus,
     selections,
-    ...checkboxProps
-}: Props & CheckboxProps) => {
+}: Props) => {
     useEffect(() => {
         const validate = (targetValue?: string[]) => {
             if (!targetValue) targetValue = [];
@@ -55,7 +44,7 @@ const FormCheckSelect = ({
         validate(value);
     }, [required, field, value, changeStatus]);
 
-    let checked: string[] = value || [];
+    const checked: string[] = value || [];
 
     const checkboxUpdate = (newSelections: string[]) => {
         if (!onChange) return;
@@ -74,44 +63,34 @@ const FormCheckSelect = ({
     }
 
     return (
-        <FormControl>
-            {label && <FormLabel>{label}</FormLabel>}
-            <FormGroup row>
-                {selections.map((select, i) => {
-                    return (
-                        <FormControlLabel
-                            control={
-                                <Checkbox
-                                    key={i}
-                                    checked={checked.includes(select.id)}
-                                    onChange={(event) => {
-                                        if (
-                                            event.target.checked &&
-                                            !checked.includes(select.id)
-                                        ) {
-                                            checkboxUpdate([
-                                                ...checked,
-                                                select.id,
-                                            ]);
-                                        } else {
-                                            checkboxUpdate(
-                                                checked.filter(
-                                                    (id) => id !== select.id,
-                                                ),
-                                            );
-                                        }
-                                    }}
-                                    name={select.display}
-                                    {...checkboxProps}
-                                />
+        <div className="inline-flex flex-col">
+            {label && (
+                <p className="text-black/60 scheme-dark:text-white/70">
+                    {label}
+                </p>
+            )}
+            <div className="flex flex-row flex-wrap">
+                {selections.map((select) => (
+                    <CheckboxField
+                        key={select.id}
+                        checked={checked.includes(select.id)}
+                        label={select.display}
+                        onChange={(isChecked) => {
+                            if (isChecked && !checked.includes(select.id)) {
+                                checkboxUpdate([...checked, select.id]);
+                            } else {
+                                checkboxUpdate(
+                                    checked.filter((id) => id !== select.id),
+                                );
                             }
-                            label={select.display}
-                        />
-                    );
-                })}
-            </FormGroup>
-            <FormHelperText>{helperText}</FormHelperText>
-        </FormControl>
+                        }}
+                    />
+                ))}
+            </div>
+            <p className="mt-[3px] text-[0.75rem] leading-[1.66] text-black/60 scheme-dark:text-white/70">
+                {helperText}
+            </p>
+        </div>
     );
 };
 

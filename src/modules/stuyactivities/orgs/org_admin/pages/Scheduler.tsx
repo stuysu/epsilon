@@ -1,9 +1,9 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useState } from "react";
 import OrgContext from "../../../../../contexts/OrgContext";
 import UserContext from "../../../../../contexts/UserContext";
 import AdminUpsertMeeting from "../components/AdminUpsertMeeting";
 
-import { FormControlLabel, Switch, useMediaQuery } from "@mui/material";
+import useMediaQuery from "../../../../../utils/useMediaQuery";
 import { supabase } from "../../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import OrgMeeting from "../../components/OrgMeeting";
@@ -82,7 +82,6 @@ const Scheduler = () => {
                                 editing: true,
                             })
                         }
-                        variant="contained"
                     >
                         Create Meeting
                     </AsyncButton>
@@ -135,7 +134,7 @@ const Scheduler = () => {
                                           }
                                 }
                                 onDelete={async (silentDelete: boolean) => {
-                                    let { error } =
+                                    const { error } =
                                         await supabase.functions.invoke(
                                             "delete-meeting",
                                             {

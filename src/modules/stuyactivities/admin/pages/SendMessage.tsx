@@ -1,9 +1,7 @@
-import { Box, TextField, Typography } from "@mui/material";
 import { useEffect, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import OrgChat from "../components/OrgChat";
-import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import SearchInput from "../../../../components/ui/input/SearchInput";
 import Divider from "../../../../components/ui/Divider";
 
@@ -78,16 +76,9 @@ const SendMessage = () => {
                     ))}
                 </div>
             ) : null}
-            <Box
-                sx={{
-                    marginTop: "20px",
-                    width: "100%",
-                    justifyContent: "center",
-                    padding: "20px",
-                }}
-            >
+            <div className="mt-5 w-full justify-center p-5">
                 {orgId && <OrgChat organization_id={orgId} />}
-            </Box>
+            </div>
         </div>
     );
 };

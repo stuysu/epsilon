@@ -24,7 +24,6 @@ const UserPreferences = lazy(() => import("./user/./UserPreferences"));
 const Profile = lazy(() => import("./user/Profile"));
 const Create = lazy(() => import("./stuyactivities/CharterForm"));
 const Charter = lazy(() => import("./stuyactivities/CharterLanding"));
-const ConfirmJoin = lazy(() => import("./stuyactivities/ConfirmJoin"));
 const Archives = lazy(() => import("./stuyactivities/Archives"));
 const OrgRouter = lazy(() => import("./stuyactivities/orgs"));
 const AdminRouter = lazy(() => import("./stuyactivities/admin"));
@@ -77,7 +76,6 @@ const Pages = () => {
                     <Route path={"/"} Component={Index} />
                     <Route path={"/arista-landing"} Component={Arista} />
                     <Route path={"/stuyactivities"} Component={Catalog} />
-                    <Route path={"/confirm-join"} Component={ConfirmJoin} />
                     <Route path={"/communications"} Component={CommsSettings} />
                     <Route path={"/preferences"} Component={UserPreferences} />
                     <Route path={"/profile"} Component={Profile} />
@@ -151,7 +149,7 @@ const Pages = () => {
                         </div>
                         <p
                             className={
-                                "opacity-50 w-72 text-right max-sm:text-center"
+                                "w-72 text-right text-typography-2 max-sm:text-center"
                             }
                         >
                             MMXXIV

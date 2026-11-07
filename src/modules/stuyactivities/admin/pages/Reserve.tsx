@@ -1,12 +1,8 @@
 import {
-    Box,
-    Divider,
-    FormControlLabel,
-    Switch,
-    TextField,
-} from "@mui/material";
-import { DatePicker, TimePicker } from "@mui/x-date-pickers";
-import { ChangeEvent, useEffect, useRef, useState } from "react";
+    DateField,
+    TimeField,
+} from "../../../../components/ui/input/DateTimeField";
+import { useEffect, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import { Dayjs } from "dayjs";
@@ -15,6 +11,9 @@ import SearchInput from "../../../../components/ui/input/SearchInput";
 import MeetingAttendanceCard from "../../orgs/org_admin/components/MeetingAttendanceCard";
 import RoomChecklist from "../components/RoomChecklist";
 import { isoToWallClock, wallClockToISO } from "../../../../utils/NewYorkTime";
+import SwitchField from "../../../../components/ui/input/SwitchField";
+import TextField from "../../../../components/ui/input/TextField";
+import { functionErrorText } from "../../../../utils/FunctionErrors";
 
 type ApiRoom = {
     id: number;
@@ -120,6 +119,17 @@ const Reserve = () => {
                         meeting_end: wallClockToISO(endTime),
                     })
                     .returns<RoomMeta[]>();
+                if (error) {
+                    // without this, every room would look free; clear the
+                    // list so rooms loaded earlier can't stay selectable
+                    enqueueSnackbar(
+                        "Couldn't check which rooms are booked. Contact it@stuysu.org for support.",
+                        { variant: "error" },
+                    );
+                    setAllRooms([]);
+                    setSelectedRoomIds([]);
+                    return;
+                }
                 const bookedRooms: RoomMeta[] = Array.isArray(bookedRoomsRaw)
                     ? bookedRoomsRaw
                     : [];
@@ -199,13 +209,22 @@ const Reserve = () => {
             return forceReserve();
         }
 
-        const { data: bookedRoomsRaw } = await supabase.rpc(
+        const { data: bookedRoomsRaw, error: bookedError } = await supabase.rpc(
             "get_booked_rooms",
             {
                 meeting_start: wallClockToISO(startTime),
                 meeting_end: wallClockToISO(endTime),
             },
         );
+        if (bookedError) {
+            // treating a failed lookup as "nothing booked" could cancel a
+            // meeting without asking first
+            enqueueSnackbar(
+                "Couldn't check which rooms are booked, so nothing was reserved. Contact it@stuysu.org for support.",
+                { variant: "error" },
+            );
+            return;
+        }
         const bookedRooms: { room_id: number; meeting_id: number }[] =
             Array.isArray(bookedRoomsRaw) ? bookedRoomsRaw : [];
 
@@ -213,7 +232,7 @@ const Reserve = () => {
             selectedRoomIds.includes(meta.room_id),
         );
 
-        const { data: heldMeetings } = selectedBooked.length
+        const { data: heldMeetings, error: heldError } = selectedBooked.length
             ? await supabase
                   .from("meetings")
                   .select("id, room_id, organizations!inner(state)")
@@ -222,7 +241,15 @@ const Reserve = () => {
                       selectedBooked.map((meta) => meta.meeting_id),
                   )
                   .eq("organizations.state", "ADMIN")
-            : { data: [] };
+            : { data: [], error: null };
+
+        if (heldError) {
+            enqueueSnackbar(
+                "Couldn't check the booked meetings, so nothing was reserved. Contact it@stuysu.org for support.",
+                { variant: "error" },
+            );
+            return;
+        }
 
         const heldRoomIds = Array.from(
             new Set((heldMeetings || []).map((meeting) => meeting.room_id)),
@@ -269,7 +296,7 @@ const Reserve = () => {
             );
 
             if (reserveError) {
-                const message = await reserveError.context?.text();
+                const message = await functionErrorText(reserveError);
                 failed.push({
                     id: room.id,
                     name: room.name,
@@ -314,7 +341,7 @@ const Reserve = () => {
     return (
         <div className={"w-full p-4 sm:p-12"}>
             <h1>Reserve</h1>
-            <Divider />
+            <hr className="border-divider" />
             <div className="my-4">
                 <h2>Force Reservation</h2>
                 <p className={"mb-3"}>
@@ -345,14 +372,14 @@ const Reserve = () => {
                                 >
                                     {org.name}
                                 </a>
-                                <Divider />
+                                <hr className="border-divider" />
                             </div>
                         ))}
                     </div>
                 ) : null}
                 {forceOrgId && (
                     <div className="my-4">
-                        <Divider />
+                        <hr className="border-divider" />
                         <h4 className={"py-4"}>
                             Force-reserving a meeting for {forceOrgName}
                         </h4>
@@ -364,14 +391,14 @@ const Reserve = () => {
                             onChange={(event) =>
                                 setForceTitle(event.target.value)
                             }
-                            inputProps={{ maxLength: 500 }}
+                            maxLength={500}
                             sx={{
                                 width: "100%",
                                 marginTop: "10px",
                                 marginBottom: "10px",
                             }}
                         />
-                        <DatePicker
+                        <DateField
                             label="Meeting Day"
                             value={startTime}
                             onChange={(newStartTime) => {
@@ -397,44 +424,27 @@ const Reserve = () => {
                                 marginBottom: "10px",
                             }}
                         />
-                        <Box
-                            sx={{
-                                width: "100%",
-                                display: "flex",
-                                flexWrap: "nowrap",
-                                alignItems: "center",
-                            }}
-                        >
-                            <TimePicker
+                        <div className="w-full flex flex-nowrap items-center">
+                            <TimeField
                                 label="Start"
                                 value={startTime}
                                 onChange={setStartTime}
                                 sx={{ marginRight: "10px" }}
                             />
 
-                            <TimePicker
+                            <TimeField
                                 label="End"
                                 value={endTime}
                                 onChange={setEndTime}
                             />
-                            <FormControlLabel
-                                control={
-                                    <Switch
-                                        checked={excludeBooked}
-                                        onChange={(
-                                            event: ChangeEvent<HTMLInputElement>,
-                                        ) =>
-                                            setexcludeBooked(
-                                                event.target.checked,
-                                            )
-                                        }
-                                    ></Switch>
-                                }
-                                sx={{ marginLeft: "10px" }}
+                            <SwitchField
+                                checked={excludeBooked}
+                                onChange={setexcludeBooked}
+                                style={{ marginLeft: "10px" }}
                                 label="hide booked rooms?"
                                 disabled={!endTime || !startTime}
-                            ></FormControlLabel>
-                        </Box>
+                            />
+                        </div>
                         {loading ? (
                             <p className="my-4">Loading rooms...</p>
                         ) : (
@@ -485,15 +495,11 @@ const Reserve = () => {
                                     </p>
                                 )}
                                 <div className="flex gap-2 mt-3">
-                                    <AsyncButton
-                                        onClick={forceReserve}
-                                        variant="outlined"
-                                    >
+                                    <AsyncButton onClick={forceReserve}>
                                         Confirm Reservation
                                     </AsyncButton>
                                     <AsyncButton
                                         onClick={() => setConfirming(null)}
-                                        variant="outlined"
                                     >
                                         Cancel
                                     </AsyncButton>
@@ -503,7 +509,6 @@ const Reserve = () => {
                             <AsyncButton
                                 onClick={startReservation}
                                 sx={{ width: "100%", marginTop: "10px" }}
-                                variant="outlined"
                             >
                                 {roomsToReserve.length > 1
                                     ? `Force Reservation (${roomsToReserve.length} rooms)`
@@ -527,14 +532,8 @@ const Reserve = () => {
                 )}
 
                 {forceOrgId && (
-                    <Box sx={{ width: "100%" }}>
-                        <Box
-                            sx={{
-                                width: "100%",
-                                display: "flex",
-                                flexWrap: "wrap",
-                            }}
-                        >
+                    <div className="w-full">
+                        <div className="w-full flex flex-wrap">
                             {reservedMeetings.map((meeting) => (
                                 <MeetingAttendanceCard
                                     key={meeting.id}
@@ -545,8 +544,8 @@ const Reserve = () => {
                                     clickable={false}
                                 />
                             ))}
-                        </Box>
-                    </Box>
+                        </div>
+                    </div>
                 )}
             </div>
         </div>

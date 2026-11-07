@@ -2,13 +2,14 @@ import { ChangeEvent, useContext, useState } from "react";
 import { Reorder, useDragControls } from "framer-motion";
 import UserContext from "../../../../../contexts/UserContext";
 
-import { MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import { supabase } from "../../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import OrgMember from "../../components/OrgMember";
 import OrgContext from "../../../../../contexts/OrgContext";
 import UserDialog from "../../../../../components/ui/overlays/UserDialog";
 import { PUBLIC_URL } from "../../../../../config/constants";
+import SelectField from "../../../../../components/ui/input/SelectField";
+import TextField from "../../../../../components/ui/input/TextField";
 
 const AdminMember = ({
     id,
@@ -66,12 +67,15 @@ const AdminMember = ({
     };
 
     const handleKick = async () => {
-        const { error } = await supabase
+        /* select the deleted row: if the database didn't allow it, nothing is
+           deleted and there's no error, just no rows */
+        const { data: kicked, error } = await supabase
             .from("memberships")
             .delete()
-            .eq("id", id);
+            .eq("id", id)
+            .select("id");
 
-        if (error) {
+        if (error || !kicked?.length) {
             enqueueSnackbar(
                 "Could not kick member. Contact it@stuysu.org for support.",
                 { variant: "error" },
@@ -91,10 +95,10 @@ const AdminMember = ({
         enqueueSnackbar("Member kicked!", { variant: "success" });
     };
 
-    const handleSelect = (event: SelectChangeEvent) => {
+    const handleSelect = (role: string) => {
         setEditState({
             ...editState,
-            role: event.target.value,
+            role,
         });
     };
 
@@ -119,18 +123,24 @@ const AdminMember = ({
         const adminEditingAdmin =
             isAdmin && role === "ADMIN" && userId !== user.id;
 
-        const { error } = adminEditingAdmin
-            ? await supabase.rpc("set_membership_role_name", {
-                  membership_id: id,
-                  new_role_name: editState.role_name,
-              })
-            : await supabase
-                  .from("memberships")
-                  .update({
-                      role: editState.role,
-                      role_name: editState.role_name,
-                  })
-                  .eq("id", id);
+        let error: unknown = null;
+        if (adminEditingAdmin) {
+            ({ error } = await supabase.rpc("set_membership_role_name", {
+                membership_id: id,
+                new_role_name: editState.role_name,
+            }));
+        } else {
+            /* a blocked update changes no rows and returns no error */
+            const result = await supabase
+                .from("memberships")
+                .update({
+                    role: editState.role,
+                    role_name: editState.role_name,
+                })
+                .eq("id", id)
+                .select("id");
+            error = result.error || (!result.data?.length ? "no rows" : null);
+        }
 
         if (error) {
             enqueueSnackbar(
@@ -141,7 +151,7 @@ const AdminMember = ({
         }
 
         if (organization.setOrg) {
-            let existingMemberIndex = organization.memberships.findIndex(
+            const existingMemberIndex = organization.memberships.findIndex(
                 (m) => m.id === id,
             );
             if (!~existingMemberIndex) {
@@ -153,7 +163,8 @@ const AdminMember = ({
                 return;
             }
 
-            let existingMember = organization.memberships[existingMemberIndex];
+            const existingMember =
+                organization.memberships[existingMemberIndex];
 
             organization.setOrg({
                 ...organization,
@@ -222,32 +233,40 @@ const AdminMember = ({
                                 role === "ADVISOR" ||
                                 (isAdmin && role === "ADMIN") ||
                                 userId === user.id) && (
-                                <div onClick={handleEdit}>
-                                    <p>
-                                        <i
-                                            className={
-                                                "bx bx-pencil bx-sm sm:hover:opacity-75 cursor-pointer"
-                                            }
-                                        ></i>
-                                    </p>
-                                </div>
+                                <button
+                                    type="button"
+                                    onClick={handleEdit}
+                                    aria-label={`Edit ${first_name} ${last_name}`}
+                                    title="Edit member"
+                                    className="flex rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                                >
+                                    <i
+                                        className={
+                                            "bx bx-pencil bx-sm sm:hover:opacity-75 cursor-pointer"
+                                        }
+                                        aria-hidden="true"
+                                    ></i>
+                                </button>
                             )}
 
                             {userId !== user.id &&
                                 (isCreator ||
                                     role === "MEMBER" ||
                                     role === "ADVISOR") && (
-                                    <div
+                                    <button
+                                        type="button"
                                         onClick={() => setKickConfirmOpen(true)}
+                                        aria-label={`Remove ${first_name} ${last_name}`}
+                                        title="Remove member"
+                                        className="ml-3 flex rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
                                     >
-                                        <p>
-                                            <i
-                                                className={
-                                                    "bx bx-user-x bx-sm ml-3 text-red sm:hover:opacity-75 cursor-pointer"
-                                                }
-                                            ></i>
-                                        </p>
-                                    </div>
+                                        <i
+                                            className={
+                                                "bx bx-user-x bx-sm text-red sm:hover:opacity-75 cursor-pointer"
+                                            }
+                                            aria-hidden="true"
+                                        ></i>
+                                    </button>
                                 )}
                         </div>
                     </>
@@ -286,28 +305,19 @@ const AdminMember = ({
                             role !== "ADMIN" &&
                             role !== "CREATOR" &&
                             userId !== user.id)) && (
-                        <Select
+                        <SelectField
+                            label="Role"
+                            fullWidth
                             value={editState.role}
                             onChange={handleSelect}
-                            displayEmpty
-                            MenuProps={{
-                                disablePortal: true,
-                                anchorOrigin: {
-                                    vertical: "center",
-                                    horizontal: "left",
-                                },
-                                PaperProps: {
-                                    sx: { mt: "-180px", ml: "-12vw" },
-                                },
-                            }}
-                            // Temporary fix for menu being off center. migrate to radix.
-                        >
-                            <MenuItem value={"MEMBER"}>Member</MenuItem>
-                            <MenuItem value={"ADVISOR"}>Advisor</MenuItem>
-                            {isCreator && (
-                                <MenuItem value={"ADMIN"}>Admin</MenuItem>
-                            )}
-                        </Select>
+                            options={[
+                                { value: "MEMBER", label: "Member" },
+                                { value: "ADVISOR", label: "Advisor" },
+                                ...(isCreator
+                                    ? [{ value: "ADMIN", label: "Admin" }]
+                                    : []),
+                            ]}
+                        />
                     )}
                 </div>
             </UserDialog>

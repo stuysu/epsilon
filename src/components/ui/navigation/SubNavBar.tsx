@@ -1,21 +1,40 @@
-import { Stack, useMediaQuery } from "@mui/material";
 import React, { FC, useContext } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import UserContext from "../../../contexts/UserContext";
 import { isStuyActivitiesPath } from "../../../config/routes";
+import useMediaQuery from "../../../utils/useMediaQuery";
+import revealOnKeyboardFocus from "../../../utils/revealOnKeyboardFocus";
+
+const STUY_ACTIVITIES_ITEMS = [
+    { label: "Catalog", path: "/stuyactivities" },
+    { label: "Charter", path: "/charter" },
+    { label: "Regulations", path: "/rules" },
+    { label: "Archives", path: "/archives" },
+    { label: "Support", path: "/activities-support" },
+];
+
+// matches the paragraph text these links used to be, without the link underline;
+// the current page is shown brighter, as before
+const ITEM_CLASS =
+    "important whitespace-nowrap rounded text-[0.9rem] leading-[1.2rem] no-underline transition-opacity focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1";
 
 const SubNavBar: FC = () => {
     const user = useContext(UserContext);
-    const isMobile = useMediaQuery("(max-width: 640px)");
-    const navigate = useNavigate();
+    const isMobile = useMediaQuery("not all and (min-width: 640px)");
     const location = useLocation();
+    const isAdminPage =
+        location.pathname === "/admin" ||
+        location.pathname.startsWith("/admin/");
 
     const isOnStuyActivitiesPage = isStuyActivitiesPath(location.pathname);
     if (!isOnStuyActivitiesPage) return null;
 
     return (
-        <div
-            className="max-sm:pb-3"
+        <nav
+            aria-label="StuyActivities"
+            // the scroller clips its content: pb-2 leaves room for the focus
+            // outline and -mb-2 cancels it out so the layout doesn't move
+            className="pb-2 -mb-2 max-sm:mb-0 max-sm:pb-3 scroll-pe-10 max-[1099px]:[mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)]"
             style={{
                 overflowX: "scroll",
                 scrollbarWidth: "none",
@@ -31,49 +50,54 @@ const SubNavBar: FC = () => {
                 backdropFilter: isMobile ? "blur(30px)" : undefined,
             }}
         >
-            <Stack
-                direction="row"
-                spacing={3}
-                ml={isMobile ? "1rem" : "3rem"}
-                mt={isMobile ? 1.5 : 2}
-                position="relative"
-                zIndex={2}
+            <div
+                className={`relative z-[2] flex flex-row gap-6 ${
+                    isMobile ? "ml-4 mt-3" : "ml-12 mt-4"
+                }`}
             >
-                {(
-                    [
-                        { label: "Catalog", path: "/stuyactivities" },
-                        { label: "Charter", path: "/charter" },
-                        { label: "Regulations", path: "/rules" },
-                        { label: "Archives", path: "/archives" },
-                        { label: "Support", path: "/activities-support" },
-                    ] as const
-                ).map(({ label, path }) => (
-                    <p
-                        key={path}
-                        className="cursor-pointer transition-opacity whitespace-nowrap important text-typography-1"
-                        onClick={() => navigate(path)}
-                        style={{
-                            opacity: location.pathname === path ? 1 : 0.5,
-                        }}
-                    >
-                        {label}
-                    </p>
-                ))}
+                {STUY_ACTIVITIES_ITEMS.map(({ label, path }) => {
+                    const isCurrent = location.pathname === path;
+                    return (
+                        <Link
+                            key={path}
+                            to={path}
+                            aria-current={isCurrent ? "page" : undefined}
+                            onFocus={revealOnKeyboardFocus}
+                            className={`${ITEM_CLASS} ${
+                                isCurrent
+                                    ? "text-typography-1"
+                                    : "text-typography-2 hover:text-typography-1"
+                            }`}
+                        >
+                            {label}
+                        </Link>
+                    );
+                })}
 
                 {user.permission && (
-                    <div
-                        onClick={() => navigate("/admin")}
-                        className="inline-flex cursor-pointer whitespace-nowrap gap-1 text-yellow"
+                    <Link
+                        to="/admin"
+                        onFocus={revealOnKeyboardFocus}
+                        // /admin opens on one of its sub-pages
+                        aria-current={isAdminPage ? "page" : undefined}
+                        // a thin bar under it marks the admin pages; it is
+                        // drawn outside the box so nothing moves
+                        className={`${ITEM_CLASS} inline-flex gap-1 text-yellow ${
+                            isAdminPage
+                                ? "relative after:absolute after:inset-x-0 after:-bottom-[3px] after:h-0.5 after:bg-current"
+                                : ""
+                        }`}
                     >
-                        <i className="bx bx-shield pt-px" />
-                        <p className="cursor-pointer whitespace-nowrap important text-yellow">
-                            Admin Panel
-                        </p>
-                    </div>
+                        <i
+                            className="bx bx-shield text-base leading-[1.2rem]"
+                            aria-hidden="true"
+                        />
+                        <span>Admin Panel</span>
+                    </Link>
                 )}
                 <div className="min-w-4" />
-            </Stack>
-        </div>
+            </div>
+        </nav>
     );
 };
 

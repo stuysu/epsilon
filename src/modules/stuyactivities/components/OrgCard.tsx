@@ -1,8 +1,9 @@
-import { Avatar, Box, Skeleton } from "@mui/material";
 import { PUBLIC_URL } from "../../../config/constants";
 import React, { useContext, useState } from "react";
 import UserContext from "../../../contexts/UserContext";
 import { Link } from "react-router-dom";
+import Skeleton from "../../../components/ui/Skeleton";
+import Avatar from "../../../components/ui/Avatar";
 
 const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
     const [imgLoaded, setImgLoaded] = useState(false);
@@ -17,18 +18,10 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
         >
             <div className="mt-10"></div>
             <div className="relative rounded-2xl overflow-visible">
-                <Box
-                    sx={{
-                        position: "absolute",
-                        top: 0,
-                        left: 0,
-                        width: "100%",
-                        opacity: 0.2,
-                        height: "100%",
+                <div
+                    className="absolute top-[0px] left-[0px] w-full opacity-[0.2] h-full bg-cover bg-center z-[0]"
+                    style={{
                         backgroundImage: `url(${PUBLIC_URL}/textures/org_card.png)`,
-                        backgroundSize: "cover",
-                        backgroundPosition: "center",
-                        zIndex: 0,
                         filter: "blur(50px)",
                     }}
                 />
@@ -79,31 +72,15 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                         }}
                     ></div>
 
-                    <Box
-                        sx={{
-                            width: "100%",
-                            display: "flex",
-                            flexDirection: "column",
-                        }}
-                    >
-                        <Box
-                            sx={{
-                                position: "relative",
-                                top: -45,
-                                marginBottom: "-12px",
-                            }}
-                        >
-                            <Box
-                                sx={{
-                                    width: "120px",
-                                    height: "120px",
-                                    borderRadius: "20px",
-                                    position: "absolute",
+                    <div className="w-full flex flex-col">
+                        <div className="relative top-[-45px] mb-[-12px]">
+                            <div
+                                className="w-[120px] h-[120px] rounded-[20px] absolute z-[10]"
+                                style={{
                                     boxShadow:
                                         "inset 0 0 5px 1px rgba(255, 255, 255, 0.3)",
-                                    zIndex: 10,
                                 }}
-                            ></Box>
+                            ></div>
 
                             {user.signed_in && (
                                 <p
@@ -119,7 +96,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                             {/* Background avatar with blur effect */}
                             <Avatar
                                 src={organization.picture || ""}
-                                sx={{
+                                style={{
                                     display: imgLoaded ? "block" : "none",
                                     width: "120px",
                                     height: "120px",
@@ -132,33 +109,19 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                             ></Avatar>
 
                             {!imgLoaded && organization.picture && (
-                                <Skeleton
-                                    variant="rectangular"
-                                    width={120}
-                                    height={120}
-                                    sx={{
-                                        borderRadius: "20px",
-                                        position: "absolute",
-                                        zIndex: 20,
-                                    }}
-                                />
+                                <Skeleton className="absolute z-20 h-[120px] w-[120px] rounded-[20px]" />
                             )}
 
                             {/* Main avatar with text fallback */}
-                            <Box
-                                sx={{
-                                    width: "120px",
-                                    height: "120px",
-                                    backgroundColor: "var(--bg-main)",
-                                    borderRadius: "20px",
-                                    position: "absolute",
-                                }}
-                            ></Box>
+                            <div
+                                className="w-[120px] h-[120px] rounded-[20px] absolute"
+                                style={{ backgroundColor: "var(--bg-main)" }}
+                            ></div>
 
                             <Avatar
                                 onLoad={() => setImgLoaded(true)}
                                 src={organization.picture || ""}
-                                sx={{
+                                style={{
                                     transition: "opacity 0.3s ease",
                                     opacity:
                                         imgLoaded || !organization.picture
@@ -173,11 +136,11 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                 }}
                                 alt={`${organization.name}`}
                             >
-                                <h1 className="text-7xl font-light">
+                                <div className="as-h1 text-7xl font-light">
                                     {organization.name?.charAt(0).toUpperCase()}
-                                </h1>
+                                </div>
                             </Avatar>
-                        </Box>
+                        </div>
 
                         <div className={"flex h-20 items-start"}>
                             <h3
@@ -195,7 +158,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                                 {organization.name}
                             </h3>
                         </div>
-                    </Box>
+                    </div>
                     <div className={"w-full mt-4"}>
                         <p
                             className={
