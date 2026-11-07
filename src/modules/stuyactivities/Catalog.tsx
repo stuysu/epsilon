@@ -166,6 +166,9 @@ const Catalog = () => {
                     .neq("state", "PENDING")
                     .neq("state", "PUNISHED")
                     .or(catalogQuery)
+                    /* a fixed order so paging never repeats or skips a club */
+                    .order("name")
+                    .order("id")
                     .range(originalOffset, originalOffset + querySize - 1));
             }
 
