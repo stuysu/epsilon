@@ -90,7 +90,6 @@ const EditField = ({
     );
 };
 
-// same rule as the charter form; the hyphen is escaped for the HTML pattern
 const URL_PATTERN = /^[a-zA-Z0-9_\-]+$/;
 
 // too lazy to write them all out, use array.map to write it faster
@@ -169,8 +168,6 @@ const OrgEditor = ({
     /* validation */
     const [savable, setSavable] = useState(false);
 
-    /* the URL field works like the one on the charter form: it shows the full
-       link and checks that the new URL is free */
     const [urlError, setUrlError] = useState("");
     const [checkingUrl, setCheckingUrl] = useState(false);
 
@@ -207,7 +204,6 @@ const OrgEditor = ({
     const navigate = useNavigate();
 
     useEffect(() => {
-        /* the URL field already shows why the URL can't be used */
         if ("url" in editState && (urlError || checkingUrl)) {
             setSavable(false);
             return;
