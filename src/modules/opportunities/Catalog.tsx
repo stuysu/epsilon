@@ -77,6 +77,16 @@ const Catalog = () => {
         setSearchParams({}, { replace: true });
     }, [searchParams, setFilters, setSearchParams]);
 
+    // new results start from the top, so the search stays in view
+    const firstFilters = useRef(filters);
+    useLayoutEffect(() => {
+        if (filters === firstFilters.current) return;
+        const results = resultsRef.current;
+        if (results && results.getBoundingClientRect().top < 0) {
+            results.parentElement?.scrollIntoView({ block: "start" });
+        }
+    }, [filters]);
+
     // ignore unknown ?category= ids
     const activeFilters = useMemo(
         () => ({
