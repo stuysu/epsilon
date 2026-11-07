@@ -7,7 +7,6 @@ import FilterPanel from "./components/FilterPanel";
 import OpportunityList, {
     OpportunityListSkeleton,
 } from "./components/OpportunityList";
-import { OPPORTUNITY_SUBMISSION_URL } from "../../config/routes";
 import { useOpportunities } from "./OpportunitiesContext";
 import {
     DEFAULT_FILTERS,
@@ -123,7 +122,7 @@ const Catalog = () => {
     }
 
     return (
-        <main className="mx-auto grid w-full max-w-[1500px] grid-cols-1 items-start gap-x-8 gap-y-4 px-12 lg:gap-y-8 pt-8 max-sm:px-4 max-sm:pt-14 lg:grid-cols-[18rem_minmax(0,1fr)] xl:grid-cols-[18rem_minmax(0,1fr)_16rem]">
+        <main className="mx-auto grid w-full max-w-[1500px] grid-cols-1 items-start gap-x-8 gap-y-4 px-12 lg:gap-y-8 pt-8 max-sm:px-4 max-sm:pt-14 lg:grid-cols-[18rem_minmax(0,1fr)]">
             <Helmet>
                 <title>Opportunities Catalog - Epsilon</title>
             </Helmet>
@@ -203,22 +202,6 @@ const Catalog = () => {
                     </div>
                 )}
             </section>
-
-            <a
-                href={OPPORTUNITY_SUBMISSION_URL}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="sticky top-6 hidden flex-col items-center gap-1 rounded-2xl bg-layer-1 p-6 text-center no-underline shadow-prominent transition-colors hover:bg-layer-2 xl:flex"
-            >
-                <i className="bx bx-plus text-yellow" aria-hidden="true" />
-                <span className="font-serif text-xl text-beige">
-                    Submit an Opportunity
-                </span>
-                <span className="text-sm text-typography-2">
-                    Advertise your opportunity now!
-                </span>
-                <span className="sr-only"> (opens in a new tab)</span>
-            </a>
         </main>
     );
 };
