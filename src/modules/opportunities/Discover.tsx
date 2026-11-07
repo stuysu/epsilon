@@ -7,7 +7,7 @@ import { useOpportunities } from "./OpportunitiesContext";
 import { getStatus, getTodayEastern } from "./utils";
 
 const SEARCH_LINK_CLASS =
-    "cursor-pointer rounded py-1 text-xs text-typography-2 underline hover:text-typography-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 disabled:cursor-default disabled:opacity-50";
+    "flex cursor-pointer items-center gap-1.5 rounded-lg bg-layer-2/70 px-3 py-1.5 text-sm text-typography-2 no-underline shadow-control backdrop-blur-sm transition-colors hover:bg-layer-3 hover:text-typography-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 disabled:cursor-wait disabled:hover:bg-layer-2/70 disabled:hover:text-typography-2";
 
 const Discover = () => {
     const navigate = useNavigate();
@@ -68,21 +68,29 @@ const Discover = () => {
                         onChange={setQuery}
                         containerClassName="mb-3"
                     />
-                    <div className="flex flex-wrap gap-x-3 gap-y-1 pl-10">
+                    <div className="flex flex-wrap gap-2">
                         <Link
                             to="/opportunities/catalog?all=1"
                             className={SEARCH_LINK_CLASS}
                         >
+                            <i className="bx bx-grid-alt" aria-hidden="true" />
                             Browse All
                         </Link>
-                        <button
-                            type="button"
-                            onClick={openRandom}
-                            disabled={loading || !active.length}
-                            className={SEARCH_LINK_CLASS}
-                        >
-                            Random Opportunity
-                        </button>
+                        {(loading || active.length > 0) && (
+                            <button
+                                type="button"
+                                onClick={openRandom}
+                                disabled={loading}
+                                aria-busy={loading}
+                                className={SEARCH_LINK_CLASS}
+                            >
+                                <i
+                                    className={`bx ${loading ? "bx-loader-alt animate-spin motion-reduce:animate-none" : "bx-shuffle"}`}
+                                    aria-hidden="true"
+                                />
+                                Random Opportunity
+                            </button>
+                        )}
                     </div>
                 </form>
             </section>
