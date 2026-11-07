@@ -30,7 +30,7 @@ The Calendar is a comprehensive view of meetings and events happening at Stuyves
 
 Valentine's is a platform for students to send and receive Valentine's Day messages anonymously.
 
-### Opportunities (Planned)
+### Opportunities (In Progress)
 
 Opportunities is a platform for students to find and apply for internships,
 volunteer work, and other extracurricular activities.
