@@ -8,6 +8,10 @@ import OrgChat from "./OrgChat";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import orgFieldMap from "../../../../utils/OrgFieldMap";
 import Avatar from "../../../../components/ui/Avatar";
+import {
+    functionErrorStatus,
+    functionErrorText,
+} from "../../../../utils/FunctionErrors";
 
 type EditKey = keyof EditType;
 
@@ -105,12 +109,15 @@ const OrgEditApproval = ({
 
         if (error) {
             setButtonsDisabled(false);
-            const message = await error.context?.text();
-            return enqueueSnackbar(
+            const message = await functionErrorText(error);
+            enqueueSnackbar(
                 message ||
                     "Error updating organization. Contact it@stuysu.org for support.",
                 { variant: "error" },
             );
+            /* already handled by someone else: refresh the list */
+            if (functionErrorStatus(error) === 404) onApprove();
+            return;
         }
 
         setButtonsDisabled(false);
@@ -133,10 +140,14 @@ const OrgEditApproval = ({
 
         if (error) {
             setButtonsDisabled(false);
-            return enqueueSnackbar(
-                "Error deleting organization edit. Contact it@stuysu.org for support.",
+            enqueueSnackbar(
+                (await functionErrorText(error)) ||
+                    "Error deleting organization edit. Contact it@stuysu.org for support.",
                 { variant: "error" },
             );
+            /* already handled by someone else: refresh the list */
+            if (functionErrorStatus(error) === 404) onReject();
+            return;
         }
 
         setButtonsDisabled(false);

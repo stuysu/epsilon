@@ -13,6 +13,7 @@ import RoomChecklist from "../components/RoomChecklist";
 import { isoToWallClock, wallClockToISO } from "../../../../utils/NewYorkTime";
 import SwitchField from "../../../../components/ui/input/SwitchField";
 import TextField from "../../../../components/ui/input/TextField";
+import { functionErrorText } from "../../../../utils/FunctionErrors";
 
 type ApiRoom = {
     id: number;
@@ -295,7 +296,7 @@ const Reserve = () => {
             );
 
             if (reserveError) {
-                const message = await reserveError.context?.text();
+                const message = await functionErrorText(reserveError);
                 failed.push({
                     id: room.id,
                     name: room.name,

@@ -1,6 +1,7 @@
 import { ChangeEvent, Fragment, useEffect } from "react";
 import TextField, { TextFieldProps } from "../input/TextField";
 import { getInvalidSocials } from "../../../utils/SocialLinks";
+import { limitWords, wordCount } from "../../../utils/WordCount";
 
 type Requirements = {
     minChar?: number;
@@ -63,7 +64,7 @@ const FormTextField = ({
                 // does not work with onlyAlpha
                 if (
                     requirements.minWords &&
-                    targetValue.trim().split(" ").length < requirements.minWords
+                    wordCount(targetValue) < requirements.minWords
                 ) {
                     changeStatus(field, false);
                     return;
@@ -99,14 +100,9 @@ const FormTextField = ({
         }
         if (
             requirements?.maxWords &&
-            targetValue.replace(/  +/g, " ").split(" ").length >
-                requirements.maxWords
+            wordCount(targetValue) > requirements.maxWords
         ) {
-            targetValue = targetValue
-                .replace(/  +/g, " ")
-                .split(" ")
-                .slice(0, requirements.maxWords)
-                .join(" ");
+            targetValue = limitWords(targetValue, requirements.maxWords);
         }
 
         if (requirements?.disableSpaces && targetValue.indexOf(" ") !== -1) {
@@ -179,8 +175,7 @@ const FormTextField = ({
             helperText += ` max ${requirements.maxWords} Words`;
         }
 
-        if (countWords)
-            helperText += `, at ${value?.trim().split(" ").length || 0}.`;
+        if (countWords) helperText += `, at ${wordCount(value)}.`;
     }
 
     const invalidLinks = requirements?.links ? getInvalidSocials(value) : [];

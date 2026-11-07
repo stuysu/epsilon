@@ -8,7 +8,14 @@ import Pages from "./modules";
 import { SnackbarProvider, MaterialDesignContent } from "notistack";
 import { Scrollbars } from "react-custom-scrollbars-2";
 import { OrgListProvider } from "./contexts/OrgListContext";
-import React, { CSSProperties, forwardRef, useEffect, useState } from "react";
+import React, {
+    CSSProperties,
+    forwardRef,
+    useEffect,
+    useRef,
+    useState,
+} from "react";
+import ScrollToTopOnNavigate from "./components/ScrollToTopOnNavigate";
 
 const snackbarStyle: CSSProperties = {
     borderRadius: "10px",
@@ -25,6 +32,7 @@ const SnackbarOverride = forwardRef<HTMLDivElement, any>((props, ref) => (
 
 const App = () => {
     const [autoHeightMax, setAutoHeightMax] = useState(window.innerHeight);
+    const scrollbarsRef = useRef<Scrollbars>(null);
 
     useEffect(() => {
         const handleResize = () => {
@@ -52,6 +60,7 @@ const App = () => {
 
     return (
         <Scrollbars
+            ref={scrollbarsRef}
             universal
             autoHeight
             autoHeightMin={100}
@@ -76,6 +85,7 @@ const App = () => {
                     autoHideDuration={5000}
                 >
                     <BrowserRouter>
+                        <ScrollToTopOnNavigate scrollbars={scrollbarsRef} />
                         <UserProvider>
                             <OrgListProvider>
                                 <Pages />

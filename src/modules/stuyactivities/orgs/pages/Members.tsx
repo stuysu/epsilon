@@ -33,7 +33,7 @@ const Members = () => {
                 const name =
                     `${member.users?.first_name ?? ""} ${member.users?.last_name ?? ""}`.toLowerCase();
                 const email = member.users?.email?.toLowerCase() ?? "";
-                const query = search.toLowerCase();
+                const query = search.trim().toLowerCase();
                 return name.includes(query) || email.includes(query);
             })
             .sort(sortMembers);
@@ -45,11 +45,20 @@ const Members = () => {
         }));
     }, [organization.memberships, search, sort, joinDates]);
 
+    const showNoMatch = filteredMembers.length === 0 && !!search.trim();
+
+    /* follow the list's real height, including after removed rows finish
+       fading out and when the "no match" message appears or wraps */
     useLayoutEffect(() => {
-        if (contentRef.current) {
-            setBoxHeight(contentRef.current.scrollHeight);
-        }
-    }, [filteredMembers.length]);
+        const content = contentRef.current;
+        if (!content) return;
+        const measure = () => setBoxHeight(content.scrollHeight);
+        measure();
+        const observer = new ResizeObserver(measure);
+        observer.observe(content);
+        return () => observer.disconnect();
+        // re-run on these too, in case the list mounts after the first render
+    }, [filteredMembers.length, showNoMatch]);
 
     return (
         <LoginGate page="view members">
@@ -91,14 +100,19 @@ const Members = () => {
                             </motion.div>
                         ))}
                     </AnimatePresence>
-                    {filteredMembers.length === 0 && search.trim() && (
-                        <p
-                            role="status"
-                            className="px-4 py-6 text-center text-typography-2"
-                        >
-                            No members match “{search.trim()}”
-                        </p>
-                    )}
+                    {/* always rendered so screen readers announce the change */}
+                    <p
+                        role="status"
+                        className={
+                            showNoMatch
+                                ? "px-4 py-6 text-center text-typography-2"
+                                : "sr-only"
+                        }
+                    >
+                        {showNoMatch
+                            ? `No members match “${search.trim()}”`
+                            : ""}
+                    </p>
                 </ItemList>
             </section>
         </LoginGate>

@@ -134,12 +134,14 @@ const Overview = () => {
             const membership = organization.memberships?.find(
                 (m) => m.users?.id === user.id,
             );
-            const { error } = await supabase
+            /* a blocked delete removes no rows and returns no error */
+            const { data: removed, error } = await supabase
                 .from("memberships")
                 .delete()
-                .eq("id", membership?.id);
+                .eq("id", membership?.id)
+                .select("id");
 
-            if (error) {
+            if (error || !removed?.length) {
                 enqueueSnackbar("Unable to leave organization.", {
                     variant: "error",
                 });

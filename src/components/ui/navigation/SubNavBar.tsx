@@ -22,6 +22,9 @@ const SubNavBar: FC = () => {
     const user = useContext(UserContext);
     const isMobile = useMediaQuery("not all and (min-width: 640px)");
     const location = useLocation();
+    const isAdminPage =
+        location.pathname === "/admin" ||
+        location.pathname.startsWith("/admin/");
 
     const isOnStuyActivitiesPage = isStuyActivitiesPath(location.pathname);
     if (!isOnStuyActivitiesPage) return null;
@@ -29,7 +32,9 @@ const SubNavBar: FC = () => {
     return (
         <nav
             aria-label="StuyActivities"
-            className="max-sm:pb-3 scroll-pe-10 max-[1099px]:[mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)]"
+            // the scroller clips its content: pb-2 leaves room for the focus
+            // outline and -mb-2 cancels it out so the layout doesn't move
+            className="pb-2 -mb-2 max-sm:mb-0 max-sm:pb-3 scroll-pe-10 max-[1099px]:[mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)]"
             style={{
                 overflowX: "scroll",
                 scrollbarWidth: "none",
@@ -74,13 +79,14 @@ const SubNavBar: FC = () => {
                         to="/admin"
                         onFocus={revealOnKeyboardFocus}
                         // /admin opens on one of its sub-pages
-                        aria-current={
-                            location.pathname === "/admin" ||
-                            location.pathname.startsWith("/admin/")
-                                ? "page"
-                                : undefined
-                        }
-                        className={`${ITEM_CLASS} inline-flex gap-1 text-yellow`}
+                        aria-current={isAdminPage ? "page" : undefined}
+                        // a thin bar under it marks the admin pages; it is
+                        // drawn outside the box so nothing moves
+                        className={`${ITEM_CLASS} inline-flex gap-1 text-yellow ${
+                            isAdminPage
+                                ? "relative after:absolute after:inset-x-0 after:-bottom-[3px] after:h-0.5 after:bg-current"
+                                : ""
+                        }`}
                     >
                         <i
                             className="bx bx-shield text-base leading-[1.2rem]"

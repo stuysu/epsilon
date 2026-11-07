@@ -21,7 +21,8 @@ const OrgInspector = () => {
         (organization.memberships?.some(
             (m) =>
                 m.users?.id === user.id &&
-                (m.role === "CREATOR" || (m.role === "ADMIN" && m.active)),
+                (m.role === "CREATOR" || m.role === "ADMIN") &&
+                m.active,
         ) ??
             false);
     const socialLinks = getSocialLinks(organization.socials);

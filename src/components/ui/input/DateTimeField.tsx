@@ -94,7 +94,41 @@ const PickerField = ({
                 align="start"
                 sideOffset={6}
                 collisionPadding={12}
-                onOpenAutoFocus={(event) => event.preventDefault()}
+                onOpenAutoFocus={(event) => {
+                    /* move focus to the selected day/time (or the first
+                       option) so the arrow keys work right away */
+                    event.preventDefault();
+                    const content = event.target as HTMLElement;
+                    const target =
+                        content.querySelector<HTMLElement>('[tabindex="0"]') ??
+                        content.querySelector<HTMLElement>(
+                            '[aria-pressed="true"]',
+                        ) ??
+                        content.querySelector<HTMLElement>("button");
+                    target?.focus({ preventScroll: true });
+                }}
+                onKeyDown={(event) => {
+                    /* Radix loops Tab inside the picker; instead, tabbing
+                       past either end closes it and puts focus back on the
+                       button that opened it, so Tab continues to the next
+                       field */
+                    if (event.key !== "Tab") return;
+                    const stops = Array.from(
+                        event.currentTarget.querySelectorAll<HTMLElement>(
+                            "button, input, [tabindex]",
+                        ),
+                    ).filter(
+                        (el) =>
+                            el.tabIndex >= 0 &&
+                            !(el as HTMLButtonElement).disabled,
+                    );
+                    const edge = event.shiftKey
+                        ? stops[0]
+                        : stops[stops.length - 1];
+                    if (document.activeElement !== edge) return;
+                    event.preventDefault();
+                    setOpen(false);
+                }}
                 className="z-[1400] rounded-xl border border-divider bg-bg shadow-2xl outline-none"
             >
                 {children}
@@ -243,10 +277,41 @@ const TimeColumn = ({
         selectedRef.current?.scrollIntoView({ block: "center" });
     }, []);
 
+    /* one Tab stop per column (the selected option, else the first);
+       the arrow keys, Home and End move it within the column */
+    const defaultStop = options.some((option) => option.value === selected)
+        ? selected
+        : options[0]?.value;
+    const [tabStop, setTabStop] = useState(defaultStop);
+    useEffect(() => setTabStop(defaultStop), [defaultStop]);
+
+    const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
+        const buttons = Array.from(
+            event.currentTarget.querySelectorAll<HTMLButtonElement>("button"),
+        );
+        const index = buttons.indexOf(event.target as HTMLButtonElement);
+        if (index < 0) return;
+        const next =
+            event.key === "ArrowDown"
+                ? Math.min(index + 1, buttons.length - 1)
+                : event.key === "ArrowUp"
+                  ? Math.max(index - 1, 0)
+                  : event.key === "Home"
+                    ? 0
+                    : event.key === "End"
+                      ? buttons.length - 1
+                      : null;
+        if (next === null) return;
+        event.preventDefault();
+        setTabStop(options[next].value);
+        buttons[next].focus();
+    };
+
     return (
         <div
             role="group"
             aria-label={label}
+            onKeyDown={onKeyDown}
             className="flex h-56 w-14 flex-col gap-0.5 overflow-y-auto p-1 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
         >
             {options.map((option) => (
@@ -254,6 +319,7 @@ const TimeColumn = ({
                     key={option.value}
                     ref={option.value === selected ? selectedRef : undefined}
                     type="button"
+                    tabIndex={option.value === tabStop ? 0 : -1}
                     aria-pressed={option.value === selected}
                     onClick={() => onSelect(option.value)}
                     className={`h-9 shrink-0 rounded-lg transition-colors ${

@@ -21,6 +21,7 @@ import {
 import SelectField from "../../../../../components/ui/input/SelectField";
 import SwitchField from "../../../../../components/ui/input/SwitchField";
 import TextField from "../../../../../components/ui/input/TextField";
+import { functionErrorText } from "../../../../../utils/FunctionErrors";
 
 const getDefaultStartTime = () => {
     return isoToWallClock().startOf("day").hour(15).minute(35);
@@ -458,7 +459,7 @@ const AdminUpsertMeeting = ({
             });
         }
         if (supabaseReturn.error) {
-            const error = await supabaseReturn.error?.context.text();
+            const error = await functionErrorText(supabaseReturn.error);
             let message = "Contact it@stuysu.org for support.";
             if (error) {
                 message = error;

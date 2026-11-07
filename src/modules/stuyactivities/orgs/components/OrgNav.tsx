@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { createPortal } from "react-dom";
+import * as Dialog from "@radix-ui/react-dialog";
 import OrgContext from "../../../../contexts/OrgContext";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import UserContext from "../../../../contexts/UserContext";
@@ -24,7 +24,8 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
         organization.memberships?.some(
             (m) =>
                 m.users?.id === user.id &&
-                (m.role === "CREATOR" || (m.role === "ADMIN" && m.active)),
+                (m.role === "CREATOR" || m.role === "ADMIN") &&
+                m.active,
         ) ?? false;
 
     const isStuyActivitiesAdmin = Boolean(user.permission);
@@ -108,39 +109,44 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     if (isMobile) {
         return (
             <>
-                {/* phones: top corner (their nav bar is at the bottom);
-                    tablets: in the page, clear of the header and user menu */}
-                <button
-                    aria-label="Open menu"
-                    aria-haspopup="dialog"
-                    aria-expanded={menuOpen}
-                    className={`cursor-pointer transition-colors text-typography-2 sm:hover:text-typography-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1 max-sm:z-[5001] max-sm:fixed max-sm:mr-4 max-sm:top-4 max-sm:right-0 sm:flex sm:items-center sm:gap-1 sm:mr-4 sm:rounded-lg sm:bg-layer-2 sm:shadow-control sm:pl-1 sm:pr-3 sm:py-1.5`}
-                    onClick={() => setMenuOpen(true)}
-                >
-                    <span
-                        style={{
-                            fontVariationSettings: "'wght' 700",
-                            marginLeft: 3,
-                            position: "relative",
-                        }}
-                    >
-                        <i
-                            className={
-                                "bx bx-menu bx-sm relative bottom-1.5 sm:bottom-0 sm:top-0.5"
-                            }
-                        ></i>
-                    </span>
-                    <span className="max-sm:hidden important">Menu</span>
-                </button>
-
-                {menuOpen &&
-                    // rendered at the body so the page's sticky column
-                    // can't put it under the site header
-                    createPortal(
-                        <div className="z-[5002] overflow-scroll pb-10 -mx-5 fixed inset-0 flex flex-col items-center justify-start bg-blurDark backdrop-blur-3xl">
-                            <button
+                {/* a real dialog: focus moves in and stays in, Escape
+                    closes it, and focus returns to the Menu button.
+                    The button sits in the top corner on phones (their nav
+                    bar is at the bottom) and in the page on tablets */}
+                <Dialog.Root open={menuOpen} onOpenChange={setMenuOpen}>
+                    <Dialog.Trigger asChild>
+                        <button
+                            aria-label="Open menu"
+                            className={`cursor-pointer transition-colors text-typography-2 sm:hover:text-typography-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1 max-sm:z-[5001] max-sm:fixed max-sm:mr-4 max-sm:top-4 max-sm:right-0 sm:flex sm:items-center sm:gap-1 sm:mr-4 sm:rounded-lg sm:bg-layer-2 sm:shadow-control sm:pl-1 sm:pr-3 sm:py-1.5`}
+                        >
+                            <span
+                                style={{
+                                    fontVariationSettings: "'wght' 700",
+                                    marginLeft: 3,
+                                    position: "relative",
+                                }}
+                            >
+                                <i
+                                    className={
+                                        "bx bx-menu bx-sm relative bottom-1.5 sm:bottom-0 sm:top-0.5"
+                                    }
+                                ></i>
+                            </span>
+                            <span className="max-sm:hidden important">
+                                Menu
+                            </span>
+                        </button>
+                    </Dialog.Trigger>
+                    <Dialog.Portal>
+                        <Dialog.Content
+                            aria-describedby={undefined}
+                            className="z-[5002] overflow-scroll pb-10 -mx-5 fixed inset-0 flex flex-col items-center justify-start bg-blurDark backdrop-blur-3xl outline-none"
+                        >
+                            <Dialog.Title className="sr-only">
+                                {organization.name} menu
+                            </Dialog.Title>
+                            <Dialog.Close
                                 className="absolute top-4 right-14 text-3xl text-typography-1 font-bold"
-                                onClick={() => setMenuOpen(false)}
                                 aria-label="Close menu"
                             >
                                 <i
@@ -148,7 +154,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                                         "bx bx-x bx-sm relative -right-5 bottom-1.5"
                                     }
                                 ></i>
-                            </button>
+                            </Dialog.Close>
 
                             <div className="flex flex-col gap-1.5 w-full p-16">
                                 <h5 className={"px-3"}>About</h5>
@@ -164,9 +170,9 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                                     </>
                                 )}
                             </div>
-                        </div>,
-                        document.body,
-                    )}
+                        </Dialog.Content>
+                    </Dialog.Portal>
+                </Dialog.Root>
             </>
         );
     }

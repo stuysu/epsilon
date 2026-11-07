@@ -67,12 +67,15 @@ const AdminMember = ({
     };
 
     const handleKick = async () => {
-        const { error } = await supabase
+        /* select the deleted row: if the database didn't allow it, nothing is
+           deleted and there's no error, just no rows */
+        const { data: kicked, error } = await supabase
             .from("memberships")
             .delete()
-            .eq("id", id);
+            .eq("id", id)
+            .select("id");
 
-        if (error) {
+        if (error || !kicked?.length) {
             enqueueSnackbar(
                 "Could not kick member. Contact it@stuysu.org for support.",
                 { variant: "error" },
@@ -120,18 +123,24 @@ const AdminMember = ({
         const adminEditingAdmin =
             isAdmin && role === "ADMIN" && userId !== user.id;
 
-        const { error } = adminEditingAdmin
-            ? await supabase.rpc("set_membership_role_name", {
-                  membership_id: id,
-                  new_role_name: editState.role_name,
-              })
-            : await supabase
-                  .from("memberships")
-                  .update({
-                      role: editState.role,
-                      role_name: editState.role_name,
-                  })
-                  .eq("id", id);
+        let error: unknown = null;
+        if (adminEditingAdmin) {
+            ({ error } = await supabase.rpc("set_membership_role_name", {
+                membership_id: id,
+                new_role_name: editState.role_name,
+            }));
+        } else {
+            /* a blocked update changes no rows and returns no error */
+            const result = await supabase
+                .from("memberships")
+                .update({
+                    role: editState.role,
+                    role_name: editState.role_name,
+                })
+                .eq("id", id)
+                .select("id");
+            error = result.error || (!result.data?.length ? "no rows" : null);
+        }
 
         if (error) {
             enqueueSnackbar(
