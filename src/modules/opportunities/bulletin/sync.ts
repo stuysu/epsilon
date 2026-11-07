@@ -88,22 +88,37 @@ const titleWords = (title: string) =>
         ),
     );
 
-const similarity = (a: Set<string>, b: Set<string>) => {
+// words used by many titles, such as "University", count for little
+const similarity = (
+    a: Set<string>,
+    b: Set<string>,
+    weight: (word: string) => number,
+) => {
     let shared = 0;
-    a.forEach((word) => {
-        if (b.has(word)) shared++;
+    let total = 0;
+    new Set([...a, ...b]).forEach((word) => {
+        total += weight(word);
+        if (a.has(word) && b.has(word)) shared += weight(word);
     });
-    return shared / (a.size + b.size - shared || 1);
+    return total ? shared / total : 0;
 };
 
 // pairs unmatched entries with rows that look like reworded copies
 export const findRenames = (
     entries: ParsedEntry[],
     existing: Opportunity[],
-    allLinks: string[][],
+    everyListing: { title: string; links: string[] }[],
 ) => {
+    const wordCounts = new Map<string, number>();
+    everyListing.forEach(({ title }) =>
+        titleWords(title).forEach((word) =>
+            wordCounts.set(word, (wordCounts.get(word) ?? 0) + 1),
+        ),
+    );
+    const weight = (word: string) => 1 / (wordCounts.get(word) ?? 1);
+
     const linkCounts = new Map<string, number>();
-    allLinks.forEach((links) =>
+    everyListing.forEach(({ links }) =>
         new Set(links.map(linkKey)).forEach((key) => {
             if (key) linkCounts.set(key, (linkCounts.get(key) ?? 0) + 1);
         }),
@@ -123,13 +138,15 @@ export const findRenames = (
             const titleScore = similarity(
                 entryWords,
                 titleWords(opportunity.title),
+                weight,
             );
             const sameCategory = opportunity.categories.some((c) =>
                 entry.categories.includes(c.name),
             );
-            if (!sharedLink && titleScore < 0.5) return [];
+            if (titleScore < (sharedLink ? 0.1 : 0.5)) return [];
+            // one organization often uses a link for several programs
             const sure =
-                (sharedLink && (sameCategory || titleScore >= 0.4)) ||
+                (sharedLink && titleScore >= 0.3) ||
                 (sameCategory && titleScore >= 0.75);
             const score =
                 Number(sharedLink) + titleScore + (sameCategory ? 0.25 : 0);
@@ -163,7 +180,7 @@ export const buildReview = (
     const renames = findRenames(
         entries.filter((entry, i) => entry.include && !matches[i]),
         existing.filter((o) => !matchedIds.has(o.id)),
-        [...entries, ...existing].map((listing) => listing.links),
+        [...entries, ...existing],
     );
 
     return entries.map((entry, i) => {

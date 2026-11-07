@@ -1013,8 +1013,8 @@ describe("reworded titles", () => {
         const [entry] = buildReview(
             [
                 makeEntry({
-                    title: "SSP: Summer Research",
-                    titleKey: "sspsummerresearch",
+                    title: "Summer Science Program: Research Track",
+                    titleKey: "summerscienceprogramresearchtrack",
                     links: ["https://www.example.org/ssp/apply/"],
                 }),
             ],
@@ -1042,20 +1042,40 @@ describe("reworded titles", () => {
         expect(entry.existingId).toBe(20);
     });
 
-    it("only suggests a weaker match", () => {
+    it("only suggests a shared link with a different title", () => {
         const [entry] = buildReview(
             [
                 makeEntry({
-                    title: "Summer Science Camp",
-                    titleKey: "summersciencecamp",
-                    links: [],
-                    categories: ["Other"],
+                    title: "Summer Research Camp",
+                    titleKey: "summerresearchcamp",
+                    links: ["https://example.org/ssp/apply"],
                 }),
             ],
             [old],
         );
         expect(entry.existingId).toBeNull();
         expect(entry.renameCandidate?.id).toBe(20);
+    });
+
+    it("ignores titles that only share common words", () => {
+        const splash = (id: number, school: string) =>
+            makeExisting({
+                id,
+                title: `Splash at ${school} University`,
+                title_key: `splashat${school.toLowerCase()}university`,
+                links: [],
+            });
+        const [entry] = buildReview(
+            [
+                makeEntry({
+                    title: "Splash at Princeton University",
+                    titleKey: "splashatprincetonuniversity",
+                    links: [],
+                }),
+            ],
+            [splash(1, "Stanford"), splash(2, "Cornell"), splash(3, "Brown")],
+        );
+        expect(entry.renameCandidate).toBeNull();
     });
 
     it("ignores links that other listings share", () => {
