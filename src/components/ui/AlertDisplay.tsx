@@ -22,7 +22,7 @@ const AlertDisplay = () => {
     const isOpen = Boolean(anchorEl);
     useEffect(() => {
         const fetchAlert = async () => {
-            // USE Alert.json FOR TESTING PURPOSES, DONT PUSH TO PROD BEFORE REVERTING BACK TO ALERT.STUYSU.ORG
+            // USE Alert.json FOR TESTING PURPOSES, DONT PUSH TO PROD BEFORE REVERTING BACK TO https://alert.stuysu.org
             const res = await fetch("https://alert.stuysu.org");
             if (res.status === 404) return;
             try {
@@ -91,10 +91,11 @@ const AlertDisplay = () => {
             clearTimeout(openTimeout.current);
             openTimeout.current = null;
         }
-        if (anchorEl === event.currentTarget) { setAnchorEl(null); }
+        if (anchorEl === event.currentTarget) { 
+            setAnchorEl(null);
+            setSessionDismissed(true);
+        }
         else { setAnchorEl(event.currentTarget); }
-        
-        if (isOpen) { setSessionDismissed(true);}
     }
 
     const handlePopperEnter = () => {
