@@ -31,17 +31,26 @@ const Catalog = () => {
     const [searchParams, setSearchParams] = useSearchParams();
     const [filtersOpen, setFiltersOpen] = useState(false);
     const asideRef = useRef<HTMLElement>(null);
+    const resultsRef = useRef<HTMLElement>(null);
 
-    // ends the filters at the window's bottom
+    // ends the filters at the window's bottom, unless the results are shorter
     useEffect(() => {
         const aside = asideRef.current;
-        if (!aside) return;
+        const results = resultsRef.current;
+        if (!aside || !results) return;
         const fit = () => {
+            if (results.offsetHeight < aside.scrollHeight) {
+                aside.style.setProperty("--filters-height", "none");
+                return;
+            }
             const room =
                 window.innerHeight - aside.getBoundingClientRect().top - 24;
             aside.style.setProperty("--filters-height", `${room}px`);
         };
         fit();
+        const observer = new ResizeObserver(fit);
+        observer.observe(results);
+        if (aside.lastElementChild) observer.observe(aside.lastElementChild);
         // the page scrolls in an inner box
         document.addEventListener("scroll", fit, {
             capture: true,
@@ -49,6 +58,7 @@ const Catalog = () => {
         });
         window.addEventListener("resize", fit);
         return () => {
+            observer.disconnect();
             document.removeEventListener("scroll", fit, { capture: true });
             window.removeEventListener("resize", fit);
         };
@@ -169,7 +179,11 @@ const Catalog = () => {
                 </div>
             </aside>
 
-            <section aria-label="Opportunities" aria-busy={loading}>
+            <section
+                ref={resultsRef}
+                aria-label="Opportunities"
+                aria-busy={loading}
+            >
                 <div className="mb-3 flex items-center gap-3 text-sm text-typography-2">
                     <p role="status">
                         {loading

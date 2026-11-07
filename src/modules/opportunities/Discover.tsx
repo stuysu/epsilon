@@ -125,7 +125,7 @@ const Discover = () => {
             {/* clips the box so it never runs into the footer */}
             <div className="overflow-clip">
                 <section className="mx-auto flex min-h-[calc(100dvh-2rem)] w-full max-w-[59rem] flex-col px-14 pb-6 pt-16 max-lg:min-h-0 max-sm:px-4 max-lg:pb-0">
-                    <p className="text-justify font-serif text-[clamp(2.25rem,6vw,5.4rem)] leading-[0.95] tracking-[-0.02em] text-transparent [background-image:linear-gradient(180deg,#fff6e0_0%,#c9a86a_45%,#7a5f30_100%)] scheme-light:[background-image:linear-gradient(180deg,#7a5f30_0%,#5c4520_100%)] [background-clip:text] [-webkit-background-clip:text] max-sm:text-left">
+                    <p className="font-serif [text-wrap:pretty] text-[clamp(2.25rem,6vw,5.4rem)] leading-[0.95] tracking-[-0.02em] text-transparent [background-image:linear-gradient(180deg,#fff6e0_0%,#c9a86a_45%,#7a5f30_100%)] scheme-light:[background-image:linear-gradient(180deg,#7a5f30_0%,#5c4520_100%)] [background-clip:text] [-webkit-background-clip:text]">
                         The <em>largest</em> compendium of opportunities for
                         Stuyvesant students to learn, grow, and explore.
                     </p>
