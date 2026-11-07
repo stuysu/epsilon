@@ -263,9 +263,12 @@ describe("filterOpportunities", () => {
             make({ id: 4, archived: true }),
             make({ id: 5, deadline_text: "TBD" }),
         ];
+        expect(run(list).sort()).toEqual([1, 2, 3, 5]);
         expect(run(list, { statuses: ["archived"] })).toEqual([4]);
         expect(run(list, { deadlines: ["week"] })).toEqual([1]);
-        expect(run(list, { deadlines: ["rolling"] }).sort()).toEqual([3, 4]);
+        expect(
+            run(list, { statuses: [], deadlines: ["rolling"] }).sort(),
+        ).toEqual([3, 4]);
     });
 
     it("treats rolling wording with a set date as dated", () => {
@@ -283,7 +286,7 @@ describe("filterOpportunities", () => {
             make({ id: 3, deadline: "2026-12-01" }),
             make({ id: 4, deadline: "2026-11-10" }),
         ];
-        expect(run(list)).toEqual([4, 3, 2, 1]);
+        expect(run(list, { statuses: [] })).toEqual([4, 3, 2, 1]);
     });
 
     it("does not reorder the list it was given", () => {

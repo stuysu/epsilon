@@ -12,7 +12,7 @@ import {
 
 export const DEFAULT_FILTERS: OpportunityFilters = {
     query: "",
-    statuses: [],
+    statuses: ["active"],
     deadlines: [],
     categoryIds: [],
     eligibilityIds: [],

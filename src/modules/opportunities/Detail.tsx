@@ -174,7 +174,7 @@ const Detail = () => {
                                 {otherLinks.map((link) => (
                                     <li
                                         key={link}
-                                        className="min-w-0 truncate text-sm"
+                                        className="relative min-w-0 truncate py-0.5 text-sm"
                                     >
                                         <a
                                             href={link}
