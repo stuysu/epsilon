@@ -22,6 +22,9 @@ const SubNavBar: FC = () => {
     const user = useContext(UserContext);
     const isMobile = useMediaQuery("not all and (min-width: 640px)");
     const location = useLocation();
+    const isAdminPage =
+        location.pathname === "/admin" ||
+        location.pathname.startsWith("/admin/");
 
     const isOnStuyActivitiesPage = isStuyActivitiesPath(location.pathname);
     if (!isOnStuyActivitiesPage) return null;
@@ -76,13 +79,14 @@ const SubNavBar: FC = () => {
                         to="/admin"
                         onFocus={revealOnKeyboardFocus}
                         // /admin opens on one of its sub-pages
-                        aria-current={
-                            location.pathname === "/admin" ||
-                            location.pathname.startsWith("/admin/")
-                                ? "page"
-                                : undefined
-                        }
-                        className={`${ITEM_CLASS} inline-flex gap-1 text-yellow`}
+                        aria-current={isAdminPage ? "page" : undefined}
+                        // a thin bar under it marks the admin pages; the
+                        // padding is offset by the margin so nothing moves
+                        className={`${ITEM_CLASS} inline-flex gap-1 text-yellow ${
+                            isAdminPage
+                                ? "-mb-[3px] pb-[3px] shadow-[inset_0_-2px_0_currentColor]"
+                                : ""
+                        }`}
                     >
                         <i
                             className="bx bx-shield text-base leading-[1.2rem]"
