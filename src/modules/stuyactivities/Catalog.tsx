@@ -60,7 +60,20 @@ const Catalog = () => {
     const [debouncedSearchParams, setDebouncedSearchParams] =
         useState(searchParams);
     useEffect(() => {
-        const t = setTimeout(() => setDebouncedSearchParams(searchParams), 500);
+        /* typing only punctuation (e.g. the dots in "U.N.") doesn't change
+           the cleaned search, so keep the old params and don't reload */
+        const t = setTimeout(
+            () =>
+                setDebouncedSearchParams((prev) =>
+                    cleanSearch(prev.name) === cleanSearch(searchParams.name) &&
+                    prev.tags === searchParams.tags &&
+                    prev.meetingDays === searchParams.meetingDays &&
+                    prev.commitmentLevels === searchParams.commitmentLevels
+                        ? prev
+                        : searchParams,
+                ),
+            500,
+        );
         return () => clearTimeout(t);
     }, [searchParams]);
 
