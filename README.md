@@ -30,12 +30,14 @@ The Calendar is a comprehensive view of meetings and events happening at Stuyves
 
 Valentine's is a platform for students to send and receive Valentine's Day messages anonymously.
 
-### Opportunities (In Progress)
+### Opportunities
 
-Opportunities is a platform for students to find and apply for internships,
-volunteer work, and other extracurricular activities.
+Opportunities brings the SU Opportunity Bulletin into Epsilon. Students browse internships, programs, volunteer work,
+contests, and scholarships, filter them by category, deadline, cost, and who they're open to, and save the ones they
+want to come back to. Admins publish each new bulletin by uploading its PDF and reviewing the entries before they go
+live.
 
-### Applications (Future)
+### Applications (In Progress)
 
 Applications is a platform for students to apply for various SU positions while ensuring that the process is fully
 anonymous.
@@ -46,7 +48,8 @@ Voting is a platform for students to vote on future SU leaders.
 
 ### Arista (Separate)
 
-A seperate platform for Arista members to manage their membership, post updates, and manage events.
+A separate platform for Arista members to manage their membership, post updates, and manage events, at
+[stuyarista.org](https://stuyarista.org/).
 
 ## Stack
 
