@@ -15,8 +15,7 @@ export type OpportunityEligibility = {
 // preferred tags say who it is especially for, not who can apply
 export type OpportunityTag = OpportunityEligibility & { preferred: boolean };
 
-// groups is null until the student fills in About You
-export type Student = { grade: number; groups: string[] | null };
+export type Student = { grade: number };
 
 export type OpportunityBulletin = {
     id: number;

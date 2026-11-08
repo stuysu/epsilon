@@ -71,26 +71,43 @@ const toOpportunity = ({
         .sort((a, b) => a.position - b.position),
 });
 
-// sensitive, so it stays in this browser, kept apart per account
-const aboutYouKey = (userId: number) => `opportunities-about-you:${userId}`;
+type Snapshot = {
+    opportunities: Opportunity[];
+    categories: OpportunityCategory[];
+    eligibilities: OpportunityEligibility[];
+    latestBulletin: OpportunityBulletin | null;
+    savedIds: number[];
+};
 
-const readAboutYou = (userId: number): string[] | null => {
+// shown at once on the next visit while a fresh copy loads; bump the version when the columns change
+const cacheKey = (userId: number) => `opportunities-cache:v1:${userId}`;
+let memoryCache: { userId: number; snapshot: Snapshot } | null = null;
+
+const readCache = (userId: number): Snapshot | null => {
+    if (memoryCache?.userId === userId) return memoryCache.snapshot;
     try {
         const value = JSON.parse(
-            localStorage.getItem(aboutYouKey(userId)) ?? "null",
+            localStorage.getItem(cacheKey(userId)) ?? "null",
         );
-        return Array.isArray(value)
-            ? value.filter((v): v is string => typeof v === "string")
-            : null;
+        if (
+            !Array.isArray(value?.opportunities) ||
+            !Array.isArray(value.categories) ||
+            !Array.isArray(value.eligibilities) ||
+            !Array.isArray(value.savedIds)
+        ) {
+            return null;
+        }
+        memoryCache = { userId, snapshot: value };
+        return value;
     } catch {
         return null;
     }
 };
 
-const writeAboutYou = (userId: number, groups: string[] | null) => {
+const writeCache = (userId: number, snapshot: Snapshot) => {
+    memoryCache = { userId, snapshot };
     try {
-        if (groups === null) localStorage.removeItem(aboutYouKey(userId));
-        else localStorage.setItem(aboutYouKey(userId), JSON.stringify(groups));
+        localStorage.setItem(cacheKey(userId), JSON.stringify(snapshot));
     } catch {}
 };
 
@@ -129,7 +146,6 @@ type OpportunitiesContextType = {
     setSaved: (opportunityId: number, saved: boolean) => Promise<void>;
     refreshOpportunity: (opportunityId: number) => Promise<boolean>;
     student: Student;
-    setAboutYou: (groups: string[] | null) => void;
     // resolves to the fresh list, or null if it could not load
     reload: () => Promise<Opportunity[] | null>;
     // kept here so filters survive a visit to a detail page
@@ -147,8 +163,7 @@ const OpportunitiesContext = createContext<OpportunitiesContextType>({
     savedIds: new Set(),
     setSaved: async () => undefined,
     refreshOpportunity: async () => false,
-    student: { grade: 0, groups: null },
-    setAboutYou: () => undefined,
+    student: { grade: 0 },
     reload: async () => null,
     catalogFilters: DEFAULT_FILTERS,
     setCatalogFilters: () => undefined,
@@ -164,45 +179,50 @@ export const OpportunitiesProvider = ({
     const user = useContext(UserContext);
     const { enqueueSnackbar } = useSnackbar();
 
-    const [loading, setLoading] = useState(true);
+    const [cached] = useState(() => readCache(user.id));
+    const [loading, setLoading] = useState(!cached);
     const [failed, setFailed] = useState(false);
-    const [opportunities, setOpportunities] = useState<Opportunity[]>([]);
-    const [categories, setCategories] = useState<OpportunityCategory[]>([]);
+    const [opportunities, setOpportunities] = useState<Opportunity[]>(
+        cached?.opportunities ?? [],
+    );
+    const [categories, setCategories] = useState<OpportunityCategory[]>(
+        cached?.categories ?? [],
+    );
     const [eligibilities, setEligibilities] = useState<
         OpportunityEligibility[]
-    >([]);
+    >(cached?.eligibilities ?? []);
     const [latestBulletin, setLatestBulletin] =
-        useState<OpportunityBulletin | null>(null);
-    const [savedIds, setSavedIds] = useState<Set<number>>(new Set());
+        useState<OpportunityBulletin | null>(cached?.latestBulletin ?? null);
+    const [savedIds, setSavedIds] = useState<Set<number>>(
+        () => new Set(cached?.savedIds),
+    );
+    // only data from the server is cached, never what was read from it
+    const [synced, setSynced] = useState(false);
     const [catalogFilters, setCatalogFilters] =
         useState<OpportunityFilters>(DEFAULT_FILTERS);
-    const [aboutYou, setAboutYouState] = useState(() => readAboutYou(user.id));
-    const [aboutYouFor, setAboutYouFor] = useState(user.id);
-    // another account signed in, so its own choices apply
-    if (aboutYouFor !== user.id) {
-        setAboutYouFor(user.id);
-        setAboutYouState(readAboutYou(user.id));
+    const [cachedFor, setCachedFor] = useState(user.id);
+    // another account signed in, so its own copy applies
+    if (cachedFor !== user.id) {
+        setCachedFor(user.id);
+        const other = readCache(user.id);
+        setOpportunities(other?.opportunities ?? []);
+        setCategories(other?.categories ?? []);
+        setEligibilities(other?.eligibilities ?? []);
+        setLatestBulletin(other?.latestBulletin ?? null);
+        setSavedIds(new Set(other?.savedIds));
+        setLoading(!other);
+        setSynced(false);
     }
 
-    const setAboutYou = useCallback(
-        (groups: string[] | null) => {
-            setAboutYouState(groups);
-            writeAboutYou(user.id, groups);
-        },
-        [user.id],
-    );
-
-    const student = useMemo(
-        () => ({ grade: user.grade, groups: aboutYou }),
-        [user.grade, aboutYou],
-    );
+    const student = useMemo(() => ({ grade: user.grade }), [user.grade]);
 
     const latestLoad = useRef(0);
     const load = useCallback(
-        async (isWanted: () => boolean = () => true) => {
+        async (isWanted: () => boolean = () => true, quiet = false) => {
             const call = ++latestLoad.current;
             const isCurrent = () => call === latestLoad.current && isWanted();
-            setLoading(true);
+            // a cached copy stays up while it refreshes
+            if (!quiet) setLoading(true);
             setFailed(false);
 
             const [
@@ -243,7 +263,8 @@ export const OpportunitiesProvider = ({
                 bulletinRes.error ||
                 savedRes.error
             ) {
-                setFailed(true);
+                // keeps showing the cached copy rather than an error
+                if (!quiet) setFailed(true);
                 setLoading(false);
                 return null;
             }
@@ -255,18 +276,42 @@ export const OpportunitiesProvider = ({
             setLatestBulletin(bulletinRes.data[0] ?? null);
             setSavedIds(new Set(savedRes.data.map((s) => s.opportunity_id)));
             setLoading(false);
+            setSynced(true);
             return fresh;
         },
         [user.id],
     );
 
+    // read by the effect without rerunning it
+    const hasData = useRef(!loading);
+    hasData.current = !loading;
     useEffect(() => {
         let current = true;
-        load(() => current);
+        load(() => current, hasData.current);
         return () => {
             current = false;
         };
     }, [load]);
+
+    // saves and edits land in the cache too, so the next visit matches
+    useEffect(() => {
+        if (!synced) return;
+        writeCache(user.id, {
+            opportunities,
+            categories,
+            eligibilities,
+            latestBulletin,
+            savedIds: [...savedIds],
+        });
+    }, [
+        synced,
+        user.id,
+        opportunities,
+        categories,
+        eligibilities,
+        latestBulletin,
+        savedIds,
+    ]);
 
     const setSaved = useCallback(
         async (opportunityId: number, saved: boolean) => {
@@ -329,7 +374,6 @@ export const OpportunitiesProvider = ({
             setSaved,
             refreshOpportunity,
             student,
-            setAboutYou,
             reload,
             catalogFilters,
             setCatalogFilters,
@@ -345,7 +389,6 @@ export const OpportunitiesProvider = ({
             setSaved,
             refreshOpportunity,
             student,
-            setAboutYou,
             reload,
             catalogFilters,
         ],

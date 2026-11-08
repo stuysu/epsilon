@@ -10,7 +10,6 @@ import {
     OpportunityFilters,
 } from "../types";
 import { toggleValue } from "../utils";
-import { useOpportunities } from "../OpportunitiesContext";
 
 type FilterPanelProps = {
     filters: OpportunityFilters;
@@ -46,53 +45,6 @@ const FilterGroup = ({ title, action, children }: FilterGroupProps) => (
         {children}
     </section>
 );
-
-// not a filter, so Reset leaves it alone
-const AboutYou = ({ groups }: { groups: OpportunityEligibility[] }) => {
-    const { student, setAboutYou } = useOpportunities();
-    const chosen = student.groups;
-
-    const toggle = (name: string) => {
-        const next = toggleValue(chosen ?? [], name);
-        setAboutYou(next.length ? next : null);
-    };
-
-    return (
-        <FilterGroup
-            title="About You"
-            action={
-                chosen !== null && (
-                    <button
-                        type="button"
-                        onClick={() => setAboutYou(null)}
-                        className="cursor-pointer rounded text-sm text-typography-2 hover:text-typography-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
-                    >
-                        Clear
-                    </button>
-                )
-            }
-        >
-            <p className="text-sm text-typography-2">
-                Pick any that describe you.
-            </p>
-            <div className="flex flex-wrap gap-2">
-                {groups.map((group) => (
-                    <ToggleChip
-                        key={group.id}
-                        title={group.name}
-                        selected={chosen?.includes(group.name) ?? false}
-                        onChange={() => toggle(group.name)}
-                    />
-                ))}
-                <ToggleChip
-                    title="None of these"
-                    selected={chosen !== null && chosen.length === 0}
-                    onChange={(selected) => setAboutYou(selected ? [] : null)}
-                />
-            </div>
-        </FilterGroup>
-    );
-};
 
 const ROW_CLASS =
     "important w-full cursor-pointer rounded-lg px-3 pb-[0.35rem] pt-1 text-left text-sm shadow-control transition-colors";
@@ -315,10 +267,6 @@ const FilterPanel = ({
                     </div>
                 </FilterGroup>
 
-                <AboutYou
-                    groups={eligibilities.filter((e) => e.grade === null)}
-                />
-
                 <FilterGroup
                     title="Open To"
                     action={
@@ -358,8 +306,9 @@ const FilterPanel = ({
                         title="Cost"
                         action={
                             <span className="text-sm text-typography-1 [font-variation-settings:'wght'_500]">
-                                ${draftCost[0].toLocaleString("en-US")} to $
-                                {draftCost[1].toLocaleString("en-US")}
+                                {draftCost[1] === 0
+                                    ? "Free"
+                                    : `$${draftCost[0].toLocaleString("en-US")} to $${draftCost[1].toLocaleString("en-US")}`}
                             </span>
                         }
                     >
@@ -368,7 +317,8 @@ const FilterPanel = ({
                             min={0}
                             max={maxCost}
                             step={Math.max(1, Math.round(maxCost / 100))}
-                            minStepsBetweenThumbs={1}
+                            // both at $0 finds free ones
+                            minStepsBetweenThumbs={0}
                             value={draftCost}
                             onValueChange={setDraftCost}
                             onValueCommit={([low, high]) =>
@@ -383,16 +333,16 @@ const FilterPanel = ({
                             <Slider.Track className="relative h-1 grow rounded-full bg-layer-3">
                                 <Slider.Range className="absolute h-full rounded-full bg-accent" />
                             </Slider.Track>
-                            {/* thumb hit areas reach 24px past the dot */}
+                            {/* the accent is see-through, so the page color backs it; hit areas reach 24px past the dot */}
                             <Slider.Thumb
                                 aria-label="Minimum cost"
                                 aria-valuetext={formatDollars(draftCost[0])}
-                                className="relative block h-4 w-4 cursor-pointer rounded-full bg-accent shadow-control outline-none after:absolute after:-inset-1 after:content-[''] focus-visible:ring-2 focus-visible:ring-typography-1"
+                                className="relative block h-4 w-4 cursor-pointer rounded-full shadow-control [background:linear-gradient(var(--accent),var(--accent)),var(--bg-main)] outline-none after:absolute after:-inset-1 after:content-[''] focus-visible:ring-2 focus-visible:ring-typography-1"
                             />
                             <Slider.Thumb
                                 aria-label="Maximum cost"
                                 aria-valuetext={formatDollars(draftCost[1])}
-                                className="relative block h-4 w-4 cursor-pointer rounded-full bg-accent shadow-control outline-none after:absolute after:-inset-1 after:content-[''] focus-visible:ring-2 focus-visible:ring-typography-1"
+                                className="relative block h-4 w-4 cursor-pointer rounded-full shadow-control [background:linear-gradient(var(--accent),var(--accent)),var(--bg-main)] outline-none after:absolute after:-inset-1 after:content-[''] focus-visible:ring-2 focus-visible:ring-typography-1"
                             />
                         </Slider.Root>
                     </FilterGroup>

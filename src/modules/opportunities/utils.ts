@@ -46,22 +46,16 @@ export const isArchived = (opportunity: Opportunity, today: string) =>
 const requiredTags = (opportunity: Opportunity) =>
     opportunity.eligibilities.filter((e) => !e.preferred);
 
-// any one required grade, and any one required group, is enough
+// any one required grade is enough; group tags can't be checked
 export const isIneligible = (opportunity: Opportunity, student: Student) => {
-    const required = requiredTags(opportunity);
-    const grades = required.flatMap((e) => (e.grade === null ? [] : [e.grade]));
-    const groups = required.filter((e) => e.grade === null);
+    const grades = requiredTags(opportunity).flatMap((e) =>
+        e.grade === null ? [] : [e.grade],
+    );
     const hasGrade = student.grade >= 9 && student.grade <= 12;
-    const wrongGrade =
-        hasGrade && grades.length > 0 && !grades.includes(student.grade);
-    const wrongGroup =
-        student.groups !== null &&
-        groups.length > 0 &&
-        !groups.some((e) => student.groups!.includes(e.name));
-    return wrongGrade || wrongGroup;
+    return hasGrade && grades.length > 0 && !grades.includes(student.grade);
 };
 
-// true only when the grade and About You answers show the student fits
+// true only when the grade fits and no group is required
 export const isEligible = (opportunity: Opportunity, student: Student) => {
     const required = requiredTags(opportunity);
     const needsGrade = required.some((e) => e.grade !== null);
@@ -70,7 +64,7 @@ export const isEligible = (opportunity: Opportunity, student: Student) => {
     return (
         !isIneligible(opportunity, student) &&
         (!needsGrade || hasGrade) &&
-        (!needsGroup || student.groups !== null)
+        !needsGroup
     );
 };
 

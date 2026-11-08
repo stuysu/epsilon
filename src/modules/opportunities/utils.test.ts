@@ -18,7 +18,7 @@ import {
 } from "./types";
 
 const TODAY = "2026-11-02";
-const asGrade = (grade: number): Student => ({ grade, groups: null });
+const asGrade = (grade: number): Student => ({ grade });
 const JUNIOR = asGrade(11);
 
 const junior: OpportunityTag = {
@@ -152,12 +152,12 @@ describe("isEligible", () => {
         expect(isEligible(seniorsOnly, asGrade(0))).toBe(false);
     });
 
-    it("waits for About You before a group tag counts", () => {
+    it("is never sure when a group is required", () => {
         const aidOnly = make({ eligibilities: [aid] });
         expect(isEligible(aidOnly, JUNIOR)).toBe(false);
-        expect(
-            isEligible(aidOnly, { grade: 11, groups: ["Needs Financial Aid"] }),
-        ).toBe(true);
+        expect(isEligible(make({ eligibilities: [junior, aid] }), JUNIOR)).toBe(
+            false,
+        );
     });
 });
 
@@ -174,16 +174,10 @@ describe("isIneligible", () => {
         expect(isIneligible(seniorsOnly, asGrade(-1))).toBe(false);
     });
 
-    it("checks group tags only once About You is filled in", () => {
-        const aidOnly = make({ eligibilities: [aid] });
-        expect(isIneligible(aidOnly, JUNIOR)).toBe(false);
-        expect(isIneligible(aidOnly, { grade: 11, groups: [] })).toBe(true);
-        expect(
-            isIneligible(aidOnly, {
-                grade: 11,
-                groups: ["Needs Financial Aid"],
-            }),
-        ).toBe(false);
+    it("never flags a group tag", () => {
+        expect(isIneligible(make({ eligibilities: [aid] }), JUNIOR)).toBe(
+            false,
+        );
     });
 
     it("never flags a preferred tag", () => {
@@ -193,7 +187,7 @@ describe("isIneligible", () => {
                 { ...aid, preferred: true },
             ],
         });
-        expect(isIneligible(preferred, { grade: 11, groups: [] })).toBe(false);
+        expect(isIneligible(preferred, asGrade(11))).toBe(false);
     });
 });
 
