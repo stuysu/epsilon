@@ -32,10 +32,10 @@ Valentine's is a platform for students to send and receive Valentine's Day messa
 
 ### Opportunities
 
-Opportunities brings the SU Opportunity Bulletin into Epsilon. Students browse internships, programs, volunteer work,
-contests, and scholarships, filter them by category, deadline, cost, and who they're open to, and save the ones they
-want to come back to. Admins publish each new bulletin by uploading its PDF and reviewing the entries before they go
-live.
+Opportunities brings Mr. Blumm's Opportunity Bulletin into Epsilon. Students can browse internships, programs,
+volunteer work, contests, and scholarships. They can filter by category, deadline, cost, or who a listing is open to,
+and save the ones they want to come back to. Admins publish each new bulletin by uploading its PDF and reviewing the
+entries before they go live.
 
 ### Applications (In Progress)
 
