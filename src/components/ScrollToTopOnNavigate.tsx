@@ -11,18 +11,23 @@ const KEPT_POSITIONS = 100;
 const USER_SCROLL = ["wheel", "touchstart", "keydown", "pointerdown"];
 
 // keeps scrolling to target until the page is tall enough, or the user scrolls
-const restore = (box: Scrollbars, target: number) => {
+const restore = (box: Scrollbars, target: number, onDone: () => void) => {
     const started = performance.now();
     let frame = 0;
     const stop = () => {
         cancelAnimationFrame(frame);
         for (const type of USER_SCROLL) window.removeEventListener(type, stop);
+        onDone();
     };
     const step = () => {
         box.scrollTop(target);
         const reachable = box.getScrollHeight() - box.getClientHeight();
         if (reachable >= target || performance.now() - started > RESTORE_MS) {
-            stop();
+            for (const type of USER_SCROLL) {
+                window.removeEventListener(type, stop);
+            }
+            // its scroll event comes before the next frame
+            frame = requestAnimationFrame(onDone);
         } else {
             frame = requestAnimationFrame(step);
         }
@@ -44,6 +49,8 @@ const ScrollToTopOnNavigate = ({
     const navigationType = useNavigationType();
     const last = useRef({ pathname, key });
     const positions = useRef(new Map<string, number>());
+    // scrolls from restoring aren't the user's, so they aren't saved
+    const restoring = useRef<string | null>(null);
 
     useEffect(() => {
         // not in the library's types
@@ -51,6 +58,7 @@ const ScrollToTopOnNavigate = ({
             ?.view;
         if (!view) return;
         const save = () => {
+            if (restoring.current === last.current.key) return;
             const kept = positions.current;
             kept.delete(last.current.key);
             kept.set(last.current.key, view.scrollTop);
@@ -72,7 +80,10 @@ const ScrollToTopOnNavigate = ({
         if (!box) return;
         const target = positions.current.get(key);
         if (navigationType === "POP" && target !== undefined) {
-            return restore(box, target);
+            restoring.current = key;
+            return restore(box, target, () => {
+                if (restoring.current === key) restoring.current = null;
+            });
         }
 
         // a search or filter change replaces the entry but stays on the page
