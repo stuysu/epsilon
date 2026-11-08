@@ -7,6 +7,7 @@ import {
     getTodayEastern,
     isEligible,
     isIneligible,
+    splitBullets,
 } from "./utils";
 import {
     Opportunity,
@@ -100,6 +101,26 @@ describe("getTodayEastern", () => {
         expect(getTodayEastern(new Date("2026-11-03T02:00:00Z"))).toBe(
             "2026-11-02",
         );
+    });
+});
+
+describe("splitBullets", () => {
+    it("splits a flattened list after its intro", () => {
+        expect(splitBullets("Skills like: · Essays · Life Skills")).toEqual({
+            intro: "Skills like:",
+            items: ["Essays", "Life Skills"],
+        });
+        expect(splitBullets("● One ● Two")).toEqual({
+            intro: "",
+            items: ["One", "Two"],
+        });
+    });
+
+    it("leaves a lone middle dot as text", () => {
+        expect(splitBullets("Mon · Wed sessions")).toEqual({
+            intro: "Mon · Wed sessions",
+            items: [],
+        });
     });
 });
 

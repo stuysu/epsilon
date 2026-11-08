@@ -74,6 +74,25 @@ export const isEligible = (opportunity: Opportunity, student: Student) => {
     );
 };
 
+// the bulletin's lists arrive flattened into one line
+const BULLET = /\s*[●•▪◦‣]\s*/;
+const MIDDOT = /\s+·\s+|^·\s+/;
+
+export const splitBullets = (text: string) => {
+    const marker = BULLET.test(text)
+        ? BULLET
+        : // a middle dot is only a list once it repeats
+          (text.match(/(?:^|\s)·\s/g)?.length ?? 0) >= 2
+          ? MIDDOT
+          : null;
+    if (!marker) return { intro: text, items: [] };
+    const [intro, ...items] = text.split(new RegExp(marker, "g"));
+    return {
+        intro: intro.trim(),
+        items: items.map((item) => item.trim()).filter(Boolean),
+    };
+};
+
 export const getCostLabel = ({ cost_text }: Opportunity) =>
     cost_text ?? "Check description";
 

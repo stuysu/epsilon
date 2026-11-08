@@ -14,7 +14,7 @@ import EligibilityLine from "./components/EligibilityLine";
 import OpportunityDetails from "./components/OpportunityDetails";
 import StatusBadge from "./components/StatusBadge";
 import { useOpportunities } from "./OpportunitiesContext";
-import { getStatus, getTodayEastern } from "./utils";
+import { getStatus, getTodayEastern, splitBullets } from "./utils";
 
 const Detail = () => {
     const { id } = useParams();
@@ -70,6 +70,7 @@ const Detail = () => {
     const status = getStatus(opportunity, student, getTodayEastern());
     const [mainLink, ...otherLinks] = getSafeLinks(opportunity.links);
     const isSaved = savedIds.has(opportunity.id);
+    const description = splitBullets(opportunity.description);
 
     return (
         <main className="mx-auto flex w-full max-w-3xl flex-col gap-5 px-12 pt-8 [overflow-wrap:anywhere] max-sm:px-4 max-sm:pt-14">
@@ -137,9 +138,20 @@ const Detail = () => {
                         <EligibilityLine opportunity={opportunity} />
                     )}
 
-                    <p className="whitespace-pre-line text-typography-1">
-                        {opportunity.description}
-                    </p>
+                    <div className="flex flex-col gap-2">
+                        {description.intro && (
+                            <p className="whitespace-pre-line text-typography-1">
+                                {description.intro}
+                            </p>
+                        )}
+                        {description.items.length > 0 && (
+                            <ul className="flex list-disc flex-col gap-1 pl-5 text-[0.9rem] leading-[1.2rem] text-typography-1 [font-variation-settings:'wght'_500] marker:text-typography-2">
+                                {description.items.map((item, index) => (
+                                    <li key={index}>{item}</li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
 
                     <div className="flex flex-wrap gap-3">
                         {mainLink && (

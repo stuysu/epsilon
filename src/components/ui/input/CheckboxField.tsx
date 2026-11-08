@@ -21,12 +21,13 @@ const CheckboxField = ({
     small,
 }: CheckboxFieldProps) => (
     <label
-        className={`mr-4 inline-flex items-center gap-2.5 py-2 align-middle ${disabled ? "cursor-default opacity-60" : "cursor-pointer"}`}
+        className={`mr-4 inline-flex items-center align-middle ${small ? "gap-2 py-1" : "gap-2.5 py-2"} ${disabled ? "cursor-default opacity-60" : "cursor-pointer"}`}
     >
         <CheckboxInput
             checked={checked}
             onChange={onChange}
             disabled={disabled}
+            small={small}
             label={ariaLabel ?? (typeof label === "string" ? label : "")}
         />
         <span
