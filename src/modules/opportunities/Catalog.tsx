@@ -39,7 +39,10 @@ const Catalog = () => {
         const results = resultsRef.current;
         if (!aside || !results) return;
         const fit = () => {
-            if (results.offsetHeight < aside.scrollHeight) {
+            const flowing = results.offsetHeight < aside.scrollHeight;
+            // a non-scrolling panel must pass the wheel on to the page
+            aside.toggleAttribute("data-flow", flowing);
+            if (flowing) {
                 aside.style.setProperty("--filters-height", "none");
                 return;
             }
@@ -162,7 +165,7 @@ const Catalog = () => {
             {/* scrolls on its own; padding keeps focus rings unclipped */}
             <aside
                 ref={asideRef}
-                className="lg:sticky lg:top-6 lg:-mx-2 lg:max-h-[var(--filters-height,calc(100dvh-3rem))] lg:overflow-y-auto lg:overscroll-contain lg:px-2 lg:pb-6 lg:pt-1 lg:[scrollbar-width:thin]"
+                className="lg:sticky lg:top-6 lg:-mx-2 lg:max-h-[var(--filters-height,calc(100dvh-3rem))] lg:overflow-y-auto lg:overscroll-contain lg:data-[flow]:overflow-visible lg:data-[flow]:overscroll-auto lg:px-2 lg:pb-6 lg:pt-1 lg:[scrollbar-width:thin]"
             >
                 <h2 className="sr-only">Filters</h2>
                 <button
