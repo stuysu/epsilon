@@ -9,7 +9,11 @@ import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
 import OrgMember from "../../components/OrgMember";
 import ItemList from "../../../../../components/ui/lists/ItemList";
 import SortSelect from "../../../../../components/ui/input/SortSelect";
-import { MemberSort, sortMembersBy } from "../../../../../utils/DataFormatters";
+import {
+    MemberSort,
+    sortMembersBy,
+    memberSortOptions,
+} from "../../../../../utils/DataFormatters";
 
 const MeetingAttendance = () => {
     const { meetingId: meetingIdParam, orgUrl } = useParams();
@@ -202,7 +206,12 @@ const MeetingAttendance = () => {
                     />
                 </div>
             </div>
-            <SortSelect value={sort} onChange={setSort} />
+            <SortSelect
+                value={sort}
+                onChange={setSort}
+                options={memberSortOptions}
+                label="Sort members"
+            />
 
             <LayoutGroup>
                 {[

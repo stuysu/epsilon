@@ -2,6 +2,7 @@ import { Slider, Toggle } from "radix-ui";
 import { ReactNode, useEffect, useId, useState } from "react";
 import CheckboxField from "../../../components/ui/input/CheckboxField";
 import SearchInput from "../../../components/ui/input/SearchInput";
+import SortSelect from "../../../components/ui/input/SortSelect";
 import ToggleChip from "../../../components/ui/input/ToggleChip";
 import {
     OpportunityCategory,
@@ -22,10 +23,10 @@ type FilterPanelProps = {
 };
 
 const SORTS: { value: OpportunityFilters["sort"]; label: string }[] = [
-    { value: "deadline", label: "Deadline" },
-    { value: "newest", label: "Newest" },
-    { value: "title", label: "A to Z" },
-    { value: "cost", label: "Lowest Cost" },
+    { value: "deadline", label: "Soonest deadline" },
+    { value: "newest", label: "Newest first" },
+    { value: "title", label: "Title (A-Z)" },
+    { value: "cost", label: "Lowest cost" },
 ];
 
 const formatDollars = (amount: number) => `$${amount.toLocaleString("en-US")}`;
@@ -216,6 +217,17 @@ const FilterPanel = ({
                 aria-label="Search opportunities"
                 value={filters.query}
                 onChange={(query) => update({ query })}
+                trailing={
+                    <div className="absolute right-1 top-1/2 z-10 -translate-y-1/2">
+                        <SortSelect
+                            compact
+                            value={filters.sort}
+                            onChange={(sort) => update({ sort })}
+                            options={SORTS}
+                            label="Sort"
+                        />
+                    </div>
+                }
             />
             <button
                 type="button"
@@ -227,19 +239,6 @@ const FilterPanel = ({
                 Reset Filters
             </button>
             <div className="flex flex-col gap-5">
-                <FilterGroup title="Sort By">
-                    <div className="grid grid-cols-2 gap-2">
-                        {SORTS.map(({ value, label }) => (
-                            <ToggleChip
-                                key={value}
-                                title={label}
-                                selected={filters.sort === value}
-                                onChange={() => update({ sort: value })}
-                            />
-                        ))}
-                    </div>
-                </FilterGroup>
-
                 <FilterGroup title="Status">
                     <div className="grid grid-cols-2 gap-2">
                         <ToggleChip

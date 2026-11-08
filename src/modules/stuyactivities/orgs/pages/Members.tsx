@@ -7,6 +7,7 @@ import {
     MemberSort,
     sortMembers,
     sortMembersBy,
+    memberSortOptions,
 } from "../../../../utils/DataFormatters";
 import useMembershipJoinDates from "../../../../utils/useMembershipJoinDates";
 import LoginGate from "../../../../components/ui/content/LoginGate";
@@ -70,7 +71,12 @@ const Members = () => {
                         value={search}
                         onChange={setSearch}
                     />
-                    <SortSelect value={sort} onChange={setSort} />
+                    <SortSelect
+                        value={sort}
+                        onChange={setSort}
+                        options={memberSortOptions}
+                        label="Sort members"
+                    />
                 </div>
                 <ItemList height={boxHeight} contentRef={contentRef}>
                     <AnimatePresence initial={false}>
