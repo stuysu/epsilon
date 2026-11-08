@@ -17,6 +17,8 @@ type FilterPanelProps = {
     categories: OpportunityCategory[];
     eligibilities: OpportunityEligibility[];
     maxCost: number;
+    canReset: boolean;
+    onReset: () => void;
 };
 
 const formatDollars = (amount: number) => `$${amount.toLocaleString("en-US")}`;
@@ -226,6 +228,8 @@ const FilterPanel = ({
     categories,
     eligibilities,
     maxCost,
+    canReset,
+    onReset,
 }: FilterPanelProps) => {
     const update = (changes: Partial<OpportunityFilters>) =>
         onChange({ ...filters, ...changes });
@@ -276,6 +280,14 @@ const FilterPanel = ({
                     </div>
                 }
             />
+            <button
+                type="button"
+                onClick={onReset}
+                disabled={!canReset}
+                className="-mt-3 mb-3 self-end rounded text-sm text-typography-2 enabled:cursor-pointer enabled:hover:text-typography-1 disabled:text-typography-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+            >
+                Reset Filters
+            </button>
             <div className="flex flex-col gap-5">
                 <FilterGroup title="Status">
                     <div className="grid grid-cols-2 gap-2">

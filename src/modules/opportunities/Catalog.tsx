@@ -189,6 +189,8 @@ const Catalog = () => {
                         categories={categories}
                         eligibilities={eligibilities}
                         maxCost={maxCost}
+                        canReset={filtered}
+                        onReset={resetFilters}
                     />
                 </div>
             </aside>
@@ -198,7 +200,7 @@ const Catalog = () => {
                 aria-label="Opportunities"
                 aria-busy={loading}
             >
-                <div className="mb-3 flex items-center gap-3 text-sm text-typography-2">
+                <div className="mb-3 text-sm text-typography-2">
                     <p role="status">
                         {loading
                             ? ""
@@ -208,15 +210,6 @@ const Catalog = () => {
                                   "opportunities",
                               )}
                     </p>
-                    {!loading && filtered && results.length > 0 && (
-                        <button
-                            type="button"
-                            onClick={resetFilters}
-                            className="cursor-pointer rounded underline hover:text-typography-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
-                        >
-                            Reset Filters
-                        </button>
-                    )}
                 </div>
                 {loading ? (
                     <OpportunityListSkeleton />
