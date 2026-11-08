@@ -74,6 +74,31 @@ export const isEligible = (opportunity: Opportunity, student: Student) => {
     );
 };
 
+// many descriptions open with a quoted blurb, sometimes never closed
+export const unquote = (text: string) => {
+    const trimmed = text.trim();
+    const open = trimmed[0];
+    if (open !== "“" && open !== '"') return trimmed;
+    // the quote that closes the opening one, counting any nested pairs
+    let depth = 0;
+    let close = -1;
+    for (let i = 1; i < trimmed.length && close < 0; i++) {
+        const char = trimmed[i];
+        if (open === '"') {
+            if (char === '"') close = i;
+        } else if (char === "“") depth++;
+        else if (char === "”") {
+            if (depth === 0) close = i;
+            else depth--;
+        }
+    }
+    const inner =
+        close < 0
+            ? trimmed.slice(1)
+            : trimmed.slice(1, close) + trimmed.slice(close + 1);
+    return inner.trim();
+};
+
 // the bulletin's lists arrive flattened into one line
 const BULLET = /\s*[●•▪◦‣]\s*/;
 const MIDDOT = /\s+·\s+|^·\s+/;

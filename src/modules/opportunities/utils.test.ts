@@ -8,6 +8,7 @@ import {
     isEligible,
     isIneligible,
     splitBullets,
+    unquote,
 } from "./utils";
 import {
     Opportunity,
@@ -101,6 +102,24 @@ describe("getTodayEastern", () => {
         expect(getTodayEastern(new Date("2026-11-03T02:00:00Z"))).toBe(
             "2026-11-02",
         );
+    });
+});
+
+describe("unquote", () => {
+    it("drops quotes around the whole description", () => {
+        expect(unquote("“A program.”")).toBe("A program.");
+        expect(unquote("“Never closed.")).toBe("Never closed.");
+        expect(unquote('"Plain quotes."')).toBe("Plain quotes.");
+    });
+
+    it("drops the quotes around a blurb followed by notes", () => {
+        expect(unquote("“A blurb with “nested” words.” RSVP here.")).toBe(
+            "A blurb with “nested” words. RSVP here.",
+        );
+    });
+
+    it("keeps quotes that don't open the description", () => {
+        expect(unquote("Join the “Lab” today")).toBe("Join the “Lab” today");
     });
 });
 

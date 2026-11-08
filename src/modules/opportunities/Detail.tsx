@@ -14,7 +14,7 @@ import EligibilityLine from "./components/EligibilityLine";
 import OpportunityDetails from "./components/OpportunityDetails";
 import StatusBadge from "./components/StatusBadge";
 import { useOpportunities } from "./OpportunitiesContext";
-import { getStatus, getTodayEastern, splitBullets } from "./utils";
+import { getStatus, getTodayEastern, splitBullets, unquote } from "./utils";
 
 const Detail = () => {
     const { id } = useParams();
@@ -70,7 +70,7 @@ const Detail = () => {
     const status = getStatus(opportunity, student, getTodayEastern());
     const [mainLink, ...otherLinks] = getSafeLinks(opportunity.links);
     const isSaved = savedIds.has(opportunity.id);
-    const description = splitBullets(opportunity.description);
+    const description = splitBullets(unquote(opportunity.description));
 
     return (
         <main className="mx-auto flex w-full max-w-3xl flex-col gap-5 px-12 pt-8 [overflow-wrap:anywhere] max-sm:px-4 max-sm:pt-14">
@@ -85,9 +85,9 @@ const Detail = () => {
                     event.preventDefault();
                     navigate(-1);
                 }}
-                className="text inline-flex items-center gap-1 self-start py-1 no-underline hover:text-typography-1"
+                className="important inline-flex items-center gap-1 self-start rounded-lg bg-layer-2 py-1.5 pl-2 pr-3.5 text-sm text-typography-1 no-underline shadow-control transition-colors hover:bg-layer-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
             >
-                <i className="bx bx-chevron-left" aria-hidden="true" />
+                <i className="bx bx-chevron-left bx-sm" aria-hidden="true" />
                 {backTo.label}
             </Link>
 

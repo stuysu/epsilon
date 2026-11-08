@@ -1,7 +1,7 @@
 import { Link, useLocation } from "react-router-dom";
 import { useOpportunities } from "../OpportunitiesContext";
 import { Opportunity } from "../types";
-import { getStatus, getTodayEastern } from "../utils";
+import { getStatus, getTodayEastern, unquote } from "../utils";
 import EligibilityLine from "./EligibilityLine";
 import OpportunityDetails from "./OpportunityDetails";
 import StatusBadge from "./StatusBadge";
@@ -58,7 +58,7 @@ const OpportunityCard = ({ opportunity }: OpportunityCardProps) => {
             <OpportunityDetails opportunity={opportunity} />
 
             <p className="line-clamp-4 text-sm text-typography-2">
-                {opportunity.description}
+                {unquote(opportunity.description)}
             </p>
 
             <EligibilityLine opportunity={opportunity} />
