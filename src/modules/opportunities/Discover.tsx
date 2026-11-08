@@ -2,7 +2,6 @@ import { FormEvent, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
 import SearchInput from "../../components/ui/input/SearchInput";
-import { OPPORTUNITY_SUBMISSION_URL } from "../../config/routes";
 import { useOpportunities } from "./OpportunitiesContext";
 import { getStatus, getTodayEastern } from "./utils";
 
@@ -120,44 +119,6 @@ const Discover = () => {
                             </Link>
                         ))}
                 </div>
-            </div>
-
-            {/* clips the box so it never runs into the footer */}
-            <div className="overflow-clip">
-                <section className="mx-auto flex min-h-[calc(100dvh-2rem)] w-full max-w-[59rem] flex-col px-14 pb-6 pt-16 max-lg:min-h-0 max-sm:px-4 max-lg:pb-0">
-                    <p className="font-serif [text-wrap:pretty] text-[clamp(2.25rem,6vw,5.4rem)] leading-[0.95] tracking-[-0.02em] text-transparent [background-image:linear-gradient(180deg,#fff6e0_0%,#c9a86a_45%,#7a5f30_100%)] scheme-light:[background-image:linear-gradient(180deg,#7a5f30_0%,#5c4520_100%)] [background-clip:text] [-webkit-background-clip:text]">
-                        The <em>largest</em> compendium of opportunities for
-                        Stuyvesant students to learn, grow, and explore.
-                    </p>
-                    {/* fills the room under the tagline */}
-                    <div className="relative flex-1 lg:min-h-[20rem]">
-                        <p className="relative z-10 mt-14 max-w-md text-sm text-typography-2">
-                            If you&apos;re an organization or business looking
-                            to advertise opportunities for students, fill out
-                            this{" "}
-                            <a
-                                href={OPPORTUNITY_SUBMISSION_URL}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="text-accent underline"
-                            >
-                                submission form
-                                <span className="sr-only">
-                                    {" "}
-                                    (opens in a new tab)
-                                </span>
-                            </a>
-                            .
-                        </p>
-                        <img
-                            src="/media/opportunities-box.webp"
-                            alt=""
-                            width={700}
-                            height={393}
-                            className="pointer-events-none absolute bottom-0 right-[max(-14rem,calc(29.5rem-50vw))] h-full max-h-[min(34rem,40vw)] w-auto max-w-none max-lg:static max-lg:-mr-[22%] max-lg:ml-auto max-lg:mt-6 max-lg:block max-lg:h-auto max-lg:max-h-none max-lg:w-[min(40rem,118%)]"
-                        />
-                    </div>
-                </section>
             </div>
         </main>
     );
