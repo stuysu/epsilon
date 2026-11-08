@@ -28,9 +28,9 @@ export default function SortSelect<T extends string>({
                 <Select.Trigger
                     aria-label={`${label}: ${current}`}
                     title={`${label}: ${current}`}
-                    className={`flex h-10 w-9 cursor-pointer items-center justify-center rounded-lg text-typography-2 outline-0 hover:text-typography-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1 ${className ?? ""}`}
+                    className={`flex h-10 w-10 cursor-pointer items-center justify-center rounded-lg text-typography-2 outline-0 hover:text-typography-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1 ${className ?? ""}`}
                 >
-                    <i className="bx bx-sort-alt-2" aria-hidden="true" />
+                    <i className="bx bx-sort-alt-2 bx-sm" aria-hidden="true" />
                 </Select.Trigger>
             ) : (
                 <Select.Trigger
