@@ -39,6 +39,12 @@ export const topNavItems = [
         external: false,
     },
     {
+        label: "Opportunities",
+        path: "/opportunities",
+        icon: "bx bx-glasses",
+        external: false,
+    },
+    {
         label: "Arista",
         path: "/arista-landing",
         icon: "bx bxs-hot",
@@ -48,12 +54,6 @@ export const topNavItems = [
         label: "Vote",
         path: "/vote",
         icon: "bx bx-note",
-        external: false,
-    },
-    {
-        label: "Opportunities",
-        path: "/opportunities",
-        icon: "bx bx-glasses",
         external: false,
     },
     {
