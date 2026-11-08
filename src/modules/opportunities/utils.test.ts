@@ -5,6 +5,7 @@ import {
     getCostLabel,
     getStatus,
     getTodayEastern,
+    isEligible,
     isIneligible,
 } from "./utils";
 import {
@@ -99,6 +100,24 @@ describe("getTodayEastern", () => {
         expect(getTodayEastern(new Date("2026-11-03T02:00:00Z"))).toBe(
             "2026-11-02",
         );
+    });
+});
+
+describe("isEligible", () => {
+    const seniorsOnly = make({ eligibilities: [senior] });
+
+    it("is sure only when the grade fits", () => {
+        expect(isEligible(seniorsOnly, asGrade(12))).toBe(true);
+        expect(isEligible(seniorsOnly, asGrade(11))).toBe(false);
+        expect(isEligible(seniorsOnly, asGrade(0))).toBe(false);
+    });
+
+    it("waits for About You before a group tag counts", () => {
+        const aidOnly = make({ eligibilities: [aid] });
+        expect(isEligible(aidOnly, JUNIOR)).toBe(false);
+        expect(
+            isEligible(aidOnly, { grade: 11, groups: ["Needs Financial Aid"] }),
+        ).toBe(true);
     });
 });
 

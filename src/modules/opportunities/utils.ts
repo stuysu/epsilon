@@ -61,6 +61,19 @@ export const isIneligible = (opportunity: Opportunity, student: Student) => {
     return wrongGrade || wrongGroup;
 };
 
+// true only when the grade and About You answers show the student fits
+export const isEligible = (opportunity: Opportunity, student: Student) => {
+    const required = requiredTags(opportunity);
+    const needsGrade = required.some((e) => e.grade !== null);
+    const needsGroup = required.some((e) => e.grade === null);
+    const hasGrade = student.grade >= 9 && student.grade <= 12;
+    return (
+        !isIneligible(opportunity, student) &&
+        (!needsGrade || hasGrade) &&
+        (!needsGroup || student.groups !== null)
+    );
+};
+
 export const getCostLabel = ({ cost_text }: Opportunity) =>
     cost_text ?? "Check description";
 

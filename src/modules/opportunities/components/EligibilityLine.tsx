@@ -1,7 +1,7 @@
 import { isOpenToAll } from "../bulletin/normalize";
 import { useOpportunities } from "../OpportunitiesContext";
 import { Opportunity, OpportunityTag } from "../types";
-import { isIneligible } from "../utils";
+import { isEligible, isIneligible } from "../utils";
 
 type EligibilityLineProps = {
     opportunity: Opportunity;
@@ -19,7 +19,7 @@ const TagList = ({
     <p
         className={`flex flex-wrap items-center gap-1 text-[0.8125rem] font-bold ${
             highlight
-                ? "text-yellow scheme-dark:text-[#facb49]"
+                ? "text-red scheme-dark:text-[#ff6b5c]"
                 : "text-typography-2"
         }`}
     >
@@ -29,7 +29,7 @@ const TagList = ({
                 key={tag.id}
                 className={`rounded-[3px] px-1 ${
                     highlight
-                        ? "bg-yellow text-black scheme-light:text-white scheme-dark:bg-[#facb49] scheme-dark:text-[#0e0e0e]"
+                        ? "bg-red text-white scheme-dark:bg-[#e45647b3] scheme-dark:text-[#e8e8e8]"
                         : "bg-layer-2 text-typography-2"
                 }`}
             >
@@ -57,7 +57,8 @@ const EligibilityLine = ({ opportunity }: EligibilityLineProps) => {
 
     return (
         <>
-            {required.length > 0 && (
+            {/* only worth showing when the student may not qualify */}
+            {required.length > 0 && !isEligible(opportunity, student) && (
                 <TagList
                     label="Only eligible for"
                     tags={required}
