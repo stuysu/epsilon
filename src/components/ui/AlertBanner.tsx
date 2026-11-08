@@ -59,7 +59,10 @@ const AlertBanner = ({
                 className={`bx ${icon} py-[7px] text-[22px] leading-none`}
                 aria-hidden="true"
             />
-            <div className="min-w-0 flex-1 py-2">{children}</div>
+            {/* bare text matches the paragraphs other banners pass */}
+            <div className="min-w-0 flex-1 py-2 text-[0.9rem] leading-[1.2rem] [font-variation-settings:'wght'_500]">
+                {children}
+            </div>
             {onClose && (
                 <button
                     type="button"

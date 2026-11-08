@@ -56,10 +56,13 @@ const EntryFields = ({
         field: "eligibilityTags" | "preferredTags",
     ) => (
         <fieldset>
-            <legend className="mb-1 text-sm text-typography-2">{legend}</legend>
+            <legend className="important mb-1 text-sm text-typography-2">
+                {legend}
+            </legend>
             <div className="flex flex-wrap">
                 {eligibilities.map((eligibility) => (
                     <CheckboxField
+                        small
                         key={eligibility.id}
                         label={eligibility.name}
                         ariaLabel={`${legend}: ${eligibility.name}`}
@@ -148,12 +151,13 @@ const EntryFields = ({
                 }}
             />
             <fieldset>
-                <legend className="mb-1 text-sm text-typography-2">
+                <legend className="important mb-1 text-sm text-typography-2">
                     Categories
                 </legend>
                 <div className="grid sm:grid-cols-2">
                     {categories.map((category) => (
                         <CheckboxField
+                            small
                             key={category.id}
                             label={category.name}
                             checked={entry.categories.includes(category.name)}

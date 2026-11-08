@@ -40,6 +40,7 @@ const NoLongerListed = ({
                             : null;
                     return (
                         <CheckboxField
+                            small
                             key={opportunity.id}
                             label={
                                 openUntil ? (

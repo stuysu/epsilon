@@ -92,7 +92,7 @@ const ReviewEntries = ({
                         tabIndex={view === key ? 0 : -1}
                         onClick={() => changeView(key)}
                         onKeyDown={onViewKeyDown}
-                        className="cursor-pointer text-nowrap rounded-lg bg-layer-2 px-3 pb-[0.35rem] pt-1 text-sm text-typography-2 shadow-control transition-colors hover:bg-layer-3 aria-checked:bg-accent aria-checked:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                        className="important cursor-pointer text-nowrap rounded-lg bg-layer-2 px-3 pb-[0.35rem] pt-1 text-sm text-typography-2 shadow-control transition-colors hover:bg-layer-3 aria-checked:bg-accent aria-checked:text-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
                     >
                         {`${VIEW_LABELS[key]} (${countFor(key)})`}
                     </button>

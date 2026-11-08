@@ -17,7 +17,7 @@ const TagList = ({
     highlight: boolean;
 }) => (
     <p
-        className={`flex flex-wrap items-center gap-1 text-[0.8125rem] font-bold ${
+        className={`flex flex-wrap items-center gap-1 important text-[0.8125rem] ${
             highlight
                 ? "text-red scheme-dark:text-[#ff6b5c]"
                 : "text-typography-2"

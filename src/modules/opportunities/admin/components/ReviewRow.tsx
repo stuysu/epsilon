@@ -13,7 +13,7 @@ type ReviewRowProps = {
 
 const CHANGE_LABELS = { new: "New", changed: "Changed", unchanged: null };
 const RENAME_BUTTON =
-    "cursor-pointer rounded-lg bg-layer-2 px-2 py-0.5 text-typography-1 shadow-control hover:bg-layer-3";
+    "important cursor-pointer rounded-lg bg-layer-2 px-2 py-0.5 text-typography-1 shadow-control hover:bg-layer-3";
 
 const ReviewRow = ({
     entry,
@@ -39,12 +39,12 @@ const ReviewRow = ({
                             {entry.title || "Untitled"}
                         </span>
                         {changeLabel && (
-                            <span className="rounded bg-layer-2 px-1.5 text-sm text-typography-2">
+                            <span className="rounded bg-layer-2 px-1.5 text-sm text-typography-2 [font-variation-settings:'wght'_500]">
                                 {changeLabel}
                             </span>
                         )}
                         {!entry.include && (
-                            <span className="rounded bg-layer-2 px-1.5 text-sm text-typography-1">
+                            <span className="rounded bg-layer-2 px-1.5 text-sm text-typography-1 [font-variation-settings:'wght'_500]">
                                 Not included
                             </span>
                         )}
@@ -64,7 +64,7 @@ const ReviewRow = ({
                     )}
                     {rename && (
                         <div
-                            className={`flex flex-wrap items-center gap-2 pt-1 text-sm ${
+                            className={`flex flex-wrap items-center gap-2 pt-1 text-sm [font-variation-settings:'wght'_500] ${
                                 entry.renameSettled
                                     ? "text-typography-2"
                                     : "text-yellow"
@@ -131,6 +131,7 @@ const ReviewRow = ({
                 </div>
                 <div className="flex shrink-0 items-center gap-1">
                     <CheckboxField
+                        small
                         checked={entry.include}
                         onChange={(include) => onChange({ include })}
                         label="Include"
@@ -142,7 +143,7 @@ const ReviewRow = ({
                         aria-controls={editorId}
                         aria-label={`${open ? "Close" : "Edit"} ${entry.title || "untitled entry"}`}
                         onClick={() => setOpen(!open)}
-                        className="cursor-pointer rounded-lg bg-layer-2 px-3 py-1 text-sm text-typography-1 shadow-control hover:bg-layer-3"
+                        className="important cursor-pointer rounded-lg bg-layer-2 px-3 py-1 text-sm text-typography-1 shadow-control hover:bg-layer-3"
                     >
                         {open ? "Close" : "Edit"}
                     </button>

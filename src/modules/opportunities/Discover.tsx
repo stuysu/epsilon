@@ -113,7 +113,7 @@ const Discover = () => {
                             <Link
                                 key={category.id}
                                 to={`/opportunities/catalog?category=${category.id}`}
-                                className="max-w-full rounded-lg bg-layer-2 px-3 pb-[0.35rem] pt-1 text-sm text-typography-2 no-underline shadow-control transition-colors hover:bg-layer-3 hover:text-typography-1"
+                                className="important max-w-full rounded-lg bg-layer-2 px-3 pb-[0.35rem] pt-1 text-sm text-typography-2 no-underline shadow-control transition-colors hover:bg-layer-3 hover:text-typography-1"
                             >
                                 {category.name}
                             </Link>

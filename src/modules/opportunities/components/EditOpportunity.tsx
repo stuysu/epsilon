@@ -160,6 +160,7 @@ const EditOpportunity = ({ opportunity, onDone }: EditOpportunityProps) => {
                 onChange={onChange}
             />
             <CheckboxField
+                small
                 label="Archived"
                 checked={archived}
                 onChange={(value) => {

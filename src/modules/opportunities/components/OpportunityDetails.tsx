@@ -39,7 +39,7 @@ const OpportunityDetails = ({
                     text && (
                         <li
                             key={icon}
-                            className="flex items-center gap-2 rounded-lg bg-layer-2 px-3 py-1 text-sm text-typography-1"
+                            className="flex items-center gap-2 rounded-lg bg-layer-2 px-3 py-1 text-sm text-typography-1 [font-variation-settings:'wght'_500]"
                         >
                             <i
                                 className={`bx ${icon} text-typography-2`}

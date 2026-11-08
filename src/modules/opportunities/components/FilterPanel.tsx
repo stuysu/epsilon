@@ -337,6 +337,7 @@ const FilterPanel = ({
                                 update({ showIneligible })
                             }
                             label="Show Ineligible"
+                            small
                         />
                     }
                 >
@@ -365,7 +366,7 @@ const FilterPanel = ({
                     <FilterGroup
                         title="Cost"
                         action={
-                            <span className="text-sm text-typography-1">
+                            <span className="text-sm text-typography-1 [font-variation-settings:'wght'_500]">
                                 ${draftCost[0].toLocaleString("en-US")} to $
                                 {draftCost[1].toLocaleString("en-US")}
                             </span>

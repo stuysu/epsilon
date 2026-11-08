@@ -1,7 +1,10 @@
 import { useContext, useEffect, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
-import AsyncButton from "../../components/ui/buttons/AsyncButton";
+import AsyncButton, {
+    BUTTON_CLASS,
+    BUTTON_SHADOW,
+} from "../../components/ui/buttons/AsyncButton";
 import Loading from "../../components/ui/content/Loading";
 import ContentUnavailable from "../../components/ui/content/ContentUnavailable";
 import UserContext from "../../contexts/UserContext";
@@ -81,7 +84,7 @@ const Detail = () => {
                     event.preventDefault();
                     navigate(-1);
                 }}
-                className="inline-flex items-center gap-1 self-start py-1 text-sm text-typography-2 no-underline hover:text-typography-1"
+                className="text inline-flex items-center gap-1 self-start py-1 no-underline hover:text-typography-1"
             >
                 <i className="bx bx-chevron-left" aria-hidden="true" />
                 {backTo.label}
@@ -144,7 +147,8 @@ const Detail = () => {
                                 href={mainLink}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-1 rounded-lg bg-accent px-4 py-1.5 text-white no-underline shadow-control"
+                                className={`${BUTTON_CLASS} gap-1 bg-accent text-white no-underline hover:brightness-125 active:scale-[98%]`}
+                                style={{ boxShadow: BUTTON_SHADOW }}
                             >
                                 Open Link
                                 <i
@@ -168,7 +172,7 @@ const Detail = () => {
 
                     {otherLinks.length > 0 && (
                         <section>
-                            <h2 className="mb-2 text-sm font-normal text-typography-2">
+                            <h2 className="important mb-2 font-sans text-sm text-typography-2">
                                 More links
                             </h2>
                             <ul className="flex flex-col gap-1">
@@ -178,7 +182,7 @@ const Detail = () => {
                                             href={link}
                                             target="_blank"
                                             rel="noopener noreferrer"
-                                            className="relative block truncate py-0.5 text-accent underline scheme-dark:text-typography-1"
+                                            className="relative block truncate py-0.5 text-accent underline [font-variation-settings:'wght'_500] scheme-dark:text-typography-1"
                                         >
                                             {link}
                                             <span className="sr-only">
