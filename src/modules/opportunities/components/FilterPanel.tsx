@@ -1,4 +1,4 @@
-import { Popover, Slider, Toggle } from "radix-ui";
+import { Slider, Toggle } from "radix-ui";
 import { ReactNode, useEffect, useId, useState } from "react";
 import CheckboxField from "../../../components/ui/input/CheckboxField";
 import SearchInput from "../../../components/ui/input/SearchInput";
@@ -86,28 +86,12 @@ const AboutYou = ({ groups }: { groups: OpportunityEligibility[] }) => {
     );
 };
 
-type SubcategoryOptionProps = {
-    label: string;
-    checked: boolean;
-    onChange: () => void;
-};
-
-const SubcategoryOption = ({
-    label,
-    checked,
-    onChange,
-}: SubcategoryOptionProps) => (
-    <button
-        type="button"
-        role="checkbox"
-        aria-checked={checked}
-        onClick={onChange}
-        className="flex cursor-pointer items-center justify-between gap-3 rounded-lg px-3 py-2 text-left text-sm text-typography-1 outline-0 hover:bg-layer-3 focus-visible:bg-layer-3"
-    >
-        {label}
-        {checked && <i className="bx bx-check" aria-hidden="true" />}
-    </button>
-);
+const ROW_CLASS =
+    "important w-full cursor-pointer rounded-lg px-3 pb-[0.35rem] pt-1 text-left text-sm shadow-control transition-colors";
+const rowColors = (on: boolean) =>
+    on
+        ? "bg-accent text-white"
+        : "bg-layer-2 text-typography-2 hover:bg-layer-3";
 
 type CategoryRowProps = {
     category: OpportunityCategory;
@@ -116,45 +100,30 @@ type CategoryRowProps = {
     onChange: (ids: number[]) => void;
 };
 
+// turning a category on shows its subcategories underneath
 const CategoryRow = ({
     category,
     subcategories,
     selectedIds,
     onChange,
 }: CategoryRowProps) => {
-    const selectedSubs = subcategories.filter((sub) =>
-        selectedIds.includes(sub.id),
-    );
     const subIds = subcategories.map((sub) => sub.id);
+    const selectedSubs = subIds.filter((id) => selectedIds.includes(id));
     const withoutFamily = selectedIds.filter(
         (id) => id !== category.id && !subIds.includes(id),
     );
     const allSelected = selectedIds.includes(category.id);
     const pressed = allSelected || selectedSubs.length > 0;
-    const headingId = useId();
-    // matches the button's visible count for voice control
-    const triggerLabel = `${category.name} subcategories${
-        selectedSubs.length
-            ? `, ${selectedSubs.length} of ${subcategories.length} selected`
-            : ""
-    }`;
+    const groupId = useId();
 
+    // with no subcategory left, the whole category stays chosen
     const toggleSub = (subId: number) => {
-        const nextSubs = toggleValue(
-            selectedSubs.map((sub) => sub.id),
-            subId,
-        );
-        onChange([...withoutFamily, ...nextSubs]);
+        const next = toggleValue(selectedSubs, subId);
+        onChange([...withoutFamily, ...(next.length ? next : [category.id])]);
     };
 
     return (
-        <div
-            className={`flex items-center rounded-lg shadow-control transition-colors ${
-                pressed
-                    ? "bg-accent text-white"
-                    : "bg-layer-2 text-typography-2"
-            }`}
-        >
+        <div className="flex flex-col gap-2">
             <Toggle.Root
                 pressed={pressed}
                 onPressedChange={() =>
@@ -164,59 +133,48 @@ const CategoryRow = ({
                             : [...withoutFamily, category.id],
                     )
                 }
-                className="flex-1 cursor-pointer px-3 py-1 text-left text-sm"
+                aria-controls={subcategories.length ? groupId : undefined}
+                className={`${ROW_CLASS} flex items-center justify-between gap-2 ${rowColors(pressed)}`}
             >
                 {category.name}
+                {subcategories.length > 0 && (
+                    <i
+                        className={`bx ${pressed ? "bx-chevron-up" : "bx-chevron-down"}`}
+                        aria-hidden="true"
+                    />
+                )}
             </Toggle.Root>
 
-            {subcategories.length > 0 && (
-                <Popover.Root>
-                    <Popover.Trigger
-                        aria-label={triggerLabel}
-                        // a taller hit area, short of the rows around it
-                        className="relative flex cursor-pointer items-center gap-1 px-2 py-1 text-sm after:absolute after:-inset-y-[7px] after:left-0 after:-right-1 after:content-['']"
+            {pressed && subcategories.length > 0 && (
+                <div
+                    id={groupId}
+                    role="group"
+                    aria-label={`${category.name} subcategories`}
+                    className="ml-3 flex flex-col gap-2 border-l border-divider pl-3"
+                >
+                    <Toggle.Root
+                        pressed={allSelected}
+                        onPressedChange={() =>
+                            onChange([...withoutFamily, category.id])
+                        }
+                        className={`${ROW_CLASS} ${rowColors(allSelected)}`}
                     >
-                        {selectedSubs.length > 0 &&
-                            `${selectedSubs.length} of ${subcategories.length}`}
-                        <i className="bx bx-filter-alt" aria-hidden="true" />
-                    </Popover.Trigger>
-                    <Popover.Portal>
-                        <Popover.Content
-                            side="right"
-                            align="start"
-                            sideOffset={8}
-                            collisionPadding={16}
-                            aria-labelledby={headingId}
-                            className="z-50 flex w-60 flex-col rounded-xl border border-divider bg-bg p-1 shadow-2xl"
-                        >
-                            <p
-                                id={headingId}
-                                className="px-3 pb-1 pt-2 text-sm text-typography-2"
+                        All {category.name}
+                    </Toggle.Root>
+                    {subcategories.map((sub) => {
+                        const on = selectedSubs.includes(sub.id);
+                        return (
+                            <Toggle.Root
+                                key={sub.id}
+                                pressed={on}
+                                onPressedChange={() => toggleSub(sub.id)}
+                                className={`${ROW_CLASS} ${rowColors(on)}`}
                             >
-                                Filter Sub-Categories
-                            </p>
-                            <SubcategoryOption
-                                label={`All ${category.name} Items`}
-                                checked={allSelected}
-                                onChange={() =>
-                                    onChange(
-                                        allSelected
-                                            ? withoutFamily
-                                            : [...withoutFamily, category.id],
-                                    )
-                                }
-                            />
-                            {subcategories.map((sub) => (
-                                <SubcategoryOption
-                                    key={sub.id}
-                                    label={sub.name}
-                                    checked={selectedIds.includes(sub.id)}
-                                    onChange={() => toggleSub(sub.id)}
-                                />
-                            ))}
-                        </Popover.Content>
-                    </Popover.Portal>
-                </Popover.Root>
+                                {sub.name}
+                            </Toggle.Root>
+                        );
+                    })}
+                </div>
             )}
         </div>
     );
@@ -284,8 +242,9 @@ const FilterPanel = ({
                 type="button"
                 onClick={onReset}
                 disabled={!canReset}
-                className="-mt-3 mb-3 self-end rounded text-sm text-typography-2 enabled:cursor-pointer enabled:hover:text-typography-1 disabled:text-typography-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                className="important -mt-2 mb-5 flex w-full items-center justify-center gap-1.5 rounded-lg bg-layer-2 px-3 py-1.5 text-sm text-typography-1 shadow-control transition-colors enabled:cursor-pointer enabled:hover:bg-layer-3 disabled:text-typography-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
             >
+                <i className="bx bx-reset" aria-hidden="true" />
                 Reset Filters
             </button>
             <div className="flex flex-col gap-5">
