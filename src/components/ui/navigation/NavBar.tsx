@@ -14,7 +14,11 @@ import { useSnackbar } from "notistack";
 import { ThemeContext } from "../../../contexts/ThemeProvider";
 import { PUBLIC_URL } from "../../../config/constants";
 import pressable from "../../../utils/pressable";
-import { isStuyActivitiesPath, topNavItems } from "../../../config/routes";
+import {
+    isOpportunitiesPath,
+    isStuyActivitiesPath,
+    topNavItems,
+} from "../../../config/routes";
 import Divider from "../Divider";
 import Avatar from "../Avatar";
 import useMediaQuery from "../../../utils/useMediaQuery";
@@ -239,6 +243,9 @@ const NavBar: FC = () => {
             if (isOrgPage) return true;
             return isStuyActivitiesPath(location.pathname);
         }
+        if (item.path === "/opportunities") {
+            return isOpportunitiesPath(location.pathname);
+        }
         return getActivePaths(item).includes(location.pathname);
     };
 
@@ -281,6 +288,9 @@ const NavBar: FC = () => {
         const currentIndex = itemsToRender.findIndex((item) => {
             if (!item.external && item.path === "/stuyactivities") {
                 return isStuyActivitiesPath(location.pathname) || isOrgPage;
+            }
+            if (item.path === "/opportunities") {
+                return isOpportunitiesPath(location.pathname);
             }
             return getActivePaths(item).includes(location.pathname);
         });

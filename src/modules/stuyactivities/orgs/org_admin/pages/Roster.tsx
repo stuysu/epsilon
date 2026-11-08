@@ -11,6 +11,7 @@ import {
     MemberSort,
     sortMembers,
     sortMembersBy,
+    memberSortOptions,
 } from "../../../../../utils/DataFormatters";
 import useMembershipJoinDates from "../../../../../utils/useMembershipJoinDates";
 import { useSnackbar } from "notistack";
@@ -327,7 +328,12 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
             <EmailCopyBox label="Club leaders" emails={leader_emails} />
             <EmailCopyBox label="All members" emails={member_emails} />
 
-            <SortSelect value={sort} onChange={setSort} />
+            <SortSelect
+                value={sort}
+                onChange={setSort}
+                options={memberSortOptions}
+                label="Sort members"
+            />
 
             <ItemList height={"auto"}>
                 {sort === "default" ? (

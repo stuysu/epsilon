@@ -27,6 +27,7 @@ const Charter = lazy(() => import("./stuyactivities/CharterLanding"));
 const Archives = lazy(() => import("./stuyactivities/Archives"));
 const OrgRouter = lazy(() => import("./stuyactivities/orgs"));
 const AdminRouter = lazy(() => import("./stuyactivities/admin"));
+const OpportunitiesRouter = lazy(() => import("./opportunities"));
 
 const Pages = () => {
     const location = useLocation();
@@ -88,6 +89,10 @@ const Pages = () => {
                     <Route path={"/archives"} Component={Archives} />
                     <Route path={"/activities-support"} Component={Support} />
                     <Route path={"/admin/*"} Component={AdminRouter} />
+                    <Route
+                        path={"/opportunities/*"}
+                        Component={OpportunitiesRouter}
+                    />
                     <Route path={"/:orgUrl/*"} Component={OrgRouter} />
                 </Routes>
                 {user.signed_in && (

@@ -1,6 +1,10 @@
 import React, { useContext, useState } from "react";
 import OrgContext from "../../../../../contexts/OrgContext";
-import { MemberSort, sortMembersBy } from "../../../../../utils/DataFormatters";
+import {
+    MemberSort,
+    sortMembersBy,
+    memberSortOptions,
+} from "../../../../../utils/DataFormatters";
 import useMembershipJoinDates from "../../../../../utils/useMembershipJoinDates";
 import { supabase } from "../../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
@@ -196,7 +200,12 @@ const JoinRequests = () => {
             />
 
             {pendingMembers.length > 1 && (
-                <SortSelect value={sort} onChange={setSort} />
+                <SortSelect
+                    value={sort}
+                    onChange={setSort}
+                    options={memberSortOptions}
+                    label="Sort members"
+                />
             )}
 
             {pendingMembers?.length > 0 ? (
