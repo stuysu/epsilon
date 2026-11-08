@@ -226,6 +226,18 @@ const compareOpportunities = (
         Number(isArchived(a, today)) - Number(isArchived(b, today));
     if (archivedOrder !== 0) return archivedOrder;
     if (sort === "newest") return b.created_at.localeCompare(a.created_at);
+    if (sort === "title") return a.title.localeCompare(b.title);
+    if (sort === "cost") {
+        // unknown costs go last, then cheapest first
+        const costA = a.cost_min ?? a.cost_max;
+        const costB = b.cost_min ?? b.cost_max;
+        if (costA !== costB) {
+            if (costA === null) return 1;
+            if (costB === null) return -1;
+            return costA - costB;
+        }
+        return a.title.localeCompare(b.title);
+    }
     if (a.deadline === b.deadline) return a.title.localeCompare(b.title);
     if (a.deadline === null) return 1;
     if (b.deadline === null) return -1;

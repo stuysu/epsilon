@@ -308,6 +308,17 @@ describe("filterOpportunities", () => {
         expect(run(list, { statuses: [] })).toEqual([4, 3, 2, 1]);
     });
 
+    it("sorts by title or by lowest cost, unknown costs last", () => {
+        const list = [
+            make({ id: 1, title: "Beta", cost_min: null, cost_max: null }),
+            make({ id: 2, title: "Alpha", cost_min: 500, cost_max: 900 }),
+            make({ id: 3, title: "Gamma", cost_min: 0, cost_max: 0 }),
+            make({ id: 4, title: "Delta", cost_min: null, cost_max: 200 }),
+        ];
+        expect(run(list, { sort: "title" })).toEqual([2, 1, 4, 3]);
+        expect(run(list, { sort: "cost" })).toEqual([3, 4, 2, 1]);
+    });
+
     it("does not reorder the list it was given", () => {
         const list = [make({ id: 1 }), make({ id: 2, deadline: "2026-11-05" })];
         run(list);

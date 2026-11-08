@@ -61,7 +61,7 @@ export type OpportunityFilters = {
     showIneligible: boolean;
     // null is the full range; unpriced ones always show
     costRange: [number, number] | null;
-    sort: "deadline" | "newest";
+    sort: "deadline" | "newest" | "title" | "cost";
 };
 
 export type OpportunityStatus = {

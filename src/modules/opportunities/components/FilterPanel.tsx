@@ -21,6 +21,13 @@ type FilterPanelProps = {
     onReset: () => void;
 };
 
+const SORTS: { value: OpportunityFilters["sort"]; label: string }[] = [
+    { value: "deadline", label: "Deadline" },
+    { value: "newest", label: "Newest" },
+    { value: "title", label: "A to Z" },
+    { value: "cost", label: "Lowest Cost" },
+];
+
 const formatDollars = (amount: number) => `$${amount.toLocaleString("en-US")}`;
 
 type FilterGroupProps = {
@@ -193,10 +200,6 @@ const FilterPanel = ({
         onChange({ ...filters, ...changes });
 
     const mainCategories = categories.filter((c) => c.parent_id === null);
-    const sortLabel =
-        filters.sort === "deadline"
-            ? "Sorted by deadline (switch to newest)"
-            : "Sorted by newest (switch to deadline)";
     const costValue = filters.costRange ?? [0, maxCost];
 
     // keep the thumbs smooth while dragging, then filter when released
@@ -213,30 +216,6 @@ const FilterPanel = ({
                 aria-label="Search opportunities"
                 value={filters.query}
                 onChange={(query) => update({ query })}
-                inputClassName="pr-12"
-                trailing={
-                    <div className="absolute right-1 top-1/2 z-10 flex -translate-y-1/2">
-                        <button
-                            type="button"
-                            aria-label={sortLabel}
-                            title={sortLabel}
-                            onClick={() =>
-                                update({
-                                    sort:
-                                        filters.sort === "deadline"
-                                            ? "newest"
-                                            : "deadline",
-                                })
-                            }
-                            className="flex h-10 w-9 cursor-pointer items-center justify-center rounded-lg text-typography-2 hover:text-typography-1"
-                        >
-                            <i
-                                className="bx bx-sort-alt-2"
-                                aria-hidden="true"
-                            />
-                        </button>
-                    </div>
-                }
             />
             <button
                 type="button"
@@ -248,6 +227,19 @@ const FilterPanel = ({
                 Reset Filters
             </button>
             <div className="flex flex-col gap-5">
+                <FilterGroup title="Sort By">
+                    <div className="grid grid-cols-2 gap-2">
+                        {SORTS.map(({ value, label }) => (
+                            <ToggleChip
+                                key={value}
+                                title={label}
+                                selected={filters.sort === value}
+                                onChange={() => update({ sort: value })}
+                            />
+                        ))}
+                    </div>
+                </FilterGroup>
+
                 <FilterGroup title="Status">
                     <div className="grid grid-cols-2 gap-2">
                         <ToggleChip
