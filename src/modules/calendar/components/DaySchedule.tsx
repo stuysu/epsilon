@@ -3,12 +3,17 @@ import { Dayjs } from "dayjs";
 import { monthNames } from "../../../utils/TimeStrings";
 import React, { useEffect, useState } from "react";
 import ContentUnavailable from "../../../components/ui/content/ContentUnavailable";
+import AsyncButton from "../../../components/ui/buttons/AsyncButton";
+import Skeleton from "../../../components/ui/Skeleton";
 import UpcomingMeeting from "../../home/components/UpcomingMeeting";
 import { sortRooms } from "../../../utils/DataFormatters";
 
 type Props = {
     day: Dayjs;
-    meetings: CalendarMeeting[];
+    // undefined while the day loads
+    meetings?: CalendarMeeting[];
+    failed?: boolean;
+    onRetry?: () => void;
 };
 
 function compareTimes(a: CalendarMeeting, b: CalendarMeeting) {
@@ -44,7 +49,7 @@ export const sortMeetingsByRoom = (
 };
 
 /* Schedule of meetings for a given day */
-const DaySchedule = ({ day, meetings }: Props) => {
+const DaySchedule = ({ day, meetings, failed, onRetry }: Props) => {
     const STORAGE_KEY = "epsilon_daySchedule_sortDesc";
     const [sortDesc, setSortDesc] = useState<boolean>(() => {
         try {
@@ -63,7 +68,7 @@ const DaySchedule = ({ day, meetings }: Props) => {
     const toggleSort = () => setSortDesc((s) => !s);
 
     const sortedMeetings = React.useMemo(
-        () => sortMeetingsByRoom(meetings, sortDesc),
+        () => sortMeetingsByRoom(meetings ?? [], sortDesc),
         [meetings, sortDesc],
     );
 
@@ -103,8 +108,33 @@ const DaySchedule = ({ day, meetings }: Props) => {
             <motion.div
                 layout
                 className="flex flex-col gap-[2.4px] overflow-hidden rounded-lg"
+                aria-busy={!meetings && !failed}
             >
-                {sortedMeetings.length ? (
+                {failed ? (
+                    <ContentUnavailable
+                        headingLevel="h2"
+                        icon="bx-error-circle"
+                        iconColor="text-red"
+                        title="Meetings could not load"
+                        description={`Meetings for ${monthNames[day.month()]} ${day.date()} could not load. Check your connection and try again.`}
+                        action={
+                            onRetry && (
+                                <AsyncButton onClick={onRetry}>
+                                    Try Again
+                                </AsyncButton>
+                            )
+                        }
+                    />
+                ) : !meetings ? (
+                    <>
+                        <span className="sr-only" role="status">
+                            Loading meetings
+                        </span>
+                        {Array.from({ length: 3 }, (_, i) => (
+                            <Skeleton key={i} className="h-24 rounded-lg" />
+                        ))}
+                    </>
+                ) : sortedMeetings.length ? (
                     sortedMeetings.map((meeting, i) => (
                         <UpcomingMeeting
                             key={meeting.id ?? i}
@@ -124,7 +154,9 @@ const DaySchedule = ({ day, meetings }: Props) => {
                 ) : (
                     <ContentUnavailable
                         headingLevel="h2"
-                        title={"Nothing to See!"}
+                        icon="bx-calendar-x"
+                        iconColor="text-typography-2"
+                        title={"No events or meetings on this day"}
                         description={`There are no public events taking place on ${monthNames[day.month()]} ${day.date()}.`}
                     ></ContentUnavailable>
                 )}

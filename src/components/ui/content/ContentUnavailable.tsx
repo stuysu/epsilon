@@ -6,6 +6,7 @@ type ContentUnavailableProps = {
     title: string;
     headingLevel?: "h1" | "h2";
     description: string;
+    action?: React.ReactNode;
 };
 
 const ContentUnavailable: React.FC<ContentUnavailableProps> = ({
@@ -14,12 +15,14 @@ const ContentUnavailable: React.FC<ContentUnavailableProps> = ({
     title,
     headingLevel: Heading = "h1",
     description,
+    action,
 }) => {
     return (
         <div className="flex flex-col justify-center items-center h-[65vh] px-8">
             <i className={`bx ${icon} bx-lg ${iconColor} mb-5`}></i>
             <Heading className={"as-h1 text-center mb-5"}>{title}</Heading>
             <p className="text-center max-w-lg">{description}</p>
+            {action && <div className="mt-6">{action}</div>}
         </div>
     );
 };

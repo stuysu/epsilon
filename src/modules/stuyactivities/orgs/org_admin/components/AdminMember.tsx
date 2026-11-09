@@ -11,6 +11,9 @@ import { PUBLIC_URL } from "../../../../../config/constants";
 import SelectField from "../../../../../components/ui/input/SelectField";
 import TextField from "../../../../../components/ui/input/TextField";
 
+const actionButtonClass =
+    "important touch-target flex items-center justify-center rounded-full transition-colors sm:h-8 sm:bg-layer-3 sm:px-4 sm:text-[0.8rem] sm:hover:bg-divider focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1";
+
 const AdminMember = ({
     id,
     userId,
@@ -22,7 +25,6 @@ const AdminMember = ({
     role_name,
     isCreator, // referring to client user
     isAdmin, // referring to client user
-    is_faculty,
     canDrag,
     onDragEnd,
     readOnly = false,
@@ -37,7 +39,6 @@ const AdminMember = ({
     role_name?: string;
     isCreator: boolean;
     isAdmin: boolean;
-    is_faculty?: boolean;
     onDragEnd: () => void;
     canDrag: boolean;
     readOnly?: boolean;
@@ -54,8 +55,8 @@ const AdminMember = ({
         editing: false,
     });
 
-    /* KICK CONFIRMATION */
-    const [kickConfirmOpen, setKickConfirmOpen] = useState(false);
+    /* REMOVE CONFIRMATION */
+    const [removeConfirmOpen, setRemoveConfirmOpen] = useState(false);
 
     const handleEdit = () => {
         setEditState({
@@ -66,7 +67,7 @@ const AdminMember = ({
         });
     };
 
-    const handleKick = async () => {
+    const handleRemove = async () => {
         /* select the deleted row: if the database didn't allow it, nothing is
            deleted and there's no error, just no rows */
         const { data: kicked, error } = await supabase
@@ -77,7 +78,7 @@ const AdminMember = ({
 
         if (error || !kicked?.length) {
             enqueueSnackbar(
-                "Could not kick member. Contact it@stuysu.org for support.",
+                "Could not remove member. Contact it@stuysu.org for support.",
                 { variant: "error" },
             );
             return;
@@ -92,7 +93,7 @@ const AdminMember = ({
             });
         }
 
-        enqueueSnackbar("Member kicked!", { variant: "success" });
+        enqueueSnackbar("Member removed!", { variant: "success" });
     };
 
     const handleSelect = (role: string) => {
@@ -184,6 +185,16 @@ const AdminMember = ({
         handleClose();
     };
 
+    const canEdit =
+        isCreator ||
+        role === "MEMBER" ||
+        role === "ADVISOR" ||
+        (isAdmin && role === "ADMIN") ||
+        userId === user.id;
+    const canRemove =
+        userId !== user.id &&
+        (isCreator || role === "MEMBER" || role === "ADVISOR");
+
     return (
         <Reorder.Item
             as="div"
@@ -191,9 +202,28 @@ const AdminMember = ({
             dragListener={false}
             dragControls={dragControls}
             onDragEnd={onDragEnd}
-            className="w-full flex flex-nowrap items-center h-fit"
+            className="group w-full flex flex-nowrap items-center h-fit"
         >
-            <div className={"w-full min-w-0 flex items-center bg-layer-2"}>
+            <div
+                className={
+                    "w-full min-w-0 flex items-center bg-layer-2 transition-colors sm:hover:bg-layer-3 sm:focus-within:bg-layer-3"
+                }
+            >
+                {!readOnly && (
+                    <div
+                        className={
+                            "w-9 sm:w-14 shrink-0 flex justify-center " +
+                            (canDrag ? "cursor-grab touch-none" : "")
+                        }
+                        onPointerDown={(e) => canDrag && dragControls.start(e)}
+                    >
+                        {canDrag && (
+                            <p>
+                                <i className={"bx bx-menu bx-sm"}></i>
+                            </p>
+                        )}
+                    </div>
+                )}
                 <div className={"w-full min-w-0"}>
                     <OrgMember
                         role={role}
@@ -202,85 +232,94 @@ const AdminMember = ({
                         picture={picture}
                         first_name={first_name}
                         last_name={last_name}
-                        is_faculty={is_faculty}
+                        className="!bg-transparent"
+                        filledRole
                     />
                 </div>
                 {!readOnly && (
                     <>
-                        {/* always rendered so the rows line up when there is no handle */}
                         <div
                             className={
-                                "w-6 sm:w-8 shrink-0 flex justify-center " +
-                                (canDrag ? "cursor-grab touch-none" : "")
-                            }
-                            onPointerDown={(e) =>
-                                canDrag && dragControls.start(e)
+                                "flex w-[4.5rem] shrink-0 items-center px-1.5 sm:w-auto sm:justify-end sm:gap-2 sm:pl-3 sm:pr-4"
                             }
                         >
-                            {canDrag && (
-                                <p>
-                                    <i className={"bx bx-menu bx-sm"}></i>
-                                </p>
-                            )}
-                        </div>
-                        <div
-                            className={
-                                "px-1.5 sm:px-3 flex w-[4.5rem] sm:w-28 shrink-0"
-                            }
-                        >
-                            {(isCreator ||
-                                role === "MEMBER" ||
-                                role === "ADVISOR" ||
-                                (isAdmin && role === "ADMIN") ||
-                                userId === user.id) && (
+                            {canEdit && (
                                 <button
                                     type="button"
-                                    onClick={handleEdit}
                                     aria-label={`Edit ${first_name} ${last_name}`}
-                                    title="Edit member"
-                                    className="flex rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                                    onClick={handleEdit}
+                                    className={
+                                        actionButtonClass + " text-typography-1"
+                                    }
                                 >
                                     <i
-                                        className={
-                                            "bx bx-pencil bx-sm sm:hover:opacity-75 cursor-pointer"
-                                        }
                                         aria-hidden="true"
-                                    ></i>
+                                        className={
+                                            "bx bx-pencil bx-sm sm:hidden"
+                                        }
+                                    />
+                                    <span className={"hidden sm:inline"}>
+                                        Edit
+                                    </span>
                                 </button>
                             )}
+                            {!canEdit && (
+                                <span
+                                    aria-hidden="true"
+                                    className={
+                                        actionButtonClass +
+                                        " invisible hidden sm:flex"
+                                    }
+                                >
+                                    Edit
+                                </span>
+                            )}
 
-                            {userId !== user.id &&
-                                (isCreator ||
-                                    role === "MEMBER" ||
-                                    role === "ADVISOR") && (
-                                    <button
-                                        type="button"
-                                        onClick={() => setKickConfirmOpen(true)}
-                                        aria-label={`Remove ${first_name} ${last_name}`}
-                                        title="Remove member"
-                                        className="ml-3 flex rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
-                                    >
-                                        <i
-                                            className={
-                                                "bx bx-user-x bx-sm text-red sm:hover:opacity-75 cursor-pointer"
-                                            }
-                                            aria-hidden="true"
-                                        ></i>
-                                    </button>
-                                )}
+                            {canRemove && (
+                                <button
+                                    type="button"
+                                    aria-label={`Remove ${first_name} ${last_name}`}
+                                    onClick={() => setRemoveConfirmOpen(true)}
+                                    className={
+                                        actionButtonClass +
+                                        " ml-2 text-red sm:ml-0"
+                                    }
+                                >
+                                    <i
+                                        aria-hidden="true"
+                                        className={
+                                            "bx bx-user-x bx-sm sm:hidden"
+                                        }
+                                    />
+                                    <span className={"hidden sm:inline"}>
+                                        Remove
+                                    </span>
+                                </button>
+                            )}
+                            {!canRemove && (
+                                <span
+                                    aria-hidden="true"
+                                    className={
+                                        actionButtonClass +
+                                        " invisible hidden sm:flex"
+                                    }
+                                >
+                                    Remove
+                                </span>
+                            )}
                         </div>
                     </>
                 )}
             </div>
             <UserDialog
                 imageSrc={`${PUBLIC_URL}/symbols/warning.png`}
-                open={kickConfirmOpen}
-                title={`Kick ${first_name} ${last_name}?`}
+                open={removeConfirmOpen}
+                title={`Remove ${first_name} ${last_name}?`}
                 description={
                     "This action can't be reversed. This member will have to request to join again."
                 }
-                onConfirm={handleKick}
-                onClose={() => setKickConfirmOpen(false)}
+                onConfirm={handleRemove}
+                onClose={() => setRemoveConfirmOpen(false)}
             />
             <UserDialog
                 open={editState.editing}
@@ -289,6 +328,7 @@ const AdminMember = ({
                 onClose={handleClose}
                 onCancel={handleClose}
                 onConfirm={handleSave}
+                closeOnConfirm={false}
                 confirmText="Save"
                 cancelText="Cancel"
             >
@@ -312,7 +352,10 @@ const AdminMember = ({
                             onChange={handleSelect}
                             options={[
                                 { value: "MEMBER", label: "Member" },
-                                { value: "ADVISOR", label: "Advisor" },
+                                // only kept for people who already have it
+                                ...(role === "ADVISOR"
+                                    ? [{ value: "ADVISOR", label: "Advisor" }]
+                                    : []),
                                 ...(isCreator
                                     ? [{ value: "ADMIN", label: "Admin" }]
                                     : []),

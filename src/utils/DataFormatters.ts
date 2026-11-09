@@ -148,3 +148,21 @@ export const sortMembersBy = <T>(
         }
     });
 };
+
+const WEEK_ORDER = [
+    "MONDAY",
+    "TUESDAY",
+    "WEDNESDAY",
+    "THURSDAY",
+    "FRIDAY",
+    "SATURDAY",
+    "SUNDAY",
+];
+
+// days are saved in the order they were picked
+export const sortWeekdays = (days: string[]) =>
+    [...days].sort(
+        (a, b) =>
+            WEEK_ORDER.indexOf(a.toUpperCase()) -
+            WEEK_ORDER.indexOf(b.toUpperCase()),
+    );

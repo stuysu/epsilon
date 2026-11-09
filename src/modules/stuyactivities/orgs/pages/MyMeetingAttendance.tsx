@@ -1,12 +1,15 @@
 import { useContext, useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import BackLink from "../../../../components/ui/links/BackLink";
+import { useParams, useSearchParams } from "react-router-dom";
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import UserContext from "../../../../contexts/UserContext";
 import OrgContext from "../../../../contexts/OrgContext";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import LoginGate from "../../../../components/ui/content/LoginGate";
-import Avatar from "../../../../components/ui/Avatar";
+import ContentUnavailable from "../../../../components/ui/content/ContentUnavailable";
+import { Ring } from "../components/AttendanceBits";
+import MeetingChips, { MeetingChip } from "../components/MeetingChips";
 import { toNewYork, usesNewYorkTime } from "../../../../utils/NewYorkTime";
 
 /*
@@ -26,12 +29,16 @@ const formatWhen = (value: ReturnType<typeof toNewYork>) =>
 const MyMeetingAttendance = () => {
     const user = useContext(UserContext);
     const organization = useContext(OrgContext);
-    const { meetingId: meetingIdParam } = useParams();
+    const { meetingId: meetingIdParam, orgUrl } = useParams();
     const meetingId = parseInt(meetingIdParam || "-1", 10);
+    // only the meeting's QR code and link carry this, so check-in needs you there
+    const [searchParams] = useSearchParams();
+    const code = searchParams.get("code");
 
     const [valid, setValid] = useState(true);
     const [meeting, setMeeting] = useState<Meeting>();
     const [now, setNow] = useState(() => Date.now());
+    const [lateAfter, setLateAfter] = useState(15);
     const { enqueueSnackbar } = useSnackbar();
 
     const membership = organization.memberships?.find(
@@ -39,11 +46,24 @@ const MyMeetingAttendance = () => {
     );
     const isActiveMember = !!membership?.active;
 
-    /* re-check the time every so often so the button opens and closes on its own */
+    /* ticks every second so the countdown and the button update on their own */
     useEffect(() => {
-        const interval = setInterval(() => setNow(Date.now()), 15 * 1000);
+        const interval = setInterval(() => setNow(Date.now()), 1000);
         return () => clearInterval(interval);
     }, []);
+
+    useEffect(() => {
+        if (!organization.id || organization.id === -1) return;
+        supabase
+            .from("organizations")
+            .select("late_after_minutes")
+            .eq("id", organization.id)
+            .maybeSingle()
+            .then(({ data }) => {
+                if (typeof data?.late_after_minutes === "number")
+                    setLateAfter(data.late_after_minutes);
+            });
+    }, [organization.id]);
 
     useEffect(() => {
         if (isNaN(meetingId)) {
@@ -60,10 +80,11 @@ const MyMeetingAttendance = () => {
           title,
           start_time,
           end_time,
+          rooms ( name ),
           organizations!inner (
             id
           ),
-          attendance ( user_id )
+          attendance ( user_id, late )
         `,
                 )
                 .eq("id", meetingId)
@@ -95,13 +116,31 @@ const MyMeetingAttendance = () => {
 
     if (!valid) {
         return (
-            <div>
-                <h1>Invalid meeting ID</h1>
-            </div>
+            <ContentUnavailable
+                icon="bx-calendar-x"
+                iconColor="text-yellow"
+                title="Meeting Not Found"
+                description="This meeting doesn't exist or belongs to another Activity."
+                action={
+                    <BackLink
+                        to={`/${orgUrl}/attendance`}
+                        className={
+                            "inline-flex min-h-11 items-center gap-1 rounded-lg px-3 text-typography-1 underline-offset-2 sm:hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1"
+                        }
+                    >
+                        <i
+                            aria-hidden="true"
+                            className={"bx bx-chevron-left"}
+                        />
+                        Back to My Attendance
+                    </BackLink>
+                }
+            />
         );
     }
 
-    const isPresent = !!meeting?.attendance?.find((a) => a.user_id === user.id);
+    const myMark = meeting?.attendance?.find((a) => a.user_id === user.id);
+    const isPresent = !!myMark;
 
     const start = meeting ? toNewYork(meeting.start_time) : undefined;
     const end = meeting ? toNewYork(meeting.end_time) : undefined;
@@ -124,18 +163,20 @@ const MyMeetingAttendance = () => {
             return;
         }
         const { data, error } = await supabase
-            .from("attendance")
-            .insert({
-                user_id: user.id,
-                meeting_id: meetingId,
-                organization_id: meeting?.organizations?.id,
+            .rpc("check_in_to_meeting", {
+                p_meeting_id: meetingId,
+                p_code: code,
             })
-            .select(`*`)
             .returns<Attendance>()
             .single();
 
         if (error || !data) {
-            enqueueSnackbar("Failed to mark present.", { variant: "error" });
+            enqueueSnackbar(
+                error?.message === "Invalid check-in code"
+                    ? "This check-in link isn't valid. Scan the QR code at the meeting."
+                    : "Failed to mark present.",
+                { variant: "error" },
+            );
             return;
         }
 
@@ -171,62 +212,162 @@ const MyMeetingAttendance = () => {
 
     let checkInMessage = "";
     if (meeting && !isPresent) {
-        if (notOpenYet && opens) {
-            checkInMessage = `Check-in opens ${formatWhen(opens)}${timezoneNote}.`;
-        } else if (closed && closes) {
+        if (closed && closes) {
             checkInMessage = `Check-in closed ${formatWhen(closes)}${timezoneNote}.`;
+        } else if (!code) {
+            checkInMessage =
+                "To check in, scan the QR code or open the link your leaders share at the meeting.";
+        } else if (notOpenYet && opens) {
+            checkInMessage = `Check-in opens ${formatWhen(opens)}${timezoneNote}.`;
         }
     }
+
+    const lateAt = start ? start.add(lateAfter, "minute").valueOf() : 0;
+    const msLeft = lateAt - now;
+    const countdown = `${Math.floor(Math.max(0, msLeft) / 60000)}:${String(
+        Math.floor((Math.max(0, msLeft) % 60000) / 1000),
+    ).padStart(2, "0")}`;
+
+    let status = { label: "Absent", icon: "bx-x-circle", color: "text-red" };
+    if (isPresent)
+        status = myMark?.late
+            ? {
+                  label: "Present (Late)",
+                  icon: "bx-time-five",
+                  color: "text-yellow",
+              }
+            : {
+                  label: "Present",
+                  icon: "bx-check-circle",
+                  color: "text-green",
+              };
 
     return (
         <LoginGate page="mark your attendance">
             <div>
-                <h1>{meeting?.title}</h1>
-                {start && end && (
-                    <p>
-                        {`${start.format("dddd, MMMM D")}, ${start.format("LT")} to ${end.format("LT")}${timezoneNote}`}
-                    </p>
-                )}
-                <div className="w-full flex justify-center mt-5">
-                    <div
-                        className="rounded bg-layer-2 shadow-control"
-                        style={{
-                            width: "100%",
-                            maxWidth: "400px",
-                            minHeight: "300px",
-                            padding: "15px",
-                        }}
-                    >
-                        <div className="w-full flex justify-center">
-                            <Avatar
-                                src={user.picture}
-                                alt={user.first_name + " " + user.last_name}
-                                style={{ width: "100px", height: "100px" }}
-                            >
-                                {user.first_name[0]?.toUpperCase()}
-                            </Avatar>
-                        </div>
-                        <div className="w-full flex justify-center">
-                            <h1>{user.first_name + " " + user.last_name}</h1>
-                        </div>
-                        <div className="w-full flex justify-center">
-                            <h2>Status: {isPresent ? "Present" : "Absent"}</h2>
-                        </div>
-                        <AsyncButton
-                            onClick={markPresent}
-                            disabled={isPresent || !canCheckIn}
-                            sx={{ width: "100%" }}
-                            color="success"
+                <header className={"mb-6 mt-2"}>
+                    <h1 className={"mb-2 break-words"}>
+                        <BackLink
+                            to={`/${orgUrl}/attendance`}
+                            className={
+                                "rounded-md text-typography-3 no-underline transition-colors sm:hover:text-typography-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                            }
                         >
-                            Mark Myself Present
-                        </AsyncButton>
+                            My Attendance
+                        </BackLink>
+                        <span
+                            aria-hidden="true"
+                            className={"text-typography-3"}
+                        >
+                            /
+                        </span>
+                        {meeting?.title}
+                    </h1>
+                    {meeting && (
+                        <div className={"mb-3"}>
+                            <MeetingChips
+                                align="start"
+                                start_time={meeting.start_time}
+                                end_time={meeting.end_time}
+                                room_name={meeting.rooms?.name}
+                            />
+                        </div>
+                    )}
+                    {timezoneNote && <p>Times are in New York time.</p>}
+                </header>
+                <section
+                    className={
+                        "flex flex-col items-center gap-5 rounded-2xl border border-divider bg-layer-1 px-5 py-8 text-center shadow-prominent sm:py-10"
+                    }
+                >
+                    {isPresent ? (
+                        <div
+                            className={`flex size-36 items-center justify-center rounded-full bg-layer-2 sm:size-44 ${status.color}`}
+                        >
+                            <i
+                                aria-hidden="true"
+                                className={`bx ${status.icon} text-7xl sm:text-8xl`}
+                            />
+                        </div>
+                    ) : meeting && canCheckIn && code ? (
+                        <Ring
+                            size={176}
+                            width={6}
+                            value={
+                                msLeft > 0 && lateAfter
+                                    ? msLeft / (lateAfter * 60000)
+                                    : 1
+                            }
+                            stroke={
+                                msLeft > 0 ? "stroke-blue" : "stroke-yellow"
+                            }
+                        >
+                            {msLeft > 0 ? (
+                                <>
+                                    <p
+                                        className={
+                                            "important text-4xl tabular-nums"
+                                        }
+                                    >
+                                        {countdown}
+                                    </p>
+                                    <p className={"text-sm"}>
+                                        until you&apos;re late
+                                    </p>
+                                </>
+                            ) : (
+                                <>
+                                    <p className={"important text-3xl"}>Late</p>
+                                    <p className={"text-sm"}>
+                                        you can still check in
+                                    </p>
+                                </>
+                            )}
+                        </Ring>
+                    ) : (
+                        <div
+                            className={
+                                "flex size-36 items-center justify-center rounded-full bg-layer-2 text-typography-3 sm:size-44"
+                            }
+                        >
+                            <i
+                                aria-hidden="true"
+                                className={
+                                    "bx bx-calendar text-7xl sm:text-8xl"
+                                }
+                            />
+                        </div>
+                    )}
+                    <div className={"flex flex-col items-center gap-2"}>
+                        <h2 aria-live="polite" className={"text-base"}>
+                            <span className={"sr-only"}>Status: </span>
+                            <MeetingChip
+                                icon={status.icon}
+                                iconClass={status.color}
+                                label={
+                                    isPresent ? status.label : "Not Checked In"
+                                }
+                            />
+                        </h2>
                         {checkInMessage && (
-                            <p className={"text-center mt-3"}>
+                            <p className={"max-w-sm text-sm"}>
                                 {checkInMessage}
                             </p>
                         )}
                     </div>
-                </div>
+                    {!isPresent && code && !closed && (
+                        <div className={"w-full max-w-sm"}>
+                            <AsyncButton
+                                isPrimary
+                                onClick={markPresent}
+                                disabled={!canCheckIn}
+                                className={"w-full"}
+                            >
+                                Mark Myself Present
+                            </AsyncButton>
+                        </div>
+                    )}
+                </section>
             </div>
         </LoginGate>
     );

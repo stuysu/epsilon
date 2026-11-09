@@ -345,7 +345,7 @@ const Reserve = () => {
             <div className="my-4">
                 <h2>Force Reservation</h2>
                 <p className={"mb-3"}>
-                    Reserve one or more rooms for an organization manually.
+                    Reserve one or more rooms for an Activity manually.
                 </p>
                 <SearchInput
                     placeholder="Search Activities..."
@@ -359,19 +359,21 @@ const Reserve = () => {
                 ) : filteredOrgs.length > 0 ? (
                     <div>
                         {filteredOrgs.map((org) => (
-                            <div>
-                                <a
-                                    className={"important cursor-pointer"}
-                                    key={org.id}
+                            <div key={org.id}>
+                                <button
+                                    type="button"
+                                    className={
+                                        "important w-full py-2 text-left cursor-pointer"
+                                    }
                                     onClick={() => {
                                         setForceOrgId(org.id);
                                         setForceOrgName(org.name);
-                                        setSearchInput(""); // Clear search input after selecting an org
-                                        setFilteredOrgs([]); // Clear filtered orgs after selecting an org
+                                        setSearchInput("");
+                                        setFilteredOrgs([]);
                                     }}
                                 >
                                     {org.name}
-                                </a>
+                                </button>
                                 <hr className="border-divider" />
                             </div>
                         ))}
@@ -441,7 +443,7 @@ const Reserve = () => {
                                 checked={excludeBooked}
                                 onChange={setexcludeBooked}
                                 style={{ marginLeft: "10px" }}
-                                label="hide booked rooms?"
+                                label="Hide booked rooms"
                                 disabled={!endTime || !startTime}
                             />
                         </div>

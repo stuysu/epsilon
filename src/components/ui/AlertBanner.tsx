@@ -68,7 +68,7 @@ const AlertBanner = ({
                     type="button"
                     aria-label="Close"
                     onClick={onClose}
-                    className="-mr-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-black/10"
+                    className="touch-target -mr-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-black/10"
                 >
                     <i className="bx bx-x text-[20px]" aria-hidden="true" />
                 </button>

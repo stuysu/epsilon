@@ -3,6 +3,8 @@ interface UserContextType extends User {
     admin: boolean; // DEPRECATED
     permission: string;
     memberships: Partial<Membership>[] | undefined;
+    // re-reads the profile, e.g. after joining or leaving
+    refresh?: () => Promise<void>;
 }
 
 interface OrgContextType extends Organization {
@@ -33,9 +35,12 @@ type CalendarMeeting = {
     advisor: string;
 };
 
+type CatalogSort = "shuffle" | "name" | "members" | "newest";
+
 type SearchParams = {
     name: string;
     meetingDays: string[];
     commitmentLevels: string[];
     tags: string[];
+    sort: CatalogSort;
 };

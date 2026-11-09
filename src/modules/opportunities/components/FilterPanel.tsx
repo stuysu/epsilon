@@ -1,9 +1,15 @@
 import { Slider, Toggle } from "radix-ui";
-import { ReactNode, useEffect, useId, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import CheckboxField from "../../../components/ui/input/CheckboxField";
 import SearchInput from "../../../components/ui/input/SearchInput";
 import SortSelect from "../../../components/ui/input/SortSelect";
 import ToggleChip from "../../../components/ui/input/ToggleChip";
+import {
+    FilterGroup,
+    PILL_CLASS,
+    ResetFiltersButton,
+    pillColors,
+} from "../../../components/ui/input/FilterControls";
 import {
     OpportunityCategory,
     OpportunityEligibility,
@@ -30,29 +36,6 @@ const SORTS: { value: OpportunityFilters["sort"]; label: string }[] = [
 
 const formatDollars = (amount: number) => `$${amount.toLocaleString("en-US")}`;
 
-type FilterGroupProps = {
-    title: string;
-    action?: ReactNode;
-    children: ReactNode;
-};
-
-const FilterGroup = ({ title, action, children }: FilterGroupProps) => (
-    <section className="flex flex-col gap-2">
-        <div className="flex items-center justify-between">
-            <h3 className="text-sm font-normal text-typography-2">{title}</h3>
-            {action}
-        </div>
-        {children}
-    </section>
-);
-
-const ROW_CLASS =
-    "important w-full cursor-pointer rounded-lg px-3 pb-[0.35rem] pt-1 text-left text-sm shadow-control transition-colors";
-const rowColors = (on: boolean) =>
-    on
-        ? "bg-accent text-white"
-        : "bg-layer-2 text-typography-2 hover:bg-layer-3";
-
 type CategoryRowProps = {
     category: OpportunityCategory;
     subcategories: OpportunityCategory[];
@@ -60,7 +43,7 @@ type CategoryRowProps = {
     onChange: (ids: number[]) => void;
 };
 
-// turning a category on shows its subcategories underneath
+// turning a category on opens its subcategories on their own line
 const CategoryRow = ({
     category,
     subcategories,
@@ -83,7 +66,7 @@ const CategoryRow = ({
     };
 
     return (
-        <div className="flex flex-col gap-2">
+        <>
             <Toggle.Root
                 pressed={pressed}
                 onPressedChange={() =>
@@ -94,7 +77,7 @@ const CategoryRow = ({
                     )
                 }
                 aria-controls={subcategories.length ? groupId : undefined}
-                className={`${ROW_CLASS} flex items-center justify-between gap-2 ${rowColors(pressed)}`}
+                className={`${PILL_CLASS} ${pillColors(pressed)}`}
             >
                 {category.name}
                 {subcategories.length > 0 && (
@@ -110,14 +93,14 @@ const CategoryRow = ({
                     id={groupId}
                     role="group"
                     aria-label={`${category.name} subcategories`}
-                    className="ml-3 flex flex-col gap-2 border-l border-divider pl-3"
+                    className="ml-3 flex basis-full flex-wrap gap-2 border-l border-divider pl-3"
                 >
                     <Toggle.Root
                         pressed={allSelected}
                         onPressedChange={() =>
                             onChange([...withoutFamily, category.id])
                         }
-                        className={`${ROW_CLASS} ${rowColors(allSelected)}`}
+                        className={`${PILL_CLASS} ${pillColors(allSelected)}`}
                     >
                         All {category.name}
                     </Toggle.Root>
@@ -128,7 +111,7 @@ const CategoryRow = ({
                                 key={sub.id}
                                 pressed={on}
                                 onPressedChange={() => toggleSub(sub.id)}
-                                className={`${ROW_CLASS} ${rowColors(on)}`}
+                                className={`${PILL_CLASS} ${pillColors(on)}`}
                             >
                                 {sub.name}
                             </Toggle.Root>
@@ -136,7 +119,7 @@ const CategoryRow = ({
                     })}
                 </div>
             )}
-        </div>
+        </>
     );
 };
 
@@ -165,7 +148,7 @@ const FilterPanel = ({
         <div className="flex flex-col">
             <SearchInput
                 id="opportunity-search"
-                placeholder="Search Anything..."
+                placeholder="Search opportunities"
                 aria-label="Search opportunities"
                 value={filters.query}
                 onChange={(query) => update({ query })}
@@ -181,18 +164,10 @@ const FilterPanel = ({
                     </div>
                 }
             />
-            <button
-                type="button"
-                onClick={onReset}
-                disabled={!canReset}
-                className="important -mt-2 mb-5 flex w-full items-center justify-center gap-1.5 rounded-lg bg-layer-2 px-3 py-1.5 text-sm text-typography-1 shadow-control transition-colors enabled:cursor-pointer enabled:hover:bg-layer-3 disabled:text-typography-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
-            >
-                <i className="bx bx-reset" aria-hidden="true" />
-                Reset Filters
-            </button>
+            <ResetFiltersButton disabled={!canReset} onReset={onReset} />
             <div className="flex flex-col gap-5">
                 <FilterGroup title="Status">
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-2 [&>*]:justify-center [&>*]:text-center">
                         <ToggleChip
                             title="Active"
                             selected={filters.statuses.includes("active")}
@@ -221,7 +196,7 @@ const FilterPanel = ({
                 </FilterGroup>
 
                 <FilterGroup title="Deadline">
-                    <div className="grid grid-cols-2 gap-2">
+                    <div className="grid grid-cols-2 gap-2 [&>*]:justify-center [&>*]:text-center">
                         <ToggleChip
                             title="This Week"
                             selected={filters.deadlines.includes("week")}
@@ -250,7 +225,7 @@ const FilterPanel = ({
                 </FilterGroup>
 
                 <FilterGroup title="Categories">
-                    <div className="flex flex-col gap-2">
+                    <div className="flex flex-wrap gap-2">
                         {mainCategories.map((category) => (
                             <CategoryRow
                                 key={category.id}

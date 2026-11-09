@@ -6,6 +6,14 @@ import EligibilityLine from "./EligibilityLine";
 import OpportunityDetails from "./OpportunityDetails";
 import StatusBadge from "./StatusBadge";
 
+const LABEL_ICONS: Record<string, string> = {
+    New: "bxs-star",
+    "Coming Up": "bx-calendar-event",
+    Today: "bx-calendar-star",
+    "Deadline Today": "bx-alarm-exclamation",
+    "Deadline Approaching": "bx-alarm-exclamation",
+};
+
 type OpportunityCardProps = {
     opportunity: Opportunity;
 };
@@ -15,8 +23,14 @@ const OpportunityCard = ({ opportunity }: OpportunityCardProps) => {
     const { pathname } = useLocation();
     const status = getStatus(opportunity, student, getTodayEastern());
     const [mainCategory, ...otherCategories] = opportunity.categories;
-    // "New" or "Deadline Today" means nothing once the listing has ended
-    const label = status.struck ? null : opportunity.bulletin_label;
+    // "New" or "Deadline Today" means nothing once the listing has ended,
+    // and deadline labels repeat the badge when there's a date to show
+    const label =
+        status.struck ||
+        (opportunity.deadline &&
+            /^Deadline/.test(opportunity.bulletin_label ?? ""))
+            ? null
+            : opportunity.bulletin_label;
 
     return (
         <article className="relative flex flex-col gap-3 rounded-2xl [overflow-wrap:anywhere] bg-layer-1 p-6 shadow-prominent transition-colors sm:hover:bg-layer-2">
@@ -38,19 +52,28 @@ const OpportunityCard = ({ opportunity }: OpportunityCardProps) => {
             </div>
 
             {(mainCategory || label) && (
-                <p className="flex flex-wrap items-center gap-1.5 text-sm text-typography-2">
+                <p className="flex flex-wrap items-center gap-1.5 text-sm">
                     {label && (
-                        <span className="rounded bg-accent px-1.5 text-white">
+                        <span className="inline-flex items-center gap-1 rounded-full bg-accent px-2.5 py-0.5 text-white">
+                            <i
+                                aria-hidden="true"
+                                className={`bx ${LABEL_ICONS[label] ?? "bx-info-circle"}`}
+                            />
                             {label}
                         </span>
                     )}
                     {mainCategory && (
-                        <span className="rounded bg-layer-2 px-1.5 text-typography-1">
+                        <span className="rounded-2xl bg-layer-2 px-2.5 py-0.5 text-typography-1">
                             {mainCategory.name}
                         </span>
                     )}
                     {otherCategories.map((category) => (
-                        <span key={category.id}>· {category.name}</span>
+                        <span
+                            key={category.id}
+                            className="rounded-2xl bg-layer-2 px-2.5 py-0.5 text-typography-2"
+                        >
+                            {category.name}
+                        </span>
                     ))}
                 </p>
             )}

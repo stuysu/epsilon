@@ -24,7 +24,8 @@ const Avatar = ({
     >
         <RadixAvatar.Image
             src={src || undefined}
-            alt={alt}
+            // avatars sit beside a name, so they're decorative unless told otherwise
+            alt={alt ?? ""}
             className="h-full w-full object-cover"
             onLoadingStatusChange={(status) => {
                 if (status === "loaded") onLoad?.();

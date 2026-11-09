@@ -3,11 +3,12 @@
  * memberships, upcoming meetings, global announcements and recent posts
  */
 
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import UserContext from "../../../contexts/UserContext";
 import OrgBlock from "../../../components/ui/OrgBlock";
 import { useSnackbar } from "notistack";
 import { supabase } from "../../../lib/supabaseClient";
+import useCachedQuery from "../../../lib/useCachedQuery";
 import UpcomingMeeting from "./UpcomingMeeting";
 import OrgStreamPost from "../../stuyactivities/orgs/components/OrgStreamPost";
 import DisplayLinks from "../../../components/DisplayLinks";
@@ -44,17 +45,28 @@ const UserHome = () => {
     const user = React.useContext(UserContext);
     const { enqueueSnackbar } = useSnackbar();
 
-    const [upcomingMeetings, setUpcomingMeetings] = useState<meetingType[]>([]);
-    const [posts, setPosts] = useState<Post[]>([]);
-    const [announcements, setAnnouncements] = useState<Announcement[]>([]);
     const [visibleAnnouncements, setVisibleAnnouncements] = useState(3);
+    // below the two-column layout, long tile lists fold to two rows so meetings stay near the top
+    const activeCount = (user.memberships || []).filter((m) => m.active).length;
+    const [showAllTiles, setShowAllTiles] = useState(false);
+    const foldPhone = !showAllTiles && activeCount > 4;
+    const foldSm = !showAllTiles && activeCount > 6;
+    const foldMd = !showAllTiles && activeCount > 8;
+    const toggleRef = React.useRef<HTMLButtonElement>(null);
 
-    useEffect(() => {
-        const fetchMeetings = async () => {
-            const userOrgIds = user.memberships?.map(
-                (membership) => membership.organizations?.id,
-            );
+    const userOrgIds = (user.memberships || [])
+        .filter((membership) => membership.active)
+        .map((membership) => membership.organizations?.id)
+        .sort();
 
+    const failed = (what: string) =>
+        enqueueSnackbar(
+            `Failed to load ${what}. Contact it@stuysu.org for support.`,
+            { variant: "error" },
+        );
+
+    const upcomingMeetings =
+        useCachedQuery(["home", "meetings", userOrgIds], async () => {
             const { data, error } = await supabase
                 .from("meetings")
                 .select(
@@ -77,27 +89,19 @@ const UserHome = () => {
                 `,
                 )
                 .neq("organizations.url", "epsilon") // internal maintenance meetings
-                .in("organization_id", [userOrgIds])
+                .in("organization_id", userOrgIds)
                 .gte("start_time", new Date().toISOString())
                 .order("start_time")
                 .returns<meetingType[]>();
-
             if (error || !data) {
-                enqueueSnackbar(
-                    "Failed to load meetings. Contact it@stuysu.org for support.",
-                    { variant: "error" },
-                );
-                return;
+                failed("meetings");
+                throw error;
             }
+            return data;
+        }).data ?? [];
 
-            setUpcomingMeetings(data);
-        };
-
-        const fetchPosts = async () => {
-            const userOrgIds = user.memberships?.map(
-                (membership) => membership.organizations?.id,
-            );
-
+    const posts =
+        useCachedQuery(["home", "posts", userOrgIds], async () => {
             const { data, error } = await supabase
                 .from("posts")
                 .select(
@@ -114,74 +118,78 @@ const UserHome = () => {
                     )
                 `,
                 )
-                .in("organization_id", [userOrgIds])
-                .order("created_at")
+                .in("organization_id", userOrgIds)
+                .order("created_at", { ascending: false })
                 .returns<Post[]>();
-
             if (error || !data) {
-                return enqueueSnackbar(
-                    "Failed to load posts. Contact it@stuysu.org for support.",
-                    { variant: "error" },
-                );
+                failed("posts");
+                throw error;
             }
+            return data;
+        }).data ?? [];
 
-            setPosts(data.reverse());
-        };
-
-        fetchMeetings();
-        fetchPosts();
-    }, [user, enqueueSnackbar]);
-
-    useEffect(() => {
-        const fetchAnnouncements = async () => {
+    const announcements =
+        useCachedQuery(["home", "announcements"], async () => {
             const { data, error } = await supabase
                 .from("announcements")
                 .select("*")
                 .order("created_at", { ascending: false });
-
             if (error || !data) {
-                enqueueSnackbar(
-                    "Failed to load announcements. Contact it@stuysu.org for support.",
-                    { variant: "error" },
-                );
-                return;
+                failed("announcements");
+                throw error;
             }
-            setAnnouncements(data as Announcement[]);
-        };
-        fetchAnnouncements();
-    }, [enqueueSnackbar]);
+            return data as Announcement[];
+        }).data ?? [];
 
     return (
-        <main className="m-3 sm:my-8 sm:mx-12 max-sm:mt-4 min-h-[90vh]">
-            <header className="flex flex-col mb-10 max-sm:items-center max-sm:text-center">
+        // one container, the Figma content width (wider on huge screens), so both columns stay together
+        <main className="mx-auto min-h-[90vh] w-full max-w-[calc(var(--frame)+6rem)] px-3 pb-8 pt-4 sm:px-12 sm:pt-8">
+            <header className="flex flex-col mb-10">
                 <h1>
                     {timeGreeting}, {user.first_name}!
                 </h1>
                 <h2 className={"-mt-1.5"}>Here's what's happening.</h2>
             </header>
 
-            <section className="relative flex sm:flex-row justify-between flex-col gap-12 w-full mb-10">
-                <div
-                    className="sm:sticky top-10 sm:max-w-[50vw] w-full"
-                    style={{
-                        height: "calc(100dvh - 96px)",
-                        maxHeight: "calc(100dvh - 96px)",
-                    }}
-                >
+            {/* equal halves from lg; tiles stretch to a set count per row so no partial row of space is left over */}
+            <section className="relative mb-10 grid w-full grid-cols-1 gap-12 lg:grid-cols-2">
+                {/* the negative margin and matching padding give the hover glow room inside the scroller */}
+                <div className="-mx-3 -my-8 min-w-0 sm:-mx-8 lg:sticky lg:top-0 lg:self-start [--tiles-max:100000px] lg:[--tiles-max:calc(100dvh_-_1rem)]">
                     <Scrollbars
                         universal
                         autoHide
                         autoHideTimeout={1000}
                         autoHideDuration={200}
-                        style={{ height: "100%" }}
+                        autoHeight
+                        autoHeightMax="var(--tiles-max)"
                         onWheel={(e) => e.stopPropagation()}
                         renderView={(
                             props: React.HTMLProps<HTMLDivElement>,
                         ) => (
                             <div
                                 {...props}
-                                className="scroll-hide flex flex-wrap content-start justify-start gap-2 pb-6 w-full h-full"
-                                style={{ overflowX: "hidden" }}
+                                id="home-activity-tiles"
+                                className={`scroll-hide grid w-full grid-cols-2 content-start gap-x-3 gap-y-2 px-3 py-8 sm:grid-cols-3 sm:gap-x-4 sm:px-8 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-3 min-[2300px]:grid-cols-4 ${
+                                    foldPhone
+                                        ? "max-sm:[&>*:nth-child(n+5)]:hidden"
+                                        : ""
+                                } ${
+                                    foldSm
+                                        ? "sm:max-md:[&>*:nth-child(n+7)]:hidden"
+                                        : ""
+                                } ${
+                                    foldMd
+                                        ? "md:max-lg:[&>*:nth-child(n+9)]:hidden"
+                                        : ""
+                                }`}
+                                // longhands only; mixing them with the library's overflow makes React warn
+                                style={{
+                                    ...props.style,
+                                    overflow: undefined,
+                                    overflowX: "hidden",
+                                    overflowY: props.style
+                                        ?.overflow as React.CSSProperties["overflowY"],
+                                }}
                             />
                         )}
                         renderTrackHorizontal={() => (
@@ -207,6 +215,7 @@ const UserHome = () => {
                             if (membership.active)
                                 return (
                                     <OrgBlock
+                                        fluid
                                         key={membership.id}
                                         name={
                                             membership?.organizations?.name ||
@@ -230,7 +239,7 @@ const UserHome = () => {
                         <Link
                             to="/stuyactivities"
                             // the outline is inset, since the scroller clips outside the tile
-                            className="flex items-center justify-center flex-col w-44 h-44 rounded-xl no-underline transition-colors sm:hover:bg-layer-1 border-accent border-dashed border focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-typography-1"
+                            className="flex aspect-square w-full items-center justify-center flex-col rounded-xl px-2 text-center no-underline transition-colors sm:hover:bg-layer-1 border-accent border-dashed border focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-typography-1"
                         >
                             <i
                                 className="bx bx-md bx-plus-circle mb-5 text-accent"
@@ -239,14 +248,52 @@ const UserHome = () => {
                             <p className="text-accent">Join an Activity!</p>
                         </Link>
                     </Scrollbars>
+                    <div
+                        className={`relative z-10 -mt-6 mb-8 px-3 sm:px-8 lg:hidden ${
+                            showAllTiles || activeCount > 8
+                                ? ""
+                                : activeCount > 6
+                                  ? "md:hidden"
+                                  : activeCount > 4
+                                    ? "sm:hidden"
+                                    : "hidden"
+                        }`}
+                    >
+                        <button
+                            ref={toggleRef}
+                            type="button"
+                            aria-expanded={showAllTiles}
+                            aria-controls="home-activity-tiles"
+                            onClick={() => {
+                                setShowAllTiles(!showAllTiles);
+                                if (showAllTiles)
+                                    requestAnimationFrame(() =>
+                                        toggleRef.current?.scrollIntoView({
+                                            block: "nearest",
+                                        }),
+                                    );
+                            }}
+                            className="flex min-h-11 w-full items-center justify-center gap-1 rounded-xl bg-layer-1 px-4 text-sm font-semibold text-typography-1 shadow-control transition-colors sm:hover:bg-layer-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                        >
+                            {showAllTiles
+                                ? "Show fewer"
+                                : `Show all ${activeCount} activities`}
+                            <i
+                                aria-hidden="true"
+                                className={`bx bx-chevron-down text-lg transition-transform ${
+                                    showAllTiles ? "rotate-180" : ""
+                                }`}
+                            />
+                        </button>
+                    </div>
                 </div>
-                <div className="w-full max-w-3xl flex flex-col gap-14 max-sm:mt-6">
+                <div className="min-w-0 flex flex-col gap-14">
                     <div className={"relative w-full group"}>
                         <div className={"relative z-10"}>
                             <ItemList
                                 title={"My Meetings"}
                                 height={"auto"}
-                                icon={"bx-calendar-week"}
+                                icon={"bx-calendar-week text-yellow"}
                             >
                                 {upcomingMeetings.length === 0 && (
                                     <p className={"bg-layer-2 p-4"}>
@@ -298,7 +345,7 @@ const UserHome = () => {
                                 <a
                                     href={"/meetings"}
                                     className={
-                                        "sm:hover:opacity-75 transition-colors no-underline"
+                                        "touch-target sm:hover:opacity-75 transition-colors no-underline"
                                     }
                                 >
                                     View Calendar
@@ -313,7 +360,7 @@ const UserHome = () => {
                             <ItemList
                                 title={"StuyActivities Announcements"}
                                 height={"auto"}
-                                icon={"bxs-megaphone"}
+                                icon={"bx-message-square-dots text-blue"}
                             >
                                 {announcements
                                     .slice(0, visibleAnnouncements)
@@ -368,7 +415,7 @@ const UserHome = () => {
                                 // only the label dims, so the focus outline keeps its
                                 // contrast; the gap above is a margin, so the outline
                                 // isn't drawn under the list
-                                className="group/more text important mt-4 text-left cursor-pointer rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 aria-disabled:cursor-default"
+                                className="group/more touch-target text important mt-4 text-left cursor-pointer rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 aria-disabled:cursor-default"
                                 onClick={() => {
                                     if (
                                         announcements.length <=

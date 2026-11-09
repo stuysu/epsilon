@@ -2,8 +2,9 @@ import { useContext } from "react";
 import OrgContext from "../../../../contexts/OrgContext";
 import Divider from "../../../../components/ui/Divider";
 
+import { sortWeekdays } from "../../../../utils/DataFormatters";
 const formatDays = (meeting_days: string[]) => {
-    return meeting_days
+    return sortWeekdays(meeting_days)
         .map((m) => m.slice(0, 1).toUpperCase() + m.slice(1).toLowerCase())
         .join(", ");
 };

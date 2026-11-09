@@ -1,8 +1,6 @@
 import React, { useState } from "react";
 import MeetingPreview from "../../../components/ui/overlays/MeetingPreview";
-import { toNewYork } from "../../../utils/NewYorkTime";
-import ToggleChip from "../../../components/ui/input/ToggleChip";
-import { monthNames } from "../../../utils/TimeStrings";
+import MeetingChips from "../../stuyactivities/orgs/components/MeetingChips";
 import { Avatar } from "radix-ui";
 import pressable from "../../../utils/pressable";
 
@@ -34,16 +32,14 @@ const UpcomingMeeting = ({
 }) => {
     const [open, setOpen] = useState(false);
 
-    const start = toNewYork(start_time);
-
     return (
         <div className={"w-full cursor-pointer"}>
             <div
-                className="overflow-scroll scrollbar-none flex max-lg:flex-col max-lg:items-start gap-2 justify-between items-center bg-layer-2 transition-colors sm:hover:bg-layer-3 p-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 focus-visible:-outline-offset-2"
+                className="overflow-scroll scrollbar-none flex max-lg:flex-col max-lg:items-start lg:flex-wrap gap-2 justify-between items-center bg-layer-2 transition-colors sm:hover:bg-layer-3 p-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 focus-visible:-outline-offset-2"
                 aria-haspopup="dialog"
                 {...pressable(() => setOpen(true))}
             >
-                <div className="relative flex gap-3">
+                <div className="relative flex min-w-0 gap-3 lg:min-w-56 lg:flex-1">
                     <div
                         className={[
                             "min-w-10 w-10 h-10 rounded-md overflow-hidden relative",
@@ -77,19 +73,14 @@ const UpcomingMeeting = ({
                     </div>
                 </div>
 
-                <div className="flex gap-2 w-fit justify-end pointer-events-none">
-                    <ToggleChip
-                        title={room_name || "Virtual"}
-                        selectable={false}
-                    ></ToggleChip>
-                    <ToggleChip
-                        title={start.format("LT")}
-                        selectable={false}
-                    ></ToggleChip>
-                    <ToggleChip
-                        title={`${monthNames[start.month()].slice(0, 3)} ${start.date()}`}
-                        selectable={false}
-                    ></ToggleChip>
+                {/* wraps under the title only when even its narrowest form won't fit; then takes the room it needs before the title */}
+                <div className="pointer-events-none w-fit lg:ml-auto lg:min-w-min lg:max-w-fit lg:grow-[100] lg:basis-0">
+                    <MeetingChips
+                        endFrom="lg"
+                        start_time={start_time}
+                        end_time={end_time}
+                        room_name={room_name}
+                    />
                 </div>
             </div>
 

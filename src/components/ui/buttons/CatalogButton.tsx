@@ -8,6 +8,7 @@ export default function CatalogButton() {
 
     return (
         <button
+            className="touch-target"
             style={{
                 marginTop: 25,
                 opacity: hover ? 0.75 : 1,

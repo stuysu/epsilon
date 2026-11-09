@@ -1,6 +1,6 @@
 import React, { useContext } from "react";
 
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 
 import UserContext from "../../../../contexts/UserContext";
 import OrgContext from "../../../../contexts/OrgContext";
@@ -13,6 +13,7 @@ import Organization from "./pages/Organization";
 import Messages from "./pages/Messages";
 import AttendanceOverview from "./pages/AttendanceOverview";
 import MeetingAttendance from "./pages/MeetingAttendance";
+import MemberAttendance from "./pages/MemberAttendance";
 import ContentUnavailable from "../../../../components/ui/content/ContentUnavailable";
 
 const OrgAdminRouter = () => {
@@ -28,19 +29,82 @@ const OrgAdminRouter = () => {
         (membership.role === "CREATOR" || membership.role === "ADMIN") &&
         membership.active;
 
-    const isStuyActivitiesAdmin = Boolean(user.permission);
+    const isAdvisor =
+        !!membership && membership.role === "ADVISOR" && membership.active;
 
-    if (isOrgAdmin) {
+    const isStuyActivitiesAdmin = user.permission === "ADMIN";
+
+    if (isAdvisor) {
         return (
             <Routes>
+                <Route index Component={Roster} />
                 <Route path={"/roster"} Component={Roster} />
-                <Route path={"/join-requests"} Component={JoinRequests} />
+                <Route
+                    path={"/roster/join-requests"}
+                    Component={JoinRequests}
+                />
+                <Route
+                    path={"/join-requests"}
+                    element={
+                        <Navigate
+                            to={`/${organization.url}/admin/roster/join-requests`}
+                            replace
+                        />
+                    }
+                />
                 <Route path={"/scheduler"} Component={Scheduler} />
                 <Route path={"/posts"} Component={Posts} />
                 <Route path={"/attendance"} Component={AttendanceOverview} />
                 <Route
                     path="/attendance/:meetingId"
                     Component={MeetingAttendance}
+                />
+                <Route
+                    path="/attendance/members/:userId"
+                    Component={MemberAttendance}
+                />
+                <Route
+                    path={"/*"}
+                    element={
+                        <ContentUnavailable
+                            icon="bx-no-entry"
+                            iconColor="text-red"
+                            title="Student Leaders Only"
+                            description="Advisors can manage the roster, meetings, attendance and posts. Messages and charter changes are handled by the Activity's student leaders."
+                        />
+                    }
+                />
+            </Routes>
+        );
+    }
+
+    if (isOrgAdmin) {
+        return (
+            <Routes>
+                <Route path={"/roster"} Component={Roster} />
+                <Route
+                    path={"/roster/join-requests"}
+                    Component={JoinRequests}
+                />
+                <Route
+                    path={"/join-requests"}
+                    element={
+                        <Navigate
+                            to={`/${organization.url}/admin/roster/join-requests`}
+                            replace
+                        />
+                    }
+                />
+                <Route path={"/scheduler"} Component={Scheduler} />
+                <Route path={"/posts"} Component={Posts} />
+                <Route path={"/attendance"} Component={AttendanceOverview} />
+                <Route
+                    path="/attendance/:meetingId"
+                    Component={MeetingAttendance}
+                />
+                <Route
+                    path="/attendance/members/:userId"
+                    Component={MemberAttendance}
                 />
                 <Route path={"/org-edits"} Component={Organization} />
                 <Route path={"/messages"} Component={Messages} />

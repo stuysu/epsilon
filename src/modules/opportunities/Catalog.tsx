@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet";
 import { useSearchParams } from "react-router-dom";
 import AsyncButton from "../../components/ui/buttons/AsyncButton";
 import ContentUnavailable from "../../components/ui/content/ContentUnavailable";
+import { FiltersToggle } from "../../components/ui/input/FilterControls";
 import FilterPanel from "./components/FilterPanel";
 import OpportunityList, {
     OpportunityListSkeleton,
@@ -17,6 +18,8 @@ import {
 
 const COST_STEP = 100;
 
+const FILTERS_OPEN_KEY = "opportunity-filters-open";
+
 const Catalog = () => {
     const {
         loading,
@@ -29,26 +32,44 @@ const Catalog = () => {
         setCatalogFilters: setFilters,
     } = useOpportunities();
     const [searchParams, setSearchParams] = useSearchParams();
-    const [filtersOpen, setFiltersOpen] = useState(false);
+    // stays open across a visit to an opportunity, so Back returns to the same spot
+    const [filtersOpen, setFiltersOpenState] = useState(() => {
+        try {
+            return sessionStorage.getItem(FILTERS_OPEN_KEY) === "1";
+        } catch {
+            return false;
+        }
+    });
+    const setFiltersOpen = (open: boolean) => {
+        setFiltersOpenState(open);
+        try {
+            sessionStorage.setItem(FILTERS_OPEN_KEY, open ? "1" : "0");
+        } catch {
+            // private mode: it just won't be remembered
+        }
+    };
     const asideRef = useRef<HTMLElement>(null);
     const resultsRef = useRef<HTMLElement>(null);
+    // where the results were before the latest change; once they shrink the browser may already have reset the scroll
+    const resultsTopRef = useRef(0);
 
-    // ends the filters at the window's bottom, unless the results are shorter
+    // ends the filters at the window's bottom; they always scroll on their own,
+    // so a filter that shrinks the results never moves the list under the pointer
     useEffect(() => {
         const aside = asideRef.current;
         const results = resultsRef.current;
         if (!aside || !results) return;
         const fit = () => {
-            const flowing = results.offsetHeight < aside.scrollHeight;
-            // a non-scrolling panel must pass the wheel on to the page
-            aside.toggleAttribute("data-flow", flowing);
-            if (flowing) {
-                aside.style.setProperty("--filters-height", "none");
-                return;
-            }
-            const room =
-                window.innerHeight - aside.getBoundingClientRect().top - 24;
+            // measured from where it sticks, so it can never outgrow the window
+            const top = Math.max(aside.getBoundingClientRect().top, 24);
+            const room = window.innerHeight - top - 24;
             aside.style.setProperty("--filters-height", `${room}px`);
+            resultsTopRef.current = results.getBoundingClientRect().top;
+            // a panel with nothing to scroll passes the wheel on to the page
+            aside.toggleAttribute(
+                "data-fits",
+                aside.scrollHeight <= aside.clientHeight,
+            );
         };
         fit();
         const observer = new ResizeObserver(fit);
@@ -80,13 +101,20 @@ const Catalog = () => {
         setSearchParams({}, { replace: true });
     }, [searchParams, setFilters, setSearchParams]);
 
-    // new results start from the top, so the search stays in view
+    // new results start from the top; the scroll margin matches the filters'
+    // sticky offset, so they stay put while the results move into view
     const firstFilters = useRef(filters);
     useLayoutEffect(() => {
         if (filters === firstFilters.current) return;
         const results = resultsRef.current;
-        if (results && results.getBoundingClientRect().top < 0) {
-            results.parentElement?.scrollIntoView({ block: "start" });
+        if (
+            results &&
+            Math.min(
+                resultsTopRef.current,
+                results.getBoundingClientRect().top,
+            ) < 0
+        ) {
+            results.scrollIntoView({ block: "start" });
         }
     }, [filters]);
 
@@ -165,23 +193,16 @@ const Catalog = () => {
             {/* scrolls on its own; padding keeps focus rings unclipped */}
             <aside
                 ref={asideRef}
-                className="lg:sticky lg:top-6 lg:-mx-2 lg:max-h-[var(--filters-height,calc(100dvh-3rem))] lg:overflow-y-auto lg:overscroll-contain lg:data-[flow]:overflow-visible lg:data-[flow]:overscroll-auto lg:px-2 lg:pb-6 lg:pt-1 lg:[scrollbar-width:thin]"
+                className="lg:sticky lg:top-6 lg:-mx-2 lg:max-h-[var(--filters-height,calc(100dvh-3rem))] lg:overflow-y-auto lg:overscroll-contain lg:data-[fits]:overscroll-auto lg:px-2 lg:pb-6 lg:pt-1 lg:[scrollbar-width:thin]"
             >
                 <h2 className="sr-only">Filters</h2>
-                <button
-                    type="button"
+                <FiltersToggle
                     id="catalog-filters-toggle"
-                    aria-expanded={filtersOpen}
-                    aria-controls="catalog-filters"
-                    onClick={() => setFiltersOpen(!filtersOpen)}
-                    className="mb-4 flex w-full cursor-pointer items-center justify-between rounded-xl bg-layer-1 px-4 py-2 text-typography-1 shadow-control lg:hidden"
-                >
-                    Filters
-                    <i
-                        className={`bx ${filtersOpen ? "bx-chevron-up" : "bx-chevron-down"}`}
-                        aria-hidden="true"
-                    />
-                </button>
+                    open={filtersOpen}
+                    onToggle={() => setFiltersOpen(!filtersOpen)}
+                    controls="catalog-filters"
+                    className="lg:hidden"
+                />
                 <div
                     id="catalog-filters"
                     className={filtersOpen ? "" : "max-lg:hidden"}
@@ -200,6 +221,8 @@ const Catalog = () => {
 
             <section
                 ref={resultsRef}
+                // a screen tall at least, so fewer results can't shorten the page and drag the filters
+                className="scroll-mt-14 lg:min-h-[calc(100dvh-3rem)] lg:scroll-mt-6"
                 aria-label="Opportunities"
                 aria-busy={loading}
             >

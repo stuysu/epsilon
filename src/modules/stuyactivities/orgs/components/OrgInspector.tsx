@@ -5,7 +5,14 @@ import OrgContext from "../../../../contexts/OrgContext";
 import UserContext from "../../../../contexts/UserContext";
 import ItemList from "../../../../components/ui/lists/ItemList";
 import { toNewYork } from "../../../../utils/NewYorkTime";
-import { getSocialLinks } from "../../../../utils/SocialLinks";
+import {
+    LINK_TYPES,
+    getSocialLinks,
+    linkDetail,
+    linkTitle,
+} from "../../../../utils/SocialLinks";
+import { AttendancePerformance, MeetingRequirements } from "./MeetingSideCards";
+import OrgAdvisors from "./OrgAdvisors";
 
 const OrgInspector = () => {
     const organization: OrgContextType = useContext(OrgContext);
@@ -14,6 +21,18 @@ const OrgInspector = () => {
     const [strikes, setStrikes] = useState<Strike[]>([]);
 
     const isAuditPage = location.pathname.includes("/audit");
+    const canManageAttendance =
+        organization.memberships?.some(
+            (m) =>
+                m.users?.id === user.id &&
+                (m.role === "CREATOR" ||
+                    m.role === "ADMIN" ||
+                    m.role === "ADVISOR") &&
+                m.active,
+        ) ?? false;
+    const card = inspectorCardFor(location.pathname);
+    const sideCard =
+        card === "attendance" && !canManageAttendance ? undefined : card;
     /* strikes are only readable by the club's leaders and site admins, so
     anyone else would always be told the club has none */
     const canSeeStrikes =
@@ -26,6 +45,8 @@ const OrgInspector = () => {
         ) ??
             false);
     const socialLinks = getSocialLinks(organization.socials);
+    const canEditAdvisors =
+        /\/admin\/roster\/?$/.test(location.pathname) && canManageAttendance;
 
     useEffect(() => {
         if (!isAuditPage || !canSeeStrikes) return;
@@ -41,44 +62,44 @@ const OrgInspector = () => {
 
     return (
         <div className={"relative xl:w-[300px] xl:ml-10 xl:mr-[3rem]"}>
-            {!isAuditPage ? (
-                <ItemList height={"auto"} title={"Links"}>
-                    {socialLinks.length > 0 ? (
-                        socialLinks.map((social, i) => {
-                            const platform = getPlatform(social);
-                            const path = social.replace(
-                                /^https?:\/\/[^/]+\/?/i,
-                                "",
-                            );
-
-                            return (
+            {sideCard === "requirements" ? (
+                <MeetingRequirements />
+            ) : sideCard === "attendance" ? (
+                <AttendancePerformance />
+            ) : !isAuditPage ? (
+                <>
+                    <ItemList height={"auto"} title={"Links"}>
+                        {socialLinks.length > 0 ? (
+                            socialLinks.map((link, i) => (
                                 <a
                                     key={i}
-                                    href={social}
+                                    href={link.url}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="no-underline"
                                 >
-                                    <div
-                                        className={
-                                            "px-3.5 py-2 bg-layer-2 sm:hover:bg-layer-3 transition-colors"
-                                        }
-                                    >
-                                        <p className="important">
-                                            {platform.charAt(0).toUpperCase() +
-                                                platform.slice(1)}
-                                        </p>
-                                        <p className="text-nowrap overflow-hidden text-ellipsis">
-                                            {path || getHostname(social)}
-                                        </p>
+                                    <div className="flex items-center gap-3 px-3.5 py-2 bg-layer-2 sm:hover:bg-layer-3 transition-colors">
+                                        <i
+                                            aria-hidden="true"
+                                            className={`bx ${LINK_TYPES[link.type].icon} text-xl text-typography-2`}
+                                        />
+                                        <div className="min-w-0">
+                                            <p className="important">
+                                                {linkTitle(link)}
+                                            </p>
+                                            <p className="text-nowrap overflow-hidden text-ellipsis">
+                                                {linkDetail(link)}
+                                            </p>
+                                        </div>
                                     </div>
                                 </a>
-                            );
-                        })
-                    ) : (
-                        <p className={"mx-4 mb-3.5"}>No Links Provided</p>
-                    )}
-                </ItemList>
+                            ))
+                        ) : (
+                            <p className={"mx-4 mb-3.5"}>No Links Provided</p>
+                        )}
+                    </ItemList>
+                    <OrgAdvisors editable={canEditAdvisors} />
+                </>
             ) : (
                 <ItemList
                     height={"auto"}
@@ -124,17 +145,11 @@ const OrgInspector = () => {
     );
 };
 
-function getHostname(url: string): string {
-    try {
-        return new URL(url).hostname.replace(/^www\./, "");
-    } catch {
-        return url;
-    }
-}
-
-function getPlatform(url: string): string {
-    const clamp = getHostname(url);
-    return clamp.endsWith(".com") ? clamp.slice(0, -4) : clamp;
+/* the meeting pages swap the links card for one about meetings */
+export function inspectorCardFor(pathname: string) {
+    if (/\/admin\/attendance(\/|$)/.test(pathname)) return "attendance";
+    if (/\/admin\/scheduler\/?$/.test(pathname)) return "requirements";
+    return undefined;
 }
 
 export default OrgInspector;

@@ -5,11 +5,13 @@ import OrgBlock from "../../../../components/ui/OrgBlock";
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import Divider from "../../../../components/ui/Divider";
+import ContentUnavailable from "../../../../components/ui/content/ContentUnavailable";
 
 const ApproveEdit = () => {
     const { enqueueSnackbar } = useSnackbar();
     const [pendingEdits, setPendingEdits] = useState<EditType[]>([]);
     const [view, setView] = useState<EditType>();
+    const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {
         const fetchPendingEdits = async () => {
@@ -68,10 +70,11 @@ const ApproveEdit = () => {
             }
 
             setPendingEdits(pEdits);
+            setLoaded(true);
         };
 
         fetchPendingEdits();
-    });
+    }, [enqueueSnackbar]);
 
     if (view) {
         return (
@@ -97,9 +100,17 @@ const ApproveEdit = () => {
     }
 
     return (
-        <div className={"w-full p-12"}>
+        <div className={"w-full p-4 sm:p-12"}>
             <h1>Approve Edits</h1>
             <Divider />
+            {loaded && pendingEdits.length === 0 && (
+                <ContentUnavailable
+                    icon="bx-check-circle"
+                    iconColor="text-green"
+                    title="No Edits to Review"
+                    description="There are no pending Activity edits right now."
+                />
+            )}
             <div className={"flex mt-8 gap-3 flex-wrap"}>
                 {pendingEdits.map((edit) => {
                     return (

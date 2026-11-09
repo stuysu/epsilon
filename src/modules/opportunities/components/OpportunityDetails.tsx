@@ -39,7 +39,7 @@ const OpportunityDetails = ({
                     text && (
                         <li
                             key={icon}
-                            className="flex items-start gap-2 rounded-lg bg-layer-2 px-3 py-1.5 text-sm leading-5 text-typography-1 [font-variation-settings:'wght'_500]"
+                            className="flex items-start gap-2 rounded-2xl bg-layer-2 px-3 py-1.5 text-sm leading-5 text-typography-1 [font-variation-settings:'wght'_500]"
                         >
                             {/* sits on the first line when the text wraps */}
                             <i

@@ -2,7 +2,10 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { toNewYork } from "../../../utils/NewYorkTime";
 import { daysOfWeek, monthNames } from "../../../utils/TimeStrings";
 import Divider from "../Divider";
-import ToggleChip from "../input/ToggleChip";
+import {
+    MeetingChip,
+    RoomChip,
+} from "../../../modules/stuyactivities/orgs/components/MeetingChips";
 import { Avatar } from "radix-ui";
 import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
@@ -41,6 +44,7 @@ const MeetingPreview = ({
 }: Props) => {
     const start = toNewYork(startTime);
     const end = toNewYork(endTime);
+    const openerRef = React.useRef<HTMLElement | null>(null);
 
     return (
         <Dialog.Root
@@ -66,6 +70,15 @@ const MeetingPreview = ({
                             <Dialog.Content
                                 asChild
                                 onInteractOutside={keepOpenOnToast}
+                                onOpenAutoFocus={() => {
+                                    openerRef.current =
+                                        document.activeElement as HTMLElement | null;
+                                }}
+                                onCloseAutoFocus={(event) => {
+                                    event.preventDefault();
+                                    if (openerRef.current?.isConnected)
+                                        openerRef.current.focus();
+                                }}
                             >
                                 <motion.div
                                     className="relative w-[min(720px,92vw)] rounded-2xl bg-layer-1 p-0 shadow-2xl border border-divider"
@@ -134,6 +147,7 @@ const MeetingPreview = ({
                                         <Dialog.Close
                                             aria-label="Close"
                                             onClick={onClose}
+                                            className="touch-target rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1"
                                         >
                                             <i className="bx bx-x bx-md text-typography-2 mt-1 sm:hover:opacity-75" />
                                         </Dialog.Close>
@@ -144,34 +158,37 @@ const MeetingPreview = ({
                                     <div className="px-6 py-2">
                                         <h1>{title || "Untitled Meeting"}</h1>
 
-                                        <div className="flex gap-2 flex-wrap">
-                                            <ToggleChip
-                                                selectable={false}
-                                                title={`${daysOfWeek[start.day()]}, ${monthNames[start.month()]} ${start.date()}, ${start.year()}`}
+                                        <div className="flex flex-wrap gap-1.5">
+                                            <MeetingChip
+                                                icon="bx-calendar"
+                                                iconClass="text-blue"
+                                                label={`${daysOfWeek[start.day()]}, ${monthNames[start.month()]} ${start.date()}, ${start.year()}`}
                                             />
-                                            <ToggleChip
-                                                selectable={false}
-                                                title={`${start.format("LT")} to ${end.format("LT")}`}
+                                            <MeetingChip
+                                                icon="bx-time-five"
+                                                iconClass="text-yellow"
+                                                label={`${start.format("h:mm")} – ${end.format("h:mm A")}`}
                                             />
-                                            <ToggleChip
-                                                selectable={false}
-                                                title={roomName || "Virtual"}
-                                            />
-                                            <ToggleChip
-                                                selectable={false}
-                                                title={
+                                            <RoomChip roomName={roomName} />
+                                            <MeetingChip
+                                                icon={
+                                                    isPublic
+                                                        ? "bx-globe"
+                                                        : "bx-lock"
+                                                }
+                                                iconClass="text-typography-2"
+                                                label={
                                                     isPublic
                                                         ? "Public Meeting"
                                                         : "Private Meeting"
                                                 }
                                             />
                                             {advisor?.trim() ? (
-                                                <ToggleChip
-                                                    title={
-                                                        "Advisor: " + advisor
-                                                    }
-                                                    selectable={false}
-                                                ></ToggleChip>
+                                                <MeetingChip
+                                                    icon="bx-user"
+                                                    iconClass="text-typography-2"
+                                                    label={`Advisor: ${advisor}`}
+                                                />
                                             ) : null}
                                         </div>
 

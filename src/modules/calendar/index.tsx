@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 
 import { supabase } from "../../lib/supabaseClient";
+import useCachedQuery from "../../lib/useCachedQuery";
 
 import { useSnackbar } from "notistack";
 import { DayPicker } from "react-day-picker";
@@ -10,15 +11,10 @@ import DaySchedule from "./components/DaySchedule";
 import LoginGate from "../../components/ui/content/LoginGate";
 import { Helmet } from "react-helmet";
 
-type CachedMeetings = {
-    [date: string]: CalendarMeeting[];
-};
+const CALENDAR_STALE = 2 * 60_000;
 
 const Index = () => {
     const { enqueueSnackbar } = useSnackbar();
-
-    const [cachedMeetings, setCachedMeetings] = useState<CachedMeetings>({});
-    const [meetings, setMeetings] = useState<CalendarMeeting[]>([]);
 
     const [time, setTime] = useState<Dayjs>(isoToWallClock().startOf("day"));
 
@@ -26,47 +22,40 @@ const Index = () => {
         new Date(time.year(), time.month(), 1),
     );
 
-    const [loading, setLoading] = useState(false);
-    const [highlightedDays, setHighlightedDays] = useState<number[]>([]);
+    const highlightedDays =
+        useCachedQuery(
+            [
+                "calendar",
+                "days",
+                currentMonth.getFullYear(),
+                currentMonth.getMonth(),
+            ],
+            async () => {
+                const { data, error } = await supabase.rpc(
+                    "get_unique_meeting_days",
+                    {
+                        month: currentMonth.getMonth() + 1,
+                        year: currentMonth.getFullYear(),
+                    },
+                );
+                if (error) {
+                    enqueueSnackbar("Error fetching meeting days", {
+                        variant: "error",
+                    });
+                    throw error;
+                }
+                return (data ?? []) as number[];
+            },
+            { staleTime: CALENDAR_STALE },
+        ).data ?? [];
 
-    const updateHighlightedDays = async (month: number, year: number) => {
-        const { data, error } = await supabase.rpc("get_unique_meeting_days", {
-            month: month + 1,
-            year,
-        });
-
-        if (error) {
-            enqueueSnackbar("Error fetching meeting days", {
-                variant: "error",
-            });
-
-            setHighlightedDays([]);
-            setLoading(false);
-            return;
-        }
-
-        if (!data) {
-            setHighlightedDays([]);
-            setLoading(false);
-            return;
-        }
-
-        setHighlightedDays(data as number[]);
-        setLoading(false);
-    };
-
-    useEffect(() => {
-        const dayString = `${time.year()}/${time.month()}/${time.date()}`;
-        if (cachedMeetings[dayString]) {
-            return setMeetings(cachedMeetings[dayString]);
-        }
-
-        const dayStart = wallClockToISO(time.startOf("day"));
-        const nextDayStart = wallClockToISO(time.add(1, "day").startOf("day"));
-
-        updateHighlightedDays(time.month(), time.year());
-
-        const fetchMeetings = async () => {
+    const dayQuery = useCachedQuery(
+        ["calendar", "day", time.format("YYYY-MM-DD")],
+        async () => {
+            const dayStart = wallClockToISO(time.startOf("day"));
+            const nextDayStart = wallClockToISO(
+                time.add(1, "day").startOf("day"),
+            );
             const { data, error } = await supabase
                 .from("meetings")
                 .select(
@@ -94,20 +83,17 @@ const Index = () => {
                 .neq("organizations.url", "epsilon") // internal maintenance meetings
                 .gte("start_time", dayStart)
                 .lt("start_time", nextDayStart);
-
             if (error || !data) {
-                return enqueueSnackbar(
+                enqueueSnackbar(
                     "Error fetching meetings. Contact it@stuysu.org for support.",
                     { variant: "error" },
                 );
+                throw error;
             }
-
-            setCachedMeetings({ ...cachedMeetings, [dayString]: data as any });
-            setMeetings(data as any);
-        };
-
-        fetchMeetings();
-    }, [time]);
+            return data as unknown as CalendarMeeting[];
+        },
+        { staleTime: CALENDAR_STALE },
+    );
 
     return (
         <div>
@@ -136,11 +122,6 @@ const Index = () => {
                         }}
                         onMonthChange={(month) => {
                             setCurrentMonth(month);
-                            setLoading(true);
-                            updateHighlightedDays(
-                                month.getMonth(),
-                                month.getFullYear(),
-                            );
                         }}
                         // other months' days aren't shown: they couldn't be chosen,
                         // and dimmed they read as unavailable yet were announced as
@@ -148,19 +129,20 @@ const Index = () => {
                         weekStartsOn={1}
                         // the arrows are drawn at 24px, so a larger invisible area takes the tap
                         classNames={{
-                            month_grid: "max-sm:scale-125 origin-top-left",
+                            // fills the card on phones, so it fits any screen or text size
+                            month_grid: "max-sm:w-full max-sm:table-fixed",
                             button_previous:
                                 "fill-typography-1 z-10 relative sm:hover:bg-layer-2 rounded-full before:absolute before:-inset-1.5 before:content-['']",
                             button_next:
                                 "fill-typography-1 z-10 relative sm:hover:bg-layer-2 rounded-full before:absolute before:-inset-1.5 before:content-['']",
-                            root: "max-sm:pb-16 p-5 rounded-xl p-3 bg-layer-1 shadow-control relative max-md:w-full",
+                            root: "rounded-xl p-3 bg-layer-1 shadow-control relative max-md:w-full",
                             nav: "absolute flex gap-2 ml-16 right-5 top-3.5",
                             month_caption:
-                                "relative -top-1 mb-3 text-typography-1 important",
+                                "relative -top-1 mb-3 pr-16 text-typography-1 important",
                             weekday: "font-normal text-typography-2",
                             day: "p-0 text-center text-typography-1",
                             day_button:
-                                "sm:w-10 sm:h-10 w-8 h-8 grid place-items-center rounded-md transition-colors sm:hover:bg-layer-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1",
+                                "sm:size-10 max-sm:h-11 max-sm:w-full grid place-items-center rounded-md transition-colors sm:hover:bg-layer-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1",
                             selected:
                                 "bg-accent text-white rounded-md pointer-events-none",
                             outside: "opacity-50 pointer-events-none",
@@ -181,7 +163,12 @@ const Index = () => {
                     />
 
                     <div className={"w-full"}>
-                        <DaySchedule day={time} meetings={meetings} />
+                        <DaySchedule
+                            day={time}
+                            meetings={dayQuery.data}
+                            failed={!dayQuery.data && !!dayQuery.error}
+                            onRetry={dayQuery.refetch}
+                        />
                     </div>
                 </div>
             </LoginGate>
