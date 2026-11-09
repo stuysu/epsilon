@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { Link } from "react-router-dom";
 import Skeleton from "./Skeleton";
-import { sizedPicture } from "../../utils/sizedPicture";
 
 type Props = {
     name?: Organization["name"];
@@ -61,7 +60,7 @@ const OrgBlock = ({
                         >
                             {/*background glow*/}
                             <img
-                                src={sizedPicture(picture, fluid ? 320 : 176)}
+                                src={picture}
                                 alt=""
                                 className={box}
                                 style={{
@@ -78,7 +77,7 @@ const OrgBlock = ({
                             <img
                                 onLoad={() => setImgLoaded(true)}
                                 onError={() => setImgFailed(true)}
-                                src={sizedPicture(picture, fluid ? 320 : 176)}
+                                src={picture}
                                 alt={name}
                                 className={box}
                                 style={{

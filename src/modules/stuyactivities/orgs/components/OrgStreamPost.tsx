@@ -11,7 +11,6 @@ import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import { Avatar } from "radix-ui";
 import UserDialog from "../../../../components/ui/overlays/UserDialog";
 import DisplayLinks from "../../../../components/DisplayLinks";
-import { sizedPicture } from "../../../../utils/sizedPicture";
 
 /* This post component will serve as both the org_admin and member post. depending on role, differeing functionality */
 const OrgStreamPost = ({
@@ -94,7 +93,7 @@ const OrgStreamPost = ({
                 <Avatar.Root className="w-10 h-10 rounded-md overflow-hidden block">
                     <Avatar.Image
                         className="size-full object-cover"
-                        src={sizedPicture(content.organizations?.picture, 40)}
+                        src={content.organizations?.picture || ""}
                         alt={content.organizations?.name}
                     />
                     <Avatar.Fallback

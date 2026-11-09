@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
-import { sizedPicture } from "../../../../utils/sizedPicture";
 
 const PNG_SIZE = 1024;
 
@@ -65,7 +64,7 @@ const ClubQRCode = ({
         const fallback = letterImage(name || "");
         setPng(undefined);
         (picture
-            ? toDataUrl(sizedPicture(picture, 200)!).catch(() => fallback)
+            ? toDataUrl(picture).catch(() => fallback)
             : Promise.resolve(fallback)
         ).then((src) => !stale && setLogo(src));
         return () => {

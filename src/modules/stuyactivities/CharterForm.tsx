@@ -24,6 +24,11 @@ import LoginGate from "../../components/ui/content/LoginGate";
 import UserContext from "../../contexts/UserContext";
 import { Helmet } from "react-helmet";
 import { functionErrorText } from "../../utils/FunctionErrors";
+import {
+    clubPicturePath,
+    clubPictureUploadOptions,
+    prepareClubPicture,
+} from "../../utils/clubPicture";
 
 type FormType = {
     name: string;
@@ -241,11 +246,16 @@ const CharterForm = () => {
         /* Create picture if organization is successfully created */
         /* convert picture to url */
         if (formData.picture) {
-            const filePath = `org-pictures/${orgId}/${Date.now()}-${formData.url}-profile${formData.picture.name.split(".").pop()}`;
+            const prepared = await prepareClubPicture(formData.picture);
+            const filePath = clubPicturePath(orgId, formData.url, prepared.ext);
             const { data: storageData, error: storageError } =
                 await supabase.storage
                     .from("public-files")
-                    .upload(filePath, formData.picture);
+                    .upload(
+                        filePath,
+                        prepared.blob,
+                        clubPictureUploadOptions(prepared.type),
+                    );
 
             if (storageError || !storageData) {
                 /* attempt to delete organization */

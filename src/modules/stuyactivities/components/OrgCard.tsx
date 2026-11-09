@@ -7,7 +7,6 @@ import Avatar from "../../../components/ui/Avatar";
 import { MeetingChip } from "../orgs/components/MeetingChips";
 
 import { capitalizeWords, sortWeekdays } from "../../../utils/DataFormatters";
-import { sizedPicture } from "../../../utils/sizedPicture";
 const dayLetters: Record<string, string> = {
     MONDAY: "M",
     TUESDAY: "T",
@@ -111,7 +110,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
 
                             {/* Background avatar with blur effect */}
                             <Avatar
-                                src={sizedPicture(organization.picture, 120)}
+                                src={organization.picture || ""}
                                 style={{
                                     display: imgLoaded ? "block" : "none",
                                     width: "120px",
@@ -136,7 +135,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
 
                             <Avatar
                                 onLoad={() => setImgLoaded(true)}
-                                src={sizedPicture(organization.picture, 120)}
+                                src={organization.picture || ""}
                                 style={{
                                     transition: "opacity 0.3s ease",
                                     opacity:
