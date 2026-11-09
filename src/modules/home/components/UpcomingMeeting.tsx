@@ -3,6 +3,7 @@ import MeetingPreview from "../../../components/ui/overlays/MeetingPreview";
 import MeetingChips from "../../stuyactivities/orgs/components/MeetingChips";
 import { Avatar } from "radix-ui";
 import pressable from "../../../utils/pressable";
+import { sizedPicture } from "../../../utils/sizedPicture";
 
 const UpcomingMeeting = ({
     id,
@@ -51,7 +52,7 @@ const UpcomingMeeting = ({
                         <Avatar.Root className="size-full">
                             <Avatar.Image
                                 className="size-full object-cover"
-                                src={org_picture}
+                                src={sizedPicture(org_picture, 64)}
                                 alt={org_name}
                             />
                             <Avatar.Fallback

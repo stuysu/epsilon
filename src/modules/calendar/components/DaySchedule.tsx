@@ -1,4 +1,4 @@
-import { motion } from "framer-motion";
+import { motion, useReducedMotion } from "framer-motion";
 import { Dayjs } from "dayjs";
 import { monthNames } from "../../../utils/TimeStrings";
 import React, { useEffect, useState } from "react";
@@ -12,6 +12,9 @@ type Props = {
     day: Dayjs;
     // undefined while the day loads
     meetings?: CalendarMeeting[];
+    // the day the listed meetings belong to; behind `day` while it loads
+    shownDay?: string;
+    pending?: boolean;
     failed?: boolean;
     onRetry?: () => void;
 };
@@ -49,7 +52,15 @@ export const sortMeetingsByRoom = (
 };
 
 /* Schedule of meetings for a given day */
-const DaySchedule = ({ day, meetings, failed, onRetry }: Props) => {
+const DaySchedule = ({
+    day,
+    meetings,
+    shownDay,
+    pending,
+    failed,
+    onRetry,
+}: Props) => {
+    const reduceMotion = useReducedMotion();
     const STORAGE_KEY = "epsilon_daySchedule_sortDesc";
     const [sortDesc, setSortDesc] = useState<boolean>(() => {
         try {
@@ -105,10 +116,14 @@ const DaySchedule = ({ day, meetings, failed, onRetry }: Props) => {
                 </div>
             </div>
 
+            {/* fades between days instead of resizing, which stretched the rows */}
             <motion.div
-                layout
+                key={failed ? "failed" : shownDay ?? "loading"}
+                initial={reduceMotion ? false : { opacity: 0 }}
+                animate={{ opacity: pending ? 0.5 : 1 }}
+                transition={{ duration: 0.15, ease: "easeOut" }}
                 className="flex flex-col gap-[2.4px] overflow-hidden rounded-lg"
-                aria-busy={!meetings && !failed}
+                aria-busy={(!meetings && !failed) || pending}
             >
                 {failed ? (
                     <ContentUnavailable
