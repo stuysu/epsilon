@@ -81,8 +81,8 @@ const OrgMember = ({
                         (filledRole && !action ? " max-sm:hidden" : "") +
                         (action
                             ? " shrink-0 flex flex-col items-end gap-2 sm:flex-row sm:items-center"
-                            : /* keep the chip beside the name on phones; long roles truncate instead of wrapping */
-                              " shrink-0 min-w-0 max-sm:max-w-[50%]")
+                            : /* the name keeps most of the row; long roles cut off instead of wrapping */
+                              " min-w-0 max-w-[45%] max-sm:max-w-[50%]")
                     }
                 >
                     <ToggleChip title={l1} selectable={false} />

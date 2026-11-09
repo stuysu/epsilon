@@ -30,7 +30,9 @@ const ToggleChip: React.FC<ToggleChipProps> = ({
                     : "cursor-default bg-layer-2 text-typography-2 data-[state=on]:bg-accent data-[state=on]:text-white"
             }`}
         >
-            {title}
+            <span className="min-w-0 truncate" title={title}>
+                {title}
+            </span>
         </Toggle.Root>
     );
 };
