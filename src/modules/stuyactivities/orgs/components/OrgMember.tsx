@@ -67,9 +67,9 @@ const OrgMember = ({
                     >{`${first_name} ${last_name}`}</h4>
                     <p className={"truncate"}>{<>{email}</>}</p>
                     {filledRole && l1 && (
-                        <p className={"truncate text-typography-3 sm:hidden"}>
+                        <span className="important mt-1.5 w-fit max-w-full truncate rounded-full bg-layer-3 px-3 py-1 text-xs text-typography-2 sm:hidden">
                             {l1}
-                        </p>
+                        </span>
                     )}
                 </div>
             </div>
