@@ -68,6 +68,8 @@ const SubNavBar: FC = () => {
             // on phones the header holding this sticks, so a site alert above can't cover it
             style={{
                 overflowX: "scroll",
+                // sideways only; the tap areas are taller than the bar
+                overflowY: "hidden",
                 scrollbarWidth: "none",
                 position: "relative",
                 backgroundColor: isMobile ? "var(--blur-dark)" : undefined,
