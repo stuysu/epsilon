@@ -87,7 +87,7 @@ const OrgMeeting = ({
                 <div
                     className={`pointer-events-none transition-opacity sm:ml-auto ${
                         hasActions
-                            ? "[@media(hover:hover)]:group-hover:opacity-0 [@media(hover:hover)]:group-focus-within:opacity-0"
+                            ? "[@media(hover:hover)]:group-hover:opacity-0 [@media(hover:hover)]:group-has-[[data-actions]:focus-within]:opacity-0"
                             : ""
                     }`}
                 >
@@ -100,7 +100,10 @@ const OrgMeeting = ({
             </div>
             {hasActions && (
                 <>
+                    {/* the card keeps focus after its preview closes, so the
+                        chips only hide for focus on these buttons */}
                     <div
+                        data-actions
                         className={
                             "absolute inset-y-0 right-0 hidden items-center gap-2 pr-4 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100 [@media(hover:hover)]:flex"
                         }
