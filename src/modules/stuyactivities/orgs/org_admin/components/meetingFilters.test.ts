@@ -47,8 +47,41 @@ const run = (f: Partial<MeetingFilters>) =>
     ).map((m) => m.id);
 
 describe("filterMeetings", () => {
-    it("lists newest first by default", () => {
+    it("lists past meetings newest first by default", () => {
         expect(run({})).toEqual([3, 2, 1, 4]);
+    });
+
+    it("puts the live or next meeting first, then the rest by date", () => {
+        const at = (h: number) => new Date(NOW + h * 3600_000).toISOString();
+        const mixed = [
+            { id: 10, title: "past", start_time: at(-48), end_time: at(-47) },
+            { id: 11, title: "far", start_time: at(72), end_time: at(73) },
+            { id: 12, title: "live", start_time: at(-1), end_time: at(1) },
+            { id: 13, title: "soon", start_time: at(2), end_time: at(3) },
+            { id: 14, title: "older", start_time: at(-96), end_time: at(-95) },
+        ];
+        const ids = (f: Partial<MeetingFilters>) =>
+            filterMeetings(
+                mixed,
+                { ...DEFAULT_MEETING_FILTERS, ...f },
+                () => 0,
+                NOW,
+            ).map((m) => m.id);
+        expect(ids({})).toEqual([12, 11, 13, 10, 14]);
+        // with nothing live, the next meeting goes on top
+        expect(
+            filterMeetings(
+                mixed.filter((m) => m.id !== 12),
+                DEFAULT_MEETING_FILTERS,
+                () => 0,
+                NOW,
+            ).map((m) => m.id),
+        ).toEqual([13, 11, 10, 14]);
+        // upcoming meetings aren't missing attendance; "past week" stops at today
+        expect(ids({ status: "missing" })).toEqual([12, 10, 14]);
+        expect(ids({ when: "week" })).toEqual([12, 13, 10, 14]);
+        expect(ids({ status: "upcoming" })).toEqual([13, 11]);
+        expect(ids({ status: "past" })).toEqual([12, 10, 14]);
     });
 
     it("searches title, room, and dates in several formats", () => {

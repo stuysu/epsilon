@@ -69,13 +69,18 @@ const roleFilterOptions: { value: RoleFilter; label: string }[] = [
 
 const isLeader = (role?: string) => role === "ADMIN" || role === "CREATOR";
 
+// matches attendance_checkin_opens_before() in the database
+const CHECKIN_OPENS_MS = 15 * 60 * 1000;
+
 const MeetingCard = ({
     meeting,
     live,
+    upcoming = false,
     memberIds,
 }: {
     meeting: AttendanceMeeting;
     live: boolean;
+    upcoming?: boolean;
     memberIds: Set<number>;
 }) => {
     const navigate = useNavigate();
@@ -94,7 +99,7 @@ const MeetingCard = ({
                 () => navigate(`${meeting.id}`, { state: FROM_LIST }),
                 { role: "link" },
             )}
-            aria-label={`${meeting.title}, ${live ? "happening now" : "finished"}`}
+            aria-label={`${meeting.title}, ${upcoming ? "upcoming" : live ? "happening now" : "finished"}`}
         >
             {live && (
                 <span
@@ -114,9 +119,15 @@ const MeetingCard = ({
                         room_name={meeting.rooms?.name}
                     />
                 </div>
-                <StatusPill>{live ? "Happening Now" : "Finished"}</StatusPill>
+                {upcoming ? (
+                    <StatusPill>Upcoming</StatusPill>
+                ) : (
+                    <StatusPill>
+                        {live ? "Happening Now" : "Finished"}
+                    </StatusPill>
+                )}
             </div>
-            {taken || live ? (
+            {upcoming ? null : taken || live ? (
                 <>
                     <ProgressBar
                         value={memberCount ? present / memberCount : 0}
@@ -188,7 +199,11 @@ const AttendanceOverview = () => {
         from: DAY.test(params.get("from") ?? "") ? params.get("from")! : "",
         to: DAY.test(params.get("to") ?? "") ? params.get("to")! : "",
         status: pick(params.get("status"), meetingStatusOptions, "all"),
-        sort: pick(params.get("sort"), meetingSortOptions, "newest"),
+        sort: pick(
+            params.get("sort"),
+            meetingSortOptions,
+            DEFAULT_MEETING_FILTERS.sort,
+        ),
     };
     const setMeetingFilters = (patch: Partial<MeetingFilters>) => {
         const next = { ...meetingFilters, ...patch };
@@ -258,14 +273,19 @@ const AttendanceOverview = () => {
                   last_name: m.users?.last_name,
                   joined_at: joinDates.get(m.id as number),
               }));
-    const held = (meetings || []).filter(
-        (m) => new Date(m.start_time).getTime() <= now,
-    );
     const isLive = (m: AttendanceMeeting) =>
         new Date(m.start_time).getTime() <= now &&
         new Date(m.end_time).getTime() >= now;
-    const current = held.find(isLive);
-    const shownMeetings = filterMeetings(held, meetingFilters, (m) =>
+    // check-in opens before the start, so a meeting about to start counts
+    const current =
+        (meetings || []).find(isLive) ??
+        (meetings || [])
+            .filter((m) => {
+                const start = new Date(m.start_time).getTime();
+                return start > now && start - CHECKIN_OPENS_MS <= now;
+            })
+            .sort((a, b) => a.start_time.localeCompare(b.start_time))[0];
+    const shownMeetings = filterMeetings(meetings || [], meetingFilters, (m) =>
         countMembers(m, memberIds),
     );
     const filtering = filtersActive(meetingFilters);
@@ -301,9 +321,11 @@ const AttendanceOverview = () => {
                             navigate(`${current.id}`, { state: FROM_LIST })
                         }
                     >
-                        {current
-                            ? "Take Attendance for Current Meeting"
-                            : "No Active Meetings"}
+                        {!current
+                            ? "No Active Meetings"
+                            : isLive(current)
+                              ? "Take Attendance for Current Meeting"
+                              : "Take Attendance for Next Meeting"}
                     </AsyncButton>
                 </section>
                 <p>
@@ -333,12 +355,12 @@ const AttendanceOverview = () => {
             ) : !meetings ? (
                 <></>
             ) : view === "meetings" ? (
-                held.length === 0 ? (
+                meetings.length === 0 ? (
                     <ContentUnavailable
                         icon="bx-calendar-x"
                         iconColor="text-yellow"
                         title="No Meetings Yet"
-                        description="This Activity has not held any meetings yet. Once one starts, you can take its attendance here."
+                        description="This Activity has no meetings yet. Schedule one in the Scheduler, then take its attendance here."
                     />
                 ) : (
                     <>
@@ -364,7 +386,9 @@ const AttendanceOverview = () => {
                                             label="Filter meetings"
                                             value={meetingFilters.status}
                                             onChange={(status) =>
-                                                setMeetingFilters({ status })
+                                                setMeetingFilters({
+                                                    status,
+                                                })
                                             }
                                             options={meetingStatusOptions}
                                         />
@@ -372,7 +396,9 @@ const AttendanceOverview = () => {
                                             compact
                                             value={meetingFilters.sort}
                                             onChange={(sort) =>
-                                                setMeetingFilters({ sort })
+                                                setMeetingFilters({
+                                                    sort,
+                                                })
                                             }
                                             options={meetingSortOptions}
                                             label="Sort meetings"
@@ -387,8 +413,9 @@ const AttendanceOverview = () => {
                                     }
                                 >
                                     <p role="status">
-                                        {shownMeetings.length} of {held.length}{" "}
-                                        {held.length === 1
+                                        {shownMeetings.length} of{" "}
+                                        {meetings.length}{" "}
+                                        {meetings.length === 1
                                             ? "meeting"
                                             : "meetings"}
                                         {dateLabel && ` · ${dateLabel}`}
@@ -416,6 +443,10 @@ const AttendanceOverview = () => {
                                     key={meeting.id}
                                     meeting={meeting}
                                     live={isLive(meeting)}
+                                    upcoming={
+                                        new Date(meeting.start_time).getTime() >
+                                        now
+                                    }
                                     memberIds={memberIds}
                                 />
                             ))}
