@@ -67,7 +67,7 @@ const OrgMember = ({
                     >{`${first_name} ${last_name}`}</h4>
                     <p className={"truncate"}>{<>{email}</>}</p>
                     {filledRole && l1 && (
-                        <span className="important mt-1.5 w-fit max-w-full truncate rounded-full bg-layer-3 px-3 py-1 text-xs text-typography-2 sm:hidden">
+                        <span className="important mt-1.5 w-fit max-w-full truncate rounded-2xl bg-layer-2 px-2.5 py-0.5 text-xs text-typography-2 shadow-control sm:hidden">
                             {l1}
                         </span>
                     )}
@@ -85,13 +85,7 @@ const OrgMember = ({
                               " shrink-0 min-w-0 max-sm:max-w-[50%]")
                     }
                 >
-                    {filledRole ? (
-                        <span className="important inline-flex min-h-8 max-w-full items-center justify-center rounded-full bg-layer-3 px-4 py-1.5 text-center text-[0.8rem] leading-tight text-typography-2">
-                            {l1}
-                        </span>
-                    ) : (
-                        <ToggleChip title={l1} selectable={false} />
-                    )}
+                    <ToggleChip title={l1} selectable={false} />
                     {action}
                 </div>
             )}
