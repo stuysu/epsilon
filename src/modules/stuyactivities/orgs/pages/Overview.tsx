@@ -22,7 +22,6 @@ import DisplayLinks from "../../../../components/DisplayLinks";
 import Avatar from "../../../../components/ui/Avatar";
 import pressable from "../../../../utils/pressable";
 import { useInvites } from "../../../../contexts/InvitesProvider";
-import { sizedPicture } from "../../../../utils/sizedPicture";
 
 const Overview = () => {
     const navigate = useNavigate();
@@ -257,7 +256,7 @@ const Overview = () => {
                         }}
                     ></div>
                     <Avatar
-                        src={sizedPicture(organization.picture, 240)}
+                        src={organization.picture || ""}
                         style={{
                             width: "240px",
                             height: "240px",
@@ -270,7 +269,7 @@ const Overview = () => {
                         }}
                     />
                     <Avatar
-                        src={sizedPicture(organization.picture, 240)}
+                        src={organization.picture || ""}
                         style={{
                             width: "240px",
                             height: "240px",

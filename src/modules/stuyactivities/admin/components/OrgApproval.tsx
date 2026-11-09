@@ -13,7 +13,6 @@ import {
 } from "../../../../utils/FunctionErrors";
 import { sortWeekdays } from "../../../../utils/DataFormatters";
 import UserDialog from "../../../../components/ui/overlays/UserDialog";
-import { sizedPicture } from "../../../../utils/sizedPicture";
 
 const OrgApproval = ({
     onBack,
@@ -130,7 +129,7 @@ const OrgApproval = ({
                     <h4>Picture</h4>
                     {org.picture ? (
                         <Avatar
-                            src={sizedPicture(org.picture, 96)}
+                            src={org.picture}
                             alt={org.name}
                             style={{
                                 width: "150px",

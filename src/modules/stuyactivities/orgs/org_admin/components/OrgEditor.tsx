@@ -25,6 +25,11 @@ import { PUBLIC_URL } from "../../../../../config/constants";
 import { useNavigate } from "react-router-dom";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
 import Avatar from "../../../../../components/ui/Avatar";
+import {
+    clubPicturePath,
+    clubPictureUploadOptions,
+    prepareClubPicture,
+} from "../../../../../utils/clubPicture";
 
 type Props = {
     organization: Partial<Organization>; // Make organization a prop to allow component to become reusable
@@ -447,12 +452,21 @@ const OrgEditor = ({
             // picture is different, but needs to be uploaded first
             /* Note: any indication of the picture failing to upload will kill the entire org edit process */
 
-            const filePath = `org-pictures/${organization.id}/${Date.now()}-${organization.url}-profile${(editPicture as File)!.name.split(".").pop()}`;
+            const prepared = await prepareClubPicture(editPicture as File);
+            const filePath = clubPicturePath(
+                organization.id,
+                organization.url,
+                prepared.ext,
+            );
 
             const { data: storageData, error: storageError } =
                 await supabase.storage
                     .from("public-files")
-                    .upload(filePath, editPicture!);
+                    .upload(
+                        filePath,
+                        prepared.blob,
+                        clubPictureUploadOptions(prepared.type),
+                    );
 
             if (storageError || !storageData) {
                 return enqueueSnackbar(
