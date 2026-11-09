@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
+import { sizedPicture } from "../../../../utils/sizedPicture";
 
 const PNG_SIZE = 1024;
 
@@ -10,9 +11,10 @@ const letterImage = (name: string) =>
         `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><rect width="100" height="100" rx="18" fill="#2a2a2a"/><text x="50" y="68" font-family="Inter, Arial, sans-serif" font-size="56" font-weight="600" fill="#ffffff" text-anchor="middle">${(name.trim().charAt(0) || "?").toUpperCase().replace(/[<&>"]/g, "")}</text></svg>`,
     );
 
-/* the logo has to be inlined, or the canvas can't export the image */
+/* the logo has to be inlined, or the canvas can't export the image.
+   no-store: the page's avatar caches it without CORS headers, which fails this fetch */
 const toDataUrl = async (src: string) => {
-    const response = await fetch(src, { mode: "cors" });
+    const response = await fetch(src, { mode: "cors", cache: "no-store" });
     if (!response.ok) throw new Error("picture unavailable");
     const blob = await response.blob();
     return new Promise<string>((resolve, reject) => {
@@ -63,7 +65,7 @@ const ClubQRCode = ({
         const fallback = letterImage(name || "");
         setPng(undefined);
         (picture
-            ? toDataUrl(picture).catch(() => fallback)
+            ? toDataUrl(sizedPicture(picture, 200)!).catch(() => fallback)
             : Promise.resolve(fallback)
         ).then((src) => !stale && setLogo(src));
         return () => {

@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 
 import { supabase } from "../../lib/supabaseClient";
-import useCachedQuery from "../../lib/useCachedQuery";
+import useCachedQuery, { useCacheScope } from "../../lib/useCachedQuery";
+import { fetchCached, hashKey } from "../../lib/queryCache";
 
 import { useSnackbar } from "notistack";
 import { DayPicker } from "react-day-picker";
@@ -12,6 +13,42 @@ import LoginGate from "../../components/ui/content/LoginGate";
 import { Helmet } from "react-helmet";
 
 const CALENDAR_STALE = 2 * 60_000;
+
+const dayKey = (day: Dayjs) => ["calendar", "day", day.format("YYYY-MM-DD")];
+
+const loadDay = async (day: Dayjs) => {
+    const dayStart = wallClockToISO(day.startOf("day"));
+    const nextDayStart = wallClockToISO(day.add(1, "day").startOf("day"));
+    const { data, error } = await supabase
+        .from("meetings")
+        .select(
+            `
+      id,
+      title,
+      description,
+      is_public,
+      start_time,
+      end_time,
+      rooms (
+        id,
+        name,
+        floor
+      ),
+      organizations!inner (
+        id,
+        url,
+        name,
+        picture
+      ),
+      advisor
+    `,
+        )
+        .neq("organizations.url", "epsilon") // internal maintenance meetings
+        .gte("start_time", dayStart)
+        .lt("start_time", nextDayStart);
+    if (error || !data) throw error ?? new Error("No meetings returned");
+    return data as unknown as CalendarMeeting[];
+};
 
 const Index = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -50,50 +87,47 @@ const Index = () => {
         ).data ?? [];
 
     const dayQuery = useCachedQuery(
-        ["calendar", "day", time.format("YYYY-MM-DD")],
+        dayKey(time),
         async () => {
-            const dayStart = wallClockToISO(time.startOf("day"));
-            const nextDayStart = wallClockToISO(
-                time.add(1, "day").startOf("day"),
-            );
-            const { data, error } = await supabase
-                .from("meetings")
-                .select(
-                    `
-          id,
-          title,
-          description,
-          is_public,
-          start_time,
-          end_time,
-          rooms (
-            id,
-            name,
-            floor
-          ),
-          organizations!inner (
-            id,
-            url,
-            name,
-            picture
-          ),
-          advisor
-        `,
-                )
-                .neq("organizations.url", "epsilon") // internal maintenance meetings
-                .gte("start_time", dayStart)
-                .lt("start_time", nextDayStart);
-            if (error || !data) {
+            try {
+                return await loadDay(time);
+            } catch (error) {
                 enqueueSnackbar(
                     "Error fetching meetings. Contact it@stuysu.org for support.",
                     { variant: "error" },
                 );
                 throw error;
             }
-            return data as unknown as CalendarMeeting[];
         },
         { staleTime: CALENDAR_STALE },
     );
+
+    // the days on either side load in the background, so stepping through is instant
+    const scope = useCacheScope();
+    useEffect(() => {
+        if (!dayQuery.data) return;
+        for (const day of [time.subtract(1, "day"), time.add(1, "day")]) {
+            fetchCached(
+                hashKey(scope, dayKey(day)),
+                () => loadDay(day),
+                CALENDAR_STALE,
+            ).catch(() => {});
+        }
+    }, [dayQuery.data, time, scope]);
+
+    // the last loaded day stays up, dimmed, until the next one arrives
+    const [shown, setShown] = useState<{
+        day: string;
+        meetings: CalendarMeeting[];
+    }>();
+    useEffect(() => {
+        if (dayQuery.data)
+            setShown({
+                day: time.format("YYYY-MM-DD"),
+                meetings: dayQuery.data,
+            });
+    }, [dayQuery.data, time]);
+    const pending = !dayQuery.data && !dayQuery.error && !!shown;
 
     return (
         <div>
@@ -165,7 +199,16 @@ const Index = () => {
                     <div className={"w-full"}>
                         <DaySchedule
                             day={time}
-                            meetings={dayQuery.data}
+                            meetings={
+                                dayQuery.data ??
+                                (dayQuery.error ? undefined : shown?.meetings)
+                            }
+                            shownDay={
+                                dayQuery.data
+                                    ? time.format("YYYY-MM-DD")
+                                    : shown?.day
+                            }
+                            pending={pending}
                             failed={!dayQuery.data && !!dayQuery.error}
                             onRetry={dayQuery.refetch}
                         />

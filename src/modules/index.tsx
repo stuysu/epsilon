@@ -4,7 +4,7 @@ import Loading from "../components/ui/content/Loading";
 import UserContext from "../contexts/UserContext";
 
 import { Route, Routes, useLocation } from "react-router-dom";
-import React, { lazy, Suspense, useContext } from "react";
+import React, { lazy, Suspense, useContext, useEffect } from "react";
 
 // Pages
 import Index from "./home";
@@ -40,6 +40,16 @@ const OrgRouter = lazy(() => import("./stuyactivities/orgs"));
 const AdminRouter = lazy(() => import("./stuyactivities/admin"));
 const OpportunitiesRouter = lazy(() => import("./opportunities"));
 
+/* loaded while idle so the first visit to these pages doesn't wait */
+const warmPages = () => {
+    for (const load of [
+        () => import("./stuyactivities/Catalog"),
+        () => import("./stuyactivities/orgs"),
+        () => import("./opportunities"),
+    ])
+        load().catch(() => {});
+};
+
 const Pages = () => {
     const location = useLocation();
     const user: UserContextType = useContext(UserContext);
@@ -49,6 +59,13 @@ const Pages = () => {
         theme.effectiveMode === "dark"
             ? `${PUBLIC_URL}/wordmark.svg`
             : `${PUBLIC_URL}/wordmark_light.svg`;
+
+    useEffect(() => {
+        if (!user.signed_in) return;
+        const idle =
+            window.requestIdleCallback ?? ((fn) => setTimeout(fn, 2000));
+        idle(warmPages);
+    }, [user.signed_in]);
 
     return (
         <div className="bg-bg min-h-dvh">
@@ -104,38 +121,50 @@ const Pages = () => {
                             : "frame"
                     }`}
                 >
-                    <Routes>
-                        <Route path={"/"} Component={Index} />
-                        <Route path={"/arista-landing"} Component={Arista} />
-                        <Route path={"/stuyactivities"} Component={Catalog} />
-                        <Route
-                            path={"/communications"}
-                            Component={CommsSettings}
-                        />
-                        <Route
-                            path={"/preferences"}
-                            Component={UserPreferences}
-                        />
-                        <Route path={"/profile"} Component={Profile} />
-                        <Route path={"/create"} Component={Create} />
-                        <Route path={"/charter"} Component={Charter} />
-                        <Route path={"/invites"} Component={Invites} />
-                        <Route path={"/vote"} Component={Vote} />
-                        <Route path={"/about"} Component={AboutIndex} />
-                        <Route path={"/meetings"} Component={CalendarIndex} />
-                        <Route path={"/rules"} Component={Regulations} />
-                        <Route path={"/archives"} Component={Archives} />
-                        <Route
-                            path={"/activities-support"}
-                            Component={Support}
-                        />
-                        <Route path={"/admin/*"} Component={AdminRouter} />
-                        <Route
-                            path={"/opportunities/*"}
-                            Component={OpportunitiesRouter}
-                        />
-                        <Route path={"/:orgUrl/*"} Component={OrgRouter} />
-                    </Routes>
+                    {/* only the page waits on a lazy load; the header and footer stay */}
+                    <Suspense fallback={<Loading />}>
+                        <Routes>
+                            <Route path={"/"} Component={Index} />
+                            <Route
+                                path={"/arista-landing"}
+                                Component={Arista}
+                            />
+                            <Route
+                                path={"/stuyactivities"}
+                                Component={Catalog}
+                            />
+                            <Route
+                                path={"/communications"}
+                                Component={CommsSettings}
+                            />
+                            <Route
+                                path={"/preferences"}
+                                Component={UserPreferences}
+                            />
+                            <Route path={"/profile"} Component={Profile} />
+                            <Route path={"/create"} Component={Create} />
+                            <Route path={"/charter"} Component={Charter} />
+                            <Route path={"/invites"} Component={Invites} />
+                            <Route path={"/vote"} Component={Vote} />
+                            <Route path={"/about"} Component={AboutIndex} />
+                            <Route
+                                path={"/meetings"}
+                                Component={CalendarIndex}
+                            />
+                            <Route path={"/rules"} Component={Regulations} />
+                            <Route path={"/archives"} Component={Archives} />
+                            <Route
+                                path={"/activities-support"}
+                                Component={Support}
+                            />
+                            <Route path={"/admin/*"} Component={AdminRouter} />
+                            <Route
+                                path={"/opportunities/*"}
+                                Component={OpportunitiesRouter}
+                            />
+                            <Route path={"/:orgUrl/*"} Component={OrgRouter} />
+                        </Routes>
+                    </Suspense>
                 </div>
                 {user.signed_in && (
                     <footer

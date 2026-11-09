@@ -9,6 +9,7 @@ import ItemList from "../../components/ui/lists/ItemList";
 import { PendingInvite, useInvites } from "../../contexts/InvitesProvider";
 import { supabase } from "../../lib/supabaseClient";
 import { functionErrorText } from "../../utils/FunctionErrors";
+import { sizedPicture } from "../../utils/sizedPicture";
 
 const Invites = () => {
     const { invites, refresh } = useInvites();
@@ -76,7 +77,10 @@ const Invites = () => {
                                     }
                                 >
                                     <Avatar
-                                        src={invite.organizations.picture}
+                                        src={sizedPicture(
+                                            invite.organizations.picture,
+                                            40,
+                                        )}
                                         alt=""
                                         className={"rounded-md"}
                                     >

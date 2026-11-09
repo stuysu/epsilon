@@ -11,6 +11,7 @@ import React from "react";
 import { AnimatePresence, motion } from "framer-motion";
 import DisplayLinks from "../../DisplayLinks";
 import keepOpenOnToast from "./keepOpenOnToast";
+import { sizedPicture } from "../../../utils/sizedPicture";
 
 type Props = {
     id?: number;
@@ -112,7 +113,10 @@ const MeetingPreview = ({
                                             <Avatar.Root className="size-8 shrink-0 block rounded-md overflow-hidden">
                                                 <Avatar.Image
                                                     className="size-full object-cover"
-                                                    src={organizationPicture}
+                                                    src={sizedPicture(
+                                                        organizationPicture,
+                                                        32,
+                                                    )}
                                                     alt={organizationName}
                                                 />
                                                 <Avatar.Fallback
