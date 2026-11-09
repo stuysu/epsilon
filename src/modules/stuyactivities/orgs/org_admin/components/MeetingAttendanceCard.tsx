@@ -1,6 +1,7 @@
 import { useNavigate } from "react-router-dom";
-import { toNewYork } from "../../../../../utils/NewYorkTime";
 import pressable from "../../../../../utils/pressable";
+import { MeetingChip, RoomChip } from "../../components/MeetingChips";
+import { toNewYork } from "../../../../../utils/NewYorkTime";
 
 const MeetingAttendanceCard = ({
     title,
@@ -30,9 +31,20 @@ const MeetingAttendanceCard = ({
             }
             {...(clickable ? pressable(handleClick, { role: "link" }) : {})}
         >
-            <h3>{title}</h3>
-            <p>{toNewYork(startTime).format("L LT")}</p>
-            <p>Room: {room || "Virtual"}</p>
+            <h3 className={"mb-3"}>{title}</h3>
+            <div className={"flex flex-wrap gap-1.5"}>
+                <MeetingChip
+                    icon="bx-calendar"
+                    iconClass="text-blue"
+                    label={toNewYork(startTime).format("M/D")}
+                />
+                <MeetingChip
+                    icon="bx-time-five"
+                    iconClass="text-yellow"
+                    label={toNewYork(startTime).format("h:mm A")}
+                />
+                <RoomChip roomName={room} />
+            </div>
         </div>
     );
 };

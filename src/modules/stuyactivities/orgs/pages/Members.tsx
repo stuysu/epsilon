@@ -12,6 +12,7 @@ import {
 import useMembershipJoinDates from "../../../../utils/useMembershipJoinDates";
 import LoginGate from "../../../../components/ui/content/LoginGate";
 import ItemList from "../../../../components/ui/lists/ItemList";
+import OrgAdvisors from "../components/OrgAdvisors";
 import SearchInput from "../../../../components/ui/input/SearchInput";
 import SortSelect from "../../../../components/ui/input/SortSelect";
 
@@ -29,7 +30,7 @@ const Members = () => {
     const filteredMembers = useMemo(() => {
         if (!organization?.memberships) return [];
         const matching = organization.memberships
-            .filter((member) => member.active)
+            .filter((member) => member.active && member.role !== "ADVISOR")
             .filter((member) => {
                 const name =
                     `${member.users?.first_name ?? ""} ${member.users?.last_name ?? ""}`.toLowerCase();
@@ -64,18 +65,22 @@ const Members = () => {
     return (
         <LoginGate page="view members">
             <section className="w-full mt-2 mb-10">
-                <h1 className="sr-only">Members</h1>
-                <div className="flex flex-col sm:flex-row sm:gap-3">
+                <h1 className="mb-6 mt-2">Members</h1>
+                <div className="mb-5">
                     <SearchInput
-                        placeholder="Search members by name or email..."
+                        containerClassName="mb-0"
+                        placeholder="Search people"
                         value={search}
                         onChange={setSearch}
-                    />
-                    <SortSelect
-                        value={sort}
-                        onChange={setSort}
-                        options={memberSortOptions}
-                        label="Sort members"
+                        trailing={
+                            <SortSelect
+                                compact
+                                value={sort}
+                                onChange={setSort}
+                                options={memberSortOptions}
+                                label="Sort members"
+                            />
+                        }
                     />
                 </div>
                 <ItemList height={boxHeight} contentRef={contentRef}>
@@ -99,9 +104,8 @@ const Members = () => {
                                     last_name={
                                         member.users?.last_name || "Last"
                                     }
-                                    is_faculty={
-                                        member.users?.is_faculty || false
-                                    }
+                                    className="transition-colors sm:hover:!bg-layer-3"
+                                    filledRole
                                 />
                             </motion.div>
                         ))}
@@ -120,6 +124,9 @@ const Members = () => {
                             : ""}
                     </p>
                 </ItemList>
+                <div className="mt-8 xl:hidden">
+                    <OrgAdvisors editable={false} />
+                </div>
             </section>
         </LoginGate>
     );

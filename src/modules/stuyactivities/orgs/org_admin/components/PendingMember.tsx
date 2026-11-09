@@ -1,7 +1,8 @@
 import { supabase } from "../../../../../lib/supabaseClient";
 
 import { useSnackbar } from "notistack";
-import { useContext } from "react";
+import { useContext, useState } from "react";
+import UserDialog from "../../../../../components/ui/overlays/UserDialog";
 import OrgContext from "../../../../../contexts/OrgContext";
 import OrgMember from "../../components/OrgMember";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
@@ -26,6 +27,8 @@ const PendingMember = ({
 }) => {
     const { enqueueSnackbar } = useSnackbar();
     const organization = useContext(OrgContext);
+
+    const [confirmingReject, setConfirmingReject] = useState(false);
 
     const handleApprove = async () => {
         const { error } = await supabase.functions.invoke("approve-member", {
@@ -62,11 +65,12 @@ const PendingMember = ({
     };
 
     const handleReject = async () => {
-        const { error } = await supabase
+        const { data, error } = await supabase
             .from("memberships")
             .delete()
-            .eq("id", id);
-        if (error) {
+            .eq("id", id)
+            .select("id");
+        if (error || !data?.length) {
             enqueueSnackbar(
                 "Error rejecting member. Contact it@stuysu.org for support.",
                 { variant: "error" },
@@ -106,7 +110,6 @@ const PendingMember = ({
                 <OrgMember
                     email={email}
                     picture={picture}
-                    role_name={"Pending Member"}
                     first_name={first_name}
                     last_name={last_name}
                 />
@@ -118,21 +121,29 @@ const PendingMember = ({
             >
                 <AsyncButton
                     onClick={handleApprove}
-                    className="h-10 min-w-0 !px-2.5 !py-0 sm:!px-5 sm:!pb-[13px] sm:!pt-[11px]"
+                    className="h-11 min-w-0 !px-2.5 !py-0 sm:!px-5 sm:!pb-[13px] sm:!pt-[11px]"
                     aria-label="Approve"
                 >
                     <i className={"bx bx-check bx-sm sm:hidden"}></i>
                     <span className={"hidden sm:inline"}>Approve</span>
                 </AsyncButton>
                 <AsyncButton
-                    onClick={handleReject}
-                    className="h-10 min-w-0 !px-2.5 !py-0 sm:!px-5 sm:!pb-[13px] sm:!pt-[11px]"
+                    onClick={() => setConfirmingReject(true)}
+                    className="h-11 min-w-0 !px-2.5 !py-0 sm:!px-5 sm:!pb-[13px] sm:!pt-[11px]"
                     aria-label="Reject"
                 >
                     <i className={"bx bx-x bx-sm sm:hidden"}></i>
                     <span className={"hidden sm:inline"}>Reject</span>
                 </AsyncButton>
             </div>
+            <UserDialog
+                title={`Reject ${first_name} ${last_name}?`}
+                description="Their join request will be removed. They can ask to join again later."
+                open={confirmingReject}
+                onClose={() => setConfirmingReject(false)}
+                onConfirm={handleReject}
+                confirmText="Reject"
+            />
         </div>
     );
 };

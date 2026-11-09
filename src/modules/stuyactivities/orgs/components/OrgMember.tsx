@@ -11,6 +11,8 @@ type Props = {
     last_name?: User["last_name"];
     is_faculty?: User["is_faculty"];
     action?: ReactNode;
+    className?: string;
+    filledRole?: boolean;
 };
 
 const formatCapitals = (txt?: string) => {
@@ -27,6 +29,8 @@ const OrgMember = ({
     last_name,
     is_faculty,
     action,
+    className = "",
+    filledRole = false,
 }: Props) => {
     const l1 =
         (role_name || formatCapitals(role)) + (is_faculty ? " - Faculty" : "");
@@ -34,12 +38,13 @@ const OrgMember = ({
     return (
         <div
             className={
-                "flex flex-row flex-nowrap items-center justify-between gap-3 bg-layer-2 pr-4 pl-3"
+                "flex flex-row flex-nowrap items-center justify-between gap-3 bg-layer-2 pr-4 pl-3 " +
+                className
             }
         >
             <div
                 className={
-                    "h-16 w-fit max-w-full min-w-0 flex gap-3 items-center"
+                    "min-h-16 py-2 w-fit max-w-full min-w-0 flex gap-3 items-center"
                 }
             >
                 <Avatar.Root className="w-10 h-10 shrink-0 rounded-md overflow-hidden">
@@ -58,24 +63,38 @@ const OrgMember = ({
 
                 <div className={"flex flex-col min-w-0"}>
                     <h4
-                        className={"truncate"}
+                        className={"line-clamp-2 break-words"}
                     >{`${first_name} ${last_name}`}</h4>
                     <p className={"truncate"}>{<>{email}</>}</p>
+                    {filledRole && l1 && (
+                        <span className="important mt-1.5 w-fit max-w-full truncate rounded-full bg-layer-3 px-3 py-1 text-xs text-typography-2 sm:hidden">
+                            {l1}
+                        </span>
+                    )}
                 </div>
             </div>
 
-            <div
-                className={
-                    "my-3 max-w-full [&>button]:max-w-full [&>button]:truncate" +
-                    (action
-                        ? " shrink-0 flex flex-col items-end gap-2 sm:flex-row sm:items-center"
-                        : /* keep the chip beside the name on phones; long roles truncate instead of wrapping */
-                          " shrink-0 min-w-0 max-sm:max-w-[50%]")
-                }
-            >
-                <ToggleChip title={l1} selectable={false} />
-                {action}
-            </div>
+            {(l1 || action) && (
+                <div
+                    className={
+                        "my-3 max-w-full [&>button]:max-w-full [&>button]:truncate" +
+                        (filledRole && !action ? " max-sm:hidden" : "") +
+                        (action
+                            ? " shrink-0 flex flex-col items-end gap-2 sm:flex-row sm:items-center"
+                            : /* keep the chip beside the name on phones; long roles truncate instead of wrapping */
+                              " shrink-0 min-w-0 max-sm:max-w-[50%]")
+                    }
+                >
+                    {filledRole ? (
+                        <span className="important inline-flex min-h-8 max-w-full items-center justify-center rounded-full bg-layer-3 px-4 py-1.5 text-center text-[0.8rem] leading-tight text-typography-2">
+                            {l1}
+                        </span>
+                    ) : (
+                        <ToggleChip title={l1} selectable={false} />
+                    )}
+                    {action}
+                </div>
+            )}
         </div>
     );
 };

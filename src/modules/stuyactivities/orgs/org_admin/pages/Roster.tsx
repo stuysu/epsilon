@@ -4,7 +4,6 @@ import UserContext from "../../../../../contexts/UserContext";
 import { supabase } from "../../../../../lib/supabaseClient";
 
 import AdminMember from "../components/AdminMember";
-import { Switch } from "radix-ui";
 import { Reorder } from "framer-motion";
 
 import {
@@ -15,61 +14,16 @@ import {
 } from "../../../../../utils/DataFormatters";
 import useMembershipJoinDates from "../../../../../utils/useMembershipJoinDates";
 import { useSnackbar } from "notistack";
+import { useNavigate } from "react-router-dom";
 import ItemList from "../../../../../components/ui/lists/ItemList";
+import OrgAdvisors from "../../components/OrgAdvisors";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
 import ToggleChip from "../../../../../components/ui/input/ToggleChip";
-import SortSelect from "../../../../../components/ui/input/SortSelect";
-import TextField from "../../../../../components/ui/input/TextField";
+import UserDialog from "../../../../../components/ui/overlays/UserDialog";
+import InviteMembersDialog from "../components/InviteMembersDialog";
+import MemberToolbar from "../components/MemberToolbar";
+import { PUBLIC_URL } from "../../../../../config/constants";
 
-/* a disabled text box with all the emails and a button to copy them */
-const EmailCopyBox = ({
-    label,
-    emails,
-}: {
-    label?: string;
-    emails: string;
-}) => {
-    const { enqueueSnackbar } = useSnackbar();
-
-    return (
-        <div className="w-full mb-[25px]">
-            {label && (
-                <p className={"font-medium text-typography-1 mt-2"}>{label}</p>
-            )}
-            <div className="w-full flex flex-nowrap items-center">
-                <div className="pt-2 pb-2 w-full">
-                    <TextField
-                        aria-label={label}
-                        disabled
-                        fullWidth
-                        value={emails}
-                    />
-                </div>
-                <div className="pl-4 w-[100px]">
-                    <AsyncButton
-                        onClick={async () => {
-                            try {
-                                await navigator.clipboard.writeText(emails);
-                                enqueueSnackbar("Copied emails to clipboard!", {
-                                    variant: "success",
-                                });
-                            } catch {
-                                enqueueSnackbar(
-                                    "Failed to copy emails to clipboard. :( Try manually copying from the page.",
-                                    { variant: "error" },
-                                );
-                            }
-                        }}
-                    >
-                        Copy
-                    </AsyncButton>
-                </div>
-            </div>
-        </div>
-    );
-};
-
-// readOnly: Clubs & Pubs admins can look at any roster and copy emails, but can't change it
 const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
     const { enqueueSnackbar } = useSnackbar();
 
@@ -80,6 +34,13 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
         organization.joinable ?? false,
     );
     const [toggling, setToggling] = useState(false);
+    const [confirmingVisibility, setConfirmingVisibility] = useState(false);
+    const navigate = useNavigate();
+    const [inviteOpen, setInviteOpen] = useState(false);
+    const [query, setQuery] = useState("");
+    const pendingCount = organization.memberships.filter(
+        (member) => !member.active,
+    ).length;
     const [sort, setSort] = useState<MemberSort>("default");
     const joinDates = useMembershipJoinDates(
         organization.id,
@@ -90,7 +51,7 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
         setJoinableState(organization.joinable ?? false);
     }, [organization.joinable]);
 
-    const members = organization.memberships
+    const activeMembers = organization.memberships
         .filter((member) => member.active)
         .sort(sortMembers)
         .map((member) => {
@@ -106,6 +67,7 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
                 is_faculty: member.users?.is_faculty,
             };
         });
+    const members = activeMembers.filter((member) => member.role !== "ADVISOR");
     const member_emails = members.map((member) => member.email).join(", ");
     const leader_emails = members
         .filter(
@@ -119,11 +81,13 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
     );
 
     const canToggleJoinable =
-        userMember?.role === "CREATOR" || userMember?.role === "ADMIN";
+        !!userMember?.active &&
+        (userMember.role === "CREATOR" ||
+            userMember.role === "ADMIN" ||
+            userMember.role === "ADVISOR");
 
     /* the creator can move anyone, admins can only move members and advisors */
-    const canReorder =
-        userMember?.role === "CREATOR" || userMember?.role === "ADMIN";
+    const canReorder = canToggleJoinable;
 
     const roles: Membership["role"][] = [
         "CREATOR",
@@ -153,6 +117,14 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
         last_name: member.last_name,
         joined_at: joinDates.get(member.membershipId as number),
     }));
+
+    const searchText = query.trim().toLowerCase();
+    const searching = searchText !== "";
+    const visibleMembers = sortedMembers.filter((member) =>
+        `${member.first_name ?? ""} ${member.last_name ?? ""} ${member.email ?? ""}`
+            .toLowerCase()
+            .includes(searchText),
+    );
 
     const idsOfRole = (list: typeof members, role: Membership["role"]) =>
         list
@@ -217,9 +189,11 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
             picture={member.picture}
             role={member.role || "MEMBER"}
             role_name={member.role_name}
-            isCreator={userMember?.role === "CREATOR"}
-            isAdmin={userMember?.role === "ADMIN"}
-            is_faculty={member.is_faculty}
+            isCreator={!!userMember?.active && userMember.role === "CREATOR"}
+            isAdmin={
+                !!userMember?.active &&
+                (userMember.role === "ADMIN" || userMember.role === "ADVISOR")
+            }
             readOnly={readOnly}
             canDrag={canDrag}
             onDragEnd={onDragEnd}
@@ -244,9 +218,12 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
         });
 
         if (error) {
-            enqueueSnackbar("Failed to update joinable state.", {
-                variant: "error",
-            });
+            enqueueSnackbar(
+                "Failed to update whether this Activity is public.",
+                {
+                    variant: "error",
+                },
+            );
             setToggling(false);
             return;
         }
@@ -259,7 +236,7 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
         }
         setJoinableState((prev) => !prev);
         enqueueSnackbar(
-            `Organization is now ${!joinableState ? "joinable" : "private"}.`,
+            `Activity is now ${!joinableState ? "public" : "private"}.`,
             { variant: "success" },
         );
         setToggling(false);
@@ -267,76 +244,106 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
 
     return (
         <div className="w-full">
-            <div
-                className={
-                    "bg-layer-1 p-5 pl-7 pb-8 rounded-xl mb-10 mt-2 shadow-prominent"
-                }
-            >
-                <h1>Member Roster</h1>
-                {readOnly ? (
-                    <>
-                        <p className={"mb-6"}>
-                            You are viewing this roster as a Clubs & Pubs
-                            administrator. You can copy emails, but only this
-                            Activity's admins can change it.
-                        </p>
+            <header className={"mb-8 mt-2"}>
+                <section
+                    className={
+                        "mb-2 flex flex-wrap items-center justify-between gap-x-4 gap-y-3"
+                    }
+                >
+                    <h1>Roster</h1>
+                    {readOnly ? (
                         <ToggleChip
-                            title={joinableState ? "Joinable" : "Private"}
+                            title={joinableState ? "Public" : "Private"}
                             selectable={false}
                         />
-                    </>
-                ) : (
-                    <>
-                        <p className={"mb-6"}>
-                            See your members, manage them, or change your club's
-                            joinable status here. Sending invites to join is a
-                            feature in development.
-                        </p>
-
-                        <div
-                            style={{ marginBottom: 12 }}
-                            className="flex items-center gap-4"
-                        >
-                            <div className="font-medium">
-                                {joinableState ? "Joinable" : "Private"}
-                            </div>
-                            <Switch.Root
-                                aria-label="Joinable"
-                                checked={joinableState}
-                                onCheckedChange={() => toggleJoinable()}
+                    ) : (
+                        <div className={"flex flex-wrap gap-2"}>
+                            <AsyncButton
+                                onClick={() => setConfirmingVisibility(true)}
                                 disabled={!canToggleJoinable || toggling}
-                                className={
-                                    "relative h-6 w-11 cursor-pointer rounded-full bg-layer-3 transition-colors " +
-                                    "data-[state=checked]:bg-blue " +
-                                    (!canToggleJoinable || toggling
-                                        ? "opacity-50 cursor-not-allowed"
-                                        : "")
+                            >
+                                <i
+                                    aria-hidden="true"
+                                    className={
+                                        "bx bx-xs mr-3 mt-px " +
+                                        (joinableState ? "bx-globe" : "bx-lock")
+                                    }
+                                />
+                                {joinableState
+                                    ? "Public Activity"
+                                    : "Private Activity"}
+                            </AsyncButton>
+                            <AsyncButton onClick={() => setInviteOpen(true)}>
+                                <i
+                                    aria-hidden="true"
+                                    className={
+                                        "bx bx-user-plus bx-xs mr-3 mt-px"
+                                    }
+                                />
+                                Invite
+                            </AsyncButton>
+                            <AsyncButton
+                                isPrimary={true}
+                                onClick={() =>
+                                    navigate(
+                                        `/${organization.url}/admin/roster/join-requests`,
+                                    )
                                 }
                             >
-                                <Switch.Thumb className="sm:hover:scale-110 block h-5 w-5 translate-x-0.5 rounded-full bg-white/90 shadow transition-transform data-[state=checked]:translate-x-[22px] ease-in-out" />
-                            </Switch.Root>
+                                Join Requests
+                                {pendingCount > 0 && ` (${pendingCount})`}
+                            </AsyncButton>
                         </div>
-
-                        <AsyncButton disabled={true}>
-                            <i className={"bx bx-send mr-2"}></i> Invites are
-                            coming soon!
-                        </AsyncButton>
-                    </>
+                    )}
+                </section>
+                {readOnly ? (
+                    <p>
+                        You are viewing this roster as a Clubs & Pubs
+                        administrator. You can copy emails, but only this
+                        Activity's admins can change it.
+                    </p>
+                ) : (
+                    <p>
+                        See your members, manage them, or change your club's
+                        public status here.
+                    </p>
                 )}
-            </div>
+            </header>
 
-            <EmailCopyBox label="Club leaders" emails={leader_emails} />
-            <EmailCopyBox label="All members" emails={member_emails} />
+            <InviteMembersDialog
+                open={inviteOpen}
+                onClose={() => setInviteOpen(false)}
+            />
 
-            <SortSelect
-                value={sort}
-                onChange={setSort}
-                options={memberSortOptions}
-                label="Sort members"
+            <UserDialog
+                title={
+                    joinableState
+                        ? "Make Activity Private?"
+                        : "Make Activity Public?"
+                }
+                description={
+                    joinableState
+                        ? "This Activity is currently public. Are you sure you want to make it private? Members may no longer request to join this Activity."
+                        : "This Activity is currently private. Are you sure you want to make it public? Anyone will be able to send join requests."
+                }
+                imageSrc={`${PUBLIC_URL}/symbols/warning.png`}
+                open={confirmingVisibility}
+                onClose={() => setConfirmingVisibility(false)}
+                onConfirm={toggleJoinable}
+                confirmText={joinableState ? "Make Private" : "Make Public"}
+            />
+
+            <MemberToolbar
+                query={query}
+                onQueryChange={setQuery}
+                sort={sort}
+                onSortChange={setSort}
+                leaderEmails={leader_emails}
+                memberEmails={member_emails}
             />
 
             <ItemList height={"auto"}>
-                {sort === "default" ? (
+                {sort === "default" && !searching ? (
                     roles.map((role) => {
                         const group = orderedMembers.filter(
                             (member) => member.role === role,
@@ -373,22 +380,29 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
                             </Reorder.Group>
                         );
                     })
+                ) : visibleMembers.length === 0 ? (
+                    <p className={"py-8 text-center"}>
+                        No members match your search.
+                    </p>
                 ) : (
                     <Reorder.Group
                         as="div"
                         axis="y"
-                        values={sortedMembers.map(
+                        values={visibleMembers.map(
                             (member) => member.membershipId as number,
                         )}
                         onReorder={() => {}}
                         className="flex flex-col gap-0.5"
                     >
-                        {sortedMembers.map((member) =>
+                        {visibleMembers.map((member) =>
                             renderMember(member, false, () => {}),
                         )}
                     </Reorder.Group>
                 )}
             </ItemList>
+            <div className="mt-8 xl:hidden">
+                <OrgAdvisors editable={canToggleJoinable && !readOnly} />
+            </div>
         </div>
     );
 };

@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useState } from "react";
+import LinkSummary from "../../orgs/components/LinkSummary";
 
 import Divider from "../../../../components/ui/Divider";
 
@@ -222,7 +223,15 @@ const OrgEditApproval = ({
                                     {orgFieldMap(field)}{" "}
                                     <i className={"bx bx-refresh"}></i>
                                 </h4>
-                                <p>{`"${edit[f2]}"`}</p>
+                                <p>
+                                    {f2 === "socials" ? (
+                                        <LinkSummary
+                                            socials={edit[f2] as string}
+                                        />
+                                    ) : (
+                                        `"${edit[f2]}"`
+                                    )}
+                                </p>
                                 <Divider />
                             </Fragment>
                         );

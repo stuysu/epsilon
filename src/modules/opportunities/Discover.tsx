@@ -2,6 +2,10 @@ import { FormEvent, useState } from "react";
 import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
 import SearchInput from "../../components/ui/input/SearchInput";
+import {
+    PILL_CLASS,
+    pillColors,
+} from "../../components/ui/input/FilterControls";
 import { useOpportunities } from "./OpportunitiesContext";
 import { getStatus, getTodayEastern } from "./utils";
 
@@ -49,10 +53,11 @@ const Discover = () => {
                     className="absolute inset-x-0 -top-[2.2rem] bottom-0 bg-[url('/media/opportunities-hero.webp')] bg-cover bg-[center_35%] brightness-[0.25] contrast-[0.75] saturate-[0.9] [mask-image:linear-gradient(to_bottom,black_72%,transparent)] scheme-light:opacity-30 scheme-light:brightness-100"
                 />
                 <h1 className="relative -mt-2 mb-[clamp(3.5rem,20dvh-4rem,9.5rem)] pt-2 text-center font-['epsilon-geometric','neue-haas-grotesk-display',sans-serif] font-medium uppercase leading-[0.8] text-transparent [-webkit-background-clip:text] [background-clip:text] [background-image:linear-gradient(95deg,#f3fbef_0%,#fbe9e4_30%,#ffa3ec_62%,#c46cff_100%)] [font-variation-settings:normal] scheme-light:[background-image:linear-gradient(95deg,var(--text-primary)_0%,#9333ea_60%,#6b21a8_100%)] max-sm:mb-28">
-                    <span className="block text-[4.8rem] max-sm:text-[3.4rem]">
+                    <span className="block text-[min(4.8rem,calc((100vw_-_2rem)/5))] max-sm:text-[min(3.4rem,calc((100vw_-_2rem)/5))]">
                         Find Your
                     </span>{" "}
-                    <span className="block text-[6.4rem] max-sm:text-[4.55rem]">
+                    {/* capped so larger text settings still fit the screen */}
+                    <span className="block text-[min(6.4rem,calc((100vw_-_2rem)/3.9))] max-sm:text-[min(4.55rem,calc((100vw_-_2rem)/3.9))]">
                         Calling
                     </span>
                 </h1>
@@ -63,7 +68,7 @@ const Discover = () => {
                     className="relative w-full max-w-[52rem]"
                 >
                     <SearchInput
-                        placeholder="Find Opportunities..."
+                        placeholder="Search opportunities"
                         aria-label="Search opportunities"
                         value={query}
                         onChange={setQuery}
@@ -113,7 +118,7 @@ const Discover = () => {
                             <Link
                                 key={category.id}
                                 to={`/opportunities/catalog?category=${category.id}`}
-                                className="important max-w-full rounded-lg bg-layer-2 px-3 pb-[0.35rem] pt-1 text-sm text-typography-2 no-underline shadow-control transition-colors hover:bg-layer-3 hover:text-typography-1"
+                                className={`important no-underline ${PILL_CLASS} ${pillColors(false)}`}
                             >
                                 {category.name}
                             </Link>

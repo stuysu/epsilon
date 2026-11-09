@@ -104,7 +104,7 @@ const Support = () => {
             </div>
 
             <div className={"hidden sm:block"}>
-                <h2 className="as-h1">Get help with StuyActivities.</h2>
+                <h1>Get help with StuyActivities.</h1>
             </div>
 
             <div className={"max-sm:-mr-4"}>

@@ -3,6 +3,7 @@
     z-index: 1;
     display: flex;
     width: 330px;
+    max-width: 100%;
     background-color: var(--layer-primary);
     color: var(--text-primary);
     border: none;

@@ -11,13 +11,17 @@ const KEPT_POSITIONS = 100;
 const USER_SCROLL = ["wheel", "touchstart", "keydown", "pointerdown"];
 
 // keeps scrolling to target until the page is tall enough, or the user scrolls
-const restore = (box: Scrollbars, target: number, onDone: () => void) => {
+const restore = (
+    box: Scrollbars,
+    target: number,
+    onDone: (reached: boolean) => void,
+) => {
     const started = performance.now();
     let frame = 0;
     const stop = () => {
         cancelAnimationFrame(frame);
         for (const type of USER_SCROLL) window.removeEventListener(type, stop);
-        onDone();
+        onDone(false);
     };
     const step = () => {
         box.scrollTop(target);
@@ -27,7 +31,7 @@ const restore = (box: Scrollbars, target: number, onDone: () => void) => {
                 window.removeEventListener(type, stop);
             }
             // its scroll event comes before the next frame
-            frame = requestAnimationFrame(onDone);
+            frame = requestAnimationFrame(() => onDone(reachable >= target));
         } else {
             frame = requestAnimationFrame(step);
         }
@@ -45,10 +49,12 @@ const ScrollToTopOnNavigate = ({
 }: {
     scrollbars: RefObject<Scrollbars>;
 }) => {
-    const { pathname, key } = useLocation();
+    const { pathname, key, state } = useLocation();
     const navigationType = useNavigationType();
     const last = useRef({ pathname, key });
     const positions = useRef(new Map<string, number>());
+    // the latest position per page, for links that return to it
+    const byPath = useRef(new Map<string, number>());
     // scrolls from restoring aren't the user's, so they aren't saved
     const restoring = useRef<string | null>(null);
 
@@ -62,6 +68,7 @@ const ScrollToTopOnNavigate = ({
             const kept = positions.current;
             kept.delete(last.current.key);
             kept.set(last.current.key, view.scrollTop);
+            byPath.current.set(last.current.pathname, view.scrollTop);
             if (kept.size > KEPT_POSITIONS) {
                 kept.delete(kept.keys().next().value!);
             }
@@ -78,11 +85,21 @@ const ScrollToTopOnNavigate = ({
 
         const box = scrollbars.current;
         if (!box) return;
-        const target = positions.current.get(key);
-        if (navigationType === "POP" && target !== undefined) {
+        const target =
+            navigationType === "POP"
+                ? positions.current.get(key)
+                : (state as { restoreScroll?: boolean } | null)?.restoreScroll
+                  ? byPath.current.get(pathname)
+                  : undefined;
+        if (target !== undefined) {
             restoring.current = key;
-            return restore(box, target, () => {
+            return restore(box, target, (reached) => {
                 if (restoring.current === key) restoring.current = null;
+                // a later Back to this entry should land here too
+                if (reached) {
+                    positions.current.set(key, target);
+                    byPath.current.set(pathname, target);
+                }
             });
         }
 
@@ -93,7 +110,7 @@ const ScrollToTopOnNavigate = ({
             return;
         }
         box.scrollToTop();
-    }, [pathname, key, navigationType, scrollbars]);
+    }, [pathname, key, state, navigationType, scrollbars]);
 
     return null;
 };

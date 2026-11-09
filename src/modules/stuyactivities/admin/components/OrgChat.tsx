@@ -5,6 +5,7 @@ import UserContext from "../../../../contexts/UserContext";
 import { toNewYork } from "../../../../utils/NewYorkTime";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import TextInput from "../../../../components/ui/input/TextInput";
+import UserDialog from "../../../../components/ui/overlays/UserDialog";
 import { Avatar } from "radix-ui";
 
 type OrgMessage = {
@@ -58,12 +59,16 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                 return;
             }
 
-            setMessages(
-                messageData.sort(
-                    (a, b) =>
-                        new Date(a.created_at).getTime() -
-                        new Date(b.created_at).getTime(),
-                ),
+            const sorted = messageData.sort(
+                (a, b) =>
+                    new Date(a.created_at).getTime() -
+                    new Date(b.created_at).getTime(),
+            );
+            setMessages((prev) =>
+                prev.length === sorted.length &&
+                prev.every((m, i) => m.id === sorted[i].id)
+                    ? prev
+                    : sorted,
             );
         };
 
@@ -75,14 +80,17 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
         };
     }, [organization_id, enqueueSnackbar]);
 
+    const lastCount = useRef(0);
     useEffect(() => {
-        if (chatBoxRef.current) {
+        if (chatBoxRef.current && messages.length > lastCount.current) {
             chatBoxRef.current.scrollTop = chatBoxRef.current.scrollHeight;
         }
-    }, [messages]); // Assuming `messages` is your state variable that holds the chat messages
+        lastCount.current = messages.length;
+    }, [messages]);
 
     const sendMessage = async () => {
-        if (!message) {
+        const content = message.trim();
+        if (!content) {
             enqueueSnackbar("Message cannot be empty", { variant: "error" });
             return;
         }
@@ -92,7 +100,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
             {
                 body: {
                     organization_id,
-                    content: message,
+                    content,
                 },
             },
         );
@@ -107,7 +115,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
             ...messages,
             {
                 id: data.id,
-                content: message,
+                content,
                 users: {
                     id: user.id,
                     first_name: user.first_name,
@@ -126,6 +134,8 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
         );
     };
 
+    const [pendingDelete, setPendingDelete] = useState<number>();
+
     const deleteMessage = async (messageId: number) => {
         const { error } = await supabase
             .from("orgmessages")
@@ -137,20 +147,19 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
             return;
         }
 
-        setMessages(messages.filter((message) => message.id !== messageId));
+        setMessages((prev) => prev.filter((m) => m.id !== messageId));
     };
 
     return (
         <section className="p-6 relative rounded-3xl shadow-prominent">
             <h4>Messaging</h4>
             <p>
-                Only visible to Activity admins, faculty, and the Clubs & Pubs
-                Department.
+                Only visible to Activity admins and the Clubs & Pubs Department.
             </p>
             <div className={"h-96 overflow-auto relative"} ref={chatBoxRef}>
                 {messages.map((message) => {
                     const messageTime = toNewYork(message.created_at);
-                    const timeStr = `${messageTime.month() + 1}/${messageTime.date()}/${messageTime.year()}`;
+                    const timeStr = messageTime.format("M/D/YYYY h:mm A");
                     return (
                         <article
                             key={message.id}
@@ -158,7 +167,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                                 "my-6 bg-layer-1 p-3 rounded-xl shadow-control"
                             }
                         >
-                            <div className={"flex gap-3 items-center mb-3"}>
+                            <div className={"mb-3 flex items-center gap-3"}>
                                 <Avatar.Root className="w-10 h-10 rounded-md overflow-hidden block">
                                     <Avatar.Image
                                         className="size-full object-cover"
@@ -174,46 +183,62 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                                             .toUpperCase()}
                                     </Avatar.Fallback>
                                 </Avatar.Root>
-                                <div>
-                                    <h4>
+                                <div className={"min-w-0 flex-1"}>
+                                    <h4 className={"break-words"}>
                                         {message.users.first_name +
                                             " " +
                                             message.users.last_name}
                                     </h4>
                                     <p>{timeStr}</p>
                                 </div>
-                            </div>
-
-                            <div
-                                className={"relative p-4 bg-layer-2 rounded-lg"}
-                            >
-                                <p className={"text-wrap overflow-scroll"}>
-                                    {message.content}
-                                </p>
-
                                 {message.users.id === user.id && (
                                     <button
                                         type="button"
                                         aria-label="Delete message"
                                         className={
-                                            "absolute right-3 top-3.5 bx bx-trash bx-sm text-red cursor-pointer sm:hover:opacity-75 transition-opacity rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                                            "flex size-11 shrink-0 items-center justify-center rounded-lg text-red transition-colors sm:hover:bg-layer-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1"
                                         }
                                         onClick={() =>
-                                            deleteMessage(message.id)
+                                            setPendingDelete(message.id)
                                         }
-                                    ></button>
+                                    >
+                                        <i
+                                            aria-hidden="true"
+                                            className={"bx bx-trash text-xl"}
+                                        />
+                                    </button>
                                 )}
+                            </div>
+
+                            <div className={"rounded-lg bg-layer-2 p-4"}>
+                                <p className={"text-wrap overflow-scroll"}>
+                                    {message.content}
+                                </p>
                             </div>
                         </article>
                     );
                 })}
             </div>
             <div className={"w-full flex items-center mt-2 gap-4"}>
-                <TextInput value={message} onChange={(e) => setMessage(e)} />
-                <AsyncButton sx={{ width: "10%" }} onClick={sendMessage}>
+                <TextInput
+                    ariaLabel="Message"
+                    value={message}
+                    onChange={(e) => setMessage(e)}
+                />
+                <AsyncButton sx={{ flexShrink: 0 }} onClick={sendMessage}>
                     Send
                 </AsyncButton>
             </div>
+            <UserDialog
+                title="Delete this message?"
+                description="It will be removed for everyone in this chat. This can't be undone."
+                open={pendingDelete !== undefined}
+                onClose={() => setPendingDelete(undefined)}
+                onConfirm={() =>
+                    pendingDelete !== undefined && deleteMessage(pendingDelete)
+                }
+                confirmText="Delete"
+            />
         </section>
     );
 };

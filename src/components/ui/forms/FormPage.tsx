@@ -28,6 +28,8 @@ type Props<T> = {
     first?: boolean;
     checkRequired?: boolean;
     checkCompleted?: boolean;
+    // a check outside the fields, like a URL lookup, is failing or running
+    blocked?: boolean;
 };
 
 type FormStatus = {
@@ -50,6 +52,7 @@ const FormPage = <T,>({
     first,
     checkRequired,
     checkCompleted,
+    blocked,
 }: Props<T>) => {
     const [status, setStatus] = useState<FormStatus>({});
     const [valid, setValid] = useState(false);
@@ -154,7 +157,7 @@ const FormPage = <T,>({
                     {last ? (
                         <AsyncButton
                             onClick={onSubmit}
-                            disabled={!valid}
+                            disabled={!valid || blocked}
                             sx={{ width: "150px", height: "40px" }}
                         >
                             {submitText ? submitText : "Submit"}
@@ -163,7 +166,9 @@ const FormPage = <T,>({
                         <AsyncButton
                             onClick={onNext}
                             disabled={
-                                !valid || (checkRequired && !checkCompleted)
+                                !valid ||
+                                blocked ||
+                                (checkRequired && !checkCompleted)
                             }
                             sx={{ width: "150px", height: "40px" }}
                         >

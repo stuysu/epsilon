@@ -78,19 +78,19 @@ const AddUser = () => {
                         <FormTextField
                             label="First Name"
                             field="first_name"
-                            required={OrgRequirements.name.required}
-                            requirements={OrgRequirements.name.requirements}
-                            sx={{ width: isMobile ? "50%" : "25%" }}
+                            required
+                            requirements={{ minChar: 1, maxChar: 60 }}
+                            sx={{ width: isMobile ? "100%" : "25%" }}
                         />
                         <FormTextField
                             label="Last Name"
                             field="last_name"
-                            required={OrgRequirements.name.required}
-                            requirements={OrgRequirements.name.requirements}
-                            // beside the first name on phones too, so no top margin there
+                            required
+                            requirements={{ minChar: 1, maxChar: 60 }}
                             sx={{
-                                marginLeft: isMobile ? "12px" : "20px",
-                                width: isMobile ? "calc(50% - 12px)" : "25%",
+                                marginLeft: isMobile ? "" : "20px",
+                                marginTop: isMobile ? "20px" : "",
+                                width: isMobile ? "100%" : "25%",
                             }}
                         />
                         <FormTextField
@@ -123,11 +123,14 @@ const AddUser = () => {
                             }
                             sx={{
                                 marginTop: isMobile ? "20px" : "40px",
-                                width: isMobile ? "50%" : "25%",
+                                width: isMobile ? "100%" : "25%",
                             }}
                         />
                         <FormSection
-                            sx={{ marginTop: "30px", marginLeft: "40px" }}
+                            sx={{
+                                marginTop: "30px",
+                                marginLeft: isMobile ? "" : "40px",
+                            }}
                         >
                             <FormCheckbox
                                 field="is_faculty"

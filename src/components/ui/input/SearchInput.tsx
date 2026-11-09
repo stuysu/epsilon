@@ -19,14 +19,14 @@ export default function SearchInput({
     onChange,
     icon = "bx bx-search bx-sm",
     trailing,
-    containerClassName = "",
+    containerClassName = "mb-5",
     inputClassName = "",
     id,
     "aria-label": ariaLabel,
 }: SearchInputProps) {
     return (
         <div
-            className={`relative w-full h-12 mb-5 flex justify-center ${containerClassName}`}
+            className={`relative w-full h-12 flex justify-center ${containerClassName}`}
         >
             <i
                 className={`absolute ${icon} z-10 top-[0.8rem] left-3 text-typography-2`}
@@ -41,7 +41,7 @@ export default function SearchInput({
                 onChange={(e: ChangeEvent<HTMLInputElement>) =>
                     onChange(e.target.value)
                 }
-                className={` w-full rounded-xl px-12 transition-colors
+                className={` w-full rounded-xl pl-12 ${trailing ? "pr-14" : "pr-12"} transition-colors
                 text-typography-1
                 important
               placeholder:text-typography-2
@@ -56,10 +56,13 @@ export default function SearchInput({
               focus-visible:outline-offset-2
               focus-visible:outline-typography-1
               shadow-control
-              ${trailing ? "pr-12" : ""}
               ${inputClassName}`}
             />
-            {trailing}
+            {trailing && (
+                <div className="absolute right-2 top-1/2 z-10 -translate-y-1/2">
+                    {trailing}
+                </div>
+            )}
         </div>
     );
 }

@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
+import { invalidate } from "../../../lib/queryCache";
 
 import UserContext from "../../../contexts/UserContext";
 
@@ -98,6 +99,21 @@ export const getLinks = (user: UserContextType) => {
 
 const AdminRouter = () => {
     const user = useContext(UserContext);
+
+    // approvals, edits and rooms change shared data, so leaving refreshes it
+    useEffect(
+        () => () => {
+            for (const key of [
+                "org",
+                "catalog",
+                "orgList",
+                "rooms",
+                "roomGrants",
+            ])
+                invalidate([key]);
+        },
+        [],
+    );
     const links = getLinks(user);
 
     if (!user.permission || !links.length) {

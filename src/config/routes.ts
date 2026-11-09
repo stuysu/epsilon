@@ -17,7 +17,9 @@ export const STUY_ACTIVITIES_PATHS = [
 ] as const;
 
 export const isStuyActivitiesPath = (pathname: string) =>
-    STUY_ACTIVITIES_PATHS.some((p) => pathname.startsWith(p));
+    STUY_ACTIVITIES_PATHS.some(
+        (p) => pathname === p || pathname.startsWith(`${p}/`),
+    );
 
 export const isOpportunitiesPath = (pathname: string) =>
     pathname === "/opportunities" || pathname.startsWith("/opportunities/");

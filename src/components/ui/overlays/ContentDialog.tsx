@@ -56,22 +56,22 @@ export default function ContentDialog({
                                 }}
                             >
                                 <motion.div
-                                    className="relative flex max-h-[90vh] w-[min(600px,92vw)] flex-col rounded-2xl border border-divider bg-layer-1 shadow-2xl"
+                                    className="relative flex max-h-[calc(100dvh-1.5rem)] w-[min(600px,calc(100vw-1.5rem))] sm:max-h-[90vh] sm:w-[min(600px,92vw)] flex-col rounded-2xl border border-divider bg-layer-1 shadow-2xl"
                                     initial={{ opacity: 0, y: 20, scale: 0.95 }}
                                     animate={{ opacity: 1, y: 0, scale: 1 }}
                                     exit={{ opacity: 0, y: 20, scale: 0.95 }}
                                     transition={{ duration: 0.2 }}
                                 >
                                     <Dialog.Title asChild>
-                                        <h3 className="px-6 pb-2 pt-6">
+                                        <h3 className="px-4 pb-2 pt-5 sm:px-6 sm:pt-6">
                                             {title}
                                         </h3>
                                     </Dialog.Title>
-                                    <div className="min-h-0 flex-1 overflow-y-auto px-6 py-3">
+                                    <div className="min-h-0 flex-1 overflow-y-auto px-4 py-3 sm:px-6">
                                         {children}
                                     </div>
                                     {actions && (
-                                        <div className="flex justify-end gap-3 p-6 pt-3">
+                                        <div className="flex justify-end gap-3 px-4 pb-4 pt-3 sm:p-6 sm:pt-3">
                                             {actions}
                                         </div>
                                     )}
