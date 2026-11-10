@@ -51,34 +51,40 @@ const SendMessage = () => {
                 value={searchInput}
                 onChange={(e) => setSearchInput(e)}
             />
-            {searchInput.length < 3 ? (
+            {searchInput.length === 0 && orgId ? null : searchInput.length <
+              3 ? (
                 <p>Keep typing to find an Activity.</p>
             ) : filteredOrgs.length > 10 ? (
                 <p>Too many activities, try a more specific query.</p>
             ) : filteredOrgs.length > 0 ? (
                 <div>
                     {filteredOrgs.map((org) => (
-                        <div>
-                            <a
-                                className={"important cursor-pointer"}
-                                key={org.id}
+                        <div key={org.id}>
+                            <button
+                                type="button"
+                                className={
+                                    "important w-full py-2 text-left cursor-pointer"
+                                }
                                 onClick={() => {
                                     setOrgId(org.id);
                                     setOrgName(org.name);
-                                    setSearchInput(""); // Clear search input after selecting an org
-                                    setFilteredOrgs([]); // Clear filtered orgs after selecting an org
+                                    setSearchInput("");
+                                    setFilteredOrgs([]);
                                 }}
                             >
                                 {org.name}
-                            </a>
+                            </button>
                             <Divider />
                         </div>
                     ))}
                 </div>
             ) : null}
-            <div className="mt-5 w-full justify-center p-5">
-                {orgId && <OrgChat organization_id={orgId} />}
-            </div>
+            {orgId && (
+                <section className="mt-5 flex w-full flex-col gap-3">
+                    <h2 className="break-words">{orgName}</h2>
+                    <OrgChat organization_id={orgId} />
+                </section>
+            )}
         </div>
     );
 };

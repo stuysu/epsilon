@@ -21,6 +21,7 @@ interface Organization {
     is_returning?: boolean;
     returning_info?: string;
     memberships?: Partial<Membership>[];
+    member_count?: number;
     fair?: boolean;
     faculty_email?: string;
 }
@@ -142,6 +143,8 @@ interface Attendance {
     organization_id: number;
     meeting_id: number;
     user_id: number;
+    late: boolean;
+    left_early: boolean;
     created_at: string;
     updated_at: string;
 }

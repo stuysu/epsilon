@@ -4,7 +4,7 @@ import Loading from "../components/ui/content/Loading";
 import UserContext from "../contexts/UserContext";
 
 import { Route, Routes, useLocation } from "react-router-dom";
-import React, { lazy, Suspense, useContext } from "react";
+import React, { lazy, Suspense, useContext, useEffect } from "react";
 
 // Pages
 import Index from "./home";
@@ -16,6 +16,16 @@ import Support from "./stuyactivities/Support";
 import SubNavBar from "../components/ui/navigation/SubNavBar";
 import Arista from "./arista";
 import { ThemeContext } from "../contexts/ThemeProvider";
+import InviteBanner from "../components/ui/InviteBanner";
+import { isOpportunitiesPath, isStuyActivitiesPath } from "../config/routes";
+
+const FULL_BLEED = [
+    "/",
+    "/vote",
+    "/about",
+    "/arista-landing",
+    "/opportunities",
+];
 
 const Catalog = lazy(() => import("./stuyactivities/Catalog"));
 const Vote = lazy(() => import("./voting/index"));
@@ -24,9 +34,21 @@ const UserPreferences = lazy(() => import("./user/./UserPreferences"));
 const Profile = lazy(() => import("./user/Profile"));
 const Create = lazy(() => import("./stuyactivities/CharterForm"));
 const Charter = lazy(() => import("./stuyactivities/CharterLanding"));
+const Invites = lazy(() => import("./stuyactivities/Invites"));
 const Archives = lazy(() => import("./stuyactivities/Archives"));
 const OrgRouter = lazy(() => import("./stuyactivities/orgs"));
 const AdminRouter = lazy(() => import("./stuyactivities/admin"));
+const OpportunitiesRouter = lazy(() => import("./opportunities"));
+
+/* loaded while idle so the first visit to these pages doesn't wait */
+const warmPages = () => {
+    for (const load of [
+        () => import("./stuyactivities/Catalog"),
+        () => import("./stuyactivities/orgs"),
+        () => import("./opportunities"),
+    ])
+        load().catch(() => {});
+};
 
 const Pages = () => {
     const location = useLocation();
@@ -37,6 +59,13 @@ const Pages = () => {
         theme.effectiveMode === "dark"
             ? `${PUBLIC_URL}/wordmark.svg`
             : `${PUBLIC_URL}/wordmark_light.svg`;
+
+    useEffect(() => {
+        if (!user.signed_in) return;
+        const idle =
+            window.requestIdleCallback ?? ((fn) => setTimeout(fn, 2000));
+        idle(warmPages);
+    }, [user.signed_in]);
 
     return (
         <div className="bg-bg min-h-dvh">
@@ -59,7 +88,14 @@ const Pages = () => {
 
             <Suspense fallback={<Loading />}>
                 {!(!user.signed_in && location.pathname === "/") && (
-                    <header>
+                    <header
+                        className={
+                            isStuyActivitiesPath(location.pathname) ||
+                            isOpportunitiesPath(location.pathname)
+                                ? "phone-sticky max-sm:z-[1000]"
+                                : undefined
+                        }
+                    >
                         <div
                             className={
                                 "max-sm:w-full sm:relative bg-blurDark fixed z-50 bottom-0 sm:bg-opacity-0 bg-opacity-80 max-sm:backdrop-blur-2xl max-sm:border-t border-divider"
@@ -67,33 +103,73 @@ const Pages = () => {
                         >
                             <NavBar />
                         </div>
-                        <div className={"max-sm:h-8"}>
+                        <div className={"max-sm:min-h-8"}>
                             <SubNavBar />
                         </div>
                     </header>
                 )}
-                <Routes>
-                    <Route path={"/"} Component={Index} />
-                    <Route path={"/arista-landing"} Component={Arista} />
-                    <Route path={"/stuyactivities"} Component={Catalog} />
-                    <Route path={"/communications"} Component={CommsSettings} />
-                    <Route path={"/preferences"} Component={UserPreferences} />
-                    <Route path={"/profile"} Component={Profile} />
-                    <Route path={"/create"} Component={Create} />
-                    <Route path={"/charter"} Component={Charter} />
-                    <Route path={"/vote"} Component={Vote} />
-                    <Route path={"/about"} Component={AboutIndex} />
-                    <Route path={"/meetings"} Component={CalendarIndex} />
-                    <Route path={"/rules"} Component={Regulations} />
-                    <Route path={"/archives"} Component={Archives} />
-                    <Route path={"/activities-support"} Component={Support} />
-                    <Route path={"/admin/*"} Component={AdminRouter} />
-                    <Route path={"/:orgUrl/*"} Component={OrgRouter} />
-                </Routes>
+                {user.signed_in && location.pathname !== "/invites" && (
+                    <InviteBanner />
+                )}
+                {/* app pages share one centered frame; these art-led pages span the window */}
+                <div
+                    className={`min-h-[calc(100dvh-20rem)] ${
+                        FULL_BLEED.includes(
+                            location.pathname.replace(/\/$/, "") || "/",
+                        )
+                            ? ""
+                            : "frame"
+                    }`}
+                >
+                    {/* only the page waits on a lazy load; the header and footer stay */}
+                    <Suspense fallback={<Loading />}>
+                        <Routes>
+                            <Route path={"/"} Component={Index} />
+                            <Route
+                                path={"/arista-landing"}
+                                Component={Arista}
+                            />
+                            <Route
+                                path={"/stuyactivities"}
+                                Component={Catalog}
+                            />
+                            <Route
+                                path={"/communications"}
+                                Component={CommsSettings}
+                            />
+                            <Route
+                                path={"/preferences"}
+                                Component={UserPreferences}
+                            />
+                            <Route path={"/profile"} Component={Profile} />
+                            <Route path={"/create"} Component={Create} />
+                            <Route path={"/charter"} Component={Charter} />
+                            <Route path={"/invites"} Component={Invites} />
+                            <Route path={"/vote"} Component={Vote} />
+                            <Route path={"/about"} Component={AboutIndex} />
+                            <Route
+                                path={"/meetings"}
+                                Component={CalendarIndex}
+                            />
+                            <Route path={"/rules"} Component={Regulations} />
+                            <Route path={"/archives"} Component={Archives} />
+                            <Route
+                                path={"/activities-support"}
+                                Component={Support}
+                            />
+                            <Route path={"/admin/*"} Component={AdminRouter} />
+                            <Route
+                                path={"/opportunities/*"}
+                                Component={OpportunitiesRouter}
+                            />
+                            <Route path={"/:orgUrl/*"} Component={OrgRouter} />
+                        </Routes>
+                    </Suspense>
+                </div>
                 {user.signed_in && (
                     <footer
                         className={
-                            "w-full h-36 bg-layer-1 p-10 max-sm:p-6 pr-12 flex justify-between items-center mt-20 max-sm:pb-48 max-sm:flex-col gap-2"
+                            "w-full h-36 bg-layer-1 py-10 px-frame max-sm:p-6 flex justify-between items-center mt-20 max-sm:pb-48 max-sm:flex-col gap-2"
                         }
                     >
                         <div className="w-72 flex max-sm:justify-center">
@@ -113,7 +189,9 @@ const Pages = () => {
                             <p className={"sm:hover:opacity-75"}>
                                 <a
                                     href={"https://github.com/stuysu/epsilon/"}
-                                    className={"no-underline text-typography-2"}
+                                    className={
+                                        "touch-target no-underline text-typography-2"
+                                    }
                                 >
                                     Source
                                 </a>
@@ -121,14 +199,18 @@ const Pages = () => {
                             <p className={"sm:hover:opacity-75"}>
                                 <a
                                     href={"https://stuysu.org/"}
-                                    className={"no-underline text-typography-2"}
+                                    className={
+                                        "touch-target no-underline text-typography-2"
+                                    }
                                 >
                                     StuySU
                                 </a>
                             </p>
                             <p className={"sm:hover:opacity-75"}>
                                 <a
-                                    className={"no-underline text-typography-2"}
+                                    className={
+                                        "touch-target no-underline text-typography-2"
+                                    }
                                     href={
                                         "https://www.figma.com/design/WfaOkjsU63VjVD1sdmSTXu/Epsilon-Design-File-Revision-1?node-id=0-1&t=xuEKneeUJMZXyrt1-1"
                                     }
@@ -138,7 +220,9 @@ const Pages = () => {
                             </p>
                             <p className={"sm:hover:opacity-75"}>
                                 <a
-                                    className={"no-underline text-typography-2"}
+                                    className={
+                                        "touch-target no-underline text-typography-2"
+                                    }
                                     href={
                                         "https://github.com/willpill/Epsilon-Press-Kit/archive/refs/heads/main.zip"
                                     }

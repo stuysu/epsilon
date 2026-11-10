@@ -2,12 +2,12 @@ import "./styles/app.css";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from "./contexts/ThemeProvider";
 import UserProvider from "./contexts/UserProvider";
+import InvitesProvider from "./contexts/InvitesProvider";
 import AlertDisplay from "./components/ui/AlertDisplay";
 import TimezoneNotice from "./components/ui/TimezoneNotice";
 import Pages from "./modules";
 import { SnackbarProvider, MaterialDesignContent } from "notistack";
 import { Scrollbars } from "react-custom-scrollbars-2";
-import { OrgListProvider } from "./contexts/OrgListContext";
 import React, {
     CSSProperties,
     forwardRef,
@@ -87,9 +87,9 @@ const App = () => {
                     <BrowserRouter>
                         <ScrollToTopOnNavigate scrollbars={scrollbarsRef} />
                         <UserProvider>
-                            <OrgListProvider>
+                            <InvitesProvider>
                                 <Pages />
-                            </OrgListProvider>
+                            </InvitesProvider>
                         </UserProvider>
                     </BrowserRouter>
                 </SnackbarProvider>

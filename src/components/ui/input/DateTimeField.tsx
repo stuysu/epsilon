@@ -71,7 +71,10 @@ const PickerField = ({
 }) => (
     <Popover.Root open={open} onOpenChange={setOpen} modal={false}>
         <Popover.Anchor asChild>
-            <div className="relative inline-flex min-w-0" style={sx}>
+            <div
+                className="relative inline-flex min-w-0 [&>*:first-child]:min-w-0 [&>*:first-child]:flex-1 [&_input]:pr-6"
+                style={sx}
+            >
                 <TextField
                     label={label}
                     value={draft}
@@ -83,7 +86,7 @@ const PickerField = ({
                 />
                 <Popover.Trigger
                     aria-label={`Choose ${label.toLowerCase()}`}
-                    className="absolute right-2 top-[10px] flex h-9 w-9 items-center justify-center rounded-full text-typography-2 transition-colors hover:bg-layer-3"
+                    className="absolute right-1 top-[10px] flex h-9 w-9 items-center justify-center rounded-full text-typography-2 transition-colors hover:bg-layer-3"
                 >
                     <i className={`bx ${icon} text-[20px]`} />
                 </Popover.Trigger>

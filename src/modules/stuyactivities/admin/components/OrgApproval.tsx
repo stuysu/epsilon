@@ -11,6 +11,8 @@ import {
     functionErrorStatus,
     functionErrorText,
 } from "../../../../utils/FunctionErrors";
+import { sortWeekdays } from "../../../../utils/DataFormatters";
+import UserDialog from "../../../../components/ui/overlays/UserDialog";
 
 const OrgApproval = ({
     onBack,
@@ -22,6 +24,7 @@ const OrgApproval = ({
 } & Partial<OrgContextType>) => {
     const { enqueueSnackbar } = useSnackbar();
     const [buttonsDisabled, setButtonsDisabled] = useState(false);
+    const [confirmingReject, setConfirmingReject] = useState(false);
 
     const approve = async () => {
         setButtonsDisabled(true);
@@ -94,7 +97,7 @@ const OrgApproval = ({
                         Approve Activity & Publish
                     </AsyncButton>
                     <AsyncButton
-                        onClick={reject}
+                        onClick={() => setConfirmingReject(true)}
                         color="secondary"
                         sx={{ marginRight: "10px" }}
                         disabled={buttonsDisabled}
@@ -103,6 +106,15 @@ const OrgApproval = ({
                     </AsyncButton>
                 </div>
             </div>
+
+            <UserDialog
+                title="Reject this charter?"
+                description={`${org.name || "This Activity"} will be deleted and its leaders will be emailed. This can't be undone.`}
+                open={confirmingReject}
+                onClose={() => setConfirmingReject(false)}
+                onConfirm={reject}
+                confirmText="Reject"
+            />
 
             <div className={"flex flex-col sm:flex-row gap-10"}>
                 <div className={"w-full flex flex-col gap-2"}>
@@ -169,7 +181,7 @@ const OrgApproval = ({
                     <Divider />
 
                     <h4>Meeting Days</h4>
-                    <p>{org.meeting_days?.join(", ")}</p>
+                    <p>{sortWeekdays(org.meeting_days ?? []).join(", ")}</p>
                     <Divider />
 
                     <h4>Commitment Level</h4>

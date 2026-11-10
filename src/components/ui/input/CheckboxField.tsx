@@ -8,6 +8,8 @@ type CheckboxFieldProps = {
     // a fuller name for screen readers when the visible label is ambiguous
     ariaLabel?: string;
     disabled?: boolean;
+    // paragraph-sized, for dense lists
+    small?: boolean;
 };
 
 const CheckboxField = ({
@@ -16,17 +18,23 @@ const CheckboxField = ({
     label,
     ariaLabel,
     disabled,
+    small,
 }: CheckboxFieldProps) => (
     <label
-        className={`mr-4 inline-flex items-center gap-2.5 py-2 align-middle ${disabled ? "cursor-default opacity-60" : "cursor-pointer"}`}
+        className={`mr-4 inline-flex items-center align-middle ${small ? "gap-2 py-1" : "gap-2.5 py-2"} ${disabled ? "cursor-default opacity-60" : "cursor-pointer"}`}
     >
         <CheckboxInput
             checked={checked}
             onChange={onChange}
             disabled={disabled}
+            small={small}
             label={ariaLabel ?? (typeof label === "string" ? label : "")}
         />
-        <span className="text-typography-1">{label}</span>
+        <span
+            className={`text-typography-1 ${small ? "text-[0.9rem] [font-variation-settings:'wght'_500]" : ""}`}
+        >
+            {label}
+        </span>
     </label>
 );
 

@@ -5,6 +5,8 @@ import {
     TimeField,
 } from "../../../../../components/ui/input/DateTimeField";
 import { supabase } from "../../../../../lib/supabaseClient";
+import { fetchCached, hashKey } from "../../../../../lib/queryCache";
+import { unwrap, useCacheScope } from "../../../../../lib/useCachedQuery";
 import OrgContext from "../../../../../contexts/OrgContext";
 import UserContext from "../../../../../contexts/UserContext";
 import dayjs, { Dayjs } from "dayjs";
@@ -22,6 +24,9 @@ import SelectField from "../../../../../components/ui/input/SelectField";
 import SwitchField from "../../../../../components/ui/input/SwitchField";
 import TextField from "../../../../../components/ui/input/TextField";
 import { functionErrorText } from "../../../../../utils/FunctionErrors";
+
+// rooms, grants and faculty rarely change; booked rooms are always fetched fresh
+const LIST_STALE = 10 * 60_000;
 
 const getDefaultStartTime = () => {
     return isoToWallClock().startOf("day").hour(15).minute(35);
@@ -58,6 +63,7 @@ const AdminUpsertMeeting = ({
     onSave: (saveState: Partial<Meeting>, isInsert: boolean) => void;
 }) => {
     const { enqueueSnackbar } = useSnackbar();
+    const scope = useCacheScope();
     const organization = useContext(OrgContext);
     const user = useContext(UserContext);
 
@@ -75,13 +81,19 @@ const AdminUpsertMeeting = ({
     const [endTime, setEndTime] = useState<Dayjs | null>(
         end ? isoToWallClock(end) : getDefaultEndTime(),
     );
+    // cleared times come back on this day, not today
+    const [day, setDay] = useState<Dayjs>(
+        () => startTime ?? endTime ?? dayjs(),
+    );
+    const onDay = (t: Dayjs | null) =>
+        t && t.year(day.year()).month(day.month()).date(day.date());
 
     const [isPub, setIsPub] = useState(
         isPublic === undefined ? true : isPublic,
     );
 
     const [notifyFaculty, setNotifyFaculty] = useState(false);
-    const [silent, setSilent] = useState(false);
+    const [notifyMembers, setNotifyMembers] = useState(true);
     const advisorRoomBooking = advisorNeeded && (!id || roomId !== room_id);
 
     const [faculty, setFaculty] = useState<
@@ -148,9 +160,13 @@ const AdminUpsertMeeting = ({
     /* Filtering out rooms that are taken for that day */
     useEffect(() => {
         const fetchRooms = async () => {
-            const { data, error } = await supabase.from("rooms").select();
+            const data = await fetchCached(
+                hashKey(scope, ["rooms"]),
+                async () => unwrap(await supabase.from("rooms").select()),
+                LIST_STALE,
+            );
 
-            if (error || !data) {
+            if (!data) {
                 enqueueSnackbar(
                     "Error fetching rooms. Contact it@stuysu.org for support.",
                     { variant: "error" },
@@ -158,11 +174,18 @@ const AdminUpsertMeeting = ({
                 return;
             }
 
-            const { data: grantsData, error: grantsError } = await supabase
-                .from("room_grants")
-                .select("room_id, organization_id");
+            const grantsData = await fetchCached(
+                hashKey(scope, ["roomGrants"]),
+                async () =>
+                    unwrap(
+                        await supabase
+                            .from("room_grants")
+                            .select("room_id, organization_id"),
+                    ),
+                LIST_STALE,
+            );
 
-            if (grantsError) {
+            if (!grantsData) {
                 enqueueSnackbar(
                     "Error fetching rooms. Contact it@stuysu.org for support.",
                     { variant: "error" },
@@ -173,25 +196,35 @@ const AdminUpsertMeeting = ({
             setRoomGrants(grantsData || []);
             setAllRooms(() => {
                 setLoading(false);
-                return (data as Room[]).sort(sortRooms);
+                return [...(data as Room[])].sort(sortRooms);
             });
         };
 
         fetchRooms();
-    }, []);
+    }, [scope, enqueueSnackbar]);
 
     useEffect(() => {
         const fetchFaculty = async () => {
-            const { data, error } = await supabase
-                .from("users")
-                .select("id, first_name, last_name, email")
-                .eq("is_faculty", true)
-                .order("last_name")
-                .returns<
-                    Pick<User, "id" | "first_name" | "last_name" | "email">[]
-                >();
+            const data = await fetchCached(
+                hashKey(scope, ["faculty"]),
+                async () =>
+                    unwrap(
+                        await supabase
+                            .from("users")
+                            .select("id, first_name, last_name, email")
+                            .eq("is_faculty", true)
+                            .order("last_name")
+                            .returns<
+                                Pick<
+                                    User,
+                                    "id" | "first_name" | "last_name" | "email"
+                                >[]
+                            >(),
+                    ),
+                LIST_STALE,
+            );
 
-            if (error || !data) {
+            if (!data) {
                 setFacultyFailed(true);
                 enqueueSnackbar(
                     "Error fetching faculty. Contact it@stuysu.org for support.",
@@ -213,9 +246,10 @@ const AdminUpsertMeeting = ({
         };
 
         fetchFaculty();
-    }, [enqueueSnackbar]);
+    }, [scope, enqueueSnackbar]);
 
     useEffect(() => {
+        let stale = false;
         const filterRooms = async () => {
             if (!startTime || !endTime) return; // can't filter without these bounds
 
@@ -234,6 +268,7 @@ const AdminUpsertMeeting = ({
                     meeting_end: wallClockToISO(endTime),
                 })
                 .returns<RoomMeta[]>();
+            if (stale) return;
 
             if (error) {
                 enqueueSnackbar(
@@ -306,6 +341,9 @@ const AdminUpsertMeeting = ({
         };
 
         filterRooms();
+        return () => {
+            stale = true;
+        };
     }, [
         loading,
         id,
@@ -347,7 +385,7 @@ const AdminUpsertMeeting = ({
 
         let isInsert = false;
 
-        if (!meetingTitle || !meetingTitle.length) {
+        if (!meetingTitle.trim()) {
             enqueueSnackbar("Missing meeting title.", { variant: "error" });
             return;
         }
@@ -429,7 +467,7 @@ const AdminUpsertMeeting = ({
                 body: {
                     organization_id: organization.id,
                     id,
-                    title: meetingTitle,
+                    title: meetingTitle.trim(),
                     description: meetingDesc,
                     room_id: roomId || null,
                     start_time: wallClockToISO(startTime),
@@ -437,7 +475,7 @@ const AdminUpsertMeeting = ({
                     is_public: isPub,
                     notify_faculty: notifyFaculty || advisorRoomBooking,
                     advisor: meetingAdvisor.trim(),
-                    silent,
+                    silent: !notifyMembers,
                 },
             });
         } else {
@@ -446,7 +484,7 @@ const AdminUpsertMeeting = ({
             supabaseReturn = await supabase.functions.invoke("create-meeting", {
                 body: {
                     organization_id: organization.id,
-                    title: meetingTitle,
+                    title: meetingTitle.trim(),
                     description: meetingDesc,
                     room_id: roomId || null,
                     start_time: wallClockToISO(startTime),
@@ -454,7 +492,7 @@ const AdminUpsertMeeting = ({
                     is_public: isPub,
                     notify_faculty: notifyFaculty || advisorRoomBooking,
                     advisor: meetingAdvisor.trim(),
-                    silent,
+                    silent: !notifyMembers,
                 },
             });
         }
@@ -464,9 +502,14 @@ const AdminUpsertMeeting = ({
             if (error) {
                 message = error;
             }
-            enqueueSnackbar("Error creating meeting. " + message, {
-                variant: "error",
-            });
+            enqueueSnackbar(
+                (isInsert
+                    ? "Error creating meeting. "
+                    : "Error saving meeting. ") + message,
+                {
+                    variant: "error",
+                },
+            );
             return;
         }
 
@@ -543,6 +586,40 @@ const AdminUpsertMeeting = ({
                 }
             />
 
+            <DateField
+                label="Meeting Day"
+                value={startTime ?? endTime ?? day}
+                onChange={(next) => {
+                    if (!next?.isValid()) return;
+                    const move = (t: Dayjs | null) =>
+                        t &&
+                        t
+                            .year(next.year())
+                            .month(next.month())
+                            .date(next.date());
+                    setDay(next);
+                    setStartTime(move(startTime));
+                    setEndTime(move(endTime));
+                }}
+                sx={{
+                    width: "100%",
+                    marginTop: "10px",
+                    marginBottom: "10px",
+                }}
+            />
+            <div className="grid w-full grid-cols-2 gap-2.5">
+                <TimeField
+                    label="Start"
+                    value={startTime}
+                    onChange={(t) => setStartTime(onDay(t))}
+                />
+
+                <TimeField
+                    label="End"
+                    value={endTime}
+                    onChange={(t) => setEndTime(onDay(t))}
+                />
+            </div>
             <TextField
                 value={meetingDesc}
                 onChange={(event: ChangeEvent<HTMLInputElement>) =>
@@ -551,57 +628,19 @@ const AdminUpsertMeeting = ({
                 label="Description"
                 fullWidth
                 multiline
-                rows={4}
                 sx={{ marginTop: "16px" }}
             />
-
-            <DateField
-                label="Meeting Day"
-                value={startTime}
-                onChange={(newStartTime) => {
-                    if (!newStartTime) return;
-
-                    setStartTime(newStartTime);
-
-                    // also change day of end time
-                    if (!endTime) {
-                        setEndTime(newStartTime);
-                    } else {
-                        setEndTime(
-                            endTime
-                                ?.year(newStartTime.year())
-                                .month(newStartTime.month())
-                                .date(newStartTime.date()),
-                        );
-                    }
-                }}
-                sx={{
-                    width: "100%",
-                    marginTop: "10px",
-                    marginBottom: "10px",
-                }}
-            />
-            <div className="w-full flex flex-nowrap items-center">
-                <TimeField
-                    label="Start"
-                    value={startTime}
-                    onChange={setStartTime}
-                    sx={{ marginRight: "10px" }}
-                />
-
-                <TimeField label="End" value={endTime} onChange={setEndTime} />
-            </div>
             <SwitchField
                 checked={isPub}
                 onChange={setIsPub}
                 className="mt-2.5"
-                label="is public?"
+                label="Public"
             />
             <SwitchField
-                checked={silent}
-                onChange={setSilent}
+                checked={notifyMembers}
+                onChange={setNotifyMembers}
                 className="mt-2.5"
-                label="silent?"
+                label="Notify members"
             />
             <SwitchField
                 checked={notifyFaculty || advisorRoomBooking}
@@ -610,8 +649,8 @@ const AdminUpsertMeeting = ({
                 className="mt-2.5"
                 label={
                     advisorRoomBooking
-                        ? "notify faculty? (required for this room)"
-                        : "notify faculty?"
+                        ? "Notify faculty (required for this room)"
+                        : "Notify faculty"
                 }
             />
         </ContentDialog>

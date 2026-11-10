@@ -10,6 +10,7 @@ type Requirements = {
     maxWords?: number;
     disableSpaces?: boolean /* replace spaces with dashes */;
     onlyAlpha?: boolean;
+    onlyDigits?: boolean;
     lowercase?: boolean;
     links?: boolean /* space separated web links */;
 };
@@ -115,6 +116,10 @@ const FormTextField = ({
             targetValue = targetValue.replace(/[^a-z0-9\- ]/gi, "");
         }
 
+        if (requirements?.onlyDigits) {
+            targetValue = targetValue.replace(/\D/g, "");
+        }
+
         if (requirements?.lowercase) {
             targetValue = targetValue.toLowerCase();
         }
@@ -133,12 +138,21 @@ const FormTextField = ({
 
     if (requirements) {
         let countChars = false;
-        if (requirements.minChar) {
+        if (
+            requirements.minChar &&
+            requirements.minChar === requirements.maxChar
+        ) {
+            countChars = true;
+            helperText += `: exactly ${requirements.minChar} Characters`;
+        } else if (requirements.minChar && requirements.minChar > 1) {
             countChars = true;
             helperText += `: min ${requirements.minChar} Characters`;
         }
 
-        if (requirements.maxChar) {
+        if (
+            requirements.maxChar &&
+            requirements.maxChar !== requirements.minChar
+        ) {
             if (countChars) {
                 helperText += " to";
             } else {

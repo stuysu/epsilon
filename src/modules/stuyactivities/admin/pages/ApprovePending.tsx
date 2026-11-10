@@ -5,6 +5,7 @@ import OrgApproval from "../components/OrgApproval";
 import { useSnackbar } from "notistack";
 import OrgBlock from "../../../../components/ui/OrgBlock";
 import Divider from "../../../../components/ui/Divider";
+import ContentUnavailable from "../../../../components/ui/content/ContentUnavailable";
 
 const ApprovePending = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -13,6 +14,7 @@ const ApprovePending = () => {
     );
 
     const [view, setView] = useState<Partial<OrgContextType>>();
+    const [loaded, setLoaded] = useState(false);
 
     useEffect(() => {
         const fetchPendingOrgs = async () => {
@@ -67,6 +69,7 @@ const ApprovePending = () => {
             }
 
             setPendingOrgs(data as Partial<OrgContextType>[]);
+            setLoaded(true);
         };
 
         fetchPendingOrgs();
@@ -90,6 +93,14 @@ const ApprovePending = () => {
         <div className={"w-full p-4 sm:p-12"}>
             <h1>Pending Organizations</h1>
             <Divider />
+            {loaded && pendingOrgs.length === 0 && (
+                <ContentUnavailable
+                    icon="bx-check-circle"
+                    iconColor="text-green"
+                    title="No Pending Activities"
+                    description="There are no new Activities waiting for approval."
+                />
+            )}
             <div className={"flex mt-8 gap-3 flex-wrap"}>
                 {pendingOrgs.map((org) => (
                     <button

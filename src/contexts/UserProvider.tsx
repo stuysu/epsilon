@@ -1,60 +1,58 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, {
+    useCallback,
+    useContext,
+    useEffect,
+    useMemo,
+    useState,
+} from "react";
 import { supabase } from "../lib/supabaseClient";
 import UserContext from "./UserContext";
 import { useSnackbar } from "notistack";
 import { ThemeContext } from "./ThemeProvider";
+import { useLocation } from "react-router-dom";
+import UnauthorizedAccount from "../modules/home/UnauthorizedAccount";
+
+const signedOut: UserContextType = {
+    signed_in: false,
+    admin: false,
+    permission: "",
+    id: -1,
+    first_name: "",
+    last_name: "",
+    email: "",
+    picture: "",
+    grade: -1,
+    memberships: [],
+    is_faculty: false,
+    active: false,
+};
 
 const UserProvider = ({ children }: { children: React.ReactNode }) => {
     const { enqueueSnackbar } = useSnackbar();
     const { effectiveMode } = useContext(ThemeContext);
+    const location = useLocation();
     const [loading, setLoading] = useState(true);
+    const [unauthorizedEmail, setUnauthorizedEmail] = useState<string>();
 
-    const [value, setValue] = React.useState<UserContextType>({
-        signed_in: false,
-        admin: false,
-        permission: "",
-        id: -1,
-        first_name: "",
-        last_name: "",
-        email: "",
-        picture: "",
-        grade: -1,
-        memberships: [],
-        is_faculty: false,
-        active: false,
-    });
-
-    supabase.auth.onAuthStateChange((event) => {
-        if (event !== "SIGNED_OUT") {
-        } else {
-            setValue({
-                signed_in: false,
-                admin: false,
-                permission: "",
-                id: -1,
-                first_name: "",
-                last_name: "",
-                email: "",
-                picture: "",
-                grade: -1,
-                memberships: [],
-                is_faculty: false,
-                active: false,
-            });
-        }
-    });
+    const [value, setValue] = React.useState<UserContextType>(signedOut);
 
     useEffect(() => {
-        const getUser = async () => {
-            const authData = await supabase.auth.getSession();
+        const { data } = supabase.auth.onAuthStateChange((event) => {
+            if (event === "SIGNED_OUT") setValue(signedOut);
+        });
+        return () => data.subscription.unsubscribe();
+    }, []);
 
-            if (authData.data?.session?.user) {
-                // fetch user profile
-                const supabaseUser = authData.data.session.user; // user stored in auth.user table
-                const { data, error } = await supabase
-                    .from("users")
-                    .select(
-                        `
+    const getUser = useCallback(async () => {
+        const authData = await supabase.auth.getSession();
+
+        if (authData.data?.session?.user) {
+            // fetch user profile
+            const supabaseUser = authData.data.session.user; // user stored in auth.user table
+            const { data, error } = await supabase
+                .from("users")
+                .select(
+                    `
               id,
               first_name,
               last_name,
@@ -79,117 +77,120 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 permission
               )
           `,
-                    )
-                    .eq("email", supabaseUser.email);
+                )
+                .eq("email", supabaseUser.email);
 
-                if (error) {
-                    enqueueSnackbar(
-                        "Error logging in. Contact it@stuysu.org for support.",
-                        { variant: "error" },
-                    );
-                    setLoading(false);
-                    return;
-                }
+            if (error) {
+                enqueueSnackbar(
+                    "Error logging in. Contact it@stuysu.org for support.",
+                    { variant: "error" },
+                );
+                setLoading(false);
+                return;
+            }
 
-                if (!Array.isArray(data) || data?.length === 0) {
-                    // user is not in our public.users table. notify
-                    enqueueSnackbar(
-                        "Please sign in with your stuy.edu account. If you are an incoming freshman, wait until" +
-                            " later. For more assistance, contact it@stuysu.org",
-                        { variant: "error" },
-                    );
-                    setLoading(false);
-                    return;
-                }
+            if (!Array.isArray(data) || data?.length === 0) {
+                // user is not in our public.users table
+                setUnauthorizedEmail(supabaseUser.email || "");
+                setLoading(false);
+                return;
+            }
 
-                let grade;
-                const d = new Date();
+            let grade;
+            const d = new Date();
 
-                if (!data[0].is_faculty && data[0].grad_year) {
-                    if (d.getMonth() < 8) {
-                        grade = 12 - (data[0].grad_year - d.getFullYear());
-                    } else {
-                        grade = 12 - (data[0].grad_year - d.getFullYear() - 1);
-                    }
+            if (!data[0].is_faculty && data[0].grad_year) {
+                if (d.getMonth() < 8) {
+                    grade = 12 - (data[0].grad_year - d.getFullYear());
                 } else {
-                    grade = 0;
+                    grade = 12 - (data[0].grad_year - d.getFullYear() - 1);
                 }
+            } else {
+                grade = 0;
+            }
 
-                /* this probably isn't necessary and could be replaced with better typescript */
-                const user: User = {
-                    first_name: data[0].first_name,
-                    last_name: data[0].last_name,
-                    email: data[0].email,
-                    grade: grade,
-                    picture: data[0].picture,
-                    id: data[0].id,
-                    is_faculty: data[0].is_faculty,
-                    active: data[0].active,
-                    memberships: data[0].memberships as Membership[],
-                }; // user in our own user table
-                let isAdmin = false;
-                /* CHECK PERMISSIONS */
-                if (
-                    data &&
-                    data[0].permissions.some(
-                        (p: { permission: string }) => p.permission === "ADMIN",
-                    )
-                ) {
-                    isAdmin = true;
-                }
-                // a user can hold several permissions, and ADMIN outranks the rest
-                const permission = isAdmin
-                    ? "ADMIN"
-                    : data[0].permissions[0]?.permission;
+            /* this probably isn't necessary and could be replaced with better typescript */
+            const user: User = {
+                first_name: data[0].first_name,
+                last_name: data[0].last_name,
+                email: data[0].email,
+                grade: grade,
+                picture: data[0].picture,
+                id: data[0].id,
+                is_faculty: data[0].is_faculty,
+                active: data[0].active,
+                memberships: data[0].memberships as Membership[],
+            }; // user in our own user table
+            let isAdmin = false;
+            /* CHECK PERMISSIONS */
+            if (
+                data &&
+                data[0].permissions.some(
+                    (p: { permission: string }) => p.permission === "ADMIN",
+                )
+            ) {
+                isAdmin = true;
+            }
+            // a user can hold several permissions, and ADMIN outranks the rest
+            const permission = isAdmin
+                ? "ADMIN"
+                : data[0].permissions[0]?.permission;
 
-                /* get google pfp and update; password logins have none */
-                const avatarURL = supabaseUser.user_metadata.avatar_url;
-                if (!user.picture && avatarURL) {
-                    user.picture = avatarURL;
+            /* get google pfp and update; password logins have none */
+            const avatarURL = supabaseUser.user_metadata.avatar_url;
+            if (!user.picture && avatarURL) {
+                user.picture = avatarURL;
 
-                    const { error: profileUpdateError } = await supabase.rpc(
-                        "update_profile_picture",
-                        { profile_url: avatarURL },
+                const { error: profileUpdateError } = await supabase.rpc(
+                    "update_profile_picture",
+                    { profile_url: avatarURL },
+                );
+
+                if (profileUpdateError) {
+                    enqueueSnackbar(
+                        "Unable to save profile picture to server. Please contact it@stuysu.org for support.",
+                        { variant: "error" },
                     );
-
-                    if (profileUpdateError) {
-                        enqueueSnackbar(
-                            "Unable to save profile picture to server. Please contact it@stuysu.org for support.",
-                            { variant: "error" },
-                        );
-                        setLoading(false);
-                    } else {
-                        enqueueSnackbar("Profile Picture Updated!", {
-                            variant: "success",
-                        });
-                    }
+                    setLoading(false);
+                } else {
+                    enqueueSnackbar("Profile Picture Updated!", {
+                        variant: "success",
+                    });
                 }
+            }
 
-                /*
+            /*
           This shows every time we log in (even if its saved already). Thus, it is commented out.
           enqueueSnackbar("Signed In!", { variant: "success" })
         */
 
-                setValue({
-                    signed_in: true,
-                    admin: isAdmin,
-                    id: user.id,
-                    first_name: user.first_name,
-                    last_name: user.last_name,
-                    email: user.email,
-                    picture: user.picture,
-                    grade: user.grade,
-                    memberships: user.memberships,
-                    is_faculty: user.is_faculty,
-                    active: user.active,
-                    permission,
-                });
-            }
-            setLoading(false);
-        };
-
-        getUser();
+            setValue({
+                signed_in: true,
+                admin: isAdmin,
+                id: user.id,
+                first_name: user.first_name,
+                last_name: user.last_name,
+                email: user.email,
+                picture: user.picture,
+                grade: user.grade,
+                memberships: user.memberships,
+                is_faculty: user.is_faculty,
+                active: user.active,
+                permission,
+            });
+        }
+        setLoading(false);
     }, [enqueueSnackbar]);
+
+    useEffect(() => {
+        getUser();
+    }, [getUser]);
+
+    // pages call refresh after the user's own memberships change
+    const provided = useMemo(
+        () => ({ ...value, refresh: getUser }),
+        [value, getUser],
+    );
 
     if (loading) {
         return (
@@ -204,8 +205,15 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
         );
     }
 
+    if (
+        unauthorizedEmail !== undefined &&
+        location.pathname !== "/activities-support"
+    ) {
+        return <UnauthorizedAccount email={unauthorizedEmail} />;
+    }
+
     return (
-        <UserContext.Provider value={value}>{children}</UserContext.Provider>
+        <UserContext.Provider value={provided}>{children}</UserContext.Provider>
     );
 };
 

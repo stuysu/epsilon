@@ -16,6 +16,5 @@ export default defineConfig(({ mode }) => {
         },
         server: { port: Number(process.env.PORT) || 3000 },
         build: { outDir: process.env.BUILD_PATH || "build", emptyOutDir: true },
-        test: { environment: "jsdom", globals: true },
     };
 });

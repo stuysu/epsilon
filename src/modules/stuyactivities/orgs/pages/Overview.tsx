@@ -1,6 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import OrgContext from "../../../../contexts/OrgContext";
-import useMediaQuery from "../../../../utils/useMediaQuery";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../../../lib/supabaseClient";
@@ -11,6 +10,8 @@ import { sortByDate, sortMembers } from "../../../../utils/DataFormatters";
 import { toNewYork } from "../../../../utils/NewYorkTime";
 import UserContext from "../../../../contexts/UserContext";
 import RelatedActivities from "./RelatedActivities";
+import { relatedActivities } from "../relatedActivities";
+import { useOrgList } from "../../../../contexts/OrgListContext";
 import OrgInspector from "../components/OrgInspector";
 import ToggleChip from "../../../../components/ui/input/ToggleChip";
 import Divider from "../../../../components/ui/Divider";
@@ -20,14 +21,25 @@ import { PUBLIC_URL } from "../../../../config/constants";
 import DisplayLinks from "../../../../components/DisplayLinks";
 import Avatar from "../../../../components/ui/Avatar";
 import pressable from "../../../../utils/pressable";
+import { useInvites } from "../../../../contexts/InvitesProvider";
 
 const Overview = () => {
     const navigate = useNavigate();
-    const isMobile = useMediaQuery("(max-width: 1024px)");
     const organization: OrgContextType = useContext(OrgContext);
     const user: UserContextType = useContext(UserContext);
+    const { orgs } = useOrgList();
+    const related = useMemo(
+        () =>
+            orgs
+                ? relatedActivities(
+                      organization as Organization,
+                      orgs as Organization[],
+                  )
+                : null,
+        [orgs, organization],
+    );
+    const { invites } = useInvites();
     const { enqueueSnackbar } = useSnackbar();
-    const isMeetingMobile = useMediaQuery("(max-width: 1450px)");
 
     const [attemptingInteract, setAttemptingInteract] = useState(false);
 
@@ -53,7 +65,12 @@ const Overview = () => {
     let disabled = false;
 
     if (isCreator) disabled = true;
-    if (!isInOrg && !organization.joinable) {
+    const pendingInvite = invites.find(
+        (invite) => invite.organizations.id === organization.id,
+    );
+    if (!isInOrg && pendingInvite) {
+        interactString = "VIEW INVITE";
+    } else if (!isInOrg && !organization.joinable) {
         interactString = "🔒 Private Activity";
         disabled = true;
     } else if (!user.signed_in) {
@@ -64,7 +81,18 @@ const Overview = () => {
         setAttemptingInteract(true);
         try {
             if (!user.signed_in) {
-                navigate("/");
+                // back to this club after signing in
+                await supabase.auth.signInWithOAuth({
+                    provider: "google",
+                    options: {
+                        redirectTo:
+                            window.location.origin + window.location.pathname,
+                    },
+                });
+                return;
+            }
+            if (interactString === "VIEW INVITE") {
+                navigate("/invites");
                 return;
             }
             if (interactString === "JOIN") {
@@ -205,7 +233,11 @@ const Overview = () => {
     };
 
     return (
-        <div className={"mt-3 w-full flex flex-wrap max-w-4xl"}>
+        <div
+            className={
+                "mt-3 w-full flex flex-wrap max-w-4xl min-[2300px]:max-w-none"
+            }
+        >
             <div className={"flex max-sm:flex-col gap-6 mb-7"}>
                 <div
                     className={
@@ -310,16 +342,15 @@ const Overview = () => {
                         <AsyncButton
                             onClick={handleInteract}
                             disabled={disabled || attemptingInteract}
+                            className="max-lg:w-full"
                             sx={{
                                 ...(interactString === "LEAVE" ||
                                 interactString === "CANCEL JOIN"
                                     ? {
-                                          backgroundColor:
-                                              "rgba(248, 19, 19, 0.88)",
+                                          backgroundColor: "#c81e1e",
                                           color: "white",
                                       }
                                     : {}),
-                                ...(isMobile && { width: "100%" }),
                             }}
                         >
                             {interactString
@@ -347,7 +378,7 @@ const Overview = () => {
             <Divider />
             <div
                 className={
-                    "max-w-full overflow-scroll scrollbar-none scroll-pe-10 max-sm:[mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)]"
+                    "max-w-full overflow-scroll scrollbar-none scroll-pe-10 max-lg:[mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)] max-lg:pr-8"
                 }
             >
                 <div className={"flex flex-row mt-2 mb-6 items-center"}>
@@ -357,7 +388,9 @@ const Overview = () => {
                                 <h3 className={"w-24 text-center"}>
                                     {
                                         organization.memberships.filter(
-                                            (member) => member.active,
+                                            (member) =>
+                                                member.active &&
+                                                member.role !== "ADVISOR",
                                         ).length
                                     }
                                 </h3>
@@ -377,7 +410,7 @@ const Overview = () => {
                             <button
                                 type="button"
                                 className={
-                                    "bx bx-info-circle relative top-px ml-1 cursor-help sm:hover:brightness-200"
+                                    "bx bx-info-circle relative top-px -my-1.5 -mr-1.5 ml-[-2px] p-1.5 cursor-help sm:hover:brightness-200"
                                 }
                                 aria-label="What does Activity Status mean?"
                                 onClick={() => navigate(`/activities-support`)}
@@ -408,7 +441,7 @@ const Overview = () => {
                                 <h3 className={"w-48 text-center"}>
                                     {lastMeetingStart
                                         ? toNewYork(lastMeetingStart).format(
-                                              "YYYY/MM/DD",
+                                              "M/D/YYYY",
                                           )
                                         : "None Yet"}
                                 </h3>
@@ -584,7 +617,6 @@ const Overview = () => {
                                         advisor={meeting.advisor}
                                         org_name={organization.name}
                                         org_picture={organization.picture || ""}
-                                        isMobile={isMeetingMobile}
                                         onlyUpcoming
                                     />
                                 ));
@@ -597,26 +629,26 @@ const Overview = () => {
                 </div>
             </div>
 
-            <div className={"w-full mt-10"}>
-                <h2 className={"mb-2 text-typography-1"}>
-                    Activities Like This
-                    <span className={"opacity-75"}> (Beta)</span>
-                </h2>
-                {isMobile ? (
-                    <Divider />
-                ) : (
+            {related?.length !== 0 && (
+                <div className={"w-full mt-10"}>
+                    <h2 className={"mb-2 text-typography-1"}>
+                        Activities Like This
+                    </h2>
+                    <div className={"lg:hidden"}>
+                        <Divider />
+                    </div>
                     <div
                         className={
-                            "absolute w-[calc(100vw-160px-3rem)] h-px bg-divider"
+                            "absolute h-px w-[calc(100vw-160px-3rem)] bg-divider max-lg:hidden"
                         }
                     ></div>
-                )}
-                <div className={"h-80 relative right-12"}>
-                    <div className={"absolute"}>
-                        <RelatedActivities currentOrg={organization} />
+                    <div className={"h-80 relative right-12"}>
+                        <div className={"absolute"}>
+                            <RelatedActivities related={related} />
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };

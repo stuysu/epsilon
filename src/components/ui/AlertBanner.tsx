@@ -61,14 +61,17 @@ const AlertBanner = ({
                 className={`bx ${icon} py-[7px] text-[22px] leading-none`}
                 aria-hidden="true"
             />
-            <div className="min-w-0 flex-1 py-2">{children}</div>
+            {/* bare text matches the paragraphs other banners pass */}
+            <div className="min-w-0 flex-1 py-2 text-[0.9rem] leading-[1.2rem] [font-variation-settings:'wght'_500]">
+                {children}
+            </div>
             {onClose && (
                 <button
                     {...closeButtonProps}
                     type="button"
                     aria-label="Close"
                     onClick={onClose}
-                    className="-mr-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-black/10"
+                    className="touch-target -mr-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-black/10"
                 >
                     <i className="bx bx-x text-[20px]" aria-hidden="true" />
                 </button>

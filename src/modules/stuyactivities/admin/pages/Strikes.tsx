@@ -52,6 +52,7 @@ const Strikes = () => {
 
     useEffect(() => {
         if (!orgId) return;
+        let stale = false;
 
         const fetchOrgStrikes = async () => {
             const { data, error } = await supabase
@@ -66,6 +67,7 @@ const Strikes = () => {
                 `,
                 )
                 .eq("organization_id", orgId);
+            if (stale) return;
 
             if (error || !data) {
                 return enqueueSnackbar(
@@ -77,16 +79,26 @@ const Strikes = () => {
             setOrgStrikes(data as Strike[]);
         };
 
+        setOrgStrikes([]);
         fetchOrgStrikes();
+        return () => {
+            stale = true;
+        };
     }, [orgId, enqueueSnackbar]);
 
     const issueStrike = async () => {
+        if (!reason.trim()) {
+            enqueueSnackbar("Enter a reason for the strike.", {
+                variant: "error",
+            });
+            return;
+        }
         const { data, error } = await supabase.functions.invoke(
             "issue-strike",
             {
                 body: {
                     organization_id: orgId,
-                    reason,
+                    reason: reason.trim(),
                 },
             },
         );
@@ -148,19 +160,21 @@ const Strikes = () => {
             ) : filteredOrgs.length > 0 ? (
                 <div>
                     {filteredOrgs.map((org) => (
-                        <div>
-                            <a
-                                className={"important cursor-pointer"}
-                                key={org.id}
+                        <div key={org.id}>
+                            <button
+                                type="button"
+                                className={
+                                    "important w-full py-2 text-left cursor-pointer"
+                                }
                                 onClick={() => {
                                     setOrgId(org.id);
                                     setOrgName(org.name);
-                                    setSearchInput(""); // Clear search input after selecting an org
-                                    setFilteredOrgs([]); // Clear filtered orgs after selecting an org
+                                    setSearchInput("");
+                                    setFilteredOrgs([]);
                                 }}
                             >
                                 {org.name}
-                            </a>
+                            </button>
                             <Divider />
                         </div>
                     ))}
@@ -172,7 +186,7 @@ const Strikes = () => {
                         <Divider />
                     </div>
                     <div className="w-full flex justify-center flex-wrap">
-                        <div className="w-[500px] flex justify-center flex-wrap">
+                        <div className="w-full max-w-[500px] flex justify-center flex-wrap">
                             <h3 className={"mb-6"}>
                                 Issue Strike to {orgName}
                             </h3>
@@ -195,7 +209,10 @@ const Strikes = () => {
 
                     <div className="mt-2.5 w-full flex flex-wrap justify-center">
                         {orgStrikes.map((strike, i) => (
-                            <div className="w-full flex justify-center" key={i}>
+                            <div
+                                className="w-full flex justify-center"
+                                key={strike.id}
+                            >
                                 <div
                                     className="rounded bg-layer-2 shadow-control"
                                     style={{
@@ -222,9 +239,7 @@ const Strikes = () => {
 
                     <UserDialog
                         title="Delete this strike?"
-                        description="This action cannot be undone. Ensure that you have
-                        confirmed that this strike should be deleted, in accordance with
-                        the Clubs & Pubs Regulations, with the Clubs & Pubs Department."
+                        description="This can't be undone. Only delete a strike after confirming with the Clubs & Pubs Department that it should be removed under the Clubs & Pubs Regulations."
                         open={deleteDialogOpen}
                         onClose={closeDeleteDialog}
                         onCancel={() => {

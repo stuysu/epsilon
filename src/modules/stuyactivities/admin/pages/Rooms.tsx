@@ -68,7 +68,7 @@ const Rooms = () => {
             role="button"
             tabIndex={0}
             aria-label={`Sort by ${label}`}
-            className={`${width} cursor-pointer select-none sm:hover:text-typography-1`}
+            className={`${width} touch-target cursor-pointer select-none rounded sm:hover:text-typography-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1`}
             onClick={() => toggleSort(key)}
             onKeyDown={(event) => {
                 if (event.key === "Enter" || event.key === " ") {

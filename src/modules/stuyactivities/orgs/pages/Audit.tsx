@@ -1,5 +1,7 @@
 import React, { useContext } from "react";
+import { Navigate } from "react-router-dom";
 import OrgContext from "../../../../contexts/OrgContext";
+import UserContext from "../../../../contexts/UserContext";
 
 import OrgMeeting from "../components/OrgMeeting";
 import { sortByDate } from "../../../../utils/DataFormatters";
@@ -10,6 +12,9 @@ import ItemList from "../../../../components/ui/lists/ItemList";
 
 const Audit = () => {
     const organization: OrgContextType = useContext(OrgContext);
+    const user = useContext(UserContext);
+
+    if (user.permission !== "ADMIN") return <Navigate to=".." replace />;
 
     return (
         <LoginGate page="audit this activity">
@@ -24,10 +29,11 @@ const Audit = () => {
                         title={"Audit Meeting Records"}
                         icon={"bx-calendar"}
                     >
-                        {organization.meetings
+                        {[...organization.meetings]
                             .sort(sortByDate)
                             .map((meeting) => (
                                 <OrgMeeting
+                                    key={meeting.id}
                                     id={meeting.id || -1}
                                     title={meeting.title || "No Title"}
                                     description={

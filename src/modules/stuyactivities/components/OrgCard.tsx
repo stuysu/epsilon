@@ -4,18 +4,31 @@ import UserContext from "../../../contexts/UserContext";
 import { Link } from "react-router-dom";
 import Skeleton from "../../../components/ui/Skeleton";
 import Avatar from "../../../components/ui/Avatar";
+import { MeetingChip } from "../orgs/components/MeetingChips";
+
+import { capitalizeWords, sortWeekdays } from "../../../utils/DataFormatters";
+const dayLetters: Record<string, string> = {
+    MONDAY: "M",
+    TUESDAY: "T",
+    WEDNESDAY: "W",
+    THURSDAY: "R",
+    FRIDAY: "F",
+};
+
+const SHOWN_TAGS = 2;
+
+const TAG_PILL =
+    "inline-block h-7 truncate rounded-full bg-layer-3 px-2.5 text-sm font-semibold leading-7 text-typography-1 shadow-control";
 
 const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
     const [imgLoaded, setImgLoaded] = useState(false);
 
     const user: UserContextType = useContext(UserContext);
+    const memberCount =
+        organization.member_count ?? organization.memberships?.length ?? 0;
 
     return (
-        <article
-            tabIndex={0}
-            role="link"
-            className="relative transition-transform duration-[400ms] ease-[cubic-bezier(0.3,0.9,0.3,1)] sm:sm:hover:-translate-y-[5px]"
-        >
+        <article className="relative transition-transform duration-[400ms] ease-[cubic-bezier(0.3,0.9,0.3,1)] sm:sm:hover:-translate-y-[5px]">
             <div className="mt-10"></div>
             <div className="relative rounded-2xl overflow-visible">
                 <div
@@ -30,7 +43,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                     style={{
                         textDecoration: "none",
                         color: "inherit",
-                        display: "block",
+                        display: "flex",
                     }}
                     className="
     relative
@@ -83,14 +96,16 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                             ></div>
 
                             {user.signed_in && (
-                                <p
-                                    className={
-                                        "absolute top-12 right-0 text-typography-2 bg-layer-2 px-2 py-1 rounded-md important shadow-control"
-                                    }
+                                <span
+                                    className={"absolute right-0 top-12"}
+                                    aria-label={`${memberCount} members`}
                                 >
-                                    <i className="bx bx-group bx-xs relative top-0.5 mr-1"></i>
-                                    {organization.memberships?.length ?? 0}
-                                </p>
+                                    <MeetingChip
+                                        icon="bx-group"
+                                        iconClass="text-typography-2"
+                                        label={String(memberCount)}
+                                    />
+                                </span>
                             )}
 
                             {/* Background avatar with blur effect */}
@@ -159,56 +174,69 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                             </h3>
                         </div>
                     </div>
-                    <div className={"w-full mt-4"}>
-                        <p
-                            className={
-                                "important overflow-hidden overflow-ellipsis whitespace-normal [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:1]"
-                            }
-                        >
-                            {organization.tags?.join(" • ")}
-                        </p>
-                    </div>
-
-                    <div className="w-full mt-3.5">
-                        <p
-                            className={
-                                "overflow-hidden overflow-ellipsis whitespace-normal [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:4]"
-                            }
-                        >
-                            {organization.purpose}
-                        </p>
-
-                        <div
-                            className={
-                                "flex flex-col bg-layer-2 shadow-control py-3 px-4 mt-5 rounded-lg capitalize"
-                            }
-                        >
-                            <div className={"flex justify-between"}>
-                                <p>Commitment</p>
-                                <p className={"important"}>
-                                    {organization.commitment_level?.toLowerCase()}
-                                </p>
-                            </div>
-                            <div className={"flex justify-between"}>
-                                <p>Days</p>
-                                <p className={"important"}>
-                                    {organization.meeting_days?.length
-                                        ? organization.meeting_days
-                                              .map(
-                                                  (day: string) =>
-                                                      ({
-                                                          MONDAY: "M",
-                                                          TUESDAY: "T",
-                                                          WEDNESDAY: "W",
-                                                          THURSDAY: "R",
-                                                          FRIDAY: "F",
-                                                      })[day],
-                                              )
-                                              .join(" · ")
-                                        : "None"}
-                                </p>
-                            </div>
+                    {!!organization.tags?.length && (
+                        <div className={"mt-4 flex w-full gap-1.5"}>
+                            {organization.tags
+                                .slice(0, SHOWN_TAGS)
+                                .map((tag: string) => (
+                                    <span
+                                        key={tag}
+                                        title={tag}
+                                        className={`${TAG_PILL} ${tag.length <= 10 ? "shrink-0" : "min-w-0"}`}
+                                    >
+                                        {tag}
+                                    </span>
+                                ))}
+                            {organization.tags.length > SHOWN_TAGS && (
+                                <span className={`${TAG_PILL} shrink-0`}>
+                                    +{organization.tags.length - SHOWN_TAGS}
+                                </span>
+                            )}
                         </div>
+                    )}
+
+                    <p
+                        className={
+                            "mt-3.5 overflow-hidden overflow-ellipsis whitespace-normal [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:4]"
+                        }
+                    >
+                        {organization.purpose}
+                    </p>
+
+                    <div className={"mt-auto flex flex-wrap gap-1.5 pt-4"}>
+                        {organization.commitment_level && (
+                            <MeetingChip
+                                icon="bx-bar-chart-alt-2"
+                                iconClass="text-blue"
+                                label={
+                                    organization.commitment_level === "NONE"
+                                        ? "No Commitment"
+                                        : `${organization.commitment_level.charAt(0)}${organization.commitment_level.slice(1).toLowerCase()} Commitment`
+                                }
+                            />
+                        )}
+                        <MeetingChip
+                            icon="bx-calendar"
+                            iconClass="text-yellow"
+                            label={
+                                organization.meeting_days?.length
+                                    ? sortWeekdays(organization.meeting_days)
+                                          .map((day: string) => dayLetters[day])
+                                          .join(" · ")
+                                    : "No Set Days"
+                            }
+                            fullLabel={
+                                organization.meeting_days?.length
+                                    ? `Meets ${sortWeekdays(
+                                          organization.meeting_days,
+                                      )
+                                          .map((d) =>
+                                              capitalizeWords(d.toLowerCase()),
+                                          )
+                                          .join(", ")}`
+                                    : "No set meeting days"
+                            }
+                        />
                     </div>
                 </Link>
             </div>

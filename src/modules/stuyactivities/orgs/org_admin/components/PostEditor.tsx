@@ -25,7 +25,7 @@ const PostEditor = ({
     onCreate?: (newData: Post) => void;
 }) => {
     const { enqueueSnackbar } = useSnackbar();
-    const [silent, setSilent] = useState(false);
+    const [notifyMembers, setNotifyMembers] = useState(true);
 
     const [postData, setPostData] = useState<Partial<Post>>({
         id: undefined,
@@ -69,7 +69,7 @@ const PostEditor = ({
             title: postData.title,
             description: postData.description,
             organization_id: orgId,
-            silent,
+            silent: !notifyMembers,
         };
 
         const { data, error } = await supabase.functions.invoke("create-post", {
@@ -84,7 +84,7 @@ const PostEditor = ({
         }
 
         // reset values
-        setSilent(false);
+        setNotifyMembers(true);
         setPostData({
             id: undefined,
             organizations: {
@@ -174,9 +174,9 @@ const PostEditor = ({
             )}{" "}
             {!content && (
                 <SwitchField
-                    checked={silent}
-                    onChange={setSilent}
-                    label="silent?"
+                    checked={notifyMembers}
+                    onChange={setNotifyMembers}
+                    label="Notify members"
                     style={{ marginLeft: "10px" }}
                 />
             )}

@@ -2,12 +2,14 @@ import { ChangeEvent } from "react";
 
 type TextInputProps = {
     placeholder?: string;
+    ariaLabel?: string;
     value: string;
     onChange: (value: string) => void;
 };
 
 export default function TextInput({
     placeholder = "Send a message...",
+    ariaLabel,
     value,
     onChange,
 }: TextInputProps) {
@@ -15,13 +17,14 @@ export default function TextInput({
         <input
             type="text"
             placeholder={placeholder}
+            aria-label={ariaLabel ?? placeholder}
             value={value}
             onChange={(e: ChangeEvent<HTMLInputElement>) =>
                 onChange(e.target.value)
             }
             className=" w-full rounded-xl px-4 h-11 transition-colors
                 text-typography-1
-                important
+                font-semibold
               bg-layer-2
               sm:hover:bg-layer-3
               focus:outline-1

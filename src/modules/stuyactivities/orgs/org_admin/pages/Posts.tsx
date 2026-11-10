@@ -45,11 +45,11 @@ const Posts = () => {
             {organization.posts
                 .sort(sortPostByDate)
                 .reverse()
-                .map((post, i) => {
+                .map((post) => {
                     return (
                         <OrgStreamPost
                             content={post}
-                            key={i}
+                            key={post.id}
                             editable
                             onDelete={() => {
                                 if (organization.setOrg) {

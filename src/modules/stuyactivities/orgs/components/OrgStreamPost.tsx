@@ -9,6 +9,7 @@ import { toNewYork } from "../../../../utils/NewYorkTime";
 import OrgContext from "../../../../contexts/OrgContext";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import { Avatar } from "radix-ui";
+import UserDialog from "../../../../components/ui/overlays/UserDialog";
 import DisplayLinks from "../../../../components/DisplayLinks";
 
 /* This post component will serve as both the org_admin and member post. depending on role, differeing functionality */
@@ -23,15 +24,17 @@ const OrgStreamPost = ({
 }) => {
     const { enqueueSnackbar } = useSnackbar();
     const [editing, setEditing] = useState(false);
+    const [confirmingDelete, setConfirmingDelete] = useState(false);
     const organization = useContext(OrgContext);
 
     const deletePost = async () => {
-        const { error } = await supabase
+        const { data, error } = await supabase
             .from("posts")
             .delete()
-            .eq("id", content.id);
+            .eq("id", content.id)
+            .select("id");
 
-        if (error) {
+        if (error || !data?.length) {
             return enqueueSnackbar(
                 "Could not delete post. Contact it@stuysu.org for support",
                 { variant: "error" },
@@ -86,7 +89,7 @@ const OrgStreamPost = ({
 
     return (
         <article className="w-full relative p-1 rounded-xl h-fit max-h-96 border-none shadow-prominent bg-layer-1">
-            <div className={"flex items-center gap-2 m-4"}>
+            <div className={"m-4 flex flex-wrap items-center gap-2"}>
                 <Avatar.Root className="w-10 h-10 rounded-md overflow-hidden block">
                     <Avatar.Image
                         className="size-full object-cover"
@@ -101,10 +104,22 @@ const OrgStreamPost = ({
                     </Avatar.Fallback>
                 </Avatar.Root>
 
-                <div className={"mt-1.5"}>
-                    <h4>{content.organizations?.name}</h4>
+                <div className={"mt-1.5 min-w-0 flex-1"}>
+                    <h4 className={"break-words"}>
+                        {content.organizations?.name}
+                    </h4>
                     <p>{timeStr + (isEdited ? " · Edited" : "")}</p>
                 </div>
+                {editable && (
+                    <div className="flex shrink-0 gap-2.5">
+                        <AsyncButton onClick={() => setConfirmingDelete(true)}>
+                            Delete
+                        </AsyncButton>
+                        <AsyncButton onClick={() => setEditing(true)}>
+                            Edit
+                        </AsyncButton>
+                    </div>
+                )}
             </div>
 
             <div
@@ -136,23 +151,15 @@ const OrgStreamPost = ({
                 >
                     <DisplayLinks text={content.description} />
                 </div>
-
-                <div className="absolute top-5 right-5">
-                    {editable && (
-                        <>
-                            <AsyncButton onClick={deletePost}>
-                                Delete
-                            </AsyncButton>
-                            <AsyncButton
-                                onClick={() => setEditing(true)}
-                                sx={{ marginLeft: "10px" }}
-                            >
-                                Edit
-                            </AsyncButton>
-                        </>
-                    )}
-                </div>
             </div>
+            <UserDialog
+                title="Delete this post?"
+                description={`"${content.title}" will be removed for everyone. This can't be undone.`}
+                open={confirmingDelete}
+                onClose={() => setConfirmingDelete(false)}
+                onConfirm={deletePost}
+                confirmText="Delete"
+            />
         </article>
     );
 };

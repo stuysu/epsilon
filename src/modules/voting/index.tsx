@@ -33,7 +33,7 @@ const Vote = () => {
                         <div className="relative bottom-12 w-full flex justify-center">
                             <div className="max-sm:mt-5 max-sm:w-1/2 relative max-w-xl sm:w-2/3 w-full">
                                 {/* glow */}
-                                <h1
+                                <div
                                     aria-hidden="true"
                                     className="max-sm:pt-4 max-lg:mt-14 md:text-8xl text-4xl text-center max-sm:leading-9 font-light absolute top-0 left-0 w-full pointer-events-none select-none z-0"
                                 >
@@ -45,7 +45,7 @@ const Vote = () => {
                                             {word}
                                         </span>
                                     ))}
-                                </h1>
+                                </div>
 
                                 <h1 className="max-sm:pt-4 max-lg:mt-14 md:text-8xl text-4xl text-center max-sm:leading-9 font-light relative z-10">
                                     {title.split(" ").map((word, i) => (

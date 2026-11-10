@@ -2,14 +2,80 @@
 @import url("https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css");
 
 @tailwind base;
+
+/* stands in for ITC Avant Garde Medium, which the Adobe kit doesn't include;
+   its tracking and the CA and LL ligatures are built in */
+@font-face {
+    font-family: "epsilon-geometric";
+    src: url("/fonts/epsilon-geometric-medium.woff2") format("woff2");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
 @tailwind components;
 @tailwind utilities;
+
+/* page content is 1440px wide, growing on very wide or zoomed-out screens;
+   chrome uses these to line up with it */
+:root {
+    --frame: min(1920px, max(1440px, 100vw - 480px));
+}
+@layer utilities {
+    .px-frame {
+        padding-left: max(3rem, calc((100% - var(--frame)) / 2));
+        padding-right: max(3rem, calc((100% - var(--frame)) / 2));
+    }
+    .mx-frame {
+        margin-left: max(3rem, calc((100% - var(--frame)) / 2));
+        margin-right: max(3rem, calc((100% - var(--frame)) / 2));
+    }
+    .ml-frame {
+        margin-left: max(3rem, calc((100% - var(--frame)) / 2));
+    }
+    /* phone bars stick, except on very short screens (400% zoom) where they'd cover too much */
+    @media (max-width: 639px) {
+        .phone-sticky {
+            position: sticky;
+            top: 0;
+        }
+    }
+    @media (max-width: 639px) and (max-height: 400px) {
+        .phone-sticky {
+            position: relative;
+        }
+    }
+    .frame {
+        width: 100%;
+        max-width: calc(var(--frame) + 6rem);
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
 
 /* headline look for text that is not the page's main heading */
 @layer components {
     .as-h1 {
         @apply font-display text-[2.1rem] leading-[2.1rem] my-2 text-[color:var(--text-primary)];
         font-weight: 700;
+    }
+    /* gives a small control a 44px tap area on touch screens */
+    .touch-target {
+        position: relative;
+    }
+    @media (pointer: coarse) {
+        .touch-target::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: max(100%, 44px);
+            height: max(100%, 44px);
+            transform: translate(-50%, -50%);
+        }
+    }
+    .as-h3 {
+        @apply text-[1.4rem] leading-[1.4rem] text-[color:var(--text-primary)];
+        font-variation-settings: "wght" 700;
     }
 }
 

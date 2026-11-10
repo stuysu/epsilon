@@ -19,9 +19,10 @@ const SwitchField = ({
     style,
 }: SwitchFieldProps) => (
     <label
-        className={`mr-4 inline-flex items-center gap-2 align-middle ${disabled ? "cursor-default opacity-60" : "cursor-pointer"} ${className}`}
+        className={`mr-6 inline-flex items-center gap-2.5 align-middle [@media(pointer:coarse)]:min-h-11 ${disabled ? "cursor-default opacity-60" : "cursor-pointer"} ${className}`}
         style={style}
     >
+        {label && <span className="text-typography-1">{label}</span>}
         <Switch.Root
             checked={checked}
             onCheckedChange={onChange}
@@ -30,7 +31,6 @@ const SwitchField = ({
         >
             <Switch.Thumb className="block h-5 w-5 translate-x-0.5 rounded-full bg-white/90 shadow transition-transform ease-in-out data-[state=checked]:translate-x-[22px]" />
         </Switch.Root>
-        {label && <span className="text-typography-1">{label}</span>}
     </label>
 );
 

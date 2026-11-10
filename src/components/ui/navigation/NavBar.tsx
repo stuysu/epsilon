@@ -14,11 +14,19 @@ import { useSnackbar } from "notistack";
 import { ThemeContext } from "../../../contexts/ThemeProvider";
 import { PUBLIC_URL } from "../../../config/constants";
 import pressable from "../../../utils/pressable";
-import { isStuyActivitiesPath, topNavItems } from "../../../config/routes";
+import {
+    isOpportunitiesPath,
+    isStuyActivitiesPath,
+    topNavItems,
+} from "../../../config/routes";
 import Divider from "../Divider";
 import Avatar from "../Avatar";
 import useMediaQuery from "../../../utils/useMediaQuery";
+import { useInvites } from "../../../contexts/InvitesProvider";
 import revealOnKeyboardFocus from "../../../utils/revealOnKeyboardFocus";
+
+// same as .px-frame in app.css
+const FRAME_GUTTER = "max(3rem, calc((100% - var(--frame)) / 2))";
 
 const linkStyle: CSSProperties = {
     color: "inherit",
@@ -129,7 +137,30 @@ const CURRENT_BAR =
     "after:absolute after:-bottom-2 after:left-1/2 after:h-0.5 after:w-3 after:-translate-x-1/2 after:rounded-full after:bg-typography-1 after:content-['']";
 
 // pages reached from the phone "More" menu's Account section
-const ACCOUNT_PATHS = ["/profile", "/preferences", "/communications"];
+const InviteCount = ({ count }: { count: number }) =>
+    count ? (
+        <span
+            aria-label={`${count} pending`}
+            className="flex h-5 min-w-5 items-center justify-center rounded-full bg-blue px-1.5 text-xs text-white"
+        >
+            {count}
+        </span>
+    ) : null;
+
+const InviteDot = ({ show }: { show: boolean }) =>
+    show ? (
+        <span
+            aria-hidden="true"
+            className="pointer-events-none absolute -right-1 -top-1 size-2.5 rounded-full bg-blue ring-2 ring-bg"
+        />
+    ) : null;
+
+const ACCOUNT_PATHS = [
+    "/profile",
+    "/invites",
+    "/preferences",
+    "/communications",
+];
 
 // the phone tabs are only as tall as their icons, so their tap area reaches
 // the top and bottom of the 46px bar (13px each way still fits inside it)
@@ -142,6 +173,7 @@ const FOCUS_RING_INSET =
 
 const NavBar: FC = () => {
     const user = useContext(UserContext);
+    const inviteCount = useInvites().invites.length;
     const { enqueueSnackbar } = useSnackbar();
     const [drawerOpen, setDrawerOpen] = useState(false);
     const [isHovered, setIsHovered] = useState(false);
@@ -151,9 +183,16 @@ const NavBar: FC = () => {
     const theme = useContext(ThemeContext);
     const isMobile = useMediaQuery("not all and (min-width: 640px)");
 
+    // on wider screens, the tabs that don't fit go into a "More" tab
+    const [fitCount, setFitCount] = useState<number>(topNavItems.length);
     const itemsToRender = React.useMemo(
-        () => (isMobile ? topNavItems.slice(0, 4) : topNavItems),
-        [isMobile],
+        () =>
+            isMobile ? topNavItems.slice(0, 4) : topNavItems.slice(0, fitCount),
+        [isMobile, fitCount],
+    );
+    const tabOverflow = React.useMemo(
+        () => (isMobile ? [] : topNavItems.slice(fitCount)),
+        [isMobile, fitCount],
     );
 
     const overflowItems = React.useMemo(
@@ -187,8 +226,8 @@ const NavBar: FC = () => {
         justifyContent: "space-between",
         display: "flex",
         alignItems: "center",
-        paddingRight: "3rem",
-        paddingLeft: "3rem",
+        paddingRight: FRAME_GUTTER,
+        paddingLeft: FRAME_GUTTER,
         zIndex: 50,
     };
 
@@ -219,8 +258,90 @@ const NavBar: FC = () => {
     }, [isHovered]);
 
     useEffect(() => {
-        itemRefs.current = new Array(itemsToRender.length);
+        itemRefs.current.length = itemsToRender.length;
     }, [itemsToRender.length]);
+
+    const navRef = useRef<HTMLElement | null>(null);
+    const scrollerRef = useRef<HTMLDivElement | null>(null);
+    const measureRef = useRef<HTMLDivElement | null>(null);
+    const tabMoreRef = useRef<HTMLDivElement | null>(null);
+    const tabMenuRef = useRef<HTMLDivElement | null>(null);
+    const [tabMoreOpen, setTabMoreOpen] = useState(false);
+    const [tabMenuLeft, setTabMenuLeft] = useState(0);
+    const closeTabMore = React.useCallback(() => setTabMoreOpen(false), []);
+    useMenuDismiss(tabMoreOpen, closeTabMore, tabMenuRef, tabMoreRef);
+
+    useLayoutEffect(() => {
+        if (isMobile) return;
+        const fit = () => {
+            const scroller = scrollerRef.current;
+            const row = containerRef.current;
+            const measure = measureRef.current;
+            if (!scroller || !row || !measure) return;
+            const style = getComputedStyle(row);
+            const gap = parseFloat(style.columnGap) || 0;
+            const room =
+                scroller.clientWidth -
+                parseFloat(style.marginLeft) -
+                parseFloat(style.marginRight);
+            const widths = Array.from(measure.children).map(
+                (c) => c.getBoundingClientRect().width,
+            );
+            const more = widths.pop() || 0;
+            const all =
+                widths.reduce((a, b) => a + b, 0) + gap * (widths.length - 1);
+            let count = widths.length;
+            if (all > room) {
+                let used = more;
+                count = 0;
+                while (
+                    count < widths.length &&
+                    used + gap + widths[count] <= room
+                ) {
+                    used += gap + widths[count];
+                    count++;
+                }
+            }
+            setFitCount(Math.max(1, count));
+        };
+        fit();
+        // the unseen row resizes when the web font arrives
+        const observer = new ResizeObserver(fit);
+        if (scrollerRef.current) observer.observe(scrollerRef.current);
+        if (measureRef.current) observer.observe(measureRef.current);
+        return () => observer.disconnect();
+    }, [isMobile]);
+
+    useEffect(() => setTabMoreOpen(false), [fitCount, location]);
+
+    useEffect(() => {
+        if (!tabMoreOpen) return;
+        const onClick = (e: MouseEvent) => {
+            const target = e.target as Node;
+            if (
+                !tabMoreRef.current?.contains(target) &&
+                !tabMenuRef.current?.contains(target)
+            )
+                setTabMoreOpen(false);
+        };
+        document.addEventListener("click", onClick);
+        return () => document.removeEventListener("click", onClick);
+    }, [tabMoreOpen]);
+
+    const toggleTabMore = () => {
+        const nav = navRef.current?.getBoundingClientRect();
+        const tab = tabMoreRef.current?.getBoundingClientRect();
+        const menuWidth = tabMenuRef.current?.offsetWidth || 0;
+        // kept 16px inside the window
+        if (nav && tab)
+            setTabMenuLeft(
+                Math.max(
+                    0,
+                    Math.min(tab.left - nav.left, nav.width - menuWidth - 16),
+                ),
+            );
+        setTabMoreOpen((v) => !v);
+    };
 
     const [optionUnderline, setOptionUnderline] = useState({
         left: 0,
@@ -238,6 +359,9 @@ const NavBar: FC = () => {
         if (!item.external && item.path === "/stuyactivities") {
             if (isOrgPage) return true;
             return isStuyActivitiesPath(location.pathname);
+        }
+        if (item.path === "/opportunities") {
+            return isOpportunitiesPath(location.pathname);
         }
         return getActivePaths(item).includes(location.pathname);
     };
@@ -272,6 +396,7 @@ const NavBar: FC = () => {
         return () => document.removeEventListener("click", onClick);
     }, [moreOpen]);
 
+    const tabOverflowActive = tabOverflow.some(isPageOptnActive);
     const updateUnderline = React.useCallback(() => {
         if (isMobile) {
             setOptionUnderline({ left: 0, width: 0 });
@@ -282,11 +407,19 @@ const NavBar: FC = () => {
             if (!item.external && item.path === "/stuyactivities") {
                 return isStuyActivitiesPath(location.pathname) || isOrgPage;
             }
+            if (item.path === "/opportunities") {
+                return isOpportunitiesPath(location.pathname);
+            }
             return getActivePaths(item).includes(location.pathname);
         });
 
         const parent = containerRef.current;
-        const el = currentIndex >= 0 ? itemRefs.current[currentIndex] : null;
+        const el =
+            currentIndex >= 0
+                ? itemRefs.current[currentIndex]
+                : tabOverflowActive
+                  ? tabMoreRef.current
+                  : null;
 
         if (!parent || !el) {
             setOptionUnderline({ left: 0, width: 0 });
@@ -300,7 +433,13 @@ const NavBar: FC = () => {
             left: rect.left - parentRect.left,
             width: rect.width,
         });
-    }, [location.pathname, isOrgPage, isMobile, itemsToRender]);
+    }, [
+        location.pathname,
+        isOrgPage,
+        isMobile,
+        itemsToRender,
+        tabOverflowActive,
+    ]);
 
     useLayoutEffect(() => {
         const raf = requestAnimationFrame(updateUnderline);
@@ -323,7 +462,7 @@ const NavBar: FC = () => {
         return <div className="h-5" />;
 
     return (
-        <nav aria-label="Main">
+        <nav aria-label="Main" ref={navRef} className="relative">
             {/* Mobile nav toolbox */}
             <div
                 ref={moreMenuRef}
@@ -332,8 +471,8 @@ const NavBar: FC = () => {
     shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)]
     transition-all duration-200 ${
         moreOpen
-            ? "opacity-100 translate-y-0"
-            : "pointer-events-none opacity-0 translate-y-1"
+            ? "visible opacity-100 translate-y-0"
+            : "invisible pointer-events-none opacity-0 translate-y-1"
     }`}
             >
                 <div className="px-6 py-4" aria-hidden={!moreOpen}>
@@ -403,6 +542,33 @@ const NavBar: FC = () => {
                                     aria-hidden="true"
                                 />
                                 <span className="important">Profile</span>
+                            </div>
+
+                            <div
+                                aria-current={
+                                    location.pathname === "/invites"
+                                        ? "page"
+                                        : undefined
+                                }
+                                className={`flex items-center gap-2 py-1 cursor-pointer sm:hover:text-typography-1 transition-colors ${FOCUS_RING} ${
+                                    location.pathname === "/invites"
+                                        ? "text-typography-1"
+                                        : "text-typography-2"
+                                }`}
+                                {...pressable(
+                                    () => {
+                                        navigate("/invites");
+                                        setMoreOpen(false);
+                                    },
+                                    { role: "link", focusable: moreOpen },
+                                )}
+                            >
+                                <i
+                                    className="bx bx-envelope-open"
+                                    aria-hidden="true"
+                                />
+                                <span className="important">Invites</span>
+                                <InviteCount count={inviteCount} />
                             </div>
 
                             <div
@@ -533,10 +699,17 @@ const NavBar: FC = () => {
                         aria-controls="nav-user-menu"
                         {...pressable(() => setDrawerOpen(!drawerOpen))}
                     >
-                        <Avatar
-                            style={{ width: 30, height: 30, borderRadius: 4 }}
-                            src={user.picture}
-                        />
+                        <span className="relative">
+                            <Avatar
+                                style={{
+                                    width: 30,
+                                    height: 30,
+                                    borderRadius: 4,
+                                }}
+                                src={user.picture}
+                            />
+                            <InviteDot show={inviteCount > 0} />
+                        </span>
                         <p className="pr-2">
                             {user?.signed_in
                                 ? `${user.first_name} ${user.last_name}`
@@ -599,6 +772,19 @@ const NavBar: FC = () => {
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
+                                    className={`flex cursor-pointer items-center gap-2 transition-colors sm:hover:text-typography-3 ${FOCUS_RING}`}
+                                    {...pressable(() => navigate("/invites"), {
+                                        role: "link",
+                                        focusable: drawerOpen,
+                                    })}
+                                >
+                                    Invites
+                                    <InviteCount count={inviteCount} />
+                                </p>
+                                <p
+                                    style={{
+                                        fontVariationSettings: "'wght' 700",
+                                    }}
                                     className={`cursor-pointer transition-colors sm:hover:text-typography-3 ${FOCUS_RING}`}
                                     {...pressable(
                                         () => navigate("/preferences"),
@@ -646,24 +832,55 @@ const NavBar: FC = () => {
             {/* Top-level tabs */}
             <div
                 onMouseLeave={() => setIsHovered(false)}
-                // its own layer above the hover backdrop, since the fade's mask would
-                // otherwise sink the tabs under it and swallow clicks
-                className="relative z-[41] scroll-pe-10 sm:max-[1099px]:[mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)] overflow-scroll [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                // its own layer above the hover backdrop
+                ref={scrollerRef}
+                className="relative z-[41] scroll-pe-10 overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             >
+                {/* same tabs, unseen, to work out how many fit */}
+                {!isMobile && (
+                    <div className="pointer-events-none invisible absolute inset-x-0 top-0 h-0 overflow-hidden">
+                        <div
+                            ref={measureRef}
+                            aria-hidden="true"
+                            className="flex w-max text-[20px] [font-variation-settings:'wght'_700]"
+                        >
+                            {topNavItems.map((item) => (
+                                <div
+                                    key={item.path}
+                                    className="flex text-nowrap"
+                                >
+                                    <i className={item.icon} />
+                                    <span style={{ marginLeft: 3 }}>
+                                        {item.label}
+                                    </span>
+                                </div>
+                            ))}
+                            <div className="flex text-nowrap">
+                                <span>More</span>
+                                <i className="bx bx-chevron-down" />
+                            </div>
+                        </div>
+                    </div>
+                )}
                 {/* colorful backdrop */}
+                {/* clipped to the row so the taller glow can't make it scroll up and down */}
                 {theme.effectiveMode === "dark" && (
-                    <div
-                        className="absolute top-0 w-full h-[100px] bg-cover bg-center pointer-events-none opacity-50 blur-[20px] z-[1]"
-                        style={{
-                            backgroundImage: `url(${PUBLIC_URL}/textures/navigation.png)`,
-                        }}
-                    />
+                    <div className="pointer-events-none absolute inset-0 z-[1] overflow-hidden">
+                        <div
+                            className="absolute top-0 w-full h-[100px] bg-cover bg-center opacity-50 blur-[20px]"
+                            style={{
+                                backgroundImage: `url(${PUBLIC_URL}/textures/navigation.png)`,
+                            }}
+                        />
+                    </div>
                 )}
 
                 <div
                     ref={containerRef}
                     className={`relative z-40 flex flex-row gap-6 text-[20px] [font-variation-settings:'wght'_700] ${
-                        isMobile ? "mb-3 ml-6 mr-2 mt-[14.4px]" : "mx-12 mt-6"
+                        isMobile
+                            ? "mb-3 ml-6 mr-2 mt-[14.4px] max-[359px]:ml-4 max-[359px]:gap-4"
+                            : "mx-frame mt-6"
                     }`}
                 >
                     {itemsToRender.map((item, index) => (
@@ -737,18 +954,53 @@ const NavBar: FC = () => {
                         </div>
                     ))}
 
+                    {tabOverflow.length > 0 && (
+                        <div
+                            ref={tabMoreRef}
+                            className={`text-nowrap flex items-start cursor-pointer transition-colors ${FOCUS_RING_INSET} ${
+                                tabMoreOpen ||
+                                tabOverflow.some(isPageOptnActive)
+                                    ? "text-typography-1"
+                                    : "sm:hover:text-typography-1 text-typography-2"
+                            }`}
+                            onMouseEnter={() => setIsHovered(true)}
+                            onFocus={revealOnKeyboardFocus}
+                            aria-expanded={tabMoreOpen}
+                            aria-controls="nav-tab-more-menu"
+                            {...pressable(toggleTabMore)}
+                            style={{ position: "relative" }}
+                        >
+                            <span style={{ position: "relative", bottom: 5 }}>
+                                More
+                            </span>
+                            <i
+                                aria-hidden="true"
+                                className={`bx bx-chevron-down transition-transform ${
+                                    tabMoreOpen ? "rotate-180" : ""
+                                }`}
+                            />
+                        </div>
+                    )}
+
                     {/* mobile hidden items */}
                     {isMobile && overflowItems.length > 0 && (
                         <div ref={dotsRef} className="relative">
                             <div
                                 ref={moreTriggerRef}
-                                className={`relative w-10 flex justify-center ${FOCUS_RING_INSET} ${PHONE_TAP_AREA} ${
+                                className={`relative w-11 flex justify-center ${FOCUS_RING_INSET} ${PHONE_TAP_AREA} ${
                                     overflowItems.some(isPageOptnActive) ||
-                                    ACCOUNT_PATHS.includes(location.pathname)
+                                    (user?.signed_in &&
+                                        ACCOUNT_PATHS.includes(
+                                            location.pathname,
+                                        ))
                                         ? CURRENT_BAR
                                         : ""
                                 }`}
-                                aria-label="More"
+                                aria-label={
+                                    inviteCount
+                                        ? "More, you have invites"
+                                        : "More"
+                                }
                                 aria-expanded={moreOpen}
                                 aria-controls="nav-more-menu"
                                 {...pressable(() => setMoreOpen((v) => !v))}
@@ -761,6 +1013,7 @@ const NavBar: FC = () => {
                                     }`}
                                     aria-hidden="true"
                                 ></i>
+                                <InviteDot show={inviteCount > 0} />
                             </div>
                         </div>
                     )}
@@ -778,6 +1031,52 @@ const NavBar: FC = () => {
                     <div className={"max-sm:hidden min-w-3"}></div>
                 </div>
             </div>
+
+            {tabOverflow.length > 0 && (
+                <div
+                    ref={tabMenuRef}
+                    id="nav-tab-more-menu"
+                    style={{ left: tabMenuLeft }}
+                    className={`absolute top-full z-50 mt-2 w-56 rounded-xl bg-bg p-2 shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)] transition-[opacity,transform] duration-150 ${
+                        tabMoreOpen
+                            ? "visible translate-y-0 opacity-100"
+                            : "invisible pointer-events-none -translate-y-1 opacity-0"
+                    }`}
+                >
+                    {tabOverflow.map((item) => (
+                        <div
+                            key={item.path}
+                            aria-current={
+                                isPageOptnActive(item) ? "page" : undefined
+                            }
+                            className={`flex min-h-11 items-center gap-2 rounded-lg px-3 cursor-pointer transition-colors sm:hover:bg-layer-2 sm:hover:text-typography-1 ${FOCUS_RING} ${
+                                isPageOptnActive(item)
+                                    ? "text-typography-1"
+                                    : "text-typography-2"
+                            }`}
+                            {...pressable(
+                                () => {
+                                    if (item.external && (item as any).url) {
+                                        window.open(
+                                            (item as any).url!,
+                                            "_blank",
+                                            "noopener",
+                                        );
+                                    } else {
+                                        navigate(item.path);
+                                    }
+                                    setTabMoreOpen(false);
+                                    setIsHovered(false);
+                                },
+                                { role: "link", focusable: tabMoreOpen },
+                            )}
+                        >
+                            <i className={item.icon} aria-hidden="true" />
+                            <span className="important">{item.label}</span>
+                        </div>
+                    ))}
+                </div>
+            )}
 
             {/* Divider under main nav */}
             <div

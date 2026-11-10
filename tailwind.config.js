@@ -9,6 +9,7 @@ module.exports = {
                 "inter-variable",
                 "sans-serif",
             ],
+            serif: ["instrument-serif", "Georgia", "serif"],
             mono: ["source-code-pro", "monospace"],
         },
 

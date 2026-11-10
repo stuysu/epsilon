@@ -11,6 +11,7 @@
         "dayjs": "^1.11.23",
         "framer-motion": "^12.12.1",
         "notistack": "^3.0.2",
+        "pdfjs-dist": "^4.10.38",
         "qrcode.react": "^3.1.0",
         "radix-ui": "^1.8.1",
         "react": "^18.2.0",
@@ -28,23 +29,18 @@
         "start": "vite",
         "build": "tsc --noEmit && vite build",
         "preview": "vite preview",
-        "test": "vitest run",
         "lint": "eslint src"
     },
     "devDependencies": {
-        "@testing-library/dom": "^10.4.2",
-        "@testing-library/react": "^14.3.1",
         "@types/node": "^22.20.5",
         "@types/react-helmet": "^6.1.11",
         "@vitejs/plugin-react": "^4.7.0",
         "autoprefixer": "^10.6.2",
         "eslint": "^9.39.5",
         "eslint-plugin-react-hooks": "^5.2.0",
-        "jsdom": "^29.1.1",
         "prettier": "^3.3.2",
         "typescript-eslint": "^8.72.1",
-        "vite": "^6.4.5",
-        "vitest": "^4.1.12"
+        "vite": "^6.4.5"
     },
     "engines": {
         "node": "^22.13.0 || >=24.0.0"

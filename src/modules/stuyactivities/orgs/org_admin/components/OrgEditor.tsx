@@ -1,11 +1,22 @@
-import { Fragment, ReactNode, useCallback, useEffect, useState } from "react";
+import {
+    Fragment,
+    ReactNode,
+    useCallback,
+    useContext,
+    useEffect,
+    useState,
+} from "react";
+import OrgContext from "../../../../../contexts/OrgContext";
+import UserDialog from "../../../../../components/ui/overlays/UserDialog";
 import { useSnackbar } from "notistack";
 import FormTextField from "../../../../../components/ui/forms/FormTextField";
 import Divider from "../../../../../components/ui/Divider";
 import OrgRequirements, {
     ORG_TAGS,
 } from "../../../../../utils/OrgRequirements";
-import { getInvalidSocials } from "../../../../../utils/SocialLinks";
+import { getInvalidSocials, linkOrder } from "../../../../../utils/SocialLinks";
+import FormSocialLinks from "../../../../../components/ui/forms/FormSocialLinks";
+import LinkSummary from "../../components/LinkSummary";
 import FormTagSelect from "../../../../../components/ui/forms/FormTagSelect";
 import FormChipText from "../../../../../components/ui/forms/FormChipText";
 import orgFieldMap from "../../../../../utils/OrgFieldMap";
@@ -14,6 +25,11 @@ import { PUBLIC_URL } from "../../../../../config/constants";
 import { useNavigate } from "react-router-dom";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
 import Avatar from "../../../../../components/ui/Avatar";
+import {
+    clubPicturePath,
+    clubPictureUploadOptions,
+    prepareClubPicture,
+} from "../../../../../utils/clubPicture";
 
 type Props = {
     organization: Partial<Organization>; // Make organization a prop to allow component to become reusable
@@ -63,7 +79,7 @@ const EditField = ({
                 {editing ? (
                     <>
                         {editDisplay}
-                        <div className="w-[15%] absolute right-[20px]">
+                        <div className="absolute right-[20px] w-[15%] max-sm:right-0 max-sm:w-auto">
                             <AsyncButton
                                 onClick={onCancel}
                                 sx={{ width: "100%" }}
@@ -74,7 +90,9 @@ const EditField = ({
                     </>
                 ) : (
                     <>
-                        {defaultDisplay}
+                        <div className="min-w-0 flex-1 pr-[88px]">
+                            {defaultDisplay}
+                        </div>
                         <div className="w-[60px] absolute right-[20px]">
                             <AsyncButton
                                 onClick={onEdit}
@@ -145,6 +163,7 @@ const OrgEditor = ({
     setPendingEdit,
 }: Props) => {
     const { enqueueSnackbar } = useSnackbar();
+    const orgContext = useContext(OrgContext);
 
     /* everything that is displayed on the page (could include values similar to original)*/
     const [editData, setEditData] = useState<OrganizationEdit>({});
@@ -167,6 +186,7 @@ const OrgEditor = ({
 
     /* validation */
     const [savable, setSavable] = useState(false);
+    const [confirmingDelete, setConfirmingDelete] = useState(false);
 
     const [urlError, setUrlError] = useState("");
     const [checkingUrl, setCheckingUrl] = useState(false);
@@ -205,6 +225,15 @@ const OrgEditor = ({
 
     useEffect(() => {
         if ("url" in editState && (urlError || checkingUrl)) {
+            setSavable(false);
+            return;
+        }
+
+        if (
+            Object.keys(editState).some(
+                (field) => status[field] && status[field].value === false,
+            )
+        ) {
             setSavable(false);
             return;
         }
@@ -255,7 +284,11 @@ const OrgEditor = ({
                 continue;
             }
 
-            if (editedValue !== originalValue) {
+            if (
+                (field === "name" && typeof editedValue === "string"
+                    ? editedValue.trim()
+                    : editedValue) !== originalValue
+            ) {
                 atleastOneDiff = true;
                 break;
             }
@@ -308,12 +341,38 @@ const OrgEditor = ({
             return;
         }
 
+        /* reordering approved links saves right away, without review */
+        const socialsOrder =
+            organization.state !== "PENDING" && "socials" in editState
+                ? linkOrder(organization.socials, editData.socials)
+                : null;
+        let reordered = false;
+        if (socialsOrder && socialsOrder.some((p, i) => p !== i + 1)) {
+            const { data: socials, error } = await supabase.rpc(
+                "reorder_organization_socials",
+                { org_id: organization.id, new_order: socialsOrder },
+            );
+            if (error) {
+                return enqueueSnackbar(
+                    "Error saving the link order. Contact it@stuysu.org for support.",
+                    { variant: "error" },
+                );
+            }
+            reordered = true;
+            orgContext.setOrg?.({ ...orgContext, socials });
+        }
+
         const payload: any = {};
 
         let allNull = true;
         for (const key of Object.keys(existingEdit)) {
             const field = key as orgKey;
             if (hiddenFields.includes(field)) continue;
+
+            if (field === "socials" && socialsOrder) {
+                payload[field] = null;
+                continue;
+            }
 
             if (listFields.includes(field)) {
                 // an empty list is a real change (clearing it), so it can't use the || fallbacks below.
@@ -331,7 +390,13 @@ const OrgEditor = ({
                 continue;
             }
 
-            payload[field] = editData[field] || existingEdit[field] || null;
+            // an edited field cleared to "" is a real change
+            payload[field] =
+                field in editState
+                    ? editData[field] ?? null
+                    : existingEdit[field] ?? null;
+            if (field === "name" && typeof payload[field] === "string")
+                payload[field] = payload[field].trim();
 
             // if it is equal to the original, approved value, don't put it in the request.
             if (
@@ -387,12 +452,21 @@ const OrgEditor = ({
             // picture is different, but needs to be uploaded first
             /* Note: any indication of the picture failing to upload will kill the entire org edit process */
 
-            const filePath = `org-pictures/${organization.id}/${Date.now()}-${organization.url}-profile${(editPicture as File)!.name.split(".").pop()}`;
+            const prepared = await prepareClubPicture(editPicture as File);
+            const filePath = clubPicturePath(
+                organization.id,
+                organization.url,
+                prepared.ext,
+            );
 
             const { data: storageData, error: storageError } =
                 await supabase.storage
                     .from("public-files")
-                    .upload(filePath, editPicture!);
+                    .upload(
+                        filePath,
+                        prepared.blob,
+                        clubPictureUploadOptions(prepared.type),
+                    );
 
             if (storageError || !storageData) {
                 return enqueueSnackbar(
@@ -430,9 +504,14 @@ const OrgEditor = ({
                     );
                 }
 
-                enqueueSnackbar("Removed redundant organization edit!", {
-                    variant: "success",
-                });
+                enqueueSnackbar(
+                    reordered
+                        ? "Link order saved."
+                        : "Removed redundant organization edit!",
+                    { variant: "success" },
+                );
+            } else if (reordered) {
+                enqueueSnackbar("Link order saved.", { variant: "success" });
             } else {
                 enqueueSnackbar(
                     "Unexpected behavior: all edit fields were null.",
@@ -529,9 +608,15 @@ const OrgEditor = ({
             // update frontend to reflect changes
             setPendingEdit(data[0] as OrganizationEdit);
 
-            enqueueSnackbar("Organization edit request sent!", {
-                variant: "success",
-            });
+            enqueueSnackbar(
+                reordered
+                    ? Object.keys(editState).some((f) => f !== "socials") ||
+                      editPicture !== undefined
+                        ? "Link order saved. Other changes were sent for review."
+                        : "Link order saved."
+                    : "Organization edit request sent!",
+                { variant: "success" },
+            );
 
             // reset edit state
             setEditState({});
@@ -550,6 +635,7 @@ const OrgEditor = ({
                 enqueueSnackbar("Error removing redundant organization edit.", {
                     variant: "error",
                 });
+                return;
             }
 
             enqueueSnackbar("Removed redundant organization edit!", {
@@ -596,6 +682,14 @@ const OrgEditor = ({
                 : ""
             : oldPicture || "";
 
+    const onlyReorder =
+        organization.state !== "PENDING" &&
+        editPicture === undefined &&
+        Object.keys(editState).every((f) => f === "socials") &&
+        !!linkOrder(organization.socials, editData.socials)?.some(
+            (p, i) => p !== i + 1,
+        );
+
     const allNull = Object.keys(existingEdit).every(
         (key) => existingEdit[key as keyof OrganizationEdit] === undefined,
     );
@@ -608,7 +702,7 @@ const OrgEditor = ({
                     {pendingPicture ? "Pending" : "Approved"}
                 </p>
             </div>
-            <div className="flex items-center justify-between py-2.5 mb-5">
+            <div className="flex flex-wrap items-center justify-between gap-4 py-2.5 mb-5">
                 <Avatar
                     src={putPicture}
                     style={{
@@ -621,15 +715,22 @@ const OrgEditor = ({
                 >
                     {(organization.name || "O").slice(0, 1).toUpperCase()}
                 </Avatar>
-                <div className="w-[200px] flex flex-col pr-5">
+                <div className="w-[200px] max-sm:w-full flex flex-col sm:pr-5">
                     <AsyncButton component="label" sx={{ width: "100%" }}>
                         Upload Avatar
                         <input
                             type="file"
-                            accept="images/*"
+                            accept="image/*"
                             id="input-file-upload"
                             onChange={(e) => {
-                                if (!e.target.files) return;
+                                if (!e.target.files?.[0]) return;
+                                if (
+                                    !e.target.files[0].type.startsWith("image/")
+                                )
+                                    return enqueueSnackbar(
+                                        "Choose an image file.",
+                                        { variant: "error" },
+                                    );
                                 if (
                                     e.target.files[0].size >
                                     1024 *
@@ -729,12 +830,16 @@ const OrgEditor = ({
                                 setEditState({ ...editState, [field]: true })
                             }
                             defaultDisplay={
-                                <p className={"w-3/4 break-words"}>
+                                <p className={"break-words"}>
                                     {editData[
                                         field as keyof OrganizationEdit
                                     ] ? (
                                         field === "url" ? (
                                             `https://epsilon.stuysu.org/${editData.url}`
+                                        ) : field === "socials" ? (
+                                            <LinkSummary
+                                                socials={editData.socials}
+                                            />
                                         ) : (
                                             editData[
                                                 field as keyof OrganizationEdit
@@ -779,6 +884,25 @@ const OrgEditor = ({
                                         }
                                         startAdornment="https://epsilon.stuysu.org/"
                                         pattern={URL_PATTERN.source}
+                                    />
+                                ) : field === "socials" ? (
+                                    <FormSocialLinks
+                                        field="socials"
+                                        label={orgFieldMap(field)}
+                                        hideLabel
+                                        description={
+                                            organization.state === "PENDING"
+                                                ? undefined
+                                                : "Reordering approved links saves right away. New or changed links are reviewed first."
+                                        }
+                                        className={
+                                            "w-full max-sm:pt-14 sm:w-4/5"
+                                        }
+                                        value={editData.socials}
+                                        onChange={(val) =>
+                                            updateEdit("socials", val)
+                                        }
+                                        changeStatus={changeStatus}
                                     />
                                 ) : (
                                     <FormTextField
@@ -857,7 +981,7 @@ const OrgEditor = ({
                                 setEditState({ ...editState, [field]: true })
                             }
                             defaultDisplay={
-                                <p className={"w-3/4 break-words"}>
+                                <p className={"break-words"}>
                                     {toList(
                                         field,
                                         editData[
@@ -928,12 +1052,25 @@ const OrgEditor = ({
                     onClick={saveChanges}
                     sx={{ marginLeft: "10px" }}
                 >
-                    Submit Changes for Review
+                    {onlyReorder
+                        ? "Save Link Order"
+                        : "Submit Changes for Review"}
                 </AsyncButton>
-                <AsyncButton disabled={allNull} onClick={deleteEdit}>
+                <AsyncButton
+                    disabled={allNull}
+                    onClick={() => setConfirmingDelete(true)}
+                >
                     Delete Edit
                 </AsyncButton>
             </div>
+            <UserDialog
+                title="Delete pending edit?"
+                description="All changes waiting for review will be discarded. This can't be undone."
+                open={confirmingDelete}
+                onClose={() => setConfirmingDelete(false)}
+                onConfirm={deleteEdit}
+                confirmText="Delete Edit"
+            />
         </div>
     );
 };

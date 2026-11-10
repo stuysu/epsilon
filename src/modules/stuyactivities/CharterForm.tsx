@@ -4,6 +4,7 @@ import useMediaQuery from "../../utils/useMediaQuery";
 import MultiPageForm from "../../components/ui/forms/MultiPageForm";
 import FormPage from "../../components/ui/forms/FormPage";
 import FormTextField from "../../components/ui/forms/FormTextField";
+import FormSocialLinks from "../../components/ui/forms/FormSocialLinks";
 import FormDropSelect from "../../components/ui/forms/FormDropSelect";
 import FormCheckSelect from "../../components/ui/forms/FormCheckSelect";
 
@@ -23,6 +24,11 @@ import LoginGate from "../../components/ui/content/LoginGate";
 import UserContext from "../../contexts/UserContext";
 import { Helmet } from "react-helmet";
 import { functionErrorText } from "../../utils/FunctionErrors";
+import {
+    clubPicturePath,
+    clubPictureUploadOptions,
+    prepareClubPicture,
+} from "../../utils/clubPicture";
 
 type FormType = {
     name: string;
@@ -76,6 +82,24 @@ const multilineStyle: CSSProperties = {
     marginTop: "20px",
 };
 
+// the hyphen is escaped, since browsers read the HTML pattern attribute
+// with the v flag, which rejects an unescaped one in a class
+const urlPattern = /^[a-zA-Z0-9\-]+$/;
+
+const urlProblem = async (url: string) => {
+    const { minChar, maxChar } = OrgRequirements.url.requirements ?? {};
+    if (url.length < minChar || url.length > maxChar)
+        return `URL ending must be between ${minChar} and ${maxChar} characters long.`;
+    if (!urlPattern.test(url))
+        return "URL can only contain letters, numbers, and dashes.";
+    const { data, error } = await supabase
+        .from("organizations")
+        .select("id")
+        .eq("url", url.toLowerCase());
+    if (error) return "The URL could not be checked. Try again.";
+    return data?.length ? "This URL is already in use." : "";
+};
+
 const CharterForm = () => {
     const [submitting, setSubmitting] = useState<boolean>(false);
 
@@ -89,44 +113,29 @@ const CharterForm = () => {
 
     const [urlError, setUrlError] = useState<string>("");
     const [checkingUrl, setCheckingUrl] = useState<boolean>(false);
-    // the hyphen is escaped, since browsers read the HTML pattern attribute
-    // with the v flag, which rejects an unescaped one in a class
-    const urlPattern = /^[a-zA-Z0-9_\-]+$/;
-
-    const validateUrl = async (url: string) => {
-        if (
-            OrgRequirements.url.requirements &&
-            (url.length < OrgRequirements.url.requirements.minChar ||
-                url.length > OrgRequirements.url.requirements.maxChar)
-        ) {
-            setUrlError(
-                `URL ending must be between ${OrgRequirements.url.requirements.minChar} and ${OrgRequirements.url.requirements.maxChar} characters long`,
-            );
-            return;
-        }
-        if (!urlPattern.test(url)) {
-            setUrlError(
-                "URL can only contain letters, numbers, dashes, and underscores.",
-            );
-            return;
-        }
+    const [urlAvailable, setUrlAvailable] = useState(false);
+    useEffect(() => {
+        const url = formData.url;
+        setUrlAvailable(false);
         setUrlError("");
-        setCheckingUrl(true);
-        const { data, error } = await supabase
-            .from("organizations")
-            .select("id")
-            .eq("url", url.toLowerCase());
-        setCheckingUrl(false);
-        if (error) {
-            setUrlError("Error checking URL.");
+        if (!url) {
+            setCheckingUrl(false);
             return;
         }
-        if (data && data.length > 0) {
-            setUrlError("This URL is already in use.");
-        } else {
-            setUrlError("");
-        }
-    };
+        setCheckingUrl(true);
+        let live = true;
+        const timer = setTimeout(async () => {
+            const problem = await urlProblem(url);
+            if (!live) return;
+            setUrlError(problem);
+            setUrlAvailable(!problem);
+            setCheckingUrl(false);
+        }, 400);
+        return () => {
+            live = false;
+            clearTimeout(timer);
+        };
+    }, [formData.url]);
 
     const checkFormFields = () => {
         const fields = [
@@ -142,8 +151,6 @@ const CharterForm = () => {
             "appointment_procedures",
             "faculty_email",
         ];
-        if (formData.returning && !formData.returning_info) return false;
-
         return fields.some((field) => {
             const value = formData[field as keyof FormType];
             if (typeof value === "string") {
@@ -228,7 +235,9 @@ const CharterForm = () => {
             if (error) {
                 message = error;
             }
-            return enqueueSnackbar("Error creating organization. " + message, {
+            if (!message.startsWith("Error creating organization"))
+                message = "Error creating organization. " + message;
+            return enqueueSnackbar(message, {
                 variant: "error",
             });
         }
@@ -237,11 +246,16 @@ const CharterForm = () => {
         /* Create picture if organization is successfully created */
         /* convert picture to url */
         if (formData.picture) {
-            const filePath = `org-pictures/${orgId}/${Date.now()}-${formData.url}-profile${formData.picture.name.split(".").pop()}`;
+            const prepared = await prepareClubPicture(formData.picture);
+            const filePath = clubPicturePath(orgId, formData.url, prepared.ext);
             const { data: storageData, error: storageError } =
                 await supabase.storage
                     .from("public-files")
-                    .upload(filePath, formData.picture);
+                    .upload(
+                        filePath,
+                        prepared.blob,
+                        clubPictureUploadOptions(prepared.type),
+                    );
 
             if (storageError || !storageData) {
                 /* attempt to delete organization */
@@ -342,7 +356,10 @@ const CharterForm = () => {
                         Happy chartering!
                     </p>
                 </FormPage>
-                <FormPage title="Basic Information">
+                <FormPage
+                    title="Basic Information"
+                    blocked={!!urlError || checkingUrl}
+                >
                     <FormSection
                         sx={{
                             width: "100%",
@@ -373,27 +390,12 @@ const CharterForm = () => {
                                     ? urlError
                                     : checkingUrl
                                       ? "Checking URL..."
-                                      : formData.url && !urlError
-                                        ? "URL is valid."
+                                      : urlAvailable
+                                        ? "URL is available."
                                         : undefined
                             }
                             startAdornment="https://epsilon.stuysu.org/"
                             pattern={urlPattern.source}
-                            onBlur={async (e: any) => {
-                                const url = e.target.value;
-                                if (url) await validateUrl(url);
-                            }}
-                            onChange={(e: any) => {
-                                const url = e.target.value;
-                                if (url === "" || urlPattern.test(url)) {
-                                    setFormData((prev) => ({ ...prev, url }));
-                                    setUrlError("");
-                                } else {
-                                    setUrlError(
-                                        "URL can only contain letters, numbers, dashes, and underscores.",
-                                    );
-                                }
-                            }}
                         />
                     </FormSection>
                     <FormSection
@@ -455,13 +457,10 @@ const CharterForm = () => {
                         />
                     </FormSection>
                     <FormSection sx={{ width: "100%", marginTop: "20px" }}>
-                        <FormTextField
-                            label="Socials (optional)"
-                            description="Include the Activity's website or social media links here. Input each link with a just SPACE in between."
+                        <FormSocialLinks
                             field="socials"
-                            sx={{ width: "100%" }}
-                            required={OrgRequirements.socials.required}
-                            requirements={OrgRequirements.socials.requirements}
+                            label="Socials (optional)"
+                            description="Add your Activity's website and social media. Pick what each link is, and give it a name if you'd like."
                         />
                     </FormSection>
                     <FormSection sx={{ width: "100%", marginTop: "20px" }}>
