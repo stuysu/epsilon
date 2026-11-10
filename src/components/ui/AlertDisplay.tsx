@@ -13,11 +13,13 @@ const AlertDisplay = () => {
     const [open, setOpen] = useState(false);
     const [sessionDismissed, setSessionDismissed] = useState(false);
     const [data, setData] = useState<AlertInfo | null>(null);
-    const [anchorEl, setAnchorEl] = useState<HTMLButtonElement | null>(null);
-    const travelTime = useRef<NodeJS.Timeout | null>(null);
-    const openTimeout = useRef<NodeJS.Timeout | null>(null);
+    const [menuAnchor, setMenuAnchor] = useState<HTMLButtonElement | null>(
+        null,
+    );
+    const closeTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
+    const openTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
     const isError = data?.severity === "error";
-    const isOpen = Boolean(anchorEl);
+    const isOpen = Boolean(menuAnchor);
     useEffect(() => {
         const fetchAlert = async () => {
             // the alert service being down shouldn't surface as an error
@@ -46,8 +48,8 @@ const AlertDisplay = () => {
             if (openTimeout.current) {
                 clearTimeout(openTimeout.current);
             }
-            if (travelTime.current) {
-                clearTimeout(travelTime.current);
+            if (closeTimeout.current) {
+                clearTimeout(closeTimeout.current);
             }
         };
     }, []);
@@ -56,11 +58,11 @@ const AlertDisplay = () => {
         if (openTimeout.current) {
             clearTimeout(openTimeout.current);
         }
-        if (travelTime.current) {
-            clearTimeout(travelTime.current);
+        if (closeTimeout.current) {
+            clearTimeout(closeTimeout.current);
         }
         setSessionDismissed(true);
-        setAnchorEl(null);
+        setMenuAnchor(null);
     };
 
     const handleDoNotRemindAgain = () => {
@@ -68,20 +70,20 @@ const AlertDisplay = () => {
             localStorage.setItem("dismissedAlert", data.message);
         }
         setOpen(false);
-        setAnchorEl(null);
+        setMenuAnchor(null);
     };
 
     const handleMouseEnter = (event: React.MouseEvent<HTMLButtonElement>) => {
         const t = event.currentTarget;
-        if (travelTime.current) {
-            clearTimeout(travelTime.current);
-            travelTime.current = null;
+        if (closeTimeout.current) {
+            clearTimeout(closeTimeout.current);
+            closeTimeout.current = null;
         }
         if (openTimeout.current) {
             clearTimeout(openTimeout.current);
         }
         openTimeout.current = setTimeout(() => {
-            setAnchorEl(t);
+            setMenuAnchor(t);
         }, 150);
     };
 
@@ -90,8 +92,8 @@ const AlertDisplay = () => {
             clearTimeout(openTimeout.current);
             openTimeout.current = null;
         }
-        travelTime.current = setTimeout(() => {
-            setAnchorEl(null);
+        closeTimeout.current = setTimeout(() => {
+            setMenuAnchor(null);
         }, 150);
     };
 
@@ -101,18 +103,18 @@ const AlertDisplay = () => {
             clearTimeout(openTimeout.current);
             openTimeout.current = null;
         }
-        if (anchorEl === event.currentTarget) {
-            setAnchorEl(null);
+        if (menuAnchor === event.currentTarget) {
+            setMenuAnchor(null);
             setSessionDismissed(true);
         } else {
-            setAnchorEl(event.currentTarget);
+            setMenuAnchor(event.currentTarget);
         }
     };
 
-    const handlePopperEnter = () => {
-        if (travelTime.current) {
-            clearTimeout(travelTime.current);
-            travelTime.current = null;
+    const handleMenuEnter = () => {
+        if (closeTimeout.current) {
+            clearTimeout(closeTimeout.current);
+            closeTimeout.current = null;
         }
     };
 
@@ -130,10 +132,10 @@ const AlertDisplay = () => {
             <Popover.Root
                 open={isOpen}
                 onOpenChange={(next) => {
-                    if (!next) setAnchorEl(null);
+                    if (!next) setMenuAnchor(null);
                 }}
             >
-                <Popover.Anchor virtualRef={{ current: anchorEl }} />
+                <Popover.Anchor virtualRef={{ current: menuAnchor }} />
                 <AlertBanner
                     severity={data.severity}
                     onClose={isError ? undefined : handleCloseClick}
@@ -157,7 +159,7 @@ const AlertDisplay = () => {
                             sideOffset={4}
                             onOpenAutoFocus={(event) => event.preventDefault()}
                             onCloseAutoFocus={(event) => event.preventDefault()}
-                            onMouseEnter={handlePopperEnter}
+                            onMouseEnter={handleMenuEnter}
                             onMouseLeave={handleMouseLeave}
                             className="z-[10000] overflow-hidden rounded-lg border border-divider bg-layer-1 shadow-xl"
                         >
