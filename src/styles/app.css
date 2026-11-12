@@ -317,3 +317,40 @@ offers some preconfigured css names to style specific things. */
     color: var(--text-secondary) !important;
     margin-left: 2rem;
 }
+
+
+.md-ul,
+.md-ol {
+  padding-left: 1.5rem;
+  margin: 0.75em 0;
+}
+ 
+.md-ul { list-style-type: disc; }
+.md-ol { list-style-type: decimal; }
+
+.md-li {
+  padding-left: 0.25rem;
+  margin: 0.25em 0;
+}
+ 
+.md-ul > .md-li::marker {
+  font-size: 1.2em;
+}
+ 
+.md-ol > .md-li::marker {
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+ 
+.md-ul > .md-li,
+.md-ol > .md-li {
+  color: var(--text-primary);
+}
+
+.mdxeditor-contenteditable-wrapper div ul { list-style-type: disc; padding-left: 1.5rem; }
+.mdxeditor-contenteditable-wrapper div ol { list-style-type: decimal; padding-left: 1.5rem; }
+
+.mdxeditor-contenteditable-wrapper div ul > li::marker { font-size: 1.2em; }
+.mdxeditor-contenteditable-wrapper div ol > li::marker { font-weight: 700; font-variant-numeric: tabular-nums; }
+
+.mdxeditor-contenteditable-wrapper li { color: var(--text-primary); }
