@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ButtonHTMLAttributes, ReactNode } from "react";
 
 export type AlertSeverity = "success" | "info" | "warning" | "error";
 
@@ -34,6 +34,7 @@ type AlertBannerProps = {
     onClose?: () => void;
     // defaults to interrupting only for warnings and errors
     live?: keyof typeof LIVE_ROLES;
+    closeButtonProps?: ButtonHTMLAttributes<HTMLButtonElement>;
     children: ReactNode;
 };
 
@@ -41,6 +42,7 @@ const AlertBanner = ({
     severity = "info",
     onClose,
     live,
+    closeButtonProps,
     children,
 }: AlertBannerProps) => {
     const announce =
@@ -65,6 +67,7 @@ const AlertBanner = ({
             </div>
             {onClose && (
                 <button
+                    {...closeButtonProps}
                     type="button"
                     aria-label="Close"
                     onClick={onClose}
