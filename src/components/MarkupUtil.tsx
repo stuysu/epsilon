@@ -1,4 +1,4 @@
-import { MDXEditor, headingsPlugin, linkPlugin, linkDialogPlugin, toolbarPlugin, tablePlugin, listsPlugin, BlockTypeSelect, BoldItalicUnderlineToggles, CreateLink, InsertTable, HighlightToggle, ListsToggle, StrikeThroughSupSubToggles, UndoRedo, MDXEditorMethods } from "@mdxeditor/editor";
+import { MDXEditor, headingsPlugin, linkPlugin, linkDialogPlugin, toolbarPlugin, tablePlugin, listsPlugin, BlockTypeSelect, BoldItalicUnderlineToggles, CreateLink, InsertTable, HighlightToggle, ListsToggle, StrikeThroughSupSubToggles, UndoRedo, MDXEditorMethods, quotePlugin, thematicBreakPlugin, insertThematicBreak$, InsertThematicBreak } from "@mdxeditor/editor";
 import Markdown from "markdown-to-jsx";
 import { ReactNode, Ref, useContext, useEffect } from "react";
 import { ThemeContext } from "../contexts/ThemeProvider";
@@ -17,6 +17,8 @@ export function MarkupEditor({ callback, editableClassName = "", defaultText = "
                         linkDialogPlugin(),
                         tablePlugin(),
                         listsPlugin(),
+                        quotePlugin(),
+                        thematicBreakPlugin(),
 
                         toolbarPlugin(
                             {
@@ -27,8 +29,9 @@ export function MarkupEditor({ callback, editableClassName = "", defaultText = "
                                         <CreateLink />
                                         <InsertTable />
                                         <HighlightToggle />
+                                        <InsertThematicBreak />
                                         <ListsToggle options={["bullet", "number", "check"]} />
-                                        <StrikeThroughSupSubToggles />
+                                        <StrikeThroughSupSubToggles options={["Strikethrough"]} />
                                         <UndoRedo />
                                     </>)
                                 }

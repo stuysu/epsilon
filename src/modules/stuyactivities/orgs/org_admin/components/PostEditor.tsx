@@ -144,6 +144,7 @@ const PostEditor = ({
                     marginBottom: "1rem"
                 }}>
                 <MarkupEditor
+                    key={content?.id ?? "new"}
                     callback={(value) => {
                         setPostData({
                             ...postData,
@@ -158,6 +159,7 @@ const PostEditor = ({
                 </div>
 
                 <MarkupEditor
+                    key={content?.id ?? "new"}
                     callback={(value) => {
                         setPostData({
                             ...postData,
