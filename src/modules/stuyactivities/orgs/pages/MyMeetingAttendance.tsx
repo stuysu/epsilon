@@ -190,6 +190,24 @@ const MyMeetingAttendance = () => {
         );
     };
 
+    const joinClub = async () => {
+        const { data, error } = await supabase.functions.invoke(
+            "join-organization",
+            { body: { organization_id: organization.id } },
+        );
+        if (error || !data) {
+            enqueueSnackbar("Unable to join organization.", {
+                variant: "error",
+            });
+            return;
+        }
+        organization.setOrg?.({
+            ...organization,
+            memberships: [...organization.memberships, data],
+        });
+        enqueueSnackbar("Join request sent!", { variant: "success" });
+    };
+
     if (user.signed_in && !isActiveMember) {
         return (
             <div
@@ -204,8 +222,19 @@ const MyMeetingAttendance = () => {
                 <p className={"text-center"}>
                     {membership
                         ? "Your request to join is still pending. You can mark attendance once it's approved."
-                        : "Join this activity to mark your attendance at its meetings."}
+                        : organization.joinable
+                          ? "Join this activity to mark your attendance at its meetings."
+                          : "This activity is private. Ask a leader to add you."}
                 </p>
+                {!membership && organization.joinable && (
+                    <AsyncButton
+                        isPrimary
+                        onClick={joinClub}
+                        className={"mt-6 w-full max-w-sm"}
+                    >
+                        Join {organization.name}
+                    </AsyncButton>
+                )}
             </div>
         );
     }
