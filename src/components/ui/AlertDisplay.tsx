@@ -23,7 +23,6 @@ const AlertDisplay = () => {
     useEffect(() => {
         const fetchAlert = async () => {
             // the alert service being down shouldn't surface as an error
-            // use Alert.json for testing purposes, dont push to prod before reverting to https://alert.stuysu.org
             const res = await fetch("https://alert.stuysu.org").catch(
                 () => null,
             );
