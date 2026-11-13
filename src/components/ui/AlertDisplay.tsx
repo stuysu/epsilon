@@ -118,6 +118,17 @@ const AlertDisplay = () => {
         }
     };
 
+    const handleCloseButtonFocus = (event: React.KeyboardEvent<HTMLButtonElement>) => {
+        if (event.key === "Tab" && !event.shiftKey && !isOpen) {
+            event.preventDefault();
+            if (openTimeout.current) {
+                clearTimeout(openTimeout.current);
+                openTimeout.current = null;
+            }
+            setMenuAnchor(event.currentTarget);
+        }
+    };
+
     if (
         sessionDismissed ||
         !open ||
@@ -143,6 +154,7 @@ const AlertDisplay = () => {
                         onMouseEnter: handleMouseEnter,
                         onMouseLeave: handleMouseLeave,
                         onTouchEnd: handleTouchEnd,
+                        onKeyDown: handleCloseButtonFocus,
                     }}
                 >
                     {/* the message takes the banner's own text colour, which is
@@ -166,6 +178,11 @@ const AlertDisplay = () => {
                             <button
                                 type="button"
                                 onClick={handleDoNotRemindAgain}
+                                onKeyDown={(event) => {
+                                    if (event.key === "Tab") {
+                                        setMenuAnchor(null);
+                                    }
+                                }}
                                 className="px-3 py-2 text-sm text-typography-1 hover:bg-layer-3"
                             >
                                 Do not remind me again
