@@ -303,9 +303,11 @@ type Draft = {
 
 const readMeta = (lines: BulletinLine[]): BulletinMeta => {
     const firstPage = lines.filter((line) => line.page === 1);
+    // the title can wrap, leaving the issue number on its own line
     const issue = firstPage
-        .map((line) => line.text.match(/bulletin\s*#\s*([0-9]+\s*[a-z]?)/i))
-        .find(Boolean)?.[1];
+        .map((line) => line.text)
+        .join(" ")
+        .match(/bulletin\s*#\s*([0-9]+\s*[a-z]?)(?![a-z])/i)?.[1];
     const date = firstPage
         .map((line) => line.text.match(/^([A-Za-z]+\s+\d{1,2},\s*\d{4})$/))
         .find(Boolean)?.[1];
