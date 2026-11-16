@@ -29,7 +29,8 @@
         "start": "vite",
         "build": "tsc --noEmit && vite build",
         "preview": "vite preview",
-        "lint": "eslint src"
+        "lint": "eslint src",
+        "import-bulletin": "esbuild scripts/import-bulletin.ts --bundle --platform=node --format=esm --external:pdfjs-dist --log-level=warning --outfile=node_modules/.cache/import-bulletin.mjs && node node_modules/.cache/import-bulletin.mjs"
     },
     "devDependencies": {
         "@types/node": "^22.20.5",

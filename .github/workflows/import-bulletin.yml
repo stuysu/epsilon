@@ -1,0 +1,47 @@
+name: Import opportunity bulletin
+
+on:
+    schedule:
+        # bulletins come out on Fridays; checking twice a day catches late uploads
+        - cron: "0 13,22 * * *"
+    workflow_dispatch:
+        inputs:
+            dry_run:
+                description: "Parse and count only, without publishing"
+                type: boolean
+                default: false
+
+permissions:
+    contents: read
+
+concurrency:
+    group: import-bulletin
+    cancel-in-progress: false
+
+jobs:
+    import:
+        if: github.repository == 'stuysu/epsilon'
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version: 24
+                  cache: npm
+            - run: npm ci --no-audit --no-fund
+            - name: Import the newest bulletin
+              env:
+                  SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+                  SUPABASE_ANON_KEY: ${{ vars.SUPABASE_ANON_KEY }}
+                  BULLETIN_IMPORTER_TOKEN: ${{ secrets.BULLETIN_IMPORTER_TOKEN }}
+              run: npm run -s import-bulletin -- ${{ inputs.dry_run && '--dry-run' || '' }}
+            - name: Alert on Discord
+              if: failure()
+              env:
+                  WEBHOOK: ${{ secrets.DISCORD_WEBHOOK_URL }}
+                  RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+              run: |
+                  [ -n "$WEBHOOK" ] || exit 0
+                  curl -sf -H "Content-Type: application/json" \
+                      -d "{\"content\":\"The weekly opportunity bulletin import failed: $RUN_URL\"}" "$WEBHOOK"
