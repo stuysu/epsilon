@@ -197,7 +197,7 @@ const OrgAdvisors = ({ editable }: { editable: boolean }) => {
                         setProblem("");
                     }}
                     onKeyDown={(e) => e.key === "Enter" && addAdvisor()}
-                    placeholder="name@schools.nyc.gov"
+                    placeholder="name@stuy.edu"
                     aria-invalid={!!problem}
                     aria-describedby={problem ? "advisor-problem" : undefined}
                     className={
