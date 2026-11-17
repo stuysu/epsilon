@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { capitalizeWords } from "../../../utils/DataFormatters";
 import SearchInput from "../../../components/ui/input/SearchInput";
 import SortSelect from "../../../components/ui/input/SortSelect";
@@ -8,6 +8,8 @@ import {
     FiltersToggle,
     ResetFiltersButton,
 } from "../../../components/ui/input/FilterControls";
+
+const FOCUS_ROOM = "8px";
 
 type Props = {
     value: SearchParams;
@@ -70,25 +72,59 @@ const SearchFilter = ({
         value.tags.length +
         value.commitmentLevels.length +
         value.meetingDays.length;
+    const sticky = !isOneColumn && !isTwoWrap;
+    const panelRef = useRef<HTMLDivElement>(null);
+
+    // ends the panel at the window's bottom so its own scroll reaches every filter
+    useEffect(() => {
+        const panel = panelRef.current;
+        if (!sticky || !panel) return;
+        const fit = () => {
+            const top = Math.max(panel.getBoundingClientRect().top, 0);
+            panel.style.maxHeight = `${window.innerHeight - top}px`;
+            // a panel with nothing to scroll passes the wheel on to the page
+            panel.style.overscrollBehavior =
+                panel.scrollHeight > panel.clientHeight ? "contain" : "auto";
+        };
+        fit();
+        const observer = new ResizeObserver(fit);
+        if (panel.lastElementChild) observer.observe(panel.lastElementChild);
+        // the page scrolls in an inner box
+        document.addEventListener("scroll", fit, {
+            capture: true,
+            passive: true,
+        });
+        window.addEventListener("resize", fit);
+        return () => {
+            observer.disconnect();
+            document.removeEventListener("scroll", fit, { capture: true });
+            window.removeEventListener("resize", fit);
+            panel.style.maxHeight = "";
+            panel.style.overscrollBehavior = "";
+        };
+    }, [sticky]);
+
     return (
         <div
+            ref={panelRef}
+            className={sticky ? "overflow-y-auto [scrollbar-width:thin]" : ""}
             style={{
-                width:
-                    isOneColumn || isTwoWrap
-                        ? "100%"
-                        : isTwoColumn
-                          ? "30%"
-                          : "25%",
-                height: isOneColumn || isTwoWrap ? " " : "100vh",
+                // the pinned panel scrolls, so it gets room on the right for
+                // focus rings and gives it back with the negative margin
+                width: !sticky
+                    ? "100%"
+                    : `calc(${isTwoColumn ? "30%" : "25%"} + ${FOCUS_ROOM})`,
+                marginRight: sticky ? `-${FOCUS_ROOM}` : undefined,
                 paddingLeft: isOneColumn ? "1rem" : "3rem",
                 paddingRight: isOneColumn
                     ? "1rem"
                     : isTwoWrap
                       ? "3rem"
-                      : "0rem",
-                position: isOneColumn || isTwoWrap ? "relative" : "sticky",
+                      : FOCUS_ROOM,
+                position: sticky ? "sticky" : "relative",
                 top: 0,
                 paddingTop: "40px",
+                paddingBottom: sticky ? "40px" : undefined,
             }}
         >
             <SearchInput
