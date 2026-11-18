@@ -101,45 +101,48 @@ const OrgInspector = () => {
                     <OrgAdvisors editable={canEditAdvisors} />
                 </>
             ) : (
-                <ItemList
-                    height={"auto"}
-                    title={"Strikes"}
-                    icon={"bx-error"}
-                    subtitle={
-                        "A combination of 3 strikes will result in the permanent revocation of the Activity’s charter."
-                    }
-                >
-                    {!canSeeStrikes ? (
-                        <p className={"px-3.5 py-3 bg-layer-2"}>
-                            Only this Activity&apos;s leaders and the Clubs
-                            &amp; Pubs department can see its strikes.
-                        </p>
-                    ) : strikes.length === 0 ? (
-                        <p className={"px-3.5 py-3 bg-layer-2"}>
-                            No strikes received. This Activity is in good
-                            standing.
-                        </p>
-                    ) : (
-                        strikes.map((strike, i) => (
-                            <div
-                                key={strike.id}
-                                className={"px-3.5 py-2 bg-layer-2"}
-                            >
-                                <div className="flex w-full justify-between my-1">
-                                    <p className={"important"}>
-                                        Strike {i + 1}
-                                    </p>
-                                    <p className={"important"}>
-                                        {toNewYork(strike.created_at).format(
-                                            "L",
-                                        )}
-                                    </p>
+                <>
+                    <MeetingRequirements />
+                    <ItemList
+                        height={"auto"}
+                        title={"Strikes"}
+                        icon={"bx-error"}
+                        subtitle={
+                            "A combination of 3 strikes will result in the permanent revocation of the Activity’s charter."
+                        }
+                    >
+                        {!canSeeStrikes ? (
+                            <p className={"px-3.5 py-3 bg-layer-2"}>
+                                Only this Activity&apos;s leaders and the Clubs
+                                &amp; Pubs department can see its strikes.
+                            </p>
+                        ) : strikes.length === 0 ? (
+                            <p className={"px-3.5 py-3 bg-layer-2"}>
+                                No strikes received. This Activity is in good
+                                standing.
+                            </p>
+                        ) : (
+                            strikes.map((strike, i) => (
+                                <div
+                                    key={strike.id}
+                                    className={"px-3.5 py-2 bg-layer-2"}
+                                >
+                                    <div className="flex w-full justify-between my-1">
+                                        <p className={"important"}>
+                                            Strike {i + 1}
+                                        </p>
+                                        <p className={"important"}>
+                                            {toNewYork(
+                                                strike.created_at,
+                                            ).format("L")}
+                                        </p>
+                                    </div>
+                                    <p>{strike.reason}</p>
                                 </div>
-                                <p>{strike.reason}</p>
-                            </div>
-                        ))
-                    )}
-                </ItemList>
+                            ))
+                        )}
+                    </ItemList>
+                </>
             )}
         </div>
     );
