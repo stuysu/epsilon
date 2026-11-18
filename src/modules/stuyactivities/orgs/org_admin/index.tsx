@@ -117,6 +117,18 @@ const OrgAdminRouter = () => {
         return (
             <Routes>
                 <Route path={"/roster"} element={<Roster readOnly />} />
+                <Route
+                    path={"/attendance"}
+                    element={<AttendanceOverview readOnly />}
+                />
+                <Route
+                    path="/attendance/:meetingId"
+                    element={<MeetingAttendance readOnly />}
+                />
+                <Route
+                    path="/attendance/members/:userId"
+                    Component={MemberAttendance}
+                />
                 <Route path={"/messages"} Component={Messages} />
                 <Route
                     path={"/*"}
@@ -125,7 +137,7 @@ const OrgAdminRouter = () => {
                             icon="bx-no-entry"
                             iconColor="text-red"
                             title="Limited Access"
-                            description="You are not an administrator for this Activity. You are a Clubs & Pubs administrator, which gives you access to the roster (read-only) and messaging. To access global administrator actions, please use the StuyActivities Admin Panel."
+                            description="You are not an administrator for this Activity. You are a Clubs & Pubs administrator, which gives you read-only access to the roster and attendance, plus messaging. To access global administrator actions, please use the StuyActivities Admin Panel."
                         />
                     }
                 />

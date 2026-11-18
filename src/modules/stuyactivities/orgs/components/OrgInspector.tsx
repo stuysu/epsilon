@@ -32,7 +32,11 @@ const OrgInspector = () => {
         ) ?? false;
     const card = inspectorCardFor(location.pathname);
     const sideCard =
-        card === "attendance" && !canManageAttendance ? undefined : card;
+        card === "attendance" &&
+        !canManageAttendance &&
+        user.permission !== "ADMIN"
+            ? undefined
+            : card;
     /* strikes are only readable by the club's leaders and site admins, so
     anyone else would always be told the club has none */
     const canSeeStrikes =
