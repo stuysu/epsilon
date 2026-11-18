@@ -54,7 +54,26 @@ const segment = (selected: boolean) =>
             : "text-typography-2 enabled:sm:hover:text-typography-1"
     }`;
 
-const MeetingAttendance = () => {
+const markLabel: Record<Mark, [string, string]> = {
+    present: ["Present", "text-green"],
+    late: ["Late", "text-yellow"],
+    absent: ["Absent", "text-red"],
+};
+
+const ReadOnlyMark = ({
+    mark,
+    leftEarly,
+}: {
+    mark: Mark;
+    leftEarly: boolean;
+}) => (
+    <p className={"flex items-center gap-3 text-sm font-semibold"}>
+        <span className={markLabel[mark][1]}>{markLabel[mark][0]}</span>
+        {leftEarly && <span className={"text-yellow"}>Left Early</span>}
+    </p>
+);
+
+const MeetingAttendance = ({ readOnly = false }: { readOnly?: boolean }) => {
     const org = useContext(OrgContext);
     const { meetingId: meetingIdParam, orgUrl } = useParams();
     const meetingId = parseInt(meetingIdParam || "-1", 10);
@@ -76,7 +95,7 @@ const MeetingAttendance = () => {
     // the code proves a member was at the meeting; only leaders can read it
     const [code, setCode] = useState<string>();
     useEffect(() => {
-        if (!/^\d+$/.test(meetingIdParam ?? "")) return;
+        if (readOnly || !/^\d+$/.test(meetingIdParam ?? "")) return;
         let live = true;
         supabase
             .rpc("meeting_checkin_code", { p_meeting_id: meetingId })
@@ -86,7 +105,7 @@ const MeetingAttendance = () => {
         return () => {
             live = false;
         };
-    }, [meetingId, meetingIdParam]);
+    }, [meetingId, meetingIdParam, readOnly]);
     const link = code
         ? `${PUBLIC_URL}/${orgUrl}/my-attendance/${meetingId}?code=${code}`
         : "";
@@ -353,21 +372,21 @@ const MeetingAttendance = () => {
                 </p>
             </header>
 
-            <SegmentedControl
-                label={"Meeting attendance view"}
-                value={view}
-                onChange={setView}
-                options={[
-                    { value: "overview", label: "Overview" },
-                    { value: "manual", label: "Manual Attendance" },
-                ]}
-            />
+            {!readOnly && (
+                <SegmentedControl
+                    label={"Meeting attendance view"}
+                    value={view}
+                    onChange={setView}
+                    options={[
+                        { value: "overview", label: "Overview" },
+                        { value: "manual", label: "Manual Attendance" },
+                    ]}
+                />
+            )}
 
-            {view === "overview" ? (
+            {(readOnly || view === "overview") && (
                 <div
-                    className={
-                        "grid grid-cols-[minmax(0,1fr)] gap-4 sm:grid-cols-2"
-                    }
+                    className={`grid grid-cols-[minmax(0,1fr)] gap-4 ${readOnly ? "mb-6" : "sm:grid-cols-2"}`}
                 >
                     <section
                         aria-label="Attendance summary"
@@ -418,7 +437,22 @@ const MeetingAttendance = () => {
                                 <p className={"text-sm"}>On Time</p>
                             </Ring>
                         </div>
-                        {editingLate ? (
+                        {readOnly ? (
+                            <p
+                                title="Self check-ins after this are marked late"
+                                className={
+                                    "inline-flex h-9 items-center gap-2 rounded-full bg-layer-2 px-4 text-sm font-semibold text-typography-1"
+                                }
+                            >
+                                <i
+                                    aria-hidden="true"
+                                    className={
+                                        "bx bx-time-five text-base text-yellow"
+                                    }
+                                />
+                                Late after {lateAfter} min
+                            </p>
+                        ) : editingLate ? (
                             <form
                                 className={
                                     "flex h-11 flex-wrap items-center justify-center gap-2"
@@ -510,80 +544,85 @@ const MeetingAttendance = () => {
                                 />
                             </button>
                         )}
-                        <button
-                            type="button"
-                            onClick={copyLink}
-                            disabled={!link}
-                            aria-live="polite"
-                            className={
-                                "flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-layer-2 px-4 text-sm font-semibold text-typography-1 shadow-control transition-colors disabled:opacity-50 sm:hover:bg-layer-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
-                            }
-                        >
-                            <i
-                                aria-hidden="true"
-                                className={`bx ${copied ? "bx-check text-green" : "bx-link text-yellow"} text-lg`}
-                            />
-                            {copied ? "Copied" : "Copy Attendance Link"}
-                        </button>
-                    </section>
-                    <section
-                        className={
-                            "flex flex-col items-center gap-3 rounded-xl border border-divider bg-layer-1 p-5 text-center shadow-prominent"
-                        }
-                    >
-                        <h2 className={"flex items-center gap-2 text-base"}>
-                            <i
-                                aria-hidden="true"
-                                className={"bx bx-qr text-xl text-blue"}
-                            />
-                            QR Code
-                        </h2>
-                        <p className={"text-sm"}>
-                            Members scan this at the meeting to check themselves
-                            in.
-                        </p>
-                        <div
-                            className={
-                                "flex min-h-48 flex-1 items-center justify-center"
-                            }
-                        >
-                            {!link ? (
-                                <div
-                                    className={
-                                        "size-[184px] animate-pulse rounded-lg bg-layer-2"
-                                    }
+                        {!readOnly && (
+                            <button
+                                type="button"
+                                onClick={copyLink}
+                                disabled={!link}
+                                aria-live="polite"
+                                className={
+                                    "flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-layer-2 px-4 text-sm font-semibold text-typography-1 shadow-control transition-colors disabled:opacity-50 sm:hover:bg-layer-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                                }
+                            >
+                                <i
+                                    aria-hidden="true"
+                                    className={`bx ${copied ? "bx-check text-green" : "bx-link text-yellow"} text-lg`}
                                 />
-                            ) : (
-                                <button
-                                    type="button"
-                                    aria-label="Show QR code full screen"
-                                    onClick={() => setQrFull(true)}
-                                    className={
-                                        "cursor-zoom-in overflow-hidden rounded-lg bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
-                                    }
-                                >
-                                    <ClubQRCode
-                                        value={link}
-                                        picture={org.picture ?? undefined}
-                                        name={org.name}
-                                        className={"block size-[184px]"}
-                                    />
-                                </button>
-                            )}
-                        </div>
-                        <AsyncButton
-                            onClick={() => setQrFull(true)}
-                            disabled={!link}
-                        >
-                            <i
-                                aria-hidden="true"
-                                className={"bx bx-fullscreen mr-2"}
-                            />
-                            Full Screen
-                        </AsyncButton>
+                                {copied ? "Copied" : "Copy Attendance Link"}
+                            </button>
+                        )}
                     </section>
+                    {!readOnly && (
+                        <section
+                            className={
+                                "flex flex-col items-center gap-3 rounded-xl border border-divider bg-layer-1 p-5 text-center shadow-prominent"
+                            }
+                        >
+                            <h2 className={"flex items-center gap-2 text-base"}>
+                                <i
+                                    aria-hidden="true"
+                                    className={"bx bx-qr text-xl text-blue"}
+                                />
+                                QR Code
+                            </h2>
+                            <p className={"text-sm"}>
+                                Members scan this at the meeting to check
+                                themselves in.
+                            </p>
+                            <div
+                                className={
+                                    "flex min-h-48 flex-1 items-center justify-center"
+                                }
+                            >
+                                {!link ? (
+                                    <div
+                                        className={
+                                            "size-[184px] animate-pulse rounded-lg bg-layer-2"
+                                        }
+                                    />
+                                ) : (
+                                    <button
+                                        type="button"
+                                        aria-label="Show QR code full screen"
+                                        onClick={() => setQrFull(true)}
+                                        className={
+                                            "cursor-zoom-in overflow-hidden rounded-lg bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                                        }
+                                    >
+                                        <ClubQRCode
+                                            value={link}
+                                            picture={org.picture ?? undefined}
+                                            name={org.name}
+                                            className={"block size-[184px]"}
+                                        />
+                                    </button>
+                                )}
+                            </div>
+                            <AsyncButton
+                                onClick={() => setQrFull(true)}
+                                disabled={!link}
+                            >
+                                <i
+                                    aria-hidden="true"
+                                    className={"bx bx-fullscreen mr-2"}
+                                />
+                                Full Screen
+                            </AsyncButton>
+                        </section>
+                    )}
                 </div>
-            ) : (
+            )}
+            {(readOnly || view === "manual") && (
                 <>
                     <MemberToolbar
                         placeholder={"Search members"}
@@ -650,86 +689,103 @@ const MeetingAttendance = () => {
                                                 </p>
                                             </div>
                                         </div>
-                                        <div
-                                            className={
-                                                "flex flex-wrap items-center gap-2 max-sm:w-full"
-                                            }
-                                        >
+                                        {readOnly ? (
+                                            <ReadOnlyMark
+                                                mark={state}
+                                                leftEarly={!!mark?.left_early}
+                                            />
+                                        ) : (
                                             <div
-                                                role="radiogroup"
-                                                onKeyDown={(event) =>
-                                                    moveWithArrows(event)
-                                                }
-                                                aria-label={`Attendance for ${m.name}`}
                                                 className={
-                                                    "flex rounded-full bg-layer-3 p-1 max-sm:flex-1"
+                                                    "flex flex-wrap items-center gap-2 max-sm:w-full"
                                                 }
                                             >
-                                                {(
-                                                    [
-                                                        ["present", "Present"],
-                                                        ["late", "Late"],
-                                                        ["absent", "Absent"],
-                                                    ] as const
-                                                ).map(([value, label]) => (
-                                                    <button
-                                                        key={value}
-                                                        type="button"
-                                                        role="radio"
-                                                        aria-checked={
-                                                            state === value
-                                                        }
-                                                        tabIndex={
-                                                            state === value
-                                                                ? 0
-                                                                : -1
-                                                        }
-                                                        disabled={disabled}
-                                                        onClick={() =>
-                                                            state !== value &&
-                                                            setMark(
-                                                                m.id,
-                                                                m.name,
-                                                                value,
-                                                            )
-                                                        }
-                                                        className={segment(
-                                                            state === value,
-                                                        )}
-                                                    >
-                                                        {label}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                            <button
-                                                type="button"
-                                                aria-pressed={
-                                                    !!mark?.left_early
-                                                }
-                                                disabled={disabled || !mark}
-                                                title={
-                                                    mark
-                                                        ? undefined
-                                                        : "Mark them present or late first"
-                                                }
-                                                onClick={() =>
-                                                    toggleEarly(m.id, m.name)
-                                                }
-                                                className={`flex h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-3.5 text-sm sm:px-4 font-semibold outline-0 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 disabled:opacity-40 ${
-                                                    mark?.left_early
-                                                        ? "bg-yellow text-black"
-                                                        : "bg-layer-3 text-typography-2 enabled:sm:hover:text-typography-1"
-                                                }`}
-                                            >
-                                                <i
-                                                    aria-hidden="true"
-                                                    className={
-                                                        "bx bx-log-out-circle text-base max-sm:hidden"
+                                                <div
+                                                    role="radiogroup"
+                                                    onKeyDown={(event) =>
+                                                        moveWithArrows(event)
                                                     }
-                                                />
-                                                Left Early
-                                            </button>
-                                        </div>
+                                                    aria-label={`Attendance for ${m.name}`}
+                                                    className={
+                                                        "flex rounded-full bg-layer-3 p-1 max-sm:flex-1"
+                                                    }
+                                                >
+                                                    {(
+                                                        [
+                                                            [
+                                                                "present",
+                                                                "Present",
+                                                            ],
+                                                            ["late", "Late"],
+                                                            [
+                                                                "absent",
+                                                                "Absent",
+                                                            ],
+                                                        ] as const
+                                                    ).map(([value, label]) => (
+                                                        <button
+                                                            key={value}
+                                                            type="button"
+                                                            role="radio"
+                                                            aria-checked={
+                                                                state === value
+                                                            }
+                                                            tabIndex={
+                                                                state === value
+                                                                    ? 0
+                                                                    : -1
+                                                            }
+                                                            disabled={disabled}
+                                                            onClick={() =>
+                                                                state !==
+                                                                    value &&
+                                                                setMark(
+                                                                    m.id,
+                                                                    m.name,
+                                                                    value,
+                                                                )
+                                                            }
+                                                            className={segment(
+                                                                state === value,
+                                                            )}
+                                                        >
+                                                            {label}
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                                <button
+                                                    type="button"
+                                                    aria-pressed={
+                                                        !!mark?.left_early
+                                                    }
+                                                    disabled={disabled || !mark}
+                                                    title={
+                                                        mark
+                                                            ? undefined
+                                                            : "Mark them present or late first"
+                                                    }
+                                                    onClick={() =>
+                                                        toggleEarly(
+                                                            m.id,
+                                                            m.name,
+                                                        )
+                                                    }
+                                                    className={`flex h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-3.5 text-sm sm:px-4 font-semibold outline-0 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 disabled:opacity-40 ${
+                                                        mark?.left_early
+                                                            ? "bg-yellow text-black"
+                                                            : "bg-layer-3 text-typography-2 enabled:sm:hover:text-typography-1"
+                                                    }`}
+                                                >
+                                                    <i
+                                                        aria-hidden="true"
+                                                        className={
+                                                            "bx bx-log-out-circle text-base max-sm:hidden"
+                                                        }
+                                                    />
+                                                    Left Early
+                                                </button>
+                                            </div>
+                                        )}
                                     </div>
                                 </motion.div>
                             );

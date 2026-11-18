@@ -184,7 +184,7 @@ const MiniStat = ({
     </div>
 );
 
-const AttendanceOverview = () => {
+const AttendanceOverview = ({ readOnly = false }: { readOnly?: boolean }) => {
     const org = useContext(OrgContext);
     const navigate = useNavigate();
     const [params, setParams] = useSearchParams();
@@ -323,15 +323,15 @@ const AttendanceOverview = () => {
                     >
                         {!current
                             ? "No Active Meetings"
-                            : isLive(current)
-                              ? "Take Attendance for Current Meeting"
-                              : "Take Attendance for Next Meeting"}
+                            : `${readOnly ? "View" : "Take"} Attendance for ${isLive(current) ? "Current" : "Next"} Meeting`}
                     </AsyncButton>
                 </section>
                 <p>
-                    Take attendance here. Attendance records must be kept up to
-                    date. Strikes will be issued if attendance is not marked or
-                    falsely marked.
+                    {readOnly
+                        ? "This Activity's attendance records, view only."
+                        : "Take attendance here."}{" "}
+                    Attendance records must be kept up to date. Strikes will be
+                    issued if attendance is not marked or falsely marked.
                 </p>
             </header>
 
@@ -340,7 +340,10 @@ const AttendanceOverview = () => {
                 value={view}
                 onChange={setView}
                 options={[
-                    { value: "meetings", label: "Take Attendance" },
+                    {
+                        value: "meetings",
+                        label: readOnly ? "Meetings" : "Take Attendance",
+                    },
                     { value: "members", label: "View Members" },
                 ]}
             />
