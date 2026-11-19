@@ -23,6 +23,7 @@ import {
 import SelectField from "../../../../../components/ui/input/SelectField";
 import SwitchField from "../../../../../components/ui/input/SwitchField";
 import TextField from "../../../../../components/ui/input/TextField";
+import CheckboxInput from "../../../../../components/ui/input/CheckboxInput";
 import { functionErrorText } from "../../../../../utils/FunctionErrors";
 
 // rooms, grants and faculty rarely change; booked rooms are always fetched fresh
@@ -93,6 +94,8 @@ const AdminUpsertMeeting = ({
     );
 
     const [notifyFaculty, setNotifyFaculty] = useState(false);
+    const [virtualConfirmed, setVirtualConfirmed] = useState(false);
+    const [virtualTouched, setVirtualTouched] = useState(false);
     const [notifyMembers, setNotifyMembers] = useState(true);
     const advisorRoomBooking = advisorNeeded && (!id || roomId !== room_id);
 
@@ -440,6 +443,15 @@ const AdminUpsertMeeting = ({
             return;
         }
 
+        if (!roomId && !virtualConfirmed) {
+            setVirtualTouched(true);
+            enqueueSnackbar(
+                "Confirm that this virtual meeting won't be held in person.",
+                { variant: "error" },
+            );
+            return;
+        }
+
         if (advisorNeeded && !facultyLoaded) {
             enqueueSnackbar(
                 facultyFailed
@@ -563,6 +575,38 @@ const AdminUpsertMeeting = ({
                     }}
                 />
             </div>
+
+            {!roomId && !loading && (
+                <div className="mb-3">
+                    <label className="flex cursor-pointer items-start gap-2.5 rounded-lg bg-layer-2 px-3 py-2.5">
+                        <span className="mt-0.5 shrink-0">
+                            <CheckboxInput
+                                checked={virtualConfirmed}
+                                onChange={(checked) => {
+                                    setVirtualConfirmed(checked);
+                                    setVirtualTouched(true);
+                                }}
+                                label="Confirm this meeting is virtual"
+                            />
+                        </span>
+                        <span className="text-sm text-black/60 scheme-dark:text-white/70">
+                            I confirm this meeting is virtual. The Activity will
+                            not meet in or list a room or location that
+                            isn&apos;t virtual, unless otherwise approved by
+                            faculty or administration. Doing so will result in a
+                            strike.
+                        </span>
+                    </label>
+                    {virtualTouched && !virtualConfirmed && (
+                        <p
+                            role="alert"
+                            className="mx-3.5 mt-[3px] text-[0.75rem] leading-[1.66] text-[#d32f2f] scheme-dark:text-[#f44336]"
+                        >
+                            Required for virtual meetings.
+                        </p>
+                    )}
+                </div>
+            )}
 
             <FacultySelect
                 label="Faculty Advisor Present"
