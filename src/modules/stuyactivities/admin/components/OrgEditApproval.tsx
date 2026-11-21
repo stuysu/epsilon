@@ -223,13 +223,13 @@ const OrgEditApproval = ({
                                     {orgFieldMap(field)}{" "}
                                     <i className={"bx bx-refresh"}></i>
                                 </h4>
-                                <p>
+                                <p className="whitespace-pre-line break-words">
                                     {f2 === "socials" ? (
                                         <LinkSummary
                                             socials={edit[f2] as string}
                                         />
                                     ) : (
-                                        `"${edit[f2]}"`
+                                        `"${Array.isArray(edit[f2]) ? (edit[f2] as string[]).join(", ") : edit[f2]}"`
                                     )}
                                 </p>
                                 <Divider />

@@ -23,7 +23,9 @@ const Charter = () => {
                 <i className={"bx bx-info-circle relative top-0.5 mr-2"}></i>
                 What is this Activity?
             </h3>
-            <p>{organization.purpose || "None"}</p>
+            <p className="whitespace-pre-line break-words">
+                {organization.purpose || "None"}
+            </p>
             <Divider />
 
             <h3 className={"font-['instrument-serif'] text-beige"}>
@@ -37,28 +39,36 @@ const Charter = () => {
                 <i className={"bx bx-calendar relative top-0.5 mr-2"}></i>What
                 is the meeting schedule?
             </h3>
-            <p>{organization.meeting_schedule || "None"}</p>
+            <p className="whitespace-pre-line break-words">
+                {organization.meeting_schedule || "None"}
+            </p>
             <Divider />
 
             <h3 className={"font-['instrument-serif'] text-beige"}>
                 <i className={"bx bx-notepad relative top-0.5 mr-2"}></i>What
                 does a typical meeting look like?
             </h3>
-            <p>{organization.meeting_description || "None"}</p>
+            <p className="whitespace-pre-line break-words">
+                {organization.meeting_description || "None"}
+            </p>
             <Divider />
 
             <h3 className={"font-['instrument-serif'] text-beige"}>
                 <i className={"bx bx-shield relative top-0.5 mr-2"}></i>How does
                 this Activity appoint leaders?
             </h3>
-            <p>{organization.appointment_procedures || "None"}</p>
+            <p className="whitespace-pre-line break-words">
+                {organization.appointment_procedures || "None"}
+            </p>
             <Divider />
 
             <h3 className={"font-['instrument-serif'] text-beige"}>
                 <i className={"bx bx-star relative top-0.5 mr-2"}></i>What makes
                 this Activity unique?
             </h3>
-            <p>{organization.uniqueness || "None"}</p>
+            <p className="whitespace-pre-line break-words">
+                {organization.uniqueness || "None"}
+            </p>
         </div>
     );
 };

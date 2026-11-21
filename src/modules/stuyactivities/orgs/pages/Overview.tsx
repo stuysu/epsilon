@@ -323,7 +323,7 @@ const Overview = () => {
                             }
                         >
                             <p
-                                className="h-[4lh] overflow-hidden text-ellipsis [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:4]"
+                                className="h-[4lh] overflow-hidden text-ellipsis whitespace-pre-line break-words [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:4]"
                                 {...pressable(() => navigate("./charter"), {
                                     role: "link",
                                 })}

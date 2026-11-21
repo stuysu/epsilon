@@ -14,11 +14,17 @@ import Divider from "../../../../../components/ui/Divider";
 import OrgRequirements, {
     ORG_TAGS,
 } from "../../../../../utils/OrgRequirements";
-import { getInvalidSocials, linkOrder } from "../../../../../utils/SocialLinks";
+import { getInvalidSocials } from "../../../../../utils/SocialLinks";
 import FormSocialLinks from "../../../../../components/ui/forms/FormSocialLinks";
 import LinkSummary from "../../components/LinkSummary";
 import FormTagSelect from "../../../../../components/ui/forms/FormTagSelect";
 import FormChipText from "../../../../../components/ui/forms/FormChipText";
+import FormDropSelect from "../../../../../components/ui/forms/FormDropSelect";
+import FormCheckSelect from "../../../../../components/ui/forms/FormCheckSelect";
+import {
+    capitalizeWords,
+    sortWeekdays,
+} from "../../../../../utils/DataFormatters";
 import orgFieldMap from "../../../../../utils/OrgFieldMap";
 import { supabase } from "../../../../../lib/supabaseClient";
 import { PUBLIC_URL } from "../../../../../config/constants";
@@ -50,6 +56,10 @@ type FormStatus = {
 
 type orgKey = keyof OrganizationEdit & keyof Organization;
 
+const ReviewNote = () => (
+    <p className="text-sm text-typography-3">Changes are reviewed</p>
+);
+
 const EditField = ({
     field,
     pending,
@@ -74,6 +84,7 @@ const EditField = ({
                 <p className={pending ? "text-yellow" : "text-green"}>
                     {pending ? "Pending" : "Approved"}
                 </p>
+                {REVIEWED_FIELDS.includes(field) && <ReviewNote />}
             </div>
             <div className="w-full flex flex-nowrap py-2.5 relative min-h-[100px]">
                 {editing ? (
@@ -110,11 +121,15 @@ const EditField = ({
 
 const URL_PATTERN = /^[a-zA-Z0-9_\-]+$/;
 
+/* changes to these wait for the Student Union; the rest save right away */
+const REVIEWED_FIELDS = ["name", "picture", "goals", "meeting_description"];
+
 // too lazy to write them all out, use array.map to write it faster
 const textFields = [
     "name",
     "url",
     "socials",
+    "mission",
     "goals",
     "purpose",
     "appointment_procedures",
@@ -124,15 +139,31 @@ const textFields = [
     "faculty_email",
 ];
 
-/* tags is an array and keywords is a comma separated string, so they need their own editors and comparison */
-const listFields = ["tags", "keywords"];
+/* keywords is a comma separated string and the others are arrays, so they need their own editors and comparison */
+const listFields = ["meeting_days", "tags", "keywords"];
 
 const toList = (field: string, value: any): string[] => {
     if (field === "keywords") {
         return value ? String(value).split(",").filter(Boolean) : [];
     }
-    return Array.isArray(value) ? value : [];
+    const list = Array.isArray(value) ? value : [];
+    return field === "meeting_days" ? sortWeekdays(list) : list;
 };
+
+const COMMITMENT_LEVELS = [
+    { id: "NONE", display: "None" },
+    { id: "LOW", display: "Low" },
+    { id: "MEDIUM", display: "Medium" },
+    { id: "HIGH", display: "High" },
+];
+
+const WEEKDAYS = [
+    { id: "MONDAY", display: "Monday" },
+    { id: "TUESDAY", display: "Tuesday" },
+    { id: "WEDNESDAY", display: "Wednesday" },
+    { id: "THURSDAY", display: "Thursday" },
+    { id: "FRIDAY", display: "Friday" },
+];
 
 const fromList = (field: string, list: string[]) =>
     field === "keywords" ? list.join(",") : list;
@@ -341,38 +372,12 @@ const OrgEditor = ({
             return;
         }
 
-        /* reordering approved links saves right away, without review */
-        const socialsOrder =
-            organization.state !== "PENDING" && "socials" in editState
-                ? linkOrder(organization.socials, editData.socials)
-                : null;
-        let reordered = false;
-        if (socialsOrder && socialsOrder.some((p, i) => p !== i + 1)) {
-            const { data: socials, error } = await supabase.rpc(
-                "reorder_organization_socials",
-                { org_id: organization.id, new_order: socialsOrder },
-            );
-            if (error) {
-                return enqueueSnackbar(
-                    "Error saving the link order. Contact it@stuysu.org for support.",
-                    { variant: "error" },
-                );
-            }
-            reordered = true;
-            orgContext.setOrg?.({ ...orgContext, socials });
-        }
-
         const payload: any = {};
 
         let allNull = true;
         for (const key of Object.keys(existingEdit)) {
             const field = key as orgKey;
             if (hiddenFields.includes(field)) continue;
-
-            if (field === "socials" && socialsOrder) {
-                payload[field] = null;
-                continue;
-            }
 
             if (listFields.includes(field)) {
                 // an empty list is a real change (clearing it), so it can't use the || fallbacks below.
@@ -429,6 +434,49 @@ const OrgEditor = ({
                 allNull = false;
             }
         }
+
+        /* fields that don't need review are saved now and left out of the request */
+        const direct: Record<string, unknown> = {};
+        if (organization.state !== "PENDING") {
+            for (const field of Object.keys(editState)) {
+                if (
+                    REVIEWED_FIELDS.includes(field) ||
+                    hiddenFields.includes(field)
+                )
+                    continue;
+                if (payload[field] !== null && payload[field] !== undefined)
+                    direct[field] = payload[field];
+                payload[field] = null;
+            }
+            allNull = Object.values(payload).every((v) => v === null);
+        }
+        let saved: Partial<Organization> | undefined;
+        if (Object.keys(direct).length) {
+            const { data, error } = await supabase.rpc(
+                "update_organization_charter",
+                { org_id: organization.id, changes: direct },
+            );
+            if (error || !data) {
+                return enqueueSnackbar(
+                    `Error saving changes. ${error?.message || "Contact it@stuysu.org for support."}`,
+                    { variant: "error" },
+                );
+            }
+            saved = data as Partial<Organization>;
+        }
+        const urlChanged =
+            !!saved?.url && saved.url !== organization.url?.toLowerCase();
+        const afterDirectSave = () => {
+            if (!saved) return;
+            if (urlChanged) {
+                window.location.href = `${PUBLIC_URL}/${saved.url}/admin/org-edits`;
+                return;
+            }
+            orgContext.setOrg?.({
+                ...orgContext,
+                ...saved,
+            } as OrgContextType);
+        };
 
         /* custom logic for adding picture to the payload */
         /* picture is not in the original payload so nothing will manage it in the original loop. it is only edited here  */
@@ -505,13 +553,13 @@ const OrgEditor = ({
                 }
 
                 enqueueSnackbar(
-                    reordered
-                        ? "Link order saved."
+                    saved
+                        ? "Changes saved!"
                         : "Removed redundant organization edit!",
                     { variant: "success" },
                 );
-            } else if (reordered) {
-                enqueueSnackbar("Link order saved.", { variant: "success" });
+            } else if (saved) {
+                enqueueSnackbar("Changes saved!", { variant: "success" });
             } else {
                 enqueueSnackbar(
                     "Unexpected behavior: all edit fields were null.",
@@ -546,6 +594,7 @@ const OrgEditor = ({
             setEditState({});
             setEditPicture(undefined);
             setStatus({});
+            afterDirectSave();
 
             return;
         }
@@ -553,20 +602,14 @@ const OrgEditor = ({
         let data, error;
 
         if (organization.state !== "PENDING") {
-            if (existingEdit.id === undefined) {
-                // insert new
-                ({ data, error } = await supabase
-                    .from("organizationedits")
-                    .insert({ organization_id: organization.id, ...payload })
-                    .select());
-            } else {
-                // update old
-                ({ data, error } = await supabase
-                    .from("organizationedits")
-                    .update({ organization_id: organization.id, ...payload })
-                    .eq("id", existingEdit.id)
-                    .select());
-            }
+            // the direct save may have removed the old request, so upsert
+            ({ data, error } = await supabase
+                .from("organizationedits")
+                .upsert(
+                    { organization_id: organization.id, ...payload },
+                    { onConflict: "organization_id" },
+                )
+                .select());
         } else {
             /* PENDING ORGANIZATION SHOULD JUST BE ALLOWED TO UPDATE */
 
@@ -609,12 +652,11 @@ const OrgEditor = ({
             setPendingEdit(data[0] as OrganizationEdit);
 
             enqueueSnackbar(
-                reordered
-                    ? Object.keys(editState).some((f) => f !== "socials") ||
-                      editPicture !== undefined
-                        ? "Link order saved. Other changes were sent for review."
-                        : "Link order saved."
-                    : "Organization edit request sent!",
+                !saved
+                    ? "Organization edit request sent!"
+                    : needsReview
+                      ? "Changes saved. The ones that need review were sent to the Student Union."
+                      : "Changes saved!",
                 { variant: "success" },
             );
 
@@ -622,6 +664,7 @@ const OrgEditor = ({
             setEditState({});
             setEditPicture(undefined);
             setStatus({});
+            afterDirectSave();
         }
     };
 
@@ -682,13 +725,14 @@ const OrgEditor = ({
                 : ""
             : oldPicture || "";
 
-    const onlyReorder =
+    const editedFields = Object.keys(editState);
+    const needsReview =
         organization.state !== "PENDING" &&
-        editPicture === undefined &&
-        Object.keys(editState).every((f) => f === "socials") &&
-        !!linkOrder(organization.socials, editData.socials)?.some(
-            (p, i) => p !== i + 1,
-        );
+        (editPicture !== undefined ||
+            editedFields.some((f) => REVIEWED_FIELDS.includes(f)));
+    const savesNow =
+        organization.state === "PENDING" ||
+        editedFields.some((f) => !REVIEWED_FIELDS.includes(f));
 
     const allNull = Object.keys(existingEdit).every(
         (key) => existingEdit[key as keyof OrganizationEdit] === undefined,
@@ -701,6 +745,7 @@ const OrgEditor = ({
                 <p className={pendingPicture ? "text-yellow" : "text-green"}>
                     {pendingPicture ? "Pending" : "Approved"}
                 </p>
+                <ReviewNote />
             </div>
             <div className="flex flex-wrap items-center justify-between gap-4 py-2.5 mb-5">
                 <Avatar
@@ -830,7 +875,11 @@ const OrgEditor = ({
                                 setEditState({ ...editState, [field]: true })
                             }
                             defaultDisplay={
-                                <p className={"break-words"}>
+                                <p
+                                    className={
+                                        "whitespace-pre-line break-words"
+                                    }
+                                >
                                     {editData[
                                         field as keyof OrganizationEdit
                                     ] ? (
@@ -890,11 +939,6 @@ const OrgEditor = ({
                                         field="socials"
                                         label={orgFieldMap(field)}
                                         hideLabel
-                                        description={
-                                            organization.state === "PENDING"
-                                                ? undefined
-                                                : "Reordering approved links saves right away. New or changed links are reviewed first."
-                                        }
                                         className={
                                             "w-full max-sm:pt-14 sm:w-4/5"
                                         }
@@ -937,7 +981,7 @@ const OrgEditor = ({
                     </Fragment>
                 );
             })}
-            {listFields.map((field) => {
+            {["commitment_level", ...listFields].map((field) => {
                 return (
                     <Fragment key={field}>
                         <Divider />
@@ -982,12 +1026,23 @@ const OrgEditor = ({
                             }
                             defaultDisplay={
                                 <p className={"break-words"}>
-                                    {toList(
-                                        field,
-                                        editData[
-                                            field as keyof OrganizationEdit
-                                        ],
-                                    ).join(", ") || (
+                                    {(field === "commitment_level"
+                                        ? editData.commitment_level &&
+                                          capitalizeWords(
+                                              editData.commitment_level,
+                                          )
+                                        : toList(
+                                              field,
+                                              editData[
+                                                  field as keyof OrganizationEdit
+                                              ],
+                                          )
+                                              .map((v) =>
+                                                  field === "meeting_days"
+                                                      ? capitalizeWords(v)
+                                                      : v,
+                                              )
+                                              .join(", ")) || (
                                         <em className="text-typography-3">
                                             &lt;empty&gt;
                                         </em>
@@ -995,7 +1050,53 @@ const OrgEditor = ({
                                 </p>
                             }
                             editDisplay={
-                                field === "tags" ? (
+                                field === "commitment_level" ? (
+                                    <div className="w-[80%]">
+                                        <FormDropSelect
+                                            field={field}
+                                            label="Commitment Level"
+                                            description={
+                                                "None: Any amount\nLow: 0–3 meetings a month\nMedium: 4–8 meetings a month\nHigh: 9+ Meetings a month"
+                                            }
+                                            required={
+                                                OrgRequirements.commitment_level
+                                                    .required
+                                            }
+                                            selections={COMMITMENT_LEVELS}
+                                            value={editData.commitment_level}
+                                            onChange={(val) =>
+                                                updateEdit(
+                                                    "commitment_level",
+                                                    val,
+                                                )
+                                            }
+                                            changeStatus={changeStatus}
+                                        />
+                                    </div>
+                                ) : field === "meeting_days" ? (
+                                    <div className="w-[80%]">
+                                        <FormCheckSelect
+                                            field={field}
+                                            label="Meeting Days"
+                                            selections={WEEKDAYS}
+                                            required={
+                                                OrgRequirements.meeting_days
+                                                    .required
+                                            }
+                                            value={toList(
+                                                field,
+                                                editData.meeting_days,
+                                            )}
+                                            onChange={(val) =>
+                                                updateEdit(
+                                                    "meeting_days",
+                                                    sortWeekdays(val),
+                                                )
+                                            }
+                                            changeStatus={changeStatus}
+                                        />
+                                    </div>
+                                ) : field === "tags" ? (
                                     <FormTagSelect
                                         field={field}
                                         label="Tags"
@@ -1052,9 +1153,11 @@ const OrgEditor = ({
                     onClick={saveChanges}
                     sx={{ marginLeft: "10px" }}
                 >
-                    {onlyReorder
-                        ? "Save Link Order"
-                        : "Submit Changes for Review"}
+                    {needsReview && savesNow
+                        ? "Save and Submit for Review"
+                        : needsReview
+                          ? "Submit Changes for Review"
+                          : "Save Changes"}
                 </AsyncButton>
                 <AsyncButton
                     disabled={allNull}
