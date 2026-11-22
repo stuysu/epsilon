@@ -298,9 +298,8 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
                 </section>
                 {readOnly ? (
                     <p>
-                        You are viewing this roster as a Clubs & Pubs
-                        administrator. You can copy emails, but only this
-                        Activity's admins can change it.
+                        You are viewing this roster as an Epsilon
+                        Administrator and are restricted to viewing member emails.
                     </p>
                 ) : (
                     <p>
