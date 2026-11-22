@@ -311,8 +311,7 @@ const RoomBlocks = () => {
             <hr className="border-divider" />
             <p className="my-4 max-w-2xl">
                 Block rooms for a whole day. Meetings in those rooms that day
-                are cancelled and their Activities are emailed, and no one can
-                book them until they're unblocked.
+                are cancelled and their Activities are emailed.
             </p>
 
             <div className="flex flex-col lg:flex-row gap-6 items-start">
@@ -346,21 +345,19 @@ const RoomBlocks = () => {
                                                 : ""
                                         }`}
                                     >
-                                        <span className="important block">
+                                        <span className="text important block">
                                             {dayjs(group.date).format(
                                                 "ddd, MMM D",
                                             )}
                                         </span>
-                                        <span className="text-sm text-typography-2 block truncate">
+                                        <span className="text block truncate">
                                             {group.rooms.join(", ")}
                                         </span>
                                     </button>
                                 ))}
                             </div>
                         ) : (
-                            <p className="text-typography-2">
-                                No rooms are blocked from today on.
-                            </p>
+                            <p>No rooms are blocked from today on.</p>
                         )}
                     </div>
                 </div>
@@ -385,7 +382,7 @@ const RoomBlocks = () => {
                                                     "Unknown room"}
                                             </p>
                                             {block.reason && (
-                                                <p className="text-sm text-typography-2 break-words">
+                                                <p className="break-words">
                                                     {block.reason}
                                                 </p>
                                             )}
@@ -399,14 +396,12 @@ const RoomBlocks = () => {
                                 ))}
                             </div>
                         ) : (
-                            <p className="text-typography-2">
-                                No rooms are blocked on this day.
-                            </p>
+                            <p>No rooms are blocked on this day.</p>
                         )}
                     </div>
 
                     {isPast ? (
-                        <p className="mt-4 text-typography-2">
+                        <p className="mt-4">
                             This day has passed, so rooms can't be blocked on
                             it.
                         </p>
@@ -458,7 +453,7 @@ const RoomBlocks = () => {
                                                 : "No meetings will be cancelled."}
                                         </p>
                                         {confirming.meetings.length > 0 && (
-                                            <ul className="mt-1 text-sm text-typography-2">
+                                            <ul className="text mt-1">
                                                 {confirming.meetings.map(
                                                     (meeting) => (
                                                         <li key={meeting.id}>
