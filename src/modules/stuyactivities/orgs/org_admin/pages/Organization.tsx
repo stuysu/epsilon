@@ -84,12 +84,21 @@ const Organization = () => {
                 }
             >
                 <h1>Amend Charter</h1>
-                <p>
-                    You may update your organization&apos;s charter here.
-                    Changes to the name, picture, goals and meeting description
-                    are reviewed by the Student Union first. Everything else
-                    saves right away.
-                </p>
+                {["UNLOCKED", "ADMIN"].includes(organization.state) ? (
+                    <p>
+                        You may update your organization&apos;s charter here.
+                        Changes to the name, picture, description, origin story,
+                        goals, uniqueness, appointment procedures and meeting
+                        description are reviewed by the Student Union first.
+                        Everything else saves right away.
+                    </p>
+                ) : (
+                    <p>
+                        You may update your organization&apos;s charter here.
+                        Please note that edits are requests to amend, which will
+                        be reviewed by the Student Union.
+                    </p>
+                )}
             </div>
             <OrgEditor
                 organization={withMission}

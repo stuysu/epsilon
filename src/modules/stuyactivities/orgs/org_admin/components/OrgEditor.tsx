@@ -29,6 +29,8 @@ import orgFieldMap from "../../../../../utils/OrgFieldMap";
 import { supabase } from "../../../../../lib/supabaseClient";
 import { PUBLIC_URL } from "../../../../../config/constants";
 import { useNavigate } from "react-router-dom";
+import { functionErrorText } from "../../../../../utils/FunctionErrors";
+import { wordCount } from "../../../../../utils/WordCount";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
 import Avatar from "../../../../../components/ui/Avatar";
 import {
@@ -62,6 +64,7 @@ const ReviewNote = () => (
 
 const EditField = ({
     field,
+    reviewed,
     pending,
     editing,
     onCancel,
@@ -70,6 +73,7 @@ const EditField = ({
     editDisplay,
 }: {
     field: string;
+    reviewed: boolean;
     pending: boolean;
     editing: boolean;
     onCancel: () => void;
@@ -84,7 +88,7 @@ const EditField = ({
                 <p className={pending ? "text-yellow" : "text-green"}>
                     {pending ? "Pending" : "Approved"}
                 </p>
-                {REVIEWED_FIELDS.includes(field) && <ReviewNote />}
+                {reviewed && <ReviewNote />}
             </div>
             <div className="w-full flex flex-nowrap py-2.5 relative min-h-[100px]">
                 {editing ? (
@@ -119,10 +123,23 @@ const EditField = ({
     );
 };
 
-const URL_PATTERN = /^[a-zA-Z0-9_\-]+$/;
+const URL_PATTERN = /^[a-zA-Z0-9-]+$/;
 
 /* changes to these wait for the Student Union; the rest save right away */
-const REVIEWED_FIELDS = ["name", "picture", "goals", "meeting_description"];
+const REVIEWED_FIELDS = [
+    "name",
+    "picture",
+    "goals",
+    "meeting_description",
+    "purpose",
+    "uniqueness",
+    "mission",
+    "appointment_procedures",
+];
+
+/* clubs in these states save the other fields right away; restricted clubs
+   still send everything for review (PENDING charters update directly) */
+const DIRECT_EDIT_STATES = ["UNLOCKED", "ADMIN"];
 
 // too lazy to write them all out, use array.map to write it faster
 const textFields = [
@@ -171,6 +188,40 @@ const fromList = (field: string, list: string[]) =>
 const sameList = (a: string[], b: string[]) =>
     a.length === b.length && a.every((value, i) => value === b[i]);
 
+/* what the user has to do before a field can be saved */
+const fixHint = (field: string, value: any) => {
+    const label = orgFieldMap(field);
+    const { required, requirements: r = {} } = OrgRequirements[field] ?? {};
+    const list = listFields.includes(field) ? toList(field, value) : null;
+    const text = typeof value === "string" ? value.trim() : "";
+
+    if (field === "meeting_days" && !list?.length) {
+        return "Pick at least one meeting day.";
+    }
+    if (required && (list ? !list.length : !text)) {
+        return `Fill in ${label}.`;
+    }
+    if (r.minWords || r.maxWords) {
+        const words = wordCount(text);
+        if (r.minWords && words < r.minWords) {
+            return `Write at least ${r.minWords} words for ${label} (${words} so far).`;
+        }
+        if (r.maxWords && words > r.maxWords) {
+            return `Cut ${label} down to ${r.maxWords} words (${words} now).`;
+        }
+    }
+    if (r.minChar && text.length < r.minChar) {
+        return `${label} needs at least ${r.minChar} characters.`;
+    }
+    if (r.maxChar && text.length > r.maxChar) {
+        return `${label} can be at most ${r.maxChar} characters.`;
+    }
+    if (field === "faculty_email") {
+        return "Enter a full faculty email address.";
+    }
+    return `Fix ${label}.`;
+};
+
 const hiddenFields: string[] = [
     "id",
     "organization_id",
@@ -195,6 +246,10 @@ const OrgEditor = ({
 }: Props) => {
     const { enqueueSnackbar } = useSnackbar();
     const orgContext = useContext(OrgContext);
+    const directEdits = DIRECT_EDIT_STATES.includes(organization.state ?? "");
+    const isReviewed = (field: string) =>
+        organization.state !== "PENDING" &&
+        (!directEdits || REVIEWED_FIELDS.includes(field));
 
     /* everything that is displayed on the page (could include values similar to original)*/
     const [editData, setEditData] = useState<OrganizationEdit>({});
@@ -231,9 +286,7 @@ const OrgEditor = ({
             return;
         }
         if (!URL_PATTERN.test(url)) {
-            setUrlError(
-                "URL can only contain letters, numbers, dashes, and underscores.",
-            );
+            setUrlError("URL can only contain letters, numbers, and dashes.");
             return;
         }
         setUrlError("");
@@ -435,49 +488,6 @@ const OrgEditor = ({
             }
         }
 
-        /* fields that don't need review are saved now and left out of the request */
-        const direct: Record<string, unknown> = {};
-        if (organization.state !== "PENDING") {
-            for (const field of Object.keys(editState)) {
-                if (
-                    REVIEWED_FIELDS.includes(field) ||
-                    hiddenFields.includes(field)
-                )
-                    continue;
-                if (payload[field] !== null && payload[field] !== undefined)
-                    direct[field] = payload[field];
-                payload[field] = null;
-            }
-            allNull = Object.values(payload).every((v) => v === null);
-        }
-        let saved: Partial<Organization> | undefined;
-        if (Object.keys(direct).length) {
-            const { data, error } = await supabase.rpc(
-                "update_organization_charter",
-                { org_id: organization.id, changes: direct },
-            );
-            if (error || !data) {
-                return enqueueSnackbar(
-                    `Error saving changes. ${error?.message || "Contact it@stuysu.org for support."}`,
-                    { variant: "error" },
-                );
-            }
-            saved = data as Partial<Organization>;
-        }
-        const urlChanged =
-            !!saved?.url && saved.url !== organization.url?.toLowerCase();
-        const afterDirectSave = () => {
-            if (!saved) return;
-            if (urlChanged) {
-                window.location.href = `${PUBLIC_URL}/${saved.url}/admin/org-edits`;
-                return;
-            }
-            orgContext.setOrg?.({
-                ...orgContext,
-                ...saved,
-            } as OrgContextType);
-        };
-
         /* custom logic for adding picture to the payload */
         /* picture is not in the original payload so nothing will manage it in the original loop. it is only edited here  */
         if (
@@ -537,6 +547,46 @@ const OrgEditor = ({
             payload.picture = urlData.publicUrl;
             allNull = false;
         }
+
+        /* fields that don't need review are saved now and left out of the request */
+        const direct: Record<string, unknown> = {};
+        if (organization.state !== "PENDING" && directEdits) {
+            for (const field of Object.keys(editState)) {
+                if (isReviewed(field) || hiddenFields.includes(field)) continue;
+                if (payload[field] !== null && payload[field] !== undefined)
+                    direct[field] = payload[field];
+                payload[field] = null;
+            }
+            allNull = Object.values(payload).every((v) => v === null);
+        }
+        let saved: Partial<Organization> | undefined;
+        if (Object.keys(direct).length) {
+            const { data, error } = await supabase.functions.invoke(
+                "update-charter",
+                { body: { organization_id: organization.id, changes: direct } },
+            );
+            if (error || !data) {
+                const message = error ? await functionErrorText(error) : "";
+                return enqueueSnackbar(
+                    `Error saving changes. ${message || "Contact it@stuysu.org for support."}`,
+                    { variant: "error" },
+                );
+            }
+            saved = data as Partial<Organization>;
+        }
+        const urlChanged =
+            !!saved?.url && saved.url !== organization.url?.toLowerCase();
+        const afterDirectSave = () => {
+            if (!saved) return;
+            if (urlChanged) {
+                window.location.href = `${PUBLIC_URL}/${saved.url}/admin/org-edits`;
+                return;
+            }
+            orgContext.setOrg?.({
+                ...orgContext,
+                ...saved,
+            } as OrgContextType);
+        };
 
         if (allNull) {
             // delete the existing organization edit if it exists
@@ -628,6 +678,17 @@ const OrgEditor = ({
         }
 
         if (error || !data) {
+            if (saved) {
+                /* the direct changes are live even though the request failed */
+                enqueueSnackbar(
+                    "Some changes were saved, but the ones that need review couldn't be sent. Contact it@stuysu.org for support.",
+                    { variant: "error" },
+                );
+                setEditState({});
+                setStatus({});
+                afterDirectSave();
+                return;
+            }
             return enqueueSnackbar(
                 "Error editing organization. Contact it@stuysu.org for support.",
                 { variant: "error" },
@@ -728,15 +789,28 @@ const OrgEditor = ({
     const editedFields = Object.keys(editState);
     const needsReview =
         organization.state !== "PENDING" &&
-        (editPicture !== undefined ||
-            editedFields.some((f) => REVIEWED_FIELDS.includes(f)));
+        (editPicture !== undefined || editedFields.some(isReviewed));
     const savesNow =
         organization.state === "PENDING" ||
-        editedFields.some((f) => !REVIEWED_FIELDS.includes(f));
+        editedFields.some((f) => !isReviewed(f));
 
     const allNull = Object.keys(existingEdit).every(
         (key) => existingEdit[key as keyof OrganizationEdit] === undefined,
     );
+
+    /* what's keeping Save disabled */
+    const blockers = editedFields.flatMap((field) => {
+        if (field === "url" && urlError) return [urlError];
+        if (
+            field === "socials" &&
+            getInvalidSocials(editData.socials).length > 0
+        ) {
+            return ["Fix the social links marked in red."];
+        }
+        return status[field]?.value === false
+            ? [fixHint(field, editData[field as keyof OrganizationEdit])]
+            : [];
+    });
 
     return (
         <div className="bg-layer-1 p-5 pl-7 pb-8 rounded-xl mb-10 mt-2 shadow-prominent">
@@ -745,7 +819,7 @@ const OrgEditor = ({
                 <p className={pendingPicture ? "text-yellow" : "text-green"}>
                     {pendingPicture ? "Pending" : "Approved"}
                 </p>
-                <ReviewNote />
+                {organization.state !== "PENDING" && <ReviewNote />}
             </div>
             <div className="flex flex-wrap items-center justify-between gap-4 py-2.5 mb-5">
                 <Avatar
@@ -833,6 +907,7 @@ const OrgEditor = ({
                     <Fragment key={field}>
                         <EditField
                             field={field}
+                            reviewed={isReviewed(field)}
                             pending={
                                 (existingEdit[
                                     field as keyof OrganizationEdit
@@ -987,6 +1062,7 @@ const OrgEditor = ({
                         <Divider />
                         <EditField
                             field={field}
+                            reviewed={isReviewed(field)}
                             pending={
                                 (existingEdit[
                                     field as keyof OrganizationEdit
@@ -1166,6 +1242,13 @@ const OrgEditor = ({
                     Delete Edit
                 </AsyncButton>
             </div>
+            {blockers.length > 0 && (
+                <ul className="text-red text-right px-5 -mt-3 space-y-1">
+                    {blockers.map((hint) => (
+                        <li key={hint}>{hint}</li>
+                    ))}
+                </ul>
+            )}
             <UserDialog
                 title="Delete pending edit?"
                 description="All changes waiting for review will be discarded. This can't be undone."

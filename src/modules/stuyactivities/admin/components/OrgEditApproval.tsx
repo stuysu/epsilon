@@ -116,8 +116,9 @@ const OrgEditApproval = ({
                     "Error updating organization. Contact it@stuysu.org for support.",
                 { variant: "error" },
             );
-            /* already handled by someone else: refresh the list */
-            if (functionErrorStatus(error) === 404) onApprove();
+            /* handled by someone else or changed since: refresh the list */
+            if ([404, 409].includes(functionErrorStatus(error) ?? 0))
+                onApprove();
             return;
         }
 
