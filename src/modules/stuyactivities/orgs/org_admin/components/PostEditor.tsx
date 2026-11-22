@@ -1,11 +1,12 @@
-import { Box, FormControlLabel, Switch, TextField } from "@mui/material";
-import { ChangeEvent, Ref, useEffect, useRef, useState } from "react";
+import { ChangeEvent, useEffect, useState } from "react";
 
 import { supabase } from "../../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
-import { MarkupEditor } from "../../../../../components/MarkupUtil";
-import { MDXEditorMethods } from "@mdxeditor/editor";
+import SwitchField from "../../../../../components/ui/input/SwitchField";
+import TextField from "../../../../../components/ui/input/TextField";
+import MarkupEditor from "../../../../../components/markup/MarkupEditor";
+import isBlankMarkdown from "../../../../../components/markup/isBlankMarkdown";
 
 /* if content is null, then it is creating post */
 const PostEditor = ({
@@ -26,11 +27,10 @@ const PostEditor = ({
     onCreate?: (newData: Post) => void;
 }) => {
     const { enqueueSnackbar } = useSnackbar();
-    const [silent, setSilent] = useState(false);
-    const meRefTitle = useRef<MDXEditorMethods>(null);
-    const meRefDesc = useRef<MDXEditorMethods>(null);
+    const [notifyMembers, setNotifyMembers] = useState(true);
+    const [editorKey, setEditorKey] = useState(0);
 
-    let [postData, setPostData] = useState<Partial<Post>>({
+    const [postData, setPostData] = useState<Partial<Post>>({
         id: undefined,
         organizations: {
             id: orgId,
@@ -49,24 +49,33 @@ const PostEditor = ({
         }
     }, [content]);
 
+    const onChange = (event: ChangeEvent<HTMLInputElement>) => {
+        const { name, value } = event.target;
+
+        setPostData((prev) => ({
+            ...prev,
+            [name]: value,
+        }));
+    };
+
     const createPost = async () => {
         if (!postData.title) {
             return enqueueSnackbar("Missing post title.", { variant: "error" });
         }
-        if (!postData.description) {
+        if (isBlankMarkdown(postData.description ?? "")) {
             return enqueueSnackbar("Missing post description.", {
                 variant: "error",
             });
         }
 
-        let payload = {
+        const payload = {
             title: postData.title,
             description: postData.description,
             organization_id: orgId,
-            silent,
+            silent: !notifyMembers,
         };
 
-        let { data, error } = await supabase.functions.invoke("create-post", {
+        const { data, error } = await supabase.functions.invoke("create-post", {
             body: payload,
         });
 
@@ -78,7 +87,8 @@ const PostEditor = ({
         }
 
         // reset values
-        setSilent(false);
+        setNotifyMembers(true);
+        setEditorKey((k) => k + 1);
         setPostData({
             id: undefined,
             organizations: {
@@ -92,9 +102,6 @@ const PostEditor = ({
             updated_at: undefined,
         });
 
-        meRefTitle.current?.setMarkdown("");
-        meRefDesc.current?.setMarkdown("");
-
         data.organizations = {
             id: orgId,
             name: orgName,
@@ -106,13 +113,22 @@ const PostEditor = ({
     };
 
     const savePost = async () => {
-        let payload = {
+        if (!postData.title?.trim()) {
+            return enqueueSnackbar("Missing post title.", { variant: "error" });
+        }
+        if (isBlankMarkdown(postData.description ?? "")) {
+            return enqueueSnackbar("Missing post description.", {
+                variant: "error",
+            });
+        }
+
+        const payload = {
             title: postData.title,
             description: postData.description,
         };
 
         // There is no need for .limits(1) since id is primary_key/unique
-        let { data, error } = await supabase
+        const { data, error } = await supabase
             .from("posts")
             .update(payload)
             .eq("id", postData.id)
@@ -139,70 +155,44 @@ const PostEditor = ({
     return (
         <div className={"bg-layer-1 p-5 pl-7 pb-8 rounded-xl shadow-prominent"}>
             <h1>{content ? "Update Post" : "Create Post"}</h1>
-            <Box sx={{ marginY: "10px" }}>
-                <div style={{
-                    marginBottom: "1rem"
-                }}>
-                <MarkupEditor
-                    key={content?.id ?? "new"}
-                    callback={(value) => {
-                        setPostData({
-                            ...postData,
-                            title: value,
-                        });
-
-                    }}
-                    passedRef={meRefTitle as Ref<MDXEditorMethods>}
-                    defaultText="Title"
-                    insertText={content?.title}
+            <div className="my-2.5">
+                <TextField
+                    value={postData["title"]}
+                    name={"title"}
+                    label="Title"
+                    onChange={onChange}
+                    fullWidth
                 />
+
+                <div className="mt-2.5">
+                    <MarkupEditor
+                        key={`${content?.id ?? "new"}-${editorKey}`}
+                        markdown={content?.description ?? ""}
+                        onChange={(description) =>
+                            setPostData((prev) => ({ ...prev, description }))
+                        }
+                        label="Description"
+                        placeholder="Write your post"
+                        tall
+                    />
                 </div>
-
-                <MarkupEditor
-                    key={content?.id ?? "new"}
-                    callback={(value) => {
-                        setPostData({
-                            ...postData,
-                            description: value,
-                        });
-                    }}
-                    passedRef={meRefDesc as Ref<MDXEditorMethods>}
-                    editableClassName="description"
-                    defaultText="Description"
-                    insertText={content?.description}
-                />
-
-            </Box>
+            </div>
             {content ? (
                 <>
-                    <AsyncButton onClick={savePost} variant="contained">
-                        Save
-                    </AsyncButton>
-                    <AsyncButton
-                        onClick={onCancel}
-                        variant="contained"
-                        sx={{ marginLeft: "10px" }}
-                    >
+                    <AsyncButton onClick={savePost}>Save</AsyncButton>
+                    <AsyncButton onClick={onCancel} sx={{ marginLeft: "10px" }}>
                         Cancel
                     </AsyncButton>
                 </>
             ) : (
-                <AsyncButton onClick={createPost} variant="contained">
-                    Create
-                </AsyncButton>
+                <AsyncButton onClick={createPost}>Create</AsyncButton>
             )}{" "}
             {!content && (
-                <FormControlLabel
-                    control={
-                        <Switch
-                            checked={silent}
-                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                                setSilent(event.target.checked)
-                            }
-                        />
-                    }
-                    label="silent?"
-                    sx={{ marginLeft: "10px", marginBottom: 0 }}
+                <SwitchField
+                    checked={notifyMembers}
+                    onChange={setNotifyMembers}
+                    label="Notify members"
+                    style={{ marginLeft: "10px" }}
                 />
             )}
         </div>

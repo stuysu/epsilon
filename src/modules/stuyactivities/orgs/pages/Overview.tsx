@@ -1,6 +1,5 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import OrgContext from "../../../../contexts/OrgContext";
-import { Avatar, useMediaQuery } from "@mui/material";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "../../../../lib/supabaseClient";
@@ -11,6 +10,8 @@ import { sortByDate, sortMembers } from "../../../../utils/DataFormatters";
 import { toNewYork } from "../../../../utils/NewYorkTime";
 import UserContext from "../../../../contexts/UserContext";
 import RelatedActivities from "./RelatedActivities";
+import { relatedActivities } from "../relatedActivities";
+import { useOrgList } from "../../../../contexts/OrgListContext";
 import OrgInspector from "../components/OrgInspector";
 import ToggleChip from "../../../../components/ui/input/ToggleChip";
 import Divider from "../../../../components/ui/Divider";
@@ -18,14 +19,27 @@ import OverviewList from "../../../../components/ui/lists/OverviewList";
 import UserDialog from "../../../../components/ui/overlays/UserDialog";
 import { PUBLIC_URL } from "../../../../config/constants";
 import DisplayLinks from "../../../../components/DisplayLinks";
+import Avatar from "../../../../components/ui/Avatar";
+import pressable from "../../../../utils/pressable";
+import { useInvites } from "../../../../contexts/InvitesProvider";
 
 const Overview = () => {
     const navigate = useNavigate();
-    const isMobile = useMediaQuery("(max-width: 1024px)");
     const organization: OrgContextType = useContext(OrgContext);
     const user: UserContextType = useContext(UserContext);
+    const { orgs } = useOrgList();
+    const related = useMemo(
+        () =>
+            orgs
+                ? relatedActivities(
+                      organization as Organization,
+                      orgs as Organization[],
+                  )
+                : null,
+        [orgs, organization],
+    );
+    const { invites, refresh: refreshInvites } = useInvites();
     const { enqueueSnackbar } = useSnackbar();
-    const isMeetingMobile = useMediaQuery("(max-width: 1450px)");
 
     const [attemptingInteract, setAttemptingInteract] = useState(false);
 
@@ -51,7 +65,12 @@ const Overview = () => {
     let disabled = false;
 
     if (isCreator) disabled = true;
-    if (!isInOrg && !organization.joinable) {
+    const pendingInvite = invites.find(
+        (invite) => invite.organizations.id === organization.id,
+    );
+    if (!isInOrg && pendingInvite) {
+        interactString = "VIEW INVITE";
+    } else if (!isInOrg && !organization.joinable) {
         interactString = "🔒 Private Activity";
         disabled = true;
     } else if (!user.signed_in) {
@@ -62,7 +81,18 @@ const Overview = () => {
         setAttemptingInteract(true);
         try {
             if (!user.signed_in) {
-                navigate("/");
+                // back to this club after signing in
+                await supabase.auth.signInWithOAuth({
+                    provider: "google",
+                    options: {
+                        redirectTo:
+                            window.location.origin + window.location.pathname,
+                    },
+                });
+                return;
+            }
+            if (interactString === "VIEW INVITE") {
+                navigate("/invites");
                 return;
             }
             if (interactString === "JOIN") {
@@ -110,12 +140,24 @@ const Overview = () => {
                 if (organization.setOrg) {
                     organization.setOrg({
                         ...organization,
-                        memberships: [...organization.memberships, data],
+                        /* replace a row the user already had (e.g. made in another tab) */
+                        memberships: [
+                            ...organization.memberships.filter(
+                                (membership) => membership.id !== data.id,
+                            ),
+                            data,
+                        ],
                     });
                 }
-                enqueueSnackbar("Join request sent!", {
-                    variant: "success",
-                });
+                /* a pending invite that arrived after the page loaded makes this a straight join */
+                if (data.active) {
+                    enqueueSnackbar("Joined!", { variant: "success" });
+                    refreshInvites();
+                } else {
+                    enqueueSnackbar("Join request sent!", {
+                        variant: "success",
+                    });
+                }
             } else if (
                 interactString === "LEAVE" ||
                 interactString === "CANCEL JOIN"
@@ -132,12 +174,14 @@ const Overview = () => {
             const membership = organization.memberships?.find(
                 (m) => m.users?.id === user.id,
             );
-            const { error } = await supabase
+            /* a blocked delete removes no rows and returns no error */
+            const { data: removed, error } = await supabase
                 .from("memberships")
                 .delete()
-                .eq("id", membership?.id);
+                .eq("id", membership?.id)
+                .select("id");
 
-            if (error) {
+            if (error || !removed?.length) {
                 enqueueSnackbar("Unable to leave organization.", {
                     variant: "error",
                 });
@@ -151,7 +195,12 @@ const Overview = () => {
                     ),
                 });
             }
-            enqueueSnackbar("Left organization!", { variant: "success" });
+            enqueueSnackbar(
+                membership?.active
+                    ? "Left organization!"
+                    : "Join request cancelled.",
+                { variant: "success" },
+            );
         };
 
         if (userLeave) {
@@ -175,6 +224,16 @@ const Overview = () => {
         );
     }
 
+    // meetings aren't sorted and include upcoming ones
+    const lastMeetingStart = (organization.meetings ?? [])
+        .map((m) => m.start_time)
+        .filter((t): t is string => !!t && new Date(t).getTime() < Date.now())
+        .reduce<string | undefined>(
+            (latest, t) =>
+                !latest || new Date(t) > new Date(latest) ? t : latest,
+            undefined,
+        );
+
     const handleUserLeave = () => {
         setLeaveConfirmation(false);
         setUserLeave(true);
@@ -186,7 +245,11 @@ const Overview = () => {
     };
 
     return (
-        <div className={"mt-3 w-full flex flex-wrap max-w-4xl"}>
+        <div
+            className={
+                "mt-3 w-full flex flex-wrap max-w-4xl min-[2300px]:max-w-none"
+            }
+        >
             <div className={"flex max-sm:flex-col gap-6 mb-7"}>
                 <div
                     className={
@@ -206,7 +269,7 @@ const Overview = () => {
                     ></div>
                     <Avatar
                         src={organization.picture || ""}
-                        sx={{
+                        style={{
                             width: "240px",
                             height: "240px",
                             borderRadius: "25px",
@@ -219,7 +282,7 @@ const Overview = () => {
                     />
                     <Avatar
                         src={organization.picture || ""}
-                        sx={{
+                        style={{
                             width: "240px",
                             height: "240px",
                             backgroundColor: "var(--layer-primary)",
@@ -232,9 +295,13 @@ const Overview = () => {
                         }}
                         alt={`organization ${organization.name}`}
                     >
-                        <h1 className={"text-[200px] font-light opacity-70"}>
+                        <div
+                            className={
+                                "as-h1 text-[200px] font-light opacity-70"
+                            }
+                        >
                             {organization.name.charAt(0).toUpperCase()}
-                        </h1>
+                        </div>
                     </Avatar>
                 </div>
 
@@ -268,8 +335,11 @@ const Overview = () => {
                             }
                         >
                             <p
-                                className="h-[4lh] overflow-hidden text-ellipsis [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:4]"
-                                onClick={() => navigate("./charter")}
+                                className="h-[4lh] overflow-hidden text-ellipsis whitespace-pre-line break-words [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:4]"
+                                {...pressable(() => navigate("./charter"), {
+                                    role: "link",
+                                })}
+                                aria-label={`${organization.purpose || "No purpose given"}. Read the full charter`}
                             >
                                 {organization.purpose || "None"}
                             </p>
@@ -282,19 +352,17 @@ const Overview = () => {
                         }
                     >
                         <AsyncButton
-                            variant="contained"
                             onClick={handleInteract}
                             disabled={disabled || attemptingInteract}
+                            className="max-lg:w-full"
                             sx={{
                                 ...(interactString === "LEAVE" ||
                                 interactString === "CANCEL JOIN"
                                     ? {
-                                          backgroundColor:
-                                              "rgba(248, 19, 19, 0.88)",
+                                          backgroundColor: "#c81e1e",
                                           color: "white",
                                       }
                                     : {}),
-                                ...(isMobile && { width: "100%" }),
                             }}
                         >
                             {interactString
@@ -307,6 +375,12 @@ const Overview = () => {
                             description={`Are you sure you want to leave (or cancel your join request to) this organization? You will have to request to join again.`}
                             onConfirm={handleUserLeave}
                             onClose={handleUserStay}
+                            confirmText={
+                                isActive
+                                    ? `Leave ${organization.name}`
+                                    : "Cancel request"
+                            }
+                            cancelText={isActive ? "Cancel" : "Keep request"}
                             open={leaveConfirmation}
                         />
                     </div>
@@ -314,7 +388,11 @@ const Overview = () => {
             </div>
 
             <Divider />
-            <div className={"max-w-full overflow-scroll scrollbar-none"}>
+            <div
+                className={
+                    "max-w-full overflow-scroll scrollbar-none scroll-pe-10 max-lg:[mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)] max-lg:pr-8"
+                }
+            >
                 <div className={"flex flex-row mt-2 mb-6 items-center"}>
                     {user.signed_in && (
                         <>
@@ -322,13 +400,15 @@ const Overview = () => {
                                 <h3 className={"w-24 text-center"}>
                                     {
                                         organization.memberships.filter(
-                                            (member) => member.active,
+                                            (member) =>
+                                                member.active &&
+                                                member.role !== "ADVISOR",
                                         ).length
                                     }
                                 </h3>
                                 <p className={"text-center"}>Members</p>
                             </div>
-                            <h1 className={"opacity-25"}>•</h1>
+                            <div className={"as-h1 opacity-25"}>•</div>
                         </>
                     )}
 
@@ -339,16 +419,18 @@ const Overview = () => {
                         </h3>
                         <p className={"text-center"}>
                             Activity Status
-                            <i
+                            <button
+                                type="button"
                                 className={
-                                    "bx bx-info-circle relative top-px ml-1 cursor-help sm:hover:brightness-200"
+                                    "bx bx-info-circle relative top-px -my-1.5 -mr-1.5 ml-[-2px] p-1.5 cursor-help sm:hover:brightness-200"
                                 }
+                                aria-label="What does Activity Status mean?"
                                 onClick={() => navigate(`/activities-support`)}
-                            ></i>
+                            ></button>
                         </p>
                     </div>
 
-                    <h1 className={"opacity-25"}>•</h1>
+                    <div className={"as-h1 opacity-25"}>•</div>
 
                     <div>
                         <h3 className={"w-32 text-center"}>
@@ -366,15 +448,14 @@ const Overview = () => {
 
                     {user.signed_in && (
                         <>
-                            <h1 className={"opacity-25"}>•</h1>
+                            <div className={"as-h1 opacity-25"}>•</div>
                             <div>
                                 <h3 className={"w-48 text-center"}>
-                                    {organization.meetings?.at(-1)?.start_time
-                                        ? toNewYork(
-                                              organization.meetings.at(-1)!
-                                                  .start_time,
-                                          ).format("YYYY/MM/DD")
-                                        : "No Meetings"}
+                                    {lastMeetingStart
+                                        ? toNewYork(lastMeetingStart).format(
+                                              "M/D/YYYY",
+                                          )
+                                        : "None Yet"}
                                 </h3>
                                 <p className={"text-center"}>Last Meeting</p>
                             </div>
@@ -545,10 +626,9 @@ const Overview = () => {
                                         end_time={meeting.end_time}
                                         is_public={meeting.is_public}
                                         room_name={meeting.rooms?.name}
-                                        advisor={meeting.advisor || "None"}
+                                        advisor={meeting.advisor}
                                         org_name={organization.name}
                                         org_picture={organization.picture || ""}
-                                        isMobile={isMeetingMobile}
                                         onlyUpcoming
                                     />
                                 ));
@@ -561,26 +641,26 @@ const Overview = () => {
                 </div>
             </div>
 
-            <div className={"w-full mt-10"}>
-                <h2 className={"mb-2 text-typography-1"}>
-                    Activities Like This
-                    <span className={"opacity-75"}> (Beta)</span>
-                </h2>
-                {isMobile ? (
-                    <Divider />
-                ) : (
+            {related?.length !== 0 && (
+                <div className={"w-full mt-10"}>
+                    <h2 className={"mb-2 text-typography-1"}>
+                        Activities Like This
+                    </h2>
+                    <div className={"lg:hidden"}>
+                        <Divider />
+                    </div>
                     <div
                         className={
-                            "absolute w-[calc(100vw-160px-3rem)] h-px bg-divider"
+                            "absolute h-px w-[calc(100vw-160px-3rem)] bg-divider max-lg:hidden"
                         }
                     ></div>
-                )}
-                <div className={"h-80 relative right-12"}>
-                    <div className={"absolute"}>
-                        <RelatedActivities currentOrg={organization} />
+                    <div className={"h-80 relative right-12"}>
+                        <div className={"absolute"}>
+                            <RelatedActivities related={related} />
+                        </div>
                     </div>
                 </div>
-            </div>
+            )}
         </div>
     );
 };

@@ -1,5 +1,7 @@
 import React, { useContext } from "react";
+import { Navigate } from "react-router-dom";
 import OrgContext from "../../../../contexts/OrgContext";
+import UserContext from "../../../../contexts/UserContext";
 
 import OrgMeeting from "../components/OrgMeeting";
 import { sortByDate } from "../../../../utils/DataFormatters";
@@ -10,9 +12,13 @@ import ItemList from "../../../../components/ui/lists/ItemList";
 
 const Audit = () => {
     const organization: OrgContextType = useContext(OrgContext);
+    const user = useContext(UserContext);
+
+    if (user.permission !== "ADMIN") return <Navigate to=".." replace />;
 
     return (
         <LoginGate page="audit this activity">
+            <h1 className="sr-only">Audit</h1>
             <section className={"mt-2"}>
                 <div className={"xl:hidden mb-10 w-full"}>
                     <OrgInspector />
@@ -23,10 +29,11 @@ const Audit = () => {
                         title={"Audit Meeting Records"}
                         icon={"bx-calendar"}
                     >
-                        {organization.meetings
+                        {[...organization.meetings]
                             .sort(sortByDate)
                             .map((meeting) => (
                                 <OrgMeeting
+                                    key={meeting.id}
                                     id={meeting.id || -1}
                                     title={meeting.title || "No Title"}
                                     description={
@@ -36,11 +43,10 @@ const Audit = () => {
                                     end_time={meeting.end_time || ""}
                                     is_public={meeting.is_public || false}
                                     room_name={meeting.rooms?.name || "Virtual"}
-                                    advisor={meeting.advisor || "None"}
+                                    advisor={meeting.advisor}
                                     org_name={organization.name || "No Org"}
                                     org_picture={
-                                        organization.picture ||
-                                        "https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png"
+                                        organization.picture || undefined
                                     }
                                 />
                             ))}
@@ -49,6 +55,7 @@ const Audit = () => {
                     <ContentUnavailable
                         icon="bx-calendar-x"
                         iconColor="text-yellow"
+                        headingLevel="h2"
                         title="No Meeting Records"
                         description="This Activity has not yet held any meetings. Meeting records and audit results will be displayed here when they become available."
                     />

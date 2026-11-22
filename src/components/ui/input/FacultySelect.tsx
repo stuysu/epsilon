@@ -7,8 +7,9 @@ import {
     useMemo,
     useRef,
     useState,
+    useContext,
 } from "react";
-import { useTheme } from "@mui/material";
+import { ThemeContext } from "../../../contexts/ThemeProvider";
 import { Popover } from "radix-ui";
 
 export type FacultyOption = {
@@ -48,25 +49,32 @@ export default function FacultySelect({
     const [highlighted, setHighlighted] = useState(0);
     const listRef = useRef<HTMLUListElement>(null);
     const listId = useId();
-    const { palette } = useTheme();
+    const { effectiveMode } = useContext(ThemeContext);
+    const isDark = effectiveMode === "dark";
 
     const themeVars = {
-        "--fs-text": palette.text.primary,
-        "--fs-muted": palette.text.secondary,
-        "--fs-border":
-            palette.mode === "light"
-                ? "rgba(0, 0, 0, 0.23)"
-                : "rgba(255, 255, 255, 0.23)",
-        "--fs-focus": palette.primary.main,
-        "--fs-error": palette.error.main,
-        "--fs-surface": palette.background.paper,
-        "--fs-overlay":
-            palette.mode === "dark"
-                ? "rgba(255, 255, 255, 0.12)"
-                : "rgba(255, 255, 255, 0)",
-        "--fs-divider": palette.divider,
-        "--fs-hover-bg": palette.action.hover,
-        "--fs-selected-bg": palette.action.selected,
+        "--fs-text": isDark ? "#fff" : "rgba(0, 0, 0, 0.87)",
+        "--fs-muted": isDark
+            ? "rgba(255, 255, 255, 0.7)"
+            : "rgba(0, 0, 0, 0.6)",
+        "--fs-border": isDark
+            ? "rgba(255, 255, 255, 0.23)"
+            : "rgba(0, 0, 0, 0.23)",
+        "--fs-focus": isDark ? "#90caf9" : "#1976d2",
+        "--fs-error": isDark ? "#f44336" : "#d32f2f",
+        "--fs-surface": isDark ? "#121212" : "#fff",
+        "--fs-overlay": isDark
+            ? "rgba(255, 255, 255, 0.12)"
+            : "rgba(255, 255, 255, 0)",
+        "--fs-divider": isDark
+            ? "rgba(255, 255, 255, 0.12)"
+            : "rgba(0, 0, 0, 0.12)",
+        "--fs-hover-bg": isDark
+            ? "rgba(255, 255, 255, 0.08)"
+            : "rgba(0, 0, 0, 0.04)",
+        "--fs-selected-bg": isDark
+            ? "rgba(255, 255, 255, 0.16)"
+            : "rgba(0, 0, 0, 0.08)",
     } as CSSProperties;
 
     const entries = useMemo<Entry[]>(() => {

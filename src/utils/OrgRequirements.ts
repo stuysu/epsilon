@@ -68,7 +68,7 @@ const OrgRequirements: OrgValidator = {
     socials: {
         required: false,
         requirements: {
-            maxChar: 100,
+            maxChar: 2500,
         },
     },
     picture: {
@@ -149,6 +149,7 @@ const OrgRequirements: OrgValidator = {
         requirements: {
             minChar: 4,
             maxChar: 4,
+            onlyDigits: true,
         },
     },
 };

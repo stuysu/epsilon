@@ -1,17 +1,12 @@
 import { ChangeEvent, useContext, useEffect, useState } from "react";
+import ContentDialog from "../../../../../components/ui/overlays/ContentDialog";
 import {
-    Box,
-    Dialog,
-    DialogActions,
-    DialogContent,
-    DialogTitle,
-    FormControlLabel,
-    MenuItem,
-    Switch,
-    TextField,
-} from "@mui/material";
-import { DatePicker, TimePicker } from "@mui/x-date-pickers";
+    DateField,
+    TimeField,
+} from "../../../../../components/ui/input/DateTimeField";
 import { supabase } from "../../../../../lib/supabaseClient";
+import { fetchCached, hashKey } from "../../../../../lib/queryCache";
+import { unwrap, useCacheScope } from "../../../../../lib/useCachedQuery";
 import OrgContext from "../../../../../contexts/OrgContext";
 import UserContext from "../../../../../contexts/UserContext";
 import dayjs, { Dayjs } from "dayjs";
@@ -25,6 +20,14 @@ import {
     isoToWallClock,
     wallClockToISO,
 } from "../../../../../utils/NewYorkTime";
+import SelectField from "../../../../../components/ui/input/SelectField";
+import SwitchField from "../../../../../components/ui/input/SwitchField";
+import TextField from "../../../../../components/ui/input/TextField";
+import CheckboxInput from "../../../../../components/ui/input/CheckboxInput";
+import { functionErrorText } from "../../../../../utils/FunctionErrors";
+
+// rooms, grants and faculty rarely change; booked rooms are always fetched fresh
+const LIST_STALE = 10 * 60_000;
 
 const getDefaultStartTime = () => {
     return isoToWallClock().startOf("day").hour(15).minute(35);
@@ -34,7 +37,6 @@ const getDefaultEndTime = () => {
     return isoToWallClock().startOf("day").hour(17).minute(0);
 };
 
-/* TODO: block off rooms on days they are unavailable */
 const AdminUpsertMeeting = ({
     id,
     title,
@@ -61,6 +63,7 @@ const AdminUpsertMeeting = ({
     onSave: (saveState: Partial<Meeting>, isInsert: boolean) => void;
 }) => {
     const { enqueueSnackbar } = useSnackbar();
+    const scope = useCacheScope();
     const organization = useContext(OrgContext);
     const user = useContext(UserContext);
 
@@ -78,13 +81,21 @@ const AdminUpsertMeeting = ({
     const [endTime, setEndTime] = useState<Dayjs | null>(
         end ? isoToWallClock(end) : getDefaultEndTime(),
     );
+    // cleared times come back on this day, not today
+    const [day, setDay] = useState<Dayjs>(
+        () => startTime ?? endTime ?? dayjs(),
+    );
+    const onDay = (t: Dayjs | null) =>
+        t && t.year(day.year()).month(day.month()).date(day.date());
 
     const [isPub, setIsPub] = useState(
         isPublic === undefined ? true : isPublic,
     );
 
     const [notifyFaculty, setNotifyFaculty] = useState(false);
-    const [silent, setSilent] = useState(false);
+    const [virtualConfirmed, setVirtualConfirmed] = useState(false);
+    const [virtualTouched, setVirtualTouched] = useState(false);
+    const [notifyMembers, setNotifyMembers] = useState(true);
     const advisorRoomBooking = advisorNeeded && (!id || roomId !== room_id);
 
     const [faculty, setFaculty] = useState<
@@ -151,9 +162,13 @@ const AdminUpsertMeeting = ({
     /* Filtering out rooms that are taken for that day */
     useEffect(() => {
         const fetchRooms = async () => {
-            let { data, error } = await supabase.from("rooms").select();
+            const data = await fetchCached(
+                hashKey(scope, ["rooms"]),
+                async () => unwrap(await supabase.from("rooms").select()),
+                LIST_STALE,
+            );
 
-            if (error || !data) {
+            if (!data) {
                 enqueueSnackbar(
                     "Error fetching rooms. Contact it@stuysu.org for support.",
                     { variant: "error" },
@@ -161,11 +176,18 @@ const AdminUpsertMeeting = ({
                 return;
             }
 
-            const { data: grantsData, error: grantsError } = await supabase
-                .from("room_grants")
-                .select("room_id, organization_id");
+            const grantsData = await fetchCached(
+                hashKey(scope, ["roomGrants"]),
+                async () =>
+                    unwrap(
+                        await supabase
+                            .from("room_grants")
+                            .select("room_id, organization_id"),
+                    ),
+                LIST_STALE,
+            );
 
-            if (grantsError) {
+            if (!grantsData) {
                 enqueueSnackbar(
                     "Error fetching rooms. Contact it@stuysu.org for support.",
                     { variant: "error" },
@@ -174,27 +196,37 @@ const AdminUpsertMeeting = ({
             }
 
             setRoomGrants(grantsData || []);
-            setAllRooms((prev) => {
+            setAllRooms(() => {
                 setLoading(false);
-                return (data as Room[]).sort(sortRooms);
+                return [...(data as Room[])].sort(sortRooms);
             });
         };
 
         fetchRooms();
-    }, []);
+    }, [scope, enqueueSnackbar]);
 
     useEffect(() => {
         const fetchFaculty = async () => {
-            const { data, error } = await supabase
-                .from("users")
-                .select("id, first_name, last_name, email")
-                .eq("is_faculty", true)
-                .order("last_name")
-                .returns<
-                    Pick<User, "id" | "first_name" | "last_name" | "email">[]
-                >();
+            const data = await fetchCached(
+                hashKey(scope, ["faculty"]),
+                async () =>
+                    unwrap(
+                        await supabase
+                            .from("users")
+                            .select("id, first_name, last_name, email")
+                            .eq("is_faculty", true)
+                            .order("last_name")
+                            .returns<
+                                Pick<
+                                    User,
+                                    "id" | "first_name" | "last_name" | "email"
+                                >[]
+                            >(),
+                    ),
+                LIST_STALE,
+            );
 
-            if (error || !data) {
+            if (!data) {
                 setFacultyFailed(true);
                 enqueueSnackbar(
                     "Error fetching faculty. Contact it@stuysu.org for support.",
@@ -216,9 +248,10 @@ const AdminUpsertMeeting = ({
         };
 
         fetchFaculty();
-    }, [enqueueSnackbar]);
+    }, [scope, enqueueSnackbar]);
 
     useEffect(() => {
+        let stale = false;
         const filterRooms = async () => {
             if (!startTime || !endTime) return; // can't filter without these bounds
 
@@ -231,14 +264,28 @@ const AdminUpsertMeeting = ({
                 meeting_id: number;
             };
 
-            const { data: bookedRoomsRaw, error } = await supabase
-                .rpc("get_booked_rooms", {
-                    meeting_start: wallClockToISO(startTime),
-                    meeting_end: wallClockToISO(endTime),
-                })
-                .returns<RoomMeta[]>();
+            const [
+                { data: bookedRoomsRaw, error },
+                { data: blocks, error: blocksError },
+            ] = await Promise.all([
+                supabase
+                    .rpc("get_booked_rooms", {
+                        meeting_start: wallClockToISO(startTime),
+                        meeting_end: wallClockToISO(endTime),
+                    })
+                    .returns<RoomMeta[]>(),
+                supabase
+                    .from("room_blocks")
+                    .select("room_id")
+                    .gte("blocked_on", startTime.format("YYYY-MM-DD"))
+                    .lte(
+                        "blocked_on",
+                        endTime.subtract(1, "minute").format("YYYY-MM-DD"),
+                    ),
+            ]);
+            if (stale) return;
 
-            if (error) {
+            if (error || blocksError) {
                 enqueueSnackbar(
                     "Error fetching booked rooms. Contact it@stuysu.org for support.",
                     { variant: "error" },
@@ -269,7 +316,24 @@ const AdminUpsertMeeting = ({
                 "SATURDAY",
             ];
 
-            let availRooms = allRooms.filter((room) => {
+            /* a meeting already in a blocked room keeps it while it stays
+            on the same days, like the server allows */
+            const keepsRoom = (blockedId: number) =>
+                !!id &&
+                blockedId === room_id &&
+                !!start &&
+                !!end &&
+                !startTime.isBefore(isoToWallClock(start), "day") &&
+                !endTime
+                    .subtract(1, "minute")
+                    .isAfter(isoToWallClock(end).subtract(1, "minute"), "day");
+
+            const blockedRoomIds = (blocks ?? [])
+                .map((block) => block.room_id)
+                .filter((blockedId) => !keepsRoom(blockedId));
+
+            const availRooms = allRooms.filter((room) => {
+                if (blockedRoomIds.includes(room.id)) return false;
                 if (
                     ~filteredBookedRooms.findIndex(
                         (meta) => meta.room_id === room.id,
@@ -309,6 +373,9 @@ const AdminUpsertMeeting = ({
         };
 
         filterRooms();
+        return () => {
+            stale = true;
+        };
     }, [
         loading,
         id,
@@ -318,6 +385,9 @@ const AdminUpsertMeeting = ({
         enqueueSnackbar,
         roomGrants,
         organization.id,
+        room_id,
+        start,
+        end,
     ]);
 
     useEffect(() => {
@@ -350,8 +420,7 @@ const AdminUpsertMeeting = ({
 
         let isInsert = false;
 
-        if (!meetingTitle || !meetingTitle.length) {
-            console.log(meetingTitle);
+        if (!meetingTitle.trim()) {
             enqueueSnackbar("Missing meeting title.", { variant: "error" });
             return;
         }
@@ -406,6 +475,15 @@ const AdminUpsertMeeting = ({
             return;
         }
 
+        if (!roomId && !virtualConfirmed) {
+            setVirtualTouched(true);
+            enqueueSnackbar(
+                "Confirm that this virtual meeting won't be held in person.",
+                { variant: "error" },
+            );
+            return;
+        }
+
         if (advisorNeeded && !facultyLoaded) {
             enqueueSnackbar(
                 facultyFailed
@@ -433,7 +511,7 @@ const AdminUpsertMeeting = ({
                 body: {
                     organization_id: organization.id,
                     id,
-                    title: meetingTitle,
+                    title: meetingTitle.trim(),
                     description: meetingDesc,
                     room_id: roomId || null,
                     start_time: wallClockToISO(startTime),
@@ -441,7 +519,7 @@ const AdminUpsertMeeting = ({
                     is_public: isPub,
                     notify_faculty: notifyFaculty || advisorRoomBooking,
                     advisor: meetingAdvisor.trim(),
-                    silent,
+                    silent: !notifyMembers,
                 },
             });
         } else {
@@ -450,7 +528,7 @@ const AdminUpsertMeeting = ({
             supabaseReturn = await supabase.functions.invoke("create-meeting", {
                 body: {
                     organization_id: organization.id,
-                    title: meetingTitle,
+                    title: meetingTitle.trim(),
                     description: meetingDesc,
                     room_id: roomId || null,
                     start_time: wallClockToISO(startTime),
@@ -458,19 +536,24 @@ const AdminUpsertMeeting = ({
                     is_public: isPub,
                     notify_faculty: notifyFaculty || advisorRoomBooking,
                     advisor: meetingAdvisor.trim(),
-                    silent,
+                    silent: !notifyMembers,
                 },
             });
         }
         if (supabaseReturn.error) {
-            const error = await supabaseReturn.error?.context.text();
+            const error = await functionErrorText(supabaseReturn.error);
             let message = "Contact it@stuysu.org for support.";
             if (error) {
                 message = error;
             }
-            enqueueSnackbar("Error creating meeting. " + message, {
-                variant: "error",
-            });
+            enqueueSnackbar(
+                (isInsert
+                    ? "Error creating meeting. "
+                    : "Error saving meeting. ") + message,
+                {
+                    variant: "error",
+                },
+            );
             return;
         }
 
@@ -485,180 +568,168 @@ const AdminUpsertMeeting = ({
     };
 
     return (
-        <Dialog open={open} onClose={onClose}>
-            <DialogTitle>{id ? "Update" : "Create"} Meeting</DialogTitle>
-            <DialogContent>
-                <Box
-                    sx={{
-                        width: "100%",
-                        display: "flex",
-                        flexWrap: "nowrap",
-                        alignItems: "center",
-                        height: "80px",
-                    }}
-                >
-                    <TextField
-                        value={meetingTitle}
-                        onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                            setMeetingTitle(event.target.value)
-                        }
-                        label="Title"
-                        sx={{ width: "100%", height: "60px" }}
-                    />
-                    <TextField
-                        value={!loading ? String(roomId) : ""}
-                        label="Room"
-                        select
-                        onChange={(event) =>
-                            setRoomId(Number(event.target.value) || undefined)
-                        }
-                        sx={{
-                            width: "30%",
-                            height: "60px",
-                            marginLeft: "10px",
-                        }}
-                    >
-                        <MenuItem value={"undefined"}>Virtual</MenuItem>
-                        {availableRooms.map((room) => (
-                            <MenuItem key={room.id} value={String(room.id)}>
-                                {room.name}
-                            </MenuItem>
-                        ))}
-                    </TextField>
-                </Box>
-
-                <FacultySelect
-                    label="Faculty Advisor Present"
-                    options={advisorOptions}
-                    value={meetingAdvisor}
-                    onChange={setMeetingAdvisor}
-                    required={advisorNeeded}
-                    error={advisorTouched && advisorInvalid}
-                    helperText={
-                        advisorTouched && advisorInvalid && facultyLoaded
-                            ? "Choose a faculty advisor from the list."
-                            : advisorNeeded && facultyFailed
-                              ? "The faculty list could not be loaded."
-                              : advisorNeeded && !facultyLoaded
-                                ? "Loading the faculty list..."
-                                : unregisteredAdvisor
-                                  ? "This advisor is not a registered faculty member. Choose one from the list."
-                                  : advisorNeeded
-                                    ? "A faculty advisor is required for this room."
-                                    : undefined
-                    }
-                />
-
+        <ContentDialog
+            open={open}
+            onClose={onClose}
+            title={`${id ? "Update" : "Create"} Meeting`}
+            actions={
+                <>
+                    <AsyncButton onClick={onClose}>Cancel</AsyncButton>
+                    <AsyncButton onClick={handleSave}>Save</AsyncButton>
+                </>
+            }
+        >
+            <div className="w-full flex flex-nowrap items-center h-[80px]">
                 <TextField
-                    value={meetingDesc}
+                    value={meetingTitle}
                     onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                        setMeetingDesc(event.target.value)
+                        setMeetingTitle(event.target.value)
                     }
-                    label="Description"
-                    fullWidth
-                    multiline
-                    rows={4}
-                    sx={{ mt: 2 }}
+                    label="Title"
+                    sx={{ width: "100%", height: "60px" }}
                 />
+                <SelectField
+                    value={!loading ? String(roomId) : ""}
+                    label="Room"
+                    onChange={(next) => setRoomId(Number(next) || undefined)}
+                    options={[
+                        { value: "undefined", label: "Virtual" },
+                        ...availableRooms.map((room) => ({
+                            value: String(room.id),
+                            label: room.name,
+                        })),
+                    ]}
+                    sx={{
+                        width: "30%",
+                        minWidth: "120px",
+                        height: "60px",
+                        marginLeft: "10px",
+                    }}
+                />
+            </div>
 
-                <DatePicker
-                    label="Meeting Day"
+            {!roomId && !loading && (
+                <div className="mb-3">
+                    <label className="flex cursor-pointer items-start gap-2.5 rounded-lg bg-layer-2 px-3 py-2.5">
+                        <span className="mt-0.5 shrink-0">
+                            <CheckboxInput
+                                checked={virtualConfirmed}
+                                onChange={(checked) => {
+                                    setVirtualConfirmed(checked);
+                                    setVirtualTouched(true);
+                                }}
+                                label="Confirm this meeting is virtual"
+                            />
+                        </span>
+                        <span className="text-sm text-black/60 scheme-dark:text-white/70">
+                            I confirm this meeting is virtual. The Activity will
+                            not meet in or list a room or location that
+                            isn&apos;t virtual, unless otherwise approved by
+                            faculty or administration. Doing so will result in a
+                            strike.
+                        </span>
+                    </label>
+                    {virtualTouched && !virtualConfirmed && (
+                        <p
+                            role="alert"
+                            className="mx-3.5 mt-[3px] text-[0.75rem] leading-[1.66] text-[#d32f2f] scheme-dark:text-[#f44336]"
+                        >
+                            Required for virtual meetings.
+                        </p>
+                    )}
+                </div>
+            )}
+
+            <FacultySelect
+                label="Faculty Advisor Present"
+                options={advisorOptions}
+                value={meetingAdvisor}
+                onChange={setMeetingAdvisor}
+                required={advisorNeeded}
+                error={advisorTouched && advisorInvalid}
+                helperText={
+                    advisorTouched && advisorInvalid && facultyLoaded
+                        ? "Choose a faculty advisor from the list."
+                        : advisorNeeded && facultyFailed
+                          ? "The faculty list could not be loaded."
+                          : advisorNeeded && !facultyLoaded
+                            ? "Loading the faculty list..."
+                            : unregisteredAdvisor
+                              ? "This advisor is not a registered faculty member. Choose one from the list."
+                              : advisorNeeded
+                                ? "A faculty advisor is required for this room."
+                                : undefined
+                }
+            />
+
+            <DateField
+                label="Meeting Day"
+                value={startTime ?? endTime ?? day}
+                onChange={(next) => {
+                    if (!next?.isValid()) return;
+                    const move = (t: Dayjs | null) =>
+                        t &&
+                        t
+                            .year(next.year())
+                            .month(next.month())
+                            .date(next.date());
+                    setDay(next);
+                    setStartTime(move(startTime));
+                    setEndTime(move(endTime));
+                }}
+                sx={{
+                    width: "100%",
+                    marginTop: "10px",
+                    marginBottom: "10px",
+                }}
+            />
+            <div className="grid w-full grid-cols-2 gap-2.5">
+                <TimeField
+                    label="Start"
                     value={startTime}
-                    onChange={(newStartTime) => {
-                        if (!newStartTime) return;
+                    onChange={(t) => setStartTime(onDay(t))}
+                />
 
-                        setStartTime(newStartTime);
-
-                        // also change day of end time
-                        if (!endTime) {
-                            setEndTime(newStartTime);
-                        } else {
-                            setEndTime(
-                                endTime
-                                    ?.year(newStartTime.year())
-                                    .month(newStartTime.month())
-                                    .date(newStartTime.date()),
-                            );
-                        }
-                    }}
-                    sx={{
-                        width: "100%",
-                        marginTop: "10px",
-                        marginBottom: "10px",
-                    }}
+                <TimeField
+                    label="End"
+                    value={endTime}
+                    onChange={(t) => setEndTime(onDay(t))}
                 />
-                <Box
-                    sx={{
-                        width: "100%",
-                        display: "flex",
-                        flexWrap: "nowrap",
-                        alignItems: "center",
-                    }}
-                >
-                    <TimePicker
-                        label="Start"
-                        value={startTime}
-                        onChange={setStartTime}
-                        sx={{ marginRight: "10px" }}
-                    />
-
-                    <TimePicker
-                        label="End"
-                        value={endTime}
-                        onChange={setEndTime}
-                    />
-                </Box>
-                <FormControlLabel
-                    control={
-                        <Switch
-                            checked={isPub}
-                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                                setIsPub(event.target.checked)
-                            }
-                        />
-                    }
-                    sx={{ marginTop: "10px" }}
-                    label="is public?"
-                />
-                <FormControlLabel
-                    control={
-                        <Switch
-                            checked={silent}
-                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                                setSilent(event.target.checked)
-                            }
-                        />
-                    }
-                    sx={{ marginTop: "10px" }}
-                    label="silent?"
-                />
-                <FormControlLabel
-                    control={
-                        <Switch
-                            checked={notifyFaculty || advisorRoomBooking}
-                            disabled={advisorRoomBooking}
-                            onChange={(event: ChangeEvent<HTMLInputElement>) =>
-                                setNotifyFaculty(event.target.checked)
-                            }
-                        />
-                    }
-                    sx={{ marginTop: "10px" }}
-                    label={
-                        advisorRoomBooking
-                            ? "notify faculty? (required for this room)"
-                            : "notify faculty?"
-                    }
-                />
-            </DialogContent>
-            <DialogActions>
-                <AsyncButton variant="contained" onClick={onClose}>
-                    Cancel
-                </AsyncButton>
-                <AsyncButton variant="contained" onClick={handleSave}>
-                    Save
-                </AsyncButton>
-            </DialogActions>
-        </Dialog>
+            </div>
+            <TextField
+                value={meetingDesc}
+                onChange={(event: ChangeEvent<HTMLInputElement>) =>
+                    setMeetingDesc(event.target.value)
+                }
+                label="Description"
+                fullWidth
+                multiline
+                sx={{ marginTop: "16px" }}
+            />
+            <SwitchField
+                checked={isPub}
+                onChange={setIsPub}
+                className="mt-2.5"
+                label="Public"
+            />
+            <SwitchField
+                checked={notifyMembers}
+                onChange={setNotifyMembers}
+                className="mt-2.5"
+                label="Notify members"
+            />
+            <SwitchField
+                checked={notifyFaculty || advisorRoomBooking}
+                disabled={advisorRoomBooking}
+                onChange={setNotifyFaculty}
+                className="mt-2.5"
+                label={
+                    advisorRoomBooking
+                        ? "Notify faculty (required for this room)"
+                        : "Notify faculty"
+                }
+            />
+        </ContentDialog>
     );
 };
 

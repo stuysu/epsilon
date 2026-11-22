@@ -1,0 +1,216 @@
+import { useContext, useEffect, useState } from "react";
+import { Helmet } from "react-helmet";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
+import AsyncButton, {
+    BUTTON_CLASS,
+    BUTTON_SHADOW,
+} from "../../components/ui/buttons/AsyncButton";
+import Loading from "../../components/ui/content/Loading";
+import ContentUnavailable from "../../components/ui/content/ContentUnavailable";
+import UserContext from "../../contexts/UserContext";
+import { getSafeLinks } from "./bulletin/normalize";
+import EditOpportunity from "./components/EditOpportunity";
+import EligibilityLine from "./components/EligibilityLine";
+import OpportunityDetails from "./components/OpportunityDetails";
+import StatusBadge from "./components/StatusBadge";
+import { useOpportunities } from "./OpportunitiesContext";
+import { getStatus, getTodayEastern, splitBullets, unquote } from "./utils";
+
+const Detail = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
+    // back to the list it was opened from
+    const from: unknown = useLocation().state?.from;
+    const backTo =
+        from === "/opportunities/saved"
+            ? { path: from, label: "My Opportunities" }
+            : { path: "/opportunities/catalog", label: "Catalog" };
+    const user = useContext(UserContext);
+    const [editing, setEditing] = useState(false);
+    useEffect(() => setEditing(false), [id]);
+    const { loading, failed, opportunities, savedIds, setSaved, student } =
+        useOpportunities();
+
+    // a reload keeps the page, so an open editor isn't lost
+    if (loading && !opportunities.length) {
+        return (
+            <main>
+                <Loading />
+            </main>
+        );
+    }
+
+    if (failed) {
+        return (
+            <main>
+                <ContentUnavailable
+                    icon="bx-error-circle"
+                    iconColor="text-red"
+                    title="Opportunities could not load"
+                    description="Refresh the page to try again. If this keeps happening, contact it@stuysu.org."
+                />
+            </main>
+        );
+    }
+
+    const opportunity = opportunities.find((o) => o.id === Number(id));
+
+    if (!opportunity) {
+        return (
+            <main>
+                <ContentUnavailable
+                    icon="bx-search"
+                    title="Opportunity not found"
+                    description="It may have been removed. Browse the catalog to find others."
+                />
+            </main>
+        );
+    }
+
+    const status = getStatus(opportunity, student, getTodayEastern());
+    const [mainLink, ...otherLinks] = getSafeLinks(opportunity.links);
+    const isSaved = savedIds.has(opportunity.id);
+    const description = splitBullets(unquote(opportunity.description));
+
+    return (
+        <main className="mx-auto flex w-full max-w-3xl flex-col gap-5 px-12 pt-8 [overflow-wrap:anywhere] max-sm:px-4 max-sm:pt-14">
+            <Helmet>
+                <title>{`${opportunity.title} - Epsilon`}</title>
+            </Helmet>
+
+            <Link
+                to={backTo.path}
+                onClick={(event) => {
+                    if (from !== backTo.path) return;
+                    event.preventDefault();
+                    navigate(-1);
+                }}
+                className="important inline-flex items-center gap-1 self-start rounded-lg bg-layer-2 py-1.5 pl-2 pr-3.5 text-sm text-typography-1 no-underline shadow-control transition-colors hover:bg-layer-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+            >
+                <i className="bx bx-chevron-left bx-sm" aria-hidden="true" />
+                {backTo.label}
+            </Link>
+
+            <div className="flex items-start justify-between gap-4 max-sm:flex-col">
+                <h1
+                    className={`min-w-0 ${status.struck ? "line-through" : ""}`}
+                >
+                    {opportunity.title}
+                </h1>
+                <div className="flex shrink-0 items-center gap-3">
+                    <StatusBadge status={status} />
+                    {user.permission === "ADMIN" && !editing && (
+                        <AsyncButton
+                            id="edit-opportunity"
+                            onClick={() => setEditing(true)}
+                        >
+                            Edit
+                        </AsyncButton>
+                    )}
+                </div>
+            </div>
+
+            {editing ? (
+                <EditOpportunity
+                    key={opportunity.id}
+                    opportunity={opportunity}
+                    onDone={() => {
+                        setEditing(false);
+                        setTimeout(() =>
+                            document
+                                .getElementById("edit-opportunity")
+                                ?.focus(),
+                        );
+                    }}
+                />
+            ) : (
+                <>
+                    {opportunity.categories.length > 0 && (
+                        <p className="text-sm text-typography-2">
+                            {opportunity.categories
+                                .map((c) => c.name)
+                                .join(" · ")}
+                        </p>
+                    )}
+
+                    <OpportunityDetails opportunity={opportunity} full />
+                    {opportunity.eligibilities.length > 0 && (
+                        <EligibilityLine opportunity={opportunity} />
+                    )}
+
+                    <div className="flex flex-col gap-2">
+                        {description.intro && (
+                            <p className="whitespace-pre-line text-typography-1">
+                                {description.intro}
+                            </p>
+                        )}
+                        {description.items.length > 0 && (
+                            <ul className="flex list-disc flex-col gap-1 pl-5 text-[0.9rem] leading-[1.2rem] text-typography-1 [font-variation-settings:'wght'_500] marker:text-typography-2">
+                                {description.items.map((item, index) => (
+                                    <li key={index}>{item}</li>
+                                ))}
+                            </ul>
+                        )}
+                    </div>
+
+                    <div className="flex flex-wrap gap-3">
+                        {mainLink && (
+                            <a
+                                href={mainLink}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className={`${BUTTON_CLASS} gap-1 bg-accent text-white no-underline hover:brightness-125 active:scale-[98%]`}
+                                style={{ boxShadow: BUTTON_SHADOW }}
+                            >
+                                Open Link
+                                <i
+                                    className="bx bx-link-external"
+                                    aria-hidden="true"
+                                />
+                                <span className="sr-only">
+                                    {" "}
+                                    (opens in a new tab)
+                                </span>
+                            </a>
+                        )}
+                        <AsyncButton
+                            onClick={() => setSaved(opportunity.id, !isSaved)}
+                        >
+                            {isSaved
+                                ? "Remove from My Opportunities"
+                                : "Save to My Opportunities"}
+                        </AsyncButton>
+                    </div>
+
+                    {otherLinks.length > 0 && (
+                        <section>
+                            <h2 className="important mb-2 font-sans text-sm text-typography-2">
+                                More links
+                            </h2>
+                            <ul className="flex flex-col gap-1">
+                                {otherLinks.map((link) => (
+                                    <li key={link} className="min-w-0 text-sm">
+                                        <a
+                                            href={link}
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            className="relative block truncate py-0.5 text-accent underline [font-variation-settings:'wght'_500] scheme-dark:text-typography-1"
+                                        >
+                                            {link}
+                                            <span className="sr-only">
+                                                {" "}
+                                                (opens in a new tab)
+                                            </span>
+                                        </a>
+                                    </li>
+                                ))}
+                            </ul>
+                        </section>
+                    )}
+                </>
+            )}
+        </main>
+    );
+};
+
+export default Detail;

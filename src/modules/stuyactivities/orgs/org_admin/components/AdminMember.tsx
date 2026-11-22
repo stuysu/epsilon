@@ -2,13 +2,17 @@ import { ChangeEvent, useContext, useState } from "react";
 import { Reorder, useDragControls } from "framer-motion";
 import UserContext from "../../../../../contexts/UserContext";
 
-import { MenuItem, Select, SelectChangeEvent, TextField } from "@mui/material";
 import { supabase } from "../../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import OrgMember from "../../components/OrgMember";
 import OrgContext from "../../../../../contexts/OrgContext";
 import UserDialog from "../../../../../components/ui/overlays/UserDialog";
 import { PUBLIC_URL } from "../../../../../config/constants";
+import SelectField from "../../../../../components/ui/input/SelectField";
+import TextField from "../../../../../components/ui/input/TextField";
+
+const actionButtonClass =
+    "important touch-target flex items-center justify-center rounded-full transition-colors sm:h-8 sm:bg-layer-3 sm:px-4 sm:text-[0.8rem] sm:hover:bg-divider focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1";
 
 const AdminMember = ({
     id,
@@ -21,7 +25,6 @@ const AdminMember = ({
     role_name,
     isCreator, // referring to client user
     isAdmin, // referring to client user
-    is_faculty,
     canDrag,
     onDragEnd,
     readOnly = false,
@@ -36,7 +39,6 @@ const AdminMember = ({
     role_name?: string;
     isCreator: boolean;
     isAdmin: boolean;
-    is_faculty?: boolean;
     onDragEnd: () => void;
     canDrag: boolean;
     readOnly?: boolean;
@@ -53,8 +55,8 @@ const AdminMember = ({
         editing: false,
     });
 
-    /* KICK CONFIRMATION */
-    const [kickConfirmOpen, setKickConfirmOpen] = useState(false);
+    /* REMOVE CONFIRMATION */
+    const [removeConfirmOpen, setRemoveConfirmOpen] = useState(false);
 
     const handleEdit = () => {
         setEditState({
@@ -65,15 +67,18 @@ const AdminMember = ({
         });
     };
 
-    const handleKick = async () => {
-        const { error } = await supabase
+    const handleRemove = async () => {
+        /* select the deleted row: if the database didn't allow it, nothing is
+           deleted and there's no error, just no rows */
+        const { data: kicked, error } = await supabase
             .from("memberships")
             .delete()
-            .eq("id", id);
+            .eq("id", id)
+            .select("id");
 
-        if (error) {
+        if (error || !kicked?.length) {
             enqueueSnackbar(
-                "Could not kick member. Contact it@stuysu.org for support.",
+                "Could not remove member. Contact it@stuysu.org for support.",
                 { variant: "error" },
             );
             return;
@@ -88,13 +93,13 @@ const AdminMember = ({
             });
         }
 
-        enqueueSnackbar("Member kicked!", { variant: "success" });
+        enqueueSnackbar("Member removed!", { variant: "success" });
     };
 
-    const handleSelect = (event: SelectChangeEvent) => {
+    const handleSelect = (role: string) => {
         setEditState({
             ...editState,
-            role: event.target.value,
+            role,
         });
     };
 
@@ -119,18 +124,24 @@ const AdminMember = ({
         const adminEditingAdmin =
             isAdmin && role === "ADMIN" && userId !== user.id;
 
-        const { error } = adminEditingAdmin
-            ? await supabase.rpc("set_membership_role_name", {
-                  membership_id: id,
-                  new_role_name: editState.role_name,
-              })
-            : await supabase
-                  .from("memberships")
-                  .update({
-                      role: editState.role,
-                      role_name: editState.role_name,
-                  })
-                  .eq("id", id);
+        let error: unknown = null;
+        if (adminEditingAdmin) {
+            ({ error } = await supabase.rpc("set_membership_role_name", {
+                membership_id: id,
+                new_role_name: editState.role_name,
+            }));
+        } else {
+            /* a blocked update changes no rows and returns no error */
+            const result = await supabase
+                .from("memberships")
+                .update({
+                    role: editState.role,
+                    role_name: editState.role_name,
+                })
+                .eq("id", id)
+                .select("id");
+            error = result.error || (!result.data?.length ? "no rows" : null);
+        }
 
         if (error) {
             enqueueSnackbar(
@@ -141,7 +152,7 @@ const AdminMember = ({
         }
 
         if (organization.setOrg) {
-            let existingMemberIndex = organization.memberships.findIndex(
+            const existingMemberIndex = organization.memberships.findIndex(
                 (m) => m.id === id,
             );
             if (!~existingMemberIndex) {
@@ -153,7 +164,8 @@ const AdminMember = ({
                 return;
             }
 
-            let existingMember = organization.memberships[existingMemberIndex];
+            const existingMember =
+                organization.memberships[existingMemberIndex];
 
             organization.setOrg({
                 ...organization,
@@ -173,6 +185,16 @@ const AdminMember = ({
         handleClose();
     };
 
+    const canEdit =
+        isCreator ||
+        role === "MEMBER" ||
+        role === "ADVISOR" ||
+        (isAdmin && role === "ADMIN") ||
+        userId === user.id;
+    const canRemove =
+        userId !== user.id &&
+        (isCreator || role === "MEMBER" || role === "ADVISOR");
+
     return (
         <Reorder.Item
             as="div"
@@ -180,9 +202,28 @@ const AdminMember = ({
             dragListener={false}
             dragControls={dragControls}
             onDragEnd={onDragEnd}
-            className="w-full flex flex-nowrap items-center h-fit"
+            className="group w-full flex flex-nowrap items-center h-fit"
         >
-            <div className={"w-full min-w-0 flex items-center bg-layer-2"}>
+            <div
+                className={
+                    "w-full min-w-0 flex items-center bg-layer-2 transition-colors sm:hover:bg-layer-3 sm:focus-within:bg-layer-3"
+                }
+            >
+                {!readOnly && (
+                    <div
+                        className={
+                            "w-9 sm:w-14 shrink-0 flex justify-center " +
+                            (canDrag ? "cursor-grab touch-none" : "")
+                        }
+                        onPointerDown={(e) => canDrag && dragControls.start(e)}
+                    >
+                        {canDrag && (
+                            <p>
+                                <i className={"bx bx-menu bx-sm"}></i>
+                            </p>
+                        )}
+                    </div>
+                )}
                 <div className={"w-full min-w-0"}>
                     <OrgMember
                         role={role}
@@ -191,77 +232,94 @@ const AdminMember = ({
                         picture={picture}
                         first_name={first_name}
                         last_name={last_name}
-                        is_faculty={is_faculty}
+                        className="!bg-transparent"
+                        filledRole
                     />
                 </div>
                 {!readOnly && (
                     <>
-                        {/* always rendered so the rows line up when there is no handle */}
                         <div
                             className={
-                                "w-6 sm:w-8 shrink-0 flex justify-center " +
-                                (canDrag ? "cursor-grab touch-none" : "")
-                            }
-                            onPointerDown={(e) =>
-                                canDrag && dragControls.start(e)
+                                "flex w-[4.5rem] shrink-0 items-center px-1.5 sm:w-auto sm:justify-end sm:gap-2 sm:pl-3 sm:pr-4"
                             }
                         >
-                            {canDrag && (
-                                <p>
-                                    <i className={"bx bx-menu bx-sm"}></i>
-                                </p>
+                            {canEdit && (
+                                <button
+                                    type="button"
+                                    aria-label={`Edit ${first_name} ${last_name}`}
+                                    onClick={handleEdit}
+                                    className={
+                                        actionButtonClass + " text-typography-1"
+                                    }
+                                >
+                                    <i
+                                        aria-hidden="true"
+                                        className={
+                                            "bx bx-pencil bx-sm sm:hidden"
+                                        }
+                                    />
+                                    <span className={"hidden sm:inline"}>
+                                        Edit
+                                    </span>
+                                </button>
                             )}
-                        </div>
-                        <div
-                            className={
-                                "px-1.5 sm:px-3 flex w-[4.5rem] sm:w-28 shrink-0"
-                            }
-                        >
-                            {(isCreator ||
-                                role === "MEMBER" ||
-                                role === "ADVISOR" ||
-                                (isAdmin && role === "ADMIN") ||
-                                userId === user.id) && (
-                                <div onClick={handleEdit}>
-                                    <p>
-                                        <i
-                                            className={
-                                                "bx bx-pencil bx-sm sm:hover:opacity-75 cursor-pointer"
-                                            }
-                                        ></i>
-                                    </p>
-                                </div>
+                            {!canEdit && (
+                                <span
+                                    aria-hidden="true"
+                                    className={
+                                        actionButtonClass +
+                                        " invisible hidden sm:flex"
+                                    }
+                                >
+                                    Edit
+                                </span>
                             )}
 
-                            {userId !== user.id &&
-                                (isCreator ||
-                                    role === "MEMBER" ||
-                                    role === "ADVISOR") && (
-                                    <div
-                                        onClick={() => setKickConfirmOpen(true)}
-                                    >
-                                        <p>
-                                            <i
-                                                className={
-                                                    "bx bx-user-x bx-sm ml-3 text-red sm:hover:opacity-75 cursor-pointer"
-                                                }
-                                            ></i>
-                                        </p>
-                                    </div>
-                                )}
+                            {canRemove && (
+                                <button
+                                    type="button"
+                                    aria-label={`Remove ${first_name} ${last_name}`}
+                                    onClick={() => setRemoveConfirmOpen(true)}
+                                    className={
+                                        actionButtonClass +
+                                        " ml-2 text-red sm:ml-0"
+                                    }
+                                >
+                                    <i
+                                        aria-hidden="true"
+                                        className={
+                                            "bx bx-user-x bx-sm sm:hidden"
+                                        }
+                                    />
+                                    <span className={"hidden sm:inline"}>
+                                        Remove
+                                    </span>
+                                </button>
+                            )}
+                            {!canRemove && (
+                                <span
+                                    aria-hidden="true"
+                                    className={
+                                        actionButtonClass +
+                                        " invisible hidden sm:flex"
+                                    }
+                                >
+                                    Remove
+                                </span>
+                            )}
                         </div>
                     </>
                 )}
             </div>
             <UserDialog
                 imageSrc={`${PUBLIC_URL}/symbols/warning.png`}
-                open={kickConfirmOpen}
-                title={`Kick ${first_name} ${last_name}?`}
+                open={removeConfirmOpen}
+                title={`Remove ${first_name} ${last_name}?`}
                 description={
                     "This action can't be reversed. This member will have to request to join again."
                 }
-                onConfirm={handleKick}
-                onClose={() => setKickConfirmOpen(false)}
+                onConfirm={handleRemove}
+                onClose={() => setRemoveConfirmOpen(false)}
             />
             <UserDialog
                 open={editState.editing}
@@ -270,6 +328,7 @@ const AdminMember = ({
                 onClose={handleClose}
                 onCancel={handleClose}
                 onConfirm={handleSave}
+                closeOnConfirm={false}
                 confirmText="Save"
                 cancelText="Cancel"
             >
@@ -286,28 +345,22 @@ const AdminMember = ({
                             role !== "ADMIN" &&
                             role !== "CREATOR" &&
                             userId !== user.id)) && (
-                        <Select
+                        <SelectField
+                            label="Role"
+                            fullWidth
                             value={editState.role}
                             onChange={handleSelect}
-                            displayEmpty
-                            MenuProps={{
-                                disablePortal: true,
-                                anchorOrigin: {
-                                    vertical: "center",
-                                    horizontal: "left",
-                                },
-                                PaperProps: {
-                                    sx: { mt: "-180px", ml: "-12vw" },
-                                },
-                            }}
-                            // Temporary fix for menu being off center. migrate to radix.
-                        >
-                            <MenuItem value={"MEMBER"}>Member</MenuItem>
-                            <MenuItem value={"ADVISOR"}>Advisor</MenuItem>
-                            {isCreator && (
-                                <MenuItem value={"ADMIN"}>Admin</MenuItem>
-                            )}
-                        </Select>
+                            options={[
+                                { value: "MEMBER", label: "Member" },
+                                // only kept for people who already have it
+                                ...(role === "ADVISOR"
+                                    ? [{ value: "ADVISOR", label: "Advisor" }]
+                                    : []),
+                                ...(isCreator
+                                    ? [{ value: "ADMIN", label: "Admin" }]
+                                    : []),
+                            ]}
+                        />
                     )}
                 </div>
             </UserDialog>

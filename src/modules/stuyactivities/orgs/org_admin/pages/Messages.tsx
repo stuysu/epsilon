@@ -1,4 +1,3 @@
-import { Box } from "@mui/material";
 import OrgChat from "../../../admin/components/OrgChat";
 import { useContext } from "react";
 import OrgContext from "../../../../../contexts/OrgContext";
@@ -8,6 +7,7 @@ const Messages = () => {
 
     return (
         <div className="mt-2 mb-16">
+            <h1 className="sr-only">Messages</h1>
             <OrgChat organization_id={organization.id} />
         </div>
     );

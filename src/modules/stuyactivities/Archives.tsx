@@ -37,16 +37,16 @@ const Archives = () => {
                             "https://docs.google.com/spreadsheets/d/1enQNUbduXRY0pGyngbRjpYma4LVkJdep3jh66iL_EWs/edit?usp=sharing"
                         }
                         target="_blank"
-                        className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex justify-center no-underline gap-4 sm:hover:bg-layer-3 shadow-control"
+                        className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex justify-center no-underline gap-4 sm:hover:bg-layer-3 shadow-control focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1"
                     >
                         <div>
-                            <h1
+                            <h2
                                 className={
-                                    "font-['instrument-serif'] text-beige font-normal"
+                                    "as-h1 font-['instrument-serif'] text-beige font-normal"
                                 }
                             >
                                 2025-2026 Archives
-                            </h1>
+                            </h2>
                             <p className={"text-center"}>358 Activities</p>
                         </div>
                     </a>
@@ -55,16 +55,16 @@ const Archives = () => {
                             "https://docs.google.com/spreadsheets/d/1URqnVM9avoD5_oRvBzQXI1ghq4oWRLWMps58cvNCLc0/edit?usp=sharing"
                         }
                         target="_blank"
-                        className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex justify-center no-underline gap-4 sm:hover:bg-layer-3 shadow-control"
+                        className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex justify-center no-underline gap-4 sm:hover:bg-layer-3 shadow-control focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1"
                     >
                         <div>
-                            <h1
+                            <h2
                                 className={
-                                    "font-['instrument-serif'] text-beige font-normal"
+                                    "as-h1 font-['instrument-serif'] text-beige font-normal"
                                 }
                             >
                                 2024-2025 Archives
-                            </h1>
+                            </h2>
                             <p className={"text-center"}>421 Activities</p>
                         </div>
                     </a>
@@ -73,16 +73,16 @@ const Archives = () => {
                             "https://docs.google.com/spreadsheets/d/1TyFnEPhY3gM-yRJKYDJkQSfHC6OsvC5ftkkoahjVcCU/edit?gid=485693778#gid=485693778"
                         }
                         target="_blank"
-                        className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex justify-center no-underline gap-4 sm:hover:bg-layer-3 shadow-control"
+                        className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex justify-center no-underline gap-4 sm:hover:bg-layer-3 shadow-control focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1"
                     >
                         <div>
-                            <h1
+                            <h2
                                 className={
-                                    "font-['instrument-serif'] font-normal"
+                                    "as-h1 font-['instrument-serif'] font-normal"
                                 }
                             >
                                 2023-2024 Archives
-                            </h1>
+                            </h2>
                             <p className={"text-center"}>351 Activities</p>
                         </div>
                     </a>

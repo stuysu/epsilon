@@ -9,7 +9,8 @@ import { toNewYork } from "../../../../utils/NewYorkTime";
 import OrgContext from "../../../../contexts/OrgContext";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import { Avatar } from "radix-ui";
-import { MarkupDisplayer } from "../../../../components/MarkupUtil";
+import UserDialog from "../../../../components/ui/overlays/UserDialog";
+import MarkupDisplayer from "../../../../components/markup/MarkupDisplayer";
 
 /* This post component will serve as both the org_admin and member post. depending on role, differeing functionality */
 const OrgStreamPost = ({
@@ -23,15 +24,17 @@ const OrgStreamPost = ({
 }) => {
     const { enqueueSnackbar } = useSnackbar();
     const [editing, setEditing] = useState(false);
+    const [confirmingDelete, setConfirmingDelete] = useState(false);
     const organization = useContext(OrgContext);
 
     const deletePost = async () => {
-        let { error } = await supabase
+        const { data, error } = await supabase
             .from("posts")
             .delete()
-            .eq("id", content.id);
+            .eq("id", content.id)
+            .select("id");
 
-        if (error) {
+        if (error || !data?.length) {
             return enqueueSnackbar(
                 "Could not delete post. Contact it@stuysu.org for support",
                 { variant: "error" },
@@ -51,7 +54,7 @@ const OrgStreamPost = ({
                 orgPicture={content.organizations?.picture as string}
                 onCancel={() => setEditing(false)}
                 onSave={(newData) => {
-                    let postIndex = organization.posts.findIndex(
+                    const postIndex = organization.posts.findIndex(
                         (p) => p.id === newData.id,
                     );
 
@@ -78,15 +81,15 @@ const OrgStreamPost = ({
         );
     }
 
-    let isEdited = content.created_at !== content.updated_at;
-    let postTime = isEdited
+    const isEdited = content.created_at !== content.updated_at;
+    const postTime = isEdited
         ? toNewYork(content.updated_at)
         : toNewYork(content.created_at);
-    let timeStr = `${postTime.month() + 1}/${postTime.date()}/${postTime.year()}`;
+    const timeStr = `${postTime.month() + 1}/${postTime.date()}/${postTime.year()}`;
 
     return (
         <article className="w-full relative p-1 rounded-xl h-fit max-h-96 border-none shadow-prominent bg-layer-1">
-            <div className={"flex items-center gap-2 m-4"}>
+            <div className={"m-4 flex flex-wrap items-center gap-2"}>
                 <Avatar.Root className="w-10 h-10 rounded-md overflow-hidden block">
                     <Avatar.Image
                         className="size-full object-cover"
@@ -101,10 +104,22 @@ const OrgStreamPost = ({
                     </Avatar.Fallback>
                 </Avatar.Root>
 
-                <div className={"mt-1.5"}>
-                    <h4>{content.organizations?.name}</h4>
+                <div className={"mt-1.5 min-w-0 flex-1"}>
+                    <h4 className={"break-words"}>
+                        {content.organizations?.name}
+                    </h4>
                     <p>{timeStr + (isEdited ? " · Edited" : "")}</p>
                 </div>
+                {editable && (
+                    <div className="flex shrink-0 gap-2.5">
+                        <AsyncButton onClick={() => setConfirmingDelete(true)}>
+                            Delete
+                        </AsyncButton>
+                        <AsyncButton onClick={() => setEditing(true)}>
+                            Edit
+                        </AsyncButton>
+                    </div>
+                )}
             </div>
 
             <div
@@ -126,7 +141,7 @@ const OrgStreamPost = ({
                         "mb-4 max-h-[2lh] overflow-ellipsis overflow-hidden [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]"
                     }
                 >
-                    <MarkupDisplayer text={content.title} inline />
+                    {content.title}
                 </h3>
 
                 <div
@@ -136,27 +151,15 @@ const OrgStreamPost = ({
                 >
                     <MarkupDisplayer text={content.description} />
                 </div>
-
-                <div className="absolute top-5 right-5">
-                    {editable && (
-                        <>
-                            <AsyncButton
-                                onClick={deletePost}
-                                variant="contained"
-                            >
-                                Delete
-                            </AsyncButton>
-                            <AsyncButton
-                                onClick={() => setEditing(true)}
-                                variant="contained"
-                                sx={{ marginLeft: "10px" }}
-                            >
-                                Edit
-                            </AsyncButton>
-                        </>
-                    )}
-                </div>
             </div>
+            <UserDialog
+                title="Delete this post?"
+                description={`"${content.title}" will be removed for everyone. This can't be undone.`}
+                open={confirmingDelete}
+                onClose={() => setConfirmingDelete(false)}
+                onConfirm={deletePost}
+                confirmText="Delete"
+            />
         </article>
     );
 };

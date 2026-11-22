@@ -1,16 +1,16 @@
-import { Box, Card, TextField, Typography } from "@mui/material";
 import { useSnackbar } from "notistack";
-import { useEffect, useState, useRef, Ref} from "react";
+import { useEffect, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
-import { MarkupDisplayer, MarkupEditor } from "../../../../components/MarkupUtil";
-import { MDXEditorMethods } from "@mdxeditor/editor";
+import MarkupDisplayer from "../../../../components/markup/MarkupDisplayer";
+import MarkupEditor from "../../../../components/markup/MarkupEditor";
+import isBlankMarkdown from "../../../../components/markup/isBlankMarkdown";
 
 const Announcements = () => {
-    let [content, setContent] = useState("");
-    let { enqueueSnackbar } = useSnackbar();
-    let [announcements, setAnnouncements] = useState<Announcement[]>([]);
-    const meRef = useRef<MDXEditorMethods>(null);
+    const [content, setContent] = useState("");
+    const [editorKey, setEditorKey] = useState(0);
+    const { enqueueSnackbar } = useSnackbar();
+    const [announcements, setAnnouncements] = useState<Announcement[]>([]);
     const [visibleAnnouncements, setVisibleAnnouncements] = useState(3);
 
     useEffect(() => {
@@ -35,7 +35,7 @@ const Announcements = () => {
     }, [enqueueSnackbar]);
 
     const createAnnouncement = async () => {
-        if (content === "") {
+        if (isBlankMarkdown(content)) {
             enqueueSnackbar("Announcement cannot be empty.", {
                 variant: "error",
             });
@@ -58,7 +58,7 @@ const Announcements = () => {
         }
 
         setContent("");
-        meRef.current?.setMarkdown("");
+        setEditorKey((k) => k + 1);
         setAnnouncements((prev) => [data, ...prev]);
     };
 
@@ -88,10 +88,15 @@ const Announcements = () => {
             </p>
             <div className={"w-full flex sm:flex-row flex-col gap-5"}>
                 <div className={"w-full sm:w-2/3"}>
-                    <MarkupEditor callback={ setContent } passedRef={meRef as Ref<MDXEditorMethods>} defaultText="Content"/>
+                    <MarkupEditor
+                        key={editorKey}
+                        onChange={setContent}
+                        onSubmit={createAnnouncement}
+                        label="Content"
+                        placeholder="Write an announcement (Ctrl+Enter to post)"
+                    />
                     <AsyncButton
                         sx={{ width: "100%", marginTop: "10px" }}
-                        variant="contained"
                         onClick={createAnnouncement}
                     >
                         Create
@@ -102,17 +107,13 @@ const Announcements = () => {
                         .slice(0, visibleAnnouncements)
                         .map((announcement, i) => {
                             return (
-                                <Box
+                                <div
                                     key={i}
-                                    sx={{
-                                        width: "100%",
-                                        display: "flex",
-                                        flexWrap: "wrap",
-                                        justifyContent: "center",
-                                    }}
+                                    className="w-full flex flex-wrap justify-center"
                                 >
-                                    <Card
-                                        sx={{
+                                    <div
+                                        className="rounded bg-layer-2 shadow-control"
+                                        style={{
                                             maxWidth: "600px",
                                             width: "100%",
                                             display: "flex",
@@ -121,6 +122,7 @@ const Announcements = () => {
                                         }}
                                     >
                                         <MarkupDisplayer
+                                            className="min-w-0 flex-1"
                                             text={announcement.content}
                                         />
                                         <AsyncButton
@@ -134,32 +136,23 @@ const Announcements = () => {
                                                 marginLeft: "20px",
                                                 height: "40px",
                                             }}
-                                            variant="contained"
                                         >
                                             Delete
                                         </AsyncButton>
-                                    </Card>
-                                </Box>
+                                    </div>
+                                </div>
                             );
                         })}
                     {visibleAnnouncements < announcements.length && (
-                        <Box
-                            sx={{
-                                width: "100%",
-                                display: "flex",
-                                justifyContent: "center",
-                                marginTop: "10px",
-                            }}
-                        >
+                        <div className="w-full flex justify-center mt-2.5">
                             <AsyncButton
-                                variant="contained"
                                 onClick={() =>
                                     setVisibleAnnouncements((prev) => prev + 3)
                                 }
                             >
                                 Show More
                             </AsyncButton>
-                        </Box>
+                        </div>
                     )}
                 </div>
             </div>

@@ -1,4 +1,3 @@
-import { Avatar } from "@mui/material";
 import { supabase } from "../../../../lib/supabaseClient";
 
 import { useSnackbar } from "notistack";
@@ -7,6 +6,13 @@ import OrgChat from "./OrgChat";
 import { useState } from "react";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import Divider from "../../../../components/ui/Divider";
+import Avatar from "../../../../components/ui/Avatar";
+import {
+    functionErrorStatus,
+    functionErrorText,
+} from "../../../../utils/FunctionErrors";
+import { sortWeekdays } from "../../../../utils/DataFormatters";
+import UserDialog from "../../../../components/ui/overlays/UserDialog";
 
 const OrgApproval = ({
     onBack,
@@ -18,6 +24,7 @@ const OrgApproval = ({
 } & Partial<OrgContextType>) => {
     const { enqueueSnackbar } = useSnackbar();
     const [buttonsDisabled, setButtonsDisabled] = useState(false);
+    const [confirmingReject, setConfirmingReject] = useState(false);
 
     const approve = async () => {
         setButtonsDisabled(true);
@@ -28,10 +35,16 @@ const OrgApproval = ({
 
         if (error) {
             setButtonsDisabled(false);
-            return enqueueSnackbar(
-                "Error approving organization. Contact it@stuysu.org for support.",
+            enqueueSnackbar(
+                (await functionErrorText(error)) ||
+                    "Error approving organization. Contact it@stuysu.org for support.",
                 { variant: "error" },
             );
+            /* someone else already approved or rejected it: refresh the list */
+            if ([404, 409].includes(functionErrorStatus(error) ?? 0)) {
+                onDecision();
+            }
+            return;
         }
 
         enqueueSnackbar("Organization approved!", { variant: "success" });
@@ -47,10 +60,16 @@ const OrgApproval = ({
         );
         if (error) {
             setButtonsDisabled(false);
-            return enqueueSnackbar(
-                "Error rejecting organization. Contact it@stuysu.org for support.",
+            enqueueSnackbar(
+                (await functionErrorText(error)) ||
+                    "Error rejecting organization. Contact it@stuysu.org for support.",
                 { variant: "error" },
             );
+            /* someone else already approved or rejected it: refresh the list */
+            if ([404, 409].includes(functionErrorStatus(error) ?? 0)) {
+                onDecision();
+            }
+            return;
         }
 
         enqueueSnackbar("Organization rejected!", { variant: "success" });
@@ -65,15 +84,10 @@ const OrgApproval = ({
                     New Charter: {org.name}
                 </h1>
                 <div>
-                    <AsyncButton
-                        variant="contained"
-                        onClick={onBack}
-                        sx={{ marginRight: "10px" }}
-                    >
+                    <AsyncButton onClick={onBack} sx={{ marginRight: "10px" }}>
                         Back
                     </AsyncButton>
                     <AsyncButton
-                        variant="contained"
                         onClick={approve}
                         color="success"
                         sx={{ marginRight: "10px" }}
@@ -83,8 +97,7 @@ const OrgApproval = ({
                         Approve Activity & Publish
                     </AsyncButton>
                     <AsyncButton
-                        variant="contained"
-                        onClick={reject}
+                        onClick={() => setConfirmingReject(true)}
                         color="secondary"
                         sx={{ marginRight: "10px" }}
                         disabled={buttonsDisabled}
@@ -93,6 +106,15 @@ const OrgApproval = ({
                     </AsyncButton>
                 </div>
             </div>
+
+            <UserDialog
+                title="Reject this charter?"
+                description={`${org.name || "This Activity"} will be deleted and its leaders will be emailed. This can't be undone.`}
+                open={confirmingReject}
+                onClose={() => setConfirmingReject(false)}
+                onConfirm={reject}
+                confirmText="Reject"
+            />
 
             <div className={"flex flex-col sm:flex-row gap-10"}>
                 <div className={"w-full flex flex-col gap-2"}>
@@ -109,7 +131,7 @@ const OrgApproval = ({
                         <Avatar
                             src={org.picture}
                             alt={org.name}
-                            sx={{
+                            style={{
                                 width: "150px",
                                 height: "150px",
                                 borderRadius: "15px",
@@ -121,29 +143,39 @@ const OrgApproval = ({
                     <Divider />
 
                     <h4>Origin Story</h4>
-                    <p>{org.mission}</p>
+                    <p className="whitespace-pre-line break-words">
+                        {org.mission}
+                    </p>
                     <Divider />
 
                     <h4>Goals</h4>
-                    <p>{org.goals}</p>
+                    <p className="whitespace-pre-line break-words">
+                        {org.goals}
+                    </p>
                     <Divider />
 
                     <h4>Activity Description</h4>
-                    <p>{org.purpose}</p>
+                    <p className="whitespace-pre-line break-words">
+                        {org.purpose}
+                    </p>
                     <Divider />
 
                     <h4>Appointment Procedures</h4>
-                    <p>{org.appointment_procedures}</p>
+                    <p className="whitespace-pre-line break-words">
+                        {org.appointment_procedures}
+                    </p>
                     <Divider />
 
                     <h4>Uniqueness</h4>
-                    <p>{org.uniqueness}</p>
+                    <p className="whitespace-pre-line break-words">
+                        {org.uniqueness}
+                    </p>
                     <Divider />
 
                     <h4 className={org.is_returning ? "text-yellow" : ""}>
                         Returning Activity Declaration
                     </h4>
-                    <p>
+                    <p className="whitespace-pre-line break-words">
                         {org.is_returning
                             ? org?.returning_info || "N/A"
                             : "Claims to not be a returning Activity."}
@@ -151,15 +183,19 @@ const OrgApproval = ({
                     <Divider />
 
                     <h4>Meeting Description</h4>
-                    <p>{org.meeting_description}</p>
+                    <p className="whitespace-pre-line break-words">
+                        {org.meeting_description}
+                    </p>
                     <Divider />
 
                     <h4>Meeting Schedule</h4>
-                    <p>{org.meeting_schedule}</p>
+                    <p className="whitespace-pre-line break-words">
+                        {org.meeting_schedule}
+                    </p>
                     <Divider />
 
                     <h4>Meeting Days</h4>
-                    <p>{org.meeting_days?.join(", ")}</p>
+                    <p>{sortWeekdays(org.meeting_days ?? []).join(", ")}</p>
                     <Divider />
 
                     <h4>Commitment Level</h4>

@@ -11,8 +11,6 @@ import {
     useState,
 } from "react";
 
-import { Box } from "@mui/material";
-
 import FormSection from "./FormSection";
 import FormRender from "./FormRender";
 import AsyncButton from "../buttons/AsyncButton";
@@ -30,6 +28,8 @@ type Props<T> = {
     first?: boolean;
     checkRequired?: boolean;
     checkCompleted?: boolean;
+    // a check outside the fields, like a URL lookup, is failing or running
+    blocked?: boolean;
 };
 
 type FormStatus = {
@@ -39,7 +39,7 @@ type FormStatus = {
     };
 };
 
-const FormPage = <T extends unknown>({
+const FormPage = <T,>({
     title,
     value,
     children,
@@ -52,13 +52,14 @@ const FormPage = <T extends unknown>({
     first,
     checkRequired,
     checkCompleted,
+    blocked,
 }: Props<T>) => {
     const [status, setStatus] = useState<FormStatus>({});
     const [valid, setValid] = useState(false);
 
     useEffect(() => {
         const isValid = (): boolean => {
-            for (let stat of Object.values(status)) {
+            for (const stat of Object.values(status)) {
                 if (!stat.value) return false;
             }
 
@@ -93,29 +94,33 @@ const FormPage = <T extends unknown>({
     );
 
     const parseChildren = (c: ReactNode) => {
-        let childs: ReactNode[] = [];
+        const childs: ReactNode[] = [];
 
         Children.map(c, (child, index) => {
             if (isValidElement(child)) {
                 if (child.type === FormSection) {
-                    let parsedChildren = parseChildren(child.props.children);
+                    const parsedChildren = parseChildren(child.props.children);
                     childs.push(
-                        <FormSection {...child.props}>
+                        <FormSection key={index} {...child.props}>
                             {parsedChildren}
                         </FormSection>,
                     );
                     return;
                 }
 
-                if (child.type === FormRender) {
-                    childs.push(child);
+                // plain HTML elements and FormRender take no form props
+                if (
+                    child.type === FormRender ||
+                    typeof child.type === "string"
+                ) {
+                    childs.push(cloneElement(child, { key: index }));
                     return;
                 }
 
-                let childField = child.props.field as keyof T;
-                let childValue = value?.[childField];
+                const childField = child.props.field as keyof T;
+                const childValue = value?.[childField];
 
-                let childProps: { [field: string]: any } = {
+                const childProps: { [field: string]: any } = {
                     key: index,
                     value: childValue,
                     onChange: (newValue: any) =>
@@ -136,30 +141,14 @@ const FormPage = <T extends unknown>({
     };
 
     return (
-        <Box
-            sx={{
-                height: "100%",
-                maxWidth: "1000px",
-                width: "100%",
-                padding: "50px",
-            }}
-        >
+        <div className="h-full max-w-[1000px] w-full p-[50px]">
             <h3>{title}</h3>
             <div className={`mt-5`}>{parseChildren(children)}</div>
-            <Box
-                sx={{
-                    height: "10%",
-                    width: "100%",
-                    marginTop: "20px",
-                    display: "flex",
-                    flexWrap: "wrap",
-                }}
-            >
+            <div className="h-[10%] w-full mt-5 flex flex-wrap">
                 <div className={`w-full flex justify-end gap-5 mt-5`}>
                     {!first && (
                         <AsyncButton
                             onClick={onBack}
-                            variant="contained"
                             sx={{ width: "150px", height: "40px" }}
                         >
                             Back
@@ -168,8 +157,7 @@ const FormPage = <T extends unknown>({
                     {last ? (
                         <AsyncButton
                             onClick={onSubmit}
-                            variant="contained"
-                            disabled={!valid}
+                            disabled={!valid || blocked}
                             sx={{ width: "150px", height: "40px" }}
                         >
                             {submitText ? submitText : "Submit"}
@@ -177,9 +165,10 @@ const FormPage = <T extends unknown>({
                     ) : (
                         <AsyncButton
                             onClick={onNext}
-                            variant="contained"
                             disabled={
-                                !valid || (checkRequired && !checkCompleted)
+                                !valid ||
+                                blocked ||
+                                (checkRequired && !checkCompleted)
                             }
                             sx={{ width: "150px", height: "40px" }}
                         >
@@ -187,8 +176,8 @@ const FormPage = <T extends unknown>({
                         </AsyncButton>
                     )}
                 </div>
-            </Box>
-        </Box>
+            </div>
+        </div>
     );
 };
 

@@ -3,6 +3,8 @@ import { capitalizeWords } from "./DataFormatters";
 
 const textFieldMap: { [index: string]: string } = {
     purpose: "Club Description",
+    mission: "Origin Story",
+    url: "URL",
 };
 
 const OrgFieldMap = (field: string): string => {

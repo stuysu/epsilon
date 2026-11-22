@@ -1,5 +1,4 @@
 import React from "react";
-import { createTheme, ThemeProvider as MUIThemeProvider } from "@mui/material";
 
 export type ThemeMode = "light" | "dark" | "system" | "dark-hc" | "orange";
 
@@ -78,7 +77,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
         applyDOMTheme(mode);
     }, [mode]);
 
-    // resolve an effective mode for lingering MUI usage
+    // resolve the effective light/dark mode
     const effectiveMode =
         mode === "system"
             ? getSystemMode()
@@ -88,18 +87,6 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
                 ? "light"
                 : mode;
 
-    const muiTheme = React.useMemo(
-        () =>
-            createTheme({
-                palette: { mode: effectiveMode },
-                typography: {
-                    fontFamily: "inter-variable, system-ui, sans-serif",
-                    htmlFontSize: 16,
-                },
-            }),
-        [effectiveMode],
-    );
-
     const ctxValue = React.useMemo(
         () => ({ mode, setMode, effectiveMode }),
         [mode, effectiveMode],
@@ -107,7 +94,7 @@ const ThemeProvider = ({ children }: { children: React.ReactNode }) => {
 
     return (
         <ThemeContext.Provider value={ctxValue}>
-            <MUIThemeProvider theme={muiTheme}>{children}</MUIThemeProvider>
+            {children}
         </ThemeContext.Provider>
     );
 };

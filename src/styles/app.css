@@ -2,8 +2,82 @@
 @import url("https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css");
 
 @tailwind base;
+
+/* stands in for ITC Avant Garde Medium, which the Adobe kit doesn't include;
+   its tracking and the CA and LL ligatures are built in */
+@font-face {
+    font-family: "epsilon-geometric";
+    src: url("/fonts/epsilon-geometric-medium.woff2") format("woff2");
+    font-weight: 500;
+    font-style: normal;
+    font-display: swap;
+}
 @tailwind components;
 @tailwind utilities;
+
+/* page content is 1440px wide, growing on very wide or zoomed-out screens;
+   chrome uses these to line up with it */
+:root {
+    --frame: min(1920px, max(1440px, 100vw - 480px));
+}
+@layer utilities {
+    .px-frame {
+        padding-left: max(3rem, calc((100% - var(--frame)) / 2));
+        padding-right: max(3rem, calc((100% - var(--frame)) / 2));
+    }
+    .mx-frame {
+        margin-left: max(3rem, calc((100% - var(--frame)) / 2));
+        margin-right: max(3rem, calc((100% - var(--frame)) / 2));
+    }
+    .ml-frame {
+        margin-left: max(3rem, calc((100% - var(--frame)) / 2));
+    }
+    /* phone bars stick, except on very short screens (400% zoom) where they'd cover too much */
+    @media (max-width: 639px) {
+        .phone-sticky {
+            position: sticky;
+            top: 0;
+        }
+    }
+    @media (max-width: 639px) and (max-height: 400px) {
+        .phone-sticky {
+            position: relative;
+        }
+    }
+    .frame {
+        width: 100%;
+        max-width: calc(var(--frame) + 6rem);
+        margin-left: auto;
+        margin-right: auto;
+    }
+}
+
+/* headline look for text that is not the page's main heading */
+@layer components {
+    .as-h1 {
+        @apply font-display text-[2.1rem] leading-[2.1rem] my-2 text-[color:var(--text-primary)];
+        font-weight: 700;
+    }
+    /* gives a small control a 44px tap area on touch screens */
+    .touch-target {
+        position: relative;
+    }
+    @media (pointer: coarse) {
+        .touch-target::after {
+            content: "";
+            position: absolute;
+            left: 50%;
+            top: 50%;
+            width: max(100%, 44px);
+            height: max(100%, 44px);
+            transform: translate(-50%, -50%);
+        }
+    }
+    .as-h3 {
+        @apply text-[1.4rem] leading-[1.4rem] text-[color:var(--text-primary)];
+        font-variation-settings: "wght" 700;
+    }
+}
 
 @layer base {
     /* Text Styles */
@@ -11,8 +85,35 @@
         font-size: 16px;
     }
 
+    /* On phones the sub navigation is fixed to the top and the main navigation
+       to the bottom, so keep a focused control from scrolling in behind them.
+       The page scrolls inside a custom scroll area, so the margin goes on the
+       controls themselves rather than only on the scrolling element. */
+    /* below Tailwind's sm breakpoint, which starts at 640px */
+    @media (max-width: 639.98px) {
+        html {
+            scroll-padding-top: 3.5rem;
+            scroll-padding-bottom: 4.5rem;
+        }
+
+        /* options scroll inside their own short lists, so they are left out */
+        :where(a, button, input, select, textarea, [tabindex]):not(
+                [role="option"]
+            ) {
+            scroll-margin-top: 3.5rem;
+            scroll-margin-bottom: 4.5rem;
+        }
+    }
+
     body {
-        @apply font-sans text-[0.9rem] leading-[1.2rem] text-[color:var(--text-secondary)];
+        @apply font-sans text-base leading-normal;
+        color: rgba(0, 0, 0, 0.87);
+        background-color: #fff;
+    }
+
+    [data-scheme="dark"] body {
+        color: #fff;
+        background-color: #121212;
     }
 
     h1 {
@@ -37,7 +138,7 @@
     }
 
     h5 {
-        @apply text-[0.8rem] leading-[2rem] text-[color:var(--text-tertiary)] uppercase;
+        @apply text-[0.8rem] leading-[2rem] text-[color:var(--text-secondary)] uppercase;
         font-variation-settings: "wght" 700;
     }
 
@@ -48,7 +149,7 @@
     }
 
     a {
-        @apply text-[color:var(--accent)] underline;
+        @apply text-[color:var(--accent-text)] underline;
     }
 
     .important {
@@ -68,6 +169,9 @@
         --layer-tertiary: #5353534c;
 
         --accent: #3788ffcc;
+        /* the accent as text (links and the like) is lighter, since the fill
+           behind white text has to stay deep */
+        --accent-text: #5c9dff;
 
         --text-primary: #e8e8e8cc;
         --text-secondary: #aeaeaecc;
@@ -100,17 +204,21 @@
         --layer-secondary: #d6d6d680;
         --layer-tertiary: #c4c4c466;
 
-        --accent: #0068ffcc;
+        /* opaque and a little deeper, so white text on it reaches 4.5:1 */
+        --accent: #0058e0;
+        --accent-text: #0058e0;
 
         --text-primary: #000000cc;
-        --text-secondary: #4b4b4bcc;
+        --text-secondary: #3d3d3dcc;
         --text-tertiary: #595959cc;
 
         --blue: #395be9;
         --green: #33762f;
-        --yellow: #dd9700;
-        --red: #d31300;
-        --beige: #8b7355;
+        /* dark amber, since yellow is mostly used as text */
+        --yellow: #835800;
+        --red: #c41200;
+        /* deep enough for small text, as on the catalog's submission card */
+        --beige: #6e5b3f;
 
         --divider: #a9a9a94d;
         --highlight: #a9a9a94d;
@@ -133,6 +241,7 @@
         --layer-tertiary: #262626;
 
         --accent: #bb2c00;
+        --accent-text: #ff6e40;
 
         --text-primary: #ffffff;
         --text-secondary: #f5f5f5;
@@ -164,17 +273,28 @@
         --layer-secondary: #ffcc80;
         --layer-tertiary: #ffb74d;
 
-        --accent: #ff6f00;
+        /* burnt orange: white text on it, and it as link text, reach 4.5:1 */
+        --accent: #ad4200;
+        /* deeper than the fill, so links also pass on the orange cards */
+        --accent-text: #8f3600;
 
         --text-primary: #4e342e;
-        --text-secondary: #6d4c41;
-        --text-tertiary: #8d6e63;
+        /* deep enough for the orange navigation bar as well as the layers */
+        --text-secondary: #634439;
+        /* deep enough for small text on every orange layer */
+        --text-tertiary: #664b41;
 
-        --blue: #ff7043;
-        --green: #ff8a65;
-        --yellow: #ffb300;
-        --red: #e64a19;
-        --beige: #bd9200;
+        /* deep enough to fill a checkbox behind a white tick and to stand
+           out from the page; green stays a green, distinct from red, and also
+           works as small text */
+        --blue: #c43e00;
+        --green: #356018;
+        /* yellow, red and beige are used as text and behind white text, so
+           they are deep shades that pass 4.5:1 on these warm layers and on
+           the orange navigation bar */
+        --yellow: #664400;
+        --red: #b23209;
+        --beige: #6b5200;
 
         --divider: #ffcc80;
         --highlight: #ffcc80;
@@ -201,6 +321,37 @@
         font-family: "Georgia", "instrument-serif", serif !important;
     }
 
+    /* AsyncButton's color prop, with the colors MUI's palette used in each scheme */
+    :root {
+        --semantic-primary: #90caf9;
+        --semantic-primary-text: rgba(0, 0, 0, 0.87);
+        --semantic-secondary: #ce93d8;
+        --semantic-secondary-text: rgba(0, 0, 0, 0.87);
+        --semantic-error: #f44336;
+        --semantic-error-text: #fff;
+        --semantic-info: #29b6f6;
+        --semantic-info-text: rgba(0, 0, 0, 0.87);
+        --semantic-success: #66bb6a;
+        --semantic-success-text: rgba(0, 0, 0, 0.87);
+        --semantic-warning: #ffa726;
+        --semantic-warning-text: rgba(0, 0, 0, 0.87);
+    }
+
+    :root[data-scheme="light"] {
+        --semantic-primary: #1976d2;
+        --semantic-primary-text: #fff;
+        --semantic-secondary: #9c27b0;
+        --semantic-secondary-text: #fff;
+        --semantic-error: #d32f2f;
+        --semantic-error-text: #fff;
+        --semantic-info: #0277bd;
+        --semantic-info-text: #fff;
+        --semantic-success: #2e7d32;
+        --semantic-success-text: #fff;
+        --semantic-warning: #b54d00;
+        --semantic-warning-text: #fff;
+    }
+
     /* Effective color-scheme exposure: Light or Dark natured theme */
     [data-theme="orange"],
     [data-theme="light"],
@@ -223,134 +374,179 @@
     height: 0;
 }
 
-.description {
-    /* move this only to the description editor */
-    min-height: 10rem !important;
+/* rendered markdown (posts, announcements, SU chat) */
+.markup,
+.markup-editor .mdxeditor,
+:root .mdxeditor-popup-container {
+    /* lines and fills that stay visible on every theme, including orange */
+    --md-line: color-mix(in srgb, var(--text-primary) 25%, transparent);
+    --md-fill: color-mix(in srgb, var(--text-primary) 8%, transparent);
+    --md-mark: color-mix(in srgb, #ffd400 40%, transparent);
 }
-.mdxeditor {
-    width: 100%;
+.markup {
+    overflow-wrap: anywhere;
+}
+.markup > * + * {
+    margin-top: 0.6em;
+}
+.markup :is(p, li, td, th, h4, h5, h6) {
+    white-space: pre-line;
+}
+/* global text styles set font-variation-settings, which overrides font-weight */
+.markup :is(strong, b, th),
+.markup-editor .mdxeditor-root-contenteditable :is(strong, b, th) {
+    font-weight: 700;
+    font-variation-settings: "wght" 700;
+}
+.markup :is(.markup-h1, .markup-h2, .markup-h3),
+.markup-editor .mdxeditor-root-contenteditable :is(h1, h2, h3) {
+    margin: 0.8em 0 0.3em;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-weight: 700;
+    font-variation-settings: "wght" 700;
+    text-transform: none;
+    letter-spacing: normal;
+}
+.markup > :is(.markup-h1, .markup-h2, .markup-h3):first-child,
+.markup-editor .mdxeditor-root-contenteditable :is(h1, h2, h3):first-child {
+    margin-top: 0;
+}
+.markup .markup-h1,
+.markup-editor .mdxeditor-root-contenteditable h1 {
+    font-size: 1.35rem;
+    line-height: 1.2;
+}
+.markup .markup-h2,
+.markup-editor .mdxeditor-root-contenteditable h2 {
+    font-size: 1.15rem;
+    line-height: 1.25;
+}
+.markup .markup-h3,
+.markup-editor .mdxeditor-root-contenteditable h3 {
+    font-size: 1rem;
+    line-height: 1.3;
+}
+.markup :is(ul, ol),
+.markup-editor .mdxeditor-root-contenteditable :is(ul, ol) {
+    padding-left: 1.5rem;
+    color: var(--text-secondary);
+}
+.markup ul,
+.markup-editor .mdxeditor-root-contenteditable ul {
+    list-style-type: disc;
+}
+.markup ol,
+.markup-editor .mdxeditor-root-contenteditable ol {
+    list-style-type: decimal;
+}
+.markup li {
+    font-size: 0.9rem;
+    margin: 0.2em 0;
+}
+.markup li:has(> input[type="checkbox"]) {
+    list-style: none;
+    margin-left: -1.25rem;
+}
+.markup li > input[type="checkbox"] {
+    margin-right: 0.4rem;
+}
+.markup blockquote {
+    border-left: 3px solid var(--md-line);
+    padding-left: 0.75rem;
+}
+.markup hr {
+    border-color: var(--md-line);
+}
+.markup :is(code, pre) {
+    font-size: 0.85em;
+    background: var(--md-fill);
+    border-radius: 0.3rem;
+}
+.markup code {
+    padding: 0.1em 0.3em;
+}
+.markup pre {
+    padding: 0.5rem 0.75rem;
+    white-space: pre-wrap;
+    overflow-x: auto;
+}
+.markup pre code {
+    padding: 0;
+    background: none;
+}
+.markup mark,
+.markup-editor .mdxeditor-root-contenteditable mark {
+    background: var(--md-mark);
+    color: var(--text-primary);
+    border-radius: 0.15em;
+}
+.markup-table {
+    overflow-x: auto;
+}
+.markup table {
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+.markup :is(th, td) {
+    border: 1px solid var(--md-line);
+    padding: 0.4rem 0.75rem;
+    text-align: left;
+    color: var(--text-secondary);
+}
+.markup th {
+    background: var(--md-fill);
+    color: var(--text-primary);
+}
 
-    border-bottom-left-radius: 0.6rem !important;
-    border-bottom-right-radius: 0.6rem !important;
+/* markdown editor; the library's own variables are mapped onto the theme.
+   Popups (link dialog, menus) render outside the editor, so they get them too;
+   :root outranks the library's stylesheet, which loads later. */
+.markup-editor .mdxeditor,
+:root .mdxeditor-popup-container {
+    --font-body: inherit;
+    --basePageBg: transparent;
+    --baseBase: var(--bg-main);
+    --baseBgSubtle: var(--layer-secondary);
+    --baseBg: var(--md-fill);
+    --baseBgHover: var(--md-fill);
+    --baseBgActive: var(--md-line);
+    --baseLine: var(--md-line);
+    --baseBorder: var(--md-line);
+    --baseBorderHover: var(--text-tertiary);
+    --baseSolid: var(--text-secondary);
+    --baseText: var(--text-secondary);
+    --baseTextContrast: var(--text-primary);
+}
+:root .mdxeditor-popup-container {
+    --basePageBg: var(--bg-main);
+    z-index: 100;
+    color: var(--text-primary);
+}
+.markup-editor .mdxeditor {
+    border-radius: 0.75rem;
+    background: var(--layer-secondary);
     overflow: hidden;
 }
-
-.mdxeditor-toolbar {
-    border-radius: 0 !important;
+.markup-editor .mdxeditor:focus-within {
+    box-shadow: 0 0 0 1px var(--text-tertiary);
 }
-
-[data-theme="light"] .mdxeditor {
-    background-color: white !important;
+.markup-editor .mdxeditor-toolbar {
+    flex-wrap: wrap;
+    height: auto;
+    border-radius: 0;
+    background: var(--layer-tertiary);
 }
-
-[data-theme="light"] .mdxeditor-toolbar {
-    background-color: var(--layer-tertiary) !important;
+.markup-editor .mdxeditor-toolbar :is(button, [role="combobox"]):focus-visible,
+:root
+    .mdxeditor-popup-container
+    :is(button, input, [role="option"]):focus-visible {
+    outline: 2px solid var(--text-primary);
+    outline-offset: 1px;
 }
-
-[data-theme="dark"] .mdxeditor,
-[data-theme="dark-hc"] .mdxeditor {
-    background-color: var(--layer-secondary);
+.markup-editor .mdxeditor-root-contenteditable {
+    color: var(--text-secondary);
 }
-
-[data-theme="dark"] .mdxeditor-toolbar,
-[data-theme="dark-hc"] .mdxeditor-toolbar {
-    background-color: var(--layer-tertiary);
+.markup-editor-tall .mdxeditor-root-contenteditable > div {
+    min-height: 10rem;
 }
-
-[data-theme="orange"] .mdxeditor {
-    background-color: var(--layer-primary);
-}
-
-[data-theme="orange"] .mdxeditor-root-contenteditable {
-    background-color: var(--layer-secondary);
-}
-
-[data-theme="orange"] .mdxeditor-toolbar {
-    background-color: var(--text-secondary);
-}
-
-/* disclaimer: this is not the best way to do this.
-I used inspect and applied the styling based on how the elements were nested.
-
-MDX allows you to supply classes and style them and
-offers some preconfigured css names to style specific things. */
-
-/* tool bar icons */
-[data-theme="dark"] .mdxeditor-toolbar button svg,
-[data-theme="dark-hc"] .mdxeditor-toolbar button svg {
-    fill: white !important;
-    color: white !important;
-}
-
-/* top row icons in table */
-[data-theme="dark"] .mdxeditor thead tr th button,
-[data-theme="dark-hc"] .mdxeditor thead tr th button {
-    color: lightgrey !important;
-}
-
-/* first icon in the column of icons  */
-[data-theme="dark"] .mdxeditor tbody tr th button,
-[data-theme="dark-hc"] .mdxeditor tbody tr th button {
-    color: lightgrey !important;
-}
-
-/* folowing icons in the column of table icons */
-[data-theme="dark"] .mdxeditor tr td button,
-[data-theme="dark-hc"] .mdxeditor tr td button {
-    color: lightgrey !important;
-}
-
-/* zindex fix */
-.mdxeditor-popup-container {
-    z-index: 100 !important;
-}
-
-/* .mdxeditor thead tr th {
-    text-align: center !important;
-}
-
-.mdxeditor tbody tr td {
-    text-align: center !important;
-} */
-
-.mdxeditor-root-contenteditable ul li {
-    color: var(--text-secondary) !important;
-    margin-left: 2rem;
-}
-
-
-.md-ul,
-.md-ol {
-  padding-left: 1.5rem;
-  margin: 0.75em 0;
-}
-
-.md-ul { list-style-type: disc; }
-.md-ol { list-style-type: decimal; }
-
-.md-li {
-  padding-left: 0.25rem;
-  margin: 0.25em 0;
-}
-
-.md-ul > .md-li::marker {
-  font-size: 1.2em;
-}
-
-.md-ol > .md-li::marker {
-  font-weight: 700;
-  font-variant-numeric: tabular-nums;
-}
-
-.md-ul > .md-li,
-.md-ol > .md-li {
-  color: var(--text-primary);
-}
-
-.mdxeditor-contenteditable-wrapper div ul { list-style-type: disc; padding-left: 1.5rem; }
-.mdxeditor-contenteditable-wrapper div ol { list-style-type: decimal; padding-left: 1.5rem; }
-
-.mdxeditor-contenteditable-wrapper div ul > li::marker { font-size: 1.2em; }
-.mdxeditor-contenteditable-wrapper div ol > li::marker { font-weight: 700; font-variant-numeric: tabular-nums; }
-
-.mdxeditor-contenteditable-wrapper li { color: var(--text-primary); }

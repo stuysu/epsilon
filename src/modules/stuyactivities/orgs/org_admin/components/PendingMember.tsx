@@ -1,7 +1,8 @@
 import { supabase } from "../../../../../lib/supabaseClient";
-import { Box } from "@mui/material";
+
 import { useSnackbar } from "notistack";
-import { useContext } from "react";
+import { useContext, useState } from "react";
+import UserDialog from "../../../../../components/ui/overlays/UserDialog";
 import OrgContext from "../../../../../contexts/OrgContext";
 import OrgMember from "../../components/OrgMember";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
@@ -27,6 +28,8 @@ const PendingMember = ({
     const { enqueueSnackbar } = useSnackbar();
     const organization = useContext(OrgContext);
 
+    const [confirmingReject, setConfirmingReject] = useState(false);
+
     const handleApprove = async () => {
         const { error } = await supabase.functions.invoke("approve-member", {
             body: { member_id: id },
@@ -40,10 +43,10 @@ const PendingMember = ({
             return;
         }
 
-        let memberIndex = organization.memberships.findIndex(
+        const memberIndex = organization.memberships.findIndex(
             (m) => m.id === id,
         );
-        let memberData = organization.memberships[memberIndex];
+        const memberData = organization.memberships[memberIndex];
 
         memberData.active = true;
 
@@ -62,11 +65,12 @@ const PendingMember = ({
     };
 
     const handleReject = async () => {
-        const { error } = await supabase
+        const { data, error } = await supabase
             .from("memberships")
             .delete()
-            .eq("id", id);
-        if (error) {
+            .eq("id", id)
+            .select("id");
+        if (error || !data?.length) {
             enqueueSnackbar(
                 "Error rejecting member. Contact it@stuysu.org for support.",
                 { variant: "error" },
@@ -88,14 +92,7 @@ const PendingMember = ({
     };
 
     return (
-        <Box
-            sx={{
-                width: "100%",
-                display: "flex",
-                flexWrap: "nowrap",
-                alignItems: "center",
-            }}
-        >
+        <div className="w-full flex flex-nowrap items-center">
             {onSelect && (
                 <div
                     className={
@@ -109,15 +106,14 @@ const PendingMember = ({
                     />
                 </div>
             )}
-            <Box sx={{ width: "100%", minWidth: 0 }}>
+            <div className="w-full min-w-[0px]">
                 <OrgMember
                     email={email}
                     picture={picture}
-                    role_name={"Pending Member"}
                     first_name={first_name}
                     last_name={last_name}
                 />
-            </Box>
+            </div>
             <div
                 className={
                     "flex items-center gap-2 px-3 shrink-0 self-stretch bg-layer-2"
@@ -125,32 +121,30 @@ const PendingMember = ({
             >
                 <AsyncButton
                     onClick={handleApprove}
-                    variant="contained"
-                    sx={{
-                        height: "40px",
-                        minWidth: 0,
-                        padding: { xs: "0 10px", sm: "11px 20px 13px 20px" },
-                    }}
+                    className="h-11 min-w-0 !px-2.5 !py-0 sm:!px-5 sm:!pb-[13px] sm:!pt-[11px]"
                     aria-label="Approve"
                 >
                     <i className={"bx bx-check bx-sm sm:hidden"}></i>
                     <span className={"hidden sm:inline"}>Approve</span>
                 </AsyncButton>
                 <AsyncButton
-                    onClick={handleReject}
-                    variant="contained"
-                    sx={{
-                        height: "40px",
-                        minWidth: 0,
-                        padding: { xs: "0 10px", sm: "11px 20px 13px 20px" },
-                    }}
+                    onClick={() => setConfirmingReject(true)}
+                    className="h-11 min-w-0 !px-2.5 !py-0 sm:!px-5 sm:!pb-[13px] sm:!pt-[11px]"
                     aria-label="Reject"
                 >
                     <i className={"bx bx-x bx-sm sm:hidden"}></i>
                     <span className={"hidden sm:inline"}>Reject</span>
                 </AsyncButton>
             </div>
-        </Box>
+            <UserDialog
+                title={`Reject ${first_name} ${last_name}?`}
+                description="Their join request will be removed. They can ask to join again later."
+                open={confirmingReject}
+                onClose={() => setConfirmingReject(false)}
+                onConfirm={handleReject}
+                confirmText="Reject"
+            />
+        </div>
     );
 };
 

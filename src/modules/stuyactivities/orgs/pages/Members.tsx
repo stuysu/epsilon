@@ -7,10 +7,12 @@ import {
     MemberSort,
     sortMembers,
     sortMembersBy,
+    memberSortOptions,
 } from "../../../../utils/DataFormatters";
 import useMembershipJoinDates from "../../../../utils/useMembershipJoinDates";
 import LoginGate from "../../../../components/ui/content/LoginGate";
 import ItemList from "../../../../components/ui/lists/ItemList";
+import OrgAdvisors from "../components/OrgAdvisors";
 import SearchInput from "../../../../components/ui/input/SearchInput";
 import SortSelect from "../../../../components/ui/input/SortSelect";
 
@@ -28,12 +30,12 @@ const Members = () => {
     const filteredMembers = useMemo(() => {
         if (!organization?.memberships) return [];
         const matching = organization.memberships
-            .filter((member) => member.active)
+            .filter((member) => member.active && member.role !== "ADVISOR")
             .filter((member) => {
                 const name =
                     `${member.users?.first_name ?? ""} ${member.users?.last_name ?? ""}`.toLowerCase();
                 const email = member.users?.email?.toLowerCase() ?? "";
-                const query = search.toLowerCase();
+                const query = search.trim().toLowerCase();
                 return name.includes(query) || email.includes(query);
             })
             .sort(sortMembers);
@@ -45,22 +47,41 @@ const Members = () => {
         }));
     }, [organization.memberships, search, sort, joinDates]);
 
+    const showNoMatch = filteredMembers.length === 0 && !!search.trim();
+
+    /* follow the list's real height, including after removed rows finish
+       fading out and when the "no match" message appears or wraps */
     useLayoutEffect(() => {
-        if (contentRef.current) {
-            setBoxHeight(contentRef.current.scrollHeight);
-        }
-    }, [filteredMembers.length]);
+        const content = contentRef.current;
+        if (!content) return;
+        const measure = () => setBoxHeight(content.scrollHeight);
+        measure();
+        const observer = new ResizeObserver(measure);
+        observer.observe(content);
+        return () => observer.disconnect();
+        // re-run on these too, in case the list mounts after the first render
+    }, [filteredMembers.length, showNoMatch]);
 
     return (
         <LoginGate page="view members">
             <section className="w-full mt-2 mb-10">
-                <div className="flex flex-col sm:flex-row sm:gap-3">
+                <h1 className="mb-6 mt-2">Members</h1>
+                <div className="mb-5">
                     <SearchInput
-                        placeholder="Search members by name or email..."
+                        containerClassName="mb-0"
+                        placeholder="Search people"
                         value={search}
                         onChange={setSearch}
+                        trailing={
+                            <SortSelect
+                                compact
+                                value={sort}
+                                onChange={setSort}
+                                options={memberSortOptions}
+                                label="Sort members"
+                            />
+                        }
                     />
-                    <SortSelect value={sort} onChange={setSort} />
                 </div>
                 <ItemList height={boxHeight} contentRef={contentRef}>
                     <AnimatePresence initial={false}>
@@ -76,24 +97,36 @@ const Members = () => {
                                     role={member.role || "MEMBER"}
                                     role_name={member.role_name}
                                     email={member.users?.email || "no email"}
-                                    picture={
-                                        member.users?.picture ||
-                                        "https://storage.googleapis.com/proudcity/mebanenc/uploads/2021/03/placeholder-image.png"
-                                    }
+                                    picture={member.users?.picture || undefined}
                                     first_name={
                                         member.users?.first_name || "First"
                                     }
                                     last_name={
                                         member.users?.last_name || "Last"
                                     }
-                                    is_faculty={
-                                        member.users?.is_faculty || false
-                                    }
+                                    className="transition-colors sm:hover:!bg-layer-3"
+                                    filledRole
                                 />
                             </motion.div>
                         ))}
                     </AnimatePresence>
+                    {/* always rendered so screen readers announce the change */}
+                    <p
+                        role="status"
+                        className={
+                            showNoMatch
+                                ? "px-4 py-6 text-center text-typography-2"
+                                : "sr-only"
+                        }
+                    >
+                        {showNoMatch
+                            ? `No members match “${search.trim()}”`
+                            : ""}
+                    </p>
                 </ItemList>
+                <div className="mt-8 xl:hidden">
+                    <OrgAdvisors editable={false} />
+                </div>
             </section>
         </LoginGate>
     );

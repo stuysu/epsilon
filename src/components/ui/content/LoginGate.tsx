@@ -15,7 +15,7 @@ const LoginGate = ({ page, children, sx }: Props): React.JSX.Element => {
     return (
         <div
             className={
-                "w-full h-[70vh] px-14 flex flex-col justify-center items-center"
+                "w-full h-[70vh] px-4 sm:px-14 flex flex-col justify-center items-center"
             }
         >
             <i className="bx bx-lock bx-lg text-blue mb-5"></i>

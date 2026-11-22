@@ -1,12 +1,16 @@
 import React, { useContext, useState } from "react";
 import OrgContext from "../../../../../contexts/OrgContext";
-import { MemberSort, sortMembersBy } from "../../../../../utils/DataFormatters";
+import {
+    MemberSort,
+    sortMembersBy,
+    memberSortOptions,
+} from "../../../../../utils/DataFormatters";
 import useMembershipJoinDates from "../../../../../utils/useMembershipJoinDates";
 import { supabase } from "../../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
+import { Link } from "react-router-dom";
 
 import PendingMember from "../components/PendingMember";
-import { Box } from "@mui/material";
 import ItemList from "../../../../../components/ui/lists/ItemList";
 import ContentUnavailable from "../../../../../components/ui/content/ContentUnavailable";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
@@ -155,13 +159,24 @@ const JoinRequests = () => {
     };
 
     return (
-        <Box sx={{ width: "100%", minHeight: "70vh" }}>
+        <div className="w-full min-h-[70vh]">
             <div
                 className={
                     "bg-layer-1 p-5 pl-7 pb-8 rounded-xl mb-10 mt-2 shadow-prominent"
                 }
             >
-                <h1>Join Requests</h1>
+                <h1>
+                    <Link
+                        to={`/${organization.url}/admin/roster`}
+                        className={
+                            "text-typography-3 no-underline sm:hover:text-typography-1"
+                        }
+                    >
+                        Roster
+                    </Link>
+                    <wbr />
+                    <span className={"whitespace-nowrap"}>/Join Requests</span>
+                </h1>
                 <p>
                     Review requests from students who want to join your
                     Activity. Approving a request adds them to your roster.
@@ -197,7 +212,12 @@ const JoinRequests = () => {
             />
 
             {pendingMembers.length > 1 && (
-                <SortSelect value={sort} onChange={setSort} />
+                <SortSelect
+                    value={sort}
+                    onChange={setSort}
+                    options={memberSortOptions}
+                    label="Sort members"
+                />
             )}
 
             {pendingMembers?.length > 0 ? (
@@ -236,10 +256,7 @@ const JoinRequests = () => {
                                         working !== null ||
                                         !selectedMembers.length
                                     }
-                                    sx={{
-                                        height: "40px",
-                                        flexGrow: { xs: 1, sm: 0 },
-                                    }}
+                                    className="h-10 grow sm:grow-0"
                                 >
                                     {working === "approve"
                                         ? "Approving..."
@@ -251,10 +268,7 @@ const JoinRequests = () => {
                                         working !== null ||
                                         !selectedMembers.length
                                     }
-                                    sx={{
-                                        height: "40px",
-                                        flexGrow: { xs: 1, sm: 0 },
-                                    }}
+                                    className="h-10 grow sm:grow-0"
                                 >
                                     {working === "reject"
                                         ? "Rejecting..."
@@ -290,13 +304,14 @@ const JoinRequests = () => {
                 </ItemList>
             ) : (
                 <ContentUnavailable
+                    headingLevel="h2"
                     title="No Join Requests"
                     iconColor="text-red"
                     icon="bx-user-x"
                     description="When people request to join your Activity, you'll see them here."
                 ></ContentUnavailable>
             )}
-        </Box>
+        </div>
     );
 };
 

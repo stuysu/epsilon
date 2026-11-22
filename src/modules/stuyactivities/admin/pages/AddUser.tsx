@@ -4,7 +4,7 @@ import { enqueueSnackbar } from "notistack";
 import FormPage from "../../../../components/ui/forms/FormPage";
 import MultiPageForm from "../../../../components/ui/forms/MultiPageForm";
 import FormSection from "../../../../components/ui/forms/FormSection";
-import { Typography, useMediaQuery } from "@mui/material";
+import useMediaQuery from "../../../../utils/useMediaQuery";
 import FormTextField from "../../../../components/ui/forms/FormTextField";
 import OrgRequirements from "../../../../utils/OrgRequirements";
 import FormCheckbox from "../../../../components/ui/forms/FormCheckbox";
@@ -28,7 +28,7 @@ const emptyUser: User = {
 const AddUser = () => {
     const [userData, setUserData] = useState<User>(emptyUser);
 
-    const isMobile = useMediaQuery("(max-width: 640px)");
+    const isMobile = useMediaQuery("not all and (min-width: 640px)");
 
     const createUser = async () => {
         const { error: userCreateError } = await supabase.functions.invoke(
@@ -38,8 +38,14 @@ const AddUser = () => {
 
         if (userCreateError) {
             console.error("Supabase function error:", userCreateError);
-            const message =
-                userCreateError.message || "Contact it@stuysu.org for support.";
+            // the function explains what went wrong (like "User already exists") in its response
+            let message = "Contact it@stuysu.org for support.";
+            try {
+                const body = await userCreateError.context?.json();
+                if (body?.error) message = body.error;
+            } catch {
+                // no readable response, so keep the generic message
+            }
             return enqueueSnackbar(message, { variant: "error" });
         }
         enqueueSnackbar("User created successfully", { variant: "success" });
@@ -72,19 +78,19 @@ const AddUser = () => {
                         <FormTextField
                             label="First Name"
                             field="first_name"
-                            required={OrgRequirements.name.required}
-                            requirements={OrgRequirements.name.requirements}
-                            sx={{ width: isMobile ? "50%" : "25%" }}
+                            required
+                            requirements={{ minChar: 1, maxChar: 60 }}
+                            sx={{ width: isMobile ? "100%" : "25%" }}
                         />
                         <FormTextField
                             label="Last Name"
                             field="last_name"
-                            required={OrgRequirements.name.required}
-                            requirements={OrgRequirements.name.requirements}
+                            required
+                            requirements={{ minChar: 1, maxChar: 60 }}
                             sx={{
                                 marginLeft: isMobile ? "" : "20px",
                                 marginTop: isMobile ? "20px" : "",
-                                width: isMobile ? "50%" : "25%",
+                                width: isMobile ? "100%" : "25%",
                             }}
                         />
                         <FormTextField
@@ -117,11 +123,14 @@ const AddUser = () => {
                             }
                             sx={{
                                 marginTop: isMobile ? "20px" : "40px",
-                                width: isMobile ? "50%" : "25%",
+                                width: isMobile ? "100%" : "25%",
                             }}
                         />
                         <FormSection
-                            sx={{ marginTop: "30px", marginLeft: "40px" }}
+                            sx={{
+                                marginTop: "30px",
+                                marginLeft: isMobile ? "" : "40px",
+                            }}
                         >
                             <FormCheckbox
                                 field="is_faculty"

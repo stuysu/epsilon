@@ -17,7 +17,14 @@ export const STUY_ACTIVITIES_PATHS = [
 ] as const;
 
 export const isStuyActivitiesPath = (pathname: string) =>
-    STUY_ACTIVITIES_PATHS.some((p) => pathname.startsWith(p));
+    STUY_ACTIVITIES_PATHS.some(
+        (p) => pathname === p || pathname.startsWith(`${p}/`),
+    );
+
+export const isOpportunitiesPath = (pathname: string) =>
+    pathname === "/opportunities" || pathname.startsWith("/opportunities/");
+
+export const OPPORTUNITY_SUBMISSION_URL = "https://forms.gle/FnXCKhnEmKHepwqU7";
 
 export const topNavItems = [
     { label: "Home", path: "/", icon: "bx bx-home-alt", external: false },
@@ -34,6 +41,12 @@ export const topNavItems = [
         external: false,
     },
     {
+        label: "Opportunities",
+        path: "/opportunities",
+        icon: "bx bx-glasses",
+        external: false,
+    },
+    {
         label: "Arista",
         path: "/arista-landing",
         icon: "bx bxs-hot",
@@ -44,13 +57,6 @@ export const topNavItems = [
         path: "/vote",
         icon: "bx bx-note",
         external: false,
-    },
-    {
-        label: "Opportunities",
-        url: "https://opportunities.stuysu.org",
-        path: "/none",
-        icon: "bx bx-glasses",
-        external: true,
     },
     {
         label: "SU Apply",

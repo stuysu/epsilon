@@ -104,20 +104,20 @@ const CharterLanding = () => {
                             ></div>
 
                             <div className={"relative min-h-28 max-w-72"}>
-                                <h1
+                                <div
                                     className={
-                                        "absolute bottom-28 font-bold text-6xl text-beige"
+                                        "as-h1 absolute bottom-28 font-bold text-6xl text-beige"
                                     }
                                 >
                                     1
-                                </h1>
-                                <h1
+                                </div>
+                                <h2
                                     className={
-                                        "font-['instrument-serif'] font-normal text-beige"
+                                        "as-h1 font-['instrument-serif'] font-normal text-beige"
                                     }
                                 >
                                     Submit Your Charter Application Online
-                                </h1>
+                                </h2>
                             </div>
                             <p>
                                 Prior to initiating the chartering process, you
@@ -140,7 +140,7 @@ const CharterLanding = () => {
                                     onCheckedChange={(checked) =>
                                         setAgreed(!!checked)
                                     }
-                                    className="h-5 min-w-5 rounded border border-divider bg-transparent flex items-center justify-center"
+                                    className="h-5 min-w-5 rounded border border-typography-2 bg-transparent flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
                                     aria-label="Agree to Clubs & Pubs Regulations"
                                 >
                                     <Checkbox.Indicator>
@@ -160,10 +160,14 @@ const CharterLanding = () => {
                                     </p>
                                 </label>
                             </div>
-                            <p
-                                onClick={() => agreed && navigate("/create")}
+                            {/* a real button, so the keyboard reaches it; it stays
+                                unavailable until the requirements are agreed to */}
+                            <button
+                                type="button"
+                                disabled={!agreed}
+                                onClick={() => navigate("/create")}
                                 className={
-                                    "text-accent " +
+                                    "text text-accent text-left rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 " +
                                     (agreed
                                         ? "cursor-pointer"
                                         : "cursor-not-allowed opacity-50")
@@ -175,7 +179,7 @@ const CharterLanding = () => {
                                         "bx bx-chevron-right bx-md relative top-[10px]"
                                     }
                                 ></i>
-                            </p>
+                            </button>
                         </div>
                         <div
                             className={
@@ -207,20 +211,20 @@ const CharterLanding = () => {
                                 }}
                             ></div>
                             <div className={"relative min-h-28 max-w-72"}>
-                                <h1
+                                <h2
                                     className={
-                                        "font-['instrument-serif'] font-normal text-beige"
+                                        "as-h1 font-['instrument-serif'] font-normal text-beige"
                                     }
                                 >
                                     Get Approved Quickly and Listed on Epsilon!
-                                </h1>
-                                <h1
+                                </h2>
+                                <div
                                     className={
-                                        "absolute bottom-28 font-bold text-6xl text-beige"
+                                        "as-h1 absolute bottom-28 font-bold text-6xl text-beige"
                                     }
                                 >
                                     2
-                                </h1>
+                                </div>
                             </div>
                             <p>
                                 Upon the successful submission of your charter,
@@ -239,7 +243,11 @@ const CharterLanding = () => {
                                 enrolling members and scheduling meetings.
                             </p>
                         </div>
-                        <div className={"sm:hidden relative p-20"}></div>
+                        <div
+                            className={
+                                "sm:hidden relative p-20 pointer-events-none"
+                            }
+                        ></div>
                     </div>
                 </>
             )}

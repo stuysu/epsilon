@@ -16,11 +16,11 @@ const Vote = () => {
                     content="Vote in student government elections and other important school decisions with Epsilon."
                 />
             </Helmet>
-            <div className={"relative z-20 bg-black sm:-mb-20 min-h-screen"}>
+            <div className={"relative z-20 bg-bg sm:-mb-20 min-h-screen"}>
                 <img
                     alt=""
                     src={`${PUBLIC_URL}/textures/voting.png`}
-                    className="w-full drop-shadow-2xl relative z-10"
+                    className="w-full drop-shadow-2xl relative z-10 scheme-light:invert scheme-light:hue-rotate-180 scheme-light:mix-blend-multiply scheme-light:opacity-30 scheme-light:drop-shadow-none"
                     onLoad={() => isIsImgLoaded(true)}
                     style={{ display: isImgLoaded ? "block" : "none" }}
                 />
@@ -33,7 +33,7 @@ const Vote = () => {
                         <div className="relative bottom-12 w-full flex justify-center">
                             <div className="max-sm:mt-5 max-sm:w-1/2 relative max-w-xl sm:w-2/3 w-full">
                                 {/* glow */}
-                                <h1
+                                <div
                                     aria-hidden="true"
                                     className="max-sm:pt-4 max-lg:mt-14 md:text-8xl text-4xl text-center max-sm:leading-9 font-light absolute top-0 left-0 w-full pointer-events-none select-none z-0"
                                 >
@@ -45,7 +45,7 @@ const Vote = () => {
                                             {word}
                                         </span>
                                     ))}
-                                </h1>
+                                </div>
 
                                 <h1 className="max-sm:pt-4 max-lg:mt-14 md:text-8xl text-4xl text-center max-sm:leading-9 font-light relative z-10">
                                     {title.split(" ").map((word, i) => (
@@ -74,14 +74,15 @@ const Vote = () => {
                                 </h1>
                             </div>
                         </div>
-                        <p className={"text-white/70 mx-3 text-center"}>
+                        <p className={"text-typography-2 mx-3 text-center"}>
                             We're working on integrating voting services into
                             Epsilon. For now, visit
                         </p>
                         <a
                             href={"https://vote.stuysu.org"}
-                            className={"important mt-3"}
+                            className={"important mt-3 text-accent"}
                             target={"_blank"}
+                            rel={"noopener noreferrer"}
                         >
                             <i
                                 className={

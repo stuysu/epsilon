@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
+import { invalidate } from "../../../lib/queryCache";
 
 import UserContext from "../../../contexts/UserContext";
 
@@ -13,6 +14,7 @@ import SendMessage from "./pages/SendMessage";
 import Announcements from "./pages/Announcements";
 import Rooms from "./pages/Rooms";
 import Reserve from "./pages/Reserve";
+import RoomBlocks from "./pages/RoomBlocks";
 import Valentines from "./pages/Valentines";
 import ApprovedValentines from "./pages/ApprovedValentines";
 import ContentUnavailable from "../../../components/ui/content/ContentUnavailable";
@@ -65,6 +67,11 @@ export const getLinks = (user: UserContextType) => {
             icon: "bx-calendar-check",
         },
         {
+            to: "/admin/block-rooms",
+            label: "Block Rooms",
+            icon: "bx-calendar-x",
+        },
+        {
             to: "/admin/add-user",
             label: "Add User",
             icon: "bx-user-plus",
@@ -98,8 +105,22 @@ export const getLinks = (user: UserContextType) => {
 
 const AdminRouter = () => {
     const user = useContext(UserContext);
+
+    // approvals, edits and rooms change shared data, so leaving refreshes it
+    useEffect(
+        () => () => {
+            for (const key of [
+                "org",
+                "catalog",
+                "orgList",
+                "rooms",
+                "roomGrants",
+            ])
+                invalidate([key]);
+        },
+        [],
+    );
     const links = getLinks(user);
-    console.log(links, "neow");
 
     if (!user.permission || !links.length) {
         return (
@@ -124,6 +145,7 @@ const AdminRouter = () => {
                 <Route path="/announcements" Component={Announcements} />
                 <Route path="/rooms" Component={Rooms} />
                 <Route path="/reserve" Component={Reserve} />
+                <Route path="/block-rooms" Component={RoomBlocks} />
                 <Route path="/add-user" Component={AddUser} />
                 {VALENTINES && (
                     <>

@@ -37,7 +37,7 @@ const Credit = ({
                         style={{
                             fontFamily: `'neue-haas-grotesk-display', sans-serif`,
                         }}
-                        className={"text-white/50"}
+                        className={"text-white/60"}
                     >
                         {title}
                     </p>
@@ -66,7 +66,7 @@ const MemberGroup = ({ role, names }: { role: string; names: string[] }) => {
                     fontFamily: `'neue-haas-grotesk-display', sans-serif`,
                 }}
                 className={
-                    "text-white/50 w-80 sm:text-right text-center uppercase relative top-2 mb-3"
+                    "text-white/60 w-80 sm:text-right text-center uppercase relative top-2 mb-3"
                 }
             >
                 {role}
@@ -74,8 +74,11 @@ const MemberGroup = ({ role, names }: { role: string; names: string[] }) => {
             <div
                 className={"flex flex-col w-80 text-center sm:text-left mt-1.5"}
             >
-                {names.map((name, index) => (
-                    <h2 className={"-mt-3 text-white/75 relative top-0.5"}>
+                {names.map((name) => (
+                    <h2
+                        key={name}
+                        className={"-mt-3 text-white/75 relative top-0.5"}
+                    >
                         {name}
                     </h2>
                 ))}
@@ -317,6 +320,7 @@ const Index = () => {
 
     return (
         <div className="pb-0">
+            <h1 className="sr-only">About Epsilon</h1>
             <Helmet>
                 <title>About - Epsilon</title>
                 <meta
@@ -330,7 +334,7 @@ const Index = () => {
                     {stage === "idle" && (
                         <motion.button
                             key={`idle-${runId}`}
-                            className="flex flex-col items-center justify-center h-24 w-64 gap-6 focus:outline-none"
+                            className="flex flex-col items-center justify-center h-24 w-64 gap-6 rounded-lg focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                             onClick={handleStart}
                             variants={fadeVariants}
                             initial="initial"
@@ -338,8 +342,8 @@ const Index = () => {
                             exit="exit"
                             aria-label="Play"
                         >
-                            <i className="text-white/50 bx bx-play text-5xl relative left-0.5 transition sm:hover:opacity-50 " />
-                            <p className={"text-white/50"}>
+                            <i className="text-white/60 bx bx-play text-5xl relative left-0.5 transition sm:hover:opacity-50 " />
+                            <p className={"text-white/60"}>
                                 Learn about the makers of Epsilon.
                             </p>
                         </motion.button>

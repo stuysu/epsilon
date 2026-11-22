@@ -1,7 +1,8 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { AnimatePresence, motion } from "framer-motion";
 import AsyncButton from "../buttons/AsyncButton";
-import React from "react";
+import React, { useRef } from "react";
+import keepOpenOnToast from "./keepOpenOnToast";
 
 export default function UserDialog({
     title,
@@ -13,9 +14,12 @@ export default function UserDialog({
     extraText,
     onExtra,
     children,
+    footerStart,
     confirmText = "Confirm",
     cancelText = "Cancel",
     imageSrc,
+    closeOnConfirm = true,
+    showCancel = true,
 }: {
     title: string;
     description?: string;
@@ -26,11 +30,22 @@ export default function UserDialog({
     extraText?: string;
     onExtra?: () => void;
     children?: React.ReactNode;
+    footerStart?: React.ReactNode;
     confirmText?: string;
     cancelText?: string;
     imageSrc?: string;
+    closeOnConfirm?: boolean;
+    showCancel?: boolean;
 }) {
     const hasImage = Boolean(imageSrc);
+    const openerRef = useRef<HTMLElement | null>(null);
+    const wasOpen = useRef(false);
+    // there is no Dialog.Trigger, so remember what opened the dialog before
+    // Radix moves focus into it
+    if (open && !wasOpen.current) {
+        openerRef.current = document.activeElement as HTMLElement | null;
+    }
+    wasOpen.current = open;
 
     return (
         <Dialog.Root
@@ -39,7 +54,16 @@ export default function UserDialog({
                 if (!v) onClose();
             }}
         >
-            <AnimatePresence mode="wait">
+            <AnimatePresence
+                mode="wait"
+                // the dialog stays mounted while it animates out, so focus goes
+                // back to its opener once that finishes
+                onExitComplete={() => {
+                    if (openerRef.current?.isConnected)
+                        openerRef.current.focus();
+                    openerRef.current = null;
+                }}
+            >
                 {open && (
                     <Dialog.Portal forceMount>
                         <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -53,9 +77,16 @@ export default function UserDialog({
                                 />
                             </Dialog.Overlay>
 
-                            <Dialog.Content asChild>
+                            <Dialog.Content
+                                asChild
+                                onInteractOutside={keepOpenOnToast}
+                                // focus is handed back in onExitComplete instead
+                                onCloseAutoFocus={(event) =>
+                                    event.preventDefault()
+                                }
+                            >
                                 <motion.div
-                                    className="relative w-[min(480px,92vw)] rounded-2xl bg-layer-1 p-6 shadow-2xl border border-divider"
+                                    className="relative w-[min(480px,92vw)] rounded-2xl bg-layer-1 shadow-2xl border border-divider"
                                     initial={{
                                         opacity: 0,
                                         y: 20,
@@ -82,65 +113,82 @@ export default function UserDialog({
                                     }}
                                 >
                                     {hasImage && (
-                                        <>
-                                            <img
-                                                src={imageSrc}
-                                                className={
-                                                    "absolute w-32 -left-2 -top-14"
-                                                }
-                                            />
+                                        <img
+                                            alt=""
+                                            src={imageSrc}
+                                            className={
+                                                "pointer-events-none absolute -left-2 -top-14 z-10 w-32"
+                                            }
+                                        />
+                                    )}
+                                    <div className="max-h-[90dvh] overflow-y-auto rounded-2xl p-6">
+                                        {hasImage && (
                                             <div className={"h-10"}></div>
-                                        </>
-                                    )}
+                                        )}
 
-                                    {title && (
-                                        <Dialog.Title>
-                                            <h3 className={"mb-6"}>{title}</h3>
-                                        </Dialog.Title>
-                                    )}
+                                        {title && (
+                                            <Dialog.Title>
+                                                <h3 className={"mb-6"}>
+                                                    {title}
+                                                </h3>
+                                            </Dialog.Title>
+                                        )}
 
-                                    {description && (
-                                        <Dialog.Description>
-                                            <p className="whitespace-pre-line">
-                                                {description}
-                                            </p>
-                                        </Dialog.Description>
-                                    )}
+                                        {description && (
+                                            <Dialog.Description>
+                                                <p className="whitespace-pre-line">
+                                                    {description}
+                                                </p>
+                                            </Dialog.Description>
+                                        )}
 
-                                    {children && (
-                                        <div className="mt-4">{children}</div>
-                                    )}
+                                        {children && (
+                                            <div className="mt-4">
+                                                {children}
+                                            </div>
+                                        )}
 
-                                    <div className="h-12" />
+                                        <div className="h-12" />
 
-                                    <div className="flex justify-end gap-3">
-                                        <AsyncButton
-                                            onClick={() => {
-                                                onClose();
-                                                onCancel?.();
-                                            }}
-                                        >
-                                            {cancelText}
-                                        </AsyncButton>
-                                        {extraText && (
+                                        <div className="flex flex-wrap items-center justify-end gap-3">
+                                            {footerStart && (
+                                                <div className="mr-auto max-sm:w-full">
+                                                    {footerStart}
+                                                </div>
+                                            )}
+                                            {showCancel && (
+                                                <AsyncButton
+                                                    onClick={() => {
+                                                        onClose();
+                                                        onCancel?.();
+                                                    }}
+                                                >
+                                                    {cancelText}
+                                                </AsyncButton>
+                                            )}
+                                            {extraText && (
+                                                <AsyncButton
+                                                    onClick={() => {
+                                                        onClose();
+                                                        onExtra?.();
+                                                    }}
+                                                >
+                                                    {extraText}
+                                                </AsyncButton>
+                                            )}
                                             <AsyncButton
                                                 onClick={() => {
-                                                    onClose();
-                                                    onExtra?.();
+                                                    if (closeOnConfirm) {
+                                                        onClose();
+                                                        onConfirm?.();
+                                                        return;
+                                                    }
+                                                    return onConfirm?.();
                                                 }}
                                             >
-                                                {extraText}
+                                                {confirmText}
                                             </AsyncButton>
-                                        )}
-                                        <AsyncButton
-                                            onClick={() => {
-                                                onClose();
-                                                onConfirm?.();
-                                            }}
-                                            autoFocus
-                                        >
-                                            {confirmText}
-                                        </AsyncButton>
+                                        </div>
                                     </div>
                                 </motion.div>
                             </Dialog.Content>

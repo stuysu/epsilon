@@ -5,7 +5,7 @@ import { enqueueSnackbar } from "notistack";
 import UserContext from "../../../../contexts/UserContext";
 import Loading from "../../../../components/ui/content/Loading";
 import ValentineDisplay from "../../../valentines/components/ValentineDisplay";
-import { Box } from "@mui/material";
+
 import ContentUnavailable from "../../../../components/ui/content/ContentUnavailable";
 
 const Valentines = () => {
@@ -46,15 +46,7 @@ const Valentines = () => {
     }, [refresher, user.id]);
     if (loading) return <Loading />;
     return (
-        <Box
-            sx={{
-                width: "100%",
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                paddingBottom: "10vh",
-            }}
-        >
+        <div className="w-full flex flex-col items-center pb-[10vh]">
             {valentines.length > 0 ? (
                 valentines.map((v) => (
                     <ValentineDisplay
@@ -73,7 +65,7 @@ const Valentines = () => {
                     description="No messages pending approval."
                 />
             )}
-        </Box>
+        </div>
     );
 };
 export default Valentines;
