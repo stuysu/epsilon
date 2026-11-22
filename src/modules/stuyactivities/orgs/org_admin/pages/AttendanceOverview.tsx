@@ -328,10 +328,10 @@ const AttendanceOverview = ({ readOnly = false }: { readOnly?: boolean }) => {
                 </section>
                 <p>
                     {readOnly
-                        ? "This Activity's attendance records, view only."
+                        ? "You are viewing this club's attendance records as an Epsilon Administrator."
                         : "Take attendance here."}{" "}
-                    Attendance records must be kept up to date. Strikes will be
-                    issued if attendance is not marked or falsely marked.
+                    Attendance records must be kept up to date. Inaccurate or
+                    missing attendance records will result in a violation.
                 </p>
             </header>
 
