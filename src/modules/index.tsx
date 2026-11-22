@@ -16,7 +16,6 @@ import Support from "./stuyactivities/Support";
 import SubNavBar from "../components/ui/navigation/SubNavBar";
 import Arista from "./arista";
 import { ThemeContext } from "../contexts/ThemeProvider";
-import InviteBanner from "../components/ui/InviteBanner";
 import { isOpportunitiesPath, isStuyActivitiesPath } from "../config/routes";
 
 const FULL_BLEED = [
@@ -107,9 +106,6 @@ const Pages = () => {
                             <SubNavBar />
                         </div>
                     </header>
-                )}
-                {user.signed_in && location.pathname !== "/invites" && (
-                    <InviteBanner />
                 )}
                 {/* app pages share one centered frame; these art-led pages span the window */}
                 <div

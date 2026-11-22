@@ -9,9 +9,14 @@ export default function useLiveRefresh(
     useEffect(() => {
         if (!enabled) return;
         load();
+        let last = Date.now();
 
+        /* returning to a tab fires both focus and visibilitychange; load once */
         const tick = () => {
-            if (document.visibilityState === "visible") load();
+            if (document.visibilityState !== "visible") return;
+            if (Date.now() - last < 1000) return;
+            last = Date.now();
+            load();
         };
         const interval = setInterval(tick, intervalMs);
         document.addEventListener("visibilitychange", tick);

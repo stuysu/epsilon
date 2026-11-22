@@ -2,11 +2,12 @@ import React, {
     ReactNode,
     useCallback,
     useContext,
-    useEffect,
+    useRef,
     useState,
 } from "react";
 import UserContext from "./UserContext";
 import { supabase } from "../lib/supabaseClient";
+import useLiveRefresh from "../utils/useLiveRefresh";
 
 export type PendingInvite = {
     id: number;
@@ -30,10 +31,13 @@ export const useInvites = () => useContext(InvitesContext);
 const InvitesProvider = ({ children }: { children: ReactNode }) => {
     const user = useContext<UserContextType>(UserContext);
     const [invites, setInvites] = useState<PendingInvite[]>([]);
+    /* only the latest request may set invites, so a slow older one can't undo a decline or sign-out */
+    const latest = useRef(0);
 
     const refresh = useCallback(async () => {
+        const request = ++latest.current;
         if (!user.signed_in || user.id < 0) {
-            setInvites([]);
+            setInvites((current) => (current.length ? [] : current));
             return;
         }
 
@@ -48,12 +52,11 @@ const InvitesProvider = ({ children }: { children: ReactNode }) => {
             .order("created_at", { ascending: false })
             .returns<PendingInvite[]>();
 
-        if (!error && data) setInvites(data);
+        if (request === latest.current && !error && data) setInvites(data);
     }, [user.signed_in, user.id]);
 
-    useEffect(() => {
-        refresh();
-    }, [refresh]);
+    /* new invites show up without a reload; the invites page checks more often */
+    useLiveRefresh(refresh, 60000);
 
     return (
         <InvitesContext.Provider value={{ invites, refresh }}>
