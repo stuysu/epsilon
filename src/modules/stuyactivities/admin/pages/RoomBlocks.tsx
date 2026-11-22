@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { useSnackbar } from "notistack";
 import dayjs, { Dayjs } from "dayjs";
 import { supabase } from "../../../../lib/supabaseClient";
@@ -23,6 +23,19 @@ type RoomBlock = {
     rooms: { name: string; floor?: number } | null;
 };
 
+type Preview = {
+    date: string;
+    roomIds: number[];
+    meetings: {
+        id: number;
+        title: string;
+        start_time: string;
+        room_id: number;
+        organization: string;
+    }[];
+    heldRoomIds: number[];
+};
+
 const DATE_FORMAT = "YYYY-MM-DD";
 
 const plural = (count: number, word: string) =>
@@ -40,10 +53,10 @@ const RoomBlocks = () => {
     const [selectedRoomIds, setSelectedRoomIds] = useState<number[]>([]);
     const [reason, setReason] = useState("");
     const [loading, setLoading] = useState(true);
-    const [confirming, setConfirming] = useState<{
-        meetings: number;
-        heldRoomIds: number[];
-    } | null>(null);
+    const [confirming, setConfirming] = useState<Preview | null>(null);
+    /* bumped on every change so late responses are ignored */
+    const previewVersion = useRef(0);
+    const fetchVersion = useRef(0);
 
     const dayKey = day.format(DATE_FORMAT);
     const isPast = day.isBefore(today, "day");
@@ -51,6 +64,7 @@ const RoomBlocks = () => {
     const fromKey = dayKey < todayKey ? dayKey : todayKey;
 
     const fetchBlocks = useCallback(async () => {
+        const version = ++fetchVersion.current;
         const PAGE = 1000;
         const all: RoomBlock[] = [];
         for (let from = 0; ; from += PAGE) {
@@ -62,6 +76,7 @@ const RoomBlocks = () => {
                 .order("room_id", { ascending: true })
                 .range(from, from + PAGE - 1)
                 .returns<RoomBlock[]>();
+            if (version !== fetchVersion.current) return;
             if (error || !data) {
                 enqueueSnackbar("Failed to fetch blocked rooms.", {
                     variant: "error",
@@ -137,11 +152,19 @@ const RoomBlocks = () => {
         selectedRoomIds.includes(room.id),
     );
 
+    const resetPreview = () => {
+        previewVersion.current++;
+        setConfirming(null);
+    };
+
     const pickDay = (next: Dayjs) => {
         setDay(next.startOf("day"));
         setSelectedRoomIds([]);
-        setConfirming(null);
+        resetPreview();
     };
+
+    const roomName = (id: number) =>
+        rooms.find((room) => room.id === id)?.name ?? "Unknown room";
 
     const startBlocking = async () => {
         if (!roomsToBlock.length) {
@@ -149,26 +172,34 @@ const RoomBlocks = () => {
             return;
         }
 
+        const version = ++previewVersion.current;
+        const date = dayKey;
+        const roomIds = roomsToBlock.map((room) => room.id);
         const dayStart = wallClockToISO(day);
         const dayEnd = wallClockToISO(day.add(1, "day"));
 
         const { data: meetings, error } = await supabase
             .from("meetings")
-            .select("id, room_id, organizations!inner(state)")
-            .in(
-                "room_id",
-                roomsToBlock.map((room) => room.id),
+            .select(
+                "id, title, start_time, room_id, organizations!inner(name, state)",
             )
+            .in("room_id", roomIds)
             .lt("start_time", dayEnd)
             .gt("end_time", dayStart)
             .gt("start_time", new Date().toISOString())
+            .order("start_time", { ascending: true })
             .returns<
                 {
                     id: number;
+                    title: string;
+                    start_time: string;
                     room_id: number;
-                    organizations: { state: string };
+                    organizations: { name: string; state: string };
                 }[]
             >();
+
+        /* the day or rooms changed while this was loading */
+        if (version !== previewVersion.current) return;
 
         if (error || !meetings) {
             enqueueSnackbar(
@@ -189,18 +220,27 @@ const RoomBlocks = () => {
         );
 
         setConfirming({
-            meetings: meetings.filter(
-                (meeting) => !heldRoomIds.includes(meeting.room_id),
-            ).length,
+            date,
+            roomIds,
+            meetings: meetings
+                .filter((meeting) => !heldRoomIds.includes(meeting.room_id))
+                .map((meeting) => ({
+                    id: meeting.id,
+                    title: meeting.title,
+                    start_time: meeting.start_time,
+                    room_id: meeting.room_id,
+                    organization: meeting.organizations.name,
+                })),
             heldRoomIds,
         });
     };
 
-    const blockRooms = async () => {
+    /* blocks exactly what was previewed */
+    const blockRooms = async (preview: Preview) => {
         const { data, error } = await supabase.functions.invoke("block-rooms", {
             body: {
-                date: dayKey,
-                room_ids: roomsToBlock.map((room) => room.id),
+                date: preview.date,
+                room_ids: preview.roomIds,
                 reason: reason.trim() || undefined,
             },
         });
@@ -243,7 +283,7 @@ const RoomBlocks = () => {
             );
         }
 
-        setConfirming(null);
+        resetPreview();
         setSelectedRoomIds(result.held);
         setReason("");
         await fetchBlocks();
@@ -390,7 +430,7 @@ const RoomBlocks = () => {
                                     selected={selectedRoomIds}
                                     onChange={(ids) => {
                                         setSelectedRoomIds(ids);
-                                        setConfirming(null);
+                                        resetPreview();
                                     }}
                                 />
 
@@ -398,28 +438,52 @@ const RoomBlocks = () => {
                                     <div className="bg-layer-1 rounded-xl shadow-control p-4 mt-2">
                                         <p className="important">
                                             Block{" "}
-                                            {roomsToBlock.length === 1
-                                                ? roomsToBlock[0].name
+                                            {confirming.roomIds.length === 1
+                                                ? roomName(
+                                                      confirming.roomIds[0],
+                                                  )
                                                 : plural(
-                                                      roomsToBlock.length,
+                                                      confirming.roomIds.length,
                                                       "room",
                                                   )}{" "}
-                                            on {day.format("MMMM D")}?
+                                            on{" "}
+                                            {dayjs(confirming.date).format(
+                                                "MMMM D",
+                                            )}
+                                            ?
                                         </p>
                                         <p className="mt-1">
-                                            {confirming.meetings
-                                                ? `${plural(confirming.meetings, "meeting")} will be cancelled and their Activities will be emailed.`
+                                            {confirming.meetings.length
+                                                ? `${plural(confirming.meetings.length, "meeting")} will be cancelled and their Activities will be emailed:`
                                                 : "No meetings will be cancelled."}
                                         </p>
+                                        {confirming.meetings.length > 0 && (
+                                            <ul className="mt-1 text-sm text-typography-2">
+                                                {confirming.meetings.map(
+                                                    (meeting) => (
+                                                        <li key={meeting.id}>
+                                                            {isoToWallClock(
+                                                                meeting.start_time,
+                                                            ).format(
+                                                                "h:mm A",
+                                                            )}{" "}
+                                                            · {meeting.title} ·{" "}
+                                                            {
+                                                                meeting.organization
+                                                            }{" "}
+                                                            ·{" "}
+                                                            {roomName(
+                                                                meeting.room_id,
+                                                            )}
+                                                        </li>
+                                                    ),
+                                                )}
+                                            </ul>
+                                        )}
                                         {confirming.heldRoomIds.length > 0 && (
                                             <p className="mt-1">
-                                                {roomsToBlock
-                                                    .filter((room) =>
-                                                        confirming.heldRoomIds.includes(
-                                                            room.id,
-                                                        ),
-                                                    )
-                                                    .map((room) => room.name)
+                                                {confirming.heldRoomIds
+                                                    .map(roomName)
                                                     .join(", ")}{" "}
                                                 {confirming.heldRoomIds
                                                     .length === 1
@@ -430,14 +494,14 @@ const RoomBlocks = () => {
                                             </p>
                                         )}
                                         <div className="flex gap-2 mt-3">
-                                            <AsyncButton onClick={blockRooms}>
-                                                Confirm Block
-                                            </AsyncButton>
                                             <AsyncButton
                                                 onClick={() =>
-                                                    setConfirming(null)
+                                                    blockRooms(confirming)
                                                 }
                                             >
+                                                Confirm Block
+                                            </AsyncButton>
+                                            <AsyncButton onClick={resetPreview}>
                                                 Cancel
                                             </AsyncButton>
                                         </div>

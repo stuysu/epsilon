@@ -172,6 +172,14 @@ export const Calendar = ({
     const gridRef = useRef<HTMLDivElement>(null);
     const moved = useRef(false);
 
+    /* jump to the selected day when it's changed from outside */
+    const selectedKey = selected?.format("YYYY-MM-DD");
+    useEffect(() => {
+        if (!selectedKey) return;
+        setMonth(dayjs(selectedKey).startOf("month"));
+        setActive(dayjs(selectedKey));
+    }, [selectedKey]);
+
     useEffect(() => {
         if (!moved.current) return;
         moved.current = false;
