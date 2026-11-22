@@ -38,7 +38,7 @@ const Overview = () => {
                 : null,
         [orgs, organization],
     );
-    const { invites } = useInvites();
+    const { invites, refresh: refreshInvites } = useInvites();
     const { enqueueSnackbar } = useSnackbar();
 
     const [attemptingInteract, setAttemptingInteract] = useState(false);
@@ -140,12 +140,24 @@ const Overview = () => {
                 if (organization.setOrg) {
                     organization.setOrg({
                         ...organization,
-                        memberships: [...organization.memberships, data],
+                        /* replace a row the user already had (e.g. made in another tab) */
+                        memberships: [
+                            ...organization.memberships.filter(
+                                (membership) => membership.id !== data.id,
+                            ),
+                            data,
+                        ],
                     });
                 }
-                enqueueSnackbar("Join request sent!", {
-                    variant: "success",
-                });
+                /* a pending invite that arrived after the page loaded makes this a straight join */
+                if (data.active) {
+                    enqueueSnackbar("Joined!", { variant: "success" });
+                    refreshInvites();
+                } else {
+                    enqueueSnackbar("Join request sent!", {
+                        variant: "success",
+                    });
+                }
             } else if (
                 interactString === "LEAVE" ||
                 interactString === "CANCEL JOIN"
