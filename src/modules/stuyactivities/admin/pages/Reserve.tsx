@@ -40,10 +40,9 @@ const Reserve = () => {
     const [forceOrgId, setForceOrgId] = useState<number | undefined>();
     const [forceOrgName, setForceOrgName] = useState<string | undefined>();
     const [selectedRoomIds, setSelectedRoomIds] = useState<number[]>([]);
-    const [confirming, setConfirming] = useState<{
-        meetings: number;
-        heldRoomIds: number[];
-    } | null>(null);
+    const [confirming, setConfirming] = useState<{ meetings: number } | null>(
+        null,
+    );
     const [failedRooms, setFailedRooms] = useState<
         { name: string; message: string }[]
     >([]);
@@ -232,47 +231,14 @@ const Reserve = () => {
             selectedRoomIds.includes(meta.room_id),
         );
 
-        const { data: heldMeetings, error: heldError } = selectedBooked.length
-            ? await supabase
-                  .from("meetings")
-                  .select("id, room_id, organizations!inner(state)")
-                  .in(
-                      "id",
-                      selectedBooked.map((meta) => meta.meeting_id),
-                  )
-                  .eq("organizations.state", "ADMIN")
-            : { data: [], error: null };
-
-        if (heldError) {
-            enqueueSnackbar(
-                "Couldn't check the booked meetings, so nothing was reserved. Contact it@stuysu.org for support.",
-                { variant: "error" },
-            );
-            return;
-        }
-
-        const heldRoomIds = Array.from(
-            new Set((heldMeetings || []).map((meeting) => meeting.room_id)),
-        ) as number[];
-
-        const heldMeetingIds = (heldMeetings || []).map(
-            (meeting) => meeting.id,
-        );
-
-        const conflicts = selectedBooked.filter(
-            (meta) => !heldMeetingIds.includes(meta.meeting_id),
-        ).length;
-
-        if (heldRoomIds.length === roomsToReserve.length && !conflicts) {
-            return forceReserve();
-        }
+        const conflicts = selectedBooked.length;
 
         /* a single room only needs confirming when it would cancel something */
         if (roomsToReserve.length === 1 && !conflicts) {
             return forceReserve();
         }
 
-        setConfirming({ meetings: conflicts, heldRoomIds });
+        setConfirming({ meetings: conflicts });
     };
 
     const forceReserve = async () => {
@@ -479,23 +445,6 @@ const Reserve = () => {
                                           } will be cancelled and their Activities will be emailed.`
                                         : "No existing meetings in these rooms will be cancelled."}
                                 </p>
-                                {confirming.heldRoomIds.length > 0 && (
-                                    <p className="mt-1">
-                                        {roomsToReserve
-                                            .filter((room) =>
-                                                confirming.heldRoomIds.includes(
-                                                    room.id,
-                                                ),
-                                            )
-                                            .map((room) => room.name)
-                                            .join(", ")}{" "}
-                                        {confirming.heldRoomIds.length === 1
-                                            ? "is"
-                                            : "are"}{" "}
-                                        held by an admin club and will not be
-                                        reserved.
-                                    </p>
-                                )}
                                 <div className="flex gap-2 mt-3">
                                     <AsyncButton onClick={forceReserve}>
                                         Confirm Reservation

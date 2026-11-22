@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useId, useMemo, useState } from "react";
 import CheckboxInput from "../../../../components/ui/input/CheckboxInput";
 import { sortRooms } from "../../../../utils/DataFormatters";
 
@@ -56,6 +56,7 @@ const RoomChecklist = ({
     };
 
     const [open, setOpen] = useState(true);
+    const listId = useId();
 
     const selectedCount = rooms.filter((room) =>
         selected.includes(room.id),
@@ -67,19 +68,23 @@ const RoomChecklist = ({
                 className={`flex flex-wrap items-center justify-between gap-2 ${open ? "mb-3" : ""}`}
             >
                 {collapsible ? (
-                    <button
-                        type="button"
-                        aria-expanded={open}
-                        onClick={() => setOpen(!open)}
-                        className="flex items-center gap-1 cursor-pointer"
-                    >
-                        <i
-                            className={`bx bx-chevron-down text-xl text-typography-2 transition-transform ${
-                                open ? "" : "-rotate-90"
-                            }`}
-                        />
-                        <h4>{title}</h4>
-                    </button>
+                    <h4>
+                        <button
+                            type="button"
+                            aria-expanded={open}
+                            aria-controls={open ? listId : undefined}
+                            onClick={() => setOpen(!open)}
+                            className="flex items-center gap-1 cursor-pointer"
+                        >
+                            <i
+                                aria-hidden="true"
+                                className={`bx bx-chevron-down text-xl text-typography-2 transition-transform ${
+                                    open ? "" : "-rotate-90"
+                                }`}
+                            />
+                            {title}
+                        </button>
+                    </h4>
                 ) : (
                     <h4>{title}</h4>
                 )}
@@ -105,7 +110,7 @@ const RoomChecklist = ({
             </div>
 
             {open && (
-                <div className="flex flex-col gap-3">
+                <div id={listId} className="flex flex-col gap-3">
                     {floors.map((group) => {
                         const ids = group.rooms.map((room) => room.id);
                         const count = ids.filter((id) =>

@@ -33,7 +33,6 @@ type Preview = {
         room_id: number;
         organization: string;
     }[];
-    heldRoomIds: number[];
 };
 
 const DATE_FORMAT = "YYYY-MM-DD";
@@ -53,8 +52,11 @@ const RoomBlocks = () => {
     const [selectedRoomIds, setSelectedRoomIds] = useState<number[]>([]);
     const [unblockIds, setUnblockIds] = useState<number[]>([]);
     const [reason, setReason] = useState("");
-    const [loading, setLoading] = useState(true);
+    const [roomsLoaded, setRoomsLoaded] = useState(false);
+    /* the range the current blocks were fetched for */
+    const [blocksFrom, setBlocksFrom] = useState<string | null>(null);
     const [confirming, setConfirming] = useState<Preview | null>(null);
+    const [blocking, setBlocking] = useState(false);
     /* bumped on every change so late responses are ignored */
     const previewVersion = useRef(0);
     const fetchVersion = useRef(0);
@@ -63,32 +65,39 @@ const RoomBlocks = () => {
     const isPast = day.isBefore(today, "day");
     /* blocks from today on, plus the picked day if it has passed */
     const fromKey = dayKey < todayKey ? dayKey : todayKey;
+    /* refreshes after a block or unblock use the current day's range */
+    const fromKeyRef = useRef(fromKey);
+    fromKeyRef.current = fromKey;
+    const loading = !roomsLoaded || blocksFrom !== fromKey;
 
     const fetchBlocks = useCallback(async () => {
         const version = ++fetchVersion.current;
+        const from = fromKeyRef.current;
         const PAGE = 1000;
         const all: RoomBlock[] = [];
-        for (let from = 0; ; from += PAGE) {
+        for (let offset = 0; ; offset += PAGE) {
             const { data, error } = await supabase
                 .from("room_blocks")
                 .select("room_id, blocked_on, reason, rooms(name, floor)")
-                .gte("blocked_on", fromKey)
+                .gte("blocked_on", from)
                 .order("blocked_on", { ascending: true })
                 .order("room_id", { ascending: true })
-                .range(from, from + PAGE - 1)
+                .range(offset, offset + PAGE - 1)
                 .returns<RoomBlock[]>();
             if (version !== fetchVersion.current) return;
             if (error || !data) {
                 enqueueSnackbar("Failed to fetch blocked rooms.", {
                     variant: "error",
                 });
+                setBlocksFrom(from);
                 return;
             }
             all.push(...data);
             if (data.length < PAGE) break;
         }
         setBlocks(all);
-    }, [enqueueSnackbar, fromKey]);
+        setBlocksFrom(from);
+    }, [enqueueSnackbar]);
 
     useEffect(() => {
         (async () => {
@@ -103,13 +112,13 @@ const RoomBlocks = () => {
             } else {
                 setRooms(data);
             }
-            setLoading(false);
+            setRoomsLoaded(true);
         })();
     }, [enqueueSnackbar]);
 
     useEffect(() => {
         fetchBlocks();
-    }, [fetchBlocks]);
+    }, [fetchBlocks, fromKey]);
 
     const blockedDays = useMemo(
         () => new Set(blocks.map((block) => block.blocked_on)),
@@ -137,17 +146,65 @@ const RoomBlocks = () => {
         [rooms, dayBlocks],
     );
 
+    /* "All rooms", whole floors as "Floor N", then any other rooms */
+    const describeRooms = useCallback(
+        (ids: number[]) => {
+            const picked = new Set(ids);
+            if (rooms.length && rooms.every((room) => picked.has(room.id))) {
+                return "All rooms";
+            }
+
+            const floors = new Map<number, RoomOption[]>();
+            for (const room of rooms) {
+                if (room.floor == null) continue;
+                floors.set(room.floor, [
+                    ...(floors.get(room.floor) ?? []),
+                    room,
+                ]);
+            }
+
+            const parts: string[] = [];
+            const covered = new Set<number>();
+            for (const [floor, floorRooms] of Array.from(floors).sort(
+                (a, b) => a[0] - b[0],
+            )) {
+                if (
+                    floorRooms.length > 1 &&
+                    floorRooms.every((room) => picked.has(room.id))
+                ) {
+                    parts.push(`Floor ${floor}`);
+                    floorRooms.forEach((room) => covered.add(room.id));
+                }
+            }
+
+            const rest = rooms
+                .filter((room) => picked.has(room.id) && !covered.has(room.id))
+                .sort(sortRooms)
+                .map((room) => room.name);
+            return [...parts, ...rest].join(", ");
+        },
+        [rooms],
+    );
+
     const upcoming = useMemo(() => {
-        const groups: { date: string; rooms: string[] }[] = [];
+        const groups: { date: string; roomIds: number[] }[] = [];
         for (const block of blocks) {
             if (dayjs(block.blocked_on).isBefore(today, "day")) continue;
             const last = groups[groups.length - 1];
-            const name = block.rooms?.name ?? "Unknown room";
-            if (last && last.date === block.blocked_on) last.rooms.push(name);
-            else groups.push({ date: block.blocked_on, rooms: [name] });
+            if (last && last.date === block.blocked_on) {
+                last.roomIds.push(block.room_id);
+            } else {
+                groups.push({
+                    date: block.blocked_on,
+                    roomIds: [block.room_id],
+                });
+            }
         }
-        return groups;
-    }, [blocks, today]);
+        return groups.map((group) => ({
+            date: group.date,
+            rooms: describeRooms(group.roomIds),
+        }));
+    }, [blocks, today, describeRooms]);
 
     const roomsToBlock = openRooms.filter((room) =>
         selectedRoomIds.includes(room.id),
@@ -159,6 +216,7 @@ const RoomBlocks = () => {
     };
 
     const pickDay = (next: Dayjs) => {
+        if (blocking) return;
         setDay(next.startOf("day"));
         setSelectedRoomIds([]);
         setUnblockIds([]);
@@ -182,9 +240,7 @@ const RoomBlocks = () => {
 
         const { data: meetings, error } = await supabase
             .from("meetings")
-            .select(
-                "id, title, start_time, room_id, organizations!inner(name, state)",
-            )
+            .select("id, title, start_time, room_id, organizations!inner(name)")
             .in("room_id", roomIds)
             .lt("start_time", dayEnd)
             .gt("end_time", dayStart)
@@ -196,7 +252,7 @@ const RoomBlocks = () => {
                     title: string;
                     start_time: string;
                     room_id: number;
-                    organizations: { name: string; state: string };
+                    organizations: { name: string };
                 }[]
             >();
 
@@ -211,43 +267,34 @@ const RoomBlocks = () => {
             return;
         }
 
-        const heldRoomIds = Array.from(
-            new Set(
-                meetings
-                    .filter(
-                        (meeting) => meeting.organizations.state === "ADMIN",
-                    )
-                    .map((meeting) => meeting.room_id),
-            ),
-        );
-
         setConfirming({
             date,
             roomIds,
-            meetings: meetings
-                .filter((meeting) => !heldRoomIds.includes(meeting.room_id))
-                .map((meeting) => ({
-                    id: meeting.id,
-                    title: meeting.title,
-                    start_time: meeting.start_time,
-                    room_id: meeting.room_id,
-                    organization: meeting.organizations.name,
-                })),
-            heldRoomIds,
+            meetings: meetings.map((meeting) => ({
+                id: meeting.id,
+                title: meeting.title,
+                start_time: meeting.start_time,
+                room_id: meeting.room_id,
+                organization: meeting.organizations.name,
+            })),
         });
     };
 
     /* blocks exactly what was previewed */
     const blockRooms = async (preview: Preview) => {
-        const { data, error } = await supabase.functions.invoke("block-rooms", {
-            body: {
-                date: preview.date,
-                room_ids: preview.roomIds,
-                reason: reason.trim() || undefined,
-            },
-        });
+        setBlocking(true);
+        const { data, error } = await supabase.functions
+            .invoke("block-rooms", {
+                body: {
+                    date: preview.date,
+                    room_ids: preview.roomIds,
+                    reason: reason.trim() || undefined,
+                },
+            })
+            .catch((error) => ({ data: null, error }));
 
         if (error) {
+            setBlocking(false);
             const message = await functionErrorText(error);
             enqueueSnackbar(message || "Failed to block rooms.", {
                 variant: "error",
@@ -257,7 +304,6 @@ const RoomBlocks = () => {
 
         const result = data as {
             blocked: number[];
-            held: number[];
             cancelled: number;
             unemailed: number[];
         };
@@ -276,19 +322,12 @@ const RoomBlocks = () => {
                 { variant: "error" },
             );
         }
-        if (result.held.length) {
-            enqueueSnackbar(
-                `${plural(result.held.length, "room")} held by an admin club ${
-                    result.held.length === 1 ? "was" : "were"
-                } not blocked.`,
-                { variant: "warning" },
-            );
-        }
-
-        resetPreview();
-        setSelectedRoomIds(result.held);
-        setReason("");
+        /* stay locked until the new blocks are in, so they can't be picked again */
         await fetchBlocks();
+        resetPreview();
+        setSelectedRoomIds([]);
+        setReason("");
+        setBlocking(false);
     };
 
     const blockedRooms = dayBlocks.map((block) => ({
@@ -311,16 +350,18 @@ const RoomBlocks = () => {
     );
 
     const unblock = async () => {
-        const { error } = await supabase
+        const { data, error } = await supabase
             .from("room_blocks")
             .delete()
             .eq("blocked_on", dayKey)
-            .in("room_id", toUnblock);
-        if (error) {
+            .in("room_id", toUnblock)
+            .select("room_id");
+        if (error || !data?.length) {
             enqueueSnackbar("Failed to unblock rooms.", { variant: "error" });
+            await fetchBlocks();
             return;
         }
-        enqueueSnackbar(`${plural(toUnblock.length, "room")} unblocked.`, {
+        enqueueSnackbar(`${plural(data.length, "room")} unblocked.`, {
             variant: "success",
         });
         setUnblockIds([]);
@@ -352,7 +393,9 @@ const RoomBlocks = () => {
 
                     <div className="lg:w-[296px]">
                         <h4 className="mb-2">Upcoming</h4>
-                        {upcoming.length ? (
+                        {!roomsLoaded || blocksFrom === null ? (
+                            <p>Loading...</p>
+                        ) : upcoming.length ? (
                             <div className="flex flex-col gap-1">
                                 {upcoming.map((group) => (
                                     <button
@@ -373,7 +416,7 @@ const RoomBlocks = () => {
                                             )}
                                         </span>
                                         <span className="text block truncate">
-                                            {group.rooms.join(", ")}
+                                            {group.rooms}
                                         </span>
                                     </button>
                                 ))}
@@ -452,9 +495,11 @@ const RoomBlocks = () => {
 
                                 <RoomChecklist
                                     title="Open rooms"
+                                    collapsible
                                     rooms={openRooms}
                                     selected={selectedRoomIds}
                                     onChange={(ids) => {
+                                        if (blocking) return;
                                         setSelectedRoomIds(ids);
                                         resetPreview();
                                     }}
@@ -506,19 +551,6 @@ const RoomBlocks = () => {
                                                 )}
                                             </ul>
                                         )}
-                                        {confirming.heldRoomIds.length > 0 && (
-                                            <p className="mt-1">
-                                                {confirming.heldRoomIds
-                                                    .map(roomName)
-                                                    .join(", ")}{" "}
-                                                {confirming.heldRoomIds
-                                                    .length === 1
-                                                    ? "is"
-                                                    : "are"}{" "}
-                                                held by an admin club and will
-                                                not be blocked.
-                                            </p>
-                                        )}
                                         <div className="flex gap-2 mt-3">
                                             <AsyncButton
                                                 onClick={() =>
@@ -527,7 +559,10 @@ const RoomBlocks = () => {
                                             >
                                                 Confirm Block
                                             </AsyncButton>
-                                            <AsyncButton onClick={resetPreview}>
+                                            <AsyncButton
+                                                onClick={resetPreview}
+                                                disabled={blocking}
+                                            >
                                                 Cancel
                                             </AsyncButton>
                                         </div>

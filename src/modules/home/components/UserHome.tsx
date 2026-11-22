@@ -76,7 +76,7 @@ const UserHome = () => {
                     description,
                     start_time,
                     end_time,
-                    organizations!inner (
+                    organizations (
                         name,
                         picture,
                         url
@@ -88,7 +88,6 @@ const UserHome = () => {
                     advisor
                 `,
                 )
-                .neq("organizations.url", "epsilon") // internal maintenance meetings
                 .in("organization_id", userOrgIds)
                 .gte("start_time", new Date().toISOString())
                 .order("start_time")
