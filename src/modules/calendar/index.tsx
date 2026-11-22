@@ -34,7 +34,7 @@ const loadDay = async (day: Dayjs) => {
         name,
         floor
       ),
-      organizations!inner (
+      organizations (
         id,
         url,
         name,
@@ -43,7 +43,6 @@ const loadDay = async (day: Dayjs) => {
       advisor
     `,
         )
-        .neq("organizations.url", "epsilon") // internal maintenance meetings
         .gte("start_time", dayStart)
         .lt("start_time", nextDayStart);
     if (error || !data) throw error ?? new Error("No meetings returned");
