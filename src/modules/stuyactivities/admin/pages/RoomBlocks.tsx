@@ -51,6 +51,7 @@ const RoomBlocks = () => {
     const [rooms, setRooms] = useState<RoomOption[]>([]);
     const [blocks, setBlocks] = useState<RoomBlock[]>([]);
     const [selectedRoomIds, setSelectedRoomIds] = useState<number[]>([]);
+    const [unblockIds, setUnblockIds] = useState<number[]>([]);
     const [reason, setReason] = useState("");
     const [loading, setLoading] = useState(true);
     const [confirming, setConfirming] = useState<Preview | null>(null);
@@ -160,6 +161,7 @@ const RoomBlocks = () => {
     const pickDay = (next: Dayjs) => {
         setDay(next.startOf("day"));
         setSelectedRoomIds([]);
+        setUnblockIds([]);
         resetPreview();
     };
 
@@ -289,19 +291,39 @@ const RoomBlocks = () => {
         await fetchBlocks();
     };
 
-    const unblock = async (block: RoomBlock) => {
+    const blockedRooms = dayBlocks.map((block) => ({
+        id: block.room_id,
+        name: block.rooms?.name ?? "Unknown room",
+        floor: block.rooms?.floor,
+    }));
+    const toUnblock = unblockIds.filter((id) =>
+        dayBlocks.some((block) => block.room_id === id),
+    );
+
+    /* each reason with how many rooms it covers */
+    const reasons = Array.from(
+        dayBlocks.reduce((counts, block) => {
+            if (block.reason) {
+                counts.set(block.reason, (counts.get(block.reason) ?? 0) + 1);
+            }
+            return counts;
+        }, new Map<string, number>()),
+    );
+
+    const unblock = async () => {
         const { error } = await supabase
             .from("room_blocks")
             .delete()
-            .eq("room_id", block.room_id)
-            .eq("blocked_on", block.blocked_on);
+            .eq("blocked_on", dayKey)
+            .in("room_id", toUnblock);
         if (error) {
-            enqueueSnackbar("Failed to unblock room.", { variant: "error" });
+            enqueueSnackbar("Failed to unblock rooms.", { variant: "error" });
             return;
         }
-        enqueueSnackbar(`${block.rooms?.name ?? "Room"} unblocked.`, {
+        enqueueSnackbar(`${plural(toUnblock.length, "room")} unblocked.`, {
             variant: "success",
         });
+        setUnblockIds([]);
         await fetchBlocks();
     };
 
@@ -365,40 +387,47 @@ const RoomBlocks = () => {
                 <div className="flex-1 min-w-0 w-full">
                     <h2>{day.format("dddd, MMMM D, YYYY")}</h2>
 
-                    <div className="bg-layer-1 rounded-xl shadow-control p-4 mt-3">
-                        <h4 className="mb-2">Blocked rooms</h4>
-                        {loading ? (
-                            <p>Loading...</p>
-                        ) : dayBlocks.length ? (
-                            <div className="flex flex-col">
-                                {dayBlocks.map((block) => (
-                                    <div
-                                        key={block.room_id}
-                                        className="flex items-center justify-between gap-3 py-2 border-b border-divider last:border-b-0"
-                                    >
-                                        <div className="min-w-0">
-                                            <p className="important">
-                                                {block.rooms?.name ??
-                                                    "Unknown room"}
-                                            </p>
-                                            {block.reason && (
-                                                <p className="break-words">
-                                                    {block.reason}
-                                                </p>
-                                            )}
-                                        </div>
-                                        <AsyncButton
-                                            onClick={() => unblock(block)}
-                                        >
-                                            Unblock
-                                        </AsyncButton>
-                                    </div>
-                                ))}
-                            </div>
-                        ) : (
-                            <p>No rooms are blocked on this day.</p>
-                        )}
-                    </div>
+                    {loading ? (
+                        <p className="mt-3">Loading...</p>
+                    ) : dayBlocks.length ? (
+                        <>
+                            {reasons.length > 0 && (
+                                <div className="mt-3">
+                                    {reasons.map(([text, count]) => (
+                                        <p key={text} className="break-words">
+                                            <span className="important">
+                                                {text}
+                                            </span>
+                                            {reasons.length > 1 ||
+                                            count < dayBlocks.length
+                                                ? ` · ${plural(count, "room")}`
+                                                : ""}
+                                        </p>
+                                    ))}
+                                </div>
+                            )}
+                            <RoomChecklist
+                                title="Blocked rooms"
+                                rooms={blockedRooms}
+                                selected={unblockIds}
+                                onChange={setUnblockIds}
+                            />
+                            <AsyncButton
+                                onClick={unblock}
+                                disabled={!toUnblock.length}
+                                sx={{ width: "100%" }}
+                            >
+                                {toUnblock.length
+                                    ? `Unblock ${plural(toUnblock.length, "Room")}`
+                                    : "Unblock Rooms"}
+                            </AsyncButton>
+                            <hr className="border-divider my-6" />
+                        </>
+                    ) : (
+                        <p className="mt-3">
+                            No rooms are blocked on this day.
+                        </p>
+                    )}
 
                     {isPast ? (
                         <p className="mt-4">
@@ -421,6 +450,7 @@ const RoomBlocks = () => {
                                 />
 
                                 <RoomChecklist
+                                    title="Open rooms"
                                     rooms={openRooms}
                                     selected={selectedRoomIds}
                                     onChange={(ids) => {

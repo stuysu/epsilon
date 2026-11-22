@@ -23,8 +23,10 @@ const RoomChecklist = ({
     rooms,
     selected,
     onChange,
+    title = "Rooms",
 }: {
     rooms: RoomOption[];
+    title?: string;
     selected: number[];
     onChange: (selected: number[]) => void;
 }) => {
@@ -58,7 +60,7 @@ const RoomChecklist = ({
     return (
         <div className="my-4">
             <div className="flex flex-wrap items-center justify-between gap-2 mb-3">
-                <h4>Rooms</h4>
+                <h4>{title}</h4>
                 <div className="flex flex-wrap items-center gap-2">
                     <p>
                         {selectedCount} of {rooms.length} selected
