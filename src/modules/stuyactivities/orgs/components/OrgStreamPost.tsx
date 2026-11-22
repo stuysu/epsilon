@@ -121,14 +121,13 @@ const OrgStreamPost = ({
             ></div>
 
             <div className={"bg-layer-2 p-4 rounded-lg h-fit"}>
-                <div
+                <h3
                     className={
-                        "f mb-4 max-h-[2lh] overflow-ellipsis overflow-hidden [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]"
+                        "mb-4 max-h-[2lh] overflow-ellipsis overflow-hidden [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:2]"
                     }
-                    style={{fontSize: "1.5rem"}}
                 >
-                    <MarkupDisplayer text={content.title} />
-                </div>
+                    <MarkupDisplayer text={content.title} inline />
+                </h3>
 
                 <div
                     className={

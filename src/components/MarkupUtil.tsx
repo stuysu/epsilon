@@ -1,6 +1,6 @@
 import { MDXEditor, headingsPlugin, linkPlugin, linkDialogPlugin, toolbarPlugin, tablePlugin, listsPlugin, BlockTypeSelect, BoldItalicUnderlineToggles, CreateLink, InsertTable, HighlightToggle, ListsToggle, StrikeThroughSupSubToggles, UndoRedo, MDXEditorMethods, quotePlugin, thematicBreakPlugin, insertThematicBreak$, InsertThematicBreak } from "@mdxeditor/editor";
-import Markdown from "markdown-to-jsx";
-import { ReactNode, Ref, useContext, useEffect } from "react";
+import Markdown, { MarkdownToJSX, RuleType } from "markdown-to-jsx";
+import { createElement, ReactNode, Ref, useContext, useEffect } from "react";
 import { ThemeContext } from "../contexts/ThemeProvider";
 import '@mdxeditor/editor/style.css';
 
@@ -8,7 +8,6 @@ export function MarkupEditor({ callback, editableClassName = "", defaultText = "
     const theme = useContext(ThemeContext);
 
     return (
-        passedRef !== undefined ?
             <>
                 <MDXEditor
                     plugins={[
@@ -40,43 +39,6 @@ export function MarkupEditor({ callback, editableClassName = "", defaultText = "
                     markdown={insertText}
                     onChange={(current) => callback(current)}
                     ref={passedRef}
-
-
-                    /* need to store in optional parameters and apply here */
-                    placeholder={defaultText}
-                    contentEditableClassName={editableClassName}
-                //for special cases such as bigger boxes ^
-                />
-            </>
-            :
-            <>
-                <MDXEditor
-                    plugins={[
-                        headingsPlugin(),
-                        linkPlugin(),
-                        linkDialogPlugin(),
-                        tablePlugin(),
-                        listsPlugin(),
-
-                        toolbarPlugin(
-                            {
-                                toolbarContents: () => {
-                                    return (<>
-                                        <BlockTypeSelect />
-                                        <BoldItalicUnderlineToggles />
-                                        <CreateLink />
-                                        <InsertTable />
-                                        <HighlightToggle />
-                                        <ListsToggle options={["check"]} />
-                                        <StrikeThroughSupSubToggles />
-                                        <UndoRedo />
-                                    </>)
-                                }
-                            }
-                        )]}
-                    markdown={insertText}
-                    onChange={(current) => callback(current)}
-
 
 
                     /* need to store in optional parameters and apply here */
@@ -153,8 +115,14 @@ const Td = ({ children, style, ...props }: CellProps<'th'>): React.JSX.Element =
     );
 };
 
+/* added link override. applied respective generated regex */
+const A = ({ href = "", ...props }: React.ComponentPropsWithoutRef<'a'>): React.JSX.Element => (
+    <a {...props} href={/^([a-z][a-z0-9+.-]*:|\/|#)/i.test(href) ? href : `https://${href}`} />
+);
+
 const options = {
     overrides: {
+        a: A,
         table: Table,
         th: Th,
         td: Td,
@@ -164,11 +132,27 @@ const options = {
     },
 };
 
-export function MarkupDisplayer({ text }: { text: string }) {
+/* only these html tags are rendered. */
+const ALLOWED_TAGS = ["u"];
+const sanitizeHtml: MarkdownToJSX.Options["renderRule"] = (next, node, renderChildren, state) => {
+    if (node.type === RuleType.htmlBlock) {
+        const children = renderChildren(node.children || [], state);
+        return ALLOWED_TAGS.includes(node.tag)
+            ? createElement(node.tag, { key: state.key }, children)
+            : createElement("span", { key: state.key }, children);
+    }
+    if (node.type === RuleType.htmlSelfClosing || node.type === RuleType.htmlComment) {
+        return null;
+    }
+    return next();
+};
+
+export function MarkupDisplayer({ text, inline = false }: { text: string, inline?: boolean }) {
     return (
         <>
             <Markdown options={{
-                disableParsingRawHTML: true,
+                renderRule: sanitizeHtml,
+                forceInline: inline,
                 ...options
             }}>
                 {text}

@@ -191,9 +191,9 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                             <div
                                 className={"relative p-4 bg-layer-2 rounded-lg"}
                             >
-                                <p className={"text-wrap overflow-none"}>
+                                <div className={"text-wrap overflow-hidden"}>
                                     <MarkupDisplayer text={message.content} />
-                                </p>
+                                </div>
 
                                 {message.users.id === user.id && (
                                     <div
