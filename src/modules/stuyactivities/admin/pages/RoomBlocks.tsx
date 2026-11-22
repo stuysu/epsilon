@@ -408,6 +408,7 @@ const RoomBlocks = () => {
                             )}
                             <RoomChecklist
                                 title="Blocked rooms"
+                                collapsible
                                 rooms={blockedRooms}
                                 selected={unblockIds}
                                 onChange={setUnblockIds}
