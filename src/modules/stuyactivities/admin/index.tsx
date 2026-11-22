@@ -14,6 +14,7 @@ import SendMessage from "./pages/SendMessage";
 import Announcements from "./pages/Announcements";
 import Rooms from "./pages/Rooms";
 import Reserve from "./pages/Reserve";
+import RoomBlocks from "./pages/RoomBlocks";
 import Valentines from "./pages/Valentines";
 import ApprovedValentines from "./pages/ApprovedValentines";
 import ContentUnavailable from "../../../components/ui/content/ContentUnavailable";
@@ -64,6 +65,11 @@ export const getLinks = (user: UserContextType) => {
             to: "/admin/reserve",
             label: "Reserve",
             icon: "bx-calendar-check",
+        },
+        {
+            to: "/admin/block-rooms",
+            label: "Block Rooms",
+            icon: "bx-calendar-x",
         },
         {
             to: "/admin/add-user",
@@ -139,6 +145,7 @@ const AdminRouter = () => {
                 <Route path="/announcements" Component={Announcements} />
                 <Route path="/rooms" Component={Rooms} />
                 <Route path="/reserve" Component={Reserve} />
+                <Route path="/block-rooms" Component={RoomBlocks} />
                 <Route path="/add-user" Component={AddUser} />
                 {VALENTINES && (
                     <>

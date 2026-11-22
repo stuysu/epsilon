@@ -37,7 +37,6 @@ const getDefaultEndTime = () => {
     return isoToWallClock().startOf("day").hour(17).minute(0);
 };
 
-/* TODO: block off rooms on days they are unavailable */
 const AdminUpsertMeeting = ({
     id,
     title,
@@ -265,15 +264,28 @@ const AdminUpsertMeeting = ({
                 meeting_id: number;
             };
 
-            const { data: bookedRoomsRaw, error } = await supabase
-                .rpc("get_booked_rooms", {
-                    meeting_start: wallClockToISO(startTime),
-                    meeting_end: wallClockToISO(endTime),
-                })
-                .returns<RoomMeta[]>();
+            const [
+                { data: bookedRoomsRaw, error },
+                { data: blocks, error: blocksError },
+            ] = await Promise.all([
+                supabase
+                    .rpc("get_booked_rooms", {
+                        meeting_start: wallClockToISO(startTime),
+                        meeting_end: wallClockToISO(endTime),
+                    })
+                    .returns<RoomMeta[]>(),
+                supabase
+                    .from("room_blocks")
+                    .select("room_id")
+                    .gte("blocked_on", startTime.format("YYYY-MM-DD"))
+                    .lte(
+                        "blocked_on",
+                        endTime.subtract(1, "minute").format("YYYY-MM-DD"),
+                    ),
+            ]);
             if (stale) return;
 
-            if (error) {
+            if (error || blocksError) {
                 enqueueSnackbar(
                     "Error fetching booked rooms. Contact it@stuysu.org for support.",
                     { variant: "error" },
@@ -304,7 +316,24 @@ const AdminUpsertMeeting = ({
                 "SATURDAY",
             ];
 
+            /* a meeting already in a blocked room keeps it while it stays
+            on the same days, like the server allows */
+            const keepsRoom = (blockedId: number) =>
+                !!id &&
+                blockedId === room_id &&
+                !!start &&
+                !!end &&
+                !startTime.isBefore(isoToWallClock(start), "day") &&
+                !endTime
+                    .subtract(1, "minute")
+                    .isAfter(isoToWallClock(end).subtract(1, "minute"), "day");
+
+            const blockedRoomIds = (blocks ?? [])
+                .map((block) => block.room_id)
+                .filter((blockedId) => !keepsRoom(blockedId));
+
             const availRooms = allRooms.filter((room) => {
+                if (blockedRoomIds.includes(room.id)) return false;
                 if (
                     ~filteredBookedRooms.findIndex(
                         (meta) => meta.room_id === room.id,
@@ -356,6 +385,9 @@ const AdminUpsertMeeting = ({
         enqueueSnackbar,
         roomGrants,
         organization.id,
+        room_id,
+        start,
+        end,
     ]);
 
     useEffect(() => {

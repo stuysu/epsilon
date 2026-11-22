@@ -142,16 +142,22 @@ const PickerField = ({
 
 const WEEKDAYS = ["S", "M", "T", "W", "T", "F", "S"];
 
-const Calendar = ({
+export const Calendar = ({
     value,
     onSelect,
+    marked,
+    markLabel,
+    today = dayjs(),
 }: {
     value: Dayjs | null;
     onSelect: (day: Dayjs) => void;
+    today?: Dayjs;
+    /* days that get a dot under the number */
+    marked?: (day: Dayjs) => boolean;
+    markLabel?: string;
 }) => {
     const selected = value?.isValid() ? value : null;
-    const [month, setMonth] = useState((selected ?? dayjs()).startOf("month"));
-    const today = dayjs();
+    const [month, setMonth] = useState((selected ?? today).startOf("month"));
     const blanks = month.day();
     const days = Array.from({ length: month.daysInMonth() }, (_, i) =>
         month.date(i + 1),
@@ -240,21 +246,28 @@ const Calendar = ({
                 ))}
                 {days.map((day) => {
                     const isSelected = selected?.isSame(day, "day");
+                    const isMarked = marked?.(day);
                     return (
                         <button
                             key={day.date()}
                             type="button"
-                            aria-label={day.format("MMMM D, YYYY")}
+                            aria-label={`${day.format("MMMM D, YYYY")}${isMarked && markLabel ? `, ${markLabel}` : ""}`}
                             aria-pressed={Boolean(isSelected)}
                             tabIndex={day.isSame(tabStop, "day") ? 0 : -1}
                             onClick={() => onSelect(day)}
-                            className={`flex h-9 w-9 items-center justify-center rounded-full transition-colors ${
+                            className={`relative flex h-9 w-9 items-center justify-center rounded-full transition-colors ${
                                 isSelected
                                     ? "bg-accent text-white"
                                     : "text-typography-1 hover:bg-layer-3"
                             } ${day.isSame(today, "day") && !isSelected ? "border border-divider" : ""}`}
                         >
                             {day.date()}
+                            {isMarked && (
+                                <span
+                                    aria-hidden
+                                    className={`absolute bottom-1 h-1 w-1 rounded-full ${isSelected ? "bg-white" : "bg-red"}`}
+                                />
+                            )}
                         </button>
                     );
                 })}
