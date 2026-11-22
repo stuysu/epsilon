@@ -372,7 +372,7 @@ const RoomBlocks = () => {
         <div className={"w-full p-4 sm:p-12"}>
             <h1>Block Rooms</h1>
             <hr className="border-divider" />
-            <p className="my-4 max-w-2xl">
+            <p className="my-4">
                 Block rooms for a whole day. Meetings in those rooms that day
                 are cancelled and their Activities are emailed.
             </p>
