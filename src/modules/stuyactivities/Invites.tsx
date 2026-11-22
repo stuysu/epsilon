@@ -9,10 +9,13 @@ import ItemList from "../../components/ui/lists/ItemList";
 import { PendingInvite, useInvites } from "../../contexts/InvitesProvider";
 import { supabase } from "../../lib/supabaseClient";
 import { functionErrorText } from "../../utils/FunctionErrors";
+import useLiveRefresh from "../../utils/useLiveRefresh";
 
 const Invites = () => {
     const { invites, refresh } = useInvites();
     const { enqueueSnackbar } = useSnackbar();
+
+    useLiveRefresh(refresh, 10000);
 
     const accept = async (invite: PendingInvite) => {
         const { error } = await supabase.functions.invoke("accept-invite", {

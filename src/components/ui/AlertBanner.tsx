@@ -67,9 +67,9 @@ const AlertBanner = ({
             </div>
             {onClose && (
                 <button
+                    aria-label="Close"
                     {...closeButtonProps}
                     type="button"
-                    aria-label="Close"
                     onClick={onClose}
                     className="touch-target -mr-1 flex h-8 w-8 shrink-0 items-center justify-center rounded-full transition-colors hover:bg-black/10"
                 >

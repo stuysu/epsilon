@@ -20,6 +20,7 @@ import { Helmet } from "react-helmet";
 import { CSSTransition, TransitionGroup } from "react-transition-group";
 import "../../../styles/transitions.css";
 import OrgNav from "./components/OrgNav";
+import InviteBanner from "../../../components/ui/InviteBanner";
 
 import NotFound from "./pages/NotFound";
 import Overview from "./pages/Overview";
@@ -269,6 +270,13 @@ const OrgRouter = () => {
                         </div>
 
                         <div className="w-full mt-2.5"></div>
+                        <div className="mx-3 sm:mx-12 empty:hidden mb-3">
+                            {/* members (or pending joiners) already have a LEAVE or CANCEL JOIN button */}
+                            {!org.memberships?.some(
+                                (membership) =>
+                                    membership.users?.id === user.id,
+                            ) && <InviteBanner key={org.id} orgId={org.id} />}
+                        </div>
                         <div className={"ml-3 sm:ml-12 sm:mr-0 mr-3 flex"}>
                             <aside
                                 className={
