@@ -143,29 +143,39 @@ const OrgApproval = ({
                     <Divider />
 
                     <h4>Origin Story</h4>
-                    <p>{org.mission}</p>
+                    <p className="whitespace-pre-line break-words">
+                        {org.mission}
+                    </p>
                     <Divider />
 
                     <h4>Goals</h4>
-                    <p>{org.goals}</p>
+                    <p className="whitespace-pre-line break-words">
+                        {org.goals}
+                    </p>
                     <Divider />
 
                     <h4>Activity Description</h4>
-                    <p>{org.purpose}</p>
+                    <p className="whitespace-pre-line break-words">
+                        {org.purpose}
+                    </p>
                     <Divider />
 
                     <h4>Appointment Procedures</h4>
-                    <p>{org.appointment_procedures}</p>
+                    <p className="whitespace-pre-line break-words">
+                        {org.appointment_procedures}
+                    </p>
                     <Divider />
 
                     <h4>Uniqueness</h4>
-                    <p>{org.uniqueness}</p>
+                    <p className="whitespace-pre-line break-words">
+                        {org.uniqueness}
+                    </p>
                     <Divider />
 
                     <h4 className={org.is_returning ? "text-yellow" : ""}>
                         Returning Activity Declaration
                     </h4>
-                    <p>
+                    <p className="whitespace-pre-line break-words">
                         {org.is_returning
                             ? org?.returning_info || "N/A"
                             : "Claims to not be a returning Activity."}
@@ -173,11 +183,15 @@ const OrgApproval = ({
                     <Divider />
 
                     <h4>Meeting Description</h4>
-                    <p>{org.meeting_description}</p>
+                    <p className="whitespace-pre-line break-words">
+                        {org.meeting_description}
+                    </p>
                     <Divider />
 
                     <h4>Meeting Schedule</h4>
-                    <p>{org.meeting_schedule}</p>
+                    <p className="whitespace-pre-line break-words">
+                        {org.meeting_schedule}
+                    </p>
                     <Divider />
 
                     <h4>Meeting Days</h4>

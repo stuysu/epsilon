@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 
 import { supabase } from "../../../../../lib/supabaseClient";
 
@@ -37,6 +37,23 @@ const Organization = () => {
         faculty_email: undefined,
     });
 
+    // the origin story isn't shown publicly, so the club page doesn't load it
+    const [mission, setMission] = useState<string>();
+    useEffect(() => {
+        if (!organization.id || organization.id === -1) return;
+        supabase
+            .from("organizations")
+            .select("mission")
+            .eq("id", organization.id)
+            .maybeSingle()
+            .then(({ data }) => setMission(data?.mission ?? ""));
+        // reloads after a save updates the club
+    }, [organization]);
+    const withMission = useMemo(
+        () => ({ ...organization, mission }),
+        [organization, mission],
+    );
+
     useEffect(() => {
         const fetchEdits = async () => {
             const { data, error } = await supabase
@@ -67,14 +84,24 @@ const Organization = () => {
                 }
             >
                 <h1>Amend Charter</h1>
-                <p>
-                    You may update your organization's charter here. Please note
-                    that edits are requests to amend, which will be reviewed by
-                    the Student Union.
-                </p>
+                {["UNLOCKED", "ADMIN"].includes(organization.state) ? (
+                    <p>
+                        You may update your organization&apos;s charter here.
+                        Changes to the name, picture, description, origin story,
+                        goals, uniqueness, appointment procedures and meeting
+                        description are reviewed by the Student Union first.
+                        Everything else saves right away.
+                    </p>
+                ) : (
+                    <p>
+                        You may update your organization&apos;s charter here.
+                        Please note that edits are requests to amend, which will
+                        be reviewed by the Student Union.
+                    </p>
+                )}
             </div>
             <OrgEditor
-                organization={organization}
+                organization={withMission}
                 existingEdit={pendingEdit}
                 setPendingEdit={setPendingEdit}
             />
