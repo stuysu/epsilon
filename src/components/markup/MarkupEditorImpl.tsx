@@ -24,6 +24,7 @@ import "@mdxeditor/editor/style.css";
 import { useContext, useMemo, useState } from "react";
 import { ThemeContext } from "../../contexts/ThemeProvider";
 import type { MarkupEditorProps } from "./MarkupEditor";
+import { listCommandsPlugin } from "./listCommands";
 
 // The editor's parser reads "<" as MDX, so older plain-text posts like
 // "a < b", "<3" or "<https://...>" fail to load. Bare "<" is escaped and
@@ -38,6 +39,16 @@ const escapeForEditor = (text: string) =>
             return match === "<" ? "\\<" : match;
         },
     );
+
+// Names that match what the buttons show; undo and redo drop the shortcut,
+// which differs by platform.
+const LABELS: Record<string, string> = {
+    "toolbar.undo": "Undo",
+    "toolbar.redo": "Redo",
+    "createLink.saveTooltip": "Save",
+    "createLink.cancelTooltip": "Cancel",
+    "createLink.urlPlaceholder": "Paste a link",
+};
 
 const MarkupEditorImpl = ({
     markdown = "",
@@ -56,6 +67,7 @@ const MarkupEditorImpl = ({
         () => [
             headingsPlugin({ allowedHeadingLevels: [1, 2, 3] }),
             listsPlugin(),
+            listCommandsPlugin(),
             quotePlugin(),
             linkPlugin(),
             linkDialogPlugin(),
@@ -123,10 +135,12 @@ const MarkupEditorImpl = ({
             }}
             placeholder={placeholder}
             plugins={plugins}
+            toMarkdownOptions={{ listItemIndent: "one", bullet: "-" }}
             translation={(key, defaultValue, interpolations = {}) =>
                 key === "contentArea.editableMarkdown"
                     ? name
-                    : Object.entries(interpolations).reduce(
+                    : LABELS[key] ??
+                      Object.entries(interpolations).reduce(
                           (text, [k, v]) =>
                               text.replaceAll(`{{${k}}}`, String(v)),
                           defaultValue,

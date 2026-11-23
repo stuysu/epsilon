@@ -97,9 +97,15 @@
         }
 
         /* options scroll inside their own short lists, so they are left out */
-        :where(a, button, input, select, textarea, [tabindex]):not(
-                [role="option"]
-            ) {
+        :where(
+                a,
+                button,
+                input,
+                select,
+                textarea,
+                [tabindex],
+                [contenteditable]
+            ):not([role="option"]) {
             scroll-margin-top: 3.5rem;
             scroll-margin-bottom: 4.5rem;
         }
@@ -526,7 +532,9 @@
 .markup-editor .mdxeditor {
     border-radius: 0.75rem;
     background: var(--layer-secondary);
-    overflow: hidden;
+    /* clip, not hidden, so the toolbar can stay stuck to the top while a long
+       post scrolls */
+    overflow: clip;
 }
 .markup-editor .mdxeditor:focus-within {
     box-shadow: 0 0 0 1px var(--text-tertiary);
@@ -535,7 +543,17 @@
     flex-wrap: wrap;
     height: auto;
     border-radius: 0;
-    background: var(--layer-tertiary);
+    /* the layer colours are see-through, so stack them on the page colour to
+       hide text scrolling under the stuck toolbar */
+    background: linear-gradient(var(--layer-tertiary), var(--layer-tertiary)),
+        linear-gradient(var(--layer-secondary), var(--layer-secondary)),
+        var(--bg-main);
+    z-index: 1;
+}
+/* short messages scroll inside the box instead of pushing Send off screen */
+.markup-editor-compact .mdxeditor-root-contenteditable {
+    max-height: 40vh;
+    overflow-y: auto;
 }
 .markup-editor .mdxeditor-toolbar :is(button, [role="combobox"]):focus-visible,
 :root

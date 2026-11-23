@@ -6,6 +6,8 @@ export default defineConfig(({ mode }) => {
 
     return {
         plugins: [react()],
+        // the editor breaks if a second copy of Lexical is bundled
+        resolve: { dedupe: ["lexical", "@lexical/list"] },
         envPrefix: "REACT_APP_",
         // the app reads its settings from process.env, which browsers don't have
         define: {

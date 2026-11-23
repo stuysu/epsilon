@@ -1,4 +1,5 @@
 import { KeyboardEvent, Suspense, lazy, useId, useRef } from "react";
+import { useEditorA11y } from "./editorA11y";
 
 export type MarkupEditorProps = {
     markdown?: string;
@@ -12,6 +13,15 @@ export type MarkupEditorProps = {
     tall?: boolean;
     // called on Ctrl/Cmd+Enter
     onSubmit?: () => unknown;
+    // shown in the placeholder's shortcut hint, e.g. "send"
+    submitVerb?: string;
+};
+
+// The shortcut hint only makes sense with a keyboard.
+const shortcutHint = (verb: string) => {
+    if (window.matchMedia?.("(pointer: coarse)").matches) return "";
+    const mac = /Mac|iPhone|iPad/.test(navigator.platform);
+    return ` (${mac ? "⌘" : "Ctrl"}+Enter to ${verb})`;
 };
 
 // The editor is large, so it loads only on pages that use it.
@@ -19,9 +29,15 @@ const MarkupEditorImpl = lazy(() => import("./MarkupEditorImpl"));
 
 // Initial content comes from `markdown`; change the component's `key` to reset it.
 const MarkupEditor = (props: MarkupEditorProps) => {
-    const { label, placeholder, compact, tall, onSubmit } = props;
+    const { label, compact, tall, onSubmit } = props;
+    const placeholder =
+        props.placeholder && onSubmit
+            ? props.placeholder + shortcutHint(props.submitVerb ?? "submit")
+            : props.placeholder;
     const labelId = useId();
     const submitting = useRef(false);
+    const groupRef = useRef<HTMLDivElement>(null);
+    useEditorA11y(groupRef);
 
     // Runs before the editor sees the key, so stopping it here keeps the
     // editor from handling it.
@@ -40,13 +56,21 @@ const MarkupEditor = (props: MarkupEditorProps) => {
             return;
         }
 
-        // Tab moves between table cells; elsewhere it leaves the editor
-        // instead of typing a tab character.
+        // Tab moves between table cells and nests list items (Shift+Tab
+        // un-nests); when there's nothing to do it leaves the editor instead
+        // of typing a tab character, so keyboard users never get stuck.
         if (e.key === "Tab" && !e.ctrlKey && !e.metaKey && !e.altKey) {
             const anchor = window.getSelection()?.anchorNode;
             const element =
                 anchor instanceof Element ? anchor : anchor?.parentElement;
-            if (!element?.closest("td, th")) e.stopPropagation();
+            const item = element?.closest("li");
+            const stays =
+                !!element?.closest("td, th") ||
+                (!!item &&
+                    (e.shiftKey
+                        ? !!item.parentElement?.closest("li")
+                        : !!item.previousElementSibling));
+            if (!stays) e.stopPropagation();
         }
     };
 
@@ -58,10 +82,13 @@ const MarkupEditor = (props: MarkupEditorProps) => {
 
     return (
         <div
+            ref={groupRef}
             role="group"
             aria-labelledby={label ? labelId : undefined}
-            aria-label={label ? undefined : props.ariaLabel ?? placeholder}
-            className={`markup-editor w-full min-w-0 ${tall ? "markup-editor-tall" : ""}`}
+            aria-label={
+                label ? undefined : props.ariaLabel ?? props.placeholder
+            }
+            className={`markup-editor w-full min-w-0 ${tall ? "markup-editor-tall" : ""} ${compact ? "markup-editor-compact" : ""}`}
             onKeyDownCapture={onKeyDown}
         >
             {label && (
@@ -78,7 +105,8 @@ const MarkupEditor = (props: MarkupEditorProps) => {
             >
                 <MarkupEditorImpl
                     {...props}
-                    ariaLabel={props.ariaLabel ?? label}
+                    placeholder={placeholder}
+                    ariaLabel={props.ariaLabel ?? label ?? props.placeholder}
                 />
             </Suspense>
         </div>

@@ -224,16 +224,17 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                     );
                 })}
             </div>
-            <div className={"w-full flex items-end mt-2 gap-4"}>
+            <div className="mt-2 flex w-full flex-col gap-2 sm:flex-row sm:items-end sm:gap-4">
                 <MarkupEditor
                     key={editorKey}
                     onChange={setMessage}
                     onSubmit={sendMessage}
-                    placeholder="Send a message... (Ctrl+Enter to send)"
+                    placeholder="Send a message"
+                    submitVerb="send"
                     ariaLabel="Message"
                     compact
                 />
-                <AsyncButton sx={{ flexShrink: 0 }} onClick={sendMessage}>
+                <AsyncButton className="shrink-0" onClick={sendMessage}>
                     Send
                 </AsyncButton>
             </div>
