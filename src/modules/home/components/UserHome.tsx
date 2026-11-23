@@ -11,7 +11,7 @@ import { supabase } from "../../../lib/supabaseClient";
 import useCachedQuery from "../../../lib/useCachedQuery";
 import UpcomingMeeting from "./UpcomingMeeting";
 import OrgStreamPost from "../../stuyactivities/orgs/components/OrgStreamPost";
-import DisplayLinks from "../../../components/DisplayLinks";
+import MarkupDisplayer from "../../../components/markup/MarkupDisplayer";
 import { Link } from "react-router-dom";
 import ItemList from "../../../components/ui/lists/ItemList";
 import { Scrollbars } from "react-custom-scrollbars-2";
@@ -369,7 +369,7 @@ const UserHome = () => {
                                                 key={i}
                                                 className={"p-4 bg-layer-2"}
                                             >
-                                                <DisplayLinks
+                                                <MarkupDisplayer
                                                     text={announcement.content}
                                                 />
                                             </div>

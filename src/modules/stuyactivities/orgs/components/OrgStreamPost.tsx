@@ -10,7 +10,7 @@ import OrgContext from "../../../../contexts/OrgContext";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import { Avatar } from "radix-ui";
 import UserDialog from "../../../../components/ui/overlays/UserDialog";
-import DisplayLinks from "../../../../components/DisplayLinks";
+import MarkupDisplayer from "../../../../components/markup/MarkupDisplayer";
 
 /* This post component will serve as both the org_admin and member post. depending on role, differeing functionality */
 const OrgStreamPost = ({
@@ -149,7 +149,7 @@ const OrgStreamPost = ({
                         "w-full overflow-y-scroll relative min-h-full max-h-[8lh]"
                     }
                 >
-                    <DisplayLinks text={content.description} />
+                    <MarkupDisplayer text={content.description} />
                 </div>
             </div>
             <UserDialog

@@ -4,7 +4,9 @@ import { useSnackbar } from "notistack";
 import UserContext from "../../../../contexts/UserContext";
 import { toNewYork } from "../../../../utils/NewYorkTime";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
-import TextInput from "../../../../components/ui/input/TextInput";
+import MarkupDisplayer from "../../../../components/markup/MarkupDisplayer";
+import MarkupEditor from "../../../../components/markup/MarkupEditor";
+import isBlankMarkdown from "../../../../components/markup/isBlankMarkdown";
 import UserDialog from "../../../../components/ui/overlays/UserDialog";
 import { Avatar } from "radix-ui";
 
@@ -24,6 +26,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
     const user = useContext(UserContext);
     const [messages, setMessages] = useState<OrgMessage[]>([]);
     const [message, setMessage] = useState("");
+    const [editorKey, setEditorKey] = useState(0);
     const { enqueueSnackbar } = useSnackbar();
 
     const chatBoxRef = useRef<HTMLDivElement>(null);
@@ -90,7 +93,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
 
     const sendMessage = async () => {
         const content = message.trim();
-        if (!content) {
+        if (isBlankMarkdown(content)) {
             enqueueSnackbar("Message cannot be empty", { variant: "error" });
             return;
         }
@@ -111,6 +114,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
         }
 
         setMessage("");
+        setEditorKey((k) => k + 1);
         const newMessages = [
             ...messages,
             {
@@ -211,19 +215,23 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                             </div>
 
                             <div className={"rounded-lg bg-layer-2 p-4"}>
-                                <p className={"text-wrap overflow-scroll"}>
-                                    {message.content}
-                                </p>
+                                <MarkupDisplayer
+                                    className="break-words"
+                                    text={message.content}
+                                />
                             </div>
                         </article>
                     );
                 })}
             </div>
-            <div className={"w-full flex items-center mt-2 gap-4"}>
-                <TextInput
+            <div className={"w-full flex items-end mt-2 gap-4"}>
+                <MarkupEditor
+                    key={editorKey}
+                    onChange={setMessage}
+                    onSubmit={sendMessage}
+                    placeholder="Send a message... (Ctrl+Enter to send)"
                     ariaLabel="Message"
-                    value={message}
-                    onChange={(e) => setMessage(e)}
+                    compact
                 />
                 <AsyncButton sx={{ flexShrink: 0 }} onClick={sendMessage}>
                     Send

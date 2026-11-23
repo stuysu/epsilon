@@ -5,6 +5,8 @@ import { useSnackbar } from "notistack";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
 import SwitchField from "../../../../../components/ui/input/SwitchField";
 import TextField from "../../../../../components/ui/input/TextField";
+import MarkupEditor from "../../../../../components/markup/MarkupEditor";
+import isBlankMarkdown from "../../../../../components/markup/isBlankMarkdown";
 
 /* if content is null, then it is creating post */
 const PostEditor = ({
@@ -26,6 +28,7 @@ const PostEditor = ({
 }) => {
     const { enqueueSnackbar } = useSnackbar();
     const [notifyMembers, setNotifyMembers] = useState(true);
+    const [editorKey, setEditorKey] = useState(0);
 
     const [postData, setPostData] = useState<Partial<Post>>({
         id: undefined,
@@ -49,17 +52,17 @@ const PostEditor = ({
     const onChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
 
-        setPostData({
-            ...postData,
+        setPostData((prev) => ({
+            ...prev,
             [name]: value,
-        });
+        }));
     };
 
     const createPost = async () => {
         if (!postData.title) {
             return enqueueSnackbar("Missing post title.", { variant: "error" });
         }
-        if (!postData.description) {
+        if (isBlankMarkdown(postData.description ?? "")) {
             return enqueueSnackbar("Missing post description.", {
                 variant: "error",
             });
@@ -85,6 +88,7 @@ const PostEditor = ({
 
         // reset values
         setNotifyMembers(true);
+        setEditorKey((k) => k + 1);
         setPostData({
             id: undefined,
             organizations: {
@@ -109,6 +113,15 @@ const PostEditor = ({
     };
 
     const savePost = async () => {
+        if (!postData.title?.trim()) {
+            return enqueueSnackbar("Missing post title.", { variant: "error" });
+        }
+        if (isBlankMarkdown(postData.description ?? "")) {
+            return enqueueSnackbar("Missing post description.", {
+                variant: "error",
+            });
+        }
+
         const payload = {
             title: postData.title,
             description: postData.description,
@@ -151,16 +164,18 @@ const PostEditor = ({
                     fullWidth
                 />
 
-                <TextField
-                    value={postData["description"]}
-                    name={"description"}
-                    label="Description"
-                    onChange={onChange}
-                    fullWidth
-                    multiline
-                    rows={7}
-                    sx={{ marginTop: "10px" }}
-                />
+                <div className="mt-2.5">
+                    <MarkupEditor
+                        key={`${content?.id ?? "new"}-${editorKey}`}
+                        markdown={content?.description ?? ""}
+                        onChange={(description) =>
+                            setPostData((prev) => ({ ...prev, description }))
+                        }
+                        label="Description"
+                        placeholder="Write your post"
+                        tall
+                    />
+                </div>
             </div>
             {content ? (
                 <>

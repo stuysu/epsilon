@@ -2,11 +2,13 @@ import { useSnackbar } from "notistack";
 import { useEffect, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
-import DisplayLinks from "../../../../components/DisplayLinks";
-import TextField from "../../../../components/ui/input/TextField";
+import MarkupDisplayer from "../../../../components/markup/MarkupDisplayer";
+import MarkupEditor from "../../../../components/markup/MarkupEditor";
+import isBlankMarkdown from "../../../../components/markup/isBlankMarkdown";
 
 const Announcements = () => {
     const [content, setContent] = useState("");
+    const [editorKey, setEditorKey] = useState(0);
     const { enqueueSnackbar } = useSnackbar();
     const [announcements, setAnnouncements] = useState<Announcement[]>([]);
     const [visibleAnnouncements, setVisibleAnnouncements] = useState(3);
@@ -33,7 +35,7 @@ const Announcements = () => {
     }, [enqueueSnackbar]);
 
     const createAnnouncement = async () => {
-        if (content === "") {
+        if (isBlankMarkdown(content)) {
             enqueueSnackbar("Announcement cannot be empty.", {
                 variant: "error",
             });
@@ -56,6 +58,7 @@ const Announcements = () => {
         }
 
         setContent("");
+        setEditorKey((k) => k + 1);
         setAnnouncements((prev) => [data, ...prev]);
     };
 
@@ -85,19 +88,12 @@ const Announcements = () => {
             </p>
             <div className={"w-full flex sm:flex-row flex-col gap-5"}>
                 <div className={"w-full sm:w-2/3"}>
-                    <TextField
-                        sx={{ width: "100%" }}
-                        multiline
-                        rows={3}
-                        value={content}
+                    <MarkupEditor
+                        key={editorKey}
+                        onChange={setContent}
+                        onSubmit={createAnnouncement}
                         label="Content"
-                        onChange={(e) => setContent(e.target.value)}
-                        onKeyDown={(e) => {
-                            if (e.key === "Enter" && e.ctrlKey) {
-                                e.preventDefault();
-                                createAnnouncement();
-                            }
-                        }}
+                        placeholder="Write an announcement (Ctrl+Enter to post)"
                     />
                     <AsyncButton
                         sx={{ width: "100%", marginTop: "10px" }}
@@ -125,7 +121,8 @@ const Announcements = () => {
                                             alignItems: "center",
                                         }}
                                     >
-                                        <DisplayLinks
+                                        <MarkupDisplayer
+                                            className="min-w-0 flex-1"
                                             text={announcement.content}
                                         />
                                         <AsyncButton

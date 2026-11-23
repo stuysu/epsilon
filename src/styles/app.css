@@ -373,3 +373,180 @@
     width: 0;
     height: 0;
 }
+
+/* rendered markdown (posts, announcements, SU chat) */
+.markup,
+.markup-editor .mdxeditor,
+:root .mdxeditor-popup-container {
+    /* lines and fills that stay visible on every theme, including orange */
+    --md-line: color-mix(in srgb, var(--text-primary) 25%, transparent);
+    --md-fill: color-mix(in srgb, var(--text-primary) 8%, transparent);
+    --md-mark: color-mix(in srgb, #ffd400 40%, transparent);
+}
+.markup {
+    overflow-wrap: anywhere;
+}
+.markup > * + * {
+    margin-top: 0.6em;
+}
+.markup :is(p, li, td, th, h4, h5, h6) {
+    white-space: pre-line;
+}
+/* global text styles set font-variation-settings, which overrides font-weight */
+.markup :is(strong, b, th),
+.markup-editor .mdxeditor-root-contenteditable :is(strong, b, th) {
+    font-weight: 700;
+    font-variation-settings: "wght" 700;
+}
+.markup :is(.markup-h1, .markup-h2, .markup-h3),
+.markup-editor .mdxeditor-root-contenteditable :is(h1, h2, h3) {
+    margin: 0.8em 0 0.3em;
+    color: var(--text-primary);
+    font-family: inherit;
+    font-weight: 700;
+    font-variation-settings: "wght" 700;
+    text-transform: none;
+    letter-spacing: normal;
+}
+.markup > :is(.markup-h1, .markup-h2, .markup-h3):first-child,
+.markup-editor .mdxeditor-root-contenteditable :is(h1, h2, h3):first-child {
+    margin-top: 0;
+}
+.markup .markup-h1,
+.markup-editor .mdxeditor-root-contenteditable h1 {
+    font-size: 1.35rem;
+    line-height: 1.2;
+}
+.markup .markup-h2,
+.markup-editor .mdxeditor-root-contenteditable h2 {
+    font-size: 1.15rem;
+    line-height: 1.25;
+}
+.markup .markup-h3,
+.markup-editor .mdxeditor-root-contenteditable h3 {
+    font-size: 1rem;
+    line-height: 1.3;
+}
+.markup :is(ul, ol),
+.markup-editor .mdxeditor-root-contenteditable :is(ul, ol) {
+    padding-left: 1.5rem;
+    color: var(--text-secondary);
+}
+.markup ul,
+.markup-editor .mdxeditor-root-contenteditable ul {
+    list-style-type: disc;
+}
+.markup ol,
+.markup-editor .mdxeditor-root-contenteditable ol {
+    list-style-type: decimal;
+}
+.markup li {
+    font-size: 0.9rem;
+    margin: 0.2em 0;
+}
+.markup li:has(> input[type="checkbox"]) {
+    list-style: none;
+    margin-left: -1.25rem;
+}
+.markup li > input[type="checkbox"] {
+    margin-right: 0.4rem;
+}
+.markup blockquote {
+    border-left: 3px solid var(--md-line);
+    padding-left: 0.75rem;
+}
+.markup hr {
+    border-color: var(--md-line);
+}
+.markup :is(code, pre) {
+    font-size: 0.85em;
+    background: var(--md-fill);
+    border-radius: 0.3rem;
+}
+.markup code {
+    padding: 0.1em 0.3em;
+}
+.markup pre {
+    padding: 0.5rem 0.75rem;
+    white-space: pre-wrap;
+    overflow-x: auto;
+}
+.markup pre code {
+    padding: 0;
+    background: none;
+}
+.markup mark,
+.markup-editor .mdxeditor-root-contenteditable mark {
+    background: var(--md-mark);
+    color: var(--text-primary);
+    border-radius: 0.15em;
+}
+.markup-table {
+    overflow-x: auto;
+}
+.markup table {
+    border-collapse: collapse;
+    font-size: 0.9rem;
+}
+.markup :is(th, td) {
+    border: 1px solid var(--md-line);
+    padding: 0.4rem 0.75rem;
+    text-align: left;
+    color: var(--text-secondary);
+}
+.markup th {
+    background: var(--md-fill);
+    color: var(--text-primary);
+}
+
+/* markdown editor; the library's own variables are mapped onto the theme.
+   Popups (link dialog, menus) render outside the editor, so they get them too;
+   :root outranks the library's stylesheet, which loads later. */
+.markup-editor .mdxeditor,
+:root .mdxeditor-popup-container {
+    --font-body: inherit;
+    --basePageBg: transparent;
+    --baseBase: var(--bg-main);
+    --baseBgSubtle: var(--layer-secondary);
+    --baseBg: var(--md-fill);
+    --baseBgHover: var(--md-fill);
+    --baseBgActive: var(--md-line);
+    --baseLine: var(--md-line);
+    --baseBorder: var(--md-line);
+    --baseBorderHover: var(--text-tertiary);
+    --baseSolid: var(--text-secondary);
+    --baseText: var(--text-secondary);
+    --baseTextContrast: var(--text-primary);
+}
+:root .mdxeditor-popup-container {
+    --basePageBg: var(--bg-main);
+    z-index: 100;
+    color: var(--text-primary);
+}
+.markup-editor .mdxeditor {
+    border-radius: 0.75rem;
+    background: var(--layer-secondary);
+    overflow: hidden;
+}
+.markup-editor .mdxeditor:focus-within {
+    box-shadow: 0 0 0 1px var(--text-tertiary);
+}
+.markup-editor .mdxeditor-toolbar {
+    flex-wrap: wrap;
+    height: auto;
+    border-radius: 0;
+    background: var(--layer-tertiary);
+}
+.markup-editor .mdxeditor-toolbar :is(button, [role="combobox"]):focus-visible,
+:root
+    .mdxeditor-popup-container
+    :is(button, input, [role="option"]):focus-visible {
+    outline: 2px solid var(--text-primary);
+    outline-offset: 1px;
+}
+.markup-editor .mdxeditor-root-contenteditable {
+    color: var(--text-secondary);
+}
+.markup-editor-tall .mdxeditor-root-contenteditable > div {
+    min-height: 10rem;
+}
