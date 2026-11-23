@@ -1,6 +1,6 @@
 import { supabase } from "../../../../lib/supabaseClient";
 
-import React, { useContext, useState } from "react";
+import React, { useContext, useEffect, useId, useRef, useState } from "react";
 
 import PostEditor from "../org_admin/components/PostEditor";
 import { useSnackbar } from "notistack";
@@ -26,6 +26,24 @@ const OrgStreamPost = ({
     const [editing, setEditing] = useState(false);
     const [confirmingDelete, setConfirmingDelete] = useState(false);
     const organization = useContext(OrgContext);
+    const bodyId = useId();
+    const bodyRef = useRef<HTMLDivElement>(null);
+    const [expanded, setExpanded] = useState(false);
+    const [overflowing, setOverflowing] = useState(false);
+
+    // Long posts are cut to a few lines until "Show more" is pressed.
+    useEffect(() => {
+        const body = bodyRef.current;
+        const inner = body?.firstElementChild;
+        if (!body || !inner || expanded) return;
+        const measure = () =>
+            setOverflowing(inner.scrollHeight > body.clientHeight + 1);
+        const observer = new ResizeObserver(measure);
+        observer.observe(body);
+        observer.observe(inner);
+        measure();
+        return () => observer.disconnect();
+    }, [expanded, editing]);
 
     const deletePost = async () => {
         const { data, error } = await supabase
@@ -88,7 +106,7 @@ const OrgStreamPost = ({
     const timeStr = `${postTime.month() + 1}/${postTime.date()}/${postTime.year()}`;
 
     return (
-        <article className="w-full relative p-1 rounded-xl h-fit max-h-96 border-none shadow-prominent bg-layer-1">
+        <article className="w-full relative p-1 rounded-xl h-fit border-none shadow-prominent bg-layer-1">
             <div className={"m-4 flex flex-wrap items-center gap-2"}>
                 <Avatar.Root className="w-10 h-10 rounded-md overflow-hidden block">
                     <Avatar.Image
@@ -145,12 +163,38 @@ const OrgStreamPost = ({
                 </h3>
 
                 <div
-                    className={
-                        "w-full overflow-y-scroll relative min-h-full max-h-[8lh]"
-                    }
+                    id={bodyId}
+                    ref={bodyRef}
+                    className={`w-full relative ${
+                        expanded
+                            ? ""
+                            : "max-h-[8lh] overflow-hidden" +
+                              (overflowing
+                                  ? " [mask-image:linear-gradient(to_bottom,black_65%,transparent)]"
+                                  : "")
+                    }`}
                 >
-                    <MarkupDisplayer text={content.description} />
+                    <div>
+                        <MarkupDisplayer text={content.description} />
+                    </div>
                 </div>
+                {overflowing && (
+                    <button
+                        type="button"
+                        aria-expanded={expanded}
+                        aria-controls={bodyId}
+                        onClick={() => setExpanded(!expanded)}
+                        className="mt-2 flex min-h-11 items-center gap-1 rounded-lg text-sm font-semibold text-typography-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                    >
+                        {expanded ? "Show less" : "Show more"}
+                        <i
+                            aria-hidden="true"
+                            className={`bx bx-chevron-down text-lg transition-transform ${
+                                expanded ? "rotate-180" : ""
+                            }`}
+                        />
+                    </button>
+                )}
             </div>
             <UserDialog
                 title="Delete this post?"

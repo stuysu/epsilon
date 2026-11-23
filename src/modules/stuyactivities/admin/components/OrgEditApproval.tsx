@@ -158,20 +158,17 @@ const OrgEditApproval = ({
     };
 
     return (
-        <div className="m-10">
-            <div className="mb-10 flex flex-col sm:flex-row justify-between items-center">
+        <div className="m-4 sm:m-10">
+            <div className="mb-6 sm:mb-10 flex flex-col sm:flex-row justify-between gap-4 sm:items-center">
                 <h1 className={"font-['instrument-serif'] font-normal"}>
                     <span className={"text-accent"}>Charter Changes: </span>{" "}
                     {edit.organization_name}
                 </h1>
-                <div className={"flex flex-row w-min"}>
-                    <AsyncButton onClick={onBack} sx={{ marginRight: "10px" }}>
-                        Back
-                    </AsyncButton>
+                <div className="flex flex-wrap gap-2.5 sm:shrink-0">
+                    <AsyncButton onClick={onBack}>Back</AsyncButton>
                     <AsyncButton
                         onClick={approve}
                         color="success"
-                        sx={{ marginRight: "10px" }}
                         disabled={buttonsDisabled}
                     >
                         Approve
@@ -179,7 +176,6 @@ const OrgEditApproval = ({
                     <AsyncButton
                         onClick={reject}
                         color="secondary"
-                        sx={{ marginRight: "10px" }}
                         disabled={buttonsDisabled}
                     >
                         Reject

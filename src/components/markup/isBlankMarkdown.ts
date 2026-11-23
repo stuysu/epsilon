@@ -1,5 +1,5 @@
 // The editor can produce "content" with no visible text, such as "&#x20;",
-// "*" for an empty bullet or "#" for an empty heading.
+// "-" for an empty bullet or "#" for an empty heading.
 const isBlankMarkdown = (markdown: string) =>
     markdown
         .replace(/&(#x?[0-9a-f]+|nbsp);/gi, "")

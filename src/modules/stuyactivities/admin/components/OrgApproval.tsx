@@ -78,19 +78,16 @@ const OrgApproval = ({
     };
 
     return (
-        <div className="m-10">
-            <div className="mb-10 flex flex-col sm:flex-row justify-between items-center">
+        <div className="m-4 sm:m-10">
+            <div className="mb-6 sm:mb-10 flex flex-col sm:flex-row justify-between gap-4 sm:items-center">
                 <h1 className={"font-['instrument-serif'] font-normal"}>
                     New Charter: {org.name}
                 </h1>
-                <div>
-                    <AsyncButton onClick={onBack} sx={{ marginRight: "10px" }}>
-                        Back
-                    </AsyncButton>
+                <div className="flex flex-wrap gap-2.5 sm:shrink-0">
+                    <AsyncButton onClick={onBack}>Back</AsyncButton>
                     <AsyncButton
                         onClick={approve}
                         color="success"
-                        sx={{ marginRight: "10px" }}
                         disabled={buttonsDisabled}
                         isPrimary={true}
                     >
@@ -99,7 +96,6 @@ const OrgApproval = ({
                     <AsyncButton
                         onClick={() => setConfirmingReject(true)}
                         color="secondary"
-                        sx={{ marginRight: "10px" }}
                         disabled={buttonsDisabled}
                     >
                         Reject

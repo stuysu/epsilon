@@ -93,7 +93,8 @@ const Announcements = () => {
                         onChange={setContent}
                         onSubmit={createAnnouncement}
                         label="Content"
-                        placeholder="Write an announcement (Ctrl+Enter to post)"
+                        placeholder="Write an announcement"
+                        submitVerb="post"
                     />
                     <AsyncButton
                         sx={{ width: "100%", marginTop: "10px" }}
