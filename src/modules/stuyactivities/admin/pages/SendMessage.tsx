@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import OrgChat from "../components/OrgChat";
+import AdvisorEmails from "../components/AdvisorEmails";
 import SearchInput from "../../../../components/ui/input/SearchInput";
 import Divider from "../../../../components/ui/Divider";
 
@@ -46,6 +47,8 @@ const SendMessage = () => {
     return (
         <div className={"w-full p-4 sm:p-12 min-h-dvh flex flex-col gap-4"}>
             <h1>Send Message</h1>
+            <AdvisorEmails />
+            <Divider />
             <SearchInput
                 placeholder="Search Activities..."
                 value={searchInput}
