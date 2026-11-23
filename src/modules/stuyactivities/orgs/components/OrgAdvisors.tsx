@@ -1,6 +1,7 @@
 import { useContext, useRef, useState } from "react";
 import { useSnackbar } from "notistack";
 import { supabase } from "../../../../lib/supabaseClient";
+import { functionErrorText } from "../../../../utils/FunctionErrors";
 import OrgContext from "../../../../contexts/OrgContext";
 import ItemList from "../../../../components/ui/lists/ItemList";
 import Avatar from "../../../../components/ui/Avatar";
@@ -59,16 +60,24 @@ const OrgAdvisors = ({ editable }: { editable: boolean }) => {
     };
 
     const submitAdvisor = async (trimmed: string) => {
-        const { data, error } = await supabase.rpc("add_organization_advisor", {
-            org_id: organization.id,
-            advisor_email: trimmed,
-        });
+        // the function also emails the new advisor
+        const { data: response, error } = await supabase.functions.invoke(
+            "add-organization-advisor",
+            {
+                body: {
+                    organization_id: organization.id,
+                    advisor_email: trimmed,
+                },
+            },
+        );
         if (error) {
             setProblem(
-                "Couldn't add the advisor. Contact it@stuysu.org for support.",
+                (await functionErrorText(error)) ||
+                    "Couldn't add the advisor. Contact it@stuysu.org for support.",
             );
             return;
         }
+        const data: string = response?.result;
         if (data !== "added") {
             setProblem(
                 `${trimmed} ${addResults[data] ?? "couldn't be added."}`,
