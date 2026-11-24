@@ -3,7 +3,7 @@
     "version": "0.1.0",
     "private": true,
     "dependencies": {
-        "@lexical/list": "^0.48.0",
+        "@lexical/list": "^0.53.0",
         "@mdxeditor/editor": "^4.5.0",
         "@radix-ui/react-dialog": "^1.3.1",
         "@radix-ui/react-radio-group": "^1.5.1",
@@ -12,7 +12,7 @@
         "@supabase/supabase-js": "^2.119.2",
         "dayjs": "^1.11.23",
         "framer-motion": "^14.14.0",
-        "lexical": "^0.48.0",
+        "lexical": "^0.53.0",
         "markdown-to-jsx": "^9.10.6",
         "notistack": "^3.0.2",
         "pdfjs-dist": "^6.5.438",
