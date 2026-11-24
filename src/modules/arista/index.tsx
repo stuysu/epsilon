@@ -2,21 +2,19 @@ import { motion } from "framer-motion";
 import React, { useContext } from "react";
 import { PUBLIC_URL } from "../../config/constants";
 import { ThemeContext } from "../../contexts/ThemeProvider";
-import { Helmet } from "react-helmet";
+import usePageMeta from "../../utils/usePageMeta";
 
 const Arista = () => {
+    usePageMeta(
+        "Arista - Epsilon",
+        "Join Arista, Stuyvesant High School’s premier honor society.",
+    );
+
     const theme = useContext(ThemeContext);
 
     return (
         <section className={"min-h-screen p-12 mx-auto max-w-[1800px]"}>
             <h1 className="sr-only">Arista</h1>
-            <Helmet>
-                <title>Arista - Epsilon</title>
-                <meta
-                    name="description"
-                    content="Join Arista, Stuyvesant High School’s premier honor society."
-                />
-            </Helmet>
 
             <div className={"flex flex-col items-start justify-start gap-10"}>
                 <motion.div
@@ -42,7 +40,7 @@ const Arista = () => {
                     <div className={"relative"}>
                         <img
                             className={
-                                "absolute inset-0 w-full h-full aspect-[3/2] object-cover sm:aspect-[2/1] md:aspect-auto rounded-2xl opacity-30 blur-3xl scale-105 pointer-events-none"
+                                "absolute inset-0 w-full h-full aspect-3/2 object-cover sm:aspect-2/1 md:aspect-auto rounded-2xl opacity-30 blur-3xl scale-105 pointer-events-none"
                             }
                             src={`${PUBLIC_URL}/media/arista-open-house-fall-2026.jpg`}
                             alt=""
@@ -50,7 +48,7 @@ const Arista = () => {
                         />
                         <img
                             className={
-                                "relative w-full h-auto aspect-[3/2] object-cover sm:aspect-[2/1] md:aspect-auto rounded-2xl shadow-prominent"
+                                "relative w-full h-auto aspect-3/2 object-cover sm:aspect-2/1 md:aspect-auto rounded-2xl shadow-prominent"
                             }
                             src={`${PUBLIC_URL}/media/arista-open-house-fall-2026.jpg`}
                             width={2600}
@@ -90,14 +88,14 @@ const Arista = () => {
                     >
                         <img
                             src={`${PUBLIC_URL}/taglines/arista.svg`}
-                            className={`w-80 md:w-56 lg:w-72 xl:w-80 2xl:w-[26rem] h-auto ${
+                            className={`w-80 md:w-56 lg:w-72 xl:w-80 2xl:w-104 h-auto ${
                                 theme.effectiveMode === "light" ? "invert" : ""
                             }`}
                             alt="Arista is Stuyvesant High School’s premier honor society."
                         />
                         <img
                             src={`${PUBLIC_URL}/taglines/arista.svg`}
-                            className={`w-80 md:w-56 lg:w-72 xl:w-80 2xl:w-[26rem] h-auto top-0 absolute blur-2xl ${
+                            className={`w-80 md:w-56 lg:w-72 xl:w-80 2xl:w-104 h-auto top-0 absolute blur-2xl ${
                                 theme.effectiveMode === "light" ? "invert" : ""
                             }`}
                             alt=""

@@ -1,12 +1,19 @@
-import React, { ReactNode, useEffect, useMemo, useRef, useState } from "react";
+import React, {
+    ReactNode,
+    useCallback,
+    useEffect,
+    useMemo,
+    useRef,
+    useState,
+} from "react";
 import { PUBLIC_URL } from "../../config/constants";
-import { Helmet } from "react-helmet";
-import { AnimatePresence, motion } from "framer-motion";
+import { AnimatePresence, motion, type Variants } from "framer-motion";
+import usePageMeta from "../../utils/usePageMeta";
 
 const DISPLAY = 10000;
 const FADE = 2500;
 
-const fadeVariants = {
+const fadeVariants: Variants = {
     initial: { opacity: 0, filter: "blur(20px)" },
     animate: {
         opacity: 1,
@@ -103,6 +110,8 @@ function renderCredit(data: CreditData) {
 }
 
 const Index = () => {
+    usePageMeta("About - Epsilon", "One Site, One School, For Everyone.");
+
     const [stage, setStage] = useState<
         "idle" | "video" | "tagline" | "credit" | "idle"
     >("idle");
@@ -111,12 +120,14 @@ const Index = () => {
     const [runId, setRunId] = useState(0);
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const audioRef = useRef<HTMLAudioElement | null>(null);
+    const fadeRef = useRef<ReturnType<typeof setInterval>>(undefined);
 
     useEffect(() => {
-        audioRef.current = new Audio(`${PUBLIC_URL}/media/about_music.wav`);
+        audioRef.current = new Audio(`${PUBLIC_URL}/media/about_music.mp3`);
         audioRef.current.preload = "auto";
         audioRef.current.volume = 1;
         return () => {
+            clearInterval(fadeRef.current);
             audioRef.current?.pause();
             audioRef.current = null;
         };
@@ -256,6 +267,25 @@ const Index = () => {
         [],
     );
 
+    const finishRun = useCallback(() => {
+        const audio = audioRef.current;
+        if (audio) {
+            let c = 0;
+            clearInterval(fadeRef.current);
+            fadeRef.current = setInterval(() => {
+                c++;
+                audio.volume = Math.max(0, audio.volume - 0.05);
+                if (c >= 20) {
+                    clearInterval(fadeRef.current);
+                    audio.pause();
+                    audio.currentTime = 0;
+                    audio.volume = 1;
+                }
+            }, 100);
+        }
+        setStage("idle");
+    }, []);
+
     useEffect(() => {
         if (stage !== "tagline") return;
         const t = setTimeout(() => {
@@ -272,33 +302,13 @@ const Index = () => {
             else finishRun();
         }, DISPLAY);
         return () => clearTimeout(t);
-    }, [stage, creditIdx, credits.length]);
+    }, [stage, creditIdx, credits.length, finishRun]);
 
     useEffect(() => {
         if (!hasVideoEnded) return;
         const t = setTimeout(() => setStage("tagline"), 500);
         return () => clearTimeout(t);
     }, [hasVideoEnded]);
-
-    function finishRun() {
-        if (audioRef.current) {
-            let c = 0;
-            const fade = setInterval(() => {
-                c++;
-                audioRef.current!.volume = Math.max(
-                    0,
-                    audioRef.current!.volume - 0.05,
-                );
-                if (c >= 20) {
-                    clearInterval(fade);
-                    audioRef.current!.pause();
-                    audioRef.current!.currentTime = 0;
-                    audioRef.current!.volume = 1;
-                }
-            }, 100);
-        }
-        setStage("idle");
-    }
 
     async function handleStart() {
         setCreditIdx(0);
@@ -308,6 +318,9 @@ const Index = () => {
 
         try {
             if (audioRef.current) {
+                // a replay during the last run's fade starts at full volume
+                clearInterval(fadeRef.current);
+                audioRef.current.volume = 1;
                 audioRef.current.currentTime = 0;
                 await audioRef.current.play();
             }
@@ -321,20 +334,13 @@ const Index = () => {
     return (
         <div className="pb-0">
             <h1 className="sr-only">About Epsilon</h1>
-            <Helmet>
-                <title>About - Epsilon</title>
-                <meta
-                    name="description"
-                    content="One Site, One School, For Everyone."
-                />
-            </Helmet>
 
-            <section className="scheme-light:invert z-30 top-0 fixed h-screen w-screen bg-[#000000] flex items-center justify-center">
+            <section className="scheme-light:invert z-30 inset-0 fixed bg-[#000000] flex items-center justify-center">
                 <AnimatePresence mode="wait">
                     {stage === "idle" && (
                         <motion.button
                             key={`idle-${runId}`}
-                            className="flex flex-col items-center justify-center h-24 w-64 gap-6 rounded-lg focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+                            className="flex flex-col items-center justify-center h-24 w-64 gap-6 rounded-lg focus:outline-hidden focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
                             onClick={handleStart}
                             variants={fadeVariants}
                             initial="initial"

@@ -1,7 +1,7 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { AnimatePresence, motion } from "framer-motion";
 import AsyncButton from "../buttons/AsyncButton";
-import React, { useRef } from "react";
+import React, { useLayoutEffect, useRef } from "react";
 import keepOpenOnToast from "./keepOpenOnToast";
 
 export default function UserDialog({
@@ -39,13 +39,12 @@ export default function UserDialog({
 }) {
     const hasImage = Boolean(imageSrc);
     const openerRef = useRef<HTMLElement | null>(null);
-    const wasOpen = useRef(false);
     // there is no Dialog.Trigger, so remember what opened the dialog before
-    // Radix moves focus into it
-    if (open && !wasOpen.current) {
-        openerRef.current = document.activeElement as HTMLElement | null;
-    }
-    wasOpen.current = open;
+    // Radix moves focus into it (its focus moves in a later, passive effect)
+    useLayoutEffect(() => {
+        if (open)
+            openerRef.current = document.activeElement as HTMLElement | null;
+    }, [open]);
 
     return (
         <Dialog.Root
@@ -127,15 +126,20 @@ export default function UserDialog({
                                         )}
 
                                         {title && (
-                                            <Dialog.Title>
-                                                <h3 className={"mb-6"}>
+                                            // keeps the font of the h2 it used to sit in
+                                            <Dialog.Title asChild>
+                                                <h3
+                                                    className={
+                                                        "mb-6 font-display font-semibold"
+                                                    }
+                                                >
                                                     {title}
                                                 </h3>
                                             </Dialog.Title>
                                         )}
 
                                         {description && (
-                                            <Dialog.Description>
+                                            <Dialog.Description asChild>
                                                 <p className="whitespace-pre-line">
                                                     {description}
                                                 </p>

@@ -35,7 +35,7 @@ const UpcomingMeeting = ({
     return (
         <div className={"w-full cursor-pointer"}>
             <div
-                className="overflow-scroll scrollbar-none flex max-lg:flex-col max-lg:items-start lg:flex-wrap gap-2 justify-between items-center bg-layer-2 transition-colors sm:hover:bg-layer-3 p-4 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 focus-visible:-outline-offset-2"
+                className="overflow-scroll scrollbar-none flex max-lg:flex-col max-lg:items-start lg:flex-wrap gap-2 justify-between items-center bg-layer-2 transition-colors sm:hover:bg-layer-3 p-4 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 focus-visible:-outline-offset-2"
                 aria-haspopup="dialog"
                 {...pressable(() => setOpen(true))}
             >
@@ -55,7 +55,7 @@ const UpcomingMeeting = ({
                                 alt={org_name}
                             />
                             <Avatar.Fallback
-                                className="text-center size-full flex items-center justify-center bg-layer-3 text-xl relative pt-1 text-typography-2"
+                                className="text-center size-full flex items-center justify-center bg-layer-3 text-xl relative pt-1 text-typography-1"
                                 delayMs={600}
                             >
                                 {(org_name || "O").charAt(0).toUpperCase()}
@@ -67,14 +67,14 @@ const UpcomingMeeting = ({
                         <i className="bx bx-lock absolute z-10 -bottom-0.5 left-7 text-base leading-none text-typography-1" />
                     )}
 
-                    <div className="w-full pt-1">
+                    <div className="w-full min-w-0 pt-1 wrap-anywhere">
                         <h4>{title}</h4>
                         <p>{org_name}</p>
                     </div>
                 </div>
 
                 {/* wraps under the title only when even its narrowest form won't fit; then takes the room it needs before the title */}
-                <div className="pointer-events-none w-fit lg:ml-auto lg:min-w-min lg:max-w-fit lg:grow-[100] lg:basis-0">
+                <div className="pointer-events-none w-fit min-w-0 max-w-full lg:ml-auto lg:min-w-min lg:max-w-fit lg:grow-100 lg:basis-0">
                     <MeetingChips
                         endFrom="lg"
                         start_time={start_time}

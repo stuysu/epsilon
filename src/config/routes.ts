@@ -2,6 +2,7 @@ export const STUY_ACTIVITIES_PATHS = [
     "/stuyactivities",
     "/charter",
     "/create",
+    "/invites",
     "/archives",
     "/rules",
     "/activities-support",

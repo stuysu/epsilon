@@ -53,6 +53,10 @@ const AlertDisplay = () => {
         };
     }, []);
 
+    // the banner goes away, so focus moves to the page rather than the body
+    const focusPage = () =>
+        document.getElementById("main-content")?.focus({ preventScroll: true });
+
     const handleCloseClick = () => {
         if (openTimeout.current) {
             clearTimeout(openTimeout.current);
@@ -62,6 +66,7 @@ const AlertDisplay = () => {
         }
         setSessionDismissed(true);
         setMenuAnchor(null);
+        focusPage();
     };
 
     const handleDoNotRemindAgain = () => {
@@ -70,6 +75,7 @@ const AlertDisplay = () => {
         }
         setOpen(false);
         setMenuAnchor(null);
+        focusPage();
     };
 
     const handleMouseEnter = (event: React.MouseEvent<HTMLButtonElement>) => {
@@ -110,6 +116,12 @@ const AlertDisplay = () => {
         }
     };
 
+    // keyboard focus on Close opens the menu, and Tab moves into it
+    const handleFocus = (event: React.FocusEvent<HTMLButtonElement>) => {
+        if (event.currentTarget.matches(":focus-visible"))
+            setMenuAnchor(event.currentTarget);
+    };
+
     const handleMenuEnter = () => {
         if (closeTimeout.current) {
             clearTimeout(closeTimeout.current);
@@ -127,7 +139,7 @@ const AlertDisplay = () => {
     )
         return <></>;
     return (
-        <div className={"z-[9999] relative w-full p-4 bg-bg"}>
+        <div className={"z-9999 relative w-full p-4 bg-bg"}>
             <Popover.Root
                 open={isOpen}
                 onOpenChange={(next) => {
@@ -142,6 +154,7 @@ const AlertDisplay = () => {
                         onMouseEnter: handleMouseEnter,
                         onMouseLeave: handleMouseLeave,
                         onTouchEnd: handleTouchEnd,
+                        onFocus: handleFocus,
                     }}
                 >
                     {/* the message takes the banner's own text colour, which is
@@ -150,27 +163,36 @@ const AlertDisplay = () => {
                         <DisplayLinks text={data.message} />
                     </div>
                 </AlertBanner>
+                {/* not portalled, so it follows Close in the tab order */}
                 {!isError && (
-                    <Popover.Portal>
-                        <Popover.Content
-                            side="bottom"
-                            align="end"
-                            sideOffset={4}
-                            onOpenAutoFocus={(event) => event.preventDefault()}
-                            onCloseAutoFocus={(event) => event.preventDefault()}
-                            onMouseEnter={handleMenuEnter}
-                            onMouseLeave={handleMouseLeave}
-                            className="z-[10000] overflow-hidden rounded-lg border border-divider bg-layer-1 shadow-xl"
+                    <Popover.Content
+                        side="bottom"
+                        align="end"
+                        sideOffset={4}
+                        onOpenAutoFocus={(event) => event.preventDefault()}
+                        onCloseAutoFocus={(event) => event.preventDefault()}
+                        // focusing Close opens the menu, so it must not also close it
+                        onFocusOutside={(event) => {
+                            if (event.target === menuAnchor)
+                                event.preventDefault();
+                        }}
+                        onMouseEnter={handleMenuEnter}
+                        onMouseLeave={handleMouseLeave}
+                        className="z-10000 overflow-hidden rounded-lg border border-divider bg-layer-1 shadow-xl"
+                    >
+                        <button
+                            type="button"
+                            onClick={handleDoNotRemindAgain}
+                            // let Tab leave the menu instead of looping inside it
+                            onKeyDown={(event) => {
+                                if (event.key === "Tab")
+                                    event.stopPropagation();
+                            }}
+                            className="px-3 py-2 text-sm text-typography-1 hover:bg-layer-3 focus-visible:bg-layer-3 focus-visible:outline-solid focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1"
                         >
-                            <button
-                                type="button"
-                                onClick={handleDoNotRemindAgain}
-                                className="px-3 py-2 text-sm text-typography-1 hover:bg-layer-3"
-                            >
-                                Do not remind me again
-                            </button>
-                        </Popover.Content>
-                    </Popover.Portal>
+                            Do not remind me again
+                        </button>
+                    </Popover.Content>
                 )}
             </Popover.Root>
         </div>

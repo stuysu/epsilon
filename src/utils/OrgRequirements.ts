@@ -63,6 +63,7 @@ const OrgRequirements: OrgValidator = {
             onlyAlpha: true,
             lowercase: true,
             maxChips: 3,
+            maxLength: 50,
         },
     },
     socials: {
@@ -75,7 +76,8 @@ const OrgRequirements: OrgValidator = {
         required: false,
         requirements: {
             maxSize: [5, "MB"],
-            types: ["image/*"],
+            // what create-organization accepts
+            types: ["image/png", "image/jpeg", "image/webp", "image/gif"],
         },
     },
     mission: {

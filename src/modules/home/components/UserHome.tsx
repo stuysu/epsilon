@@ -14,15 +14,12 @@ import OrgStreamPost from "../../stuyactivities/orgs/components/OrgStreamPost";
 import MarkupDisplayer from "../../../components/markup/MarkupDisplayer";
 import { Link } from "react-router-dom";
 import ItemList from "../../../components/ui/lists/ItemList";
-import { Scrollbars } from "react-custom-scrollbars-2";
+import useNow from "../../../utils/useNow";
+import { SUPPORT_EMAIL } from "../../../config/constants";
 
-const currentHour = new Date().getHours();
-const timeGreeting =
-    currentHour < 12
-        ? "Good morning"
-        : currentHour < 17
-          ? "Good afternoon"
-          : "Good evening";
+const greetingFor = (hour: number) =>
+    hour < 12 ? "Good morning" : hour < 17 ? "Good afternoon" : "Good evening";
+
 type meetingType = {
     id: number;
     title: string;
@@ -44,6 +41,8 @@ type meetingType = {
 const UserHome = () => {
     const user = React.useContext(UserContext);
     const { enqueueSnackbar } = useSnackbar();
+    // re-checked every minute, so a tab left open keeps the right greeting
+    const timeGreeting = greetingFor(new Date(useNow()).getHours());
 
     const [visibleAnnouncements, setVisibleAnnouncements] = useState(3);
     // below the two-column layout, long tile lists fold to two rows so meetings stay near the top
@@ -61,7 +60,7 @@ const UserHome = () => {
 
     const failed = (what: string) =>
         enqueueSnackbar(
-            `Failed to load ${what}. Contact it@stuysu.org for support.`,
+            `Failed to load ${what}. Contact ${SUPPORT_EMAIL} for support.`,
             { variant: "error" },
         );
 
@@ -89,7 +88,8 @@ const UserHome = () => {
                 `,
                 )
                 .in("organization_id", userOrgIds)
-                .gte("start_time", new Date().toISOString())
+                // includes meetings that are happening now
+                .gte("end_time", new Date().toISOString())
                 .order("start_time")
                 .returns<meetingType[]>();
             if (error || !data) {
@@ -132,6 +132,8 @@ const UserHome = () => {
             const { data, error } = await supabase
                 .from("announcements")
                 .select("*")
+                .or(`ends_at.is.null,ends_at.gt.${new Date().toISOString()}`)
+                .order("pinned", { ascending: false })
                 .order("created_at", { ascending: false });
             if (error || !data) {
                 failed("announcements");
@@ -142,7 +144,7 @@ const UserHome = () => {
 
     return (
         // one container, the Figma content width (wider on huge screens), so both columns stay together
-        <main className="mx-auto min-h-[90vh] w-full max-w-[calc(var(--frame)+6rem)] px-3 pb-8 pt-4 sm:px-12 sm:pt-8">
+        <div className="mx-auto min-h-[90vh] w-full max-w-[calc(var(--frame)+6rem)] px-3 pb-8 pt-4 sm:px-12 sm:pt-8">
             <header className="flex flex-col mb-10">
                 <h1>
                     {timeGreeting}, {user.first_name}!
@@ -153,62 +155,22 @@ const UserHome = () => {
             {/* equal halves from lg; tiles stretch to a set count per row so no partial row of space is left over */}
             <section className="relative mb-10 grid w-full grid-cols-1 gap-12 lg:grid-cols-2">
                 {/* the negative margin and matching padding give the hover glow room inside the scroller */}
-                <div className="-mx-3 -my-8 min-w-0 sm:-mx-8 lg:sticky lg:top-0 lg:self-start [--tiles-max:100000px] lg:[--tiles-max:calc(100dvh_-_1rem)]">
-                    <Scrollbars
-                        universal
-                        autoHide
-                        autoHideTimeout={1000}
-                        autoHideDuration={200}
-                        autoHeight
-                        autoHeightMax="var(--tiles-max)"
-                        onWheel={(e) => e.stopPropagation()}
-                        renderView={(
-                            props: React.HTMLProps<HTMLDivElement>,
-                        ) => (
-                            <div
-                                {...props}
-                                id="home-activity-tiles"
-                                className={`scroll-hide grid w-full grid-cols-2 content-start gap-x-3 gap-y-2 px-3 py-8 sm:grid-cols-3 sm:gap-x-4 sm:px-8 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-3 min-[2300px]:grid-cols-4 ${
-                                    foldPhone
-                                        ? "max-sm:[&>*:nth-child(n+5)]:hidden"
-                                        : ""
-                                } ${
-                                    foldSm
-                                        ? "sm:max-md:[&>*:nth-child(n+7)]:hidden"
-                                        : ""
-                                } ${
-                                    foldMd
-                                        ? "md:max-lg:[&>*:nth-child(n+9)]:hidden"
-                                        : ""
-                                }`}
-                                // longhands only; mixing them with the library's overflow makes React warn
-                                style={{
-                                    ...props.style,
-                                    overflow: undefined,
-                                    overflowX: "hidden",
-                                    overflowY: props.style
-                                        ?.overflow as React.CSSProperties["overflowY"],
-                                }}
-                            />
-                        )}
-                        renderTrackHorizontal={() => (
-                            <div style={{ display: "none" }} />
-                        )}
-                        renderThumbVertical={({
-                            style,
-                            ...props
-                        }: {
-                            style: React.CSSProperties;
-                        } & React.HTMLProps<HTMLDivElement>) => (
-                            <div
-                                {...props}
-                                style={{
-                                    ...style,
-                                    backgroundColor: "grey",
-                                    borderRadius: 4,
-                                }}
-                            />
-                        )}
+                <div className="-mx-3 -my-8 min-w-0 sm:-mx-8 lg:sticky lg:top-0 lg:self-start [--tiles-max:100000px] lg:[--tiles-max:calc(100dvh-1rem)]">
+                    <div
+                        id="home-activity-tiles"
+                        className={`grid max-h-(--tiles-max) w-full overflow-y-auto overflow-x-hidden scrollbar-thin grid-cols-2 content-start gap-x-3 gap-y-2 px-3 py-8 sm:grid-cols-3 sm:gap-x-4 sm:px-8 md:grid-cols-4 lg:grid-cols-2 xl:grid-cols-3 min-[2300px]:grid-cols-4 ${
+                            foldPhone
+                                ? "max-sm:[&>*:nth-child(n+5)]:hidden"
+                                : ""
+                        } ${
+                            foldSm
+                                ? "sm:max-md:[&>*:nth-child(n+7)]:hidden"
+                                : ""
+                        } ${
+                            foldMd
+                                ? "md:max-lg:[&>*:nth-child(n+9)]:hidden"
+                                : ""
+                        }`}
                     >
                         {user.memberships?.map((membership) => {
                             if (membership.active)
@@ -238,7 +200,7 @@ const UserHome = () => {
                         <Link
                             to="/stuyactivities"
                             // the outline is inset, since the scroller clips outside the tile
-                            className="flex aspect-square w-full items-center justify-center flex-col rounded-xl px-2 text-center no-underline transition-colors sm:hover:bg-layer-1 border-accent border-dashed border focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-typography-1"
+                            className="flex aspect-square w-full items-center justify-center flex-col rounded-xl px-2 text-center no-underline transition-colors sm:hover:bg-layer-1 border-accent border-dashed border focus-visible:outline-solid focus-visible:outline-2 focus-visible:-outline-offset-4 focus-visible:outline-typography-1"
                         >
                             <i
                                 className="bx bx-md bx-plus-circle mb-5 text-accent"
@@ -246,7 +208,7 @@ const UserHome = () => {
                             ></i>
                             <p className="text-accent">Join an Activity!</p>
                         </Link>
-                    </Scrollbars>
+                    </div>
                     <div
                         className={`relative z-10 -mt-6 mb-8 px-3 sm:px-8 lg:hidden ${
                             showAllTiles || activeCount > 8
@@ -272,7 +234,7 @@ const UserHome = () => {
                                         }),
                                     );
                             }}
-                            className="flex min-h-11 w-full items-center justify-center gap-1 rounded-xl bg-layer-1 px-4 text-sm font-semibold text-typography-1 shadow-control transition-colors sm:hover:bg-layer-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                            className="flex min-h-11 w-full items-center justify-center gap-1 rounded-xl bg-layer-1 px-4 text-sm font-semibold text-typography-1 shadow-control transition-colors sm:hover:bg-layer-2 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
                         >
                             {showAllTiles
                                 ? "Show fewer"
@@ -335,7 +297,7 @@ const UserHome = () => {
                             sm:group-focus-within:translate-y-7
                             transition-transform
                             w-[92%]
-                            z-[1]
+                            z-1
                             rounded-xl
                             bg-layer-1
                             shadow-control"
@@ -398,7 +360,7 @@ const UserHome = () => {
                             sm:group-focus-within:translate-y-7
                             transition-transform
                             w-[92%]
-                            z-[1]
+                            z-1
                             rounded-xl
                             bg-layer-1
                             shadow-control"
@@ -414,7 +376,7 @@ const UserHome = () => {
                                 // only the label dims, so the focus outline keeps its
                                 // contrast; the gap above is a margin, so the outline
                                 // isn't drawn under the list
-                                className="group/more touch-target text important mt-4 text-left cursor-pointer rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 aria-disabled:cursor-default"
+                                className="group/more touch-target text important mt-4 text-left cursor-pointer rounded-sm focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 aria-disabled:cursor-default"
                                 onClick={() => {
                                     if (
                                         announcements.length <=
@@ -424,7 +386,7 @@ const UserHome = () => {
                                     setVisibleAnnouncements((prev) => prev + 3);
                                 }}
                             >
-                                <span className="transition-opacity sm:group-hover/more:underline group-aria-disabled/more:opacity-50 sm:group-aria-disabled/more:group-hover/more:no-underline">
+                                <span className="transition-opacity sm:group-hover/more:underline group-aria-disabled/more:opacity-50 sm:group-hover/more:group-aria-disabled/more:no-underline">
                                     View More Announcements
                                 </span>
                             </button>
@@ -438,7 +400,7 @@ const UserHome = () => {
                     </div>
                 </div>
             </section>
-        </main>
+        </div>
     );
 };
 

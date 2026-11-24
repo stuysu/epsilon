@@ -1,7 +1,7 @@
 import React from "react";
 import Divider from "../../components/ui/Divider";
 import { AnimatePresence, motion } from "framer-motion";
-import { Helmet } from "react-helmet";
+import usePageMeta from "../../utils/usePageMeta";
 
 const HelpItem = ({
     icon,
@@ -35,8 +35,8 @@ const HelpItem = ({
                         <button
                             type="button"
                             aria-expanded={expanded}
-                            aria-controls={panelId}
-                            className="text-left [font:inherit] [color:inherit] rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                            aria-controls={expanded ? panelId : undefined}
+                            className="text-left [font:inherit] text-inherit rounded-sm focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
                         >
                             {title}
                         </button>
@@ -78,15 +78,13 @@ const HelpItem = ({
 };
 
 const Support = () => {
+    usePageMeta(
+        "StuyActivities Support - Epsilon",
+        "Get help with StuyActivities questions and issues.",
+    );
+
     return (
         <div className={"m-10 sm:m-12 max-sm:mb-32"}>
-            <Helmet>
-                <title>StuyActivities Support - Epsilon</title>
-                <meta
-                    name="description"
-                    content="Get help with StuyActivities questions and issues."
-                />
-            </Helmet>
             <div
                 className={
                     "sm:hidden flex sm:justify-center items-center w-full h-48 sm:h-96"

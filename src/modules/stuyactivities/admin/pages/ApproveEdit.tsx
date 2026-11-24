@@ -6,6 +6,7 @@ import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import Divider from "../../../../components/ui/Divider";
 import ContentUnavailable from "../../../../components/ui/content/ContentUnavailable";
+import { SUPPORT_EMAIL } from "../../../../config/constants";
 
 const ApproveEdit = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -23,7 +24,7 @@ const ApproveEdit = () => {
 
             if (error || !data) {
                 return enqueueSnackbar(
-                    "Failed to fetch pending edits. Contact it@stuysu.org for support.",
+                    `Failed to fetch pending edits. Contact ${SUPPORT_EMAIL} for support.`,
                     { variant: "error" },
                 );
             }
@@ -47,7 +48,7 @@ const ApproveEdit = () => {
 
             if (oerror || !odata) {
                 return enqueueSnackbar(
-                    "Failed to fetch corresponding org data. Contact it@stuysu.org for support.",
+                    `Failed to fetch corresponding org data. Contact ${SUPPORT_EMAIL} for support.`,
                     { variant: "error" },
                 );
             }
@@ -118,7 +119,7 @@ const ApproveEdit = () => {
                             type="button"
                             key={edit.id}
                             onClick={() => setView(edit)}
-                            className="rounded-xl text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                            className="rounded-xl text-left focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
                         >
                             <OrgBlock
                                 name={edit.organization_name}

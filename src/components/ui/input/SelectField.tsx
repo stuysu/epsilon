@@ -31,13 +31,15 @@ const SelectField = ({
     sx,
 }: SelectFieldProps) => {
     const [open, setOpen] = useState(false);
+    // keyboard focus gets the same focused outline as the other fields
+    const [focusVisible, setFocusVisible] = useState(false);
 
     return (
         <OutlinedField
             label={label}
             required={required}
             disabled={disabled}
-            focused={open}
+            focused={open || focusVisible}
             shrink={open || Boolean(value)}
             helperText={helperText}
             fullWidth={fullWidth}
@@ -52,7 +54,13 @@ const SelectField = ({
             >
                 <Select.Trigger
                     aria-label={typeof label === "string" ? label : undefined}
-                    className="flex min-h-14 w-full items-center justify-between gap-2 rounded px-3.5 py-[16.5px] text-left text-base leading-[1.4375em] text-typography-1 outline-none"
+                    onFocus={(e) =>
+                        setFocusVisible(
+                            e.currentTarget.matches(":focus-visible"),
+                        )
+                    }
+                    onBlur={() => setFocusVisible(false)}
+                    className="flex min-h-14 w-full items-center justify-between gap-2 rounded-sm px-3.5 py-[16.5px] text-left text-base leading-[1.4375em] text-typography-1 outline-hidden"
                 >
                     <span className="min-w-0 truncate">
                         <Select.Value />
@@ -65,14 +73,14 @@ const SelectField = ({
                     <Select.Content
                         position="popper"
                         sideOffset={6}
-                        className="z-[1400] max-h-72 w-[var(--radix-select-trigger-width)] min-w-40 overflow-hidden rounded-xl border border-divider bg-bg shadow-2xl"
+                        className="z-1400 max-h-72 w-(--radix-select-trigger-width) min-w-40 overflow-hidden rounded-xl border border-divider bg-bg shadow-2xl"
                     >
                         <Select.Viewport className="p-1">
                             {options.map((option) => (
                                 <Select.Item
                                     key={option.value}
                                     value={option.value}
-                                    className="flex cursor-pointer items-center justify-between gap-3 rounded-lg px-3 py-2 text-typography-1 outline-0 data-[highlighted]:bg-layer-3"
+                                    className="flex cursor-pointer items-center justify-between gap-3 rounded-lg px-3 py-2 text-typography-1 outline-0 data-highlighted:bg-layer-3"
                                 >
                                     <Select.ItemText>
                                         {option.label}

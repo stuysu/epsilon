@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from "react";
+import useOnChange from "../../../../utils/useOnChange";
 import { QRCodeSVG } from "qrcode.react";
 
 const PNG_SIZE = 1024;
@@ -59,10 +60,10 @@ const ClubQRCode = ({
     const [logo, setLogo] = useState<string>();
     const hidden = useRef<HTMLDivElement>(null);
 
+    useOnChange(`${picture} ${name}`, () => setPng(undefined));
     useEffect(() => {
         let stale = false;
         const fallback = letterImage(name || "");
-        setPng(undefined);
         (picture
             ? toDataUrl(picture).catch(() => fallback)
             : Promise.resolve(fallback)

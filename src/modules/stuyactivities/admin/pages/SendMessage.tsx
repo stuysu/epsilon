@@ -11,7 +11,6 @@ const SendMessage = () => {
     const [orgId, setOrgId] = useState<number>();
     const [orgName, setOrgName] = useState("");
     const [searchInput, setSearchInput] = useState("");
-    const [filteredOrgs, setFilteredOrgs] = useState<Organization[]>([]);
     const [allOrgs, setAllOrgs] = useState<Organization[]>([]);
 
     useEffect(() => {
@@ -32,17 +31,11 @@ const SendMessage = () => {
         fetchAllOrgs();
     }, [enqueueSnackbar]);
 
-    useEffect(() => {
-        if (searchInput) {
-            setFilteredOrgs(
-                allOrgs.filter((org) =>
-                    org.name.toLowerCase().includes(searchInput.toLowerCase()),
-                ),
-            );
-        } else {
-            setFilteredOrgs([]);
-        }
-    }, [searchInput, allOrgs]);
+    const filteredOrgs = searchInput
+        ? allOrgs.filter((org) =>
+              org.name.toLowerCase().includes(searchInput.toLowerCase()),
+          )
+        : [];
 
     return (
         <div className={"w-full p-4 sm:p-12 min-h-dvh flex flex-col gap-4"}>
@@ -72,7 +65,6 @@ const SendMessage = () => {
                                     setOrgId(org.id);
                                     setOrgName(org.name);
                                     setSearchInput("");
-                                    setFilteredOrgs([]);
                                 }}
                             >
                                 {org.name}
@@ -84,7 +76,7 @@ const SendMessage = () => {
             ) : null}
             {orgId && (
                 <section className="mt-5 flex w-full flex-col gap-3">
-                    <h2 className="break-words">{orgName}</h2>
+                    <h2 className="wrap-break-word">{orgName}</h2>
                     <OrgChat organization_id={orgId} />
                 </section>
             )}

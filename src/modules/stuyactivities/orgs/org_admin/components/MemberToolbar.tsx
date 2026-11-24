@@ -123,7 +123,7 @@ const MemberToolbar = <S extends string = MemberSort>({
                         placeholder={placeholder}
                         value={query}
                         onChange={onQueryChange}
-                        inputClassName={filter ? "!pr-24" : ""}
+                        inputClassName={filter ? "pr-24!" : ""}
                         trailing={
                             <div className={"flex items-center gap-1"}>
                                 {filter}

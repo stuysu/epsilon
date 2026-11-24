@@ -58,3 +58,12 @@ A separate platform for Arista members to manage their membership, post updates,
 - [Epsilon Frontend](https://github.com/stuysu/epsilon/wiki/Frontend) (this repo)
 - [Epsilon Backend](https://github.com/stuysu/epsilon-database)
 - [Epsilon Functions](https://github.com/stuysu/epsilon-functions)
+
+## Development
+
+- [Local setup](docs/local-setup.md): local Supabase, fake data, test logins, functions, Mailpit
+- [Release checklist](docs/release-checklist.md): database → functions → site
+- [GitHub Actions](docs/github-actions.md): CI and the secrets the bulletin import needs
+- [Contributing](CONTRIBUTING.md)
+
+Scripts: `npm start` (dev server), `npm run lint`, `npm test` (unit tests), `npm run build` (type check + build), `npm run preview`.

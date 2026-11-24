@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Route, Routes, useLocation } from "react-router-dom";
 
 import React, { useContext, useEffect } from "react";
 import { invalidate } from "../../../lib/queryCache";
@@ -19,92 +19,41 @@ import Valentines from "./pages/Valentines";
 import ApprovedValentines from "./pages/ApprovedValentines";
 import ContentUnavailable from "../../../components/ui/content/ContentUnavailable";
 import AddUser from "./pages/AddUser";
+import Analytics from "./pages/Analytics";
+import ActivityLog from "./pages/ActivityLog";
+import { ALL_LINKS, canOpen, getLinks } from "./links";
+import usePageMeta from "../../../utils/usePageMeta";
 
-const VALENTINES = false;
-
-export type Link = {
-    to: string;
-    label: string;
-    icon: string;
-    permission?: string;
+const PAGES: Record<string, React.ComponentType> = {
+    "/admin/approve-pending": ApprovePending,
+    "/admin/approve-edit": ApproveEdit,
+    "/admin/strikes": Strikes,
+    "/admin/send-message": SendMessage,
+    "/admin/announcements": Announcements,
+    "/admin/rooms": Rooms,
+    "/admin/reserve": Reserve,
+    "/admin/block-rooms": RoomBlocks,
+    "/admin/add-user": AddUser,
+    "/admin/analytics": Analytics,
+    "/admin/activity-log": ActivityLog,
+    "/admin/valentines": Valentines,
+    "/admin/approved-valentines": ApprovedValentines,
 };
 
-export const getLinks = (user: UserContextType) => {
-    let navLinks: Link[] = [
-        {
-            to: "/admin/approve-pending",
-            label: "Pending Orgs",
-            icon: "bx-carousel",
-        },
-        {
-            to: "/admin/approve-edit",
-            label: "Approve Edits",
-            icon: "bx-edit",
-        },
-        {
-            to: "/admin/strikes",
-            label: "Strikes",
-            icon: "bx-error",
-        },
-        {
-            to: "/admin/send-message",
-            label: "Send Message",
-            icon: "bx-message-dots",
-        },
-        {
-            to: "/admin/announcements",
-            label: "Announcements",
-            icon: "bxs-megaphone",
-        },
-        {
-            to: "/admin/rooms",
-            label: "Rooms",
-            icon: "bx-door-open",
-        },
-        {
-            to: "/admin/reserve",
-            label: "Reserve",
-            icon: "bx-calendar-check",
-        },
-        {
-            to: "/admin/block-rooms",
-            label: "Block Rooms",
-            icon: "bx-calendar-x",
-        },
-        {
-            to: "/admin/add-user",
-            label: "Add User",
-            icon: "bx-user-plus",
-        },
-    ];
-    if (VALENTINES) {
-        navLinks.push(
-            ...[
-                {
-                    to: "/admin/valentines",
-                    label: "Valentines",
-                    icon: "bx-heart",
-                    permission: "VALENTINES",
-                },
-                {
-                    to: "/admin/approved-valentines",
-                    label: "Approved Valentines",
-                    icon: "bx-book-heart",
-                    permission: "VALENTINES",
-                },
-            ],
-        );
-    }
-    if (user.permission !== "ADMIN") {
-        navLinks = navLinks.filter(
-            (link) => link.permission === user.permission,
-        );
-    }
-    return navLinks;
-};
+const Restricted = () => (
+    <ContentUnavailable
+        icon="bx-no-entry"
+        iconColor="text-red"
+        title="Restricted Access"
+        description="You do not have access to this page at this time."
+    />
+);
 
 const AdminRouter = () => {
     const user = useContext(UserContext);
+    const { pathname } = useLocation();
+    const page = ALL_LINKS.find((link) => pathname.startsWith(link.to));
+    usePageMeta(page ? `${page.label} - Admin - Epsilon` : "Admin - Epsilon");
 
     // approvals, edits and rooms change shared data, so leaving refreshes it
     useEffect(
@@ -122,41 +71,23 @@ const AdminRouter = () => {
     );
     const links = getLinks(user);
 
-    if (!user.permission || !links.length) {
-        return (
-            <ContentUnavailable
-                icon="bx-no-entry"
-                iconColor="text-red"
-                title="Restricted Access"
-                description="You do not have access to this page at this time."
-            />
-        );
-    }
+    if (!links.length) return <Restricted />;
 
     return (
         <div className={"min-h-screen"}>
             <AdminNav links={links} />
             <Routes>
                 <Route path="/" Component={AdminRedirect} />
-                <Route path="/approve-pending" Component={ApprovePending} />
-                <Route path="/approve-edit" Component={ApproveEdit} />
-                <Route path="/strikes" Component={Strikes} />
-                <Route path="/send-message" Component={SendMessage} />
-                <Route path="/announcements" Component={Announcements} />
-                <Route path="/rooms" Component={Rooms} />
-                <Route path="/reserve" Component={Reserve} />
-                <Route path="/block-rooms" Component={RoomBlocks} />
-                <Route path="/add-user" Component={AddUser} />
-                {VALENTINES && (
-                    <>
-                        <Route path="/valentines" Component={Valentines} />
-                        <Route
-                            path="/approved-valentines"
-                            Component={ApprovedValentines}
-                        />
-                    </>
-                )}
-                <Route path="/*" Component={ApprovePending} />
+                {ALL_LINKS.map(({ to, permission }) => (
+                    <Route
+                        key={to}
+                        path={to.slice("/admin".length)}
+                        Component={
+                            canOpen(user, permission) ? PAGES[to] : Restricted
+                        }
+                    />
+                ))}
+                <Route path="/*" Component={AdminRedirect} />
             </Routes>
         </div>
     );

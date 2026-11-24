@@ -2,11 +2,16 @@ import React, { useState } from "react";
 import { PUBLIC_URL } from "../../config/constants";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Helmet } from "react-helmet";
 import { Checkbox } from "radix-ui";
 import Divider from "../../components/ui/Divider";
+import usePageMeta from "../../utils/usePageMeta";
 
 const CharterLanding = () => {
+    usePageMeta(
+        "Charter an Activity - Epsilon",
+        "Start your own club at Stuyvesant High School with our online application.",
+    );
+
     const navigate = useNavigate();
     const title = "Apply for a StuyActivities Charter";
     const [isImgLoaded, isIsImgLoaded] = useState(false);
@@ -14,13 +19,6 @@ const CharterLanding = () => {
 
     return (
         <div>
-            <Helmet>
-                <title>Charter an Activity - Epsilon</title>
-                <meta
-                    name="description"
-                    content="Start your own club at Stuyvesant High School with our online application."
-                />
-            </Helmet>
             <div className={"relative lg:bottom-32 z-20 pointer-events-none"}>
                 <img
                     alt=""
@@ -69,7 +67,7 @@ const CharterLanding = () => {
                 <>
                     <div
                         className={
-                            "lg:flex-row flex-col flex lg:justify-center items-start w-full h-[32rem] gap-20 xl:px-48 lg:px-16 px-4 relative lg:bottom-72 max-sm:mb-[800px]"
+                            "lg:flex-row flex-col flex lg:justify-center items-start w-full h-128 gap-20 xl:px-48 lg:px-16 px-4 relative lg:bottom-72 max-sm:mb-[800px]"
                         }
                     >
                         <div
@@ -140,7 +138,7 @@ const CharterLanding = () => {
                                     onCheckedChange={(checked) =>
                                         setAgreed(!!checked)
                                     }
-                                    className="h-5 min-w-5 rounded border border-typography-2 bg-transparent flex items-center justify-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                                    className="h-5 min-w-5 rounded-sm border border-typography-2 bg-transparent flex items-center justify-center focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
                                     aria-label="Agree to Clubs & Pubs Regulations"
                                 >
                                     <Checkbox.Indicator>
@@ -167,7 +165,7 @@ const CharterLanding = () => {
                                 disabled={!agreed}
                                 onClick={() => navigate("/create")}
                                 className={
-                                    "text text-accent text-left rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 " +
+                                    "text text-accent text-left rounded-sm focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 " +
                                     (agreed
                                         ? "cursor-pointer"
                                         : "cursor-not-allowed opacity-50")

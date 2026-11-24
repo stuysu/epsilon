@@ -25,6 +25,7 @@ import SwitchField from "../../../../../components/ui/input/SwitchField";
 import TextField from "../../../../../components/ui/input/TextField";
 import CheckboxInput from "../../../../../components/ui/input/CheckboxInput";
 import { functionErrorText } from "../../../../../utils/FunctionErrors";
+import { SUPPORT_EMAIL } from "../../../../../config/constants";
 
 // rooms, grants and faculty rarely change; booked rooms are always fetched fresh
 const LIST_STALE = 10 * 60_000;
@@ -170,7 +171,7 @@ const AdminUpsertMeeting = ({
 
             if (!data) {
                 enqueueSnackbar(
-                    "Error fetching rooms. Contact it@stuysu.org for support.",
+                    `Error fetching rooms. Contact ${SUPPORT_EMAIL} for support.`,
                     { variant: "error" },
                 );
                 return;
@@ -189,7 +190,7 @@ const AdminUpsertMeeting = ({
 
             if (!grantsData) {
                 enqueueSnackbar(
-                    "Error fetching rooms. Contact it@stuysu.org for support.",
+                    `Error fetching rooms. Contact ${SUPPORT_EMAIL} for support.`,
                     { variant: "error" },
                 );
                 return;
@@ -229,7 +230,7 @@ const AdminUpsertMeeting = ({
             if (!data) {
                 setFacultyFailed(true);
                 enqueueSnackbar(
-                    "Error fetching faculty. Contact it@stuysu.org for support.",
+                    `Error fetching faculty. Contact ${SUPPORT_EMAIL} for support.`,
                     { variant: "error" },
                 );
                 return;
@@ -287,7 +288,7 @@ const AdminUpsertMeeting = ({
 
             if (error || blocksError) {
                 enqueueSnackbar(
-                    "Error fetching booked rooms. Contact it@stuysu.org for support.",
+                    `Error fetching booked rooms. Contact ${SUPPORT_EMAIL} for support.`,
                     { variant: "error" },
                 );
                 return;
@@ -316,11 +317,11 @@ const AdminUpsertMeeting = ({
                 "SATURDAY",
             ];
 
-            /* a meeting already in a blocked room keeps it while it stays
-            on the same days, like the server allows */
-            const keepsRoom = (blockedId: number) =>
+            /* a meeting keeps its own room (blocked, Force Reserved or on a
+            day that became AIS) while it stays on the same days, like the server */
+            const keepsRoom = (roomIdToCheck: number) =>
                 !!id &&
-                blockedId === room_id &&
+                roomIdToCheck === room_id &&
                 !!start &&
                 !!end &&
                 !startTime.isBefore(isoToWallClock(start), "day") &&
@@ -341,6 +342,7 @@ const AdminUpsertMeeting = ({
                 ) {
                     return false;
                 }
+                if (keepsRoom(room.id)) return true;
 
                 const hasGrant = roomGrants.some(
                     (grant) =>
@@ -367,6 +369,10 @@ const AdminUpsertMeeting = ({
                 !~availRooms.findIndex((meta) => meta.id === roomId)
             ) {
                 setRoomId(undefined);
+                enqueueSnackbar(
+                    "That room isn't free at this time, so the meeting is now virtual. Pick another room or change the time.",
+                    { variant: "warning" },
+                );
             }
 
             setAvailableRooms(availRooms);
@@ -378,6 +384,7 @@ const AdminUpsertMeeting = ({
         };
     }, [
         loading,
+        allRooms,
         id,
         roomId,
         startTime,
@@ -542,7 +549,7 @@ const AdminUpsertMeeting = ({
         }
         if (supabaseReturn.error) {
             const error = await functionErrorText(supabaseReturn.error);
-            let message = "Contact it@stuysu.org for support.";
+            let message = `Contact ${SUPPORT_EMAIL} for support.`;
             if (error) {
                 message = error;
             }

@@ -3,13 +3,13 @@
     "name": "Epsilon",
     "icons": [
         {
-            "src": "logo.png",
+            "src": "/favicon.png",
             "type": "image/png",
-            "sizes": "742x757"
+            "sizes": "512x512"
         }
     ],
-    "start_url": ".",
+    "start_url": "/",
     "display": "standalone",
-    "theme_color": "#34c5db",
-    "background_color": "#ffffff"
+    "theme_color": "#0e0e0e",
+    "background_color": "#0e0e0e"
 }

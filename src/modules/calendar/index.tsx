@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 
 import { supabase } from "../../lib/supabaseClient";
 import useCachedQuery, { useCacheScope } from "../../lib/useCachedQuery";
@@ -10,7 +10,9 @@ import dayjs, { Dayjs } from "dayjs";
 import { isoToWallClock, wallClockToISO } from "../../utils/NewYorkTime";
 import DaySchedule from "./components/DaySchedule";
 import LoginGate from "../../components/ui/content/LoginGate";
-import { Helmet } from "react-helmet";
+import usePageMeta from "../../utils/usePageMeta";
+import { SUPPORT_EMAIL } from "../../config/constants";
+import UserContext from "../../contexts/UserContext";
 
 const CALENDAR_STALE = 2 * 60_000;
 
@@ -50,7 +52,11 @@ const loadDay = async (day: Dayjs) => {
 };
 
 const Index = () => {
+    usePageMeta("Calendar - Epsilon", "Happenings at Stuyvesant High School.");
+
     const { enqueueSnackbar } = useSnackbar();
+    // signed-out visitors only see the sign-in prompt, so nothing loads
+    const { signed_in } = useContext(UserContext);
 
     const [time, setTime] = useState<Dayjs>(isoToWallClock().startOf("day"));
 
@@ -60,12 +66,14 @@ const Index = () => {
 
     const highlightedDays =
         useCachedQuery(
-            [
-                "calendar",
-                "days",
-                currentMonth.getFullYear(),
-                currentMonth.getMonth(),
-            ],
+            signed_in
+                ? [
+                      "calendar",
+                      "days",
+                      currentMonth.getFullYear(),
+                      currentMonth.getMonth(),
+                  ]
+                : null,
             async () => {
                 const { data, error } = await supabase.rpc(
                     "get_unique_meeting_days",
@@ -86,13 +94,13 @@ const Index = () => {
         ).data ?? [];
 
     const dayQuery = useCachedQuery(
-        dayKey(time),
+        signed_in ? dayKey(time) : null,
         async () => {
             try {
                 return await loadDay(time);
             } catch (error) {
                 enqueueSnackbar(
-                    "Error fetching meetings. Contact it@stuysu.org for support.",
+                    `Error fetching meetings. Contact ${SUPPORT_EMAIL} for support.`,
                     { variant: "error" },
                 );
                 throw error;
@@ -119,24 +127,16 @@ const Index = () => {
         day: string;
         meetings: CalendarMeeting[];
     }>();
-    useEffect(() => {
-        if (dayQuery.data)
-            setShown({
-                day: time.format("YYYY-MM-DD"),
-                meetings: dayQuery.data,
-            });
-    }, [dayQuery.data, time]);
+    const shownDay = time.format("YYYY-MM-DD");
+    if (
+        dayQuery.data &&
+        (shown?.meetings !== dayQuery.data || shown.day !== shownDay)
+    )
+        setShown({ day: shownDay, meetings: dayQuery.data });
     const pending = !dayQuery.data && !dayQuery.error && !!shown;
 
     return (
         <div>
-            <Helmet>
-                <title>Calendar - Epsilon</title>
-                <meta
-                    name="description"
-                    content="Happenings at Stuyvesant High School."
-                />
-            </Helmet>
             <LoginGate sx={{ width: "100%" }} page={"view the calendar"}>
                 <h1 className="sr-only">Calendar</h1>
                 <div
@@ -175,7 +175,7 @@ const Index = () => {
                             weekday: "font-normal text-typography-2",
                             day: "p-0 text-center text-typography-1",
                             day_button:
-                                "sm:size-10 max-sm:h-11 max-sm:w-full grid place-items-center rounded-md transition-colors sm:hover:bg-layer-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1",
+                                "sm:size-10 max-sm:h-11 max-sm:w-full grid place-items-center rounded-md transition-colors sm:hover:bg-layer-2 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1",
                             selected:
                                 "bg-accent text-white rounded-md pointer-events-none",
                             outside: "opacity-50 pointer-events-none",
@@ -191,11 +191,11 @@ const Index = () => {
                         }}
                         modifiersClassNames={{
                             hasMeetings:
-                                'relative after:content-[""] after:left-1/2 after:absolute after:-translate-x-1/2 after:bottom-1 after:w-1 after:h-1 after:rounded-full after:bg-yellow scheme-light:after:size-1.5 scheme-light:after:bg-[#6b4700] data-[selected]:after:bg-white scheme-light:data-[selected]:after:bg-white',
+                                'relative after:content-[""] after:left-1/2 after:absolute after:-translate-x-1/2 after:bottom-1 after:w-1 after:h-1 after:rounded-full after:bg-yellow scheme-light:after:size-1.5 scheme-light:after:bg-[#6b4700] data-selected:after:bg-white data-selected:scheme-light:after:bg-white',
                         }}
                     />
 
-                    <div className={"w-full"}>
+                    <div className={"w-full min-w-0"}>
                         <DaySchedule
                             day={time}
                             meetings={

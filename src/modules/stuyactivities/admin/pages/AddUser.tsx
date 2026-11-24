@@ -8,6 +8,8 @@ import useMediaQuery from "../../../../utils/useMediaQuery";
 import FormTextField from "../../../../components/ui/forms/FormTextField";
 import OrgRequirements from "../../../../utils/OrgRequirements";
 import FormCheckbox from "../../../../components/ui/forms/FormCheckbox";
+import BulkAddUsers from "../components/BulkAddUsers";
+import { SUPPORT_EMAIL } from "../../../../config/constants";
 
 type User = {
     first_name: string;
@@ -39,7 +41,7 @@ const AddUser = () => {
         if (userCreateError) {
             console.error("Supabase function error:", userCreateError);
             // the function explains what went wrong (like "User already exists") in its response
-            let message = "Contact it@stuysu.org for support.";
+            let message = `Contact ${SUPPORT_EMAIL} for support.`;
             try {
                 const body = await userCreateError.context?.json();
                 if (body?.error) message = body.error;
@@ -141,6 +143,7 @@ const AddUser = () => {
                     </FormSection>
                 </FormPage>
             </MultiPageForm>
+            <BulkAddUsers />
         </div>
     );
 };

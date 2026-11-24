@@ -6,6 +6,7 @@ type Requirements = {
     maxChips?: number;
     onlyAlpha?: boolean;
     lowercase?: boolean;
+    maxLength?: number;
 };
 
 type Props = {
@@ -56,6 +57,14 @@ const FormChipText = ({
     const valueChanged = (newValue: string[]) => {
         if (requirements?.maxChips && newValue.length > requirements.maxChips) {
             enqueueSnackbar("You can enter up to 3 keywords only.", {
+                variant: "error",
+            });
+            return;
+        }
+
+        const max = requirements?.maxLength;
+        if (max && newValue.some((s) => s.length > max)) {
+            enqueueSnackbar(`Keywords can be up to ${max} characters.`, {
                 variant: "error",
             });
             return;

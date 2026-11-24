@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import OrgContext from "../../../../../contexts/OrgContext";
 import UserContext from "../../../../../contexts/UserContext";
 import { supabase } from "../../../../../lib/supabaseClient";
@@ -10,9 +10,9 @@ import {
     MemberSort,
     sortMembers,
     sortMembersBy,
-    memberSortOptions,
 } from "../../../../../utils/DataFormatters";
 import useMembershipJoinDates from "../../../../../utils/useMembershipJoinDates";
+import useOnChange from "../../../../../utils/useOnChange";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
 import ItemList from "../../../../../components/ui/lists/ItemList";
@@ -22,7 +22,7 @@ import ToggleChip from "../../../../../components/ui/input/ToggleChip";
 import UserDialog from "../../../../../components/ui/overlays/UserDialog";
 import InviteMembersDialog from "../components/InviteMembersDialog";
 import MemberToolbar from "../components/MemberToolbar";
-import { PUBLIC_URL } from "../../../../../config/constants";
+import { PUBLIC_URL, SUPPORT_EMAIL } from "../../../../../config/constants";
 
 const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
     const { enqueueSnackbar } = useSnackbar();
@@ -47,9 +47,9 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
         organization.memberships.length,
     );
 
-    useEffect(() => {
-        setJoinableState(organization.joinable ?? false);
-    }, [organization.joinable]);
+    useOnChange(organization.joinable, (joinable) =>
+        setJoinableState(joinable ?? false),
+    );
 
     const activeMembers = organization.memberships
         .filter((member) => member.active)
@@ -65,11 +65,14 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
                 role_name: member.role_name,
                 role: member.role,
                 is_faculty: member.users?.is_faculty,
+                deactivated: member.users?.active === false,
             };
         });
     const members = activeMembers.filter((member) => member.role !== "ADVISOR");
-    const member_emails = members.map((member) => member.email).join(", ");
-    const leader_emails = members
+    // deactivated accounts get no club email, so they stay off the mailing list
+    const mailable = members.filter((member) => !member.deactivated);
+    const member_emails = mailable.map((member) => member.email).join(", ");
+    const leader_emails = mailable
         .filter(
             (member) => member.role === "CREATOR" || member.role === "ADMIN",
         )
@@ -97,11 +100,11 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
     ];
 
     // membership ids in displayed order, so a member can be dragged before the order is saved
-    const [order, setOrder] = useState<number[]>([]);
-
-    useEffect(() => {
-        setOrder(members.map((member) => member.membershipId as number));
-    }, [organization.memberships]);
+    const memberIds = () =>
+        members.map((member) => member.membershipId as number);
+    const [order, setOrder] = useState<number[]>(memberIds);
+    // reset only when the roster itself changes, not when the sort does
+    useOnChange(organization.memberships, () => setOrder(memberIds()));
 
     const membersById = new Map(
         members.map((member) => [member.membershipId, member]),
@@ -153,7 +156,7 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
 
         if (error) {
             enqueueSnackbar(
-                "Could not reorder members. Contact it@stuysu.org for support.",
+                `Could not reorder members. Contact ${SUPPORT_EMAIL} for support.`,
                 { variant: "error" },
             );
             setOrder(members.map((member) => member.membershipId as number));
@@ -298,8 +301,8 @@ const Roster = ({ readOnly = false }: { readOnly?: boolean }) => {
                 </section>
                 {readOnly ? (
                     <p>
-                        You are viewing this roster as an Epsilon
-                        Administrator and are restricted to viewing member emails.
+                        You are viewing this roster as an Epsilon Administrator
+                        and are restricted to viewing member emails.
                     </p>
                 ) : (
                     <p>

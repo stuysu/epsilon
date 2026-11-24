@@ -109,7 +109,7 @@ const DaySchedule = ({
                         aria-label={`Sort meetings by room name ${sortDesc ? "descending" : "ascending"}`}
                         title={`Sort ${sortDesc ? "descending" : "ascending"}`}
                         className={
-                            "px-2 py-1 rounded bg-transparent hover:bg-layer-2 focus:outline-none focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1 flex items-center"
+                            "px-2 py-1 rounded-sm bg-transparent hover:bg-layer-2 focus:outline-hidden focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-typography-1 flex items-center"
                         }
                     >
                         <span className="font-semibold text-base">Room</span>
@@ -143,7 +143,7 @@ const DaySchedule = ({
             >
                 <div ref={listRef}>
                     <motion.div
-                        key={failed ? "failed" : shownDay ?? "loading"}
+                        key={failed ? "failed" : (shownDay ?? "loading")}
                         initial={reduceMotion ? false : { opacity: 0 }}
                         animate={{ opacity: pending ? 0.5 : 1 }}
                         transition={{ duration: 0.15, ease: "easeOut" }}

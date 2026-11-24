@@ -7,12 +7,12 @@ import { useSnackbar } from "notistack";
 import OrgMember from "../../components/OrgMember";
 import OrgContext from "../../../../../contexts/OrgContext";
 import UserDialog from "../../../../../components/ui/overlays/UserDialog";
-import { PUBLIC_URL } from "../../../../../config/constants";
+import { PUBLIC_URL, SUPPORT_EMAIL } from "../../../../../config/constants";
 import SelectField from "../../../../../components/ui/input/SelectField";
 import TextField from "../../../../../components/ui/input/TextField";
 
 const actionButtonClass =
-    "important touch-target flex items-center justify-center rounded-full transition-colors sm:h-8 sm:bg-layer-3 sm:px-4 sm:text-[0.8rem] sm:hover:bg-divider focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1";
+    "important touch-target flex items-center justify-center rounded-full transition-colors sm:h-8 sm:bg-layer-3 sm:px-4 sm:text-[0.8rem] sm:hover:bg-divider focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1";
 
 const AdminMember = ({
     id,
@@ -78,7 +78,7 @@ const AdminMember = ({
 
         if (error || !kicked?.length) {
             enqueueSnackbar(
-                "Could not remove member. Contact it@stuysu.org for support.",
+                `Could not remove member. Contact ${SUPPORT_EMAIL} for support.`,
                 { variant: "error" },
             );
             return;
@@ -145,7 +145,7 @@ const AdminMember = ({
 
         if (error) {
             enqueueSnackbar(
-                "Could not update member. Contact it@stuysu.org for support.",
+                `Could not update member. Contact ${SUPPORT_EMAIL} for support.`,
                 { variant: "error" },
             );
             return;
@@ -173,7 +173,7 @@ const AdminMember = ({
                     ...organization.memberships.slice(0, existingMemberIndex),
                     {
                         ...existingMember,
-                        role: editState.role,
+                        role: editState.role as Membership["role"],
                         role_name: editState.role_name,
                     },
                     ...organization.memberships.slice(existingMemberIndex + 1),
@@ -232,7 +232,7 @@ const AdminMember = ({
                         picture={picture}
                         first_name={first_name}
                         last_name={last_name}
-                        className="!bg-transparent"
+                        className="bg-transparent!"
                         filledRole
                     />
                 </div>
@@ -240,7 +240,7 @@ const AdminMember = ({
                     <>
                         <div
                             className={
-                                "flex w-[4.5rem] shrink-0 items-center px-1.5 sm:w-auto sm:justify-end sm:gap-2 sm:pl-3 sm:pr-4"
+                                "flex w-18 shrink-0 items-center px-1.5 sm:w-auto sm:justify-end sm:gap-2 sm:pl-3 sm:pr-4"
                             }
                         >
                             {canEdit && (

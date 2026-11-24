@@ -5,7 +5,8 @@ import { supabase } from "../../lib/supabaseClient";
 import { PUBLIC_URL } from "../../config/constants";
 import UserDialog from "../../components/ui/overlays/UserDialog";
 import Divider from "../../components/ui/Divider";
-import { Helmet } from "react-helmet";
+import { useSnackbar } from "notistack";
+import usePageMeta from "../../utils/usePageMeta";
 
 type Category = "Exclusive Series" | "Accolades" | "Venturer" | "Participation";
 
@@ -142,7 +143,7 @@ const MedalGrid = ({
                 key={m.key}
                 type="button"
                 onClick={() => onSelect(m)}
-                className="w-48 max-sm:w-32 overflow-hidden sm:sm:hover:bg-layer-2 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1"
+                className="w-48 max-sm:w-32 overflow-hidden sm:sm:hover:bg-layer-2 transition-colors focus-visible:outline-solid focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1"
                 aria-label={m.title}
                 title={m.title}
             >
@@ -157,7 +158,13 @@ const MedalGrid = ({
 );
 
 const Profiles = () => {
+    usePageMeta(
+        "Profile - Epsilon",
+        "View your Epsilon profile and earned medals.",
+    );
+
     const user = useContext(UserContext);
+    const { enqueueSnackbar } = useSnackbar();
     const [fourDigitId, setFourDigitId] = useState<number | null>(null);
 
     const [dialogOpen, setDialogOpen] = useState(false);
@@ -170,13 +177,15 @@ const Profiles = () => {
                 .select("value")
                 .maybeSingle();
             if (error) {
-                console.log(error);
+                enqueueSnackbar("Couldn't load your account ID.", {
+                    variant: "error",
+                });
             } else if (data) {
                 setFourDigitId(Number(data.value));
             }
         };
         fetchID();
-    }, [user]);
+    }, [user, enqueueSnackbar]);
 
     const openMedalDialog = (medal: Medal) => {
         setActiveMedal(medal);
@@ -190,14 +199,6 @@ const Profiles = () => {
 
     return (
         <LoginGate sx={{ width: "100%" }}>
-            <Helmet>
-                <title>Profile</title>
-                <meta
-                    name="description"
-                    content="View your Epsilon profile and earned medals."
-                />
-            </Helmet>
-
             <div className={"sm:m-12 m-6"}>
                 <p>Profile</p>
                 <h1>

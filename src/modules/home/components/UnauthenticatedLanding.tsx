@@ -9,14 +9,14 @@ const UnauthenticatedLanding = () => {
     const wordmarkSrc = `${PUBLIC_URL}/wordmark.svg`;
 
     return (
-        <main className={"bg-[#0e0e0e] h-screen unauth-landing"}>
+        // clipped sideways: the wordmark starts scaled up
+        <div className={"bg-[#0e0e0e] h-dvh overflow-x-clip unauth-landing"}>
             <h1 className="sr-only">Epsilon</h1>
             <div
                 style={{
                     position: "fixed",
-                    width: "100vw",
-                    height: "100vh",
-                    backgroundImage: `url(${PUBLIC_URL}/textures/login.png)`,
+                    inset: 0,
+                    backgroundImage: `url(${PUBLIC_URL}/textures/login.webp)`,
                     backgroundSize: "cover",
                     backgroundPosition: "center",
                     opacity: isLoginHovered ? 0.5 : 0.3,
@@ -29,7 +29,7 @@ const UnauthenticatedLanding = () => {
             />
             <section
                 className={
-                    "w-full max-sm:h-[80vh] h-[90vh] flex justify-center items-center flex-col"
+                    "w-full max-sm:h-[80dvh] h-[90dvh] flex justify-center items-center flex-col"
                 }
             >
                 <img
@@ -57,6 +57,20 @@ const UnauthenticatedLanding = () => {
                                 opacity: 1;
                                 transform: scale(1);
                                 filter: blur(0);
+                            }
+                        }
+                        @media (prefers-reduced-motion: reduce) {
+                            @keyframes fadeIn {
+                                from {
+                                    opacity: 0;
+                                    transform: none;
+                                    filter: none;
+                                }
+                                to {
+                                    opacity: 1;
+                                    transform: none;
+                                    filter: none;
+                                }
                             }
                         }
                     `}
@@ -87,7 +101,7 @@ const UnauthenticatedLanding = () => {
                 href="https://stuysu.org"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="block w-fit relative bottom-12 left-1/2 transform -translate-x-1/2 rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                className="block w-fit relative bottom-12 left-1/2 transform -translate-x-1/2 rounded-sm focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
             >
                 <img
                     src={`${PUBLIC_URL}/icons/stuysu.png`}
@@ -95,7 +109,7 @@ const UnauthenticatedLanding = () => {
                     className="w-14 h-14 object-cover"
                 />
             </a>
-        </main>
+        </div>
     );
 };
 

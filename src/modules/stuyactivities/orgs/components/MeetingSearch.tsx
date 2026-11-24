@@ -4,11 +4,7 @@ import FilterSelect from "../../../../components/ui/input/FilterSelect";
 
 export type MeetingSort = "soonest" | "newest" | "oldest" | "name" | "nameDesc";
 export type MeetingFilter =
-    | "all"
-    | "inPerson"
-    | "virtual"
-    | "public"
-    | "private";
+    "all" | "inPerson" | "virtual" | "public" | "private";
 
 const sortOptions: { value: MeetingSort; label: string }[] = [
     { value: "soonest", label: "Soonest first" },
@@ -99,7 +95,7 @@ const MeetingSearch = ({
         placeholder={"Search meetings"}
         value={query}
         onChange={onQueryChange}
-        inputClassName={"!pr-24"}
+        inputClassName={"pr-24!"}
         trailing={
             <div className={"flex items-center gap-1"}>
                 <FilterSelect

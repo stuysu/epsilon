@@ -3,15 +3,24 @@ import OrgContext from "../../../../contexts/OrgContext";
 import { sortPostByDate } from "../../../../utils/DataFormatters";
 import OrgStreamPost from "../components/OrgStreamPost";
 import ContentUnavailable from "../../../../components/ui/content/ContentUnavailable";
+import useOrgRole from "../useOrgRole";
 
 const Stream = () => {
     const organization: OrgContextType = useContext(OrgContext);
+    const { membership, isSiteAdmin } = useOrgRole();
 
-    if (
-        organization.state === "LOCKED" ||
-        organization.state === "PENDING" ||
-        organization.state === "PUNISHED"
-    )
+    // posts are only loaded for members and site admins
+    if (!membership?.active && !isSiteAdmin)
+        return (
+            <ContentUnavailable
+                icon="bx-lock-alt"
+                iconColor="text-yellow"
+                title="Members Only"
+                description="Join this Activity to see its posts."
+            />
+        );
+
+    if (!["UNLOCKED", "ADMIN"].includes(organization.state))
         return (
             <ContentUnavailable
                 icon="bx-message-alt-x"

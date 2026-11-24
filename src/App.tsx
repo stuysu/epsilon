@@ -6,16 +6,14 @@ import InvitesProvider from "./contexts/InvitesProvider";
 import AlertDisplay from "./components/ui/AlertDisplay";
 import TimezoneNotice from "./components/ui/TimezoneNotice";
 import Pages from "./modules";
-import { SnackbarProvider, MaterialDesignContent } from "notistack";
-import { Scrollbars } from "react-custom-scrollbars-2";
-import React, {
-    CSSProperties,
-    forwardRef,
-    useEffect,
-    useRef,
-    useState,
-} from "react";
+import {
+    SnackbarProvider,
+    MaterialDesignContent,
+    type CustomContentProps,
+} from "notistack";
+import { CSSProperties, forwardRef } from "react";
 import ScrollToTopOnNavigate from "./components/ScrollToTopOnNavigate";
+import { MotionConfig } from "framer-motion";
 
 const snackbarStyle: CSSProperties = {
     borderRadius: "10px",
@@ -26,50 +24,32 @@ const snackbarStyle: CSSProperties = {
         "0 4px 4px 0 var(--shadow-base), 0 0 1px 0 var(--shadow-antithesis) inset, 0 1px 3px 0 var(--shadow-decoration) inset",
 };
 
-const SnackbarOverride = forwardRef<HTMLDivElement, any>((props, ref) => (
-    <MaterialDesignContent ref={ref} {...props} style={snackbarStyle} />
-));
+// darker than notistack's, so the white text is at least 4.5:1
+const variantBackground: Partial<
+    Record<CustomContentProps["variant"], string>
+> = {
+    success: "#2e7d32",
+    warning: "#b45309",
+    info: "#1565c0",
+};
+
+const SnackbarOverride = forwardRef<HTMLDivElement, CustomContentProps>(
+    (props, ref) => (
+        <MaterialDesignContent
+            ref={ref}
+            {...props}
+            style={{
+                ...snackbarStyle,
+                backgroundColor: variantBackground[props.variant],
+            }}
+        />
+    ),
+);
 
 const App = () => {
-    const [autoHeightMax, setAutoHeightMax] = useState(window.innerHeight);
-    const scrollbarsRef = useRef<Scrollbars>(null);
-
-    useEffect(() => {
-        const handleResize = () => {
-            setAutoHeightMax(window.innerHeight);
-        };
-
-        window.addEventListener("resize", handleResize);
-
-        return () => window.removeEventListener("resize", handleResize);
-    }, []);
-
-    const renderThumb = ({
-        style,
-        ...props
-    }: {
-        style: CSSProperties;
-        [key: string]: any;
-    }) => {
-        const thumbStyle: CSSProperties = {
-            backgroundColor: "grey",
-            borderRadius: "4px",
-        };
-        return <div style={{ ...style, ...thumbStyle }} {...props} />;
-    };
-
     return (
-        <Scrollbars
-            ref={scrollbarsRef}
-            universal
-            autoHeight
-            autoHeightMin={100}
-            autoHeightMax={autoHeightMax}
-            autoHide
-            autoHideTimeout={1000}
-            autoHideDuration={200}
-            renderThumbVertical={renderThumb} // Apply the custom thumb component here
-        >
+        // animations of position and size are skipped for reduced motion
+        <MotionConfig reducedMotion="user">
             <ThemeProvider>
                 <AlertDisplay />
                 <TimezoneNotice />
@@ -85,7 +65,7 @@ const App = () => {
                     autoHideDuration={5000}
                 >
                     <BrowserRouter>
-                        <ScrollToTopOnNavigate scrollbars={scrollbarsRef} />
+                        <ScrollToTopOnNavigate />
                         <UserProvider>
                             <InvitesProvider>
                                 <Pages />
@@ -94,7 +74,7 @@ const App = () => {
                     </BrowserRouter>
                 </SnackbarProvider>
             </ThemeProvider>
-        </Scrollbars>
+        </MotionConfig>
     );
 };
 

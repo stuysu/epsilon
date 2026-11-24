@@ -158,7 +158,7 @@ const TagField = ({
                             add(inputValue.trim());
                         }
                     }}
-                    className="min-w-[30px] flex-1 bg-transparent px-[5px] py-[7.5px] text-base leading-[1.4375em] text-typography-1 outline-none"
+                    className="min-w-[30px] flex-1 bg-transparent px-[5px] py-[7.5px] text-base leading-[1.4375em] text-typography-1 outline-hidden"
                 />
                 {value.length > 0 && (
                     <button

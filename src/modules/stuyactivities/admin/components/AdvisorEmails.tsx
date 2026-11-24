@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSnackbar } from "notistack";
 import { supabase } from "../../../../lib/supabaseClient";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
@@ -36,7 +36,7 @@ const fetchAdvisors = async (): Promise<Advisor[] | null> => {
                 )
                 .eq("role", "ADVISOR")
                 .eq("active", true)
-                .neq("organizations.state", "PENDING")
+                .not("organizations.state", "in", "(PENDING,REJECTED)")
                 .order("id")
                 .range(from, to),
         ),
@@ -44,7 +44,7 @@ const fetchAdvisors = async (): Promise<Advisor[] | null> => {
             supabase
                 .from("organizations")
                 .select("id, faculty_email")
-                .neq("state", "PENDING")
+                .not("state", "in", "(PENDING,REJECTED)")
                 .not("faculty_email", "is", null)
                 .order("id")
                 .range(from, to),
@@ -126,11 +126,13 @@ const AdvisorEmails = () => {
     const [manual, setManual] = useState<string>();
     const manualRef = useRef<HTMLTextAreaElement>(null);
 
-    const load = useCallback(() => {
-        setAdvisors(undefined);
+    useEffect(() => {
         fetchAdvisors().then(setAdvisors);
     }, []);
-    useEffect(load, [load]);
+    const retry = () => {
+        setAdvisors(undefined);
+        return fetchAdvisors().then(setAdvisors);
+    };
 
     useEffect(() => {
         manualRef.current?.focus();
@@ -177,7 +179,7 @@ const AdvisorEmails = () => {
             {advisors === null ? (
                 <div className="flex flex-wrap items-center gap-3">
                     <p>Couldn't load advisors.</p>
-                    <AsyncButton onClick={load}>Try again</AsyncButton>
+                    <AsyncButton onClick={retry}>Try again</AsyncButton>
                 </div>
             ) : (
                 <>

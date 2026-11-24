@@ -8,19 +8,25 @@ const RelatedActivities = ({
     related: RelatedActivity<Organization>[] | null;
 }) => {
     return (
+        // on desktops it starts 160px into the centered page frame and runs to the frame's edge
         <div
             className={
-                "scrollbar-none max-w-[calc(100vw+2rem)] sm:max-w-[100vw] lg:max-w-[calc(100vw-160px)] overflow-x-scroll snap-x snap-mandatory"
+                "scrollbar-none max-w-[100vw] lg:max-w-[calc(min(100vw,var(--frame)+6rem)-160px)] overflow-x-scroll snap-x snap-mandatory"
             }
         >
-            <div className={"absolute bg-bg z-20 h-full w-8 left-0"}></div>
             <div
                 className={
-                    "absolute bg-gradient-to-r from-bg to-transparent z-20 h-full w-4 left-8"
+                    "absolute bg-bg z-20 h-full w-8 left-0 max-sm:hidden"
+                }
+            ></div>
+            <div
+                className={
+                    "absolute bg-linear-to-r/srgb from-bg to-transparent z-20 h-full w-4 left-8 max-sm:left-0"
                 }
             ></div>
             <div className={"w-fit flex gap-2 my-4"}>
-                <div className={"w-10"}></div>
+                {/* phones line the first card up with the page text */}
+                <div className={"w-10 max-sm:w-3"}></div>
                 {!related
                     ? Array.from({ length: 10 }).map((_, i) => (
                           <div
@@ -30,7 +36,9 @@ const RelatedActivities = ({
                       ))
                     : related.map(({ org, reason }) => (
                           <div
-                              className={"snap-start scroll-ml-12"}
+                              className={
+                                  "snap-start scroll-ml-12 max-sm:scroll-ml-3"
+                              }
                               key={org.id}
                           >
                               <OrgBlock
@@ -44,7 +52,7 @@ const RelatedActivities = ({
                               />
                           </div>
                       ))}
-                <div className={"w-12"}></div>
+                <div className={"w-12 max-sm:w-3"}></div>
             </div>
         </div>
     );

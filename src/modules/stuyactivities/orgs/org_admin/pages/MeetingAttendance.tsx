@@ -3,6 +3,7 @@ import BackLink from "../../../../../components/ui/links/BackLink";
 import { useSnackbar } from "notistack";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import useLiveRefresh from "../../../../../utils/useLiveRefresh";
+import useNow from "../../../../../utils/useNow";
 import { motion, useReducedMotion } from "framer-motion";
 import { useParams } from "react-router-dom";
 import * as Dialog from "@radix-ui/react-dialog";
@@ -25,6 +26,12 @@ import { AttendancePerformance } from "../../components/MeetingSideCards";
 import ClubQRCode from "../../components/ClubQRCode";
 import { AttendanceMark } from "../../components/useOrgAttendance";
 import MeetingChips from "../../components/MeetingChips";
+import { downloadCsv } from "../../../../../utils/csv";
+import {
+    MeetingCsvMark,
+    meetingCsvName,
+    meetingCsvRows,
+} from "../../components/attendanceCsv";
 
 type MeetingData = {
     id: number;
@@ -33,8 +40,10 @@ type MeetingData = {
     end_time: string;
     organization_id: number;
     rooms?: { name: string } | null;
-    attendance: AttendanceMark[];
+    attendance: (AttendanceMark & MeetingCsvMark)[];
 };
+
+const HOUR_MS = 60 * 60 * 1000;
 
 type Mark = "present" | "late" | "absent";
 type MarkFilter = "all" | Mark | "early";
@@ -48,10 +57,10 @@ const markFilterOptions: { value: MarkFilter; label: string }[] = [
 ];
 
 const segment = (selected: boolean) =>
-    `touch-target h-9 flex-1 rounded-full px-3 text-sm sm:px-4 font-semibold outline-0 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-typography-1 disabled:opacity-50 sm:flex-none ${
+    `touch-target h-9 flex-1 rounded-full px-3 text-sm sm:px-4 font-semibold outline-0 transition-colors focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-1 focus-visible:outline-typography-1 disabled:opacity-50 sm:flex-none ${
         selected
             ? "bg-accent text-white shadow-control"
-            : "text-typography-2 enabled:sm:hover:text-typography-1"
+            : "text-typography-2 sm:enabled:hover:text-typography-1"
     }`;
 
 const markLabel: Record<Mark, [string, string]> = {
@@ -123,7 +132,7 @@ const MeetingAttendance = ({ readOnly = false }: { readOnly?: boolean }) => {
         const { data, error } = await supabase
             .from("meetings")
             .select(
-                "id, title, start_time, end_time, organization_id, rooms (name), attendance (user_id, late, left_early)",
+                "id, title, start_time, end_time, organization_id, rooms (name), attendance (user_id, late, left_early, recorded_at, source)",
             )
             .eq("id", meetingId)
             .eq("organization_id", org.id)
@@ -134,7 +143,23 @@ const MeetingAttendance = ({ readOnly = false }: { readOnly?: boolean }) => {
         if (data) setMeeting(data);
     }, [meetingId, org.id, validId]);
 
-    useLiveRefresh(load, 3000);
+    // check-ins arrive around the meeting; later only leaders' own edits
+    const now = useNow();
+    const live =
+        !meeting ||
+        (now > new Date(meeting.start_time).getTime() - HOUR_MS &&
+            now < new Date(meeting.end_time).getTime() + HOUR_MS);
+    useLiveRefresh(load, live ? 3000 : 60000);
+
+    // useNow ticks once a minute, so the CSV button also unlocks right at the start
+    const startMs = meeting ? new Date(meeting.start_time).getTime() : NaN;
+    const [reachedStart, setReachedStart] = useState<number>();
+    useEffect(() => {
+        const wait = startMs - Date.now();
+        if (!(wait > 0) || wait > 2 ** 31 - 1) return;
+        const timer = setTimeout(() => setReachedStart(startMs), wait);
+        return () => clearTimeout(timer);
+    }, [startMs]);
 
     useEffect(() => {
         if (!org.id || org.id === -1) return;
@@ -156,6 +181,7 @@ const MeetingAttendance = ({ readOnly = false }: { readOnly?: boolean }) => {
         .map((m) => ({
             id: m.users!.id as number,
             membershipId: m.id as number,
+            role: m.role,
             first_name: m.users?.first_name,
             last_name: m.users?.last_name,
             name: `${m.users?.first_name || ""} ${m.users?.last_name || ""}`.trim(),
@@ -186,7 +212,7 @@ const MeetingAttendance = ({ readOnly = false }: { readOnly?: boolean }) => {
                 : marks.has(userId)
                   ? await supabase
                         .from("attendance")
-                        .update({ late: mark === "late" })
+                        .update({ late: mark === "late", source: "LEADER" })
                         .eq("meeting_id", meeting.id)
                         .eq("user_id", userId)
                   : await supabase.from("attendance").insert({
@@ -194,12 +220,13 @@ const MeetingAttendance = ({ readOnly = false }: { readOnly?: boolean }) => {
                         meeting_id: meeting.id,
                         organization_id: meeting.organization_id,
                         late: mark === "late",
+                        source: "LEADER",
                     });
         // they checked themselves in since the last refresh
         if (error?.code === "23505")
             ({ error } = await supabase
                 .from("attendance")
-                .update({ late: mark === "late" })
+                .update({ late: mark === "late", source: "LEADER" })
                 .eq("meeting_id", meeting.id)
                 .eq("user_id", userId));
         if (error) {
@@ -260,7 +287,7 @@ const MeetingAttendance = ({ readOnly = false }: { readOnly?: boolean }) => {
     };
 
     const [copied, setCopied] = useState(false);
-    const copiedTimer = useRef<ReturnType<typeof setTimeout>>();
+    const copiedTimer = useRef<ReturnType<typeof setTimeout>>(undefined);
     useEffect(() => () => clearTimeout(copiedTimer.current), []);
 
     const copyLink = async () => {
@@ -315,6 +342,25 @@ const MeetingAttendance = ({ readOnly = false }: { readOnly?: boolean }) => {
                   joined_at: joinDates.get(m.membershipId),
               }));
 
+    const started = !!meeting && (startMs <= now || reachedStart === startMs);
+    const exportCsv = () =>
+        meeting &&
+        downloadCsv(
+            meetingCsvName(org.url, meeting),
+            meetingCsvRows(
+                meeting,
+                meeting.attendance,
+                sortMembersBy(members, "last-name", (m) => ({
+                    first_name: m.first_name,
+                    last_name: m.last_name,
+                    joined_at: joinDates.get(m.membershipId),
+                })).map((m) => ({
+                    ...m,
+                    joined_at: joinDates.get(m.membershipId),
+                })),
+            ),
+        );
+
     if (missing)
         return (
             <ContentUnavailable
@@ -326,7 +372,7 @@ const MeetingAttendance = ({ readOnly = false }: { readOnly?: boolean }) => {
                     <BackLink
                         to={`/${orgUrl}/admin/attendance`}
                         className={
-                            "inline-flex min-h-11 items-center gap-1 rounded-lg px-3 text-typography-1 underline-offset-2 sm:hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1"
+                            "inline-flex min-h-11 items-center gap-1 rounded-lg px-3 text-typography-1 underline-offset-2 sm:hover:underline focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-typography-1"
                         }
                     >
                         <i
@@ -342,20 +388,46 @@ const MeetingAttendance = ({ readOnly = false }: { readOnly?: boolean }) => {
     return (
         <div>
             <header className={"mb-6 mt-2"}>
-                <h1 className={"mb-2 break-words"}>
-                    <BackLink
-                        to={`/${orgUrl}/admin/attendance`}
-                        className={
-                            "rounded-md text-typography-3 no-underline transition-colors sm:hover:text-typography-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                <div
+                    className={
+                        "mb-2 flex flex-wrap items-start justify-between gap-x-4 gap-y-3"
+                    }
+                >
+                    <h1 className={"min-w-0 wrap-break-word"}>
+                        <BackLink
+                            to={`/${orgUrl}/admin/attendance`}
+                            className={
+                                "rounded-md text-typography-3 underline underline-offset-4 transition-colors sm:hover:text-typography-2 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                            }
+                        >
+                            Attendance
+                        </BackLink>
+                        <span
+                            aria-hidden="true"
+                            className={"text-typography-3"}
+                        >
+                            /
+                        </span>
+                        {/* wraps after the slash rather than mid-word */}
+                        <wbr />
+                        {meeting?.title}
+                    </h1>
+                    <AsyncButton
+                        onClick={exportCsv}
+                        disabled={!started}
+                        title={
+                            started
+                                ? undefined
+                                : "Available once the meeting starts"
                         }
                     >
-                        Attendance
-                    </BackLink>
-                    <span aria-hidden="true" className={"text-typography-3"}>
-                        /
-                    </span>
-                    {meeting?.title}
-                </h1>
+                        <i
+                            className={"bx bx-download mr-1.5"}
+                            aria-hidden="true"
+                        />
+                        Download CSV
+                    </AsyncButton>
+                </div>
                 {meeting && (
                     <div className={"mb-3"}>
                         <MeetingChips
@@ -486,7 +558,7 @@ const MeetingAttendance = ({ readOnly = false }: { readOnly?: boolean }) => {
                                         setLateDraft(e.target.value)
                                     }
                                     className={
-                                        "h-9 w-16 rounded-lg bg-layer-2 px-2 text-center tabular-nums text-typography-1 shadow-control outline-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1"
+                                        "h-9 w-16 rounded-lg bg-layer-2 px-2 text-center tabular-nums text-typography-1 shadow-control outline-0 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-typography-1"
                                     }
                                 />
                                 <span className={"text-sm"}>min</span>
@@ -494,7 +566,7 @@ const MeetingAttendance = ({ readOnly = false }: { readOnly?: boolean }) => {
                                     type="submit"
                                     aria-label="Save"
                                     className={
-                                        "flex size-9 items-center justify-center rounded-full text-xl shadow-control transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 bg-accent text-white sm:hover:brightness-110"
+                                        "flex size-9 items-center justify-center rounded-full text-xl shadow-control transition-colors focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 bg-accent text-white sm:hover:brightness-110"
                                     }
                                 >
                                     <i
@@ -510,7 +582,7 @@ const MeetingAttendance = ({ readOnly = false }: { readOnly?: boolean }) => {
                                         setEditingLate(false);
                                     }}
                                     className={
-                                        "flex size-9 items-center justify-center rounded-full text-xl shadow-control transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 bg-layer-2 text-typography-2 sm:hover:bg-layer-3 sm:hover:text-typography-1"
+                                        "flex size-9 items-center justify-center rounded-full text-xl shadow-control transition-colors focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 bg-layer-2 text-typography-2 sm:hover:bg-layer-3 sm:hover:text-typography-1"
                                     }
                                 >
                                     <i
@@ -526,7 +598,7 @@ const MeetingAttendance = ({ readOnly = false }: { readOnly?: boolean }) => {
                                 aria-label={`Late after ${lateAfter} minutes. Edit`}
                                 title="Self check-ins after this are marked late"
                                 className={
-                                    "touch-target inline-flex h-9 items-center gap-2 rounded-full bg-layer-2 px-4 text-sm font-semibold text-typography-1 shadow-control transition-colors sm:hover:bg-layer-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                                    "touch-target inline-flex h-9 items-center gap-2 rounded-full bg-layer-2 px-4 text-sm font-semibold text-typography-1 shadow-control transition-colors sm:hover:bg-layer-3 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
                                 }
                             >
                                 <i
@@ -551,7 +623,7 @@ const MeetingAttendance = ({ readOnly = false }: { readOnly?: boolean }) => {
                                 disabled={!link}
                                 aria-live="polite"
                                 className={
-                                    "flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-layer-2 px-4 text-sm font-semibold text-typography-1 shadow-control transition-colors disabled:opacity-50 sm:hover:bg-layer-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                                    "flex h-11 w-full items-center justify-center gap-2 rounded-lg bg-layer-2 px-4 text-sm font-semibold text-typography-1 shadow-control transition-colors disabled:opacity-50 sm:hover:bg-layer-3 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
                                 }
                             >
                                 <i
@@ -596,7 +668,7 @@ const MeetingAttendance = ({ readOnly = false }: { readOnly?: boolean }) => {
                                         aria-label="Show QR code full screen"
                                         onClick={() => setQrFull(true)}
                                         className={
-                                            "cursor-zoom-in overflow-hidden rounded-lg bg-white focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                                            "cursor-zoom-in overflow-hidden rounded-lg bg-white focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
                                         }
                                     >
                                         <ClubQRCode
@@ -677,7 +749,11 @@ const MeetingAttendance = ({ readOnly = false }: { readOnly?: boolean }) => {
                                                 {m.name.charAt(0)}
                                             </Avatar>
                                             <div className={"min-w-0"}>
-                                                <h4 className={"break-words"}>
+                                                <h4
+                                                    className={
+                                                        "wrap-break-word"
+                                                    }
+                                                >
                                                     {m.name}
                                                 </h4>
                                                 <p
@@ -770,10 +846,10 @@ const MeetingAttendance = ({ readOnly = false }: { readOnly?: boolean }) => {
                                                             m.name,
                                                         )
                                                     }
-                                                    className={`flex h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-3.5 text-sm sm:px-4 font-semibold outline-0 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 disabled:opacity-40 ${
+                                                    className={`flex h-11 items-center justify-center gap-1.5 whitespace-nowrap rounded-full px-3.5 text-sm sm:px-4 font-semibold outline-0 transition-colors focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 disabled:opacity-40 ${
                                                         mark?.left_early
                                                             ? "bg-yellow text-black"
-                                                            : "bg-layer-3 text-typography-2 enabled:sm:hover:text-typography-1"
+                                                            : "bg-layer-3 text-typography-2 sm:enabled:hover:text-typography-1"
                                                     }`}
                                                 >
                                                     <i
@@ -797,7 +873,7 @@ const MeetingAttendance = ({ readOnly = false }: { readOnly?: boolean }) => {
                 <Dialog.Portal>
                     <Dialog.Overlay
                         className={
-                            "fixed inset-0 z-[100] bg-black/85 backdrop-blur-md"
+                            "fixed inset-0 z-100 bg-black/85 backdrop-blur-md"
                         }
                     />
                     <Dialog.Content
@@ -811,7 +887,7 @@ const MeetingAttendance = ({ readOnly = false }: { readOnly?: boolean }) => {
                                 qrOpener.current.focus();
                         }}
                         className={
-                            "fixed inset-0 z-[101] flex flex-col items-center justify-center gap-5 p-6 text-center outline-0"
+                            "fixed inset-0 z-101 flex flex-col items-center justify-center gap-5 p-6 text-center outline-0"
                         }
                     >
                         <Dialog.Title className={"text-3xl text-typography-1"}>
@@ -837,7 +913,7 @@ const MeetingAttendance = ({ readOnly = false }: { readOnly?: boolean }) => {
                         <Dialog.Close
                             aria-label="Close full screen QR code"
                             className={
-                                "absolute right-4 top-4 flex size-11 items-center justify-center rounded-full bg-layer-2 text-typography-1 shadow-control sm:hover:bg-layer-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1"
+                                "absolute right-4 top-4 flex size-11 items-center justify-center rounded-full bg-layer-2 text-typography-1 shadow-control sm:hover:bg-layer-3 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-typography-1"
                             }
                         >
                             <i aria-hidden="true" className={"bx bx-x bx-sm"} />

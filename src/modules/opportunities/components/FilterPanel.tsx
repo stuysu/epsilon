@@ -1,5 +1,5 @@
 import { Slider, Toggle } from "radix-ui";
-import { useEffect, useId, useState } from "react";
+import { useId, useState } from "react";
 import CheckboxField from "../../../components/ui/input/CheckboxField";
 import SearchInput from "../../../components/ui/input/SearchInput";
 import SortSelect from "../../../components/ui/input/SortSelect";
@@ -15,6 +15,7 @@ import {
     OpportunityEligibility,
     OpportunityFilters,
 } from "../types";
+import useOnChange from "../../../utils/useOnChange";
 import { toggleValue } from "../utils";
 
 type FilterPanelProps = {
@@ -76,7 +77,9 @@ const CategoryRow = ({
                             : [...withoutFamily, category.id],
                     )
                 }
-                aria-controls={subcategories.length ? groupId : undefined}
+                aria-controls={
+                    pressed && subcategories.length ? groupId : undefined
+                }
                 className={`${PILL_CLASS} ${pillColors(pressed)}`}
             >
                 {category.name}
@@ -140,9 +143,7 @@ const FilterPanel = ({
 
     // keep the thumbs smooth while dragging, then filter when released
     const [draftCost, setDraftCost] = useState<number[]>(costValue);
-    useEffect(() => {
-        setDraftCost(filters.costRange ?? [0, maxCost]);
-    }, [filters.costRange, maxCost]);
+    useOnChange(costValue.join(), () => setDraftCost(costValue));
 
     return (
         <div className="flex flex-col">
@@ -167,7 +168,7 @@ const FilterPanel = ({
             <ResetFiltersButton disabled={!canReset} onReset={onReset} />
             <div className="flex flex-col gap-5">
                 <FilterGroup title="Status">
-                    <div className="grid grid-cols-2 gap-2 [&>*]:justify-center [&>*]:text-center">
+                    <div className="grid grid-cols-2 gap-2 *:justify-center *:text-center">
                         <ToggleChip
                             title="Active"
                             selected={filters.statuses.includes("active")}
@@ -196,7 +197,7 @@ const FilterPanel = ({
                 </FilterGroup>
 
                 <FilterGroup title="Deadline">
-                    <div className="grid grid-cols-2 gap-2 [&>*]:justify-center [&>*]:text-center">
+                    <div className="grid grid-cols-2 gap-2 *:justify-center *:text-center">
                         <ToggleChip
                             title="This Week"
                             selected={filters.deadlines.includes("week")}
@@ -312,12 +313,12 @@ const FilterPanel = ({
                             <Slider.Thumb
                                 aria-label="Minimum cost"
                                 aria-valuetext={formatDollars(draftCost[0])}
-                                className="relative block h-4 w-4 cursor-pointer rounded-full shadow-control [background:linear-gradient(var(--accent),var(--accent)),var(--bg-main)] outline-none after:absolute after:-inset-1 after:content-[''] focus-visible:ring-2 focus-visible:ring-typography-1"
+                                className="relative block h-4 w-4 cursor-pointer rounded-full shadow-control [background:linear-gradient(var(--accent),var(--accent)),var(--bg-main)] outline-hidden after:absolute after:-inset-1 after:content-[''] focus-visible:ring-2 focus-visible:ring-typography-1"
                             />
                             <Slider.Thumb
                                 aria-label="Maximum cost"
                                 aria-valuetext={formatDollars(draftCost[1])}
-                                className="relative block h-4 w-4 cursor-pointer rounded-full shadow-control [background:linear-gradient(var(--accent),var(--accent)),var(--bg-main)] outline-none after:absolute after:-inset-1 after:content-[''] focus-visible:ring-2 focus-visible:ring-typography-1"
+                                className="relative block h-4 w-4 cursor-pointer rounded-full shadow-control [background:linear-gradient(var(--accent),var(--accent)),var(--bg-main)] outline-hidden after:absolute after:-inset-1 after:content-[''] focus-visible:ring-2 focus-visible:ring-typography-1"
                             />
                         </Slider.Root>
                     </FilterGroup>

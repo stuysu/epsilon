@@ -3,6 +3,7 @@ import React, {
     useContext,
     useEffect,
     useMemo,
+    useRef,
     useState,
 } from "react";
 import { supabase } from "../lib/supabaseClient";
@@ -11,11 +12,13 @@ import { useSnackbar } from "notistack";
 import { ThemeContext } from "./ThemeProvider";
 import { useLocation } from "react-router-dom";
 import UnauthorizedAccount from "../modules/home/UnauthorizedAccount";
+import { SUPPORT_EMAIL } from "../config/constants";
 
 const signedOut: UserContextType = {
     signed_in: false,
     admin: false,
     permission: "",
+    permissions: [],
     id: -1,
     first_name: "",
     last_name: "",
@@ -36,15 +39,12 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
     const [value, setValue] = React.useState<UserContextType>(signedOut);
 
-    useEffect(() => {
-        const { data } = supabase.auth.onAuthStateChange((event) => {
-            if (event === "SIGNED_OUT") setValue(signedOut);
-        });
-        return () => data.subscription.unsubscribe();
-    }, []);
+    // the account whose profile is loaded (or loading)
+    const loadedEmail = useRef<string | undefined>(undefined);
 
     const getUser = useCallback(async () => {
         const authData = await supabase.auth.getSession();
+        loadedEmail.current = authData.data?.session?.user?.email;
 
         if (authData.data?.session?.user) {
             // fetch user profile
@@ -82,7 +82,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
             if (error) {
                 enqueueSnackbar(
-                    "Error logging in. Contact it@stuysu.org for support.",
+                    `Error logging in. Contact ${SUPPORT_EMAIL} for support.`,
                     { variant: "error" },
                 );
                 setLoading(false);
@@ -148,7 +148,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
 
                 if (profileUpdateError) {
                     enqueueSnackbar(
-                        "Unable to save profile picture to server. Please contact it@stuysu.org for support.",
+                        `Unable to save profile picture to server. Please contact ${SUPPORT_EMAIL} for support.`,
                         { variant: "error" },
                     );
                     setLoading(false);
@@ -164,6 +164,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
           enqueueSnackbar("Signed In!", { variant: "success" })
         */
 
+            setUnauthorizedEmail(undefined);
             setValue({
                 signed_in: true,
                 admin: isAdmin,
@@ -177,13 +178,52 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 is_faculty: user.is_faculty,
                 active: user.active,
                 permission,
+                permissions: data[0].permissions.map(
+                    (p: { permission: string }) => p.permission,
+                ),
             });
         }
         setLoading(false);
     }, [enqueueSnackbar]);
 
     useEffect(() => {
+        // fetches; state is only set once the response arrives
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         getUser();
+    }, [getUser]);
+
+    // sign-ins and sign-outs in other tabs arrive as auth events or storage changes
+    useEffect(() => {
+        const sync = async () => {
+            const { data } = await supabase.auth.getSession();
+            const email = data.session?.user?.email;
+            if (email === loadedEmail.current) return;
+            loadedEmail.current = email;
+            if (email) {
+                getUser();
+            } else {
+                setUnauthorizedEmail(undefined);
+                setValue(signedOut);
+            }
+        };
+        const { data } = supabase.auth.onAuthStateChange((event) => {
+            if (event === "SIGNED_OUT") {
+                loadedEmail.current = undefined;
+                setUnauthorizedEmail(undefined);
+                setValue(signedOut);
+            } else if (event === "SIGNED_IN") {
+                // auth calls inside the callback can deadlock, so defer
+                setTimeout(sync, 0);
+            }
+        });
+        const onStorage = (e: StorageEvent) => {
+            if (e.key === null || e.key.endsWith("-auth-token")) sync();
+        };
+        window.addEventListener("storage", onStorage);
+        return () => {
+            data.subscription.unsubscribe();
+            window.removeEventListener("storage", onStorage);
+        };
     }, [getUser]);
 
     // pages call refresh after the user's own memberships change
@@ -198,8 +238,7 @@ const UserProvider = ({ children }: { children: React.ReactNode }) => {
                 style={{
                     backgroundColor:
                         effectiveMode === "dark" ? "#0c161b" : "#ebf5f2",
-                    width: "100vw",
-                    height: "100vh",
+                    height: "100dvh",
                 }}
             />
         );

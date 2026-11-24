@@ -13,15 +13,15 @@ import {
     AttendanceStats,
     attendanceRecord,
 } from "../components/AttendanceRecord";
+import useOrgRole from "../useOrgRole";
+import { SUPPORT_EMAIL } from "../../../../config/constants";
 
 const MyAttendance = () => {
     const organization = useContext(OrgContext);
     const user = useContext(UserContext);
     const navigate = useNavigate();
     const { meetings, error } = useOrgAttendance(organization.id);
-    const membership = organization.memberships?.find(
-        (m) => m.users?.id === user.id,
-    );
+    const { membership } = useOrgRole();
     const joinDates = useMembershipJoinDates(
         organization.id,
         organization.memberships?.length ?? 0,
@@ -50,7 +50,7 @@ const MyAttendance = () => {
                         icon="bx-error"
                         iconColor="text-red"
                         title="Attendance Unavailable"
-                        description="Couldn't load your attendance. Refresh the page or contact it@stuysu.org."
+                        description={`Couldn't load your attendance. Refresh the page or contact ${SUPPORT_EMAIL}.`}
                     />
                 ) : !meetings ? (
                     <></>

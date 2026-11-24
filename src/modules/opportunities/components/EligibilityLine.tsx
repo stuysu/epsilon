@@ -49,7 +49,7 @@ const EligibilityLine = ({ opportunity }: EligibilityLineProps) => {
         // ages and GPAs have no tag, so show the bulletin's words
         if (!text || isOpenToAll(text)) return null;
         return (
-            <p className="text-sm text-typography-2 [overflow-wrap:anywhere]">
+            <p className="text-sm text-typography-2 wrap-anywhere">
                 Eligibility: {text}
             </p>
         );

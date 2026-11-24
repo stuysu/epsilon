@@ -1,4 +1,11 @@
-import React, { useContext, useEffect, useRef, useState } from "react";
+import React, {
+    useCallback,
+    useContext,
+    useEffect,
+    useRef,
+    useState,
+} from "react";
+import useLiveRefresh from "../../../../utils/useLiveRefresh";
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import UserContext from "../../../../contexts/UserContext";
@@ -31,57 +38,58 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
 
     const chatBoxRef = useRef<HTMLDivElement>(null);
 
-    // fetch messages from the database
-    useEffect(() => {
-        let isMounted = true;
-        const fetchMessages = async () => {
-            const { data: messageData, error: messageError } = await supabase
-                .from("orgmessages")
-                .select(
-                    `
+    const request = useRef(0);
+    const failing = useRef(false);
+
+    const fetchMessages = useCallback(async () => {
+        const id = ++request.current;
+        const { data: messageData, error: messageError } = await supabase
+            .from("orgmessages")
+            .select(
+                `
+                id,
+                content,
+                users!inner (
                     id,
-                    content,
-                    users!inner (
-                        id,
-                        first_name,
-                        last_name,
-                        picture
-                    ),
-                    created_at
-                `,
-                )
-                .eq("organization_id", organization_id)
-                .returns<OrgMessage[]>();
+                    first_name,
+                    last_name,
+                    picture
+                ),
+                created_at
+            `,
+            )
+            .eq("organization_id", organization_id)
+            .returns<OrgMessage[]>();
 
-            if (!isMounted) return;
+        if (id !== request.current) return;
 
-            if (messageError) {
+        // polling keeps failing while offline; say so once
+        if (messageError) {
+            if (!failing.current) {
+                failing.current = true;
                 enqueueSnackbar("Failed to fetch messages", {
                     variant: "error",
                 });
-                return;
             }
+            return;
+        }
+        failing.current = false;
 
-            const sorted = messageData.sort(
-                (a, b) =>
-                    new Date(a.created_at).getTime() -
-                    new Date(b.created_at).getTime(),
-            );
-            setMessages((prev) =>
-                prev.length === sorted.length &&
-                prev.every((m, i) => m.id === sorted[i].id)
-                    ? prev
-                    : sorted,
-            );
-        };
-
-        fetchMessages();
-        const interval = setInterval(fetchMessages, 10000);
-        return () => {
-            isMounted = false;
-            clearInterval(interval);
-        };
+        const sorted = messageData.sort(
+            (a, b) =>
+                new Date(a.created_at).getTime() -
+                new Date(b.created_at).getTime(),
+        );
+        setMessages((prev) =>
+            prev.length === sorted.length &&
+            prev.every((m, i) => m.id === sorted[i].id)
+                ? prev
+                : sorted,
+        );
     }, [organization_id, enqueueSnackbar]);
+
+    // pauses while the tab is hidden
+    useLiveRefresh(fetchMessages, 10000);
 
     const lastCount = useRef(0);
     useEffect(() => {
@@ -179,7 +187,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                                         alt={message.users.first_name}
                                     />
                                     <Avatar.Fallback
-                                        className="text-center size-full flex items-center justify-center bg-layer-3 text-xl relative pt-1 text-typography-2"
+                                        className="text-center size-full flex items-center justify-center bg-layer-3 text-xl relative pt-1 text-typography-1"
                                         delayMs={600}
                                     >
                                         {message.users.first_name
@@ -188,7 +196,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                                     </Avatar.Fallback>
                                 </Avatar.Root>
                                 <div className={"min-w-0 flex-1"}>
-                                    <h4 className={"break-words"}>
+                                    <h4 className={"wrap-break-word"}>
                                         {message.users.first_name +
                                             " " +
                                             message.users.last_name}
@@ -200,7 +208,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                                         type="button"
                                         aria-label="Delete message"
                                         className={
-                                            "flex size-11 shrink-0 items-center justify-center rounded-lg text-red transition-colors sm:hover:bg-layer-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1"
+                                            "flex size-11 shrink-0 items-center justify-center rounded-lg text-red transition-colors sm:hover:bg-layer-2 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-typography-1"
                                         }
                                         onClick={() =>
                                             setPendingDelete(message.id)
@@ -216,7 +224,7 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
 
                             <div className={"rounded-lg bg-layer-2 p-4"}>
                                 <MarkupDisplayer
-                                    className="break-words"
+                                    className="wrap-break-word"
                                     text={message.content}
                                 />
                             </div>
@@ -224,19 +232,23 @@ const OrgChat = ({ organization_id }: { organization_id: number }) => {
                     );
                 })}
             </div>
-            <div className="mt-2 flex w-full flex-col gap-2 sm:flex-row sm:items-end sm:gap-4">
-                <MarkupEditor
-                    key={editorKey}
-                    onChange={setMessage}
-                    onSubmit={sendMessage}
-                    placeholder="Send a message"
-                    submitVerb="send"
-                    ariaLabel="Message"
-                    compact
-                />
-                <AsyncButton className="shrink-0" onClick={sendMessage}>
-                    Send
-                </AsyncButton>
+            {/* Send sits beside the box only when the chat itself is wide;
+                it's shown in narrow side panels too */}
+            <div className="@container mt-2 w-full">
+                <div className="flex flex-col gap-2 @lg:flex-row @lg:items-end @lg:gap-4">
+                    <MarkupEditor
+                        key={editorKey}
+                        onChange={setMessage}
+                        onSubmit={sendMessage}
+                        placeholder="Send a message"
+                        submitVerb="send"
+                        ariaLabel="Message"
+                        compact
+                    />
+                    <AsyncButton className="shrink-0" onClick={sendMessage}>
+                        Send
+                    </AsyncButton>
+                </div>
             </div>
             <UserDialog
                 title="Delete this message?"

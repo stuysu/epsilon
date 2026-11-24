@@ -15,6 +15,7 @@ import { useOpportunities } from "../OpportunitiesContext";
 import { Opportunity } from "../types";
 import { getTodayEastern } from "../utils";
 import EntryFields from "./EntryFields";
+import { SUPPORT_EMAIL } from "../../../config/constants";
 
 // errors the database raises on purpose, written for admins
 const EDIT_ERROR_CODE = "P0001";
@@ -120,7 +121,7 @@ const EditOpportunity = ({ opportunity, onDone }: EditOpportunityProps) => {
             enqueueSnackbar(
                 error.code === EDIT_ERROR_CODE
                     ? `Not saved. ${error.message}`
-                    : "Error saving opportunity. Contact it@stuysu.org for support.",
+                    : `Error saving opportunity. Contact ${SUPPORT_EMAIL} for support.`,
                 { variant: "error" },
             );
             return;
@@ -139,11 +140,11 @@ const EditOpportunity = ({ opportunity, onDone }: EditOpportunityProps) => {
 
     return (
         <section className="flex flex-col gap-4 rounded-2xl bg-layer-1 p-6 shadow-control max-sm:p-4">
-            <h2 ref={headingRef} tabIndex={-1} className="outline-none">
+            <h2 ref={headingRef} tabIndex={-1} className="outline-hidden">
                 Edit Opportunity
             </h2>
             {draft.warnings.length > 0 && (
-                <p className="flex gap-1.5 text-sm text-yellow [overflow-wrap:anywhere]">
+                <p className="flex gap-1.5 text-sm text-yellow wrap-anywhere">
                     <i
                         className="bx bx-error-circle pt-0.5"
                         aria-hidden="true"

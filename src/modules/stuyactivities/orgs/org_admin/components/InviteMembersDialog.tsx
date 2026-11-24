@@ -1,3 +1,4 @@
+import useOnChange from "../../../../../utils/useOnChange";
 import { useCallback, useContext, useEffect, useState } from "react";
 import { useSnackbar } from "notistack";
 import dayjs from "dayjs";
@@ -6,6 +7,7 @@ import { supabase } from "../../../../../lib/supabaseClient";
 import UserDialog from "../../../../../components/ui/overlays/UserDialog";
 import ItemList from "../../../../../components/ui/lists/ItemList";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
+import { SUPPORT_EMAIL } from "../../../../../config/constants";
 
 type PendingInvite = {
     id: number;
@@ -68,11 +70,11 @@ const InviteMembersDialog = ({
         if (!error && data) setInvites(data);
     }, [organization.id]);
 
+    useOnChange(open, (isOpen) => isOpen && setProblems([]));
     useEffect(() => {
-        if (open) {
-            setProblems([]);
-            fetchInvites();
-        }
+        // the list is fetched each time the dialog opens
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        if (open) fetchInvites();
     }, [open, fetchInvites]);
 
     const sendInvites = async () => {
@@ -94,7 +96,7 @@ const InviteMembersDialog = ({
             enqueueSnackbar(
                 error?.code === "P0001"
                     ? error.message
-                    : "Failed to send invites. Contact it@stuysu.org for support.",
+                    : `Failed to send invites. Contact ${SUPPORT_EMAIL} for support.`,
                 { variant: "error" },
             );
             return;
@@ -177,7 +179,7 @@ const InviteMembersDialog = ({
                 <ul className={"mt-3 space-y-1"}>
                     {problems.map((problem) => (
                         <li key={problem.email}>
-                            <p className={"break-words"}>
+                            <p className={"wrap-break-word"}>
                                 <span
                                     className={"break-all font-medium text-red"}
                                 >

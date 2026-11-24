@@ -7,12 +7,12 @@ import Create from "./Create";
 const ValentinesRouter = () => {
     return (
         <LoginGate>
-            <div className="mt-[2rem] w-full flex items-center flex-col pb-[10vh]">
+            <div className="mt-8 w-full flex items-center flex-col pb-[10vh]">
                 {/* the page's heading; styled as it was when it was an h2 */}
                 <h1 className="text-[3.75rem] leading-[1.2] my-1 font-semibold text-typography-2">
                     Valentines
                 </h1>
-                <div className="mt-4 mb-[2rem] w-[80vw]">
+                <div className="mt-4 mb-8 w-[80vw]">
                     <hr className="border-divider" />
                 </div>
                 <Routes>

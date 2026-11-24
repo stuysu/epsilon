@@ -3,7 +3,8 @@ import { ChangeEvent, CSSProperties, HTMLAttributes, useEffect } from "react";
 import { useSnackbar } from "notistack";
 import AsyncButton from "../buttons/AsyncButton";
 
-type FileType = "image/png" | "image/jpeg" | "image/webp" | "image/*";
+type FileType =
+    "image/png" | "image/jpeg" | "image/webp" | "image/gif" | "image/*";
 
 type Requirements = {
     maxSize?: [number, "MB"];
@@ -23,6 +24,10 @@ type Props = {
     };
     changeStatus?: (field: string, newValue: boolean) => void;
 };
+
+// "image/png" -> "PNG", "image/*" -> "image"
+const typeName = (type: string) =>
+    type.endsWith("/*") ? type.slice(0, -2) : type.split("/")[1].toUpperCase();
 
 const FormUpload = ({
     field,
@@ -63,10 +68,30 @@ const FormUpload = ({
     const hasFile = !!value;
 
     const fileChanged = (event: ChangeEvent<HTMLInputElement>) => {
-        if (!event.target.files) return;
+        const file = event.target.files?.[0];
+        // cleared, so picking the same file again still fires a change
+        event.target.value = "";
+        if (!file) return;
+        const types = requirements?.types;
+        if (
+            types &&
+            !types.some((type) =>
+                type.endsWith("/*")
+                    ? file.type.startsWith(type.slice(0, -1))
+                    : file.type === type,
+            )
+        ) {
+            return enqueueSnackbar(
+                `Choose a ${types
+                    .map(typeName)
+                    .join(", ")
+                    .replace(/, ([^,]*)$/, " or $1")} file.`,
+                { variant: "error" },
+            );
+        }
         if (
             requirements?.maxSize &&
-            event.target.files[0].size > requirements?.maxSize![0] * 1024 * 1024
+            file.size > requirements.maxSize[0] * 1024 * 1024
         ) {
             return enqueueSnackbar(
                 `File size exceeds ${requirements.maxSize[0]}MB limit.`,
@@ -76,7 +101,7 @@ const FormUpload = ({
 
         if (!onChange) return;
 
-        onChange(event.target.files[0]);
+        onChange(file);
     };
 
     return (
@@ -113,7 +138,6 @@ const FormUpload = ({
                         }
                         id="input-file-upload"
                         onChange={fileChanged}
-                        value={value?.webkitRelativePath}
                         // visually hidden but focusable, so the upload works from a keyboard
                         className="sr-only"
                     />

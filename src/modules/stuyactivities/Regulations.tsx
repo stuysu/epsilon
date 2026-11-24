@@ -1,16 +1,14 @@
-import { Helmet } from "react-helmet";
 import React from "react";
+import usePageMeta from "../../utils/usePageMeta";
 
 const Regulations = () => {
+    usePageMeta(
+        "StuySU Clubs & Pubs Regulations - Epsilon",
+        "Official regulations for Activities at Stuyvesant High School, including guidelines for meetings, funding, and room usage.",
+    );
+
     return (
         <div className={"p-10 max-sm:mb-32"}>
-            <Helmet>
-                <title>StuySU Clubs & Pubs Regulations</title>
-                <meta
-                    name="description"
-                    content="Official regulations for Activities at Stuyvesant High School, including guidelines for meetings, funding, and room usage."
-                />
-            </Helmet>
             <div
                 className={
                     "flex sm:justify-center items-center w-full h-48 sm:h-96"
@@ -29,7 +27,10 @@ const Regulations = () => {
             <div className={"flex flex-row sm:mx-5 justify-center"}>
                 <div className={"w-1/4 sticky top-20 h-96 sm:block hidden"}>
                     <h4 className={"mb-3"}>Table of Contents</h4>
-                    <ul className={"space-y-1"}>
+                    {/* 24px tall links, for touch */}
+                    <ul
+                        className={"space-y-1 [&_a]:inline-block [&_a]:min-h-6"}
+                    >
                         <li>
                             <p>
                                 <a href="#general">General Guidance</a>

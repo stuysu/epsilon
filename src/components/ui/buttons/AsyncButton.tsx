@@ -2,10 +2,10 @@ import React, { CSSProperties, useState } from "react";
 
 // shared with links that should look like buttons
 export const BUTTON_CLASS = [
-    "relative inline-flex select-none items-center justify-center rounded-[11px] px-5 pb-[13px] pt-[11px] align-middle text-[14px] outline-none transition-[filter,transform] [font-family:inter-variable] [font-variation-settings:'wght'_700]",
+    "relative inline-flex select-none items-center justify-center rounded-[11px] px-5 pb-[13px] pt-[11px] align-middle text-[14px] outline-hidden transition-[filter,transform] font-[inter-variable] [font-variation-settings:'wght'_700]",
     // an outline, since the inline box-shadow would hide a ring; the label
     // variant wraps a hidden file input, so it shows the input's focus
-    "focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-typography-1",
+    "focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 has-focus-visible:outline-solid has-focus-visible:outline-2 has-focus-visible:outline-offset-2 has-focus-visible:outline-typography-1",
 ].join(" ");
 export const BUTTON_SHADOW =
     "0 4px 20px 0 var(--shadow-base), 0 4px 3px 0 var(--shadow-base), 0 0 3px 0 var(--shadow-antithesis) inset, 0 -7px 20px 0 var(--shadow-fume) inset";
@@ -26,7 +26,7 @@ type AsyncButtonProps = Omit<
 > & {
     onClick?: (
         e: React.MouseEvent<HTMLButtonElement, MouseEvent>,
-    ) => void | Promise<any>;
+    ) => void | Promise<unknown>;
     sx?: CSSProperties;
     isPrimary?: boolean;
     component?: "button" | "label";
@@ -95,10 +95,10 @@ const AsyncButton: React.FC<AsyncButtonProps> = ({
     const buttonStyle: CSSProperties = {
         backgroundColor: isPrimary
             ? "var(--accent)"
-            : semanticColor?.background ?? "var(--layer-secondary)",
+            : (semanticColor?.background ?? "var(--layer-secondary)"),
         color: isPrimary
             ? "white"
-            : semanticColor?.text ?? "var(--text-primary)",
+            : (semanticColor?.text ?? "var(--text-primary)"),
         boxShadow: disabled
             ? "0 3px 3px 0 var(--shadow-base) inset, 0 0 2px 0 var(--shadow-antithesis) inset, 0 1px 1px 0 var(--shadow-decoration) inset, 0 -5px 20px 0 var(--shadow-fume) inset"
             : BUTTON_SHADOW,

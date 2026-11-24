@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useState } from "react";
 import ContentUnavailable from "../../../../components/ui/content/ContentUnavailable";
+import usePageMeta from "../../../../utils/usePageMeta";
 
 const FlavorText = [
     "The page is a lie.",
@@ -21,14 +22,11 @@ const FlavorText = [
 ];
 
 const NotFound = () => {
-    return (
-        <ContentUnavailable
-            title={"Page Not Found"}
-            description={
-                FlavorText[Math.floor(Math.random() * FlavorText.length)]
-            }
-        />
+    usePageMeta("Page Not Found - Epsilon");
+    const [text] = useState(
+        () => FlavorText[Math.floor(Math.random() * FlavorText.length)],
     );
+    return <ContentUnavailable title={"Page Not Found"} description={text} />;
 };
 
 export default NotFound;

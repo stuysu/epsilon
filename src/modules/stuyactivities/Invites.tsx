@@ -10,8 +10,11 @@ import { PendingInvite, useInvites } from "../../contexts/InvitesProvider";
 import { supabase } from "../../lib/supabaseClient";
 import { functionErrorText } from "../../utils/FunctionErrors";
 import useLiveRefresh from "../../utils/useLiveRefresh";
+import { SUPPORT_EMAIL } from "../../config/constants";
+import usePageMeta from "../../utils/usePageMeta";
 
 const Invites = () => {
+    usePageMeta("Invites - Epsilon");
     const { invites, refresh } = useInvites();
     const { enqueueSnackbar } = useSnackbar();
 
@@ -25,7 +28,7 @@ const Invites = () => {
         if (error) {
             enqueueSnackbar(
                 (await functionErrorText(error)) ||
-                    "Failed to accept the invite. Contact it@stuysu.org for support.",
+                    `Failed to accept the invite. Contact ${SUPPORT_EMAIL} for support.`,
                 { variant: "error" },
             );
             await refresh();
@@ -43,7 +46,7 @@ const Invites = () => {
 
         if (error) {
             enqueueSnackbar(
-                "Failed to decline the invite. Contact it@stuysu.org for support.",
+                `Failed to decline the invite. Contact ${SUPPORT_EMAIL} for support.`,
                 { variant: "error" },
             );
             return;
@@ -55,7 +58,7 @@ const Invites = () => {
 
     return (
         <LoginGate page="see your invites">
-            <main className={"sm:m-12 m-6 min-h-[60vh]"}>
+            <div className={"sm:m-12 m-6 min-h-[60vh]"}>
                 <h1 className={"mb-6"}>Invites</h1>
                 {invites.length === 0 ? (
                     <ContentUnavailable
@@ -89,7 +92,7 @@ const Invites = () => {
                                         <Link
                                             to={`/${invite.organizations.url}`}
                                             className={
-                                                "important block break-words text-typography-1 no-underline sm:hover:underline"
+                                                "important block wrap-break-word text-typography-1 no-underline sm:hover:underline"
                                             }
                                         >
                                             {invite.organizations.name}
@@ -129,7 +132,7 @@ const Invites = () => {
                         ))}
                     </ItemList>
                 )}
-            </main>
+            </div>
         </LoginGate>
     );
 };

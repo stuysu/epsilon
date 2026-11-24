@@ -2,7 +2,6 @@ import { useContext, useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { supabase } from "../../../../lib/supabaseClient";
 import OrgContext from "../../../../contexts/OrgContext";
-import UserContext from "../../../../contexts/UserContext";
 import ItemList from "../../../../components/ui/lists/ItemList";
 import { toNewYork } from "../../../../utils/NewYorkTime";
 import {
@@ -13,41 +12,24 @@ import {
 } from "../../../../utils/SocialLinks";
 import { AttendancePerformance, MeetingRequirements } from "./MeetingSideCards";
 import OrgAdvisors from "./OrgAdvisors";
+import useOrgRole from "../useOrgRole";
 
 const OrgInspector = () => {
     const organization: OrgContextType = useContext(OrgContext);
-    const user: UserContextType = useContext(UserContext);
     const location = useLocation();
     const [strikes, setStrikes] = useState<Strike[]>([]);
 
     const isAuditPage = location.pathname.includes("/audit");
-    const canManageAttendance =
-        organization.memberships?.some(
-            (m) =>
-                m.users?.id === user.id &&
-                (m.role === "CREATOR" ||
-                    m.role === "ADMIN" ||
-                    m.role === "ADVISOR") &&
-                m.active,
-        ) ?? false;
+    const { isOrgAdmin, isAdvisor, isSiteAdmin } = useOrgRole();
+    const canManageAttendance = isOrgAdmin || isAdvisor;
     const card = inspectorCardFor(location.pathname);
     const sideCard =
-        card === "attendance" &&
-        !canManageAttendance &&
-        user.permission !== "ADMIN"
+        card === "attendance" && !canManageAttendance && !isSiteAdmin
             ? undefined
             : card;
     /* strikes are only readable by the club's leaders and site admins, so
     anyone else would always be told the club has none */
-    const canSeeStrikes =
-        user.permission === "ADMIN" ||
-        (organization.memberships?.some(
-            (m) =>
-                m.users?.id === user.id &&
-                (m.role === "CREATOR" || m.role === "ADMIN") &&
-                m.active,
-        ) ??
-            false);
+    const canSeeStrikes = isSiteAdmin || isOrgAdmin;
     const socialLinks = getSocialLinks(organization.socials);
     const canEditAdvisors =
         /\/admin\/roster\/?$/.test(location.pathname) && canManageAttendance;
@@ -65,7 +47,7 @@ const OrgInspector = () => {
     }, [isAuditPage, canSeeStrikes, organization.id]);
 
     return (
-        <div className={"relative xl:w-[300px] xl:ml-10 xl:mr-[3rem]"}>
+        <div className={"relative xl:w-[300px] xl:ml-10 xl:mr-12"}>
             {sideCard === "requirements" ? (
                 <MeetingRequirements />
             ) : sideCard === "attendance" ? (

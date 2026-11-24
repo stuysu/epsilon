@@ -35,16 +35,16 @@ const ReviewRow = ({
             <div className="flex items-start gap-3 p-4 max-sm:flex-col max-sm:gap-2">
                 <div className="min-w-0 flex-1">
                     <div className="flex flex-wrap items-center gap-2">
-                        <span className="min-w-0 font-semibold text-typography-1 [overflow-wrap:anywhere]">
+                        <span className="min-w-0 font-semibold text-typography-1 wrap-anywhere">
                             {entry.title || "Untitled"}
                         </span>
                         {changeLabel && (
-                            <span className="rounded bg-layer-2 px-1.5 text-sm text-typography-2 [font-variation-settings:'wght'_500]">
+                            <span className="rounded-sm bg-layer-2 px-1.5 text-sm text-typography-2 [font-variation-settings:'wght'_500]">
                                 {changeLabel}
                             </span>
                         )}
                         {!entry.include && (
-                            <span className="rounded bg-layer-2 px-1.5 text-sm text-typography-1 [font-variation-settings:'wght'_500]">
+                            <span className="rounded-sm bg-layer-2 px-1.5 text-sm text-typography-1 [font-variation-settings:'wght'_500]">
                                 Not included
                             </span>
                         )}
@@ -70,7 +70,7 @@ const ReviewRow = ({
                                     : "text-yellow"
                             }`}
                         >
-                            <span className="flex min-w-0 gap-1.5 [overflow-wrap:anywhere]">
+                            <span className="flex min-w-0 gap-1.5 wrap-anywhere">
                                 <i
                                     className="bx bx-git-compare pt-0.5"
                                     aria-hidden="true"
@@ -118,7 +118,7 @@ const ReviewRow = ({
                         </div>
                     )}
                     {entry.warnings.length > 0 && (
-                        <p className="flex gap-1.5 pt-1 text-sm text-yellow [overflow-wrap:anywhere]">
+                        <p className="flex gap-1.5 pt-1 text-sm text-yellow wrap-anywhere">
                             <i
                                 className="bx bx-error-circle pt-0.5"
                                 aria-hidden="true"

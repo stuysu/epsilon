@@ -4,8 +4,10 @@ import { ThemeContext, ThemeMode } from "../../contexts/ThemeProvider";
 import { PUBLIC_URL } from "../../config/constants";
 import Divider from "../../components/ui/Divider";
 import LoginGate from "../../components/ui/content/LoginGate";
+import usePageMeta from "../../utils/usePageMeta";
 
 const UserPreferences = () => {
+    usePageMeta("Preferences - Epsilon");
     const { mode, setMode } = React.useContext(ThemeContext);
 
     return (
@@ -20,7 +22,7 @@ const UserPreferences = () => {
                         <h2>Display Theme</h2>
                         <p>Define the visual look of Epsilon.</p>
                     </div>
-                    <div className="bg-gradient-to-b from-bg to-transparent w-full h-4" />
+                    <div className="bg-linear-to-b/srgb from-bg to-transparent w-full h-4" />
                 </div>
 
                 <RadioGroup.Root

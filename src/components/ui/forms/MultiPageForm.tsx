@@ -7,7 +7,6 @@ import {
     ReactElement,
     ReactNode,
     SetStateAction,
-    useEffect,
     useState,
 } from "react";
 import FormPage from "./FormPage";
@@ -36,16 +35,14 @@ const MultiPageForm = <T,>({
         sx?: CSSProperties;
     }) => {
     const [page, setPage] = useState(0);
-    const [steps, setSteps] = useState<string[]>([]);
-
-    useEffect(() => {
-        const s = Children.map(children, (child) => {
-            if (isValidElement(child) && child.type === FormPage) {
-                return child.props.title || "No Title";
-            }
-        });
-        setSteps(s as string[]);
-    }, [children]);
+    const steps = (Children.map(children, (child) => {
+        if (
+            isValidElement<{ title?: string }>(child) &&
+            child.type === FormPage
+        ) {
+            return child.props.title || "No Title";
+        }
+    }) ?? []) as string[];
 
     const onNext = () => {
         if (page < Children.count(children) - 1) setPage(page + 1);
@@ -76,7 +73,7 @@ const MultiPageForm = <T,>({
     return (
         <div {...boxProps} style={{ ...sx, ...style }}>
             <div className="h-[10%] w-full p-5">
-                <h2>{title}</h2>
+                {title && <h2>{title}</h2>}
             </div>
 
             <div className="w-full flex justify-center pl-5 pr-5">
@@ -100,8 +97,9 @@ const MultiPageForm = <T,>({
                                     i + 1
                                 )}
                             </span>
+                            {/* the narrowest phones only show the current step's name */}
                             <span
-                                className={`ml-2 text-[0.875rem] leading-[1.43] ${i <= page ? "text-black/90 scheme-dark:text-white" : "text-typography-2"}`}
+                                className={`ml-2 text-[0.875rem] leading-[1.43] ${i <= page ? "text-black/90 scheme-dark:text-white" : "text-typography-2"} ${i === page ? "" : "max-[359px]:sr-only"}`}
                             >
                                 {label}
                             </span>

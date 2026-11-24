@@ -28,11 +28,11 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
         organization.member_count ?? organization.memberships?.length ?? 0;
 
     return (
-        <article className="relative transition-transform duration-[400ms] ease-[cubic-bezier(0.3,0.9,0.3,1)] sm:sm:hover:-translate-y-[5px]">
+        <article className="relative transition-transform duration-400 ease-[cubic-bezier(0.3,0.9,0.3,1)] sm:sm:hover:translate-y-[-5px]">
             <div className="mt-10"></div>
             <div className="relative rounded-2xl overflow-visible">
                 <div
-                    className="absolute top-[0px] left-[0px] w-full opacity-[0.2] h-full bg-cover bg-center z-[0]"
+                    className="absolute top-0 left-0 w-full opacity-[0.2] h-full bg-cover bg-center z-0"
                     style={{
                         backgroundImage: `url(${PUBLIC_URL}/textures/org_card.png)`,
                         filter: "blur(50px)",
@@ -88,7 +88,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
                     <div className="w-full flex flex-col">
                         <div className="relative top-[-45px] mb-[-12px]">
                             <div
-                                className="w-[120px] h-[120px] rounded-[20px] absolute z-[10]"
+                                className="w-[120px] h-[120px] rounded-[20px] absolute z-10"
                                 style={{
                                     boxShadow:
                                         "inset 0 0 5px 1px rgba(255, 255, 255, 0.3)",
@@ -197,7 +197,7 @@ const OrgCard = ({ organization }: { organization: Partial<Organization> }) => {
 
                     <p
                         className={
-                            "mt-3.5 overflow-hidden overflow-ellipsis whitespace-normal [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:4]"
+                            "mt-3.5 overflow-hidden text-ellipsis whitespace-normal [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:4]"
                         }
                     >
                         {organization.purpose}

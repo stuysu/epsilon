@@ -1,6 +1,7 @@
 import LoginButton from "../buttons/LoginButton";
 import React, { useContext } from "react";
 import UserContext from "../../../contexts/UserContext";
+import usePageMeta from "../../../utils/usePageMeta";
 
 type Props = {
     page?: string;
@@ -11,6 +12,8 @@ const LoginGate = ({ page, children, sx }: Props): React.JSX.Element => {
     const user: UserContextType = useContext(UserContext);
 
     if (!page) page = "access this page";
+    // a page's own title still wins over this one
+    usePageMeta(user.signed_in ? undefined : `Sign in to ${page} - Epsilon`);
     if (user.signed_in) return <div style={sx}>{children}</div>;
     return (
         <div

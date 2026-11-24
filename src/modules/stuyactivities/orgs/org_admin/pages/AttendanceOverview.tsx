@@ -37,6 +37,7 @@ const attendanceSortOptions: { value: AttendanceSort; label: string }[] = [
     { value: "rate-low", label: "Worst attendance" },
 ];
 import useMembershipJoinDates from "../../../../../utils/useMembershipJoinDates";
+import useNow from "../../../../../utils/useNow";
 import dayjs from "dayjs";
 import SearchInput from "../../../../../components/ui/input/SearchInput";
 import SortSelect from "../../../../../components/ui/input/SortSelect";
@@ -50,6 +51,12 @@ import {
     meetingStatusOptions,
     meetingWhenOptions,
 } from "../components/meetingFilters";
+import { SUPPORT_EMAIL } from "../../../../../config/constants";
+import { downloadCsv } from "../../../../../utils/csv";
+import {
+    attendanceCsvName,
+    attendanceCsvRows,
+} from "../../components/attendanceCsv";
 
 const DAY = /^\d{4}-\d{2}-\d{2}$/;
 const pick = <T extends string>(
@@ -93,7 +100,7 @@ const MeetingCard = ({
     return (
         <div
             className={
-                "relative flex cursor-pointer flex-col gap-2 bg-layer-2 px-4 py-3 transition-colors sm:hover:bg-layer-3 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1"
+                "relative flex cursor-pointer flex-col gap-2 bg-layer-2 px-4 py-3 transition-colors sm:hover:bg-layer-3 focus-visible:outline-solid focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1"
             }
             {...pressable(
                 () => navigate(`${meeting.id}`, { state: FROM_LIST }),
@@ -111,7 +118,7 @@ const MeetingCard = ({
             )}
             <div className={"flex items-start justify-between gap-3"}>
                 <div className={"min-w-0"}>
-                    <h4 className={"mb-2 break-words"}>{meeting.title}</h4>
+                    <h4 className={"mb-2 wrap-break-word"}>{meeting.title}</h4>
                     <MeetingChips
                         align="start"
                         start_time={meeting.start_time}
@@ -227,7 +234,7 @@ const AttendanceOverview = ({ readOnly = false }: { readOnly?: boolean }) => {
     const [sort, setSort] = useState<AttendanceSort>("default");
     const [roleFilter, setRoleFilter] = useState<RoleFilter>("all");
     const { meetings, error } = useOrgAttendance(org.id, true);
-    const now = Date.now();
+    const now = useNow(15_000);
 
     const members = (org.memberships || []).filter(
         (m) => m.active && m.role !== "ADVISOR" && m.users?.id != null,
@@ -273,6 +280,25 @@ const AttendanceOverview = ({ readOnly = false }: { readOnly?: boolean }) => {
                   last_name: m.users?.last_name,
                   joined_at: joinDates.get(m.id as number),
               }));
+    const exportCsv = () =>
+        downloadCsv(
+            attendanceCsvName(org.url),
+            attendanceCsvRows(
+                meetings || [],
+                sortMembersBy(members, "last-name", (m) => ({
+                    first_name: m.users?.first_name,
+                    last_name: m.users?.last_name,
+                    joined_at: joinDates.get(m.id as number),
+                })).map((m) => ({
+                    id: m.users!.id as number,
+                    first_name: m.users?.first_name,
+                    last_name: m.users?.last_name,
+                    email: m.users?.email,
+                    role: m.role,
+                    joined_at: joinDates.get(m.id as number),
+                })),
+            ),
+        );
     const isLive = (m: AttendanceMeeting) =>
         new Date(m.start_time).getTime() <= now &&
         new Date(m.end_time).getTime() >= now;
@@ -313,18 +339,30 @@ const AttendanceOverview = ({ readOnly = false }: { readOnly?: boolean }) => {
                     }
                 >
                     <h1>Attendance</h1>
-                    <AsyncButton
-                        isPrimary
-                        disabled={!current}
-                        onClick={() =>
-                            current &&
-                            navigate(`${current.id}`, { state: FROM_LIST })
-                        }
-                    >
-                        {!current
-                            ? "No Active Meetings"
-                            : `${readOnly ? "View" : "Take"} Attendance for ${isLive(current) ? "Current" : "Next"} Meeting`}
-                    </AsyncButton>
+                    <div className={"flex flex-wrap gap-2.5"}>
+                        <AsyncButton
+                            onClick={exportCsv}
+                            disabled={!meetings?.length}
+                        >
+                            <i
+                                className={"bx bx-download mr-1.5"}
+                                aria-hidden="true"
+                            />
+                            Download CSV
+                        </AsyncButton>
+                        <AsyncButton
+                            isPrimary
+                            disabled={!current}
+                            onClick={() =>
+                                current &&
+                                navigate(`${current.id}`, { state: FROM_LIST })
+                            }
+                        >
+                            {!current
+                                ? "No Active Meetings"
+                                : `${readOnly ? "View" : "Take"} Attendance for ${isLive(current) ? "Current" : "Next"} Meeting`}
+                        </AsyncButton>
+                    </div>
                 </section>
                 <p>
                     {readOnly
@@ -353,7 +391,7 @@ const AttendanceOverview = ({ readOnly = false }: { readOnly?: boolean }) => {
                     icon="bx-error"
                     iconColor="text-red"
                     title="Attendance Unavailable"
-                    description="Couldn't load attendance. Refresh the page or contact it@stuysu.org."
+                    description={`Couldn't load attendance. Refresh the page or contact ${SUPPORT_EMAIL}.`}
                 />
             ) : !meetings ? (
                 <></>
@@ -376,7 +414,7 @@ const AttendanceOverview = ({ readOnly = false }: { readOnly?: boolean }) => {
                                 onChange={(q) =>
                                     setMeetingFilters({ query: q })
                                 }
-                                inputClassName={"!pr-36"}
+                                inputClassName={"pr-36!"}
                                 trailing={
                                     <div className={"flex items-center gap-1"}>
                                         <MeetingDateFilter
@@ -427,7 +465,7 @@ const AttendanceOverview = ({ readOnly = false }: { readOnly?: boolean }) => {
                                         type="button"
                                         onClick={clearMeetingFilters}
                                         className={
-                                            "touch-target rounded font-semibold text-typography-1 underline-offset-2 sm:hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1"
+                                            "touch-target rounded-sm font-semibold text-typography-1 underline-offset-2 sm:hover:underline focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-typography-1"
                                         }
                                     >
                                         Clear Filters
@@ -488,7 +526,7 @@ const AttendanceOverview = ({ readOnly = false }: { readOnly?: boolean }) => {
                                 <div
                                     key={m.id}
                                     className={
-                                        "group flex cursor-pointer flex-col bg-layer-2 px-4 py-3 transition-colors sm:hover:bg-layer-3 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1"
+                                        "group flex cursor-pointer flex-col bg-layer-2 px-4 py-3 transition-colors sm:hover:bg-layer-3 focus-visible:outline-solid focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1"
                                     }
                                     aria-label={`${name}, ${present} of ${stats.counted} times present. View attendance record`}
                                     {...pressable(
@@ -517,7 +555,11 @@ const AttendanceOverview = ({ readOnly = false }: { readOnly?: boolean }) => {
                                                 {m.users?.first_name?.charAt(0)}
                                             </Avatar>
                                             <div className={"min-w-0 flex-1"}>
-                                                <h4 className={"break-words"}>
+                                                <h4
+                                                    className={
+                                                        "wrap-break-word"
+                                                    }
+                                                >
                                                     {m.users?.first_name}{" "}
                                                     {m.users?.last_name}
                                                 </h4>

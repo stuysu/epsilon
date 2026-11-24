@@ -91,11 +91,17 @@ const findLatestLong = async (): Promise<Listing | null> => {
 };
 
 const readPdf = async (data: Uint8Array) => {
-    const doc = await pdfjs.getDocument({ data, verbosity: 0 }).promise;
+    const task = pdfjs.getDocument({
+        data,
+        verbosity: 0,
+        fontExtraProperties: true,
+    });
     try {
-        return parseBulletin(await extractBulletinLines(doc as never));
+        return parseBulletin(
+            await extractBulletinLines((await task.promise) as never),
+        );
     } finally {
-        await doc.destroy();
+        await task.destroy();
     }
 };
 

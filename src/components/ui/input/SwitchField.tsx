@@ -19,7 +19,7 @@ const SwitchField = ({
     style,
 }: SwitchFieldProps) => (
     <label
-        className={`mr-6 inline-flex items-center gap-2.5 align-middle [@media(pointer:coarse)]:min-h-11 ${disabled ? "cursor-default opacity-60" : "cursor-pointer"} ${className}`}
+        className={`mr-6 inline-flex items-center gap-2.5 align-middle pointer-coarse:min-h-11 ${disabled ? "cursor-default opacity-60" : "cursor-pointer"} ${className}`}
         style={style}
     >
         {label && <span className="text-typography-1">{label}</span>}
@@ -29,7 +29,7 @@ const SwitchField = ({
             disabled={disabled}
             className="relative h-6 w-11 shrink-0 rounded-full bg-layer-3 transition-colors data-[state=checked]:bg-blue"
         >
-            <Switch.Thumb className="block h-5 w-5 translate-x-0.5 rounded-full bg-white/90 shadow transition-transform ease-in-out data-[state=checked]:translate-x-[22px]" />
+            <Switch.Thumb className="block h-5 w-5 translate-x-0.5 rounded-full bg-white/90 shadow-sm transition-transform ease-in-out data-[state=checked]:translate-x-[22px]" />
         </Switch.Root>
     </label>
 );

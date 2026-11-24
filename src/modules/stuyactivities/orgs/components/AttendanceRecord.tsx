@@ -166,51 +166,58 @@ const RecordItem = ({
     const { meeting, live, arrival, leftEarly } = row;
     const style = arrivalStyle[arrival];
     return (
-        <li
-            className={`flex flex-col gap-2.5 bg-layer-2 px-6 py-4 ${
-                onOpen
-                    ? "cursor-pointer transition-colors sm:hover:bg-layer-3 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1"
-                    : ""
-            }`}
-            {...(onOpen ? pressable(onOpen, { role: "link" }) : {})}
-        >
-            <div className={"flex items-start justify-between gap-3"}>
-                <div
-                    className={
-                        "flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1.5"
-                    }
-                >
-                    <h4 className={"min-w-0 break-words"}>{meeting.title}</h4>
-                    <MeetingChip
-                        icon={style.icon}
-                        iconClass={style.color}
-                        label={style.label}
-                    />
-                    {leftEarly && (
+        // the link goes inside the item, so the list keeps its list items
+        <li>
+            <div
+                className={`flex flex-col gap-2.5 bg-layer-2 px-6 py-4 ${
+                    onOpen
+                        ? "cursor-pointer transition-colors sm:hover:bg-layer-3 focus-visible:outline-solid focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1"
+                        : ""
+                }`}
+                {...(onOpen ? pressable(onOpen, { role: "link" }) : {})}
+            >
+                <div className={"flex items-start justify-between gap-3"}>
+                    <div
+                        className={
+                            "flex min-w-0 flex-wrap items-center gap-x-2.5 gap-y-1.5"
+                        }
+                    >
+                        <h4 className={"min-w-0 wrap-break-word"}>
+                            {meeting.title}
+                        </h4>
                         <MeetingChip
-                            icon="bx-log-out-circle"
-                            iconClass="text-yellow"
-                            label="Left Early"
+                            icon={style.icon}
+                            iconClass={style.color}
+                            label={style.label}
                         />
-                    )}
+                        {leftEarly && (
+                            <MeetingChip
+                                icon="bx-log-out-circle"
+                                iconClass="text-yellow"
+                                label="Left Early"
+                            />
+                        )}
+                    </div>
+                    <StatusPill>
+                        {live ? "Happening Now" : "Finished"}
+                    </StatusPill>
                 </div>
-                <StatusPill>{live ? "Happening Now" : "Finished"}</StatusPill>
-            </div>
-            <div className={"flex flex-wrap items-center gap-1.5"}>
-                <MeetingChip
-                    icon="bx-calendar"
-                    iconClass="text-blue"
-                    label={toNewYork(meeting.start_time).format("M/D/YYYY")}
-                />
-                <MeetingChip
-                    icon="bx-time-five"
-                    iconClass="text-yellow"
-                    label={meetingTimeLabel(
-                        meeting.start_time,
-                        meeting.end_time,
-                    )}
-                />
-                <RoomChip roomName={meeting.rooms?.name} />
+                <div className={"flex flex-wrap items-center gap-1.5"}>
+                    <MeetingChip
+                        icon="bx-calendar"
+                        iconClass="text-blue"
+                        label={toNewYork(meeting.start_time).format("M/D/YYYY")}
+                    />
+                    <MeetingChip
+                        icon="bx-time-five"
+                        iconClass="text-yellow"
+                        label={meetingTimeLabel(
+                            meeting.start_time,
+                            meeting.end_time,
+                        )}
+                    />
+                    <RoomChip roomName={meeting.rooms?.name} />
+                </div>
             </div>
         </li>
     );

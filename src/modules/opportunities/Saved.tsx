@@ -1,5 +1,4 @@
 import { useMemo } from "react";
-import { Helmet } from "react-helmet";
 import { Link } from "react-router-dom";
 import ContentUnavailable from "../../components/ui/content/ContentUnavailable";
 import OpportunityList, {
@@ -7,8 +6,12 @@ import OpportunityList, {
 } from "./components/OpportunityList";
 import { useOpportunities } from "./OpportunitiesContext";
 import { getTodayEastern, sortOpportunities } from "./utils";
+import usePageMeta from "../../utils/usePageMeta";
+import { SUPPORT_EMAIL } from "../../config/constants";
 
 const Saved = () => {
+    usePageMeta("My Opportunities - Epsilon");
+
     const { loading, failed, opportunities, savedIds } = useOpportunities();
 
     const today = getTodayEastern();
@@ -24,22 +27,19 @@ const Saved = () => {
 
     if (failed) {
         return (
-            <main>
+            <div>
                 <ContentUnavailable
                     icon="bx-error-circle"
                     iconColor="text-red"
                     title="Your opportunities could not load"
-                    description="Refresh the page to try again. If this keeps happening, contact it@stuysu.org."
+                    description={`Refresh the page to try again. If this keeps happening, contact ${SUPPORT_EMAIL}.`}
                 />
-            </main>
+            </div>
         );
     }
 
     return (
-        <main className="mx-auto w-full max-w-4xl px-12 pt-8 max-sm:px-4 max-sm:pt-14">
-            <Helmet>
-                <title>My Opportunities - Epsilon</title>
-            </Helmet>
+        <div className="mx-auto w-full max-w-4xl px-12 pt-8 max-sm:px-4 max-sm:pt-14">
             <h1 className="mb-8">My Opportunities</h1>
 
             {loading ? (
@@ -61,7 +61,7 @@ const Saved = () => {
                     </Link>
                 </div>
             )}
-        </main>
+        </div>
     );
 };
 

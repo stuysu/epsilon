@@ -7,13 +7,14 @@ import React, {
     useRef,
     useState,
 } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { supabase } from "../../../lib/supabaseClient";
 import UserContext from "../../../contexts/UserContext";
 import { useSnackbar } from "notistack";
 import { ThemeContext } from "../../../contexts/ThemeProvider";
-import { PUBLIC_URL } from "../../../config/constants";
+import { PUBLIC_URL, SUPPORT_EMAIL } from "../../../config/constants";
 import pressable from "../../../utils/pressable";
+import useOnChange from "../../../utils/useOnChange";
 import {
     isOpportunitiesPath,
     isStuyActivitiesPath,
@@ -35,8 +36,37 @@ const linkStyle: CSSProperties = {
 
 type TopNavItem = (typeof topNavItems)[number];
 
-// The nav is built from divs and paragraphs, so each clickable one gets the
-// role, focus and keys of the control it stands for (see utils/pressable).
+const itemHref = (item: TopNavItem) => ("url" in item ? item.url : item.path);
+
+type ItemLinkProps = Omit<
+    React.AnchorHTMLAttributes<HTMLAnchorElement>,
+    "href"
+> & { to: string; external?: boolean; focusable?: boolean };
+
+/* a real link, so middle-click and "open in new tab" work */
+const ItemLink = React.forwardRef<HTMLAnchorElement, ItemLinkProps>(
+    ({ to, external, focusable = true, className = "", ...rest }, ref) => {
+        const shared = {
+            ...rest,
+            ref,
+            tabIndex: focusable ? undefined : -1,
+            className: `no-underline ${className}`,
+        };
+        return external ? (
+            <a
+                {...shared}
+                href={to}
+                target="_blank"
+                rel="noopener noreferrer"
+            />
+        ) : (
+            <Link {...shared} to={to} />
+        );
+    },
+);
+
+// Menu toggles are divs, so each gets the role, focus and keys of a button
+// (see utils/pressable); destinations are real links.
 
 // The first focusable element after `anchor` in the page, skipping `skip`
 const nextFocusableAfter = (
@@ -62,13 +92,16 @@ const nextFocusableAfter = (
     );
 };
 
+// links in an open menu have no tabindex; pressable items have tabindex 0
+const MENU_ITEMS = 'a[href]:not([tabindex="-1"]), [tabindex="0"]';
+
 // Menus close on Escape, handing focus back to their button, and once focus
 // moves anywhere else, so a keyboard user never leaves one open behind them.
 const useMenuDismiss = (
     open: boolean,
     close: () => void,
-    menuRef: React.RefObject<HTMLElement>,
-    triggerRef: React.RefObject<HTMLElement>,
+    menuRef: React.RefObject<HTMLElement | null>,
+    triggerRef: React.RefObject<HTMLElement | null>,
     { focusFirstItem = false } = {},
 ) => {
     useEffect(() => {
@@ -76,9 +109,7 @@ const useMenuDismiss = (
         // a menu placed before its button in the page would otherwise be
         // reached only by tabbing backwards
         if (focusFirstItem) {
-            menuRef.current
-                ?.querySelector<HTMLElement>('[tabindex="0"]')
-                ?.focus();
+            menuRef.current?.querySelector<HTMLElement>(MENU_ITEMS)?.focus();
         }
         const onKeyDown = (event: KeyboardEvent) => {
             if (event.key === "Escape") {
@@ -86,17 +117,25 @@ const useMenuDismiss = (
                 triggerRef.current?.focus();
                 return;
             }
-            if (!focusFirstItem || event.key !== "Tab") return;
-            // This menu sits before its button in the page, so Tab is steered
-            // to behave as if it came right after the button.
+            if (!focusFirstItem) return;
             const items = Array.from(
-                menuRef.current?.querySelectorAll<HTMLElement>(
-                    '[tabindex="0"]',
-                ) ?? [],
+                menuRef.current?.querySelectorAll<HTMLElement>(MENU_ITEMS) ??
+                    [],
             );
             const active = document.activeElement;
             const trigger = triggerRef.current;
             let target: HTMLElement | null | undefined;
+            if (event.key === "ArrowDown" || event.key === "ArrowUp") {
+                const index = items.indexOf(active as HTMLElement);
+                if (index < 0) return;
+                const step = event.key === "ArrowDown" ? 1 : -1;
+                event.preventDefault();
+                items[(index + step + items.length) % items.length]?.focus();
+                return;
+            }
+            if (event.key !== "Tab") return;
+            // This menu sits before its button in the page, so Tab is steered
+            // to behave as if it came right after the button.
             if (!event.shiftKey && active === trigger) target = items[0];
             if (event.shiftKey && active === items[0]) target = trigger;
             if (!event.shiftKey && active === items[items.length - 1]) {
@@ -130,8 +169,9 @@ const useMenuDismiss = (
     }, [open, close, menuRef, triggerRef, focusFirstItem]);
 };
 
-const FOCUS_RING =
-    "rounded focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1";
+const FOCUS_OUTLINE =
+    "focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1";
+const FOCUS_RING = `rounded-sm ${FOCUS_OUTLINE}`;
 // marks the current page under a phone tab's icon (also when it's in "More")
 const CURRENT_BAR =
     "after:absolute after:-bottom-2 after:left-1/2 after:h-0.5 after:w-3 after:-translate-x-1/2 after:rounded-full after:bg-typography-1 after:content-['']";
@@ -165,11 +205,11 @@ const ACCOUNT_PATHS = [
 // the phone tabs are only as tall as their icons, so their tap area reaches
 // the top and bottom of the 46px bar (13px each way still fits inside it)
 const PHONE_TAP_AREA =
-    "max-sm:before:absolute max-sm:before:inset-x-0 max-sm:before:-inset-y-[13px] max-sm:before:content-['']";
+    "max-sm:before:absolute max-sm:before:inset-x-0 max-sm:before:inset-y-[-13px] max-sm:before:content-['']";
 
 // for the tabs, whose scroller clips anything drawn below them
 const FOCUS_RING_INSET =
-    "rounded focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1";
+    "rounded-sm focus-visible:outline-solid focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1";
 
 const NavBar: FC = () => {
     const user = useContext(UserContext);
@@ -231,7 +271,7 @@ const NavBar: FC = () => {
         zIndex: 50,
     };
 
-    const itemRefs = useRef<HTMLDivElement[]>([]);
+    const itemRefs = useRef<HTMLAnchorElement[]>([]);
     const containerRef = useRef<HTMLDivElement | null>(null);
     const dotsRef = useRef<HTMLDivElement | null>(null);
 
@@ -312,7 +352,7 @@ const NavBar: FC = () => {
         return () => observer.disconnect();
     }, [isMobile]);
 
-    useEffect(() => setTabMoreOpen(false), [fitCount, location]);
+    useOnChange(`${fitCount} ${location.key}`, () => setTabMoreOpen(false));
 
     useEffect(() => {
         if (!tabMoreOpen) return;
@@ -328,11 +368,12 @@ const NavBar: FC = () => {
         return () => document.removeEventListener("click", onClick);
     }, [tabMoreOpen]);
 
-    const toggleTabMore = () => {
+    // placed under the More tab as it opens, kept 16px inside the window
+    useLayoutEffect(() => {
+        if (!tabMoreOpen) return;
         const nav = navRef.current?.getBoundingClientRect();
         const tab = tabMoreRef.current?.getBoundingClientRect();
         const menuWidth = tabMenuRef.current?.offsetWidth || 0;
-        // kept 16px inside the window
         if (nav && tab)
             setTabMenuLeft(
                 Math.max(
@@ -340,8 +381,8 @@ const NavBar: FC = () => {
                     Math.min(tab.left - nav.left, nav.width - menuWidth - 16),
                 ),
             );
-        setTabMoreOpen((v) => !v);
-    };
+    }, [tabMoreOpen]);
+    const toggleTabMore = () => setTabMoreOpen((v) => !v);
 
     const [optionUnderline, setOptionUnderline] = useState({
         left: 0,
@@ -350,6 +391,8 @@ const NavBar: FC = () => {
 
     const [isOrgPage, setIsOrgPage] = useState(false);
     useEffect(() => {
+        // the club page is only known once the router has rendered it
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setIsOrgPage(!!document.querySelector("#activity-page"));
     }, [location.pathname]);
 
@@ -370,7 +413,7 @@ const NavBar: FC = () => {
         const { error } = await supabase.auth.signOut();
         if (error) {
             enqueueSnackbar(
-                "Error signing out. Contact it@stuysu.org for support.",
+                `Error signing out. Contact ${SUPPORT_EMAIL} for support.`,
                 {
                     variant: "error",
                 },
@@ -381,10 +424,10 @@ const NavBar: FC = () => {
         navigate("/");
     };
 
-    useEffect(() => {
+    useOnChange(location.key, () => {
         setDrawerOpen(false);
         setMoreOpen(false);
-    }, [location]);
+    });
 
     useEffect(() => {
         if (!moreOpen) return;
@@ -468,18 +511,19 @@ const NavBar: FC = () => {
                 ref={moreMenuRef}
                 id="nav-more-menu"
                 className={`transform-gpu z-50 fixed left-2 right-2 bottom-16 rounded-lg bg-bg
-    shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)]
-    transition-all duration-200 ${
+    shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),0_10px_25px_rgba(0,0,0,0.5)]
+    duration-200 ${
+        // visible at once on open, so its first item can take focus
         moreOpen
-            ? "visible opacity-100 translate-y-0"
-            : "invisible pointer-events-none opacity-0 translate-y-1"
+            ? "visible opacity-100 translate-y-0 transition-[opacity,transform]"
+            : "invisible pointer-events-none opacity-0 translate-y-1 transition-all"
     }`}
             >
                 <div className="px-6 py-4" aria-hidden={!moreOpen}>
                     {/* overflow nav */}
                     <h5>More Tools</h5>
                     {overflowItems.map((item, idx) => (
-                        <div
+                        <ItemLink
                             key={`${item.path}-overflow-${idx}`}
                             aria-current={
                                 isPageOptnActive(item) ? "page" : undefined
@@ -490,26 +534,17 @@ const NavBar: FC = () => {
                                     ? "text-typography-1"
                                     : "text-typography-2"
                             }`}
-                            {...pressable(
-                                () => {
-                                    if (item.external && (item as any).url) {
-                                        window.open(
-                                            (item as any).url!,
-                                            "_blank",
-                                            "noopener",
-                                        );
-                                    } else {
-                                        navigate(item.path);
-                                    }
-                                    setMoreOpen(false);
-                                    setTimeout(() => setIsHovered(false), 300);
-                                },
-                                { role: "link", focusable: moreOpen },
-                            )}
+                            to={itemHref(item)}
+                            external={item.external}
+                            focusable={moreOpen}
+                            onClick={() => {
+                                setMoreOpen(false);
+                                setTimeout(() => setIsHovered(false), 300);
+                            }}
                         >
                             <i className={item.icon} aria-hidden="true" />
                             <span className="important">{item.label}</span>
-                        </div>
+                        </ItemLink>
                     ))}
 
                     <Divider />
@@ -518,7 +553,7 @@ const NavBar: FC = () => {
 
                     {user?.signed_in ? (
                         <>
-                            <div
+                            <ItemLink
                                 aria-current={
                                     location.pathname === "/profile"
                                         ? "page"
@@ -529,22 +564,18 @@ const NavBar: FC = () => {
                                         ? "text-typography-1"
                                         : "text-typography-2"
                                 }`}
-                                {...pressable(
-                                    () => {
-                                        navigate("/profile");
-                                        setMoreOpen(false);
-                                    },
-                                    { role: "link", focusable: moreOpen },
-                                )}
+                                to="/profile"
+                                focusable={moreOpen}
+                                onClick={() => setMoreOpen(false)}
                             >
                                 <i
                                     className="bx bx-id-card"
                                     aria-hidden="true"
                                 />
                                 <span className="important">Profile</span>
-                            </div>
+                            </ItemLink>
 
-                            <div
+                            <ItemLink
                                 aria-current={
                                     location.pathname === "/invites"
                                         ? "page"
@@ -555,13 +586,9 @@ const NavBar: FC = () => {
                                         ? "text-typography-1"
                                         : "text-typography-2"
                                 }`}
-                                {...pressable(
-                                    () => {
-                                        navigate("/invites");
-                                        setMoreOpen(false);
-                                    },
-                                    { role: "link", focusable: moreOpen },
-                                )}
+                                to="/invites"
+                                focusable={moreOpen}
+                                onClick={() => setMoreOpen(false)}
                             >
                                 <i
                                     className="bx bx-envelope-open"
@@ -569,9 +596,9 @@ const NavBar: FC = () => {
                                 />
                                 <span className="important">Invites</span>
                                 <InviteCount count={inviteCount} />
-                            </div>
+                            </ItemLink>
 
-                            <div
+                            <ItemLink
                                 aria-current={
                                     location.pathname === "/preferences"
                                         ? "page"
@@ -582,22 +609,18 @@ const NavBar: FC = () => {
                                         ? "text-typography-1"
                                         : "text-typography-2"
                                 }`}
-                                {...pressable(
-                                    () => {
-                                        navigate("/preferences");
-                                        setMoreOpen(false);
-                                    },
-                                    { role: "link", focusable: moreOpen },
-                                )}
+                                to="/preferences"
+                                focusable={moreOpen}
+                                onClick={() => setMoreOpen(false)}
                             >
                                 <i
                                     className="bx bx-slider"
                                     aria-hidden="true"
                                 />
                                 <span className="important">Preferences</span>
-                            </div>
+                            </ItemLink>
 
-                            <div
+                            <ItemLink
                                 aria-current={
                                     location.pathname === "/communications"
                                         ? "page"
@@ -608,13 +631,9 @@ const NavBar: FC = () => {
                                         ? "text-typography-1"
                                         : "text-typography-2"
                                 }`}
-                                {...pressable(
-                                    () => {
-                                        navigate("/communications");
-                                        setMoreOpen(false);
-                                    },
-                                    { role: "link", focusable: moreOpen },
-                                )}
+                                to="/communications"
+                                focusable={moreOpen}
+                                onClick={() => setMoreOpen(false)}
                             >
                                 <i
                                     className="bx bx-envelope"
@@ -623,7 +642,7 @@ const NavBar: FC = () => {
                                 <span className="important">
                                     Communications
                                 </span>
-                            </div>
+                            </ItemLink>
 
                             <div
                                 className={`flex items-center gap-2 py-1 cursor-pointer text-red sm:hover:brightness-90 transition-[filter,color] ${FOCUS_RING}`}
@@ -643,19 +662,15 @@ const NavBar: FC = () => {
                             </div>
                         </>
                     ) : (
-                        <div
+                        <ItemLink
                             className={`flex items-center gap-2 py-1 cursor-pointer text-typography-2 sm:hover:text-typography-1 transition-colors ${FOCUS_RING}`}
-                            {...pressable(
-                                () => {
-                                    navigate("/");
-                                    setMoreOpen(false);
-                                },
-                                { role: "link", focusable: moreOpen },
-                            )}
+                            to="/"
+                            focusable={moreOpen}
+                            onClick={() => setMoreOpen(false)}
                         >
                             <i className="bx bx-log-in" aria-hidden="true" />
                             <span className="important">Sign In</span>
-                        </div>
+                        </ItemLink>
                     )}
                 </div>
             </div>
@@ -671,10 +686,10 @@ const NavBar: FC = () => {
             <div style={topStyle}>
                 {/* Logo / Wordmark */}
                 <div style={titleStyle}>
-                    <span
+                    <ItemLink
                         style={{ ...linkStyle, cursor: "pointer" }}
                         className={FOCUS_RING}
-                        {...pressable(() => navigate("/"), { role: "link" })}
+                        to="/"
                     >
                         <img
                             src={wordmarkSrc}
@@ -687,14 +702,14 @@ const NavBar: FC = () => {
                                 zIndex: 1,
                             }}
                         />
-                    </span>
+                    </ItemLink>
                 </div>
 
                 {/* User dropdown */}
                 <div className="max-sm:hidden pointer-events-auto relative flex flex-row justify-end top-1 right-0">
                     <div
                         ref={drawerTriggerRef}
-                        className={`flex cursor-pointer flex-row items-center justify-center gap-2 rounded-lg bg-layer-1 pl-1.5 pr-1.5 shadow-control h-10 ${FOCUS_RING}`}
+                        className={`flex cursor-pointer flex-row items-center justify-center gap-2 rounded-lg bg-layer-1 pl-1.5 pr-1.5 shadow-control h-10 ${FOCUS_OUTLINE}`}
                         aria-expanded={drawerOpen}
                         aria-controls="nav-user-menu"
                         {...pressable(() => setDrawerOpen(!drawerOpen))}
@@ -729,7 +744,7 @@ const NavBar: FC = () => {
                         id="nav-user-menu"
                         className={`absolute top-14 bottom-auto right-auto
                         z-50 flex w-72 flex-col gap-2 rounded-xl bg-blurDark p-5
-                        [[data-theme=orange]_&]:bg-bg
+                        in-data-[theme=orange]:bg-bg
                         backdrop-blur-xl shadow-prominent
                         transition-all duration-300 ${
                             drawerOpen
@@ -739,13 +754,11 @@ const NavBar: FC = () => {
                         aria-hidden={!drawerOpen}
                     >
                         {!user?.signed_in ? (
-                            <p
+                            <ItemLink
                                 style={{ fontVariationSettings: "'wght' 700" }}
-                                className={`cursor-pointer transition-colors sm:hover:text-typography-3 ${FOCUS_RING}`}
-                                {...pressable(() => navigate("/"), {
-                                    role: "link",
-                                    focusable: drawerOpen,
-                                })}
+                                className={`block text-[0.9rem] leading-[1.2rem] text-typography-2 cursor-pointer transition-colors sm:hover:text-typography-3 ${FOCUS_RING}`}
+                                to="/"
+                                focusable={drawerOpen}
                             >
                                 <i
                                     className={
@@ -753,64 +766,50 @@ const NavBar: FC = () => {
                                     }
                                 ></i>
                                 Sign In
-                            </p>
+                            </ItemLink>
                         ) : (
                             <>
-                                <p
+                                <ItemLink
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
-                                    className={`cursor-pointer transition-colors sm:hover:text-typography-3 ${FOCUS_RING}`}
-                                    {...pressable(() => navigate("/profile"), {
-                                        role: "link",
-                                        focusable: drawerOpen,
-                                    })}
+                                    className={`block text-[0.9rem] leading-[1.2rem] text-typography-2 cursor-pointer transition-colors sm:hover:text-typography-3 ${FOCUS_RING}`}
+                                    to="/profile"
+                                    focusable={drawerOpen}
                                 >
                                     Profile
-                                </p>
-                                <p
+                                </ItemLink>
+                                <ItemLink
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
-                                    className={`flex cursor-pointer items-center gap-2 transition-colors sm:hover:text-typography-3 ${FOCUS_RING}`}
-                                    {...pressable(() => navigate("/invites"), {
-                                        role: "link",
-                                        focusable: drawerOpen,
-                                    })}
+                                    className={`flex text-[0.9rem] leading-[1.2rem] text-typography-2 cursor-pointer items-center gap-2 transition-colors sm:hover:text-typography-3 ${FOCUS_RING}`}
+                                    to="/invites"
+                                    focusable={drawerOpen}
                                 >
                                     Invites
                                     <InviteCount count={inviteCount} />
-                                </p>
-                                <p
+                                </ItemLink>
+                                <ItemLink
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
-                                    className={`cursor-pointer transition-colors sm:hover:text-typography-3 ${FOCUS_RING}`}
-                                    {...pressable(
-                                        () => navigate("/preferences"),
-                                        {
-                                            role: "link",
-                                            focusable: drawerOpen,
-                                        },
-                                    )}
+                                    className={`block text-[0.9rem] leading-[1.2rem] text-typography-2 cursor-pointer transition-colors sm:hover:text-typography-3 ${FOCUS_RING}`}
+                                    to="/preferences"
+                                    focusable={drawerOpen}
                                 >
                                     Preferences
-                                </p>
-                                <p
+                                </ItemLink>
+                                <ItemLink
                                     style={{
                                         fontVariationSettings: "'wght' 700",
                                     }}
-                                    className={`cursor-pointer transition-colors sm:hover:text-typography-3 ${FOCUS_RING}`}
-                                    {...pressable(
-                                        () => navigate("/communications"),
-                                        {
-                                            role: "link",
-                                            focusable: drawerOpen,
-                                        },
-                                    )}
+                                    className={`block text-[0.9rem] leading-[1.2rem] text-typography-2 cursor-pointer transition-colors sm:hover:text-typography-3 ${FOCUS_RING}`}
+                                    to="/communications"
+                                    focusable={drawerOpen}
                                 >
                                     Communications
-                                </p>
+                                </ItemLink>
                                 <Divider />
                                 <p
                                     style={{
@@ -834,7 +833,7 @@ const NavBar: FC = () => {
                 onMouseLeave={() => setIsHovered(false)}
                 // its own layer above the hover backdrop
                 ref={scrollerRef}
-                className="relative z-[41] scroll-pe-10 overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
+                className="relative z-41 scroll-pe-10 overflow-x-auto overflow-y-hidden [scrollbar-width:none] [&::-webkit-scrollbar]:hidden"
             >
                 {/* same tabs, unseen, to work out how many fit */}
                 {!isMobile && (
@@ -865,7 +864,7 @@ const NavBar: FC = () => {
                 {/* colorful backdrop */}
                 {/* clipped to the row so the taller glow can't make it scroll up and down */}
                 {theme.effectiveMode === "dark" && (
-                    <div className="pointer-events-none absolute inset-0 z-[1] overflow-hidden">
+                    <div className="pointer-events-none absolute inset-0 z-1 overflow-hidden">
                         <div
                             className="absolute top-0 w-full h-[100px] bg-cover bg-center opacity-50 blur-[20px]"
                             style={{
@@ -884,13 +883,13 @@ const NavBar: FC = () => {
                     }`}
                 >
                     {itemsToRender.map((item, index) => (
-                        <div
+                        <ItemLink
                             key={`${item.path}${index}`}
                             ref={(el) => {
                                 if (el) itemRefs.current[index] = el;
                             }}
                             // the scroller clips below the tabs, so the outline is drawn inside
-                            className={`group/tab max-sm:w-full text-nowrap flex items-start flex-nowrap cursor-pointer transition-colors ${FOCUS_RING_INSET} ${PHONE_TAP_AREA} max-sm:focus-visible:!outline-none ${
+                            className={`group/tab max-sm:w-full text-nowrap flex items-start flex-nowrap cursor-pointer transition-colors ${FOCUS_RING_INSET} ${PHONE_TAP_AREA} max-sm:focus-visible:outline-hidden! ${
                                 isPageOptnActive(item)
                                     ? "text-typography-1"
                                     : "sm:hover:text-typography-1 text-typography-2"
@@ -904,22 +903,12 @@ const NavBar: FC = () => {
                             aria-current={
                                 isPageOptnActive(item) ? "page" : undefined
                             }
-                            {...pressable(
-                                () => {
-                                    if (item.external && (item as any).url) {
-                                        window.open(
-                                            (item as any).url!,
-                                            "_blank",
-                                            "noopener",
-                                        );
-                                    } else {
-                                        navigate(item.path);
-                                    }
-                                    setTimeout(() => setIsHovered(false), 300);
-                                    requestAnimationFrame(updateUnderline);
-                                },
-                                { role: "link" },
-                            )}
+                            to={itemHref(item)}
+                            external={item.external}
+                            onClick={() => {
+                                setTimeout(() => setIsHovered(false), 300);
+                                requestAnimationFrame(updateUnderline);
+                            }}
                             style={{ position: "relative" }}
                         >
                             <i
@@ -931,7 +920,7 @@ const NavBar: FC = () => {
                             <div
                                 // on phones the focus ring and current-page bar sit on
                                 // this icon slot rather than the stretched tab
-                                className={`sm:hidden relative w-10 flex justify-center rounded max-sm:group-focus-visible/tab:outline max-sm:group-focus-visible/tab:outline-2 max-sm:group-focus-visible/tab:outline-offset-2 max-sm:group-focus-visible/tab:outline-typography-1 ${
+                                className={`sm:hidden relative w-10 flex justify-center rounded max-sm:group-focus-visible/tab:outline-solid max-sm:group-focus-visible/tab:outline-2 max-sm:group-focus-visible/tab:outline-offset-2 max-sm:group-focus-visible/tab:outline-typography-1 ${
                                     isPageOptnActive(item) ? CURRENT_BAR : ""
                                 }`}
                             >
@@ -951,7 +940,7 @@ const NavBar: FC = () => {
                                     {item.label}
                                 </span>
                             )}
-                        </div>
+                        </ItemLink>
                     ))}
 
                     {tabOverflow.length > 0 && (
@@ -1021,7 +1010,7 @@ const NavBar: FC = () => {
                     {/* Animated underline */}
                     {!isMobile && (
                         <div
-                            className="absolute bottom-0 h-px bg-typography-1 pointer-events-none transition-[left,width] duration-300"
+                            className="absolute bottom-0 h-px bg-typography-1 pointer-events-none transition-[left,width] duration-300 motion-reduce:transition-none"
                             style={{
                                 left: optionUnderline.left + 1,
                                 width: optionUnderline.width,
@@ -1037,43 +1026,34 @@ const NavBar: FC = () => {
                     ref={tabMenuRef}
                     id="nav-tab-more-menu"
                     style={{ left: tabMenuLeft }}
-                    className={`absolute top-full z-50 mt-2 w-56 rounded-xl bg-bg p-2 shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),_0_10px_25px_rgba(0,0,0,0.5)] transition-[opacity,transform] duration-150 ${
+                    className={`absolute top-full z-50 mt-2 w-56 rounded-xl bg-bg p-2 shadow-[inset_0_0_1px_1px_rgba(255,255,255,0.15),0_10px_25px_rgba(0,0,0,0.5)] transition-[opacity,transform] duration-150 ${
                         tabMoreOpen
                             ? "visible translate-y-0 opacity-100"
                             : "invisible pointer-events-none -translate-y-1 opacity-0"
                     }`}
                 >
                     {tabOverflow.map((item) => (
-                        <div
+                        <ItemLink
                             key={item.path}
                             aria-current={
                                 isPageOptnActive(item) ? "page" : undefined
                             }
-                            className={`flex min-h-11 items-center gap-2 rounded-lg px-3 cursor-pointer transition-colors sm:hover:bg-layer-2 sm:hover:text-typography-1 ${FOCUS_RING} ${
+                            className={`flex min-h-11 items-center gap-2 rounded-lg px-3 cursor-pointer transition-colors sm:hover:bg-layer-2 sm:hover:text-typography-1 ${FOCUS_OUTLINE} ${
                                 isPageOptnActive(item)
                                     ? "text-typography-1"
                                     : "text-typography-2"
                             }`}
-                            {...pressable(
-                                () => {
-                                    if (item.external && (item as any).url) {
-                                        window.open(
-                                            (item as any).url!,
-                                            "_blank",
-                                            "noopener",
-                                        );
-                                    } else {
-                                        navigate(item.path);
-                                    }
-                                    setTabMoreOpen(false);
-                                    setIsHovered(false);
-                                },
-                                { role: "link", focusable: tabMoreOpen },
-                            )}
+                            to={itemHref(item)}
+                            external={item.external}
+                            focusable={tabMoreOpen}
+                            onClick={() => {
+                                setTabMoreOpen(false);
+                                setIsHovered(false);
+                            }}
                         >
                             <i className={item.icon} aria-hidden="true" />
                             <span className="important">{item.label}</span>
-                        </div>
+                        </ItemLink>
                     ))}
                 </div>
             )}
@@ -1081,7 +1061,7 @@ const NavBar: FC = () => {
             {/* Divider under main nav */}
             <div
                 className={
-                    "max-sm:hidden relative z-[45] bottom-px w-full h-px bg-divider"
+                    "max-sm:hidden relative z-45 bottom-px w-full h-px bg-divider"
                 }
             />
         </nav>

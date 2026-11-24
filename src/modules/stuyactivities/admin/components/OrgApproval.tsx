@@ -13,6 +13,8 @@ import {
 } from "../../../../utils/FunctionErrors";
 import { sortWeekdays } from "../../../../utils/DataFormatters";
 import UserDialog from "../../../../components/ui/overlays/UserDialog";
+import { SUPPORT_EMAIL } from "../../../../config/constants";
+import { toNewYork } from "../../../../utils/NewYorkTime";
 
 const OrgApproval = ({
     onBack,
@@ -37,7 +39,7 @@ const OrgApproval = ({
             setButtonsDisabled(false);
             enqueueSnackbar(
                 (await functionErrorText(error)) ||
-                    "Error approving organization. Contact it@stuysu.org for support.",
+                    `Error approving organization. Contact ${SUPPORT_EMAIL} for support.`,
                 { variant: "error" },
             );
             /* someone else already approved or rejected it: refresh the list */
@@ -62,7 +64,7 @@ const OrgApproval = ({
             setButtonsDisabled(false);
             enqueueSnackbar(
                 (await functionErrorText(error)) ||
-                    "Error rejecting organization. Contact it@stuysu.org for support.",
+                    `Error rejecting organization. Contact ${SUPPORT_EMAIL} for support.`,
                 { variant: "error" },
             );
             /* someone else already approved or rejected it: refresh the list */
@@ -72,8 +74,11 @@ const OrgApproval = ({
             return;
         }
 
-        enqueueSnackbar("Organization rejected!", { variant: "success" });
+        enqueueSnackbar("Charter sent back to its leaders.", {
+            variant: "success",
+        });
         setButtonsDisabled(false);
+        setConfirmingReject(false);
         onDecision();
     };
 
@@ -105,21 +110,31 @@ const OrgApproval = ({
 
             <UserDialog
                 title="Reject this charter?"
-                description={`${org.name || "This Activity"} will be deleted and its leaders will be emailed. This can't be undone.`}
+                description={`${org.name || "This Activity"} goes back to its leaders as needing changes. They can fix it and send it back for review. Use Send Message to tell them what to change.`}
                 open={confirmingReject}
                 onClose={() => setConfirmingReject(false)}
                 onConfirm={reject}
-                confirmText="Reject"
+                closeOnConfirm={false}
+                confirmText="Reject Charter"
             />
 
+            {org.rejected_at && (
+                <div className="mb-6 rounded-xl border border-divider p-4">
+                    <h4>
+                        Rejected Before, on{" "}
+                        {toNewYork(org.rejected_at).format("MMMM D, YYYY")}
+                    </h4>
+                </div>
+            )}
+
             <div className={"flex flex-col sm:flex-row gap-10"}>
-                <div className={"w-full flex flex-col gap-2"}>
+                <div className={"w-full min-w-0 flex flex-col gap-2"}>
                     <h4>Activity Name</h4>
                     <p>{org.name}</p>
                     <Divider />
 
                     <h4>URL</h4>
-                    <p className={"font-mono"}>{org.url}</p>
+                    <p className={"font-mono wrap-anywhere"}>{org.url}</p>
                     <Divider />
 
                     <h4>Picture</h4>
@@ -139,31 +154,31 @@ const OrgApproval = ({
                     <Divider />
 
                     <h4>Origin Story</h4>
-                    <p className="whitespace-pre-line break-words">
+                    <p className="whitespace-pre-line wrap-anywhere">
                         {org.mission}
                     </p>
                     <Divider />
 
                     <h4>Goals</h4>
-                    <p className="whitespace-pre-line break-words">
+                    <p className="whitespace-pre-line wrap-anywhere">
                         {org.goals}
                     </p>
                     <Divider />
 
                     <h4>Activity Description</h4>
-                    <p className="whitespace-pre-line break-words">
+                    <p className="whitespace-pre-line wrap-anywhere">
                         {org.purpose}
                     </p>
                     <Divider />
 
                     <h4>Appointment Procedures</h4>
-                    <p className="whitespace-pre-line break-words">
+                    <p className="whitespace-pre-line wrap-anywhere">
                         {org.appointment_procedures}
                     </p>
                     <Divider />
 
                     <h4>Uniqueness</h4>
-                    <p className="whitespace-pre-line break-words">
+                    <p className="whitespace-pre-line wrap-anywhere">
                         {org.uniqueness}
                     </p>
                     <Divider />
@@ -171,7 +186,7 @@ const OrgApproval = ({
                     <h4 className={org.is_returning ? "text-yellow" : ""}>
                         Returning Activity Declaration
                     </h4>
-                    <p className="whitespace-pre-line break-words">
+                    <p className="whitespace-pre-line wrap-anywhere">
                         {org.is_returning
                             ? org?.returning_info || "N/A"
                             : "Claims to not be a returning Activity."}
@@ -179,13 +194,13 @@ const OrgApproval = ({
                     <Divider />
 
                     <h4>Meeting Description</h4>
-                    <p className="whitespace-pre-line break-words">
+                    <p className="whitespace-pre-line wrap-anywhere">
                         {org.meeting_description}
                     </p>
                     <Divider />
 
                     <h4>Meeting Schedule</h4>
-                    <p className="whitespace-pre-line break-words">
+                    <p className="whitespace-pre-line wrap-anywhere">
                         {org.meeting_schedule}
                     </p>
                     <Divider />
@@ -199,7 +214,9 @@ const OrgApproval = ({
                     <Divider />
 
                     <h4>Keywords</h4>
-                    <p className={"font-mono"}>{org.keywords || "none"}</p>
+                    <p className={"font-mono wrap-anywhere"}>
+                        {org.keywords || "none"}
+                    </p>
                     <Divider />
 
                     <h4>Tags</h4>
@@ -211,7 +228,7 @@ const OrgApproval = ({
                     <Divider />
 
                     <h4>Creator</h4>
-                    <p className={"font-mono"}>
+                    <p className={"font-mono wrap-anywhere"}>
                         {
                             org.memberships?.find((m) => m.role === "CREATOR")
                                 ?.users?.email
@@ -220,11 +237,13 @@ const OrgApproval = ({
                     <Divider />
 
                     <h4>Faculty Advisor</h4>
-                    <p className={"font-mono"}>{org?.faculty_email || "N/A"}</p>
+                    <p className={"font-mono wrap-anywhere"}>
+                        {org?.faculty_email || "N/A"}
+                    </p>
                     <Divider />
                 </div>
 
-                <div className="h-fit sticky top-12 w-full mb-12">
+                <div className="h-fit sticky top-12 w-full min-w-0 mb-12">
                     <OrgChat organization_id={org.id as number} />
                 </div>
             </div>

@@ -1,7 +1,101 @@
-@import url("https://use.typekit.net/trt3qfc.css");
-@import url("https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css");
+@import "tailwindcss";
+/* layered, so utilities like hidden still apply to icons */
+@import "./boxicons/boxicons.min.css" layer(components);
 
-@tailwind base;
+@theme {
+    --font-*: initial;
+    --font-sans: inter-variable, system-ui, sans-serif;
+    --font-display: neue-haas-grotesk-display, inter-variable, sans-serif;
+    --font-serif: instrument-serif, Georgia, serif;
+    --font-mono: source-code-pro, monospace;
+
+    --color-bg: var(--bg-main);
+    --color-layer-1: var(--layer-primary);
+    --color-layer-2: var(--layer-secondary);
+    --color-layer-3: var(--layer-tertiary);
+    --color-typography-1: var(--text-primary);
+    --color-typography-2: var(--text-secondary);
+    --color-typography-3: var(--text-tertiary);
+    --color-blue: var(--blue);
+    --color-green: var(--green);
+    --color-yellow: var(--yellow);
+    --color-red: var(--red);
+    --color-beige: var(--beige);
+    --color-divider: var(--divider);
+    --color-blurDark: var(--blur-dark);
+    --color-blurLight: var(--blur-light);
+
+    /* Tailwind 3's shades of the palette colors in use */
+    --color-purple-500: #a855f7;
+    --color-orange-400: #fb923c;
+    --color-orange-700: #c2410c;
+    --color-pink-500: #ec4899;
+    --color-pink-700: #be185d;
+
+    --shadow-prominent:
+        0 4px 20px 10px var(--shadow-base), 0 3px 4px 2px var(--shadow-base),
+        0 0 3px 0 var(--shadow-antithesis) inset,
+        0 -7px 20px 0 var(--shadow-fume) inset;
+    --shadow-control:
+        0 4px 4px 0 var(--shadow-base),
+        0 0 1px 0 var(--shadow-antithesis) inset,
+        0 1px 3px 0 var(--shadow-decoration) inset;
+    --shadow-inner:
+        0 3px 3px 0 var(--shadow-base) inset,
+        0 0 2px 0 var(--shadow-antithesis) inset,
+        0 1px 1px 0 var(--shadow-decoration) inset,
+        0 -5px 20px 0 var(--shadow-fume) inset;
+}
+
+@custom-variant scheme-light (:root[data-scheme="light"] &);
+@custom-variant scheme-dark (:root[data-scheme="dark"] &);
+
+/* text-accent uses a lighter shade in dark themes than bg-accent */
+@utility text-accent {
+    color: var(--accent-text);
+}
+@utility bg-accent {
+    background-color: var(--accent);
+}
+@utility border-accent {
+    border-color: var(--accent);
+}
+
+@utility bg-lineSeparator {
+    background-image: linear-gradient(
+        to right,
+        var(--divider) 0%,
+        var(--highlight) 25%,
+        var(--divider) 100%
+    );
+}
+
+@utility scrollbar-none {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+        display: none;
+    }
+}
+
+/* Tailwind 3 defaults this site was drawn with */
+@layer base {
+    *,
+    ::after,
+    ::before,
+    ::backdrop,
+    ::file-selector-button {
+        border-color: var(--color-gray-200, currentcolor);
+    }
+    input::placeholder,
+    textarea::placeholder {
+        color: var(--color-gray-400);
+    }
+    button:not(:disabled),
+    [role="button"]:not(:disabled) {
+        cursor: pointer;
+    }
+}
 
 /* stands in for ITC Avant Garde Medium, which the Adobe kit doesn't include;
    its tracking and the CA and LL ligatures are built in */
@@ -12,58 +106,56 @@
     font-style: normal;
     font-display: swap;
 }
-@tailwind components;
-@tailwind utilities;
 
 /* page content is 1440px wide, growing on very wide or zoomed-out screens;
    chrome uses these to line up with it */
 :root {
     --frame: min(1920px, max(1440px, 100vw - 480px));
 }
-@layer utilities {
-    .px-frame {
-        padding-left: max(3rem, calc((100% - var(--frame)) / 2));
-        padding-right: max(3rem, calc((100% - var(--frame)) / 2));
-    }
-    .mx-frame {
-        margin-left: max(3rem, calc((100% - var(--frame)) / 2));
-        margin-right: max(3rem, calc((100% - var(--frame)) / 2));
-    }
-    .ml-frame {
-        margin-left: max(3rem, calc((100% - var(--frame)) / 2));
-    }
-    /* phone bars stick, except on very short screens (400% zoom) where they'd cover too much */
+@utility px-frame {
+    padding-left: max(3rem, calc((100% - var(--frame)) / 2));
+    padding-right: max(3rem, calc((100% - var(--frame)) / 2));
+}
+@utility mx-frame {
+    margin-left: max(3rem, calc((100% - var(--frame)) / 2));
+    margin-right: max(3rem, calc((100% - var(--frame)) / 2));
+}
+@utility ml-frame {
+    margin-left: max(3rem, calc((100% - var(--frame)) / 2));
+}
+@utility frame {
+    width: 100%;
+    max-width: calc(var(--frame) + 6rem);
+    margin-left: auto;
+    margin-right: auto;
+}
+/* phone bars stick, except on very short screens (400% zoom) where they'd cover too much */
+@utility phone-sticky {
     @media (max-width: 639px) {
-        .phone-sticky {
-            position: sticky;
-            top: 0;
-        }
+        position: sticky;
+        top: 0;
     }
     @media (max-width: 639px) and (max-height: 400px) {
-        .phone-sticky {
-            position: relative;
-        }
-    }
-    .frame {
-        width: 100%;
-        max-width: calc(var(--frame) + 6rem);
-        margin-left: auto;
-        margin-right: auto;
+        position: relative;
     }
 }
 
 /* headline look for text that is not the page's main heading */
-@layer components {
-    .as-h1 {
-        @apply font-display text-[2.1rem] leading-[2.1rem] my-2 text-[color:var(--text-primary)];
-        font-weight: 700;
-    }
-    /* gives a small control a 44px tap area on touch screens */
-    .touch-target {
-        position: relative;
-    }
+@utility as-h1 {
+    @apply font-display text-[2.1rem] my-2 text-(--text-primary);
+    line-height: 2.1rem;
+    font-weight: 700;
+}
+@utility as-h3 {
+    @apply text-[1.4rem] text-(--text-primary);
+    line-height: 1.4rem;
+    font-variation-settings: "wght" 700;
+}
+/* gives a small control a 44px tap area on touch screens */
+@utility touch-target {
+    position: relative;
     @media (pointer: coarse) {
-        .touch-target::after {
+        &::after {
             content: "";
             position: absolute;
             left: 50%;
@@ -72,10 +164,6 @@
             height: max(100%, 44px);
             transform: translate(-50%, -50%);
         }
-    }
-    .as-h3 {
-        @apply text-[1.4rem] leading-[1.4rem] text-[color:var(--text-primary)];
-        font-variation-settings: "wght" 700;
     }
 }
 
@@ -87,8 +175,8 @@
 
     /* On phones the sub navigation is fixed to the top and the main navigation
        to the bottom, so keep a focused control from scrolling in behind them.
-       The page scrolls inside a custom scroll area, so the margin goes on the
-       controls themselves rather than only on the scrolling element. */
+       The padding covers the page; the margin also covers controls inside
+       other scrolling areas. */
     /* below Tailwind's sm breakpoint, which starts at 640px */
     @media (max-width: 639.98px) {
         html {
@@ -98,21 +186,22 @@
 
         /* options scroll inside their own short lists, so they are left out */
         :where(
-                a,
-                button,
-                input,
-                select,
-                textarea,
-                [tabindex],
-                [contenteditable]
-            ):not([role="option"]) {
+            a,
+            button,
+            input,
+            select,
+            textarea,
+            [tabindex],
+            [contenteditable]
+        ):not([role="option"]) {
             scroll-margin-top: 3.5rem;
             scroll-margin-bottom: 4.5rem;
         }
     }
 
     body {
-        @apply font-sans text-base leading-normal;
+        @apply font-sans text-base;
+        line-height: 1.5;
         color: rgba(0, 0, 0, 0.87);
         background-color: #fff;
     }
@@ -123,39 +212,44 @@
     }
 
     h1 {
-        @apply font-display text-[2.1rem] leading-[2.1rem] my-2 text-[color:var(--text-primary)];
+        @apply font-display text-[2.1rem] my-2 text-(--text-primary);
+        line-height: 2.1rem;
         font-weight: 700;
     }
 
     h2 {
-        @apply font-display text-[1.5rem] my-1 text-[color:var(--text-secondary)];
+        @apply font-display text-[1.5rem] my-1 text-(--text-secondary);
         font-weight: 600;
     }
 
     h3 {
-        @apply text-[1.4rem] leading-[1.4rem] my-1 text-[color:var(--text-primary)];
+        @apply text-[1.4rem] my-1 text-(--text-primary);
+        line-height: 1.4rem;
         font-variation-settings: "wght" 700;
         padding-top: 0.12em;
     }
 
     h4 {
-        @apply text-[1rem] leading-[1.1rem] text-[color:var(--text-primary)];
+        @apply text-[1rem] text-(--text-primary);
+        line-height: 1.1rem;
         font-variation-settings: "wght" 600;
     }
 
     h5 {
-        @apply text-[0.8rem] leading-[2rem] text-[color:var(--text-secondary)] uppercase;
+        @apply text-[0.8rem] text-(--text-secondary) uppercase;
+        line-height: 2rem;
         font-variation-settings: "wght" 700;
     }
 
     p,
     .text {
-        @apply text-[0.9rem] leading-[1.2rem] text-[color:var(--text-secondary)];
+        @apply text-[0.9rem] text-(--text-secondary);
+        line-height: 1.2rem;
         font-variation-settings: "wght" 500;
     }
 
     a {
-        @apply text-[color:var(--accent-text)] underline;
+        @apply text-(--accent-text) underline;
     }
 
     .important {
@@ -186,7 +280,8 @@
         --blue: #395be9;
         --green: #6deb68;
         --yellow: #eefe53;
-        --red: #e45647;
+        /* light enough for small text on the lightest layer */
+        --red: #f47466;
         --beige: #b6b684;
 
         --divider: #7d7d7d4d;
@@ -222,7 +317,7 @@
         --green: #33762f;
         /* dark amber, since yellow is mostly used as text */
         --yellow: #835800;
-        --red: #c41200;
+        --red: #b51000;
         /* deep enough for small text, as on the catalog's submission card */
         --beige: #6e5b3f;
 
@@ -256,7 +351,7 @@
         --blue: #66aaff;
         --green: #55dd55;
         --yellow: #ffff66;
-        --red: #ff4444;
+        --red: #ff5a5a;
         --beige: #ffffcc;
 
         --divider: #666;
@@ -299,7 +394,7 @@
            they are deep shades that pass 4.5:1 on these warm layers and on
            the orange navigation bar */
         --yellow: #664400;
-        --red: #b23209;
+        --red: #962606;
         --beige: #6b5200;
 
         --divider: #ffcc80;
@@ -369,15 +464,6 @@
     :root[data-scheme="dark"] {
         color-scheme: dark;
     }
-}
-
-.scroll-hide {
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-}
-.scroll-hide::-webkit-scrollbar {
-    width: 0;
-    height: 0;
 }
 
 /* rendered markdown (posts, announcements, SU chat) */
@@ -545,10 +631,23 @@
     border-radius: 0;
     /* the layer colours are see-through, so stack them on the page colour to
        hide text scrolling under the stuck toolbar */
-    background: linear-gradient(var(--layer-tertiary), var(--layer-tertiary)),
+    background:
+        linear-gradient(var(--layer-tertiary), var(--layer-tertiary)),
         linear-gradient(var(--layer-secondary), var(--layer-secondary)),
         var(--bg-main);
     z-index: 1;
+}
+/* the library's placeholder has no right edge, so long hints were cut off
+   instead of ending in "…" */
+.markup-editor [class*="_placeholder_"] {
+    left: 0;
+    right: 0;
+    box-sizing: border-box;
+}
+.markup-editor [class*="_placeholder_"] > * {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 /* short messages scroll inside the box instead of pushing Send off screen */
 .markup-editor-compact .mdxeditor-root-contenteditable {
@@ -565,6 +664,46 @@
 .markup-editor .mdxeditor-root-contenteditable {
     color: var(--text-secondary);
 }
+/* the link popover fits a phone screen */
+:root .mdxeditor-popup-container [class*="_linkDialogPopoverContent_"] {
+    max-width: calc(100vw - 16px);
+    box-sizing: border-box;
+}
+:root
+    .mdxeditor-popup-container
+    [class*="_linkDialogPopoverContent_"]
+    :is(form, [class*="_formField_"], input) {
+    min-width: 0;
+}
+:root .mdxeditor-popup-container [class*="_linkDialogPopoverContent_"] form {
+    flex: 1;
+}
 .markup-editor-tall .mdxeditor-root-contenteditable > div {
     min-height: 10rem;
+}
+
+/* the shared loading spinner */
+.loading-grid rect {
+    transform-box: fill-box;
+    transform-origin: center;
+    transform: scale(0.43);
+    animation: loading-cell 1.8s ease-in-out infinite;
+}
+@keyframes loading-cell {
+    0%,
+    100% {
+        transform: scale(0.43);
+    }
+    30%,
+    55% {
+        transform: scale(1);
+    }
+    85% {
+        transform: scale(0.43);
+    }
+}
+@media (prefers-reduced-motion: reduce) {
+    .loading-grid rect {
+        animation: none;
+    }
 }

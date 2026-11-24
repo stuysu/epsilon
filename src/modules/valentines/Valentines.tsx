@@ -71,7 +71,7 @@ const Valentines = () => {
         <>
             {deadline && deadline < new Date() && (
                 <>
-                    <h2 className="m-0 font-sans text-[3.75rem] leading-[1.2] tracking-[-0.00833em] text-[color:inherit] [font-variation-settings:'wght'_300]">
+                    <h2 className="m-0 font-sans text-[3.75rem] leading-[1.2] tracking-[-0.00833em] text-inherit [font-variation-settings:'wght'_300]">
                         {`${receivedValentines.length} Valentine${receivedValentines.length === 1 ? "" : "s"} Received`}
                     </h2>
                     <div className="mt-4">
@@ -88,13 +88,13 @@ const Valentines = () => {
                     </div>
                 </>
             )}
-            <h2 className="m-0 font-sans text-[3.75rem] leading-[1.2] tracking-[-0.00833em] text-[color:inherit] [font-variation-settings:'wght'_300]">
+            <h2 className="m-0 font-sans text-[3.75rem] leading-[1.2] tracking-[-0.00833em] text-inherit [font-variation-settings:'wght'_300]">
                 {`${sentValentines.length} Valentine${sentValentines.length === 1 ? "" : "s"} Sent`}
             </h2>
             {sentValentines.map((valentine) => (
                 <div
                     key={valentine.id}
-                    className="flex justify-center w-[100vw]"
+                    className="flex justify-center w-screen"
                 >
                     <ValentineDisplay
                         valentine={valentine}

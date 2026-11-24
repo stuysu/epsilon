@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from "react";
+import React, { useContext, useMemo, useState } from "react";
 import OrgContext from "../../../../contexts/OrgContext";
 import { useSnackbar } from "notistack";
 import { useNavigate } from "react-router-dom";
@@ -16,12 +16,18 @@ import OrgInspector from "../components/OrgInspector";
 import ToggleChip from "../../../../components/ui/input/ToggleChip";
 import Divider from "../../../../components/ui/Divider";
 import OverviewList from "../../../../components/ui/lists/OverviewList";
+import CalendarSubscribe, {
+    calendarFeedUrl,
+    useCalendarToken,
+} from "../../../../components/ui/CalendarSubscribe";
 import UserDialog from "../../../../components/ui/overlays/UserDialog";
 import { PUBLIC_URL } from "../../../../config/constants";
 import DisplayLinks from "../../../../components/DisplayLinks";
 import Avatar from "../../../../components/ui/Avatar";
 import pressable from "../../../../utils/pressable";
 import { useInvites } from "../../../../contexts/InvitesProvider";
+import useOrgRole from "../useOrgRole";
+import useNow from "../../../../utils/useNow";
 
 const Overview = () => {
     const navigate = useNavigate();
@@ -44,18 +50,14 @@ const Overview = () => {
     const [attemptingInteract, setAttemptingInteract] = useState(false);
 
     const [leaveConfirmation, setLeaveConfirmation] = useState(false);
-    const [userLeave, setUserLeave] = useState(false);
+    const now = useNow();
+    const { token: calendarToken, makeLink: makeCalendarLink } =
+        useCalendarToken(user.signed_in ? user.id : undefined);
 
-    const isInOrg = !!organization.memberships?.find(
-        (m) => m.users?.id === user.id,
-    );
-    const isCreator =
-        isInOrg &&
-        organization.memberships?.find((m) => m.users?.id === user.id)?.role ===
-            "CREATOR";
-    const isActive =
-        isInOrg &&
-        organization.memberships?.find((m) => m.users?.id === user.id)?.active;
+    const { membership: myMembership } = useOrgRole();
+    const isInOrg = !!myMembership;
+    const isCreator = myMembership?.role === "CREATOR";
+    const isActive = !!myMembership?.active;
 
     let interactString = isInOrg
         ? isActive
@@ -64,12 +66,20 @@ const Overview = () => {
         : "JOIN";
     let disabled = false;
 
-    if (isCreator) disabled = true;
     const pendingInvite = invites.find(
         (invite) => invite.organizations.id === organization.id,
     );
     if (!isInOrg && pendingInvite) {
         interactString = "VIEW INVITE";
+    } else if (
+        !isInOrg &&
+        ["PENDING", "REJECTED"].includes(organization.state)
+    ) {
+        interactString = "Charter Pending";
+        disabled = true;
+    } else if (!isInOrg && organization.state === "PUNISHED") {
+        interactString = "Joining Paused";
+        disabled = true;
     } else if (!isInOrg && !organization.joinable) {
         interactString = "🔒 Private Activity";
         disabled = true;
@@ -169,48 +179,38 @@ const Overview = () => {
         }
     };
 
-    useEffect(() => {
-        const leaveOrg = async () => {
-            const membership = organization.memberships?.find(
-                (m) => m.users?.id === user.id,
-            );
-            /* a blocked delete removes no rows and returns no error */
-            const { data: removed, error } = await supabase
-                .from("memberships")
-                .delete()
-                .eq("id", membership?.id)
-                .select("id");
+    const leaveOrg = async () => {
+        const membership = organization.memberships?.find(
+            (m) => m.users?.id === user.id,
+        );
+        /* a blocked delete removes no rows and returns no error */
+        const { data: removed, error } = await supabase
+            .from("memberships")
+            .delete()
+            .eq("id", membership?.id)
+            .select("id");
 
-            if (error || !removed?.length) {
-                enqueueSnackbar("Unable to leave organization.", {
-                    variant: "error",
-                });
-                return;
-            }
-            if (organization.setOrg) {
-                organization.setOrg({
-                    ...organization,
-                    memberships: organization.memberships.filter(
-                        (m) => m.users?.id !== user.id,
-                    ),
-                });
-            }
-            enqueueSnackbar(
-                membership?.active
-                    ? "Left organization!"
-                    : "Join request cancelled.",
-                { variant: "success" },
-            );
-        };
-
-        if (userLeave) {
-            setAttemptingInteract(true);
-            leaveOrg().finally(() => {
-                setUserLeave(false);
-                setAttemptingInteract(false);
+        if (error || !removed?.length) {
+            enqueueSnackbar("Unable to leave organization.", {
+                variant: "error",
+            });
+            return;
+        }
+        if (organization.setOrg) {
+            organization.setOrg({
+                ...organization,
+                memberships: organization.memberships.filter(
+                    (m) => m.users?.id !== user.id,
+                ),
             });
         }
-    }, [userLeave]);
+        enqueueSnackbar(
+            membership?.active
+                ? "Left organization!"
+                : "Join request cancelled.",
+            { variant: "success" },
+        );
+    };
 
     // const handleClickOpen = () => {
     //     setAttemptingInteract(true);
@@ -225,9 +225,12 @@ const Overview = () => {
     }
 
     // meetings aren't sorted and include upcoming ones
-    const lastMeetingStart = (organization.meetings ?? [])
+    const lastMeetingStart = [
+        ...(organization.meetings ?? []),
+        ...(organization.last_meeting ?? []),
+    ]
         .map((m) => m.start_time)
-        .filter((t): t is string => !!t && new Date(t).getTime() < Date.now())
+        .filter((t): t is string => !!t && new Date(t).getTime() < now)
         .reduce<string | undefined>(
             (latest, t) =>
                 !latest || new Date(t) > new Date(latest) ? t : latest,
@@ -236,13 +239,11 @@ const Overview = () => {
 
     const handleUserLeave = () => {
         setLeaveConfirmation(false);
-        setUserLeave(true);
+        setAttemptingInteract(true);
+        leaveOrg().finally(() => setAttemptingInteract(false));
     };
 
-    const handleUserStay = () => {
-        setLeaveConfirmation(false);
-        setUserLeave(false);
-    };
+    const handleUserStay = () => setLeaveConfirmation(false);
 
     return (
         <div
@@ -335,7 +336,7 @@ const Overview = () => {
                             }
                         >
                             <p
-                                className="h-[4lh] overflow-hidden text-ellipsis whitespace-pre-line break-words [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:4]"
+                                className="h-[4lh] overflow-hidden text-ellipsis whitespace-pre-line wrap-break-word [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:4]"
                                 {...pressable(() => navigate("./charter"), {
                                     role: "link",
                                 })}
@@ -351,24 +352,31 @@ const Overview = () => {
                             "max-sm:flex max-sm:justify-center max-sm:w-full mt-2"
                         }
                     >
-                        <AsyncButton
-                            onClick={handleInteract}
-                            disabled={disabled || attemptingInteract}
-                            className="max-lg:w-full"
-                            sx={{
-                                ...(interactString === "LEAVE" ||
-                                interactString === "CANCEL JOIN"
-                                    ? {
-                                          backgroundColor: "#c81e1e",
-                                          color: "white",
-                                      }
-                                    : {}),
-                            }}
-                        >
-                            {interactString
-                                .toLowerCase()
-                                .replace(/\b\w/g, (c) => c.toUpperCase())}
-                        </AsyncButton>
+                        {isCreator ? (
+                            <p className="text-typography-2">
+                                You created this Activity, so you can&apos;t
+                                leave it.
+                            </p>
+                        ) : (
+                            <AsyncButton
+                                onClick={handleInteract}
+                                disabled={disabled || attemptingInteract}
+                                className="max-lg:w-full"
+                                sx={{
+                                    ...(interactString === "LEAVE" ||
+                                    interactString === "CANCEL JOIN"
+                                        ? {
+                                              backgroundColor: "#c81e1e",
+                                              color: "white",
+                                          }
+                                        : {}),
+                                }}
+                            >
+                                {interactString
+                                    .toLowerCase()
+                                    .replace(/\b\w/g, (c) => c.toUpperCase())}
+                            </AsyncButton>
+                        )}
                         <UserDialog
                             title="Leave Organization?"
                             imageSrc={`${PUBLIC_URL}/symbols/warning.png`}
@@ -390,7 +398,7 @@ const Overview = () => {
             <Divider />
             <div
                 className={
-                    "max-w-full overflow-scroll scrollbar-none scroll-pe-10 max-lg:[mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)] max-lg:pr-8"
+                    "max-w-full overflow-scroll scrollbar-none scroll-pe-10 max-lg:mask-[linear-gradient(to_right,black_calc(100%-32px),transparent)] max-lg:pr-8"
                 }
             >
                 <div className={"flex flex-row mt-2 mb-6 items-center"}>
@@ -636,13 +644,44 @@ const Overview = () => {
                     )}
                 </OverviewList>
 
+                {user.signed_in &&
+                    !["PENDING", "REJECTED"].includes(organization.state) &&
+                    calendarToken !== undefined && (
+                        <div className="mt-4 mb-6">
+                            {calendarToken ? (
+                                <CalendarSubscribe
+                                    url={calendarFeedUrl(
+                                        `token=${calendarToken}&club=${encodeURIComponent(organization.url)}`,
+                                    )}
+                                />
+                            ) : (
+                                <div className="flex flex-col items-start gap-2.5">
+                                    <AsyncButton
+                                        onClick={() => makeCalendarLink(false)}
+                                    >
+                                        <i
+                                            className="bx bx-calendar-plus mr-1.5"
+                                            aria-hidden="true"
+                                        />
+                                        Get Calendar Link
+                                    </AsyncButton>
+                                    <p className="text-sm text-typography-2">
+                                        Makes a private link that adds this
+                                        Activity&apos;s meetings to your
+                                        calendar app.
+                                    </p>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
                 <div className={"xl:hidden mb-10 w-full"}>
                     <OrgInspector />
                 </div>
             </div>
 
             {related?.length !== 0 && (
-                <div className={"w-full mt-10"}>
+                <div className={"relative w-full mt-10"}>
                     <h2 className={"mb-2 text-typography-1"}>
                         Activities Like This
                     </h2>
@@ -651,10 +690,10 @@ const Overview = () => {
                     </div>
                     <div
                         className={
-                            "absolute h-px w-[calc(100vw-160px-3rem)] bg-divider max-lg:hidden"
+                            "absolute inset-x-0 h-px bg-divider max-lg:hidden"
                         }
                     ></div>
-                    <div className={"h-80 relative right-12"}>
+                    <div className={"h-80 relative right-3 sm:right-12"}>
                         <div className={"absolute"}>
                             <RelatedActivities related={related} />
                         </div>

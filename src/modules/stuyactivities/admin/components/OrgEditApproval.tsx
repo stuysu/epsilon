@@ -1,4 +1,4 @@
-import { Fragment, useEffect, useState } from "react";
+import { Fragment, useState } from "react";
 import LinkSummary from "../../orgs/components/LinkSummary";
 
 import Divider from "../../../../components/ui/Divider";
@@ -7,12 +7,14 @@ import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import OrgChat from "./OrgChat";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
+import UserDialog from "../../../../components/ui/overlays/UserDialog";
 import orgFieldMap from "../../../../utils/OrgFieldMap";
 import Avatar from "../../../../components/ui/Avatar";
 import {
     functionErrorStatus,
     functionErrorText,
 } from "../../../../utils/FunctionErrors";
+import { SUPPORT_EMAIL } from "../../../../config/constants";
 
 type EditKey = keyof EditType;
 
@@ -32,7 +34,6 @@ const editFields: EditKey[] = [
     "keywords",
     "tags",
     "commitment_level",
-    "fair",
     "faculty_email",
 ];
 
@@ -48,56 +49,26 @@ const OrgEditApproval = ({
 } & EditType) => {
     const { enqueueSnackbar } = useSnackbar();
 
-    /* fetch current org data to compare to */
-    const [currentOrg, setCurrentOrg] = useState<Partial<Organization>>({});
     const [buttonsDisabled, setButtonsDisabled] = useState(false);
-    const [fields, setChangedFields] = useState<string[]>([]);
+    const [confirmingReject, setConfirmingReject] = useState(false);
 
-    useEffect(() => {
-        /* find not null fields */
-        const changedFields: string[] = [];
-        for (const key of Object.keys(edit)) {
-            const field: EditKey = key as EditKey;
-            if (!editFields.includes(field)) continue;
-
-            if (edit[field] !== null) {
-                changedFields.push(key);
-            }
-        }
-
-        const qs = changedFields.join(",\n");
-
-        const fetchCurrentOrg = async () => {
-            const { data, error } = await supabase
-                .from("organizations")
-                .select(qs)
-                .eq("id", edit.organization_id);
-
-            if (error || !data) {
-                return enqueueSnackbar(
-                    "Could not fetch current organization data. Please contact it@stuysu.org for support.",
-                    { variant: "error" },
-                );
-            }
-
-            setCurrentOrg(data[0] as Partial<Organization>);
-            setChangedFields(changedFields);
-        };
-
-        fetchCurrentOrg();
-    }, [edit, enqueueSnackbar]);
+    // the fields this edit changes
+    const fields = Object.keys(edit).filter(
+        (key) =>
+            editFields.includes(key as EditKey) &&
+            edit[key as EditKey] !== null,
+    );
 
     const approve = async () => {
         setButtonsDisabled(true);
-        let error;
-        const updatedFields: any = {};
+        const updatedFields: Record<string, unknown> = {};
 
         for (const field of fields) {
             updatedFields[field] = edit[field as EditKey];
         }
 
         /* apply changes to organization */
-        ({ error } = await supabase.functions.invoke(
+        const { error } = await supabase.functions.invoke(
             "approve-organization-edit",
             {
                 body: {
@@ -106,14 +77,14 @@ const OrgEditApproval = ({
                     edit_id: edit.id,
                 },
             },
-        ));
+        );
 
         if (error) {
             setButtonsDisabled(false);
             const message = await functionErrorText(error);
             enqueueSnackbar(
                 message ||
-                    "Error updating organization. Contact it@stuysu.org for support.",
+                    `Error updating organization. Contact ${SUPPORT_EMAIL} for support.`,
                 { variant: "error" },
             );
             /* handled by someone else or changed since: refresh the list */
@@ -129,8 +100,7 @@ const OrgEditApproval = ({
 
     const reject = async () => {
         setButtonsDisabled(true);
-        let error;
-        ({ error } = await supabase.functions.invoke(
+        const { error } = await supabase.functions.invoke(
             "reject-organization-edit",
             {
                 body: {
@@ -138,13 +108,13 @@ const OrgEditApproval = ({
                     edit_id: edit.id,
                 },
             },
-        ));
+        );
 
         if (error) {
             setButtonsDisabled(false);
             enqueueSnackbar(
                 (await functionErrorText(error)) ||
-                    "Error deleting organization edit. Contact it@stuysu.org for support.",
+                    `Error deleting organization edit. Contact ${SUPPORT_EMAIL} for support.`,
                 { variant: "error" },
             );
             /* already handled by someone else: refresh the list */
@@ -153,6 +123,7 @@ const OrgEditApproval = ({
         }
 
         setButtonsDisabled(false);
+        setConfirmingReject(false);
         enqueueSnackbar("Organization edit rejected.", { variant: "success" });
         onReject();
     };
@@ -174,7 +145,7 @@ const OrgEditApproval = ({
                         Approve
                     </AsyncButton>
                     <AsyncButton
-                        onClick={reject}
+                        onClick={() => setConfirmingReject(true)}
                         color="secondary"
                         disabled={buttonsDisabled}
                     >
@@ -182,8 +153,17 @@ const OrgEditApproval = ({
                     </AsyncButton>
                 </div>
             </div>
+            <UserDialog
+                title="Reject These Changes?"
+                description={`The pending changes to ${edit.organization_name} are discarded and its leaders are emailed. Use Send Message to tell them why. This can't be undone.`}
+                open={confirmingReject}
+                onClose={() => setConfirmingReject(false)}
+                onConfirm={reject}
+                closeOnConfirm={false}
+                confirmText="Reject Changes"
+            />
             <div className={"flex flex-col sm:flex-row gap-10"}>
-                <div className={"w-full flex flex-col gap-2"}>
+                <div className={"w-full min-w-0 flex flex-col gap-2"}>
                     {fields.map((field) => {
                         const f2: EditKey = field as EditKey;
 
@@ -220,7 +200,7 @@ const OrgEditApproval = ({
                                     {orgFieldMap(field)}{" "}
                                     <i className={"bx bx-refresh"}></i>
                                 </h4>
-                                <p className="whitespace-pre-line break-words">
+                                <p className="whitespace-pre-line wrap-anywhere">
                                     {f2 === "socials" ? (
                                         <LinkSummary
                                             socials={edit[f2] as string}
@@ -235,8 +215,10 @@ const OrgEditApproval = ({
                     })}
                 </div>
 
-                <div className="h-fit sticky top-12 w-full mb-12">
-                    <OrgChat organization_id={edit.organization_id} />
+                <div className="h-fit sticky top-12 w-full min-w-0 mb-12">
+                    {edit.organization_id !== undefined && (
+                        <OrgChat organization_id={edit.organization_id} />
+                    )}
                 </div>
             </div>
         </div>

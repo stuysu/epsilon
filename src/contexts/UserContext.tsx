@@ -4,6 +4,7 @@ const UserContext = React.createContext<UserContextType>({
     signed_in: false,
     admin: false,
     permission: "",
+    permissions: [],
     id: -1,
     first_name: "",
     last_name: "",

@@ -1,9 +1,13 @@
-import { DotLottieReact } from "@lottiefiles/dotlottie-react";
 import { useEffect, useState } from "react";
-import useMediaQuery from "../../../utils/useMediaQuery";
+
+// 4x4 squares that grow into one block in a diagonal wave
+const CELLS = Array.from({ length: 16 }, (_, i) => {
+    const row = Math.floor(i / 4);
+    const col = i % 4;
+    return { row, col, delay: (3 - row + col) * 0.1 };
+});
 
 const Loading = () => {
-    const reduceMotion = useMediaQuery("(prefers-reduced-motion: reduce)");
     // quick loads show nothing instead of flashing the animation
     const [shown, setShown] = useState(false);
     useEffect(() => {
@@ -14,18 +18,30 @@ const Loading = () => {
     return (
         <div
             role="status"
-            className={`w-full h-[85vh] flex items-center justify-center z-[1000] pointer-events-none scale-50 transition-opacity duration-200 ${
+            className={`w-full h-[85dvh] flex items-center justify-center z-1000 pointer-events-none transition-opacity duration-200 ${
                 shown ? "opacity-100" : "opacity-0"
             }`}
         >
             <span className="sr-only">Loading…</span>
-            <DotLottieReact
-                src="https://lottie.host/94199763-e11d-43d4-9c10-e5168529d524/kV89Eoo3Vm.lottie"
-                // with reduced motion the first frame stays as a still image
-                loop={!reduceMotion}
-                autoplay={!reduceMotion}
+            <svg
                 aria-hidden="true"
-            />
+                width="56"
+                height="56"
+                viewBox="0 0 56 56"
+                className="loading-grid"
+            >
+                {CELLS.map(({ row, col, delay }) => (
+                    <rect
+                        key={`${row}-${col}`}
+                        x={col * 14}
+                        y={row * 14}
+                        width="14.5"
+                        height="14.5"
+                        fill="#6666ff"
+                        style={{ animationDelay: `${delay}s` }}
+                    />
+                ))}
+            </svg>
         </div>
     );
 };

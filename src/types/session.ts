@@ -1,7 +1,9 @@
 interface UserContextType extends User {
     signed_in: boolean;
     admin: boolean; // DEPRECATED
+    // highest site permission, kept for older checks
     permission: string;
+    permissions: string[];
     memberships: Partial<Membership>[] | undefined;
     // re-reads the profile, e.g. after joining or leaving
     refresh?: () => Promise<void>;
@@ -10,8 +12,10 @@ interface UserContextType extends User {
 interface OrgContextType extends Organization {
     meetings: Partial<Meeting>[];
     memberships: Partial<Membership>[];
-    posts: Partial<Posts>[];
-    setOrg?: (data: any) => void;
+    posts: Post[];
+    // only for viewers who get upcoming meetings alone
+    last_meeting?: { start_time: string }[];
+    setOrg?: (data: OrgContextType) => void;
 }
 
 type CalendarMeeting = {

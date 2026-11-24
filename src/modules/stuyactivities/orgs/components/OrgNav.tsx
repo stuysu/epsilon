@@ -2,7 +2,7 @@ import React, { useContext, useState } from "react";
 import * as Dialog from "@radix-ui/react-dialog";
 import OrgContext from "../../../../contexts/OrgContext";
 import { Link, useLocation } from "react-router-dom";
-import UserContext from "../../../../contexts/UserContext";
+import useOrgRole from "../useOrgRole";
 
 type LinkItem = {
     to: string;
@@ -23,28 +23,18 @@ const CountBadge = ({ count }: { count?: number }) =>
 
 const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
     const organization = useContext<OrgContextType>(OrgContext);
-    const user = useContext<UserContextType>(UserContext);
     const pendingMembers =
         organization.memberships?.filter((m) => !m.active) || [];
 
     const location = useLocation();
 
     const main = `/${organization.url}`;
-    const membership = organization.memberships?.find(
-        (m) => m.users?.id === user.id,
-    );
-
-    const isOrgAdmin =
-        organization.memberships?.some(
-            (m) =>
-                m.users?.id === user.id &&
-                (m.role === "CREATOR" || m.role === "ADMIN") &&
-                m.active,
-        ) ?? false;
-
-    const isAdvisor = membership?.role === "ADVISOR" && !!membership.active;
-
-    const isStuyActivitiesAdmin = user.permission === "ADMIN";
+    const {
+        membership,
+        isOrgAdmin,
+        isAdvisor,
+        isSiteAdmin: isStuyActivitiesAdmin,
+    } = useOrgRole();
 
     const navLinks: LinkItem[] = [
         { to: main, display: "Overview" },
@@ -102,14 +92,14 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     aria-current={
                         location.pathname === linkData.to ? "page" : undefined
                     }
-                    className="flex min-h-[30px] w-5/6 items-center gap-2 rounded no-underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                    className="flex min-h-[30px] w-5/6 items-center gap-2 rounded-sm no-underline focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
                 >
                     <p
                         className={`important cursor-pointer ${
                             location.pathname === linkData.to ||
                             location.pathname === linkData.alsoActiveOn
                                 ? "text-typography-1"
-                                : "text-typography-3"
+                                : "text-typography-2"
                         }`}
                     >
                         {linkData.display}
@@ -131,7 +121,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     to={linkData.to}
                     aria-current={current ? "page" : undefined}
                     onClick={() => setMenuOpen(false)}
-                    className={`important flex min-h-11 w-full items-center rounded-lg px-3 text-left no-underline shadow-control transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1 ${
+                    className={`important flex min-h-11 w-full items-center rounded-lg px-3 text-left no-underline shadow-control transition-colors focus-visible:outline-solid focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1 ${
                         current
                             ? "bg-layer-3 text-typography-1"
                             : "bg-layer-2 text-typography-2 sm:hover:bg-layer-3 sm:hover:text-typography-1"
@@ -154,7 +144,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     <Dialog.Trigger asChild>
                         <button
                             aria-label="Open menu"
-                            className={`touch-target cursor-pointer transition-colors text-typography-2 sm:hover:text-typography-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1 max-sm:flex max-sm:size-11 max-sm:-mr-2.5 max-sm:items-center max-sm:justify-center sm:flex sm:items-center sm:gap-1 sm:rounded-lg sm:bg-layer-2 sm:shadow-control sm:pl-1 sm:pr-3 sm:py-1.5`}
+                            className={`touch-target cursor-pointer transition-colors text-typography-2 sm:hover:text-typography-1 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-typography-1 max-sm:flex max-sm:size-11 max-sm:-mr-2.5 max-sm:items-center max-sm:justify-center sm:flex sm:items-center sm:gap-1 sm:rounded-lg sm:bg-layer-2 sm:shadow-control sm:pl-1 sm:pr-3 sm:py-1.5`}
                         >
                             <span
                                 style={{
@@ -177,7 +167,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                     <Dialog.Portal>
                         <Dialog.Content
                             aria-describedby={undefined}
-                            className="fixed inset-0 z-[5002] overflow-y-auto bg-blurDark outline-none backdrop-blur-3xl"
+                            className="fixed inset-0 z-5002 overflow-y-auto bg-blurDark outline-hidden backdrop-blur-3xl"
                         >
                             <div className="mx-auto flex w-full max-w-lg flex-col gap-1.5 px-4 pb-10 pt-3 sm:px-6 sm:pt-6">
                                 {/* the close button sits where the phone menu button was */}
@@ -186,7 +176,7 @@ const OrgNav = ({ isMobile }: { isMobile: boolean }) => {
                                         {organization.name}
                                     </Dialog.Title>
                                     <Dialog.Close
-                                        className="flex size-11 shrink-0 items-center justify-center rounded-lg text-typography-1 sm:hover:bg-layer-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1"
+                                        className="flex size-11 shrink-0 items-center justify-center rounded-lg text-typography-1 sm:hover:bg-layer-2 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-typography-1"
                                         aria-label="Close menu"
                                     >
                                         <i

@@ -1,5 +1,4 @@
 import { PUBLIC_URL } from "../config/constants";
-import { Helmet } from "react-helmet";
 import Loading from "../components/ui/content/Loading";
 import UserContext from "../contexts/UserContext";
 
@@ -8,15 +7,34 @@ import React, { lazy, Suspense, useContext, useEffect } from "react";
 
 // Pages
 import Index from "./home";
-import CalendarIndex from "./calendar";
 import NavBar from "../components/ui/navigation/NavBar";
-import AboutIndex from "./about";
-import Regulations from "./stuyactivities/Regulations";
-import Support from "./stuyactivities/Support";
 import SubNavBar from "../components/ui/navigation/SubNavBar";
-import Arista from "./arista";
 import { ThemeContext } from "../contexts/ThemeProvider";
 import { isOpportunitiesPath, isStuyActivitiesPath } from "../config/routes";
+import RouteErrorBoundary from "../components/RouteErrorBoundary";
+
+// the footer gives the year in Roman numerals
+const toRoman = (n: number) =>
+    (
+        [
+            [1000, "M"],
+            [900, "CM"],
+            [500, "D"],
+            [400, "CD"],
+            [100, "C"],
+            [90, "XC"],
+            [50, "L"],
+            [40, "XL"],
+            [10, "X"],
+            [9, "IX"],
+            [5, "V"],
+            [4, "IV"],
+            [1, "I"],
+        ] as const
+    ).reduce((out, [value, numeral]) => {
+        for (; n >= value; n -= value) out += numeral;
+        return out;
+    }, "");
 
 const FULL_BLEED = [
     "/",
@@ -26,6 +44,11 @@ const FULL_BLEED = [
     "/opportunities",
 ];
 
+const CalendarIndex = lazy(() => import("./calendar"));
+const AboutIndex = lazy(() => import("./about"));
+const Regulations = lazy(() => import("./stuyactivities/Regulations"));
+const Support = lazy(() => import("./stuyactivities/Support"));
+const Arista = lazy(() => import("./arista"));
 const Catalog = lazy(() => import("./stuyactivities/Catalog"));
 const Vote = lazy(() => import("./voting/index"));
 const CommsSettings = lazy(() => import("./user/./CommsSettings"));
@@ -68,36 +91,30 @@ const Pages = () => {
 
     return (
         <div className="bg-bg min-h-dvh">
-            <Helmet>
-                <meta
-                    property="og:url"
-                    content={PUBLIC_URL + location.pathname}
-                />
-                <meta property="og:site_name" content={"Epsilon"} />
-                <meta property="og:type" content={"website"} />
-                <meta
-                    property="og:description"
-                    content={
-                        "Epsilon is the everything app for Stuyvesant High School. Find and join Activities, browse the calendar, discover new opportunities, and more."
-                    }
-                />
-                <meta property={"og:title"} content={"Epsilon"} />
-                <title>Epsilon</title>
-            </Helmet>
-
+            {/* focuses the page itself; a hash link would count as navigation */}
+            <a
+                href="#main-content"
+                onClick={(event) => {
+                    event.preventDefault();
+                    document.getElementById("main-content")?.focus();
+                }}
+                className="fixed left-4 top-4 z-10001 rounded-lg bg-bg px-4 py-2 text-typography-1 no-underline shadow-prominent not-focus:sr-only"
+            >
+                Skip to content
+            </a>
             <Suspense fallback={<Loading />}>
                 {!(!user.signed_in && location.pathname === "/") && (
                     <header
                         className={
                             isStuyActivitiesPath(location.pathname) ||
                             isOpportunitiesPath(location.pathname)
-                                ? "phone-sticky max-sm:z-[1000]"
+                                ? "phone-sticky max-sm:z-1000"
                                 : undefined
                         }
                     >
                         <div
                             className={
-                                "max-sm:w-full sm:relative bg-blurDark fixed z-50 bottom-0 sm:bg-opacity-0 bg-opacity-80 max-sm:backdrop-blur-2xl max-sm:border-t border-divider"
+                                "max-sm:w-full sm:relative bg-blurDark fixed z-50 bottom-0 max-sm:backdrop-blur-2xl max-sm:border-t border-divider"
                             }
                         >
                             <NavBar />
@@ -108,8 +125,10 @@ const Pages = () => {
                     </header>
                 )}
                 {/* app pages share one centered frame; these art-led pages span the window */}
-                <div
-                    className={`min-h-[calc(100dvh-20rem)] ${
+                <main
+                    id="main-content"
+                    tabIndex={-1}
+                    className={`min-h-[calc(100dvh-20rem)] outline-hidden ${
                         FULL_BLEED.includes(
                             location.pathname.replace(/\/$/, "") || "/",
                         )
@@ -118,50 +137,64 @@ const Pages = () => {
                     }`}
                 >
                     {/* only the page waits on a lazy load; the header and footer stay */}
-                    <Suspense fallback={<Loading />}>
-                        <Routes>
-                            <Route path={"/"} Component={Index} />
-                            <Route
-                                path={"/arista-landing"}
-                                Component={Arista}
-                            />
-                            <Route
-                                path={"/stuyactivities"}
-                                Component={Catalog}
-                            />
-                            <Route
-                                path={"/communications"}
-                                Component={CommsSettings}
-                            />
-                            <Route
-                                path={"/preferences"}
-                                Component={UserPreferences}
-                            />
-                            <Route path={"/profile"} Component={Profile} />
-                            <Route path={"/create"} Component={Create} />
-                            <Route path={"/charter"} Component={Charter} />
-                            <Route path={"/invites"} Component={Invites} />
-                            <Route path={"/vote"} Component={Vote} />
-                            <Route path={"/about"} Component={AboutIndex} />
-                            <Route
-                                path={"/meetings"}
-                                Component={CalendarIndex}
-                            />
-                            <Route path={"/rules"} Component={Regulations} />
-                            <Route path={"/archives"} Component={Archives} />
-                            <Route
-                                path={"/activities-support"}
-                                Component={Support}
-                            />
-                            <Route path={"/admin/*"} Component={AdminRouter} />
-                            <Route
-                                path={"/opportunities/*"}
-                                Component={OpportunitiesRouter}
-                            />
-                            <Route path={"/:orgUrl/*"} Component={OrgRouter} />
-                        </Routes>
-                    </Suspense>
-                </div>
+                    <RouteErrorBoundary resetKey={location.pathname}>
+                        <Suspense fallback={<Loading />}>
+                            <Routes>
+                                <Route path={"/"} Component={Index} />
+                                <Route
+                                    path={"/arista-landing"}
+                                    Component={Arista}
+                                />
+                                <Route
+                                    path={"/stuyactivities"}
+                                    Component={Catalog}
+                                />
+                                <Route
+                                    path={"/communications"}
+                                    Component={CommsSettings}
+                                />
+                                <Route
+                                    path={"/preferences"}
+                                    Component={UserPreferences}
+                                />
+                                <Route path={"/profile"} Component={Profile} />
+                                <Route path={"/create"} Component={Create} />
+                                <Route path={"/charter"} Component={Charter} />
+                                <Route path={"/invites"} Component={Invites} />
+                                <Route path={"/vote"} Component={Vote} />
+                                <Route path={"/about"} Component={AboutIndex} />
+                                <Route
+                                    path={"/meetings"}
+                                    Component={CalendarIndex}
+                                />
+                                <Route
+                                    path={"/rules"}
+                                    Component={Regulations}
+                                />
+                                <Route
+                                    path={"/archives"}
+                                    Component={Archives}
+                                />
+                                <Route
+                                    path={"/activities-support"}
+                                    Component={Support}
+                                />
+                                <Route
+                                    path={"/admin/*"}
+                                    Component={AdminRouter}
+                                />
+                                <Route
+                                    path={"/opportunities/*"}
+                                    Component={OpportunitiesRouter}
+                                />
+                                <Route
+                                    path={"/:orgUrl/*"}
+                                    Component={OrgRouter}
+                                />
+                            </Routes>
+                        </Suspense>
+                    </RouteErrorBoundary>
+                </main>
                 {user.signed_in && (
                     <footer
                         className={
@@ -232,7 +265,7 @@ const Pages = () => {
                                 "w-72 text-right text-typography-2 max-sm:text-center"
                             }
                         >
-                            MMXXIV
+                            {toRoman(new Date().getFullYear())}
                         </p>
                     </footer>
                 )}

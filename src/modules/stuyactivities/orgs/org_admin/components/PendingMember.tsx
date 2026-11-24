@@ -7,6 +7,7 @@ import OrgContext from "../../../../../contexts/OrgContext";
 import OrgMember from "../../components/OrgMember";
 import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
 import CheckboxInput from "../../../../../components/ui/input/CheckboxInput";
+import { SUPPORT_EMAIL } from "../../../../../config/constants";
 
 const PendingMember = ({
     id,
@@ -37,7 +38,7 @@ const PendingMember = ({
 
         if (error) {
             enqueueSnackbar(
-                "Error approving member. Contact it@stuysu.org for support.",
+                `Error approving member. Contact ${SUPPORT_EMAIL} for support.`,
                 { variant: "error" },
             );
             return;
@@ -46,9 +47,10 @@ const PendingMember = ({
         const memberIndex = organization.memberships.findIndex(
             (m) => m.id === id,
         );
-        const memberData = organization.memberships[memberIndex];
-
-        memberData.active = true;
+        const memberData = {
+            ...organization.memberships[memberIndex],
+            active: true,
+        };
 
         if (organization.setOrg) {
             organization.setOrg({
@@ -72,7 +74,7 @@ const PendingMember = ({
             .select("id");
         if (error || !data?.length) {
             enqueueSnackbar(
-                "Error rejecting member. Contact it@stuysu.org for support.",
+                `Error rejecting member. Contact ${SUPPORT_EMAIL} for support.`,
                 { variant: "error" },
             );
             return;
@@ -106,7 +108,7 @@ const PendingMember = ({
                     />
                 </div>
             )}
-            <div className="w-full min-w-[0px]">
+            <div className="w-full min-w-0">
                 <OrgMember
                     email={email}
                     picture={picture}
@@ -121,7 +123,7 @@ const PendingMember = ({
             >
                 <AsyncButton
                     onClick={handleApprove}
-                    className="h-11 min-w-0 !px-2.5 !py-0 sm:!px-5 sm:!pb-[13px] sm:!pt-[11px]"
+                    className="h-11 min-w-0 px-2.5! py-0! sm:px-5! sm:pb-[13px]! sm:pt-[11px]!"
                     aria-label="Approve"
                 >
                     <i className={"bx bx-check bx-sm sm:hidden"}></i>
@@ -129,7 +131,7 @@ const PendingMember = ({
                 </AsyncButton>
                 <AsyncButton
                     onClick={() => setConfirmingReject(true)}
-                    className="h-11 min-w-0 !px-2.5 !py-0 sm:!px-5 sm:!pb-[13px] sm:!pt-[11px]"
+                    className="h-11 min-w-0 px-2.5! py-0! sm:px-5! sm:pb-[13px]! sm:pt-[11px]!"
                     aria-label="Reject"
                 >
                     <i className={"bx bx-x bx-sm sm:hidden"}></i>

@@ -1,9 +1,7 @@
 import { Component, ReactNode, Suspense, lazy } from "react";
 
-const loadRenderer = () => import("./MarkupRenderer");
-const MarkupRenderer = lazy(loadRenderer);
-// Start fetching right away so posts rarely wait on it.
-void loadRenderer();
+// loaded on first render, so pages without markup don't download it
+const MarkupRenderer = lazy(() => import("./MarkupRenderer"));
 
 // Pathological input (e.g. thousands of nested `*`) can overflow the
 // renderer's stack; show the raw text instead of taking the page down.

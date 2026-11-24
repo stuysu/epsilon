@@ -127,7 +127,7 @@ const Create = () => {
                         key={color}
                         aria-label={`${name} background`}
                         aria-pressed={background === color}
-                        className="shrink-0 w-[2em] h-[2em] m-[.5em] rounded-[2em] cursor-pointer text-black content-center focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                        className="shrink-0 w-[2em] h-[2em] m-[.5em] rounded-[2em] cursor-pointer text-black content-center focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
                         style={{
                             backgroundColor: color,
                             borderColor: "#ffffff",

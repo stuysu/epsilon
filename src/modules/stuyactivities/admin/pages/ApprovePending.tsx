@@ -6,6 +6,7 @@ import { useSnackbar } from "notistack";
 import OrgBlock from "../../../../components/ui/OrgBlock";
 import Divider from "../../../../components/ui/Divider";
 import ContentUnavailable from "../../../../components/ui/content/ContentUnavailable";
+import { SUPPORT_EMAIL } from "../../../../config/constants";
 
 const ApprovePending = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -43,6 +44,7 @@ const ApprovePending = () => {
                     joinable,
                     is_returning,
                     returning_info,
+                    rejected_at,
                     memberships (
                         id,
                         role,
@@ -63,7 +65,7 @@ const ApprovePending = () => {
 
             if (error || !data) {
                 return enqueueSnackbar(
-                    "Failed to fetch pending organizations. Contact it@stuysu.org for support.",
+                    `Failed to fetch pending organizations. Contact ${SUPPORT_EMAIL} for support.`,
                     { variant: "error" },
                 );
             }
@@ -73,7 +75,7 @@ const ApprovePending = () => {
         };
 
         fetchPendingOrgs();
-    }, []);
+    }, [enqueueSnackbar]);
 
     if (view) {
         return (
@@ -107,7 +109,7 @@ const ApprovePending = () => {
                         type="button"
                         key={org.id}
                         onClick={() => setView(org)}
-                        className="rounded-xl text-left focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                        className="rounded-xl text-left focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
                     >
                         <OrgBlock
                             name={org.name}

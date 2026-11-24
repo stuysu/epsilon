@@ -54,7 +54,7 @@ const OrgMember = ({
                         alt={`${first_name} ${last_name}`}
                     />
                     <Avatar.Fallback
-                        className="text-center size-full flex items-center justify-center bg-layer-3 text-xl text-typography-2"
+                        className="text-center size-full flex items-center justify-center bg-layer-3 text-xl text-typography-1"
                         delayMs={600}
                     >
                         {(first_name || "O").charAt(0).toUpperCase()}
@@ -63,7 +63,7 @@ const OrgMember = ({
 
                 <div className={"flex flex-col min-w-0"}>
                     <h4
-                        className={"line-clamp-2 break-words"}
+                        className={"line-clamp-2 wrap-break-word"}
                     >{`${first_name} ${last_name}`}</h4>
                     <p className={"truncate"}>{<>{email}</>}</p>
                     {filledRole && l1 && (

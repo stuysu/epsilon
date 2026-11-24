@@ -2,7 +2,6 @@ import React, { useContext } from "react";
 
 import { Navigate, Route, Routes } from "react-router-dom";
 
-import UserContext from "../../../../contexts/UserContext";
 import OrgContext from "../../../../contexts/OrgContext";
 
 import Roster from "./pages/Roster";
@@ -15,24 +14,16 @@ import AttendanceOverview from "./pages/AttendanceOverview";
 import MeetingAttendance from "./pages/MeetingAttendance";
 import MemberAttendance from "./pages/MemberAttendance";
 import ContentUnavailable from "../../../../components/ui/content/ContentUnavailable";
+import useOrgRole from "../useOrgRole";
 
 const OrgAdminRouter = () => {
-    const user = useContext<UserContextType>(UserContext);
     const organization = useContext<OrgContextType>(OrgContext);
 
-    const membership = organization.memberships?.find(
-        (m) => m.users?.id === user.id,
-    );
-
-    const isOrgAdmin =
-        !!membership &&
-        (membership.role === "CREATOR" || membership.role === "ADMIN") &&
-        membership.active;
-
-    const isAdvisor =
-        !!membership && membership.role === "ADVISOR" && membership.active;
-
-    const isStuyActivitiesAdmin = user.permission === "ADMIN";
+    const {
+        isOrgAdmin,
+        isAdvisor,
+        isSiteAdmin: isStuyActivitiesAdmin,
+    } = useOrgRole();
 
     if (isAdvisor) {
         return (
