@@ -34,11 +34,9 @@ const OrgAdvisors = ({ editable }: { editable: boolean }) => {
     const submitting = useRef(false);
     const [invites, setInvites] = useState<Invite[]>([]);
     const [cancelling, setCancelling] = useState<Invite | null>(null);
-    // dialogs keep their text while closing
-    const shownRemoving = useRef(removing);
-    if (removing) shownRemoving.current = removing;
-    const shownCancelling = useRef(cancelling);
-    if (cancelling) shownCancelling.current = cancelling;
+    // the dialogs keep their text while closing
+    const [removeOpen, setRemoveOpen] = useState(false);
+    const [cancelOpen, setCancelOpen] = useState(false);
 
     // teachers with no account yet; leaders can see and cancel these.
     // Invites older than a year no longer count.
@@ -227,7 +225,10 @@ const OrgAdvisors = ({ editable }: { editable: boolean }) => {
                             <button
                                 type="button"
                                 aria-label={`Remove ${name} as advisor`}
-                                onClick={() => setRemoving(advisor)}
+                                onClick={() => {
+                                    setRemoving(advisor);
+                                    setRemoveOpen(true);
+                                }}
                                 className={
                                     "flex size-9 shrink-0 items-center justify-center rounded-lg text-typography-2 transition-colors sm:hover:bg-layer-3 sm:hover:text-red focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-typography-1"
                                 }
@@ -257,7 +258,10 @@ const OrgAdvisors = ({ editable }: { editable: boolean }) => {
                     <button
                         type="button"
                         aria-label={`Withdraw the invite to ${invite.email}`}
-                        onClick={() => setCancelling(invite)}
+                        onClick={() => {
+                            setCancelling(invite);
+                            setCancelOpen(true);
+                        }}
                         className={
                             "flex size-9 shrink-0 items-center justify-center rounded-lg text-typography-2 transition-colors sm:hover:bg-layer-3 sm:hover:text-red focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-typography-1"
                         }
@@ -331,18 +335,18 @@ const OrgAdvisors = ({ editable }: { editable: boolean }) => {
 
             <UserDialog
                 title="Remove advisor?"
-                description={`${shownRemoving.current?.users?.first_name ?? ""} ${shownRemoving.current?.users?.last_name ?? ""} will no longer be listed as an advisor of this Activity.`}
-                open={!!removing}
-                onClose={() => setRemoving(null)}
+                description={`${removing?.users?.first_name ?? ""} ${removing?.users?.last_name ?? ""} will no longer be listed as an advisor of this Activity.`}
+                open={removeOpen}
+                onClose={() => setRemoveOpen(false)}
                 onConfirm={removeAdvisor}
                 confirmText="Remove"
             />
 
             <UserDialog
                 title="Withdraw invite?"
-                description={`${shownCancelling.current?.email ?? ""} won't be added as an advisor when their account is set up.`}
-                open={!!cancelling}
-                onClose={() => setCancelling(null)}
+                description={`${cancelling?.email ?? ""} won't be added as an advisor when their account is set up.`}
+                open={cancelOpen}
+                onClose={() => setCancelOpen(false)}
                 onConfirm={cancelInvite}
                 confirmText="Withdraw"
                 cancelText="Keep"
