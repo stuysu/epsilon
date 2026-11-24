@@ -10,6 +10,7 @@ import {
 } from "react";
 import { useSnackbar } from "notistack";
 import { supabase } from "../../lib/supabaseClient";
+import useLatest from "../../utils/useLatest";
 import UserContext from "../../contexts/UserContext";
 import {
     Opportunity,
@@ -26,6 +27,7 @@ import {
     OpportunityRow,
     toOpportunity,
 } from "./catalogQuery";
+import { SUPPORT_EMAIL } from "../../config/constants";
 
 type Snapshot = {
     opportunities: Opportunity[];
@@ -215,15 +217,16 @@ export const OpportunitiesProvider = ({
     );
 
     // read by the effect without rerunning it
-    const hasData = useRef(!loading);
-    hasData.current = !loading;
+    const hasData = useLatest(!loading);
     useEffect(() => {
         let current = true;
+        // fetches, showing loading unless a cached copy is up
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         load(() => current, hasData.current);
         return () => {
             current = false;
         };
-    }, [load]);
+    }, [load, hasData]);
 
     // saves and edits land in the cache too, so the next visit matches
     useEffect(() => {
@@ -261,8 +264,8 @@ export const OpportunitiesProvider = ({
             if (error) {
                 enqueueSnackbar(
                     saved
-                        ? "Error saving opportunity. Contact it@stuysu.org for support."
-                        : "Error removing opportunity. Contact it@stuysu.org for support.",
+                        ? `Error saving opportunity. Contact ${SUPPORT_EMAIL} for support.`
+                        : `Error removing opportunity. Contact ${SUPPORT_EMAIL} for support.`,
                     { variant: "error" },
                 );
                 return;

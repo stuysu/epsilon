@@ -54,7 +54,7 @@ export const SegmentedControl = <T extends string>({
                     aria-selected={selected}
                     tabIndex={selected ? 0 : -1}
                     onClick={() => onChange(option.value)}
-                    className={`touch-target flex-1 rounded-lg px-3 py-2 text-sm font-semibold outline-0 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1 ${
+                    className={`touch-target flex-1 rounded-lg px-3 py-2 text-sm font-semibold outline-0 transition-colors focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-typography-1 ${
                         selected
                             ? "bg-layer-3 text-typography-1 shadow-control"
                             : "text-typography-2 hover:bg-layer-2"

@@ -22,7 +22,7 @@ export default function FilterSelect<T extends string>({
         >
             <Select.Trigger
                 aria-label={label}
-                className={`relative flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg outline-0 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1 ${
+                className={`relative flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg outline-0 transition-colors focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-typography-1 ${
                     active
                         ? "text-accent"
                         : "text-typography-2 hover:text-typography-1"
@@ -45,7 +45,7 @@ export default function FilterSelect<T extends string>({
                             <Select.Item
                                 key={option.value}
                                 value={option.value}
-                                className="flex cursor-pointer items-center justify-between gap-3 rounded-lg px-3 py-2 text-typography-1 outline-0 data-[highlighted]:bg-layer-3"
+                                className="flex cursor-pointer items-center justify-between gap-3 rounded-lg px-3 py-2 text-typography-1 outline-0 data-highlighted:bg-layer-3"
                             >
                                 <Select.ItemText>
                                     {option.label}

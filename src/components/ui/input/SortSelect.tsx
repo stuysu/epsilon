@@ -28,7 +28,7 @@ export default function SortSelect<T extends string>({
                 <Select.Trigger
                     aria-label={`${label}: ${current}`}
                     title={`${label}: ${current}`}
-                    className={`flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg text-typography-2 outline-0 hover:text-typography-1 focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1 ${className ?? ""}`}
+                    className={`flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg text-typography-2 outline-0 hover:text-typography-1 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-typography-1 ${className ?? ""}`}
                 >
                     <i className="bx bx-sort-alt-2 bx-sm" aria-hidden="true" />
                 </Select.Trigger>
@@ -54,14 +54,14 @@ export default function SortSelect<T extends string>({
                     position="popper"
                     sideOffset={6}
                     align={compact ? "end" : "start"}
-                    className="z-50 w-[var(--radix-select-trigger-width)] min-w-56 overflow-hidden rounded-xl bg-bg border border-divider shadow-2xl"
+                    className="z-50 w-(--radix-select-trigger-width) min-w-56 overflow-hidden rounded-xl bg-bg border border-divider shadow-2xl"
                 >
                     <Select.Viewport className="p-1">
                         {options.map((option) => (
                             <Select.Item
                                 key={option.value}
                                 value={option.value}
-                                className="flex items-center justify-between gap-3 rounded-lg px-3 py-2 cursor-pointer text-typography-1 outline-0 data-[highlighted]:bg-layer-3"
+                                className="flex items-center justify-between gap-3 rounded-lg px-3 py-2 cursor-pointer text-typography-1 outline-0 data-highlighted:bg-layer-3"
                             >
                                 <Select.ItemText>
                                     {option.label}

@@ -1,0 +1,23 @@
+# The SPA fallback (and the /assets 404 ahead of it) lives in public/_redirects,
+# which Netlify reads before any [[redirects]] here. Netlify takes the Node
+# version from .nvmrc (unless NODE_VERSION is set in the site's settings).
+
+# typescript and tailwind are devDependencies; install them even if NODE_ENV=production
+[build.environment]
+  NPM_FLAGS = "--include=dev"
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=(), usb=()"
+    # report-only until a production run shows no violations, then rename to Content-Security-Policy
+    Content-Security-Policy-Report-Only = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline' https://use.typekit.net https://p.typekit.net; font-src 'self' data: https://use.typekit.net; img-src 'self' data: blob: https:; media-src 'self'; connect-src 'self' https://base.stuysu.org wss://base.stuysu.org https://alert.stuysu.org; worker-src 'self' blob:; frame-src 'none'; frame-ancestors 'none'; object-src 'none'; base-uri 'self'; form-action 'self'"
+
+# hashed build files never change
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"

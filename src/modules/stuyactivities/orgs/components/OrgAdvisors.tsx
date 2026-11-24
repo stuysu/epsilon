@@ -7,6 +7,7 @@ import ItemList from "../../../../components/ui/lists/ItemList";
 import Avatar from "../../../../components/ui/Avatar";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import UserDialog from "../../../../components/ui/overlays/UserDialog";
+import { SUPPORT_EMAIL } from "../../../../config/constants";
 
 const addResults: Record<string, string> = {
     already_advisor: "is already an advisor.",
@@ -73,7 +74,7 @@ const OrgAdvisors = ({ editable }: { editable: boolean }) => {
         if (error) {
             setProblem(
                 (await functionErrorText(error)) ||
-                    "Couldn't add the advisor. Contact it@stuysu.org for support.",
+                    `Couldn't add the advisor. Contact ${SUPPORT_EMAIL} for support.`,
             );
             return;
         }
@@ -100,7 +101,7 @@ const OrgAdvisors = ({ editable }: { editable: boolean }) => {
             .select("id");
         if (error || !data?.length) {
             enqueueSnackbar(
-                "Could not remove advisor. Contact it@stuysu.org for support.",
+                `Could not remove advisor. Contact ${SUPPORT_EMAIL} for support.`,
                 { variant: "error" },
             );
             return;
@@ -149,7 +150,7 @@ const OrgAdvisors = ({ editable }: { editable: boolean }) => {
                                 aria-label={`Remove ${name} as advisor`}
                                 onClick={() => setRemoving(advisor)}
                                 className={
-                                    "flex size-9 shrink-0 items-center justify-center rounded-lg text-typography-2 transition-colors sm:hover:bg-layer-3 sm:hover:text-red focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1"
+                                    "flex size-9 shrink-0 items-center justify-center rounded-lg text-typography-2 transition-colors sm:hover:bg-layer-3 sm:hover:text-red focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-typography-1"
                                 }
                             >
                                 <i
@@ -217,7 +218,7 @@ const OrgAdvisors = ({ editable }: { editable: boolean }) => {
                     <p
                         id="advisor-problem"
                         role="alert"
-                        className={"mt-3 break-words text-red"}
+                        className={"mt-3 wrap-break-word text-red"}
                     >
                         {problem}
                     </p>

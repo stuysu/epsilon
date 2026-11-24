@@ -1,0 +1,38 @@
+name: CI
+
+on:
+    pull_request:
+    push:
+        branches: [main]
+
+permissions:
+    contents: read
+
+concurrency:
+    group: ci-${{ github.ref }}
+    cancel-in-progress: true
+
+jobs:
+    build:
+        runs-on: ubuntu-latest
+        timeout-minutes: 15
+        env:
+            # placeholders so the build doesn't depend on real settings
+            REACT_APP_SUPABASE_URL: http://127.0.0.1:54321
+            REACT_APP_SUPABASE_ANON_KEY: ci-placeholder
+            REACT_APP_PUBLIC_URL: http://localhost:3000
+        steps:
+            - uses: actions/checkout@v4
+            - uses: actions/setup-node@v4
+              with:
+                  node-version-file: .nvmrc
+                  cache: npm
+            - run: npm ci --no-audit --no-fund
+            - name: Type check
+              run: npx tsc --noEmit
+            - name: Lint
+              run: npx eslint src
+            - name: Test
+              run: npm test
+            - name: Build
+              run: npx vite build

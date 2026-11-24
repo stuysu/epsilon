@@ -7,7 +7,6 @@ import {
     ReactNode,
     SetStateAction,
     useCallback,
-    useEffect,
     useState,
 } from "react";
 
@@ -55,19 +54,8 @@ const FormPage = <T,>({
     blocked,
 }: Props<T>) => {
     const [status, setStatus] = useState<FormStatus>({});
-    const [valid, setValid] = useState(false);
 
-    useEffect(() => {
-        const isValid = (): boolean => {
-            for (const stat of Object.values(status)) {
-                if (!stat.value) return false;
-            }
-
-            return true;
-        };
-
-        setValid(isValid());
-    }, [status]);
+    const valid = Object.values(status).every((stat) => stat.value);
 
     const childOnChange = (field: string, updatedValue: any) => {
         if (onChange && value) {
@@ -97,7 +85,7 @@ const FormPage = <T,>({
         const childs: ReactNode[] = [];
 
         Children.map(c, (child, index) => {
-            if (isValidElement(child)) {
+            if (isValidElement<Record<string, any>>(child)) {
                 if (child.type === FormSection) {
                     const parsedChildren = parseChildren(child.props.children);
                     childs.push(
@@ -142,7 +130,10 @@ const FormPage = <T,>({
 
     return (
         <div className="h-full max-w-[1000px] w-full p-[50px]">
-            <h3>{title}</h3>
+            {/* the step's heading comes right after the page's h1; styled as an h3 */}
+            <h2 className="as-h3 my-1 pt-[0.12em] font-normal [font-family:inherit]">
+                {title}
+            </h2>
             <div className={`mt-5`}>{parseChildren(children)}</div>
             <div className="h-[10%] w-full mt-5 flex flex-wrap">
                 <div className={`w-full flex justify-end gap-5 mt-5`}>

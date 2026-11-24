@@ -30,8 +30,9 @@ const MarkupEditorImpl = lazy(() => import("./MarkupEditorImpl"));
 // Initial content comes from `markdown`; change the component's `key` to reset it.
 const MarkupEditor = (props: MarkupEditorProps) => {
     const { label, compact, tall, onSubmit } = props;
+    // compact boxes sit in narrow panels where the hint would be cut off
     const placeholder =
-        props.placeholder && onSubmit
+        props.placeholder && onSubmit && !compact
             ? props.placeholder + shortcutHint(props.submitVerb ?? "submit")
             : props.placeholder;
     const labelId = useId();
@@ -86,7 +87,7 @@ const MarkupEditor = (props: MarkupEditorProps) => {
             role="group"
             aria-labelledby={label ? labelId : undefined}
             aria-label={
-                label ? undefined : props.ariaLabel ?? props.placeholder
+                label ? undefined : (props.ariaLabel ?? props.placeholder)
             }
             className={`markup-editor w-full min-w-0 ${tall ? "markup-editor-tall" : ""} ${compact ? "markup-editor-compact" : ""}`}
             onKeyDownCapture={onKeyDown}

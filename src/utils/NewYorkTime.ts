@@ -23,6 +23,10 @@ export const wallClockToISO = (value: Dayjs) =>
 export const toNewYork = (value?: string | Date) =>
     dayjs(value).tz(SCHOOL_TIMEZONE);
 
+/* "EST" or "EDT", whichever New York is on at that time (or now) */
+export const newYorkZoneName = (value?: string | Date) =>
+    toNewYork(value).utcOffset() === -240 ? "EDT" : "EST";
+
 /* the inverse: a stored timestamp, as its New York wall clock time for the pickers */
 export const isoToWallClock = (iso?: string) =>
     dayjs(dayjs(iso).tz(SCHOOL_TIMEZONE).format(WALL_CLOCK_FORMAT));

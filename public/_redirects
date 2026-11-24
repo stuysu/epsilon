@@ -1,1 +1,4 @@
+# hashed build files that are gone (e.g. a tab open across a deploy) 404, so the
+# SPA fallback below is never cached under their immutable header
+/assets/*  /404.html  404
 /*  /index.html  200

@@ -1,6 +1,8 @@
 import { useLocation } from "react-router-dom";
 import { supabase } from "../../../lib/supabaseClient";
+import { useSnackbar } from "notistack";
 import "./UnauthenticatedButtons.css";
+import { SUPPORT_EMAIL } from "../../../config/constants";
 
 type LoginButtonProps = {
     onMouseEnter?: () => void;
@@ -9,6 +11,7 @@ type LoginButtonProps = {
 
 const LoginButton = ({ onMouseEnter, onMouseLeave }: LoginButtonProps) => {
     const location = useLocation();
+    const { enqueueSnackbar } = useSnackbar();
 
     const signInWithGoogle = async () => {
         const { error } = await supabase.auth.signInWithOAuth({
@@ -21,7 +24,10 @@ const LoginButton = ({ onMouseEnter, onMouseLeave }: LoginButtonProps) => {
             },
         });
         if (error) {
-            console.error("Error Signing In with Google", error.message);
+            enqueueSnackbar(
+                `Couldn't start signing in with Google. Try again, or contact ${SUPPORT_EMAIL} if it keeps failing.`,
+                { variant: "error" },
+            );
         }
     };
 

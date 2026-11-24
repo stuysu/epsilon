@@ -1,5 +1,4 @@
-import { useContext, useEffect, useState } from "react";
-import { Helmet } from "react-helmet";
+import { useContext, useState } from "react";
 import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import AsyncButton, {
     BUTTON_CLASS,
@@ -15,6 +14,9 @@ import OpportunityDetails from "./components/OpportunityDetails";
 import StatusBadge from "./components/StatusBadge";
 import { useOpportunities } from "./OpportunitiesContext";
 import { getStatus, getTodayEastern, splitBullets, unquote } from "./utils";
+import usePageMeta from "../../utils/usePageMeta";
+import { SUPPORT_EMAIL } from "../../config/constants";
+import useOnChange from "../../utils/useOnChange";
 
 const Detail = () => {
     const { id } = useParams();
@@ -27,29 +29,37 @@ const Detail = () => {
             : { path: "/opportunities/catalog", label: "Catalog" };
     const user = useContext(UserContext);
     const [editing, setEditing] = useState(false);
-    useEffect(() => setEditing(false), [id]);
+    useOnChange(id, () => setEditing(false));
     const { loading, failed, opportunities, savedIds, setSaved, student } =
         useOpportunities();
+    const title = opportunities.find((o) => o.id === Number(id))?.title;
+    usePageMeta(
+        title
+            ? `${title} - Epsilon`
+            : !loading && !failed
+              ? "Opportunity Not Found - Epsilon"
+              : undefined,
+    );
 
     // a reload keeps the page, so an open editor isn't lost
     if (loading && !opportunities.length) {
         return (
-            <main>
+            <div>
                 <Loading />
-            </main>
+            </div>
         );
     }
 
     if (failed) {
         return (
-            <main>
+            <div>
                 <ContentUnavailable
                     icon="bx-error-circle"
                     iconColor="text-red"
                     title="Opportunities could not load"
-                    description="Refresh the page to try again. If this keeps happening, contact it@stuysu.org."
+                    description={`Refresh the page to try again. If this keeps happening, contact ${SUPPORT_EMAIL}.`}
                 />
-            </main>
+            </div>
         );
     }
 
@@ -57,13 +67,13 @@ const Detail = () => {
 
     if (!opportunity) {
         return (
-            <main>
+            <div>
                 <ContentUnavailable
                     icon="bx-search"
                     title="Opportunity not found"
                     description="It may have been removed. Browse the catalog to find others."
                 />
-            </main>
+            </div>
         );
     }
 
@@ -73,11 +83,7 @@ const Detail = () => {
     const description = splitBullets(unquote(opportunity.description));
 
     return (
-        <main className="mx-auto flex w-full max-w-3xl flex-col gap-5 px-12 pt-8 [overflow-wrap:anywhere] max-sm:px-4 max-sm:pt-14">
-            <Helmet>
-                <title>{`${opportunity.title} - Epsilon`}</title>
-            </Helmet>
-
+        <div className="mx-auto flex w-full max-w-3xl flex-col gap-5 px-12 pt-8 wrap-anywhere max-sm:px-4 max-sm:pt-14">
             <Link
                 to={backTo.path}
                 onClick={(event) => {
@@ -85,7 +91,7 @@ const Detail = () => {
                     event.preventDefault();
                     navigate(-1);
                 }}
-                className="important inline-flex items-center gap-1 self-start rounded-lg bg-layer-2 py-1.5 pl-2 pr-3.5 text-sm text-typography-1 no-underline shadow-control transition-colors hover:bg-layer-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                className="important inline-flex items-center gap-1 self-start rounded-lg bg-layer-2 py-1.5 pl-2 pr-3.5 text-sm text-typography-1 no-underline shadow-control transition-colors hover:bg-layer-3 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
             >
                 <i className="bx bx-chevron-left bx-sm" aria-hidden="true" />
                 {backTo.label}
@@ -209,7 +215,7 @@ const Detail = () => {
                     )}
                 </>
             )}
-        </main>
+        </div>
     );
 };
 

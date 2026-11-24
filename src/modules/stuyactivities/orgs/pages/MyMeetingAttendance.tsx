@@ -1,4 +1,5 @@
 import { useContext, useEffect, useState } from "react";
+import useNow from "../../../../utils/useNow";
 import BackLink from "../../../../components/ui/links/BackLink";
 import { useParams, useSearchParams } from "react-router-dom";
 import { supabase } from "../../../../lib/supabaseClient";
@@ -11,6 +12,7 @@ import ContentUnavailable from "../../../../components/ui/content/ContentUnavail
 import { Ring } from "../components/AttendanceBits";
 import MeetingChips, { MeetingChip } from "../components/MeetingChips";
 import { toNewYork, usesNewYorkTime } from "../../../../utils/NewYorkTime";
+import useOrgRole from "../useOrgRole";
 
 /*
  * Self check-in window. Members can mark themselves present from
@@ -37,20 +39,13 @@ const MyMeetingAttendance = () => {
 
     const [valid, setValid] = useState(true);
     const [meeting, setMeeting] = useState<Meeting>();
-    const [now, setNow] = useState(() => Date.now());
+    // ticks every second so the countdown and the button update on their own
+    const now = useNow(1000);
     const [lateAfter, setLateAfter] = useState(15);
     const { enqueueSnackbar } = useSnackbar();
 
-    const membership = organization.memberships?.find(
-        (m) => m.users?.id === user.id,
-    );
+    const { membership } = useOrgRole();
     const isActiveMember = !!membership?.active;
-
-    /* ticks every second so the countdown and the button update on their own */
-    useEffect(() => {
-        const interval = setInterval(() => setNow(Date.now()), 1000);
-        return () => clearInterval(interval);
-    }, []);
 
     useEffect(() => {
         if (!organization.id || organization.id === -1) return;
@@ -66,10 +61,7 @@ const MyMeetingAttendance = () => {
     }, [organization.id]);
 
     useEffect(() => {
-        if (isNaN(meetingId)) {
-            setValid(false);
-            return;
-        }
+        if (isNaN(meetingId)) return;
         if (!user.signed_in || !isActiveMember) return;
         const validateMeeting = async () => {
             const { data, error } = await supabase
@@ -114,7 +106,7 @@ const MyMeetingAttendance = () => {
         enqueueSnackbar,
     ]);
 
-    if (!valid) {
+    if (!valid || isNaN(meetingId)) {
         return (
             <ContentUnavailable
                 icon="bx-calendar-x"
@@ -125,7 +117,7 @@ const MyMeetingAttendance = () => {
                     <BackLink
                         to={`/${orgUrl}/attendance`}
                         className={
-                            "inline-flex min-h-11 items-center gap-1 rounded-lg px-3 text-typography-1 underline-offset-2 sm:hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1"
+                            "inline-flex min-h-11 items-center gap-1 rounded-lg px-3 text-typography-1 underline-offset-2 sm:hover:underline focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-typography-1"
                         }
                     >
                         <i
@@ -275,11 +267,11 @@ const MyMeetingAttendance = () => {
         <LoginGate page="mark your attendance">
             <div>
                 <header className={"mb-6 mt-2"}>
-                    <h1 className={"mb-2 break-words"}>
+                    <h1 className={"mb-2 wrap-break-word"}>
                         <BackLink
                             to={`/${orgUrl}/attendance`}
                             className={
-                                "rounded-md text-typography-3 no-underline transition-colors sm:hover:text-typography-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                                "rounded-md text-typography-3 underline underline-offset-4 transition-colors sm:hover:text-typography-2 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
                             }
                         >
                             My Attendance

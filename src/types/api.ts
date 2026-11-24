@@ -15,7 +15,9 @@ interface Organization {
     keywords?: string;
     tags?: string[];
     commitment_level?: "NONE" | "LOW" | "MEDIUM" | "HIGH";
-    state: "PENDING" | "LOCKED" | "UNLOCKED" | "ADMIN" | "PUNISHED";
+    state:
+        "PENDING" | "LOCKED" | "UNLOCKED" | "ADMIN" | "PUNISHED" | "REJECTED";
+    rejected_at?: string | null;
     joinable?: boolean;
     join_instructions?: string;
     is_returning?: boolean;
@@ -28,7 +30,7 @@ interface Organization {
 
 interface OrganizationEdit {
     id?: number;
-    organization_id?: Organization[id];
+    organization_id?: Organization["id"];
     name?: Organization["name"];
     url?: Organization["url"];
     socials?: Organization["socials"];

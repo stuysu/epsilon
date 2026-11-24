@@ -53,7 +53,10 @@ const FormSocialLinks = ({
     const nextKey = useRef(0);
     const toRows = (links: ClubLink[]) =>
         links.map((l) => ({ ...l, key: nextKey.current++, touched: true }));
-    const [rows, setRows] = useState<Row[]>(() => toRows(parseLinks(value)));
+    // first rows get negative keys, so they never clash with nextKey's
+    const [rows, setRows] = useState<Row[]>(() =>
+        parseLinks(value).map((l, i) => ({ ...l, key: -1 - i, touched: true })),
+    );
     const lastSent = useRef(value ?? "");
 
     /* only reload from props when someone else changed the value, ex. Cancel */
@@ -105,7 +108,7 @@ const FormSocialLinks = ({
     }, [rows]);
 
     const iconButton =
-        "flex size-11 items-center justify-center rounded-lg text-typography-2 transition-colors disabled:opacity-30 sm:enabled:hover:bg-layer-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1";
+        "flex size-11 items-center justify-center rounded-lg text-typography-2 transition-colors disabled:opacity-30 sm:enabled:hover:bg-layer-3 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-typography-1";
 
     return (
         <fieldset className={className}>

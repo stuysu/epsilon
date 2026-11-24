@@ -23,7 +23,9 @@ const RoomGrants = ({
     const { enqueueSnackbar } = useSnackbar();
     const [grants, setGrants] = useState<Grant[]>([]);
     const [search, setSearch] = useState("");
-    const [results, setResults] = useState<OrgResult[]>([]);
+    const [found, setFound] = useState<OrgResult[]>([]);
+    // an empty search shows no matches
+    const results = search.trim() ? found : [];
 
     const fetchGrants = useCallback(async () => {
         const { data, error } = await supabase
@@ -41,15 +43,14 @@ const RoomGrants = ({
     }, [roomId, enqueueSnackbar]);
 
     useEffect(() => {
+        // fetches; state is only set once the response arrives
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchGrants();
     }, [fetchGrants]);
 
     useEffect(() => {
         const term = search.trim();
-        if (!term) {
-            setResults([]);
-            return;
-        }
+        if (!term) return;
 
         const timeout = setTimeout(async () => {
             const { data } = await supabase
@@ -59,7 +60,7 @@ const RoomGrants = ({
                 .order("name")
                 .limit(6)
                 .returns<OrgResult[]>();
-            setResults(data || []);
+            setFound(data || []);
         }, 200);
 
         return () => clearTimeout(timeout);
@@ -79,7 +80,7 @@ const RoomGrants = ({
             variant: "success",
         });
         setSearch("");
-        setResults([]);
+        setFound([]);
         fetchGrants();
     };
 
@@ -127,7 +128,7 @@ const RoomGrants = ({
             <div className="relative w-72">
                 <input
                     value={search}
-                    className="text text-typography-1 w-full rounded-md px-3 h-9 bg-layer-1 outline-none"
+                    className="text text-typography-1 w-full rounded-md px-3 h-9 bg-layer-1 outline-hidden"
                     placeholder="Add a club"
                     onChange={(e) => setSearch(e.target.value)}
                 />

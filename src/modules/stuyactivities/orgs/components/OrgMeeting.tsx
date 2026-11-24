@@ -10,7 +10,7 @@ import pressable from "../../../../utils/pressable";
 import MeetingChips from "./MeetingChips";
 
 const menuItem =
-    "flex min-h-11 cursor-pointer items-center gap-2 rounded-lg px-3 text-typography-1 outline-0 data-[disabled]:opacity-50 data-[highlighted]:bg-layer-3";
+    "flex min-h-11 cursor-pointer items-center gap-2 rounded-lg px-3 text-typography-1 outline-0 data-disabled:opacity-50 data-highlighted:bg-layer-3";
 
 type Props = {
     id?: number;
@@ -67,15 +67,16 @@ const OrgMeeting = ({
     return (
         <div className={"group relative w-full"}>
             <div
-                className={`flex cursor-pointer flex-wrap items-center justify-between gap-x-4 gap-y-2 bg-layer-2 py-3 pl-4 ${hasActions ? "pr-14 [@media(hover:hover)]:pr-4" : "pr-4"} transition-colors sm:hover:bg-layer-3 focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1`}
+                className={`flex cursor-pointer flex-wrap items-center justify-between gap-x-4 gap-y-2 bg-layer-2 py-3 pl-4 ${hasActions ? "pr-14 [@media(hover:hover)]:pr-4" : "pr-4"} transition-colors sm:hover:bg-layer-3 focus-visible:outline-solid focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1`}
                 aria-haspopup="dialog"
                 {...pressable(() => setOpen(true))}
             >
                 <div className={"min-w-0 flex-1 basis-56"}>
-                    <h4 className={"break-words"}>
+                    <h4 className={"wrap-break-word"}>
                         {title}
                         {!is_public && (
                             <i
+                                role="img"
                                 aria-label="Private"
                                 className={
                                     "bx bx-lock ml-1.5 align-[-1px] text-sm text-typography-2"
@@ -85,7 +86,7 @@ const OrgMeeting = ({
                     </h4>
                 </div>
                 <div
-                    className={`pointer-events-none transition-opacity sm:ml-auto ${
+                    className={`pointer-events-none min-w-0 max-w-full transition-opacity sm:ml-auto ${
                         hasActions
                             ? "[@media(hover:hover)]:group-hover:opacity-0 [@media(hover:hover)]:group-has-[[data-actions]:focus-within]:opacity-0"
                             : ""
@@ -112,7 +113,7 @@ const OrgMeeting = ({
                             <AsyncButton
                                 onClick={onEdit}
                                 aria-label={`Edit ${title}`}
-                                className={"!px-4 !pb-[8px] !pt-[7px]"}
+                                className={"px-4! pb-[8px]! pt-[7px]!"}
                             >
                                 Edit
                             </AsyncButton>
@@ -123,7 +124,7 @@ const OrgMeeting = ({
                                 onClick={() => setConfirmingDelete(true)}
                                 aria-label={`Delete ${title}`}
                                 color="error"
-                                className={"!px-4 !pb-[8px] !pt-[7px]"}
+                                className={"px-4! pb-[8px]! pt-[7px]!"}
                             >
                                 {deleting ? "Deleting..." : "Delete"}
                             </AsyncButton>
@@ -133,7 +134,7 @@ const OrgMeeting = ({
                         <DropdownMenu.Trigger
                             aria-label={`Actions for ${title}`}
                             className={
-                                "absolute right-1.5 top-1.5 flex size-11 items-center justify-center rounded-lg text-typography-2 outline-0 focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1 data-[state=open]:bg-layer-3 [@media(hover:hover)]:hidden"
+                                "absolute right-1.5 top-1.5 flex size-11 items-center justify-center rounded-lg text-typography-2 outline-0 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-typography-1 data-[state=open]:bg-layer-3 [@media(hover:hover)]:hidden"
                             }
                         >
                             <i
@@ -169,7 +170,7 @@ const OrgMeeting = ({
                                         onSelect={() =>
                                             setConfirmingDelete(true)
                                         }
-                                        className={`${menuItem} !text-red`}
+                                        className={`${menuItem} text-red!`}
                                     >
                                         <i
                                             aria-hidden="true"
@@ -198,7 +199,7 @@ const OrgMeeting = ({
                         checked={notifyOnDelete}
                         onChange={setNotifyOnDelete}
                         label="Notify members"
-                        className="!mr-0"
+                        className="mr-0!"
                     />
                 }
             />

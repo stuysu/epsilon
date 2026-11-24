@@ -1,4 +1,5 @@
-import { ChangeEvent, useEffect, useState } from "react";
+import useOnChange from "../../../../../utils/useOnChange";
+import { ChangeEvent, useState } from "react";
 
 import { supabase } from "../../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
@@ -7,6 +8,7 @@ import SwitchField from "../../../../../components/ui/input/SwitchField";
 import TextField from "../../../../../components/ui/input/TextField";
 import MarkupEditor from "../../../../../components/markup/MarkupEditor";
 import isBlankMarkdown from "../../../../../components/markup/isBlankMarkdown";
+import { SUPPORT_EMAIL } from "../../../../../config/constants";
 
 /* if content is null, then it is creating post */
 const PostEditor = ({
@@ -30,24 +32,24 @@ const PostEditor = ({
     const [notifyMembers, setNotifyMembers] = useState(true);
     const [editorKey, setEditorKey] = useState(0);
 
-    const [postData, setPostData] = useState<Partial<Post>>({
-        id: undefined,
-        organizations: {
-            id: orgId,
-            name: orgName,
-            picture: orgPicture,
-        },
-        title: "",
-        description: "",
-        created_at: undefined,
-        updated_at: undefined,
+    const [postData, setPostData] = useState<Partial<Post>>(
+        () =>
+            content ?? {
+                id: undefined,
+                organizations: {
+                    id: orgId,
+                    name: orgName,
+                    picture: orgPicture,
+                },
+                title: "",
+                description: "",
+                created_at: undefined,
+                updated_at: undefined,
+            },
+    );
+    useOnChange(content, (next) => {
+        if (next) setPostData(next);
     });
-
-    useEffect(() => {
-        if (content) {
-            setPostData(content);
-        }
-    }, [content]);
 
     const onChange = (event: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = event.target;
@@ -81,7 +83,7 @@ const PostEditor = ({
 
         if (error || !data) {
             return enqueueSnackbar(
-                "Could not create post. Please contact it@stuysu.org for support.",
+                `Could not create post. Please contact ${SUPPORT_EMAIL} for support.`,
                 { variant: "error" },
             );
         }
@@ -137,7 +139,7 @@ const PostEditor = ({
 
         if (error) {
             return enqueueSnackbar(
-                "Could not update post. Please contact it@stuysu.org for support.",
+                `Could not update post. Please contact ${SUPPORT_EMAIL} for support.`,
                 { variant: "error" },
             );
         }

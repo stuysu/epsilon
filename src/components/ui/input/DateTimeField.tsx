@@ -10,6 +10,7 @@ import { Popover } from "radix-ui";
 import dayjs, { Dayjs } from "dayjs";
 import customParseFormat from "dayjs/plugin/customParseFormat";
 import TextField from "./TextField";
+import useOnChange from "../../../utils/useOnChange";
 
 dayjs.extend(customParseFormat);
 
@@ -30,7 +31,7 @@ const useDraft = (
     const formatted = value?.isValid() ? value.format(format) : "";
     const [draft, setDraft] = useState(formatted);
 
-    useEffect(() => setDraft(formatted), [formatted]);
+    useOnChange(formatted, setDraft);
 
     return {
         draft,
@@ -132,7 +133,7 @@ const PickerField = ({
                     event.preventDefault();
                     setOpen(false);
                 }}
-                className="z-[1400] rounded-xl border border-divider bg-bg shadow-2xl outline-none"
+                className="z-1400 rounded-xl border border-divider bg-bg shadow-2xl outline-hidden"
             >
                 {children}
             </Popover.Content>
@@ -148,10 +149,13 @@ export const Calendar = ({
     marked,
     markLabel,
     today = dayjs(),
+    min,
 }: {
     value: Dayjs | null;
     onSelect: (day: Dayjs) => void;
     today?: Dayjs;
+    /* days before this can't be picked */
+    min?: Dayjs;
     /* days that get a dot under the number */
     marked?: (day: Dayjs) => boolean;
     markLabel?: string;
@@ -174,11 +178,11 @@ export const Calendar = ({
 
     /* jump to the selected day when it's changed from outside */
     const selectedKey = selected?.format("YYYY-MM-DD");
-    useEffect(() => {
-        if (!selectedKey) return;
-        setMonth(dayjs(selectedKey).startOf("month"));
-        setActive(dayjs(selectedKey));
-    }, [selectedKey]);
+    useOnChange(selectedKey, (key) => {
+        if (!key) return;
+        setMonth(dayjs(key).startOf("month"));
+        setActive(dayjs(key));
+    });
 
     useEffect(() => {
         if (!moved.current) return;
@@ -255,18 +259,23 @@ export const Calendar = ({
                 {days.map((day) => {
                     const isSelected = selected?.isSame(day, "day");
                     const isMarked = marked?.(day);
+                    // still focusable, so arrow keys can move past it
+                    const isDisabled = min?.isAfter(day, "day");
                     return (
                         <button
                             key={day.date()}
                             type="button"
                             aria-label={`${day.format("MMMM D, YYYY")}${isMarked && markLabel ? `, ${markLabel}` : ""}`}
                             aria-pressed={Boolean(isSelected)}
+                            aria-disabled={isDisabled || undefined}
                             tabIndex={day.isSame(tabStop, "day") ? 0 : -1}
-                            onClick={() => onSelect(day)}
+                            onClick={() => !isDisabled && onSelect(day)}
                             className={`relative flex h-9 w-9 items-center justify-center rounded-full transition-colors ${
                                 isSelected
                                     ? "bg-accent text-white"
-                                    : "text-typography-1 hover:bg-layer-3"
+                                    : isDisabled
+                                      ? "cursor-not-allowed text-typography-3"
+                                      : "text-typography-1 hover:bg-layer-3"
                             } ${day.isSame(today, "day") && !isSelected ? "border border-divider" : ""}`}
                         >
                             {day.date()}
@@ -307,7 +316,7 @@ const TimeColumn = ({
         ? selected
         : options[0]?.value;
     const [tabStop, setTabStop] = useState(defaultStop);
-    useEffect(() => setTabStop(defaultStop), [defaultStop]);
+    useOnChange(defaultStop, setTabStop);
 
     const onKeyDown = (event: KeyboardEvent<HTMLDivElement>) => {
         const buttons = Array.from(
@@ -364,15 +373,18 @@ export const DateField = ({
     value,
     onChange,
     sx,
-}: DateTimeFieldProps) => {
+    min,
+}: DateTimeFieldProps & { min?: Dayjs }) => {
     const [open, setOpen] = useState(false);
 
-    const merge = (day: Dayjs) =>
+    const merge = (day: Dayjs) => {
+        if (min?.isAfter(day, "day")) return;
         onChange(
             value?.isValid()
                 ? value.year(day.year()).month(day.month()).date(day.date())
                 : day,
         );
+    };
 
     const { draft, setDraft, reset } = useDraft(
         value,
@@ -396,6 +408,7 @@ export const DateField = ({
         >
             <Calendar
                 value={value}
+                min={min}
                 onSelect={(day) => {
                     merge(day);
                     setOpen(false);

@@ -13,11 +13,7 @@ import ContentUnavailable from "../../../../../components/ui/content/ContentUnav
 const Posts = () => {
     const organization = useContext(OrgContext);
 
-    if (
-        organization.state === "LOCKED" ||
-        organization.state === "PENDING" ||
-        organization.state === "PUNISHED"
-    )
+    if (!["UNLOCKED", "ADMIN"].includes(organization.state))
         return (
             <ContentUnavailable
                 icon="bx-message-alt-x"

@@ -7,6 +7,7 @@ import {
     OPPORTUNITY_SUBMISSION_URL,
 } from "../../../config/routes";
 import useMediaQuery from "../../../utils/useMediaQuery";
+import { getLinks } from "../../../modules/stuyactivities/admin/links";
 import revealOnKeyboardFocus from "../../../utils/revealOnKeyboardFocus";
 
 const STUY_ACTIVITIES_ITEMS = [
@@ -31,7 +32,7 @@ const OPPORTUNITIES_ITEMS = [
 // matches the paragraph text these links used to be, without the link underline;
 // the current page is shown brighter, as before
 const ITEM_CLASS =
-    "important touch-target whitespace-nowrap rounded text-[0.9rem] leading-[1.2rem] no-underline transition-opacity focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1";
+    "important touch-target whitespace-nowrap rounded-sm text-[0.9rem] leading-[1.2rem] no-underline transition-opacity focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1";
 
 const SubNavBar: FC = () => {
     const user = useContext(UserContext);
@@ -51,7 +52,10 @@ const SubNavBar: FC = () => {
               label: "Opportunities Admin",
               path: adminPath,
           }
-        : user.permission && { label: "Admin Panel", path: adminPath };
+        : getLinks(user).length > 0 && {
+              label: "Admin Panel",
+              path: adminPath,
+          };
     const isAdminPage =
         location.pathname === adminPath ||
         location.pathname.startsWith(`${adminPath}/`);
@@ -64,7 +68,7 @@ const SubNavBar: FC = () => {
             // the scroller clips its content: pb-2 leaves room for the focus
             // outline and -mb-2 cancels it out so the layout doesn't move.
             // touch screens get room for the 44px tap areas the same way
-            className="relative z-[5] pb-2 -mb-2 max-sm:mb-0 max-sm:pb-3 sm:[@media(pointer:coarse)]:-my-3 sm:[@media(pointer:coarse)]:py-3 scroll-pe-10 max-[1099px]:[mask-image:linear-gradient(to_right,black_calc(100%-32px),transparent)]"
+            className="relative z-5 pb-2 -mb-2 max-sm:mb-0 max-sm:pb-3 sm:pointer-coarse:-my-3 sm:pointer-coarse:py-3 scroll-pe-10 max-[1099px]:mask-[linear-gradient(to_right,black_calc(100%-32px),transparent)]"
             // on phones the header holding this sticks, so a site alert above can't cover it
             style={{
                 overflowX: "scroll",
@@ -80,7 +84,7 @@ const SubNavBar: FC = () => {
             }}
         >
             <div
-                className={`relative z-[2] flex flex-row gap-6 ${
+                className={`relative z-2 flex flex-row gap-6 ${
                     isMobile ? "ml-4 mt-3" : "ml-frame mt-4"
                 }`}
             >
@@ -129,7 +133,7 @@ const SubNavBar: FC = () => {
                         // drawn outside the box so nothing moves
                         className={`${ITEM_CLASS} inline-flex gap-1 text-yellow ${
                             isAdminPage
-                                ? "relative before:absolute before:inset-x-0 before:-bottom-[3px] before:h-0.5 before:bg-current"
+                                ? "relative before:absolute before:inset-x-0 before:bottom-[-3px] before:h-0.5 before:bg-current"
                                 : ""
                         }`}
                     >

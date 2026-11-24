@@ -1,6 +1,7 @@
 import { CSSProperties, useContext, useEffect, useState } from "react";
 
 import useMediaQuery from "../../utils/useMediaQuery";
+import usePageMeta from "../../utils/usePageMeta";
 import MultiPageForm from "../../components/ui/forms/MultiPageForm";
 import FormPage from "../../components/ui/forms/FormPage";
 import FormTextField from "../../components/ui/forms/FormTextField";
@@ -18,17 +19,14 @@ import FormCheckbox from "../../components/ui/forms/FormCheckbox";
 
 import OrgRequirements, { ORG_TAGS } from "../../utils/OrgRequirements";
 
-import { PUBLIC_URL } from "../../config/constants";
+import { PUBLIC_URL, SUPPORT_EMAIL } from "../../config/constants";
 
 import LoginGate from "../../components/ui/content/LoginGate";
 import UserContext from "../../contexts/UserContext";
-import { Helmet } from "react-helmet";
 import { functionErrorText } from "../../utils/FunctionErrors";
-import {
-    clubPicturePath,
-    clubPictureUploadOptions,
-    prepareClubPicture,
-} from "../../utils/clubPicture";
+import useOnChange from "../../utils/useOnChange";
+import useLatest from "../../utils/useLatest";
+import { prepareClubPicture } from "../../utils/clubPicture";
 
 type FormType = {
     name: string;
@@ -101,10 +99,15 @@ const urlProblem = async (url: string) => {
 };
 
 const CharterForm = () => {
+    usePageMeta("Charter an Activity - Epsilon");
     const [submitting, setSubmitting] = useState<boolean>(false);
 
     const user: UserContextType = useContext(UserContext);
     const [eligible, setEligible] = useState<boolean>(true);
+    /* charters sent back for changes, which can be fixed instead */
+    const [rejected, setRejected] = useState<{ name: string; url: string }[]>(
+        [],
+    );
 
     const { enqueueSnackbar } = useSnackbar();
 
@@ -114,15 +117,23 @@ const CharterForm = () => {
     const [urlError, setUrlError] = useState<string>("");
     const [checkingUrl, setCheckingUrl] = useState<boolean>(false);
     const [urlAvailable, setUrlAvailable] = useState(false);
+    // keep the charter form out of search results
     useEffect(() => {
-        const url = formData.url;
+        const robots = document.createElement("meta");
+        robots.name = "robots";
+        robots.content = "noindex";
+        document.head.appendChild(robots);
+        return () => robots.remove();
+    }, []);
+
+    useOnChange(formData.url, (url) => {
         setUrlAvailable(false);
         setUrlError("");
-        if (!url) {
-            setCheckingUrl(false);
-            return;
-        }
-        setCheckingUrl(true);
+        setCheckingUrl(!!url);
+    });
+    useEffect(() => {
+        const url = formData.url;
+        if (!url) return;
         let live = true;
         const timer = setTimeout(async () => {
             const problem = await urlProblem(url);
@@ -163,6 +174,8 @@ const CharterForm = () => {
         });
     };
 
+    const hasInput = useLatest(checkFormFields);
+
     useEffect(() => {
         if (!eligible) return;
         const fetchPendingCharters = async () => {
@@ -173,24 +186,35 @@ const CharterForm = () => {
                     user_id,
                     role,
 		            organization_id,
-                    organizations!inner(id)
+                    organizations!inner(id, name, url, state)
                 `,
                 )
                 .eq("user_id", user.id)
                 .eq("role", "CREATOR")
-                .eq("organizations.state", "PENDING");
-            if ((owned?.data?.length || 0) > 0) setEligible(false);
+                .in("organizations.state", ["PENDING", "REJECTED"])
+                .returns<
+                    {
+                        organizations: {
+                            name: string;
+                            url: string;
+                            state: string;
+                        };
+                    }[]
+                >();
+            const charters = (owned?.data ?? []).map((m) => m.organizations);
+            if (charters.some((o) => o.state === "PENDING")) setEligible(false);
+            setRejected(charters.filter((o) => o.state === "REJECTED"));
         };
 
         fetchPendingCharters();
-    }, [user]);
+    }, [user, eligible]);
 
     useEffect(() => {
         if (submitting) {
             window.location.href = `${PUBLIC_URL}/${formData.url}`;
         }
         const handleBeforeUnload = (event: BeforeUnloadEvent) => {
-            if (checkFormFields() && !submitting) {
+            if (hasInput.current() && !submitting) {
                 event.preventDefault();
             }
         };
@@ -200,14 +224,13 @@ const CharterForm = () => {
         return () => {
             window.removeEventListener("beforeunload", handleBeforeUnload);
         };
-    }, [formData, submitting]);
+    }, [formData.url, submitting, hasInput]);
 
     const createActivity = async () => {
         const body = {
             name: formData.name,
             url: formData.url.toLowerCase(),
             socials: formData.socials,
-            // picture: null, // update after creating initial org
             mission: formData.mission,
             goals: formData.goals,
             purpose: formData.purpose,
@@ -226,73 +249,37 @@ const CharterForm = () => {
             faculty_email: formData.faculty_email,
         };
 
+        /* the picture goes up with the charter, so a failed upload can't
+           leave a half-made club behind */
+        let request: typeof body | FormData = body;
+        if (formData.picture) {
+            const prepared = await prepareClubPicture(formData.picture);
+            request = new FormData();
+            request.append("charter", JSON.stringify(body));
+            request.append(
+                "picture",
+                new File([prepared.blob], `picture.${prepared.ext}`, {
+                    type: prepared.type,
+                }),
+            );
+        }
+
         const { data: orgCreateData, error: orgCreateError } =
-            await supabase.functions.invoke("create-organization", { body });
+            await supabase.functions.invoke("create-organization", {
+                body: request,
+            });
 
         if (orgCreateError || !orgCreateData) {
             const error = await functionErrorText(orgCreateError);
-            let message = "Contact it@stuysu.org for support.";
+            let message = `Contact ${SUPPORT_EMAIL} for support.`;
             if (error) {
                 message = error;
             }
-            if (!message.startsWith("Error creating organization"))
+            if (!message.startsWith("Error"))
                 message = "Error creating organization. " + message;
             return enqueueSnackbar(message, {
                 variant: "error",
             });
-        }
-        const orgId = orgCreateData.id;
-
-        /* Create picture if organization is successfully created */
-        /* convert picture to url */
-        if (formData.picture) {
-            const prepared = await prepareClubPicture(formData.picture);
-            const filePath = clubPicturePath(orgId, formData.url, prepared.ext);
-            const { data: storageData, error: storageError } =
-                await supabase.storage
-                    .from("public-files")
-                    .upload(
-                        filePath,
-                        prepared.blob,
-                        clubPictureUploadOptions(prepared.type),
-                    );
-
-            if (storageError || !storageData) {
-                /* attempt to delete organization */
-                await supabase.from("organizations").delete().eq("id", orgId);
-                return enqueueSnackbar(
-                    "Error uploading image to storage. Contact it@stuysu.org for support.",
-                    { variant: "error" },
-                );
-            }
-
-            const { data: urlData } = await supabase.storage
-                .from("public-files")
-                .getPublicUrl(filePath);
-
-            if (!urlData) {
-                /* attempt to delete organization */
-                await supabase.from("organizations").delete().eq("id", orgId);
-
-                return enqueueSnackbar(
-                    "Failed to retrieve image after upload. Contact it@stuysu.org for support.",
-                    { variant: "error" },
-                );
-            }
-
-            const { error: updateUrlError } = await supabase
-                .from("organizations")
-                .update({ picture: urlData.publicUrl })
-                .eq("id", orgId);
-
-            if (updateUrlError) {
-                /* attempt to delete organization */
-                await supabase.from("organizations").delete().eq("id", orgId);
-                return enqueueSnackbar(
-                    "Error uploading image to organization. Contact it@stuysu.org for support.",
-                    { variant: "error" },
-                );
-            }
         }
 
         enqueueSnackbar("Organization created!", { variant: "success" });
@@ -302,18 +289,15 @@ const CharterForm = () => {
     if (!eligible)
         return (
             <div className="w-full">
-                <h3 className="m-0 text-center font-sans text-[3rem] leading-[1.167] text-[color:inherit] [font-variation-settings:'wght'_400]">
+                <h1 className="m-0 pt-[0.12em] text-center font-sans text-[3rem] leading-[1.167] text-inherit font-normal [font-variation-settings:'wght'_400]">
                     You may not submit a second charter if you already have one
                     pending.
-                </h3>
+                </h1>
             </div>
         );
     return (
         <LoginGate page={"charter an Activity"}>
             <h1 className="sr-only">Charter an Activity</h1>
-            <Helmet>
-                <meta name="robots" content="noindex" />
-            </Helmet>
 
             <MultiPageForm
                 title=""
@@ -330,6 +314,22 @@ const CharterForm = () => {
                 }}
             >
                 <FormPage title="Before You Start">
+                    {rejected.map((charter) => (
+                        <p
+                            key={charter.url}
+                            className="mb-4 rounded-xl border border-divider p-4"
+                            role="status"
+                        >
+                            Your charter for {charter.name} needs changes. You
+                            can{" "}
+                            <a
+                                href={`${PUBLIC_URL}/${charter.url}/admin/org-edits`}
+                            >
+                                fix and resubmit it
+                            </a>{" "}
+                            instead of starting a new one.
+                        </p>
+                    ))}
                     <p>
                         We're looking forward to hosting your Activity at
                         Stuyvesant! As you complete the chartering form, be sure

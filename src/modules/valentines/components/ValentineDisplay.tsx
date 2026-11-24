@@ -71,7 +71,7 @@ const ValentineCard = ({
             {/* backup background */}
             <div className="bg-white">
                 <div
-                    className="text-black rounded-[1rem] m-2 w-[20em] h-[30em] p-4 overflow-y-scroll whitespace-pre-wrap"
+                    className="text-black rounded-2xl m-2 w-[20em] h-[30em] p-4 overflow-y-scroll whitespace-pre-wrap"
                     style={{ backgroundColor: valentine.background }}
                 >
                     <p className={"text-black"}>{valentine.message}</p>

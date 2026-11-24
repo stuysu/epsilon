@@ -16,6 +16,8 @@ import MeetingSearch, {
     MeetingFilter,
     MeetingSort,
 } from "../../components/MeetingSearch";
+import { SUPPORT_EMAIL } from "../../../../../config/constants";
+import { functionErrorText } from "../../../../../utils/FunctionErrors";
 
 const Scheduler = () => {
     const organization = useContext(OrgContext);
@@ -48,11 +50,7 @@ const Scheduler = () => {
         editing: false,
     });
 
-    if (
-        organization.state === "LOCKED" ||
-        organization.state === "PENDING" ||
-        organization.state === "PUNISHED"
-    )
+    if (!["UNLOCKED", "ADMIN"].includes(organization.state))
         return (
             <ContentUnavailable
                 icon="bx-no-entry"
@@ -61,6 +59,12 @@ const Scheduler = () => {
                 description="This Activity does not yet meet the requirements to hold meetings."
             />
         );
+
+    // only site admins can change or delete a meeting that has ended
+    const locked = (meeting: Partial<Meeting>) =>
+        !user.admin &&
+        !!meeting.end_time &&
+        new Date(meeting.end_time) <= new Date();
 
     const renderMeeting = (meeting: Partial<Meeting>) => (
         <OrgMeeting
@@ -76,9 +80,7 @@ const Scheduler = () => {
             is_public={meeting.is_public}
             advisor={meeting.advisor}
             onEdit={
-                !user.admin &&
-                meeting.end_time &&
-                new Date(meeting.end_time) <= new Date()
+                locked(meeting)
                     ? undefined
                     : () =>
                           setEditState({
@@ -93,28 +95,40 @@ const Scheduler = () => {
                               editing: true,
                           })
             }
-            onDelete={async (silentDelete: boolean) => {
-                const { error } = await supabase.functions.invoke(
-                    "delete-meeting",
-                    { body: { id: meeting.id, silent: silentDelete } },
-                );
+            onDelete={
+                locked(meeting)
+                    ? undefined
+                    : async (silentDelete: boolean) => {
+                          const { error } = await supabase.functions.invoke(
+                              "delete-meeting",
+                              {
+                                  body: {
+                                      id: meeting.id,
+                                      silent: silentDelete,
+                                  },
+                              },
+                          );
 
-                if (error) {
-                    return enqueueSnackbar(
-                        "Error deleting meeting. Contact it@stuysu.org for support.",
-                        { variant: "error" },
-                    );
-                }
+                          if (error) {
+                              return enqueueSnackbar(
+                                  (await functionErrorText(error)) ||
+                                      `Error deleting meeting. Contact ${SUPPORT_EMAIL} for support.`,
+                                  { variant: "error" },
+                              );
+                          }
 
-                organization.setOrg?.({
-                    ...organization,
-                    meetings: organization.meetings.filter(
-                        (m) => m.id !== meeting.id,
-                    ),
-                });
+                          organization.setOrg?.({
+                              ...organization,
+                              meetings: organization.meetings.filter(
+                                  (m) => m.id !== meeting.id,
+                              ),
+                          });
 
-                enqueueSnackbar("Deleted Meeting!", { variant: "success" });
-            }}
+                          enqueueSnackbar("Deleted Meeting!", {
+                              variant: "success",
+                          });
+                      }
+            }
         />
     );
 

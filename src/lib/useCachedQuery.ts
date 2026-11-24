@@ -1,8 +1,8 @@
+import useLatest from "../utils/useLatest";
 import {
     useCallback,
     useContext,
     useEffect,
-    useRef,
     useSyncExternalStore,
 } from "react";
 import UserContext from "../contexts/UserContext";
@@ -69,8 +69,7 @@ export default function useCachedQuery<T>(
     const scope = useCacheScope(isPublic);
     const hash = key ? hashKey(scope, key) : null;
 
-    const fetcherRef = useRef(fetcher);
-    fetcherRef.current = fetcher;
+    const fetcherRef = useLatest(fetcher);
 
     const entry = useSyncExternalStore(
         useCallback(
@@ -86,7 +85,7 @@ export default function useCachedQuery<T>(
             hash
                 ? fetchQuery(hash, () => fetcherRef.current(), persist)
                 : Promise.resolve(undefined),
-        [hash, persist],
+        [hash, persist, fetcherRef],
     );
 
     const staleFlag = !!entry?.stale;

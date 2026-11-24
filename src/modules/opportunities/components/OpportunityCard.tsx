@@ -33,11 +33,11 @@ const OpportunityCard = ({ opportunity }: OpportunityCardProps) => {
             : opportunity.bulletin_label;
 
     return (
-        <article className="relative flex flex-col gap-3 rounded-2xl [overflow-wrap:anywhere] bg-layer-1 p-6 shadow-prominent transition-colors sm:hover:bg-layer-2">
+        <article className="relative flex flex-col gap-3 rounded-2xl wrap-anywhere bg-layer-1 p-6 shadow-prominent transition-colors sm:hover:bg-layer-2">
             {/* the badge drops below a long title on narrow phones */}
             <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-2">
                 <h2
-                    className={`min-w-0 break-words text-xl font-semibold ${status.struck ? "text-typography-2 line-through" : "text-typography-1"}`}
+                    className={`min-w-0 wrap-break-word text-xl font-semibold ${status.struck ? "text-typography-2 line-through" : "text-typography-1"}`}
                 >
                     {/* the link covers the whole card */}
                     <Link

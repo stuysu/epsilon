@@ -1,5 +1,4 @@
 import { ChangeEvent, useContext, useEffect, useMemo, useState } from "react";
-import { Helmet } from "react-helmet";
 import { useSnackbar } from "notistack";
 import AlertBanner from "../../../components/ui/AlertBanner";
 import AsyncButton from "../../../components/ui/buttons/AsyncButton";
@@ -28,6 +27,8 @@ import { formatDate, getTodayEastern, pluralize } from "../utils";
 import NoLongerListed from "./components/NoLongerListed";
 import ReviewEntries from "./components/ReviewEntries";
 import ReviewHeader from "./components/ReviewHeader";
+import usePageMeta from "../../../utils/usePageMeta";
+import { SUPPORT_EMAIL } from "../../../config/constants";
 
 const MAX_FILE_BYTES = 25 * 1024 * 1024;
 // errors the import raises on purpose, written for admins
@@ -35,9 +36,7 @@ const IMPORT_ERROR_CODE = "P0001";
 
 // focused after an upload or publish, so the result is read out
 type FocusTarget =
-    | "bulletin-review"
-    | "bulletin-read-error"
-    | "bulletin-published";
+    "bulletin-review" | "bulletin-read-error" | "bulletin-published";
 
 type ReviewState = {
     meta: BulletinMeta;
@@ -52,6 +51,8 @@ type ReviewState = {
 };
 
 const Admin = () => {
+    usePageMeta("Opportunities Admin - Epsilon");
+
     const user = useContext(UserContext);
     const { enqueueSnackbar } = useSnackbar();
     const {
@@ -69,13 +70,14 @@ const Admin = () => {
     const [publishedSummary, setPublishedSummary] = useState<string | null>(
         null,
     );
-    const [focusTarget, setFocusTarget] = useState<FocusTarget | null>(null);
+    // a new object each time, so the same target can be focused again
+    const [focusTarget, setFocusTarget] = useState<{ id: FocusTarget } | null>(
+        null,
+    );
     useLeaveWarning(review !== null);
 
     useEffect(() => {
-        if (!focusTarget) return;
-        document.getElementById(focusTarget)?.focus();
-        setFocusTarget(null);
+        if (focusTarget) document.getElementById(focusTarget.id)?.focus();
     }, [focusTarget]);
 
     const publishProblems = useMemo(
@@ -92,28 +94,28 @@ const Admin = () => {
 
     if (user.permission !== "ADMIN") {
         return (
-            <main>
+            <div>
                 <ContentUnavailable
                     icon="bx-no-entry"
                     iconColor="text-red"
                     title="Restricted Access"
                     description="You do not have access to this page at this time."
                 />
-            </main>
+            </div>
         );
     }
 
     // after a publish, a failed reload shouldn't hide that the publish worked
     if (failed && !publishedSummary) {
         return (
-            <main>
+            <div>
                 <ContentUnavailable
                     icon="bx-error-circle"
                     iconColor="text-red"
                     title="The catalog could not load"
-                    description="Refresh the page to try again. If this keeps happening, contact it@stuysu.org."
+                    description={`Refresh the page to try again. If this keeps happening, contact ${SUPPORT_EMAIL}.`}
                 />
-            </main>
+            </div>
         );
     }
 
@@ -129,7 +131,7 @@ const Admin = () => {
 
         if (file.size > MAX_FILE_BYTES) {
             setReadError("That file is over 25 MB. Choose the bulletin PDF.");
-            setFocusTarget("bulletin-read-error");
+            setFocusTarget({ id: "bulletin-read-error" });
             return;
         }
 
@@ -160,14 +162,14 @@ const Admin = () => {
                 shownIds: noLongerListed.map((o) => o.id),
                 baseline: latest,
             });
-            setFocusTarget("bulletin-review");
+            setFocusTarget({ id: "bulletin-review" });
         } catch (error) {
             setReadError(
                 error instanceof BulletinFormatError
                     ? error.message
                     : "This file could not be read. Make sure it's the bulletin PDF, then try again.",
             );
-            setFocusTarget("bulletin-read-error");
+            setFocusTarget({ id: "bulletin-read-error" });
         } finally {
             setProgress(null);
         }
@@ -252,7 +254,7 @@ const Admin = () => {
             enqueueSnackbar(
                 error.code === IMPORT_ERROR_CODE
                     ? `Nothing was published. ${error.message}`
-                    : "Error publishing bulletin, so nothing changed. Contact it@stuysu.org for support.",
+                    : `Error publishing bulletin, so nothing changed. Contact ${SUPPORT_EMAIL} for support.`,
                 { variant: "error" },
             );
             return;
@@ -262,22 +264,18 @@ const Admin = () => {
             `Published bulletin #${review.meta.issue}: ${pluralize(payload.length, "opportunity", "opportunities")}, ${archiveIds.length} archived.`,
         );
         setReview(null);
-        setFocusTarget("bulletin-published");
+        setFocusTarget({ id: "bulletin-published" });
         await reload();
     };
 
     const isOlderIssue = Boolean(
         review &&
-            latestBulletin &&
-            review.meta.publishedOn < latestBulletin.published_on,
+        latestBulletin &&
+        review.meta.publishedOn < latestBulletin.published_on,
     );
 
     return (
-        <main className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-12 pt-8 max-sm:px-4 max-sm:pt-14">
-            <Helmet>
-                <title>Opportunities Admin - Epsilon</title>
-            </Helmet>
-
+        <div className="mx-auto flex w-full max-w-5xl flex-col gap-6 px-12 pt-8 max-sm:px-4 max-sm:pt-14">
             <header>
                 <h1 className="mb-2">Upload Bulletin</h1>
                 <p className="text-typography-2">
@@ -369,7 +367,7 @@ const Admin = () => {
                     )}
                 </>
             )}
-        </main>
+        </div>
     );
 };
 

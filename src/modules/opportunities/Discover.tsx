@@ -1,5 +1,4 @@
 import { FormEvent, useState } from "react";
-import { Helmet } from "react-helmet";
 import { Link, useNavigate } from "react-router-dom";
 import SearchInput from "../../components/ui/input/SearchInput";
 import {
@@ -8,13 +7,16 @@ import {
 } from "../../components/ui/input/FilterControls";
 import { useOpportunities } from "./OpportunitiesContext";
 import { getStatus, getTodayEastern } from "./utils";
+import usePageMeta from "../../utils/usePageMeta";
 
 const SEARCH_LINK_CLASS =
-    "group flex cursor-pointer items-center gap-1.5 rounded py-1 text-sm font-medium text-typography-1 no-underline opacity-80 transition-opacity hover:opacity-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 disabled:cursor-wait disabled:opacity-60 disabled:hover:opacity-60";
+    "group flex cursor-pointer items-center gap-1.5 rounded-sm py-1 text-sm font-medium text-typography-1 no-underline opacity-80 transition-opacity hover:opacity-100 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 disabled:cursor-wait disabled:opacity-60 disabled:hover:opacity-60";
 const SEARCH_LINK_ICON =
     "bx text-base transition-transform group-hover:translate-x-0.5 motion-reduce:transition-none";
 
 const Discover = () => {
+    usePageMeta("Opportunities - Epsilon");
+
     const navigate = useNavigate();
     const { loading, failed, opportunities, categories, student } =
         useOpportunities();
@@ -41,23 +43,19 @@ const Discover = () => {
     };
 
     return (
-        <main className="relative overflow-x-clip">
-            <Helmet>
-                <title>Opportunities - Epsilon</title>
-            </Helmet>
-
+        <div className="relative overflow-x-clip">
             <section className="relative flex flex-col items-center px-4 pb-10 pt-[clamp(3rem,16dvh-5rem,9rem)] max-sm:pt-32">
                 {/* darkened like the design's photo */}
                 <div
                     aria-hidden="true"
-                    className="absolute inset-x-0 -top-[2.2rem] bottom-0 bg-[url('/media/opportunities-hero.webp')] bg-cover bg-[center_35%] brightness-[0.25] contrast-[0.75] saturate-[0.9] [mask-image:linear-gradient(to_bottom,black_72%,transparent)] scheme-light:opacity-30 scheme-light:brightness-100"
+                    className="absolute inset-x-0 top-[-2.2rem] bottom-0 bg-[url('/media/opportunities-hero.webp')] bg-cover bg-position-[center_35%] brightness-[0.25] contrast-[0.75] saturate-[0.9] mask-[linear-gradient(to_bottom,black_72%,transparent)] scheme-light:opacity-30 scheme-light:brightness-100"
                 />
-                <h1 className="relative -mt-2 mb-[clamp(3.5rem,20dvh-4rem,9.5rem)] pt-2 text-center font-['epsilon-geometric','neue-haas-grotesk-display',sans-serif] font-medium uppercase leading-[0.8] text-transparent [-webkit-background-clip:text] [background-clip:text] [background-image:linear-gradient(95deg,#f3fbef_0%,#fbe9e4_30%,#ffa3ec_62%,#c46cff_100%)] [font-variation-settings:normal] scheme-light:[background-image:linear-gradient(95deg,var(--text-primary)_0%,#9333ea_60%,#6b21a8_100%)] max-sm:mb-28">
-                    <span className="block text-[min(4.8rem,calc((100vw_-_2rem)/5))] max-sm:text-[min(3.4rem,calc((100vw_-_2rem)/5))]">
+                <h1 className="relative -mt-2 mb-[clamp(3.5rem,20dvh-4rem,9.5rem)] pt-2 text-center font-['epsilon-geometric','neue-haas-grotesk-display',sans-serif] font-medium uppercase leading-[0.8] text-transparent [-webkit-background-clip:text] bg-clip-text bg-[linear-gradient(95deg,#f3fbef_0%,#fbe9e4_30%,#ffa3ec_62%,#c46cff_100%)] [font-variation-settings:normal] scheme-light:bg-[linear-gradient(95deg,var(--text-primary)_0%,#9333ea_60%,#6b21a8_100%)] max-sm:mb-28">
+                    <span className="block text-[min(4.8rem,calc((100vw-2rem)/5))] max-sm:text-[min(3.4rem,calc((100vw-2rem)/5))]">
                         Find Your
                     </span>{" "}
                     {/* capped so larger text settings still fit the screen */}
-                    <span className="block text-[min(6.4rem,calc((100vw_-_2rem)/3.9))] max-sm:text-[min(4.55rem,calc((100vw_-_2rem)/3.9))]">
+                    <span className="block text-[min(6.4rem,calc((100vw-2rem)/3.9))] max-sm:text-[min(4.55rem,calc((100vw-2rem)/3.9))]">
                         Calling
                     </span>
                 </h1>
@@ -65,7 +63,7 @@ const Discover = () => {
                 <form
                     role="search"
                     onSubmit={onSearch}
-                    className="relative w-full max-w-[52rem]"
+                    className="relative w-full max-w-208"
                 >
                     <SearchInput
                         placeholder="Search opportunities"
@@ -104,7 +102,7 @@ const Discover = () => {
                 </form>
             </section>
 
-            <div className="mx-auto w-full max-w-[59rem] px-14 pb-12 max-sm:px-4">
+            <div className="mx-auto w-full max-w-236 px-14 pb-12 max-sm:px-4">
                 {failed && (
                     <p role="alert" className="text-sm text-typography-2">
                         Opportunities could not load. Refresh the page to try
@@ -125,7 +123,7 @@ const Discover = () => {
                         ))}
                 </div>
             </div>
-        </main>
+        </div>
     );
 };
 

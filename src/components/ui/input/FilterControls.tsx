@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 
 // shared by the Activities and Opportunities catalogs so both filter panels look the same
 export const PILL_CLASS =
-    "inline-flex min-h-8 max-w-full items-center gap-1 rounded-2xl px-3 py-1 text-left text-sm font-semibold leading-tight shadow-control transition-[background-color,color,transform] duration-150 ease-out focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1";
+    "inline-flex min-h-8 max-w-full items-center gap-1 rounded-2xl px-3 py-1 text-left text-sm font-semibold leading-tight shadow-control transition-[background-color,color,transform] duration-150 ease-out focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1";
 
 export const pillColors = (on: boolean) =>
     `cursor-pointer active:scale-[0.97] ${
@@ -50,7 +50,7 @@ export const FiltersToggle = ({
         aria-expanded={open}
         aria-controls={controls}
         onClick={onToggle}
-        className={`mb-4 flex min-h-11 w-full cursor-pointer items-center justify-between rounded-xl bg-layer-1 px-4 py-2 text-typography-1 shadow-control focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 ${className}`}
+        className={`mb-4 flex min-h-11 w-full cursor-pointer items-center justify-between rounded-xl bg-layer-1 px-4 py-2 text-typography-1 shadow-control focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1 ${className}`}
     >
         {count ? `Filters (${count})` : "Filters"}
         <i
@@ -73,7 +73,7 @@ export const ResetFiltersButton = ({
         type="button"
         onClick={onReset}
         disabled={disabled}
-        className="important -mt-2 mb-5 flex min-h-9 w-full items-center justify-center gap-1.5 rounded-lg bg-layer-2 px-3 py-1.5 text-sm text-typography-1 shadow-control transition-colors enabled:cursor-pointer enabled:hover:bg-layer-3 disabled:text-typography-3 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+        className="important -mt-2 mb-5 flex min-h-9 w-full items-center justify-center gap-1.5 rounded-lg bg-layer-2 px-3 py-1.5 text-sm text-typography-1 shadow-control transition-colors enabled:cursor-pointer enabled:hover:bg-layer-3 disabled:text-typography-3 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
     >
         <i className="bx bx-reset" aria-hidden="true" />
         Reset Filters

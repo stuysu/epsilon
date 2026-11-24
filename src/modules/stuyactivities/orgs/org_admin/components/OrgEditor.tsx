@@ -1,13 +1,7 @@
-import {
-    Fragment,
-    ReactNode,
-    useCallback,
-    useContext,
-    useEffect,
-    useState,
-} from "react";
+import { Fragment, ReactNode, useCallback, useContext, useState } from "react";
 import OrgContext from "../../../../../contexts/OrgContext";
 import UserDialog from "../../../../../components/ui/overlays/UserDialog";
+import useOnChange from "../../../../../utils/useOnChange";
 import { useSnackbar } from "notistack";
 import FormTextField from "../../../../../components/ui/forms/FormTextField";
 import Divider from "../../../../../components/ui/Divider";
@@ -27,7 +21,7 @@ import {
 } from "../../../../../utils/DataFormatters";
 import orgFieldMap from "../../../../../utils/OrgFieldMap";
 import { supabase } from "../../../../../lib/supabaseClient";
-import { PUBLIC_URL } from "../../../../../config/constants";
+import { PUBLIC_URL, SUPPORT_EMAIL } from "../../../../../config/constants";
 import { useNavigate } from "react-router-dom";
 import { functionErrorText } from "../../../../../utils/FunctionErrors";
 import { wordCount } from "../../../../../utils/WordCount";
@@ -59,7 +53,7 @@ type FormStatus = {
 type orgKey = keyof OrganizationEdit & keyof Organization;
 
 const ReviewNote = () => (
-    <p className="text-sm text-typography-3">Changes are reviewed</p>
+    <p className="text-sm text-typography-2">Changes are reviewed</p>
 );
 
 const EditField = ({
@@ -90,11 +84,12 @@ const EditField = ({
                 </p>
                 {reviewed && <ReviewNote />}
             </div>
-            <div className="w-full flex flex-nowrap py-2.5 relative min-h-[100px]">
+            <div className="w-full flex flex-nowrap py-2.5 relative min-h-[100px] max-sm:flex-col">
                 {editing ? (
                     <>
                         {editDisplay}
-                        <div className="absolute right-[20px] w-[15%] max-sm:right-0 max-sm:w-auto">
+                        {/* on phones it sits below the field instead of over it */}
+                        <div className="absolute right-[20px] w-[15%] max-sm:static max-sm:mt-2 max-sm:w-auto max-sm:self-end">
                             <AsyncButton
                                 onClick={onCancel}
                                 sx={{ width: "100%" }}
@@ -138,7 +133,7 @@ const REVIEWED_FIELDS = [
 ];
 
 /* clubs in these states save the other fields right away; restricted clubs
-   still send everything for review (PENDING charters update directly) */
+   still send everything for review (charters in review update directly) */
 const DIRECT_EDIT_STATES = ["UNLOCKED", "ADMIN"];
 
 // too lazy to write them all out, use array.map to write it faster
@@ -159,7 +154,7 @@ const textFields = [
 /* keywords is a comma separated string and the others are arrays, so they need their own editors and comparison */
 const listFields = ["meeting_days", "tags", "keywords"];
 
-const toList = (field: string, value: any): string[] => {
+const toList = (field: string, value: unknown): string[] => {
     if (field === "keywords") {
         return value ? String(value).split(",").filter(Boolean) : [];
     }
@@ -189,7 +184,7 @@ const sameList = (a: string[], b: string[]) =>
     a.length === b.length && a.every((value, i) => value === b[i]);
 
 /* what the user has to do before a field can be saved */
-const fixHint = (field: string, value: any) => {
+const fixHint = (field: string, value: unknown) => {
     const label = orgFieldMap(field);
     const { required, requirements: r = {} } = OrgRequirements[field] ?? {};
     const list = listFields.includes(field) ? toList(field, value) : null;
@@ -247,12 +242,35 @@ const OrgEditor = ({
     const { enqueueSnackbar } = useSnackbar();
     const orgContext = useContext(OrgContext);
     const directEdits = DIRECT_EDIT_STATES.includes(organization.state ?? "");
+    /* charters still in review (or sent back) save straight to the club */
+    const inReview = ["PENDING", "REJECTED"].includes(organization.state ?? "");
     const isReviewed = (field: string) =>
-        organization.state !== "PENDING" &&
-        (!directEdits || REVIEWED_FIELDS.includes(field));
+        !inReview && (!directEdits || REVIEWED_FIELDS.includes(field));
+
+    // the saved edit, with the club's own values where it has none
+    const savedData = () => {
+        const baseData: OrganizationEdit = {};
+
+        for (const key of Object.keys(existingEdit)) {
+            const editField = key as keyof OrganizationEdit;
+            if (hiddenFields.includes(editField)) continue;
+
+            if (
+                existingEdit[editField] === undefined ||
+                existingEdit[editField] === null
+            ) {
+                (baseData as Record<string, unknown>)[editField] =
+                    organization[editField as keyof Organization];
+            } else {
+                (baseData as Record<string, unknown>)[editField] =
+                    existingEdit[editField];
+            }
+        }
+        return baseData;
+    };
 
     /* everything that is displayed on the page (could include values similar to original)*/
-    const [editData, setEditData] = useState<OrganizationEdit>({});
+    const [editData, setEditData] = useState<OrganizationEdit>(savedData);
 
     /* only includes keys who are currently being edited */
     // idk why i split this up, this could both be in one but i was just copy and pasting code from FormPage
@@ -271,46 +289,41 @@ const OrgEditor = ({
             : existingEdit["picture"];
 
     /* validation */
-    const [savable, setSavable] = useState(false);
     const [confirmingDelete, setConfirmingDelete] = useState(false);
 
     const [urlError, setUrlError] = useState("");
     const [checkingUrl, setCheckingUrl] = useState(false);
 
+    /* returns the problem with the URL, or "" */
     const validateUrl = async (url: string) => {
         const { minChar, maxChar } = OrgRequirements.url.requirements ?? {};
+        let problem = "";
         if (url.length < minChar || url.length > maxChar) {
-            setUrlError(
-                `URL ending must be between ${minChar} and ${maxChar} characters long`,
-            );
-            return;
+            problem = `URL ending must be between ${minChar} and ${maxChar} characters long`;
+        } else if (!URL_PATTERN.test(url)) {
+            problem = "URL can only contain letters, numbers, and dashes.";
+        } else if (url.toLowerCase() !== organization.url?.toLowerCase()) {
+            setCheckingUrl(true);
+            const { data, error } = await supabase
+                .from("organizations")
+                .select("id")
+                .eq("url", url.toLowerCase());
+            setCheckingUrl(false);
+            if (error) problem = "Error checking URL.";
+            else if (data && data.length > 0)
+                problem = "This URL is already in use.";
         }
-        if (!URL_PATTERN.test(url)) {
-            setUrlError("URL can only contain letters, numbers, and dashes.");
-            return;
-        }
-        setUrlError("");
-        if (url.toLowerCase() === organization.url?.toLowerCase()) return;
-        setCheckingUrl(true);
-        const { data, error } = await supabase
-            .from("organizations")
-            .select("id")
-            .eq("url", url.toLowerCase());
-        setCheckingUrl(false);
-        if (error) {
-            setUrlError("Error checking URL.");
-        } else if (data && data.length > 0) {
-            setUrlError("This URL is already in use.");
-        }
+        setUrlError(problem);
+        return problem;
     };
 
     /* redirection */
     const navigate = useNavigate();
 
-    useEffect(() => {
-        if ("url" in editState && (urlError || checkingUrl)) {
-            setSavable(false);
-            return;
+    const savable = (() => {
+        // not while checking: the check starts on blur, which a click on Save causes
+        if ("url" in editState && urlError) {
+            return false;
         }
 
         if (
@@ -318,8 +331,7 @@ const OrgEditor = ({
                 (field) => status[field] && status[field].value === false,
             )
         ) {
-            setSavable(false);
-            return;
+            return false;
         }
 
         /* the field already shows which links are wrong */
@@ -327,22 +339,19 @@ const OrgEditor = ({
             "socials" in editState &&
             getInvalidSocials(editData.socials).length > 0
         ) {
-            setSavable(false);
-            return;
+            return false;
         }
 
         /* check if picture is saved before terminating if no other fields are saved */
 
         if (editPicture !== undefined && editPicture !== oldPicture) {
-            setSavable(true);
-            return;
+            return true;
         }
 
         /* check if there is anything to save, if not, terminate */
         const editedFields: string[] = Object.keys(editState);
         if (!editedFields.length) {
-            setSavable(false);
-            return;
+            return false;
         }
 
         /* check if the edited fields are different from the original */
@@ -378,43 +387,12 @@ const OrgEditor = ({
             }
         }
 
-        setSavable(atleastOneDiff);
-    }, [
-        urlError,
-        checkingUrl,
-        status,
-        existingEdit,
-        editState,
-        editData,
-        editPicture,
-        oldPicture,
-        organization,
-    ]);
+        return atleastOneDiff;
+    })();
 
     /* update form data if existingEdit changes */
-    useEffect(() => {
-        // replace undefined fields with organization
-
-        const baseData: OrganizationEdit = {};
-
-        for (const key of Object.keys(existingEdit)) {
-            // typescript crying
-            const editField = key as keyof OrganizationEdit;
-            if (hiddenFields.includes(editField)) continue;
-
-            if (
-                existingEdit[editField] === undefined ||
-                existingEdit[editField] === null
-            ) {
-                baseData[editField] =
-                    organization[editField as keyof Organization];
-            } else {
-                baseData[editField] = existingEdit[editField];
-            }
-        }
-
-        setEditData(baseData);
-    }, [existingEdit, organization]);
+    useOnChange(existingEdit, () => setEditData(savedData()));
+    useOnChange(organization, () => setEditData(savedData()));
 
     const saveChanges = async () => {
         if (!savable) {
@@ -424,6 +402,12 @@ const OrgEditor = ({
             );
             return;
         }
+        if (
+            "url" in editState &&
+            editData.url &&
+            (await validateUrl(editData.url))
+        )
+            return;
 
         const payload: any = {};
 
@@ -451,8 +435,8 @@ const OrgEditor = ({
             // an edited field cleared to "" is a real change
             payload[field] =
                 field in editState
-                    ? editData[field] ?? null
-                    : existingEdit[field] ?? null;
+                    ? (editData[field] ?? null)
+                    : (existingEdit[field] ?? null);
             if (field === "name" && typeof payload[field] === "string")
                 payload[field] = payload[field].trim();
 
@@ -488,6 +472,7 @@ const OrgEditor = ({
             }
         }
 
+        let reviewPicture: File | undefined;
         /* custom logic for adding picture to the payload */
         /* picture is not in the original payload so nothing will manage it in the original loop. it is only edited here  */
         if (
@@ -511,46 +496,55 @@ const OrgEditor = ({
             /* Note: any indication of the picture failing to upload will kill the entire org edit process */
 
             const prepared = await prepareClubPicture(editPicture as File);
-            const filePath = clubPicturePath(
-                organization.id,
-                organization.url,
-                prepared.ext,
-            );
-
-            const { data: storageData, error: storageError } =
-                await supabase.storage
-                    .from("public-files")
-                    .upload(
-                        filePath,
-                        prepared.blob,
-                        clubPictureUploadOptions(prepared.type),
-                    );
-
-            if (storageError || !storageData) {
-                return enqueueSnackbar(
-                    "Error uploading image to storage. Contact it@stuysu.org for support.",
-                    { variant: "error" },
-                );
-            }
-
-            const { data: urlData } = await supabase.storage
-                .from("public-files")
-                .getPublicUrl(filePath);
-
-            if (!urlData) {
-                return enqueueSnackbar(
-                    "Failed to retrieve image url after upload. Contact it@stuysu.org for support.",
-                    { variant: "error" },
-                );
-            }
-
-            payload.picture = urlData.publicUrl;
             allNull = false;
+            if (inReview) {
+                // update-charter checks and uploads it
+                reviewPicture = new File(
+                    [prepared.blob],
+                    `picture.${prepared.ext}`,
+                    { type: prepared.type },
+                );
+            } else {
+                const filePath = clubPicturePath(
+                    organization.id,
+                    organization.url,
+                    prepared.ext,
+                );
+
+                const { data: storageData, error: storageError } =
+                    await supabase.storage
+                        .from("public-files")
+                        .upload(
+                            filePath,
+                            prepared.blob,
+                            clubPictureUploadOptions(prepared.type),
+                        );
+
+                if (storageError || !storageData) {
+                    return enqueueSnackbar(
+                        `Error uploading image to storage. Contact ${SUPPORT_EMAIL} for support.`,
+                        { variant: "error" },
+                    );
+                }
+
+                const { data: urlData } = await supabase.storage
+                    .from("public-files")
+                    .getPublicUrl(filePath);
+
+                if (!urlData) {
+                    return enqueueSnackbar(
+                        `Failed to retrieve image url after upload. Contact ${SUPPORT_EMAIL} for support.`,
+                        { variant: "error" },
+                    );
+                }
+
+                payload.picture = urlData.publicUrl;
+            }
         }
 
         /* fields that don't need review are saved now and left out of the request */
         const direct: Record<string, unknown> = {};
-        if (organization.state !== "PENDING" && directEdits) {
+        if (!inReview && directEdits) {
             for (const field of Object.keys(editState)) {
                 if (isReviewed(field) || hiddenFields.includes(field)) continue;
                 if (payload[field] !== null && payload[field] !== undefined)
@@ -568,7 +562,7 @@ const OrgEditor = ({
             if (error || !data) {
                 const message = error ? await functionErrorText(error) : "";
                 return enqueueSnackbar(
-                    `Error saving changes. ${message || "Contact it@stuysu.org for support."}`,
+                    `Error saving changes. ${message || `Contact ${SUPPORT_EMAIL} for support.`}`,
                     { variant: "error" },
                 );
             }
@@ -651,7 +645,7 @@ const OrgEditor = ({
 
         let data, error;
 
-        if (organization.state !== "PENDING") {
+        if (!inReview) {
             // the direct save may have removed the old request, so upsert
             ({ data, error } = await supabase
                 .from("organizationedits")
@@ -670,18 +664,36 @@ const OrgEditor = ({
                 }
             }
 
-            ({ data, error } = await supabase
-                .from("organizations")
-                .update(payload)
-                .eq("id", organization.id)
-                .select());
+            const request = {
+                organization_id: organization.id,
+                changes: payload,
+            };
+            let body: typeof request | FormData = request;
+            if (reviewPicture) {
+                body = new FormData();
+                body.append("body", JSON.stringify(request));
+                body.append("picture", reviewPicture);
+            }
+            const result = await supabase.functions.invoke("update-charter", {
+                body,
+            });
+            if (result.error || !result.data) {
+                const message = result.error
+                    ? await functionErrorText(result.error)
+                    : "";
+                return enqueueSnackbar(
+                    `Error saving changes. ${message || `Contact ${SUPPORT_EMAIL} for support.`}`,
+                    { variant: "error" },
+                );
+            }
+            data = [result.data];
         }
 
         if (error || !data) {
             if (saved) {
                 /* the direct changes are live even though the request failed */
                 enqueueSnackbar(
-                    "Some changes were saved, but the ones that need review couldn't be sent. Contact it@stuysu.org for support.",
+                    `Some changes were saved, but the ones that need review couldn't be sent. Contact ${SUPPORT_EMAIL} for support.`,
                     { variant: "error" },
                 );
                 setEditState({});
@@ -690,7 +702,7 @@ const OrgEditor = ({
                 return;
             }
             return enqueueSnackbar(
-                "Error editing organization. Contact it@stuysu.org for support.",
+                `Error editing organization. Contact ${SUPPORT_EMAIL} for support.`,
                 { variant: "error" },
             );
         }
@@ -702,9 +714,10 @@ const OrgEditor = ({
             );
         }
 
-        if (organization.state === "PENDING") {
-            if (payload.url) {
-                window.location.href = `${PUBLIC_URL}/${payload.url}/admin/org-edits`;
+        if (inReview) {
+            const url = (data[0] as Organization).url;
+            if (url && url !== organization.url) {
+                window.location.href = `${PUBLIC_URL}/${url}/admin/org-edits`;
             } else {
                 navigate(0);
             }
@@ -774,7 +787,7 @@ const OrgEditor = ({
     };
 
     const pendingPicture =
-        organization.state === "PENDING" ||
+        inReview ||
         (existingEdit.picture !== undefined &&
             existingEdit.picture !== null &&
             existingEdit.picture !== organization.picture);
@@ -788,11 +801,9 @@ const OrgEditor = ({
 
     const editedFields = Object.keys(editState);
     const needsReview =
-        organization.state !== "PENDING" &&
+        !inReview &&
         (editPicture !== undefined || editedFields.some(isReviewed));
-    const savesNow =
-        organization.state === "PENDING" ||
-        editedFields.some((f) => !isReviewed(f));
+    const savesNow = inReview || editedFields.some((f) => !isReviewed(f));
 
     const allNull = Object.keys(existingEdit).every(
         (key) => existingEdit[key as keyof OrganizationEdit] === undefined,
@@ -819,7 +830,7 @@ const OrgEditor = ({
                 <p className={pendingPicture ? "text-yellow" : "text-green"}>
                     {pendingPicture ? "Pending" : "Approved"}
                 </p>
-                {organization.state !== "PENDING" && <ReviewNote />}
+                {!inReview && <ReviewNote />}
             </div>
             <div className="flex flex-wrap items-center justify-between gap-4 py-2.5 mb-5">
                 <Avatar
@@ -839,15 +850,16 @@ const OrgEditor = ({
                         Upload Avatar
                         <input
                             type="file"
-                            accept="image/*"
+                            accept="image/png,image/jpeg,image/webp,image/gif"
                             id="input-file-upload"
                             onChange={(e) => {
                                 if (!e.target.files?.[0]) return;
-                                if (
-                                    !e.target.files[0].type.startsWith("image/")
-                                )
+                                const types =
+                                    OrgRequirements.picture?.requirements
+                                        ?.types ?? [];
+                                if (!types.includes(e.target.files[0].type))
                                     return enqueueSnackbar(
-                                        "Choose an image file.",
+                                        "Choose a PNG, JPEG, WEBP or GIF file.",
                                         { variant: "error" },
                                     );
                                 if (
@@ -915,7 +927,7 @@ const OrgEditor = ({
                                     existingEdit[
                                         field as keyof OrganizationEdit
                                     ] !== undefined) ||
-                                organization.state === "PENDING"
+                                inReview
                             }
                             editing={editState[field]}
                             onCancel={() => {
@@ -952,7 +964,7 @@ const OrgEditor = ({
                             defaultDisplay={
                                 <p
                                     className={
-                                        "whitespace-pre-line break-words"
+                                        "whitespace-pre-line wrap-break-word"
                                     }
                                 >
                                     {editData[
@@ -970,7 +982,7 @@ const OrgEditor = ({
                                             ]
                                         )
                                     ) : (
-                                        <em className="text-typography-3">
+                                        <em className="text-typography-2">
                                             &lt;empty&gt;
                                         </em>
                                     )}
@@ -1034,10 +1046,11 @@ const OrgEditor = ({
                                                 val,
                                             )
                                         }
+                                        // text fields only reach this branch
                                         value={
                                             editData[
                                                 field as keyof OrganizationEdit
-                                            ]
+                                            ] as string | undefined
                                         }
                                         required={
                                             OrgRequirements[field].required
@@ -1070,7 +1083,7 @@ const OrgEditor = ({
                                     existingEdit[
                                         field as keyof OrganizationEdit
                                     ] !== undefined) ||
-                                organization.state === "PENDING"
+                                inReview
                             }
                             editing={editState[field]}
                             onCancel={() => {
@@ -1101,7 +1114,7 @@ const OrgEditor = ({
                                 setEditState({ ...editState, [field]: true })
                             }
                             defaultDisplay={
-                                <p className={"break-words"}>
+                                <p className={"wrap-break-word"}>
                                     {(field === "commitment_level"
                                         ? editData.commitment_level &&
                                           capitalizeWords(
@@ -1119,7 +1132,7 @@ const OrgEditor = ({
                                                       : v,
                                               )
                                               .join(", ")) || (
-                                        <em className="text-typography-3">
+                                        <em className="text-typography-2">
                                             &lt;empty&gt;
                                         </em>
                                     )}

@@ -104,7 +104,7 @@ const Members = () => {
                                     last_name={
                                         member.users?.last_name || "Last"
                                     }
-                                    className="transition-colors sm:hover:!bg-layer-3"
+                                    className="transition-colors sm:hover:bg-layer-3!"
                                     filledRole
                                 />
                             </motion.div>

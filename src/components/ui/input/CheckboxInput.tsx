@@ -25,8 +25,8 @@ const CheckboxInput = ({
                 "relative flex shrink-0 items-center justify-center bg-layer-3 shadow-control transition-colors " +
                 // invisible padding widens the tap target without changing the look
                 (small
-                    ? "h-4 w-4 rounded before:absolute before:-inset-[8px] before:content-[''] "
-                    : "h-6 w-6 rounded-md before:absolute before:-inset-[10px] before:content-[''] ") +
+                    ? "h-4 w-4 rounded-sm before:absolute before:inset-[-8px] before:content-[''] "
+                    : "h-6 w-6 rounded-md before:absolute before:inset-[-10px] before:content-[''] ") +
                 "data-[state=checked]:bg-blue data-[state=indeterminate]:bg-blue " +
                 // keeps an empty box visible on dark rows
                 "data-[state=unchecked]:ring-1 data-[state=unchecked]:ring-inset data-[state=unchecked]:ring-typography-2 " +
@@ -34,7 +34,7 @@ const CheckboxInput = ({
             }
         >
             {/* the tick is dark on the light blue of the high contrast theme */}
-            <Checkbox.Indicator className="text-white [[data-theme=dark-hc]_&]:text-black flex items-center justify-center">
+            <Checkbox.Indicator className="text-white in-data-[theme=dark-hc]:text-black flex items-center justify-center">
                 <i
                     className={`bx ${
                         checked === "indeterminate" ? "bx-minus" : "bx-check"

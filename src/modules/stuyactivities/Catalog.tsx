@@ -4,7 +4,6 @@ import { getEntry, hashKey, isStale, setData } from "../../lib/queryCache";
 import { useCacheScope } from "../../lib/useCachedQuery";
 import useMediaQuery from "../../utils/useMediaQuery";
 import { motion } from "framer-motion";
-import { Helmet } from "react-helmet";
 import AsyncButton from "../../components/ui/buttons/AsyncButton";
 import ContentUnavailable from "../../components/ui/content/ContentUnavailable";
 
@@ -12,6 +11,8 @@ import OrgCard from "./components/OrgCard";
 import SearchFilter from "./components/SearchFilter";
 import Masonry from "../../components/ui/Masonry";
 import Skeleton from "../../components/ui/Skeleton";
+import usePageMeta from "../../utils/usePageMeta";
+import { SUPPORT_EMAIL } from "../../config/constants";
 
 /* builds a quoted PostgREST ilike value that matches `text` literally:
 LIKE wildcards are escaped first, then the value is double-quoted so commas,
@@ -68,7 +69,20 @@ const catalogKey = (seed: number, params: SearchParams, size: number) => [
     size,
 ];
 
+const SkeletonGrid = ({ count }: { count: number }) => (
+    <div className="flex gap-4 flex-wrap">
+        {Array.from({ length: count }).map((_, i) => (
+            <Skeleton key={i} className="h-[445px] flex-1 rounded-[20px]" />
+        ))}
+    </div>
+);
+
 const Catalog = () => {
+    usePageMeta(
+        "StuyActivities Catalog - Epsilon",
+        "Discover and explore student organizations at Stuyvesant High School. Find Activities that match your interests.",
+    );
+
     const sentinelRef = useRef<HTMLDivElement | null>(null);
     const resultsRef = useRef<HTMLDivElement | null>(null);
     const isFetchingRef = useRef(false);
@@ -137,7 +151,7 @@ const Catalog = () => {
         return () => clearTimeout(t);
     }, [searchParams, debouncedSearchParams.name]);
 
-    const [seed] = useState(
+    const [seed] = useState(() =>
         sessionStorage.getItem("seed")
             ? parseFloat(sessionStorage.getItem("seed") as string)
             : Math.random(),
@@ -189,7 +203,7 @@ const Catalog = () => {
             const originalOffset = isReset ? 0 : offsetRef.current;
 
             let orgData: Partial<Organization>[] | null;
-            let orgError: any;
+            let orgError: unknown;
 
             const search = cleanSearch(debouncedSearchParams.name);
 
@@ -245,8 +259,7 @@ const Catalog = () => {
                 let query = supabase
                     .from("organizations")
                     .select("*, member_count")
-                    .neq("state", "PENDING")
-                    .neq("state", "PUNISHED")
+                    .not("state", "in", "(PENDING,PUNISHED,REJECTED)")
                     .or(catalogQuery);
                 /* ends with id, a fixed order so paging never repeats or skips a club */
                 for (const [column, ascending] of SORT_ORDER[
@@ -320,6 +333,8 @@ const Catalog = () => {
     // on a param change show the cached pages, or reset and fetch the first page
     useEffect(() => {
         const cached = getEntry<SearchState>(cacheHash);
+        // reads the shared query cache, then fetches what it lacks
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setFailed(false);
         if (cached?.data) {
             generationRef.current++;
@@ -372,26 +387,13 @@ const Catalog = () => {
             results.scrollIntoView({ block: "start" });
     }, [debouncedSearchParams]);
 
-    const approvedOrgs = searchState.orgs.filter((o) => o.state !== "PENDING");
-
-    const SkeletonGrid = ({ count }: { count: number }) => (
-        <div className="flex gap-4 flex-wrap">
-            {Array.from({ length: count }).map((_, i) => (
-                <Skeleton key={i} className="h-[445px] flex-1 rounded-[20px]" />
-            ))}
-        </div>
+    const approvedOrgs = searchState.orgs.filter(
+        (o) => !["PENDING", "REJECTED"].includes(o.state ?? ""),
     );
 
     return (
         <section className={"flex relative flex-wrap"}>
             <h1 className="sr-only">StuyActivities Catalog</h1>
-            <Helmet>
-                <title>StuyActivities Catalog - Epsilon</title>
-                <meta
-                    name="description"
-                    content="Discover and explore student organizations at Stuyvesant High School. Find Activities that match your interests."
-                />
-            </Helmet>
 
             <SearchFilter
                 isOneColumn={isOne}
@@ -416,7 +418,7 @@ const Catalog = () => {
                             iconColor="text-red"
                             headingLevel="h2"
                             title="Activities could not load"
-                            description="Check your connection and try again. If this keeps happening, contact it@stuysu.org."
+                            description={`Check your connection and try again. If this keeps happening, contact ${SUPPORT_EMAIL}.`}
                             action={
                                 <AsyncButton onClick={() => getOrgs(true)}>
                                     Try Again
@@ -434,7 +436,7 @@ const Catalog = () => {
                             className={isOne ? "" : "pr-4"}
                         >
                             {searchState.orgs.map((org, i) => (
-                                <div key={(org as any).id ?? `ghost-${i}`}>
+                                <div key={org.id ?? `ghost-${i}`}>
                                     <motion.div
                                         initial={{
                                             opacity: 0,

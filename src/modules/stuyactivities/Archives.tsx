@@ -1,16 +1,17 @@
 import React from "react";
-import { Helmet } from "react-helmet";
+import usePageMeta from "../../utils/usePageMeta";
+// one entry per school year, newest first; scripts/archive-year.mjs exports
+// the year's clubs and adds the entry (see the top of that script)
+import archives from "./archives.json";
 
 const Archives = () => {
+    usePageMeta(
+        "StuyActivities Archives - Epsilon",
+        "Browse past years' StuyActivities data and records.",
+    );
+
     return (
         <div className={"p-10 max-sm:mb-32"}>
-            <Helmet>
-                <title>StuyActivities Archives - Epsilon</title>
-                <meta
-                    name="description"
-                    content="Browse past years' StuyActivities data and records."
-                />
-            </Helmet>
             <div
                 className={
                     "flex sm:justify-center items-center w-full h-48 sm:h-96"
@@ -27,65 +28,29 @@ const Archives = () => {
                 </h1>
             </div>
             <div className={"flex w-full justify-center"}>
-                <div
-                    className={
-                        "flex flex-col gap-5 w-full h-32 mb-64 max-w-3xl"
-                    }
-                >
-                    <a
-                        href={
-                            "https://docs.google.com/spreadsheets/d/1enQNUbduXRY0pGyngbRjpYma4LVkJdep3jh66iL_EWs/edit?usp=sharing"
-                        }
-                        target="_blank"
-                        className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex justify-center no-underline gap-4 sm:hover:bg-layer-3 shadow-control focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1"
-                    >
-                        <div>
-                            <h2
-                                className={
-                                    "as-h1 font-['instrument-serif'] text-beige font-normal"
-                                }
-                            >
-                                2025-2026 Archives
-                            </h2>
-                            <p className={"text-center"}>358 Activities</p>
-                        </div>
-                    </a>
-                    <a
-                        href={
-                            "https://docs.google.com/spreadsheets/d/1URqnVM9avoD5_oRvBzQXI1ghq4oWRLWMps58cvNCLc0/edit?usp=sharing"
-                        }
-                        target="_blank"
-                        className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex justify-center no-underline gap-4 sm:hover:bg-layer-3 shadow-control focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1"
-                    >
-                        <div>
-                            <h2
-                                className={
-                                    "as-h1 font-['instrument-serif'] text-beige font-normal"
-                                }
-                            >
-                                2024-2025 Archives
-                            </h2>
-                            <p className={"text-center"}>421 Activities</p>
-                        </div>
-                    </a>
-                    <a
-                        href={
-                            "https://docs.google.com/spreadsheets/d/1TyFnEPhY3gM-yRJKYDJkQSfHC6OsvC5ftkkoahjVcCU/edit?gid=485693778#gid=485693778"
-                        }
-                        target="_blank"
-                        className="transition-colors p-6 from-layer-2 to-layer-1 bg-gradient-to-b rounded-xl flex justify-center no-underline gap-4 sm:hover:bg-layer-3 shadow-control focus-visible:outline focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1"
-                    >
-                        <div>
-                            <h2
-                                className={
-                                    "as-h1 font-['instrument-serif'] font-normal"
-                                }
-                            >
-                                2023-2024 Archives
-                            </h2>
-                            <p className={"text-center"}>351 Activities</p>
-                        </div>
-                    </a>
+                <div className={"flex flex-col gap-5 w-full mb-32 max-w-3xl"}>
+                    {archives.map((archive) => (
+                        <a
+                            key={archive.year}
+                            href={archive.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="transition-colors p-6 from-layer-2 to-layer-1 bg-linear-to-b/srgb rounded-xl flex justify-center no-underline gap-4 sm:hover:bg-layer-3 shadow-control focus-visible:outline-solid focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-typography-1"
+                        >
+                            <div>
+                                <h2
+                                    className={
+                                        "as-h1 font-['instrument-serif'] text-beige font-normal"
+                                    }
+                                >
+                                    {archive.year} Archives
+                                </h2>
+                                <p className={"text-center"}>
+                                    {archive.activities} Activities
+                                </p>
+                            </div>
+                        </a>
+                    ))}
                 </div>
             </div>
         </div>

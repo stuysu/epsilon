@@ -1,5 +1,4 @@
 import { useEffect, useLayoutEffect, useMemo, useRef, useState } from "react";
-import { Helmet } from "react-helmet";
 import { useSearchParams } from "react-router-dom";
 import AsyncButton from "../../components/ui/buttons/AsyncButton";
 import ContentUnavailable from "../../components/ui/content/ContentUnavailable";
@@ -15,12 +14,16 @@ import {
     getTodayEastern,
     pluralize,
 } from "./utils";
+import usePageMeta from "../../utils/usePageMeta";
+import { SUPPORT_EMAIL } from "../../config/constants";
 
 const COST_STEP = 100;
 
 const FILTERS_OPEN_KEY = "opportunity-filters-open";
 
 const Catalog = () => {
+    usePageMeta("Opportunities Catalog - Epsilon");
+
     const {
         loading,
         failed,
@@ -172,28 +175,25 @@ const Catalog = () => {
 
     if (failed) {
         return (
-            <main>
+            <div>
                 <ContentUnavailable
                     icon="bx-error-circle"
                     iconColor="text-red"
                     title="Opportunities could not load"
-                    description="Refresh the page to try again. If this keeps happening, contact it@stuysu.org."
+                    description={`Refresh the page to try again. If this keeps happening, contact ${SUPPORT_EMAIL}.`}
                 />
-            </main>
+            </div>
         );
     }
 
     return (
-        <main className="mx-auto grid w-full max-w-[82rem] grid-cols-1 items-start gap-x-8 gap-y-4 px-12 lg:gap-y-8 pt-8 max-sm:px-4 max-sm:pt-14 lg:grid-cols-[18rem_minmax(0,1fr)]">
-            <Helmet>
-                <title>Opportunities Catalog - Epsilon</title>
-            </Helmet>
+        <div className="mx-auto grid w-full max-w-328 grid-cols-1 items-start gap-x-8 gap-y-4 px-12 lg:gap-y-8 pt-8 max-sm:px-4 max-sm:pt-14 lg:grid-cols-[18rem_minmax(0,1fr)]">
             <h1 className="sr-only">Opportunities Catalog</h1>
 
             {/* scrolls on its own; padding keeps focus rings unclipped */}
             <aside
                 ref={asideRef}
-                className="lg:sticky lg:top-6 lg:-mx-2 lg:max-h-[var(--filters-height,calc(100dvh-3rem))] lg:overflow-y-auto lg:overscroll-contain lg:data-[fits]:overscroll-auto lg:px-2 lg:pb-6 lg:pt-1 lg:[scrollbar-width:thin]"
+                className="lg:sticky lg:top-6 lg:-mx-2 lg:max-h-(--filters-height,calc(100dvh-3rem)) lg:overflow-y-auto lg:overscroll-contain lg:data-fits:overscroll-auto lg:px-2 lg:pb-6 lg:pt-1 lg:scrollbar-thin"
             >
                 <h2 className="sr-only">Filters</h2>
                 <FiltersToggle
@@ -260,7 +260,7 @@ const Catalog = () => {
                     </div>
                 )}
             </section>
-        </main>
+        </div>
     );
 };
 

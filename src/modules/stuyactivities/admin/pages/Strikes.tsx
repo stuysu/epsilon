@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
 import Divider from "../../../../components/ui/Divider";
+import useOnChange from "../../../../utils/useOnChange";
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import SearchInput from "../../../../components/ui/input/SearchInput";
 import UserDialog from "../../../../components/ui/overlays/UserDialog";
 import TextField from "../../../../components/ui/input/TextField";
+import { SUPPORT_EMAIL } from "../../../../config/constants";
 
 const Strikes = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -15,7 +17,6 @@ const Strikes = () => {
     const [orgStrikes, setOrgStrikes] = useState<Strike[]>([]);
     const [reason, setReason] = useState("");
     const [searchInput, setSearchInput] = useState("");
-    const [filteredOrgs, setFilteredOrgs] = useState<Organization[]>([]);
     const [allOrgs, setAllOrgs] = useState<Organization[]>([]);
     const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
     const [strikeToDelete, setStrikeToDelete] = useState<Strike | null>(null);
@@ -27,7 +28,7 @@ const Strikes = () => {
                 .select("*");
             if (error || !data) {
                 enqueueSnackbar(
-                    "Failed to load organizations. Contact it@stuysu.org for support.",
+                    `Failed to load organizations. Contact ${SUPPORT_EMAIL} for support.`,
                     { variant: "error" },
                 );
                 return;
@@ -38,18 +39,13 @@ const Strikes = () => {
         fetchAllOrgs();
     }, [enqueueSnackbar]);
 
-    useEffect(() => {
-        if (searchInput) {
-            setFilteredOrgs(
-                allOrgs.filter((org) =>
-                    org.name.toLowerCase().includes(searchInput.toLowerCase()),
-                ),
-            );
-        } else {
-            setFilteredOrgs([]);
-        }
-    }, [searchInput, allOrgs]);
+    const filteredOrgs = searchInput
+        ? allOrgs.filter((org) =>
+              org.name.toLowerCase().includes(searchInput.toLowerCase()),
+          )
+        : [];
 
+    useOnChange(orgId, () => setOrgStrikes([]));
     useEffect(() => {
         if (!orgId) return;
         let stale = false;
@@ -71,7 +67,7 @@ const Strikes = () => {
 
             if (error || !data) {
                 return enqueueSnackbar(
-                    "Failed to load strikes. Contact it@stuysu.org for support.",
+                    `Failed to load strikes. Contact ${SUPPORT_EMAIL} for support.`,
                     { variant: "error" },
                 );
             }
@@ -79,7 +75,6 @@ const Strikes = () => {
             setOrgStrikes(data as Strike[]);
         };
 
-        setOrgStrikes([]);
         fetchOrgStrikes();
         return () => {
             stale = true;
@@ -105,7 +100,7 @@ const Strikes = () => {
 
         if (error) {
             enqueueSnackbar(
-                "Error issuing strike. Contact it@stuysu.org for support",
+                `Error issuing strike. Contact ${SUPPORT_EMAIL} for support`,
                 { variant: "error" },
             );
             return;
@@ -134,7 +129,7 @@ const Strikes = () => {
 
         if (error) {
             enqueueSnackbar(
-                "Error deleting strike. Contact it@stuysu.org for support",
+                `Error deleting strike. Contact ${SUPPORT_EMAIL} for support`,
                 { variant: "error" },
             );
             return;
@@ -170,7 +165,6 @@ const Strikes = () => {
                                     setOrgId(org.id);
                                     setOrgName(org.name);
                                     setSearchInput("");
-                                    setFilteredOrgs([]);
                                 }}
                             >
                                 {org.name}
@@ -208,13 +202,13 @@ const Strikes = () => {
                     </div>
 
                     <div className="mt-2.5 w-full flex flex-wrap justify-center">
-                        {orgStrikes.map((strike, i) => (
+                        {orgStrikes.map((strike) => (
                             <div
                                 className="w-full flex justify-center"
                                 key={strike.id}
                             >
                                 <div
-                                    className="rounded bg-layer-2 shadow-control"
+                                    className="rounded-sm bg-layer-2 shadow-control"
                                     style={{
                                         width: "500px",
                                         padding: "20px",
@@ -224,8 +218,10 @@ const Strikes = () => {
                                 >
                                     <h4>{strike.reason}</h4>
                                     <p>
-                                        Issued by {strike.users?.first_name}{" "}
-                                        {strike.users?.last_name}
+                                        Issued by{" "}
+                                        {strike.users
+                                            ? `${strike.users.first_name} ${strike.users.last_name}`
+                                            : "a former admin"}
                                     </p>
                                     <AsyncButton
                                         onClick={() => openDeleteDialog(strike)}

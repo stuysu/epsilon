@@ -9,6 +9,8 @@ import RoomChecklist from "../components/RoomChecklist";
 import { isoToWallClock, wallClockToISO } from "../../../../utils/NewYorkTime";
 import { functionErrorText } from "../../../../utils/FunctionErrors";
 import { sortRooms } from "../../../../utils/DataFormatters";
+import { SUPPORT_EMAIL } from "../../../../config/constants";
+import useLatest from "../../../../utils/useLatest";
 
 type RoomOption = {
     id: number;
@@ -66,8 +68,7 @@ const RoomBlocks = () => {
     /* blocks from today on, plus the picked day if it has passed */
     const fromKey = dayKey < todayKey ? dayKey : todayKey;
     /* refreshes after a block or unblock use the current day's range */
-    const fromKeyRef = useRef(fromKey);
-    fromKeyRef.current = fromKey;
+    const fromKeyRef = useLatest(fromKey);
     const loading = !roomsLoaded || blocksFrom !== fromKey;
 
     const fetchBlocks = useCallback(async () => {
@@ -97,7 +98,7 @@ const RoomBlocks = () => {
         }
         setBlocks(all);
         setBlocksFrom(from);
-    }, [enqueueSnackbar]);
+    }, [enqueueSnackbar, fromKeyRef]);
 
     useEffect(() => {
         (async () => {
@@ -261,7 +262,7 @@ const RoomBlocks = () => {
 
         if (error || !meetings) {
             enqueueSnackbar(
-                "Couldn't check the meetings in these rooms, so nothing was blocked. Contact it@stuysu.org for support.",
+                `Couldn't check the meetings in these rooms, so nothing was blocked. Contact ${SUPPORT_EMAIL} for support.`,
                 { variant: "error" },
             );
             return;
@@ -318,7 +319,7 @@ const RoomBlocks = () => {
         );
         if (result.unemailed.length) {
             enqueueSnackbar(
-                `Couldn't email ${result.unemailed.length === 1 ? "1 Activity" : `${result.unemailed.length} Activities`} about the cancellations. Contact it@stuysu.org.`,
+                `Couldn't email ${result.unemailed.length === 1 ? "1 Activity" : `${result.unemailed.length} Activities`} about the cancellations. Contact ${SUPPORT_EMAIL}.`,
                 { variant: "error" },
             );
         }
@@ -437,7 +438,10 @@ const RoomBlocks = () => {
                             {reasons.length > 0 && (
                                 <div className="mt-3">
                                     {reasons.map(([text, count]) => (
-                                        <p key={text} className="break-words">
+                                        <p
+                                            key={text}
+                                            className="wrap-break-word"
+                                        >
                                             <span className="important">
                                                 {text}
                                             </span>

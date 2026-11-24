@@ -1,19 +1,26 @@
+import useOnChange from "../../../../utils/useOnChange";
 import {
     DateField,
     TimeField,
 } from "../../../../components/ui/input/DateTimeField";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
+import mapConcurrent from "../../../../utils/mapConcurrent";
 import { supabase } from "../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
-import { Dayjs } from "dayjs";
+import dayjs, { Dayjs } from "dayjs";
 import AsyncButton from "../../../../components/ui/buttons/AsyncButton";
 import SearchInput from "../../../../components/ui/input/SearchInput";
 import MeetingAttendanceCard from "../../orgs/org_admin/components/MeetingAttendanceCard";
 import RoomChecklist from "../components/RoomChecklist";
-import { isoToWallClock, wallClockToISO } from "../../../../utils/NewYorkTime";
+import {
+    isoToWallClock,
+    toNewYork,
+    wallClockToISO,
+} from "../../../../utils/NewYorkTime";
 import SwitchField from "../../../../components/ui/input/SwitchField";
 import TextField from "../../../../components/ui/input/TextField";
 import { functionErrorText } from "../../../../utils/FunctionErrors";
+import { SUPPORT_EMAIL } from "../../../../config/constants";
 
 type ApiRoom = {
     id: number;
@@ -47,12 +54,12 @@ const Reserve = () => {
         { name: string; message: string }[]
     >([]);
     const [forceTitle, setForceTitle] = useState("");
-    const [allRooms, setAllRooms] = useState<ApiRoom[]>([]);
-    const [loading, setLoading] = useState<boolean>(false);
+    const [rooms, setRooms] = useState<ApiRoom[]>([]);
+    const [booked, setBooked] = useState<Set<number> | "failed">();
+    const [loading, setLoading] = useState<boolean>(true);
 
     /* organization search data */
     const [searchInput, setSearchInput] = useState("");
-    const [filteredOrgs, setFilteredOrgs] = useState<Organization[]>([]);
     const [allOrgs, setAllOrgs] = useState<Organization[]>([]);
 
     /* date inputs */
@@ -63,7 +70,7 @@ const Reserve = () => {
 
     const [excludeBooked, setexcludeBooked] = useState<boolean>(false);
 
-    const fetchOrgMeetings = async () => {
+    const fetchOrgMeetings = useCallback(async () => {
         if (!forceOrgId || forceOrgId === -1) return;
 
         const { data: meetingsData, error: meetingFetchError } = await supabase
@@ -85,88 +92,89 @@ const Reserve = () => {
                 new Date(a.start_time).getTime(),
         );
         setReservedMeetings(sortedMeetings);
-    };
+    }, [forceOrgId, enqueueSnackbar]);
 
     useEffect(() => {
+        // fetches; state is only set once the response arrives
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         fetchOrgMeetings();
-    }, [forceOrgId]);
+    }, [fetchOrgMeetings]);
+
     useEffect(() => {
-        // No other way to use async here
+        let live = true;
         (async () => {
-            let { data: roomData, error: roomFetchError } = await supabase
+            const { data, error } = await supabase
                 .from("rooms")
                 .select("*")
                 .order("name", { ascending: true });
-            if (roomFetchError || !roomData) {
-                enqueueSnackbar("Failed to fetch rooms", {
-                    variant: "error",
-                });
-                setLoading(false);
+            if (!live) return;
+            if (error || !data) {
+                enqueueSnackbar("Failed to fetch rooms", { variant: "error" });
+            } else {
+                setRooms(data);
+            }
+            setLoading(false);
+        })();
+        return () => {
+            live = false;
+        };
+    }, [enqueueSnackbar]);
+
+    // booked rooms for the chosen times; a newer change cancels the older lookup
+    const startISO = startTime?.isValid() ? wallClockToISO(startTime) : null;
+    const endISO = endTime?.isValid() ? wallClockToISO(endTime) : null;
+    useOnChange(`${excludeBooked} ${startISO} ${endISO}`, () =>
+        setBooked(undefined),
+    );
+    useEffect(() => {
+        if (!excludeBooked || !startISO || !endISO) return;
+        const controller = new AbortController();
+        const timer = setTimeout(async () => {
+            const { data, error } = await supabase
+                .rpc("get_booked_rooms", {
+                    meeting_start: startISO,
+                    meeting_end: endISO,
+                })
+                .abortSignal(controller.signal)
+                .returns<{ room_id: number; meeting_id: number }[]>();
+            if (controller.signal.aborted) return;
+            if (error) {
+                // without this, every room would look free
+                enqueueSnackbar(
+                    `Couldn't check which rooms are booked. Contact ${SUPPORT_EMAIL} for support.`,
+                    { variant: "error" },
+                );
+                setBooked("failed");
                 return;
             }
-            if (excludeBooked) {
-                // Fetch booked rooms overlapping with current times
-                // Date should in theory be filled but just in case:
-                if (!startTime || !endTime) return;
-                type RoomMeta = {
-                    room_id: number;
-                    meeting_id: number;
-                };
-                const { data: bookedRoomsRaw, error } = await supabase
-                    .rpc("get_booked_rooms", {
-                        meeting_start: wallClockToISO(startTime),
-                        meeting_end: wallClockToISO(endTime),
-                    })
-                    .returns<RoomMeta[]>();
-                if (error) {
-                    // without this, every room would look free; clear the
-                    // list so rooms loaded earlier can't stay selectable
-                    enqueueSnackbar(
-                        "Couldn't check which rooms are booked. Contact it@stuysu.org for support.",
-                        { variant: "error" },
-                    );
-                    setAllRooms([]);
-                    setSelectedRoomIds([]);
-                    return;
-                }
-                const bookedRooms: RoomMeta[] = Array.isArray(bookedRoomsRaw)
-                    ? bookedRoomsRaw
-                    : [];
-                roomData = roomData.filter((meta) =>
-                    bookedRooms.every((room) => room.room_id !== meta.id),
-                );
-            }
-            setAllRooms(roomData);
-        })();
-    }, [excludeBooked]);
-    const fetchRooms = async () => {
-        setLoading(true);
+            setBooked(
+                new Set(
+                    (Array.isArray(data) ? data : []).map((r) => r.room_id),
+                ),
+            );
+        }, 250);
+        return () => {
+            clearTimeout(timer);
+            controller.abort();
+        };
+    }, [excludeBooked, startISO, endISO, enqueueSnackbar]);
 
-        const { data: roomData, error: roomFetchError } = await supabase
-            .from("rooms")
-            .select("*")
-            .order("name", { ascending: true });
-
-        if (roomFetchError || !roomData) {
-            enqueueSnackbar("Failed to fetch rooms", { variant: "error" });
-            setLoading(false);
-            return;
-        }
-
-        setAllRooms(roomData);
-
-        setLoading(false);
-    };
-
-    useEffect(() => {
-        fetchRooms();
-    }, [enqueueSnackbar]);
+    // without both times there's nothing to check against
+    const hideBooked = excludeBooked && !!startISO && !!endISO;
+    const checkingBooked = hideBooked && booked === undefined;
+    const allRooms = !hideBooked
+        ? rooms
+        : booked instanceof Set
+          ? rooms.filter((room) => !booked.has(room.id))
+          : [];
 
     useEffect(() => {
         const fetchAllOrgs = async () => {
             const { data, error } = await supabase
                 .from("organizations")
-                .select("*");
+                .select("id, name")
+                // the server refuses these
+                .not("state", "in", "(PENDING,REJECTED)");
             if (error || !data) {
                 enqueueSnackbar(
                     "Failed to load organizations. Contact support.",
@@ -180,17 +188,11 @@ const Reserve = () => {
         fetchAllOrgs();
     }, [enqueueSnackbar]);
 
-    useEffect(() => {
-        if (searchInput) {
-            setFilteredOrgs(
-                allOrgs.filter((org) =>
-                    org.name.toLowerCase().includes(searchInput.toLowerCase()),
-                ),
-            );
-        } else {
-            setFilteredOrgs([]);
-        }
-    }, [searchInput, allOrgs]);
+    const filteredOrgs = searchInput
+        ? allOrgs.filter((org) =>
+              org.name.toLowerCase().includes(searchInput.toLowerCase()),
+          )
+        : [];
 
     const roomsToReserve = allRooms.filter((room) =>
         selectedRoomIds.includes(room.id),
@@ -219,7 +221,7 @@ const Reserve = () => {
             // treating a failed lookup as "nothing booked" could cancel a
             // meeting without asking first
             enqueueSnackbar(
-                "Couldn't check which rooms are booked, so nothing was reserved. Contact it@stuysu.org for support.",
+                `Couldn't check which rooms are booked, so nothing was reserved. Contact ${SUPPORT_EMAIL} for support.`,
                 { variant: "error" },
             );
             return;
@@ -245,9 +247,8 @@ const Reserve = () => {
         setConfirming(null);
         setFailedRooms([]);
 
-        const failed: { id: number; name: string; message: string }[] = [];
-
-        for (const room of roomsToReserve) {
+        // a few at a time; each room is its own booking
+        const results = await mapConcurrent(roomsToReserve, 4, async (room) => {
             const { error: reserveError } = await supabase.functions.invoke(
                 "force-reserve",
                 {
@@ -260,16 +261,15 @@ const Reserve = () => {
                     },
                 },
             );
-
-            if (reserveError) {
-                const message = await functionErrorText(reserveError);
-                failed.push({
-                    id: room.id,
-                    name: room.name,
-                    message: message || "Failed to force reserve room",
-                });
-            }
-        }
+            if (!reserveError) return null;
+            const message = await functionErrorText(reserveError);
+            return {
+                id: room.id,
+                name: room.name,
+                message: message || "Failed to force reserve room",
+            };
+        });
+        const failed = results.filter((r) => r !== null);
 
         const reserved = roomsToReserve.length - failed.length;
 
@@ -335,7 +335,6 @@ const Reserve = () => {
                                         setForceOrgId(org.id);
                                         setForceOrgName(org.name);
                                         setSearchInput("");
-                                        setFilteredOrgs([]);
                                     }}
                                 >
                                     {org.name}
@@ -368,6 +367,7 @@ const Reserve = () => {
                         />
                         <DateField
                             label="Meeting Day"
+                            min={dayjs(toNewYork().format("YYYY-MM-DD"))}
                             value={startTime}
                             onChange={(newStartTime) => {
                                 if (!newStartTime) return;
@@ -392,28 +392,29 @@ const Reserve = () => {
                                 marginBottom: "10px",
                             }}
                         />
-                        <div className="w-full flex flex-nowrap items-center">
-                            <TimeField
-                                label="Start"
-                                value={startTime}
-                                onChange={setStartTime}
-                                sx={{ marginRight: "10px" }}
-                            />
+                        {/* on phones the times share a row and the switch goes below */}
+                        <div className="w-full flex flex-wrap items-center gap-x-2.5 gap-y-2">
+                            <div className="grid grid-cols-2 gap-2.5 max-sm:w-full">
+                                <TimeField
+                                    label="Start"
+                                    value={startTime}
+                                    onChange={setStartTime}
+                                />
 
-                            <TimeField
-                                label="End"
-                                value={endTime}
-                                onChange={setEndTime}
-                            />
+                                <TimeField
+                                    label="End"
+                                    value={endTime}
+                                    onChange={setEndTime}
+                                />
+                            </div>
                             <SwitchField
-                                checked={excludeBooked}
+                                checked={hideBooked}
                                 onChange={setexcludeBooked}
-                                style={{ marginLeft: "10px" }}
                                 label="Hide booked rooms"
-                                disabled={!endTime || !startTime}
+                                disabled={!startISO || !endISO}
                             />
                         </div>
-                        {loading ? (
+                        {loading || checkingBooked ? (
                             <p className="my-4">Loading rooms...</p>
                         ) : (
                             <RoomChecklist

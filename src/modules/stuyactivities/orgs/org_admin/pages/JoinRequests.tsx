@@ -6,6 +6,7 @@ import {
     memberSortOptions,
 } from "../../../../../utils/DataFormatters";
 import useMembershipJoinDates from "../../../../../utils/useMembershipJoinDates";
+import mapConcurrent from "../../../../../utils/mapConcurrent";
 import { supabase } from "../../../../../lib/supabaseClient";
 import { useSnackbar } from "notistack";
 import { Link } from "react-router-dom";
@@ -17,7 +18,7 @@ import AsyncButton from "../../../../../components/ui/buttons/AsyncButton";
 import UserDialog from "../../../../../components/ui/overlays/UserDialog";
 import CheckboxInput from "../../../../../components/ui/input/CheckboxInput";
 import SortSelect from "../../../../../components/ui/input/SortSelect";
-import { PUBLIC_URL } from "../../../../../config/constants";
+import { PUBLIC_URL, SUPPORT_EMAIL } from "../../../../../config/constants";
 
 const JoinRequests = () => {
     const { enqueueSnackbar } = useSnackbar();
@@ -77,15 +78,23 @@ const JoinRequests = () => {
     const handleApproveSelected = async () => {
         setWorking("approve");
 
-        // one at a time, approve-member checks if the club should be unlocked after every approval
-        const approvedIds: number[] = [];
-        for (const member of selectedMembers) {
+        // approve-member unlocks a club once it has enough members, so the
+        // last approval waits for the others to finish
+        const approve = async (member: (typeof selectedMembers)[number]) => {
             const { error } = await supabase.functions.invoke(
                 "approve-member",
                 { body: { member_id: member.membershipId } },
             );
-            if (!error) approvedIds.push(member.membershipId as number);
-        }
+            return error ? null : (member.membershipId as number);
+        };
+        const last = selectedMembers[selectedMembers.length - 1];
+        const results = await mapConcurrent(
+            selectedMembers.slice(0, -1),
+            4,
+            approve,
+        );
+        if (last) results.push(await approve(last));
+        const approvedIds = results.filter((id) => id !== null);
 
         if (approvedIds.length && organization.setOrg) {
             organization.setOrg({
@@ -104,12 +113,12 @@ const JoinRequests = () => {
             });
         } else if (approvedIds.length) {
             enqueueSnackbar(
-                `Approved ${approvedIds.length} of ${selectedMembers.length} members. Contact it@stuysu.org if the rest keep failing.`,
+                `Approved ${approvedIds.length} of ${selectedMembers.length} members. Contact ${SUPPORT_EMAIL} if the rest keep failing.`,
                 { variant: "warning" },
             );
         } else {
             enqueueSnackbar(
-                "Error approving members. Contact it@stuysu.org for support.",
+                `Error approving members. Contact ${SUPPORT_EMAIL} for support.`,
                 { variant: "error" },
             );
         }
@@ -145,12 +154,12 @@ const JoinRequests = () => {
             });
         } else if (rejectedIds.length) {
             enqueueSnackbar(
-                `Rejected ${rejectedIds.length} of ${selectedMembers.length} requests. Contact it@stuysu.org if the rest keep failing.`,
+                `Rejected ${rejectedIds.length} of ${selectedMembers.length} requests. Contact ${SUPPORT_EMAIL} if the rest keep failing.`,
                 { variant: "warning" },
             );
         } else {
             enqueueSnackbar(
-                "Error rejecting requests. Contact it@stuysu.org for support.",
+                `Error rejecting requests. Contact ${SUPPORT_EMAIL} for support.`,
                 { variant: "error" },
             );
         }

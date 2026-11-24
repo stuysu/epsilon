@@ -11,6 +11,7 @@ import {
 } from "react";
 import { ThemeContext } from "../../../contexts/ThemeProvider";
 import { Popover } from "radix-ui";
+import useOnChange from "../../../utils/useOnChange";
 
 export type FacultyOption = {
     id: number;
@@ -60,9 +61,10 @@ export default function FacultySelect({
         "--fs-border": isDark
             ? "rgba(255, 255, 255, 0.23)"
             : "rgba(0, 0, 0, 0.23)",
-        "--fs-focus": isDark ? "#90caf9" : "#1976d2",
-        "--fs-error": isDark ? "#f44336" : "#d32f2f",
-        "--fs-surface": isDark ? "#121212" : "#fff",
+        // theme colours, so every theme's fields match
+        "--fs-focus": "var(--accent-text)",
+        "--fs-error": "var(--red)",
+        "--fs-surface": "var(--bg-main)",
         "--fs-overlay": isDark
             ? "rgba(255, 255, 255, 0.12)"
             : "rgba(255, 255, 255, 0)",
@@ -91,9 +93,7 @@ export default function FacultySelect({
         return !required && !term ? [{ key: "none" }, ...list] : list;
     }, [options, query, required]);
 
-    useEffect(() => {
-        setHighlighted(0);
-    }, [query, open]);
+    useOnChange(`${open} ${query}`, () => setHighlighted(0));
 
     useEffect(() => {
         listRef.current
@@ -131,17 +131,17 @@ export default function FacultySelect({
                 }}
             >
                 <fieldset
-                    className={`group relative m-0 h-14 min-w-0 rounded-[4px] border-[1px] px-0 py-0 transition-colors focus-within:border-2 has-[[data-state=open]]:border-2 ${
+                    className={`group relative m-0 h-14 min-w-0 rounded-[4px] border px-0 py-0 transition-colors focus-within:border-2 has-data-[state=open]:border-2 ${
                         error
-                            ? "border-[color:var(--fs-error)]"
-                            : "border-[color:var(--fs-border)] hover:border-[color:var(--fs-text)] focus-within:border-[color:var(--fs-focus)] has-[[data-state=open]]:border-[color:var(--fs-focus)]"
+                            ? "border-(--fs-error)"
+                            : "border-(--fs-border) hover:border-(--fs-text) focus-within:border-(--fs-focus) has-data-[state=open]:border-(--fs-focus)"
                     }`}
                 >
                     <legend
                         className={`ml-[9px] px-1 text-xs leading-none ${
                             error
-                                ? "text-[color:var(--fs-error)]"
-                                : "text-[color:var(--fs-muted)] group-focus-within:text-[color:var(--fs-focus)] group-has-[[data-state=open]]:text-[color:var(--fs-focus)]"
+                                ? "text-(--fs-error)"
+                                : "text-(--fs-muted) group-focus-within:text-(--fs-focus) group-has-data-[state=open]:text-(--fs-focus)"
                         }`}
                     >
                         {label}
@@ -155,11 +155,11 @@ export default function FacultySelect({
                             aria-controls={listId}
                             aria-label={label}
                             aria-invalid={error}
-                            className="absolute inset-0 flex items-center justify-between gap-3 px-[14px] text-left text-base text-[color:var(--fs-text)] outline-0"
+                            className="absolute inset-0 flex items-center justify-between gap-3 px-[14px] text-left text-base text-(--fs-text) outline-0"
                         >
                             <span
                                 className={`min-w-0 truncate ${
-                                    value ? "" : "text-[color:var(--fs-muted)]"
+                                    value ? "" : "text-(--fs-muted)"
                                 }`}
                             >
                                 {value ||
@@ -167,7 +167,7 @@ export default function FacultySelect({
                                         ? "Select a faculty member"
                                         : noneLabel)}
                             </span>
-                            <i className="bx bx-chevron-down text-xl text-[color:var(--fs-muted)] shrink-0" />
+                            <i className="bx bx-chevron-down text-xl text-(--fs-muted) shrink-0" />
                         </button>
                     </Popover.Trigger>
                 </fieldset>
@@ -182,7 +182,7 @@ export default function FacultySelect({
                             ) as HTMLInputElement | null
                         )?.focus();
                     }}
-                    className="z-[1400] w-[var(--radix-popover-trigger-width)] overflow-hidden rounded-[4px] bg-[color:var(--fs-surface)] bg-[image:linear-gradient(var(--fs-overlay),var(--fs-overlay))] text-[color:var(--fs-text)] shadow-[0_5px_5px_-3px_rgba(0,0,0,0.2),0_8px_10px_1px_rgba(0,0,0,0.14),0_3px_14px_2px_rgba(0,0,0,0.12)]"
+                    className="z-1400 w-(--radix-popover-trigger-width) overflow-hidden rounded-[4px] bg-(--fs-surface) bg-[linear-gradient(var(--fs-overlay),var(--fs-overlay))] text-(--fs-text) shadow-[0_5px_5px_-3px_rgba(0,0,0,0.2),0_8px_10px_1px_rgba(0,0,0,0.14),0_3px_14px_2px_rgba(0,0,0,0.12)]"
                 >
                     <input
                         value={query}
@@ -199,7 +199,7 @@ export default function FacultySelect({
                                 ? `${listId}-${entries[highlighted].key}`
                                 : undefined
                         }
-                        className="w-full h-12 px-4 bg-transparent text-base text-[color:var(--fs-text)] placeholder:text-[color:var(--fs-muted)] border-b border-[color:var(--fs-divider)] outline-0"
+                        className="w-full h-12 px-4 bg-transparent text-base text-(--fs-text) placeholder:text-(--fs-muted) border-b border-(--fs-divider) outline-0"
                     />
                     <ul
                         ref={listRef}
@@ -222,7 +222,7 @@ export default function FacultySelect({
                                         {showGroup && (
                                             <li
                                                 role="presentation"
-                                                className="px-4 pt-2 pb-1 text-xs uppercase tracking-wide text-[color:var(--fs-muted)]"
+                                                className="px-4 pt-2 pb-1 text-xs uppercase tracking-wide text-(--fs-muted)"
                                             >
                                                 {entry.option?.group}
                                             </li>
@@ -240,9 +240,9 @@ export default function FacultySelect({
                                             }
                                             className={`flex items-center justify-between gap-3 px-4 py-2 cursor-pointer ${
                                                 index === highlighted
-                                                    ? "bg-[color:var(--fs-hover-bg)]"
+                                                    ? "bg-(--fs-hover-bg)"
                                                     : ""
-                                            } ${selected ? "bg-[color:var(--fs-selected-bg)]" : ""}`}
+                                            } ${selected ? "bg-(--fs-selected-bg)" : ""}`}
                                         >
                                             {entry.option ? (
                                                 <span className="min-w-0">
@@ -250,13 +250,13 @@ export default function FacultySelect({
                                                         {entry.option.name}
                                                     </span>
                                                     {entry.option.email && (
-                                                        <span className="block truncate text-sm text-[color:var(--fs-muted)]">
+                                                        <span className="block truncate text-sm text-(--fs-muted)">
                                                             {entry.option.email}
                                                         </span>
                                                     )}
                                                 </span>
                                             ) : (
-                                                <span className="text-[color:var(--fs-muted)]">
+                                                <span className="text-(--fs-muted)">
                                                     {noneLabel}
                                                 </span>
                                             )}
@@ -268,7 +268,7 @@ export default function FacultySelect({
                                 );
                             })
                         ) : (
-                            <li className="px-4 py-3 text-sm text-[color:var(--fs-muted)]">
+                            <li className="px-4 py-3 text-sm text-(--fs-muted)">
                                 {notFoundText}
                             </li>
                         )}
@@ -278,9 +278,7 @@ export default function FacultySelect({
             {helperText && (
                 <p
                     className={`mt-1 px-[14px] text-xs ${
-                        error
-                            ? "text-[color:var(--fs-error)]"
-                            : "text-[color:var(--fs-muted)]"
+                        error ? "text-(--fs-error)" : "text-(--fs-muted)"
                     }`}
                 >
                     {helperText}

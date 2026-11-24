@@ -71,7 +71,8 @@ export const relatedActivities = <T extends Org>(
     limit = 10,
 ): RelatedActivity<T>[] => {
     const pool = orgs.filter(
-        (o) => o.state !== "PENDING" && o.id !== current.id,
+        (o) =>
+            !["PENDING", "REJECTED"].includes(o.state) && o.id !== current.id,
     );
     const docs = new Map<number, string[]>();
     const df = new Map<string, number>();

@@ -4,6 +4,7 @@ import { daysOfWeek, monthNames } from "../../../utils/TimeStrings";
 import Divider from "../Divider";
 import {
     MeetingChip,
+    meetingTimeLabel,
     RoomChip,
 } from "../../../modules/stuyactivities/orgs/components/MeetingChips";
 import { Avatar } from "radix-ui";
@@ -43,7 +44,6 @@ const MeetingPreview = ({
     onClose,
 }: Props) => {
     const start = toNewYork(startTime);
-    const end = toNewYork(endTime);
     const openerRef = React.useRef<HTMLElement | null>(null);
 
     return (
@@ -81,7 +81,7 @@ const MeetingPreview = ({
                                 }}
                             >
                                 <motion.div
-                                    className="relative w-[min(720px,92vw)] rounded-2xl bg-layer-1 p-0 shadow-2xl border border-divider"
+                                    className="relative max-h-[92dvh] w-[min(720px,92vw)] overflow-y-auto rounded-2xl bg-layer-1 p-0 shadow-2xl border border-divider"
                                     initial={{
                                         opacity: 0,
                                         y: 20,
@@ -108,7 +108,7 @@ const MeetingPreview = ({
                                     }}
                                 >
                                     <div className="relative pt-3 px-6 flex items-center justify-between">
-                                        <Dialog.Title className="flex gap-3">
+                                        <Dialog.Title className="flex min-w-0 gap-3 wrap-anywhere">
                                             <Avatar.Root className="size-8 shrink-0 block rounded-md overflow-hidden">
                                                 <Avatar.Image
                                                     className="size-full object-cover"
@@ -116,7 +116,7 @@ const MeetingPreview = ({
                                                     alt={organizationName}
                                                 />
                                                 <Avatar.Fallback
-                                                    className="text-center size-full flex items-center justify-center bg-layer-3 text-xl relative pt-1 text-typography-2"
+                                                    className="text-center size-full flex items-center justify-center bg-layer-3 text-xl relative pt-1 text-typography-1"
                                                     delayMs={600}
                                                 >
                                                     {(organizationName || "O")
@@ -147,7 +147,7 @@ const MeetingPreview = ({
                                         <Dialog.Close
                                             aria-label="Close"
                                             onClick={onClose}
-                                            className="touch-target rounded-lg focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1"
+                                            className="touch-target rounded-lg focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-typography-1"
                                         >
                                             <i className="bx bx-x bx-md text-typography-2 mt-1 sm:hover:opacity-75" />
                                         </Dialog.Close>
@@ -156,7 +156,9 @@ const MeetingPreview = ({
                                     <Divider />
 
                                     <div className="px-6 py-2">
-                                        <h1>{title || "Untitled Meeting"}</h1>
+                                        <h1 className="wrap-anywhere">
+                                            {title || "Untitled Meeting"}
+                                        </h1>
 
                                         <div className="flex flex-wrap gap-1.5">
                                             <MeetingChip
@@ -167,7 +169,10 @@ const MeetingPreview = ({
                                             <MeetingChip
                                                 icon="bx-time-five"
                                                 iconClass="text-yellow"
-                                                label={`${start.format("h:mm")} – ${end.format("h:mm A")}`}
+                                                label={meetingTimeLabel(
+                                                    startTime,
+                                                    endTime,
+                                                )}
                                             />
                                             <RoomChip roomName={roomName} />
                                             <MeetingChip
@@ -193,7 +198,6 @@ const MeetingPreview = ({
                                         </div>
 
                                         <div className="mt-7 pb-10 max-h-[15lh] overflow-y-scroll">
-                                            <div className="rounded-2xl right-0 bg-gradient-to-t from-bg to-transparent w-full h-12 bottom-0 absolute" />
                                             <DisplayLinks
                                                 text={
                                                     description ||
@@ -202,6 +206,8 @@ const MeetingPreview = ({
                                             />
                                         </div>
                                     </div>
+                                    {/* sticky, so it stays at the bottom while the dialog scrolls */}
+                                    <div className="pointer-events-none sticky bottom-0 -mt-12 h-12 w-full rounded-2xl bg-linear-to-t/srgb from-bg to-transparent" />
                                 </motion.div>
                             </Dialog.Content>
                         </div>

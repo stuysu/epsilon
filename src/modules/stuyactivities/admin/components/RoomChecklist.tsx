@@ -168,7 +168,7 @@ const RoomChecklist = ({
                                                 }
                                                 label={`Room ${room.name}`}
                                             />
-                                            <span className="min-w-0 break-words">
+                                            <span className="min-w-0 wrap-break-word">
                                                 {room.name}
                                             </span>
                                         </label>

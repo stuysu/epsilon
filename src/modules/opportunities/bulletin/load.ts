@@ -12,12 +12,15 @@ export const readBulletinFile = async (
     ]);
     pdfjs.GlobalWorkerOptions.workerSrc = worker.default;
 
-    const doc = await pdfjs.getDocument({
+    const task = pdfjs.getDocument({
         data: new Uint8Array(await file.arrayBuffer()),
-    }).promise;
+        // keeps each font's real name, which tells titles from body text
+        fontExtraProperties: true,
+    });
     try {
+        const doc = await task.promise;
         return parseBulletin(await extractBulletinLines(doc, onProgress));
     } finally {
-        await doc.destroy();
+        await task.destroy();
     }
 };

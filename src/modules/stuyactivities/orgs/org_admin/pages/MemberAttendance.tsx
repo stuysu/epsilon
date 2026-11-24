@@ -13,6 +13,7 @@ import {
     attendanceRecord,
 } from "../../components/AttendanceRecord";
 import { AttendancePerformance } from "../../components/MeetingSideCards";
+import { SUPPORT_EMAIL } from "../../../../../config/constants";
 
 const MemberAttendance = () => {
     const org = useContext(OrgContext);
@@ -40,7 +41,7 @@ const MemberAttendance = () => {
                     <BackLink
                         to={`${base}?view=members`}
                         className={
-                            "inline-flex min-h-11 items-center gap-1 rounded-lg px-3 text-typography-1 underline-offset-2 sm:hover:underline focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1"
+                            "inline-flex min-h-11 items-center gap-1 rounded-lg px-3 text-typography-1 underline-offset-2 sm:hover:underline focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-typography-1"
                         }
                     >
                         <i
@@ -67,11 +68,11 @@ const MemberAttendance = () => {
     return (
         <div>
             <header className={"mb-6 mt-2"}>
-                <h1 className={"mb-3 break-words"}>
+                <h1 className={"mb-3 wrap-break-word"}>
                     <BackLink
                         to={`${base}?view=members`}
                         className={
-                            "rounded-md text-typography-3 no-underline transition-colors sm:hover:text-typography-2 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
+                            "rounded-md text-typography-3 underline underline-offset-4 transition-colors sm:hover:text-typography-2 focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-typography-1"
                         }
                     >
                         Attendance
@@ -112,7 +113,7 @@ const MemberAttendance = () => {
                     icon="bx-error"
                     iconColor="text-red"
                     title="Attendance Unavailable"
-                    description="Couldn't load attendance. Refresh the page or contact it@stuysu.org."
+                    description={`Couldn't load attendance. Refresh the page or contact ${SUPPORT_EMAIL}.`}
                 />
             ) : (
                 meetings && (

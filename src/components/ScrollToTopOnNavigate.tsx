@@ -1,6 +1,5 @@
-import { RefObject, useEffect, useLayoutEffect, useRef } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
 import { useLocation, useNavigationType } from "react-router-dom";
-import { Scrollbars } from "react-custom-scrollbars-2";
 
 // a page may still be loading when Back lands on it
 const RESTORE_MS = 5000;
@@ -11,11 +10,7 @@ const KEPT_POSITIONS = 100;
 const USER_SCROLL = ["wheel", "touchstart", "keydown", "pointerdown"];
 
 // keeps scrolling to target until the page is tall enough, or the user scrolls
-const restore = (
-    box: Scrollbars,
-    target: number,
-    onDone: (reached: boolean) => void,
-) => {
+const restore = (target: number, onDone: (reached: boolean) => void) => {
     const started = performance.now();
     let frame = 0;
     const stop = () => {
@@ -24,8 +19,9 @@ const restore = (
         onDone(false);
     };
     const step = () => {
-        box.scrollTop(target);
-        const reachable = box.getScrollHeight() - box.getClientHeight();
+        window.scrollTo(0, target);
+        const page = document.documentElement;
+        const reachable = page.scrollHeight - page.clientHeight;
         if (reachable >= target || performance.now() - started > RESTORE_MS) {
             for (const type of USER_SCROLL) {
                 window.removeEventListener(type, stop);
@@ -43,12 +39,8 @@ const restore = (
     return stop;
 };
 
-// the site scrolls in one Scrollbars box, so reset or restore it on navigation
-const ScrollToTopOnNavigate = ({
-    scrollbars,
-}: {
-    scrollbars: RefObject<Scrollbars>;
-}) => {
+// the router doesn't restore scroll, so reset or restore it on navigation
+const ScrollToTopOnNavigate = () => {
     const { pathname, key, state } = useLocation();
     const navigationType = useNavigationType();
     const last = useRef({ pathname, key });
@@ -59,23 +51,21 @@ const ScrollToTopOnNavigate = ({
     const restoring = useRef<string | null>(null);
 
     useEffect(() => {
-        // not in the library's types
-        const view = (scrollbars.current as { view?: HTMLElement } | null)
-            ?.view;
-        if (!view) return;
+        // this component restores positions itself
+        window.history.scrollRestoration = "manual";
         const save = () => {
             if (restoring.current === last.current.key) return;
             const kept = positions.current;
             kept.delete(last.current.key);
-            kept.set(last.current.key, view.scrollTop);
-            byPath.current.set(last.current.pathname, view.scrollTop);
+            kept.set(last.current.key, window.scrollY);
+            byPath.current.set(last.current.pathname, window.scrollY);
             if (kept.size > KEPT_POSITIONS) {
                 kept.delete(kept.keys().next().value!);
             }
         };
-        view.addEventListener("scroll", save, { passive: true });
-        return () => view.removeEventListener("scroll", save);
-    }, [scrollbars]);
+        window.addEventListener("scroll", save, { passive: true });
+        return () => window.removeEventListener("scroll", save);
+    }, []);
 
     // before paint, so the new page's scroll isn't saved under the old entry
     useLayoutEffect(() => {
@@ -83,8 +73,6 @@ const ScrollToTopOnNavigate = ({
         if (key === previous.key) return;
         last.current = { pathname, key };
 
-        const box = scrollbars.current;
-        if (!box) return;
         const target =
             navigationType === "POP"
                 ? positions.current.get(key)
@@ -93,7 +81,7 @@ const ScrollToTopOnNavigate = ({
                   : undefined;
         if (target !== undefined) {
             restoring.current = key;
-            return restore(box, target, (reached) => {
+            return restore(target, (reached) => {
                 if (restoring.current === key) restoring.current = null;
                 // a later Back to this entry should land here too
                 if (reached) {
@@ -109,8 +97,8 @@ const ScrollToTopOnNavigate = ({
             if (kept !== undefined) positions.current.set(key, kept);
             return;
         }
-        box.scrollToTop();
-    }, [pathname, key, state, navigationType, scrollbars]);
+        window.scrollTo(0, 0);
+    }, [pathname, key, state, navigationType]);
 
     return null;
 };

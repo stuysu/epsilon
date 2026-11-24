@@ -45,9 +45,12 @@ export const useOrgAttendance = (orgId?: number, poll = false) => {
     }, [orgId]);
 
     useEffect(() => {
+        // fetches; state is only set once the response arrives
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         if (!poll) load();
     }, [load, poll]);
-    useLiveRefresh(load, 3000, poll);
+    // summaries; check-ins show live on the meeting's own page
+    useLiveRefresh(load, 15000, poll);
 
     return { meetings, error, reload: load };
 };

@@ -6,15 +6,19 @@ import LoginGate from "../../components/ui/content/LoginGate";
 import Loading from "../../components/ui/content/Loading";
 import Divider from "../../components/ui/Divider";
 import { Switch } from "radix-ui";
+import CalendarFeedSetting from "./CalendarFeedSetting";
+import usePageMeta from "../../utils/usePageMeta";
 
 type Memberships = {
     id: number;
     organization_id: number;
     organization_name: string;
     allow_notifications: boolean;
+    active: boolean;
 };
 
 const CommsSettings = () => {
+    usePageMeta("Communications - Epsilon");
     const user = useContext(UserContext);
     const [memberships, setMemberships] = useState<Memberships[]>([]);
     const [loading, setLoading] = useState(true);
@@ -22,13 +26,27 @@ const CommsSettings = () => {
     useEffect(() => {
         const fetchMemberships = async () => {
             setLoading(true);
-            const { data: membershipsData, error: membershipsError } =
-                await supabase
-                    .from("memberships")
-                    .select(`id, organization_id`)
-                    .eq("user_id", user.id);
+            // one request; a missing settings row means notifications are on
+            const { data, error } = await supabase
+                .from("memberships")
+                .select(
+                    "id, organization_id, active, organizations (name), membershipnotifications (allow_notifications)",
+                )
+                .eq("user_id", user.id)
+                .returns<
+                    {
+                        id: number;
+                        organization_id: number;
+                        active: boolean;
+                        organizations: { name: string } | null;
+                        membershipnotifications:
+                            | { allow_notifications: boolean | null }
+                            | { allow_notifications: boolean | null }[]
+                            | null;
+                    }[]
+                >();
 
-            if (membershipsError) {
+            if (error) {
                 enqueueSnackbar("Failed to fetch memberships", {
                     variant: "error",
                 });
@@ -36,61 +54,21 @@ const CommsSettings = () => {
                 return;
             }
 
-            if (membershipsData && membershipsData.length > 0) {
-                const membershipIds = membershipsData.map((m) => m.id);
-                const organizationIds = membershipsData.map(
-                    (m) => m.organization_id,
-                );
-
-                const { data: notificationsData, error: notificationsError } =
-                    await supabase
-                        .from("membershipnotifications")
-                        .select("membership_id, allow_notifications")
-                        .in("membership_id", membershipIds);
-
-                if (notificationsError) {
-                    enqueueSnackbar("Failed to fetch notification settings", {
-                        variant: "error",
-                    });
-                    setLoading(false);
-                    return;
-                }
-
-                const { data: organizationsData, error: organizationsError } =
-                    await supabase
-                        .from("organizations")
-                        .select("id, name")
-                        .in("id", organizationIds);
-
-                if (organizationsError) {
-                    enqueueSnackbar("Failed to fetch organization names", {
-                        variant: "error",
-                    });
-                    setLoading(false);
-                    return;
-                }
-
-                const mergedData = membershipsData.map((membership) => {
-                    const notification = notificationsData.find(
-                        (n) => n.membership_id === membership.id,
-                    );
-                    const organization = organizationsData.find(
-                        (org) => org.id === membership.organization_id,
-                    );
-
+            setMemberships(
+                (data ?? []).map((m) => {
+                    const setting = [m.membershipnotifications]
+                        .flat()
+                        .find(Boolean);
                     return {
-                        ...membership,
-                        allow_notifications: notification
-                            ? notification.allow_notifications
-                            : true,
-                        organization_name: organization
-                            ? organization.name
-                            : "Unknown",
+                        id: m.id,
+                        organization_id: m.organization_id,
+                        organization_name: m.organizations?.name ?? "Unknown",
+                        allow_notifications:
+                            setting?.allow_notifications ?? true,
+                        active: m.active,
                     };
-                });
-
-                setMemberships(mergedData);
-            }
+                }),
+            );
             setLoading(false);
         };
 
@@ -133,6 +111,9 @@ const CommsSettings = () => {
         });
     };
 
+    // pending members don't get club emails, so they have no switch
+    const activeMemberships = memberships.filter((m) => m.active);
+
     return (
         <LoginGate>
             <div className={"sm:m-12 m-6 min-h-dvh"}>
@@ -140,23 +121,37 @@ const CommsSettings = () => {
                 <p>Manage your email preferences.</p>
                 <Divider />
 
+                <CalendarFeedSetting
+                    userId={user.id}
+                    clubs={activeMemberships.map((m) => ({
+                        id: m.organization_id,
+                        name: m.organization_name,
+                    }))}
+                />
+                <Divider />
+
+                <h2 className="mt-6">Club Emails</h2>
+                {activeMemberships.length === 0 && (
+                    <p className="my-4">You're not in any clubs yet.</p>
+                )}
+
                 <div>
-                    {memberships.map((membership) => (
+                    {activeMemberships.map((membership) => (
                         <div key={membership.id}>
                             <div
                                 className={
-                                    "flex flex-row justify-between my-4 text-typography-1"
+                                    "flex flex-row justify-between gap-3 my-4 text-typography-1"
                                 }
                             >
                                 <div
                                     className={
-                                        "flex flex-row items-center gap-2"
+                                        "flex min-w-0 flex-1 flex-row items-center gap-2"
                                     }
                                 >
                                     <i className={"bx bx-group bx-lg"}></i>
                                     <div
                                         className={
-                                            "flex flex-col gap-1 w-[60vw]"
+                                            "flex min-w-0 flex-1 flex-col gap-1"
                                         }
                                     >
                                         <h4>{membership.organization_name}</h4>
@@ -179,7 +174,7 @@ const CommsSettings = () => {
                                     }
                                     className="relative h-6 w-11 shrink-0 cursor-pointer rounded-full bg-layer-3 transition-colors data-[state=checked]:bg-blue"
                                 >
-                                    <Switch.Thumb className="sm:hover:scale-110 block h-5 w-5 translate-x-0.5 rounded-full bg-white/90 shadow transition-transform data-[state=checked]:translate-x-[22px] ease-in-out" />
+                                    <Switch.Thumb className="sm:hover:scale-110 block h-5 w-5 translate-x-0.5 rounded-full bg-white/90 shadow-sm transition-transform data-[state=checked]:translate-x-[22px] ease-in-out" />
                                 </Switch.Root>
                             </div>
                             <div className={"ml-14"}>

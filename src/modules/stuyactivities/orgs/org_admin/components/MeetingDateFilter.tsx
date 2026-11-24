@@ -20,7 +20,7 @@ export default function MeetingDateFilter({ when, from, to, onChange }: Props) {
         <Popover.Root>
             <Popover.Trigger
                 aria-label={`Meeting dates: ${meetingWhenOptions.find((o) => o.value === when)?.label}`}
-                className={`flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg outline-0 transition-colors focus-visible:outline focus-visible:outline-2 focus-visible:outline-typography-1 ${
+                className={`flex h-11 w-11 cursor-pointer items-center justify-center rounded-lg outline-0 transition-colors focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-typography-1 ${
                     active
                         ? "text-accent"
                         : "text-typography-2 hover:text-typography-1"

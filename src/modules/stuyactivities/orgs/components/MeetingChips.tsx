@@ -1,20 +1,25 @@
 import { toNewYork } from "../../../../utils/NewYorkTime";
 
+// capped too, so a long room name can't widen the layout around the chip
+const LABEL_CLASS = "max-w-96 truncate";
+
 export const MeetingChip = ({
     icon,
     iconClass = "",
     label,
     fullLabel,
+    title,
 }: {
     icon?: string;
     iconClass?: string;
     label: string;
     fullLabel?: string;
+    title?: string;
 }) => (
     <span
-        title={fullLabel}
+        title={fullLabel ?? title}
         className={
-            "inline-flex h-7 shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-layer-3 px-2.5 text-sm font-semibold text-typography-1 shadow-control"
+            "inline-flex h-7 min-w-0 max-w-full shrink-0 items-center gap-1.5 whitespace-nowrap rounded-full bg-layer-3 px-2.5 text-sm font-semibold text-typography-1 shadow-control"
         }
     >
         {icon && (
@@ -25,21 +30,28 @@ export const MeetingChip = ({
         )}
         {fullLabel ? (
             <>
-                <span aria-hidden="true">{label}</span>
+                <span aria-hidden="true" className={LABEL_CLASS}>
+                    {label}
+                </span>
                 <span className="sr-only">{fullLabel}</span>
             </>
         ) : (
-            label
+            <span className={LABEL_CLASS}>{label}</span>
         )}
     </span>
 );
 
-export const meetingTimeLabel = (start: string, end: string) => {
+export const meetingTimeLabel = (start?: string, end?: string) => {
     const s = toNewYork(start);
     const e = toNewYork(end);
     if (s.format("HH:mm") === "00:00" && e.diff(s, "hour") >= 23)
         return "All Day";
-    return `${s.format("h:mm")} – ${e.format("h:mm A")}`;
+    // AM/PM on the start too when it differs from the end's
+    const startFormat =
+        s.format("YYYY-MM-DD A") === e.format("YYYY-MM-DD A")
+            ? "h:mm"
+            : "h:mm A";
+    return `${s.format(startFormat)} – ${e.format("h:mm A")}`;
 };
 
 export const roomLabel = (roomName?: string) =>
@@ -52,6 +64,7 @@ export const RoomChip = ({ roomName }: { roomName?: string }) => {
             icon={label === "Virtual" ? "bx-video" : "bx-door-open"}
             iconClass="text-typography-2"
             label={label}
+            title={label}
         />
     );
 };
@@ -102,7 +115,7 @@ const MeetingChips = ({
     return (
         <div className={`flex flex-wrap items-center gap-1.5 ${wide.row}`}>
             {when}
-            <div className={`flex ${wide.room}`}>{room}</div>
+            <div className={`flex min-w-0 max-w-full ${wide.room}`}>{room}</div>
         </div>
     );
 };

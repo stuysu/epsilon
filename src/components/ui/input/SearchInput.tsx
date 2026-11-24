@@ -45,13 +45,13 @@ export default function SearchInput({
                 text-typography-1
                 important
               placeholder:text-typography-2
-              [[data-theme=dark-hc]_&]:placeholder:text-typography-3
-              [[data-theme=orange]_&]:placeholder:text-[#6a4a3f]
+              in-data-[theme=dark-hc]:placeholder:text-typography-3
+              in-data-[theme=orange]:placeholder:text-[#6a4a3f]
               bg-layer-1
               hover:bg-layer-2
               focus:bg-layer-3
               outline-0
-              focus-visible:outline
+              focus-visible:outline-solid
               focus-visible:outline-2
               focus-visible:outline-offset-2
               focus-visible:outline-typography-1

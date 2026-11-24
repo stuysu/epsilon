@@ -107,7 +107,7 @@ const SearchFilter = ({
     return (
         <div
             ref={panelRef}
-            className={sticky ? "overflow-y-auto [scrollbar-width:thin]" : ""}
+            className={sticky ? "overflow-y-auto scrollbar-thin" : ""}
             style={{
                 // the pinned panel scrolls, so it gets room on the right for
                 // focus rings and gives it back with the negative margin

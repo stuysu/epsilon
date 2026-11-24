@@ -7,6 +7,7 @@ import {
     Ref,
     useCallback,
     useId,
+    useImperativeHandle,
     useLayoutEffect,
     useRef,
     useState,
@@ -33,7 +34,7 @@ export type TextFieldProps = Omit<
 };
 
 const inputClass =
-    "w-full min-w-0 bg-transparent py-[16.5px] text-base leading-[1.4375em] text-typography-1 outline-none disabled:cursor-default";
+    "w-full min-w-0 bg-transparent text-base leading-[1.4375em] text-typography-1 outline-hidden disabled:cursor-default";
 
 const TextField = ({
     label,
@@ -71,13 +72,12 @@ const TextField = ({
     }, [autoGrow]);
     useLayoutEffect(fitToText, [fitToText, value]);
 
-    const setTextareaRef = (element: HTMLTextAreaElement | null) => {
-        textareaRef.current = element;
-        if (typeof inputRef === "function") inputRef(element);
-        else if (inputRef) {
-            (inputRef as { current: unknown }).current = element;
-        }
-    };
+    // a textarea keeps its own ref for resizing and hands the element on
+    useImperativeHandle(
+        multiline ? inputRef : undefined,
+        () => textareaRef.current,
+        [],
+    );
 
     const filled =
         value === undefined ? typed : value !== null && String(value) !== "";
@@ -131,21 +131,31 @@ const TextField = ({
             className={className}
             style={{ ...sx, ...style }}
         >
-            <div className="flex w-full items-center px-3.5">
+            {/* a textarea's own padding scrolls with its text, under the
+                floating label, so the wrapper holds the padding instead */}
+            <div
+                className={`flex w-full items-center px-3.5 ${multiline ? "cursor-text py-[16.5px]" : ""}`}
+                onClick={
+                    multiline ? () => textareaRef.current?.focus() : undefined
+                }
+            >
                 {startAdornment && (
-                    <span className="shrink-0 whitespace-nowrap text-base text-black/60 scheme-dark:text-white/70">
+                    <span className="min-w-0 truncate whitespace-nowrap text-base text-black/60 scheme-dark:text-white/70">
                         {startAdornment}
                     </span>
                 )}
                 {multiline ? (
                     <textarea
                         {...sharedProps}
-                        ref={setTextareaRef}
+                        ref={textareaRef}
                         rows={rows ?? 1}
                         className={`${inputClass} resize-none ${autoGrow ? "overflow-hidden" : ""}`}
                     />
                 ) : (
-                    <input {...sharedProps} className={inputClass} />
+                    <input
+                        {...sharedProps}
+                        className={`${startAdornment ? inputClass.replace("w-full min-w-0", "w-0 flex-1 min-w-[10ch]") : inputClass} py-[16.5px]`}
+                    />
                 )}
             </div>
         </OutlinedField>

@@ -3,7 +3,7 @@ import React, { ReactNode, RefObject } from "react";
 
 type ItemListProps = {
     height: number | "auto";
-    contentRef?: RefObject<HTMLDivElement>;
+    contentRef?: RefObject<HTMLDivElement | null>;
     title?: ReactNode;
     subtitle?: ReactNode;
     icon?: string;
@@ -53,9 +53,7 @@ export default function ItemList({
                                 </h4>
                             )}
                             {subtitle && (
-                                <p className="text-sm text-text-secondary mt-4">
-                                    {subtitle}
-                                </p>
+                                <p className="text-sm mt-4">{subtitle}</p>
                             )}
                         </div>
                     )}

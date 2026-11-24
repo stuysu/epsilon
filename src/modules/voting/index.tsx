@@ -1,21 +1,19 @@
 import React, { useState } from "react";
 import { PUBLIC_URL } from "../../config/constants";
 import { motion } from "framer-motion";
-import { Helmet } from "react-helmet";
+import usePageMeta from "../../utils/usePageMeta";
 
 const Vote = () => {
+    usePageMeta(
+        "Vote Now - Epsilon",
+        "Vote in student government elections and other important school decisions with Epsilon.",
+    );
+
     const title = "Make Your Voice Heard!";
     const [isImgLoaded, isIsImgLoaded] = useState(false);
 
     return (
         <div>
-            <Helmet>
-                <title>Vote Now - Epsilon</title>
-                <meta
-                    name="description"
-                    content="Vote in student government elections and other important school decisions with Epsilon."
-                />
-            </Helmet>
             <div className={"relative z-20 bg-bg sm:-mb-20 min-h-screen"}>
                 <img
                     alt=""
@@ -40,7 +38,7 @@ const Vote = () => {
                                     {title.split(" ").map((word, i) => (
                                         <span
                                             key={`glow-${i}`}
-                                            className="inline-block lg:mx-2 mx-1 bg-gradient-to-b shadow-blue text-transparent from-purple-500 to-red bg-clip-text opacity-70 blur-lg scale-[1.04] will-change-transform"
+                                            className="inline-block lg:mx-2 mx-1 bg-linear-to-b/srgb shadow-blue text-transparent from-purple-500 to-red bg-clip-text opacity-70 blur-lg scale-[1.04] will-change-transform"
                                         >
                                             {word}
                                         </span>
@@ -51,7 +49,7 @@ const Vote = () => {
                                     {title.split(" ").map((word, i) => (
                                         <motion.span
                                             key={i}
-                                            className="inline-block lg:mx-2 mx-1 bg-gradient-to-b shadow-blue text-transparent from-purple-500 to-red bg-clip-text opacity-100"
+                                            className="inline-block lg:mx-2 mx-1 bg-linear-to-b/srgb shadow-blue text-transparent from-purple-500 to-red bg-clip-text opacity-100"
                                             initial={{
                                                 opacity: 0,
                                                 filter: "blur(20px)",
