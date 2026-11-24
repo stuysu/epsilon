@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import { supabase } from "../../../../lib/supabaseClient";
 import { enqueueSnackbar } from "notistack";
 import FormPage from "../../../../components/ui/forms/FormPage";
@@ -9,6 +9,7 @@ import FormTextField from "../../../../components/ui/forms/FormTextField";
 import OrgRequirements from "../../../../utils/OrgRequirements";
 import FormCheckbox from "../../../../components/ui/forms/FormCheckbox";
 import BulkAddUsers from "../components/BulkAddUsers";
+import WaitingAdvisors from "../components/WaitingAdvisors";
 import { SUPPORT_EMAIL } from "../../../../config/constants";
 
 type User = {
@@ -29,6 +30,8 @@ const emptyUser: User = {
 
 const AddUser = () => {
     const [userData, setUserData] = useState<User>(emptyUser);
+    const [created, setCreated] = useState(0);
+    const formRef = useRef<HTMLDivElement>(null);
 
     const isMobile = useMediaQuery("not all and (min-width: 640px)");
 
@@ -51,98 +54,111 @@ const AddUser = () => {
             return enqueueSnackbar(message, { variant: "error" });
         }
         enqueueSnackbar("User created successfully", { variant: "success" });
+        setCreated((n) => n + 1);
     };
 
     return (
         <div className={"w-full p-4 sm:p-12"}>
             <h1>Add New User</h1>
-            <MultiPageForm
-                title=""
-                value={userData}
-                onFormChange={setUserData}
-                onSubmit={createUser}
-                submitText="Create User"
-                sx={{
-                    width: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                    flexWrap: "wrap",
+            <WaitingAdvisors
+                refreshKey={created}
+                onPick={(email, school) => {
+                    setUserData({ ...emptyUser, email, is_faculty: school });
+                    formRef.current?.scrollIntoView({ behavior: "smooth" });
+                    formRef.current?.querySelector("input")?.focus({
+                        preventScroll: true,
+                    });
                 }}
-            >
-                <FormPage title="User Information">
-                    <FormSection
-                        sx={{
-                            width: "100%",
-                            display: "flex",
-                            flexWrap: isMobile ? "wrap" : "nowrap",
-                        }}
-                    >
-                        <FormTextField
-                            label="First Name"
-                            field="first_name"
-                            required
-                            requirements={{ minChar: 1, maxChar: 60 }}
-                            sx={{ width: isMobile ? "100%" : "25%" }}
-                        />
-                        <FormTextField
-                            label="Last Name"
-                            field="last_name"
-                            required
-                            requirements={{ minChar: 1, maxChar: 60 }}
-                            sx={{
-                                marginLeft: isMobile ? "" : "20px",
-                                marginTop: isMobile ? "20px" : "",
-                                width: isMobile ? "100%" : "25%",
-                            }}
-                        />
-                        <FormTextField
-                            label="Email"
-                            field="email"
-                            required={true}
-                            requirements={
-                                OrgRequirements.faculty_email.requirements
-                            }
-                            sx={{
-                                marginLeft: isMobile ? "" : "20px",
-                                marginTop: isMobile ? "20px" : "",
-                                width: isMobile ? "100%" : "50%",
-                            }}
-                        />
-                    </FormSection>
-                    <FormSection
-                        sx={{
-                            width: "100%",
-                            display: "flex",
-                            flexWrap: isMobile ? "wrap" : "nowrap",
-                        }}
-                    >
-                        <FormTextField
-                            label="Grad Year"
-                            field="grad_year"
-                            required={OrgRequirements.grad_year.required}
-                            requirements={
-                                OrgRequirements.grad_year.requirements
-                            }
-                            sx={{
-                                marginTop: isMobile ? "20px" : "40px",
-                                width: isMobile ? "100%" : "25%",
-                            }}
-                        />
+            />
+            <div ref={formRef} className={"scroll-mt-4"}>
+                <MultiPageForm
+                    title=""
+                    value={userData}
+                    onFormChange={setUserData}
+                    onSubmit={createUser}
+                    submitText="Create User"
+                    sx={{
+                        width: "100%",
+                        display: "flex",
+                        justifyContent: "center",
+                        flexWrap: "wrap",
+                    }}
+                >
+                    <FormPage title="User Information">
                         <FormSection
                             sx={{
-                                marginTop: "30px",
-                                marginLeft: isMobile ? "" : "40px",
+                                width: "100%",
+                                display: "flex",
+                                flexWrap: isMobile ? "wrap" : "nowrap",
                             }}
                         >
-                            <FormCheckbox
-                                field="is_faculty"
-                                label="Faculty?"
-                                description="Check this box if this user is a faculty."
+                            <FormTextField
+                                label="First Name"
+                                field="first_name"
+                                required
+                                requirements={{ minChar: 1, maxChar: 60 }}
+                                sx={{ width: isMobile ? "100%" : "25%" }}
+                            />
+                            <FormTextField
+                                label="Last Name"
+                                field="last_name"
+                                required
+                                requirements={{ minChar: 1, maxChar: 60 }}
+                                sx={{
+                                    marginLeft: isMobile ? "" : "20px",
+                                    marginTop: isMobile ? "20px" : "",
+                                    width: isMobile ? "100%" : "25%",
+                                }}
+                            />
+                            <FormTextField
+                                label="Email"
+                                field="email"
+                                required={true}
+                                requirements={
+                                    OrgRequirements.faculty_email.requirements
+                                }
+                                sx={{
+                                    marginLeft: isMobile ? "" : "20px",
+                                    marginTop: isMobile ? "20px" : "",
+                                    width: isMobile ? "100%" : "50%",
+                                }}
                             />
                         </FormSection>
-                    </FormSection>
-                </FormPage>
-            </MultiPageForm>
+                        <FormSection
+                            sx={{
+                                width: "100%",
+                                display: "flex",
+                                flexWrap: isMobile ? "wrap" : "nowrap",
+                            }}
+                        >
+                            <FormTextField
+                                label="Grad Year"
+                                field="grad_year"
+                                required={OrgRequirements.grad_year.required}
+                                requirements={
+                                    OrgRequirements.grad_year.requirements
+                                }
+                                sx={{
+                                    marginTop: isMobile ? "20px" : "40px",
+                                    width: isMobile ? "100%" : "25%",
+                                }}
+                            />
+                            <FormSection
+                                sx={{
+                                    marginTop: "30px",
+                                    marginLeft: isMobile ? "" : "40px",
+                                }}
+                            >
+                                <FormCheckbox
+                                    field="is_faculty"
+                                    label="Faculty?"
+                                    description="Check this box if this user is a faculty."
+                                />
+                            </FormSection>
+                        </FormSection>
+                    </FormPage>
+                </MultiPageForm>
+            </div>
             <BulkAddUsers />
         </div>
     );

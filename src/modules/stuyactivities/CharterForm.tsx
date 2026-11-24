@@ -472,7 +472,7 @@ const CharterForm = () => {
                             requirements={
                                 OrgRequirements.faculty_email.requirements
                             }
-                            description="If a faculty member has agreed to be your club advisor, please input their preferred email here."
+                            description="If a faculty member has agreed to be your club advisor, enter their email here. Use their @stuy.edu address if they have one, since that's what they sign in with."
                         />
                     </FormSection>
                     <FormUpload
