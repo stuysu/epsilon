@@ -123,7 +123,11 @@ export const meetingCsvRows = (
             mark?.recorded_at
                 ? toNewYork(mark.recorded_at).format("h:mm A")
                 : "",
-            !mark ? "" : mark.source === "SELF" ? "Self check-in" : "Leader",
+            !mark?.source
+                ? ""
+                : mark.source === "SELF"
+                  ? "Self check-in"
+                  : "Leader",
         ];
     });
     return [header, ...rows];
