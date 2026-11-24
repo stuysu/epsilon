@@ -1,4 +1,4 @@
-import { useContext, useRef, useState } from "react";
+import { useCallback, useContext, useEffect, useRef, useState } from "react";
 import { useSnackbar } from "notistack";
 import { supabase } from "../../../../lib/supabaseClient";
 import { functionErrorText } from "../../../../utils/FunctionErrors";
@@ -12,10 +12,17 @@ import { SUPPORT_EMAIL } from "../../../../config/constants";
 const addResults: Record<string, string> = {
     already_advisor: "is already an advisor.",
     already_leader: "is already a leader of this Activity.",
-    no_account:
-        "doesn't have an Epsilon account yet. They need to sign in once first.",
+    already_invited:
+        "was already invited. They'll be added once their Epsilon account is set up.",
+    club_not_approved:
+        "doesn't have an Epsilon account yet. Invites open once this Activity is approved.",
+    invalid_email: "isn't a valid email address.",
     not_faculty: "isn't a faculty account. Only faculty can be advisors.",
+    too_many_invites:
+        "can't be invited: this Activity already has 3 open invites. Cancel one first.",
 };
+
+type Invite = { email: string; created_at: string };
 
 const OrgAdvisors = ({ editable }: { editable: boolean }) => {
     const organization = useContext(OrgContext);
@@ -25,6 +32,48 @@ const OrgAdvisors = ({ editable }: { editable: boolean }) => {
     const [problem, setProblem] = useState("");
     const [removing, setRemoving] = useState<Partial<Membership> | null>(null);
     const submitting = useRef(false);
+    const [invites, setInvites] = useState<Invite[]>([]);
+    const [cancelling, setCancelling] = useState<Invite | null>(null);
+    // dialogs keep their text while closing
+    const shownRemoving = useRef(removing);
+    if (removing) shownRemoving.current = removing;
+    const shownCancelling = useRef(cancelling);
+    if (cancelling) shownCancelling.current = cancelling;
+
+    // teachers with no account yet; leaders can see and cancel these.
+    // Invites older than a year no longer count.
+    const loadInvites = useCallback(async () => {
+        if (!editable) return [];
+        const yearAgo = new Date();
+        yearAgo.setFullYear(yearAgo.getFullYear() - 1);
+        const { data } = await supabase
+            .from("pending_advisors")
+            .select("email, created_at")
+            .eq("organization_id", organization.id)
+            .gt("created_at", yearAgo.toISOString())
+            .order("created_at");
+        return data ?? [];
+    }, [editable, organization.id]);
+
+    const [invitesVersion, setInvitesVersion] = useState(0);
+    // the Roster renders this twice (sidebar and narrow layout)
+    const invitesChanged = () =>
+        window.dispatchEvent(new Event("advisor-invites-changed"));
+
+    useEffect(() => {
+        const bump = () => setInvitesVersion((n) => n + 1);
+        window.addEventListener("advisor-invites-changed", bump);
+        return () =>
+            window.removeEventListener("advisor-invites-changed", bump);
+    }, []);
+
+    useEffect(() => {
+        let current = true;
+        loadInvites().then((rows) => current && setInvites(rows));
+        return () => {
+            current = false;
+        };
+    }, [loadInvites, invitesVersion]);
 
     const advisors = (organization.memberships || []).filter(
         (m) => m.active && m.role === "ADVISOR",
@@ -79,14 +128,25 @@ const OrgAdvisors = ({ editable }: { editable: boolean }) => {
             return;
         }
         const data: string = response?.result;
-        if (data !== "added") {
+        if (data === "invited" || data === "already_invited") {
+            invitesChanged();
+        }
+        if (data === "invited") {
+            enqueueSnackbar(
+                response?.emailed
+                    ? `Invited ${trimmed}. We emailed them, and they'll be added once their Epsilon account is set up.`
+                    : `Invited ${trimmed}. They'll be added once their Epsilon account is set up, but we couldn't email them, so let them know yourself.`,
+                { variant: response?.emailed ? "success" : "warning" },
+            );
+        } else if (data === "added") {
+            await refresh();
+            enqueueSnackbar("Advisor added!", { variant: "success" });
+        } else {
             setProblem(
                 `${trimmed} ${addResults[data] ?? "couldn't be added."}`,
             );
             return;
         }
-        await refresh();
-        enqueueSnackbar("Advisor added!", { variant: "success" });
         setAdding(false);
         setEmail("");
         setProblem("");
@@ -108,6 +168,25 @@ const OrgAdvisors = ({ editable }: { editable: boolean }) => {
         }
         await refresh();
         enqueueSnackbar("Advisor removed.", { variant: "success" });
+    };
+
+    const cancelInvite = async () => {
+        if (!cancelling) return;
+        const { data, error } = await supabase
+            .from("pending_advisors")
+            .delete()
+            .eq("organization_id", organization.id)
+            .eq("email", cancelling.email)
+            .select("email");
+        if (error || !data?.length) {
+            enqueueSnackbar(
+                `Could not withdraw the invite. Contact ${SUPPORT_EMAIL} for support.`,
+                { variant: "error" },
+            );
+            return;
+        }
+        invitesChanged();
+        enqueueSnackbar("Invite withdrawn.", { variant: "success" });
     };
 
     return (
@@ -162,6 +241,31 @@ const OrgAdvisors = ({ editable }: { editable: boolean }) => {
                     </div>
                 );
             })}
+            {invites.map((invite) => (
+                <div
+                    key={invite.email}
+                    className={"flex items-center gap-3 bg-layer-2 px-3.5 py-2"}
+                >
+                    <div className={"min-w-0 flex-1"}>
+                        <p className={"truncate"} title={invite.email}>
+                            {invite.email}
+                        </p>
+                        <p className={"text-sm text-typography-2"}>
+                            Invited · added once their account is set up
+                        </p>
+                    </div>
+                    <button
+                        type="button"
+                        aria-label={`Withdraw the invite to ${invite.email}`}
+                        onClick={() => setCancelling(invite)}
+                        className={
+                            "flex size-9 shrink-0 items-center justify-center rounded-lg text-typography-2 transition-colors sm:hover:bg-layer-3 sm:hover:text-red focus-visible:outline-solid focus-visible:outline-2 focus-visible:outline-typography-1"
+                        }
+                    >
+                        <i aria-hidden="true" className={"bx bx-x text-xl"} />
+                    </button>
+                </div>
+            ))}
             {editable && (
                 <div className={"p-2"}>
                     <AsyncButton
@@ -179,7 +283,7 @@ const OrgAdvisors = ({ editable }: { editable: boolean }) => {
 
             <UserDialog
                 title="Add Advisor"
-                description="Advisors must have a faculty Epsilon account."
+                description="If they don't have an Epsilon account yet, we'll email them and add them once it's set up."
                 open={adding}
                 onClose={() => {
                     setAdding(false);
@@ -227,11 +331,21 @@ const OrgAdvisors = ({ editable }: { editable: boolean }) => {
 
             <UserDialog
                 title="Remove advisor?"
-                description={`${removing?.users?.first_name ?? ""} ${removing?.users?.last_name ?? ""} will no longer be listed as an advisor of this Activity.`}
+                description={`${shownRemoving.current?.users?.first_name ?? ""} ${shownRemoving.current?.users?.last_name ?? ""} will no longer be listed as an advisor of this Activity.`}
                 open={!!removing}
                 onClose={() => setRemoving(null)}
                 onConfirm={removeAdvisor}
                 confirmText="Remove"
+            />
+
+            <UserDialog
+                title="Withdraw invite?"
+                description={`${shownCancelling.current?.email ?? ""} won't be added as an advisor when their account is set up.`}
+                open={!!cancelling}
+                onClose={() => setCancelling(null)}
+                onConfirm={cancelInvite}
+                confirmText="Withdraw"
+                cancelText="Keep"
             />
         </ItemList>
     );

@@ -93,11 +93,9 @@ const AdminUpsertMeeting = ({
         isPublic === undefined ? true : isPublic,
     );
 
-    const [notifyFaculty, setNotifyFaculty] = useState(false);
     const [virtualConfirmed, setVirtualConfirmed] = useState(false);
     const [virtualTouched, setVirtualTouched] = useState(false);
     const [notifyMembers, setNotifyMembers] = useState(true);
-    const advisorRoomBooking = advisorNeeded && (!id || roomId !== room_id);
 
     const [faculty, setFaculty] = useState<
         (FacultyOption & { firstName: string; lastName: string })[]
@@ -524,7 +522,6 @@ const AdminUpsertMeeting = ({
                     start_time: wallClockToISO(startTime),
                     end_time: wallClockToISO(endTime),
                     is_public: isPub,
-                    notify_faculty: notifyFaculty || advisorRoomBooking,
                     advisor: meetingAdvisor.trim(),
                     silent: !notifyMembers,
                 },
@@ -541,7 +538,6 @@ const AdminUpsertMeeting = ({
                     start_time: wallClockToISO(startTime),
                     end_time: wallClockToISO(endTime),
                     is_public: isPub,
-                    notify_faculty: notifyFaculty || advisorRoomBooking,
                     advisor: meetingAdvisor.trim(),
                     silent: !notifyMembers,
                 },
@@ -725,17 +721,9 @@ const AdminUpsertMeeting = ({
                 className="mt-2.5"
                 label="Notify members"
             />
-            <SwitchField
-                checked={notifyFaculty || advisorRoomBooking}
-                disabled={advisorRoomBooking}
-                onChange={setNotifyFaculty}
-                className="mt-2.5"
-                label={
-                    advisorRoomBooking
-                        ? "Notify faculty (required for this room)"
-                        : "Notify faculty"
-                }
-            />
+            <p className="mt-1 text-sm text-typography-2">
+                Faculty advisors are always notified.
+            </p>
         </ContentDialog>
     );
 };
